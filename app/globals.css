@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  background-color: #fafafa;
+  color: #0a0a0a;
+}
+
+.font-display {
+  font-family: var(--font-playfair), "Times New Roman", serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Rendering optimization for long below-the-fold sections */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
+
+/* Smooth scroll global */
+html { scroll-behavior: smooth; }
+
+/* Focus rings accessibles */
+:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Texte minimum 16px body */
+body { font-size: 16px; line-height: 1.6; }
+
+/* Tap targets minimum 44px */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scroll reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transition: none; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ── Leaflet map — house pin markers ── */
+.dn-marker svg {
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.2));
+  transition: transform 0.15s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+.dn-marker svg:hover,
+.dn-marker--active svg {
+  transform: scale(1.15) translateY(-2px);
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.35));
+}
+
+/* ── Leaflet map — popup mini-card ── */
+.dn-leaflet-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+/* Flèche blanche qui pointe vers le marker */
+.dn-leaflet-popup .leaflet-popup-tip-container {
+  width: 24px;
+  height: 14px;
+  margin-left: -12px;
+}
+.dn-leaflet-popup .leaflet-popup-tip {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  box-shadow: none;
+  border: none;
+  margin: -7px auto 0;
+}
+.dn-leaflet-popup .leaflet-popup-content {
+  margin: 0;
+  width: 220px !important;
+}
+.dn-popup {
+  width: 220px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.dn-popup__img {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+}
+.dn-popup__body {
+  padding: 12px 14px;
+}
+.dn-popup__name {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0a0a0a;
+  line-height: 1.3;
+}
+.dn-popup__loc {
+  margin: 0 0 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #0a0a0a;
+  opacity: 0.35;
+}
+.dn-popup__price {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0a0a0a;
+}
+.dn-popup__price span {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.4;
+}
+
+/* Hide leaflet default attribution */
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  opacity: 0.5;
+}
+
+/* no-scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Underline animation hover (Le Collectionist style) */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 100%; height: 1px;
+  background: #0a0a0a;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.link-underline:hover::after,
+.link-underline.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Bouton luxury — bordure fine, pas de radius */
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2.5rem;
+  border: 1px solid currentColor;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 44px;
+  cursor: pointer;
+}
+.btn-luxury:hover {
+  background: #0a0a0a;
+  color: #fff;
+  border-color: #0a0a0a;
+}
+.btn-luxury--white {
+  color: #fff;
+  border-color: rgba(255,255,255,0.5);
+}
+.btn-luxury--white:hover {
+  background: #fff;
+  color: #0a0a0a;
+}
+
+/* Ligne décorative fine */
+.line-luxury {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Eyebrow label raffiné */
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+/* Blur-fade animation */
+@keyframes blur-fade-in {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0);   }
+}
+.blur-fade-in {
+  animation: blur-fade-in 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}

@@ -1,0 +1,374 @@
+{
+  "name": "Diamant Noir — Chatbot Concierge V1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diamant-noir-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "diamant-noir-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 2 — Normalize Input\n// Valide et normalise les champs entrants depuis Next.js\n// ============================================================\n\nconst body = $input.first().json.body || $input.first().json;\n\nconst message = typeof body.message === 'string' ? body.message.trim() : '';\nconst sessionId = typeof body.sessionId === 'string' && body.sessionId.length > 0\n  ? body.sessionId\n  : `session-fallback-${Date.now()}`;\n\nif (!message) {\n  return [{\n    json: {\n      error: true,\n      reply: \"Message invalide.\",\n      intent: \"unknown\",\n      stage: \"fallback\",\n      sessionId\n    }\n  }];\n}\n\n// Extraire les données connues du lead\nconst knownLeadData = body.knownLeadData && typeof body.knownLeadData === 'object'\n  ? body.knownLeadData\n  : {};\n\n// Extraire le contexte villas envoyé par Next.js\nconst context = body.context && typeof body.context === 'object'\n  ? body.context\n  : { villas: [], availableAmenities: [], villaCount: 0 };\n\nreturn [{\n  json: {\n    message,\n    sessionId,\n    locale: body.locale || 'fr',\n    source: body.source || 'website_chatbot',\n    timestamp: body.timestamp || new Date().toISOString(),\n    currentPage: body.currentPage || '/',\n    villaId: body.villaId || null,\n    currentStage: body.currentStage || 'greet',\n    knownLeadData,\n    context,\n    capabilities: body.capabilities || {\n      canVerifyAvailability: false,\n      canCreateBooking: false,\n      canSendEmail: false\n    }\n  }\n}];\n"
+      },
+      "id": "node-normalize",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 3 — Build Live Context\n// Formate les données villas + lead en texte structuré pour le LLM\n// Inspiré du pattern CieloBot \"Build Live Context\"\n// ============================================================\n\nconst data = $input.first().json;\nconst { context, knownLeadData, currentStage, message, sessionId } = data;\n\n// Timestamp et contexte temporel\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('fr-FR', {\n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'\n});\nconst timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });\n\n// Formater les villas en texte structuré\nconst villas = Array.isArray(context.villas) ? context.villas : [];\nconst villaContextText = villas.length === 0\n  ? 'Aucune villa disponible actuellement.'\n  : villas.slice(0, 8).map(v => {\n      const amenities = Array.isArray(v.amenities) ? v.amenities.join(', ') : 'Non spécifiés';\n      const price = v.price_per_night ? `${v.price_per_night}€/nuit` : 'Prix sur demande';\n      return `Villa : ${v.name}\\n  Capacité : ${v.capacity || '?'} personnes\\n  Prix : ${price}\\n  Localisation : ${v.location || 'Martinique'}\\n  Équipements : ${amenities}\\n  Description : ${v.description ? v.description.slice(0, 200) : 'N/A'}`;\n    }).join('\\n\\n');\n\n// Formater le lead data connu\nconst lead = knownLeadData || {};\nconst leadLines = [];\nif (lead.firstName) leadLines.push(`Prénom : ${lead.firstName}`);\nif (lead.email) leadLines.push(`Email : ${lead.email}`);\nif (lead.phone) leadLines.push(`Téléphone : ${lead.phone}`);\nif (lead.totalGuests) leadLines.push(`Voyageurs : ${lead.totalGuests}`);\nif (lead.checkIn) leadLines.push(`Arrivée : ${lead.checkIn}`);\nif (lead.checkOut) leadLines.push(`Départ : ${lead.checkOut}`);\nif (lead.villaPreference) leadLines.push(`Villa préférée : ${lead.villaPreference}`);\nif (lead.budget) leadLines.push(`Budget : ${lead.budget}`);\nif (lead.stayPurpose) leadLines.push(`Motif : ${lead.stayPurpose}`);\nconst knownLeadDataText = leadLines.length > 0 ? leadLines.join('\\n') : 'Aucune information connue.';\n\n// Disponibilités équipements\nconst amenitiesList = Array.isArray(context.availableAmenities)\n  ? context.availableAmenities.join(', ')\n  : 'Non spécifiés';\n\n// Instructions spécifiques au stage courant\nconst stageInstructions = {\n  greet: 'Accueillez chaleureusement. Posez une question ouverte pour comprendre l\\'intention. Stage suivant : discover.',\n  discover: 'Explorez les besoins : motif du séjour, nombre de voyageurs, dates approximatives. 1 question max. Stage suivant : clarify ou recommend.',\n  clarify: 'Précisez les critères flous : dates exactes, capacité souhaitée. 1 question max. Stage suivant : recommend.',\n  recommend: 'Présentez 1-2 villas pertinentes avec leurs points forts. Invitez à confirmer l\\'intérêt. Stage suivant : qualify.',\n  qualify: 'Collectez les slots manquants (email, téléphone si chaud). Max 2 questions regroupées logiquement. Stage suivant : verify.',\n  verify: 'Récapitulez toutes les informations et demandez confirmation. 0 question. Stage suivant : prebook.',\n  prebook: 'Confirmez la prise en charge. Annoncez le délai de retour. Stage suivant : handoff.',\n  handoff: 'Clôturez avec un engagement de délai précis (\"sous 2 heures\"). Stage final.',\n  fallback: 'Réorientez ou proposez un contact humain. 1 question max.'\n};\n\nconst currentStageInstruction = stageInstructions[currentStage] || stageInstructions.greet;\n\n// Construire le chatInput enrichi pour le LLM\nconst enrichedContext = {\n  dateStr,\n  timeStr,\n  villaContextText,\n  knownLeadDataText,\n  amenitiesList,\n  villaCount: context.villaCount || villas.length,\n  currentStageInstruction,\n  capabilities: data.capabilities || {}\n};\n\nreturn [{\n  json: {\n    ...data,\n    enrichedContext,\n    // chatInput sera le message brut envoyé au LLM\n    chatInput: message\n  }\n}];\n"
+      },
+      "id": "node-build-context",
+      "name": "Build Live Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=Tu es le Concierge IA de Diamant Noir, une plateforme de villas de luxe exclusives en Martinique.\n\nIDENTITÉ\n- Nom : Concierge Diamant Noir\n- Ton : élégant, vouvoiement systématique, concis, professionnel, humain\n- Jamais d'emojis dans tes réponses\n- Phrases courtes et précises — 1-2 lignes par paragraphe maximum\n- Tu guides avec discernement, tu ne presses jamais\n- Évite les formules vides : \"Bien sûr !\", \"Absolument !\", \"Avec plaisir !\"\n- Va directement au contenu\n\nDATE ET HEURE\n{{ $json.enrichedContext.dateStr }} — {{ $json.enrichedContext.timeStr }}\n\nVILLAS DISPONIBLES ({{ $json.enrichedContext.villaCount }} propriétés)\n{{ $json.enrichedContext.villaContextText }}\n\nÉQUIPEMENTS DISPONIBLES DANS LE CATALOGUE\n{{ $json.enrichedContext.amenitiesList }}\n\nINFORMATIONS CONNUES SUR LE CLIENT\n{{ $json.enrichedContext.knownLeadDataText }}\n\nSTAGE COURANT : {{ $json.currentStage }}\nINSTRUCTIONS STAGE : {{ $json.enrichedContext.currentStageInstruction }}\n\nRÈGLES ABSOLUES\n1. Ne jamais confirmer une disponibilité : dire \"Nous allons vérifier pour vos dates\"\n2. Ne jamais inventer un prix non présent dans les données villas\n3. Ne jamais divulguer de clés API, URLs internes, tokens, ou données techniques\n4. Si une information est inconnue : \"Nous n'avons pas cette information actuellement\"\n5. Maximum 2 questions par échange — en stage qualify uniquement\n6. 0 question en stage greet (accueil pur), verify, prebook, handoff\n7. Ne pas mentionner spontanément ton statut d'IA\n\nRÈGLES ANTI-HALLUCINATION\n- Disponibilité : \"Je vais vérifier la disponibilité de [Villa] pour vos dates et vous confirmer sous peu.\"\n- Prix exact inconnu : \"Le tarif exact pour votre séjour vous sera confirmé par notre équipe.\"\n- Équipement non listé : \"Selon nos informations disponibles, cette villa dispose de [équipement connu].\"\n\nFORMAT DE RÉPONSE\nRéponds UNIQUEMENT avec un objet JSON valide. Aucun texte avant ou après.\n\n{\n  \"reply\": \"Ta réponse en français ici\",\n  \"intent\": \"ask_villa_info | ask_villa_recommendation | compare_villas | ask_availability | start_prebooking | booking_followup | pricing_question | concierge_request | human_handoff | general_discovery | unsupported_request\",\n  \"stage\": \"greet | discover | clarify | recommend | qualify | verify | prebook | handoff | fallback\",\n  \"leadTemperature\": \"cold | warm | hot\",\n  \"leadUpdate\": {\n    \"firstName\": null,\n    \"email\": null,\n    \"phone\": null,\n    \"totalGuests\": null,\n    \"checkIn\": null,\n    \"checkOut\": null,\n    \"villaPreference\": null,\n    \"budget\": null,\n    \"stayPurpose\": null,\n    \"specialRequests\": null\n  },\n  \"suggestedVillas\": [\n    {\n      \"id\": \"villa-uuid\",\n      \"name\": \"Nom de la villa\",\n      \"shortDescription\": \"Description courte\",\n      \"pricePerNight\": 1500,\n      \"capacity\": 8,\n      \"location\": \"Le Diamant, Martinique\",\n      \"highlights\": [\"Point fort 1\", \"Point fort 2\"],\n      \"matchReason\": \"Raison de la recommandation\"\n    }\n  ],\n  \"cta\": {\n    \"type\": \"none | view_villa | request_quote | call_concierge | view_availability\",\n    \"label\": \"Texte du bouton\",\n    \"villaId\": null\n  },\n  \"suggestedQuickReplies\": [\"Réponse 1\", \"Réponse 2\", \"Réponse 3\"],\n  \"shouldEscalateToHuman\": false,\n  \"humanHandoffReason\": null,\n  \"warnings\": []\n}\n\nRègles pour leadUpdate : inclure uniquement les champs extraits dans cet échange. Mettre null pour les champs non mentionnés.\nRègles pour suggestedVillas : tableau vide [] si aucune recommandation de villa dans cette réponse.\nRègles pour suggestedQuickReplies : 2-4 options courtes et actionnables adaptées au contexte.\nRègles pour shouldEscalateToHuman : true si demande explicite d'un humain, booking_followup, ou 3 échanges sans résolution.\n"
+        }
+      },
+      "id": "node-ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 900
+        }
+      },
+      "id": "node-llm",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [660, 500],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 5 — Parse Response\n// Extrait le JSON structuré depuis la réponse du LLM\n// Pattern inspiré CieloBot : 3 tentatives de parsing\n// ============================================================\n\nconst rawOutput = $input.first().json.output || $input.first().json.text || $input.first().json.reply || '';\nconst upstream = $input.first().json;\n\n// Tenter d'extraire le JSON depuis la réponse\nfunction extractJSON(text) {\n  if (!text || typeof text !== 'string') return null;\n\n  // Tentative 1 : parsing direct\n  try {\n    return JSON.parse(text.trim());\n  } catch (_) {}\n\n  // Tentative 2 : extraction du premier bloc {...}\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try {\n      return JSON.parse(match[0]);\n    } catch (_) {}\n  }\n\n  // Tentative 3 : extraction depuis bloc ```json ... ```\n  const codeBlock = text.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (codeBlock) {\n    try {\n      return JSON.parse(codeBlock[1].trim());\n    } catch (_) {}\n  }\n\n  return null;\n}\n\nconst parsed = extractJSON(rawOutput);\n\nif (!parsed || typeof parsed.reply !== 'string' || !parsed.reply.trim()) {\n  // Fallback gracieux\n  return [{\n    json: {\n      ...upstream,\n      parsedResponse: {\n        reply: \"Je rencontre une difficulté technique passagère. Notre équipe reste disponible pour vous accompagner.\",\n        intent: \"unknown\",\n        stage: upstream.currentStage || \"fallback\",\n        leadTemperature: upstream.knownLeadData?.temperature || \"cold\",\n        leadUpdate: {},\n        suggestedVillas: [],\n        cta: { type: \"none\" },\n        suggestedQuickReplies: [\"Voir nos villas\", \"Contacter le concierge\"],\n        shouldEscalateToHuman: false,\n        humanHandoffReason: null,\n        warnings: [\"parse_error\"]\n      },\n      parseError: true\n    }\n  }];\n}\n\n// Nettoyer et valider le leadUpdate — ne garder que les champs non-null\nconst rawLeadUpdate = parsed.leadUpdate || {};\nconst cleanedLeadUpdate = {};\nfor (const [key, val] of Object.entries(rawLeadUpdate)) {\n  if (val !== null && val !== undefined && val !== '') {\n    cleanedLeadUpdate[key] = val;\n  }\n}\n\n// Calculer le qualification score\nconst mergedLead = {\n  ...(upstream.knownLeadData || {}),\n  ...cleanedLeadUpdate\n};\nlet score = 0;\nif (mergedLead.totalGuests) score += 10;\nif (mergedLead.checkIn) score += 15;\nif (mergedLead.checkOut) score += 15;\nif (mergedLead.email) score += 20;\nif (mergedLead.phone) score += 15;\nif (mergedLead.budget) score += 10;\nif (mergedLead.stayPurpose) score += 15;\n\nconst leadTemperature = score > 50 ? 'hot' : score >= 20 ? 'warm' : 'cold';\nconst finalTemperature = parsed.leadTemperature || leadTemperature;\n\n// Vérifier si pre-booking est prêt\nconst readyToPrebook = !!(mergedLead.checkIn && mergedLead.checkOut && mergedLead.totalGuests && mergedLead.email);\nconst missingFields = [];\nif (!mergedLead.checkIn) missingFields.push('checkIn');\nif (!mergedLead.checkOut) missingFields.push('checkOut');\nif (!mergedLead.totalGuests) missingFields.push('totalGuests');\nif (!mergedLead.email) missingFields.push('email');\n\nreturn [{\n  json: {\n    ...upstream,\n    parsedResponse: {\n      ...parsed,\n      leadUpdate: cleanedLeadUpdate,\n      leadTemperature: finalTemperature,\n      qualificationScore: score,\n      suggestedVillas: Array.isArray(parsed.suggestedVillas) ? parsed.suggestedVillas.slice(0, 3) : [],\n      suggestedQuickReplies: Array.isArray(parsed.suggestedQuickReplies) ? parsed.suggestedQuickReplies.slice(0, 4) : [],\n      cta: parsed.cta || { type: 'none' },\n      shouldEscalateToHuman: parsed.shouldEscalateToHuman === true,\n      humanHandoffReason: parsed.shouldEscalateToHuman ? (parsed.humanHandoffReason || null) : null,\n      warnings: Array.isArray(parsed.warnings) ? parsed.warnings : []\n    },\n    mergedLead,\n    prebookingStatus: {\n      readyToCreate: readyToPrebook,\n      missingFields\n    }\n  }\n}];\n"
+      },
+      "id": "node-parse-response",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-escalate",
+              "leftValue": "={{ $json.parsedResponse.shouldEscalateToHuman }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "node-if-escalate",
+      "name": "IF — Escalade humain ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 180]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-prebook",
+              "leftValue": "={{ $json.prebookingStatus.readyToCreate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "node-if-prebook",
+      "name": "IF — Pre-booking prêt ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 420]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "chatbot_leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "keyValue": "={{ $json.sessionId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "session_id", "fieldValue": "={{ $json.sessionId }}" },
+            { "fieldId": "first_name", "fieldValue": "={{ $json.mergedLead.firstName || null }}" },
+            { "fieldId": "email", "fieldValue": "={{ $json.mergedLead.email || null }}" },
+            { "fieldId": "phone", "fieldValue": "={{ $json.mergedLead.phone || null }}" },
+            { "fieldId": "total_guests", "fieldValue": "={{ $json.mergedLead.totalGuests || null }}" },
+            { "fieldId": "check_in", "fieldValue": "={{ $json.mergedLead.checkIn || null }}" },
+            { "fieldId": "check_out", "fieldValue": "={{ $json.mergedLead.checkOut || null }}" },
+            { "fieldId": "villa_preference", "fieldValue": "={{ $json.mergedLead.villaPreference || null }}" },
+            { "fieldId": "budget", "fieldValue": "={{ $json.mergedLead.budget || null }}" },
+            { "fieldId": "stay_purpose", "fieldValue": "={{ $json.mergedLead.stayPurpose || null }}" },
+            { "fieldId": "special_requests", "fieldValue": "={{ $json.mergedLead.specialRequests || null }}" },
+            { "fieldId": "lead_temperature", "fieldValue": "={{ $json.parsedResponse.leadTemperature }}" },
+            { "fieldId": "qualification_score", "fieldValue": "={{ $json.parsedResponse.qualificationScore }}" },
+            { "fieldId": "current_stage", "fieldValue": "={{ $json.parsedResponse.stage }}" },
+            { "fieldId": "last_intent", "fieldValue": "={{ $json.parsedResponse.intent }}" },
+            { "fieldId": "should_escalate", "fieldValue": "={{ $json.parsedResponse.shouldEscalateToHuman }}" },
+            { "fieldId": "source_page", "fieldValue": "={{ $json.currentPage || '/' }}" },
+            { "fieldId": "villa_id_context", "fieldValue": "={{ $json.villaId || null }}" },
+            { "fieldId": "updated_at", "fieldValue": "={{ new Date().toISOString() }}" }
+          ]
+        }
+      },
+      "id": "node-upsert-lead",
+      "name": "Upsert Lead (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1320, 300],
+      "continueOnFail": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-credentials",
+          "name": "Supabase Diamant Noir"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "pre_bookings",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "session_id", "fieldValue": "={{ $json.sessionId }}" },
+            { "fieldId": "first_name", "fieldValue": "={{ $json.mergedLead.firstName || null }}" },
+            { "fieldId": "email", "fieldValue": "={{ $json.mergedLead.email }}" },
+            { "fieldId": "phone", "fieldValue": "={{ $json.mergedLead.phone || null }}" },
+            { "fieldId": "total_guests", "fieldValue": "={{ $json.mergedLead.totalGuests }}" },
+            { "fieldId": "check_in", "fieldValue": "={{ $json.mergedLead.checkIn }}" },
+            { "fieldId": "check_out", "fieldValue": "={{ $json.mergedLead.checkOut }}" },
+            { "fieldId": "villa_id", "fieldValue": "={{ $json.mergedLead.villaPreference || $json.villaId || null }}" },
+            { "fieldId": "special_requests", "fieldValue": "={{ $json.mergedLead.specialRequests || null }}" },
+            { "fieldId": "budget_indicated", "fieldValue": "={{ $json.mergedLead.budget || null }}" },
+            { "fieldId": "stay_purpose", "fieldValue": "={{ $json.mergedLead.stayPurpose || null }}" },
+            { "fieldId": "status", "fieldValue": "pending" },
+            { "fieldId": "source", "fieldValue": "chatbot_v1" },
+            { "fieldId": "created_at", "fieldValue": "={{ new Date().toISOString() }}" }
+          ]
+        }
+      },
+      "id": "node-create-prebooking",
+      "name": "Create Pre-booking (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1320, 120],
+      "continueOnFail": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-credentials",
+          "name": "Supabase Diamant Noir"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CONCIERGE_NOTIFICATION_WEBHOOK || 'https://kenneson.app.n8n.cloud/webhook/chatbot-admin' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Source", "value": "diamant-noir-chatbot" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "type", "value": "={{ $json.parsedResponse.shouldEscalateToHuman ? 'human_handoff' : ($json.prebookingStatus.readyToCreate ? 'pre_booking' : 'hot_lead') }}" },
+            { "name": "sessionId", "value": "={{ $json.sessionId }}" },
+            { "name": "lead", "value": "={{ JSON.stringify($json.mergedLead) }}" },
+            { "name": "stage", "value": "={{ $json.parsedResponse.stage }}" },
+            { "name": "leadTemperature", "value": "={{ $json.parsedResponse.leadTemperature }}" },
+            { "name": "qualificationScore", "value": "={{ $json.parsedResponse.qualificationScore }}" },
+            { "name": "intent", "value": "={{ $json.parsedResponse.intent }}" },
+            { "name": "escalateReason", "value": "={{ $json.parsedResponse.humanHandoffReason || null }}" },
+            { "name": "timestamp", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "node-notify-team",
+      "name": "Notify Team",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 500],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 9 — Format Reply\n// Prépare la réponse finale pour le webhook\n// Construit le payload ChatbotResponse compatible Next.js\n// ============================================================\n\nconst data = $input.first().json;\nconst { parsedResponse, sessionId, prebookingStatus } = data;\n\n// Construire la réponse frontend-safe\nconst clientResponse = {\n  success: true,\n  reply: parsedResponse.reply,\n  sessionId,\n  intent: parsedResponse.intent || undefined,\n  stage: parsedResponse.stage || 'greet',\n  leadTemperature: parsedResponse.leadTemperature || 'cold',\n  leadUpdate: parsedResponse.leadUpdate || {},\n  suggestedVillas: Array.isArray(parsedResponse.suggestedVillas)\n    ? parsedResponse.suggestedVillas.slice(0, 3)\n    : [],\n  cta: parsedResponse.cta || { type: 'none' },\n  suggestedQuickReplies: Array.isArray(parsedResponse.suggestedQuickReplies)\n    ? parsedResponse.suggestedQuickReplies.slice(0, 4)\n    : [],\n  shouldEscalateToHuman: parsedResponse.shouldEscalateToHuman === true,\n  humanHandoffReason: parsedResponse.shouldEscalateToHuman\n    ? (parsedResponse.humanHandoffReason || null)\n    : undefined,\n  // Inclure preBooking si prêt\n  preBooking: prebookingStatus?.readyToCreate\n    ? {\n        readyToCreate: true,\n        missingFields: []\n      }\n    : undefined,\n  warnings: Array.isArray(parsedResponse.warnings) ? parsedResponse.warnings : []\n};\n\n// Supprimer les clés undefined pour un JSON propre\nconst cleanResponse = JSON.parse(JSON.stringify(clientResponse));\n\nreturn [{ json: { clientResponse: cleanResponse } }];\n"
+      },
+      "id": "node-format-reply",
+      "name": "Format Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.clientResponse) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "node-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1760, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Normalize Input", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [{ "node": "Build Live Context", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Live Context": {
+      "main": [
+        [{ "node": "AI Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [{ "node": "Parse Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          { "node": "IF — Escalade humain ?", "type": "main", "index": 0 },
+          { "node": "IF — Pre-booking prêt ?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF — Escalade humain ?": {
+      "main": [
+        [{ "node": "Notify Team", "type": "main", "index": 0 }],
+        [{ "node": "Upsert Lead (Supabase)", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF — Pre-booking prêt ?": {
+      "main": [
+        [{ "node": "Create Pre-booking (Supabase)", "type": "main", "index": 0 }],
+        [{ "node": "Upsert Lead (Supabase)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Pre-booking (Supabase)": {
+      "main": [
+        [{ "node": "Notify Team", "type": "main", "index": 0 }]
+      ]
+    },
+    "Notify Team": {
+      "main": [
+        [{ "node": "Format Reply", "type": "main", "index": 0 }]
+      ]
+    },
+    "Upsert Lead (Supabase)": {
+      "main": [
+        [{ "node": "Format Reply", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Reply": {
+      "main": [
+        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-diamant-noir", "name": "diamant-noir" },
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-chatbot", "name": "chatbot" },
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-v1", "name": "v1" }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2026-03-31T00:00:00.000Z",
+  "versionId": "diamant-noir-chatbot-v1"
+}
