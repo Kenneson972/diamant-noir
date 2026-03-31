@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-03-31T22:15:00Z | type: security+config+script | Cursor — Préparation V1 GitHub/Vercel + hardening pre-prod
+- **agent**: `cursor`
+- **summary**: Préparation publication V1: ajout `.gitignore` projet (blocage `.env*`, `.next`, artefacts), durcissement `dashboard/team/[secret]` (secret serveur + `notFound()`), sécurisation `GET /api/sync` (header cron + `CRON_SECRET/SYNC_CRON_SECRET`), restriction CORS `OPTIONS /api/chat` à une allowlist, ajustement `vercel.json` (cron daily compatible Hobby), ajout des variables d’environnement de sécurité dans `.env.local.example`, installation dépendances manquantes (`recharts`, `@dnd-kit/*`) et déploiement Vercel en production.
+- **files**: [`.gitignore`, `.env.local.example`, `app/dashboard/team/[secret]/page.tsx`, `app/api/sync/route.ts`, `app/api/chat/route.ts`, `vercel.json`, `package.json`, `package-lock.json`]
+- **why**: Rendre la V1 publiable sans fuite de secrets, réduire l’exposition des endpoints sensibles, et obtenir une URL de démonstration stable.
+- **impact**: Production Vercel active sur `https://diamant-noir.vercel.app`; accès non autorisé bloqué sur `/dashboard/team/*`, `/api/sync` et CORS externe sur `/api/chat`.
+- **verify**: `npm run build` OK; déploiement Vercel OK; smoke checks HTTP: `/`=200, `/villas`=200, `/dashboard/team/test`=404, `/api/sync`=403, `OPTIONS /api/chat` (origin externe)=403.
+- **session**: `docs/logs/2026-03-31.md`
+
+---
+
 ## 2026-03-31T21:05:00Z | type: ui+config | Cursor — Retrait Chakra/HeroUI, espace client sur Radix+Tailwind
 - **agent**: `cursor`
 - **summary**: Suppression de `@heroui/react` et `@chakra-ui/react` (et assets CSS HeroUI) ; migration des routes `/espace-client` (layout, pages, components) vers `components/ui` + HTML/Tailwind ; retrait de `optimizePackageImports` pour HeroUI et de l’injection CSS globale. Fix lint/hooks sur `WelcomeBook` + correction syntaxe `SearchResults`.
