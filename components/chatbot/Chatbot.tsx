@@ -350,7 +350,7 @@ export const Chatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group fixed bottom-8 right-8 z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90"
+          className="group fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90 sm:bottom-8 sm:right-8 sm:h-16 sm:w-16"
           aria-label="Ouvrir le concierge"
         >
           <Sparkles className="relative z-10 animate-pulse" size={28} />
@@ -388,7 +388,7 @@ export const Chatbot = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
-                className="rounded-full p-2 transition-colors hover:bg-white/10"
+                className="tap-target rounded-full transition-colors hover:bg-white/10"
                 title="Nouvelle conversation"
                 aria-label="Réinitialiser"
               >
@@ -397,7 +397,7 @@ export const Chatbot = () => {
               {!isMobile && (
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="rounded-full p-2 transition-colors hover:bg-white/10"
+                  className="tap-target rounded-full transition-colors hover:bg-white/10"
                   aria-label={isFullscreen ? "Réduire" : "Agrandir"}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -405,7 +405,7 @@ export const Chatbot = () => {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="rounded-full p-2 transition-colors hover:bg-white/10"
+                className="tap-target rounded-full transition-colors hover:bg-white/10"
                 aria-label="Fermer"
               >
                 <X size={18} />

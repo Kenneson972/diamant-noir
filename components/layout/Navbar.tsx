@@ -114,7 +114,7 @@ export const Navbar = () => {
         aria-modal="true"
         aria-label="Menu de navigation"
         inert={!menuOpen ? true : undefined}
-        className={`fixed inset-y-0 left-0 z-[60] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-y-0 left-0 z-[60] flex w-full max-w-[26rem] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
@@ -238,7 +238,7 @@ export const Navbar = () => {
             : "bg-transparent py-4 md:py-5"
         }`}
       >
-        <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6">
+        <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-between gap-1 px-4 sm:gap-2 sm:px-6">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
@@ -252,7 +252,7 @@ export const Navbar = () => {
             </span>
           </button>
 
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-24 sm:px-32">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-16 sm:px-28 md:px-32">
             <div className="pointer-events-auto">
               <BrandLogo
                 variant={isSolid ? "onLight" : "onDark"}
@@ -264,7 +264,7 @@ export const Navbar = () => {
           </div>
 
           {/* Rangée utilitaire type vitrine : téléphone | favoris | compte | réserver (sans « Obtenir l’app ») */}
-          <div className="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-2 sm:gap-3 md:gap-4">
+          <div className="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
               className={`tap-target hidden items-center text-[12px] font-medium tracking-[0.02em] transition-colors md:inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
@@ -314,13 +314,14 @@ export const Navbar = () => {
 
             <Link
               href="/book"
-              className={`tap-target shrink-0 border px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.2em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:px-5 sm:text-[10px] sm:tracking-[0.22em] ${
+              className={`tap-target shrink-0 border px-2.5 py-2 text-[8px] font-bold uppercase tracking-[0.16em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:px-5 sm:py-2.5 sm:text-[10px] sm:tracking-[0.22em] ${
                 isSolid
                   ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
                   : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white"
               }`}
             >
-              Réserver
+              <span className="sm:hidden">Res.</span>
+              <span className="hidden sm:inline">Réserver</span>
             </Link>
           </div>
         </div>

@@ -11,6 +11,28 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-03-31T23:25:00Z | type: ui+perf | Cursor — Passe responsive mobile P0/P1 (public + dashboards + espace-client)
+- **agent**: `cursor`
+- **summary**: Correction mobile complète prioritaire: fondations overflow/header, parcours booking mobile sur fiche villa, comportement carte/listing villas, lightbox galerie, dashboard proprio (actions mobiles + assistant split layout + tabs/kpis/tables), espace-client (tap targets), compare bar/chatbot (safe-area + cibles tactiles), FAQ contact (longues lignes).
+- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `app/villas/[id]/page.tsx`, `components/VillasMapView.tsx`, `components/VillaGallery.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`, `app/espace-client/layout.tsx`, `components/villas/CompareBar.tsx`, `components/chatbot/Chatbot.tsx`, `app/contact/page.tsx`]
+- **why**: Site déployé signalé “buggé mobile” par l’utilisateur; nécessité de rétablir une UX utilisable sur 320-390px sans casser desktop.
+- **impact**: Navigation et actions critiques accessibles sur mobile, réduction des débordements, meilleure ergonomie tactile (>=44px), meilleure compatibilité safe-area iOS sur éléments fixes.
+- **verify**: `npm run build` OK ; `npm run dev -- -p 3000` actif ; smoke localhost `GET /villas` = 200, `GET /dashboard/proprio` = 200.
+- **session**: `docs/logs/2026-03-31.md`
+
+---
+
+## 2026-03-31T22:40:00Z | type: ui | Cursor — Hero: baseline prioritaire “CONCIERGERIE PRIVÉE”
+- **agent**: `cursor`
+- **summary**: Mise à jour du libellé éditorial du hero pour mettre “CONCIERGERIE PRIVÉE” en premier.
+- **files**: [`app/page.tsx`]
+- **why**: Demande utilisateur explicite de prioriser ce message de positionnement dans la zone hero.
+- **impact**: Hiérarchie de marque clarifiée dès le premier écran.
+- **verify**: Relecture du rendu texte dans le hero.
+- **session**: `docs/logs/2026-03-31.md`
+
+---
+
 ## 2026-03-31T22:15:00Z | type: security+config+script | Cursor — Préparation V1 GitHub/Vercel + hardening pre-prod
 - **agent**: `cursor`
 - **summary**: Préparation publication V1: ajout `.gitignore` projet (blocage `.env*`, `.next`, artefacts), durcissement `dashboard/team/[secret]` (secret serveur + `notFound()`), sécurisation `GET /api/sync` (header cron + `CRON_SECRET/SYNC_CRON_SECRET`), restriction CORS `OPTIONS /api/chat` à une allowlist, ajustement `vercel.json` (cron daily compatible Hobby), ajout des variables d’environnement de sécurité dans `.env.local.example`, installation dépendances manquantes (`recharts`, `@dnd-kit/*`) et déploiement Vercel en production.

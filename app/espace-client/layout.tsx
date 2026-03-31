@@ -142,7 +142,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
 
         {/* Mobile header */}
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-5 h-14 border-b border-navy/10 bg-white/95 backdrop-blur-md">
+          <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-navy/10 bg-white/95">
             <div className="flex min-w-0 items-center gap-3">
               <BrandLogo variant="onLight" size="sm" />
               <Link
@@ -159,7 +159,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
                   <Link
                     key={href}
                     href={href}
-                    className={`p-1.5 transition-colors ${
+                    className={`tap-target h-11 w-11 transition-colors ${
                       active ? "text-navy" : "text-navy/40 hover:text-navy"
                     }`}
                   >
@@ -171,7 +171,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-navy/40 hover:text-navy w-9 h-9 min-w-0"
+                className="tap-target text-navy/40 hover:text-navy h-11 w-11 min-w-0"
                 aria-label="Déconnexion"
               >
                 <LogOut size={18} strokeWidth={1} />

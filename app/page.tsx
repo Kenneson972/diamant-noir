@@ -85,7 +85,7 @@ export default async function HomePage() {
               />
             </div>
             <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/55 animate-in fade-in duration-700">
-              Martinique · Collection privée
+              CONCIERGERIE PRIVÉE · Martinique
             </p>
 
             <div className="mx-auto w-full max-w-4xl pt-2 md:pt-3 animate-in fade-in duration-700 delay-75">

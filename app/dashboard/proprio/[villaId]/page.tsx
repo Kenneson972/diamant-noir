@@ -934,9 +934,9 @@ export default function VillaDashboard() {
   return (
     <main className="flex min-h-screen flex-col bg-offwhite">
       {/* Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-6">
+      <header className="sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
+        <div className="mx-auto flex min-h-24 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-0">
+          <div className="flex min-w-0 items-center gap-4 sm:gap-6">
             <Button 
               variant="ghost" 
               size="sm" 
@@ -945,9 +945,9 @@ export default function VillaDashboard() {
             >
               <ArrowLeft size={20} />
             </Button>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-3">
-                <h1 className="font-display text-2xl text-navy leading-none">{villa?.name}</h1>
+            <div className="flex min-w-0 flex-col">
+              <div className="flex min-w-0 items-center gap-3">
+                <h1 className="truncate font-display text-xl leading-none text-navy sm:text-2xl">{villa?.name}</h1>
                 <span className={`rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
                   form.is_published ? "bg-emerald-50 text-emerald-600" : "bg-navy/5 text-navy/40"
                 }`}>
@@ -963,7 +963,7 @@ export default function VillaDashboard() {
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-full text-navy/60 hover:text-navy">
+          <Button variant="ghost" size="sm" onClick={handleSignOut} className="tap-target rounded-full text-navy/60 hover:text-navy">
             <LogOut size={18} />
           </Button>
         </div>
@@ -972,35 +972,35 @@ export default function VillaDashboard() {
       {/* Main Content Area with Tabs */}
       <div className="mx-auto w-full max-w-7xl flex-1 p-6 pb-20">
         <Tabs defaultValue="planning" className="space-y-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b pb-6">
-            <TabsList className="bg-navy/5 p-1 h-12 rounded-2xl">
-              <TabsTrigger value="planning" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+          <div className="flex flex-col gap-6 border-b pb-6 md:flex-row md:items-center md:justify-between">
+            <TabsList className="h-auto w-full overflow-x-auto rounded-2xl bg-navy/5 p-1 no-scrollbar md:w-auto">
+              <TabsTrigger value="planning" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Calendar size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Planning</span>
               </TabsTrigger>
-              <TabsTrigger value="content" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="content" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <FileText size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Contenu</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="settings" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Settings size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Réglages</span>
               </TabsTrigger>
-              <TabsTrigger value="reservations" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="reservations" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Calendar size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Réservations</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="analytics" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <TrendingUp size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Analyses</span>
               </TabsTrigger>
-              <TabsTrigger value="maintenance" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="maintenance" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <ListChecks size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Maintenance</span>
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               {!isNew && (
                 <Button
                   variant="ghost"
@@ -1450,7 +1450,7 @@ export default function VillaDashboard() {
                         items={form.image_urls}
                         strategy={rectSortingStrategy}
                       >
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                           {form.image_urls.map((url) => (
                             <SortableImage
                               key={url}
@@ -1564,7 +1564,7 @@ export default function VillaDashboard() {
             <div className="grid gap-12 lg:grid-cols-[1fr_350px]">
               <div className="space-y-10">
                 {/* Statistiques */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="rounded-3xl bg-offwhite p-6">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-1">Revenus (30j)</p>
                     <p className="text-2xl font-bold text-navy">€{stats.revenue.toLocaleString()}</p>
@@ -1675,7 +1675,7 @@ export default function VillaDashboard() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full min-w-[760px] text-left">
                   <thead>
                     <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">
                       <th className="pb-4 pl-4 font-bold">Client</th>

@@ -114,11 +114,13 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
       {isOpen && (
         <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 shrink-0">
+          <div className="flex items-center justify-between gap-3 px-4 py-5 shrink-0 sm:px-6">
             <span className="font-display text-white/60 text-sm tracking-widest">
               {activeIndex + 1} <span className="text-white/30">/</span> {galleryImages.length}
             </span>
-            <span className="font-display text-white text-lg tracking-[0.2em]">{title}</span>
+            <span className="min-w-0 flex-1 truncate text-center font-display text-base tracking-[0.16em] text-white sm:text-lg sm:tracking-[0.2em]">
+              {title}
+            </span>
             <button
               onClick={close}
               className="tap-target rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"

@@ -184,8 +184,8 @@ export default function ConciergeDashboard() {
   return (
     <main className="flex min-h-screen flex-col bg-offwhite">
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+      <header className="sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
+        <div className="mx-auto flex min-h-24 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-0">
           <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-white font-display text-xl">
               D
@@ -195,44 +195,48 @@ export default function ConciergeDashboard() {
               <p className="text-[10px] uppercase tracking-widest text-gold mt-1 font-bold">Conciergerie de Luxe</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex w-full items-center justify-end gap-2 overflow-x-auto no-scrollbar sm:w-auto sm:justify-start sm:gap-4">
             <Button
               variant="outline"
               size="sm"
-              className="hidden sm:flex gap-2 rounded-full border-gold/20 bg-gold/5 text-gold hover:bg-gold hover:text-navy transition-all px-6"
+              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-gold/20 bg-gold/5 px-0 text-gold transition-all hover:bg-gold hover:text-navy sm:h-auto sm:w-auto sm:gap-2 sm:px-6"
               onClick={() => router.push("/dashboard/proprio/assistant")}
+              aria-label="Assistant IA"
             >
               <Sparkles size={16} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Assistant IA</span>
+              <span className="hidden text-[10px] font-bold uppercase tracking-widest sm:inline">Assistant IA</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/analytics")}
+              aria-label="Analytics"
             >
               <BarChart3 size={16} />
-              <span>Analytics</span>
+              <span className="hidden sm:inline">Analytics</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/submissions")}
+              aria-label="Soumissions"
             >
               <FileText size={16} />
-              <span>Soumissions</span>
+              <span className="hidden sm:inline">Soumissions</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/new")}
+              aria-label="Nouvelle villa"
             >
               <Plus size={16} />
-              <span>Nouvelle Villa</span>
+              <span className="hidden sm:inline">Nouvelle Villa</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-full text-navy/60 hover:text-navy">
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-full text-navy/60 hover:text-navy tap-target">
               <LogOut size={18} />
             </Button>
           </div>

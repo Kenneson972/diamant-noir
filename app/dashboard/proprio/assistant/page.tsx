@@ -116,11 +116,11 @@ export default function AdminAssistantPage() {
   };
 
   return (
-    <main className="flex h-screen w-screen overflow-hidden bg-[#0A0A0F] text-white">
+    <main className="flex min-h-screen w-full flex-col bg-[#0A0A0F] text-white md:h-screen md:w-screen md:flex-row md:overflow-hidden">
       {/* LEFT PANE: TERMINAL */}
-      <div className="flex w-[450px] flex-col border-r border-white/5 bg-[#0D0D14]">
+      <div className="flex w-full max-w-none flex-col border-b border-white/5 bg-[#0D0D14] md:w-[420px] md:min-w-[380px] md:max-w-[450px] md:border-b-0 md:border-r">
         {/* Terminal Header */}
-        <div className="flex items-center justify-between border-b border-white/5 p-6">
+        <div className="flex items-center justify-between border-b border-white/5 p-4 md:p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
               <Terminal size={18} />
@@ -136,7 +136,7 @@ export default function AdminAssistantPage() {
         </div>
 
         {/* Terminal Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+        <div className="max-h-[52vh] flex-1 overflow-y-auto p-4 space-y-5 scrollbar-hide md:max-h-none md:p-6 md:space-y-6">
           {messages.map((m, i) => (
             <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-xs leading-relaxed ${
@@ -159,7 +159,7 @@ export default function AdminAssistantPage() {
         </div>
 
         {/* Terminal Input */}
-        <div className="border-t border-white/5 bg-black/20 p-6">
+        <div className="border-t border-white/5 bg-black/20 p-4 md:p-6">
           <form onSubmit={handleSendMessage} className="relative">
             <input
               value={input}
@@ -184,7 +184,7 @@ export default function AdminAssistantPage() {
       </div>
 
       {/* RIGHT PANE: VISUAL CONTEXT */}
-      <div className="flex-1 bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-12 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-4 custom-scrollbar md:p-12">
         {/* STRATEGIC ALERT BAR */}
         {strategicAlert && (
           <div className={`mb-8 flex items-center gap-4 rounded-3xl border p-6 animate-in slide-in-from-top-4 duration-500 ${
@@ -254,7 +254,7 @@ export default function AdminAssistantPage() {
                 Analyse, détection d'anomalies et croissance.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4 w-full max-w-lg mt-12">
+          <div className="mt-10 grid w-full max-w-lg grid-cols-1 gap-3 sm:grid-cols-2 md:mt-12 md:gap-4">
               <button 
                 onClick={() => setInput("Analyse mes revenus et mon occupation")}
                 className="flex items-center gap-4 rounded-3xl border border-white/5 bg-white/5 p-6 hover:bg-white/10 transition-all text-left group"

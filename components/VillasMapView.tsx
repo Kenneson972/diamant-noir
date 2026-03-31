@@ -37,7 +37,7 @@ export default function VillasMapView({ villas }: Props) {
   return (
     <div className="relative">
       {/* ── Toolbar ── */}
-      <div className="sticky top-[72px] z-20 bg-offwhite/95 backdrop-blur-sm border-b border-navy/8 px-6 py-3 flex items-center justify-between">
+      <div className="sticky top-[72px] z-20 border-b border-navy/8 bg-offwhite/95 px-4 py-3 sm:px-6 md:backdrop-blur-sm flex items-center justify-between">
         <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
           {villas.length} propriété{villas.length > 1 ? "s" : ""}
         </p>
@@ -147,6 +147,17 @@ export default function VillasMapView({ villas }: Props) {
           </div>
         )}
       </div>
+
+      {mapVisible && (
+        <div className="h-[360px] border-t border-navy/8 md:hidden">
+          <VillaLeafletMap
+            villas={villas}
+            hoveredId={hoveredId}
+            onHover={setHoveredId}
+            onSelect={handleSelect}
+          />
+        </div>
+      )}
     </div>
   );
 }

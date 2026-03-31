@@ -163,13 +163,13 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="flex w-full items-center justify-between px-4 py-4 text-left text-sm font-medium text-navy transition-colors hover:bg-white md:text-base"
+                    className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left text-sm font-medium text-navy transition-colors hover:bg-white md:text-base"
                   >
-                    {item.q}
+                    <span className="min-w-0 flex-1 pr-2">{item.q}</span>
                     {openFaq === i ? (
-                      <ChevronUp size={18} strokeWidth={1} aria-hidden />
+                      <ChevronUp size={18} strokeWidth={1} className="shrink-0" aria-hidden />
                     ) : (
-                      <ChevronDown size={18} strokeWidth={1} aria-hidden />
+                      <ChevronDown size={18} strokeWidth={1} className="shrink-0" aria-hidden />
                     )}
                   </button>
                   {openFaq === i && <div className="border-t border-navy/5 px-4 pb-4 text-sm text-navy/75">{item.a}</div>}

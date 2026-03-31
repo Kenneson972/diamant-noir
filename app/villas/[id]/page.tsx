@@ -220,7 +220,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             <h1 className="font-display text-4xl md:text-5xl text-navy">
               {villa!.name}
             </h1>
-            <div className="flex items-center gap-3 mt-4 text-sm text-navy/60 font-medium">
+            <div className="mt-4 flex flex-wrap items-center gap-2 text-sm font-medium text-navy/60">
               <span>{villa!.capacity} voyageurs</span>
               <span>·</span>
               <span>{villa!.rooms?.length || 4} chambres</span>
@@ -239,9 +239,19 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── Contenu principal ── */}
       <div className="mx-auto max-w-7xl px-6 pb-28 pt-8">
         <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">
-          
           {/* ── Colonne gauche ── */}
           <div className="space-y-16">
+            <section className="lg:hidden">
+              <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-xl shadow-navy/5 sm:p-6">
+                <BookingForm
+                  villaId={villa.id}
+                  basePrice={villa.price}
+                  capacity={villa.capacity}
+                  checkInTime={villa.check_in_time || "17:00"}
+                  checkOutTime={villa.check_out_time || "10:00"}
+                />
+              </div>
+            </section>
             
             {/* Description */}
             <section className="space-y-8">
