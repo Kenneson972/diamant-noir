@@ -44,21 +44,21 @@ export default function SoumettreMaVillaPage() {
 
   return (
     <main className="min-h-screen bg-offwhite">
-      <section className="relative bg-navy py-24 px-6">
+      <section className="page-px relative bg-navy py-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold mb-4">
             Devenez partenaire
           </p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-6">
+          <h1 className="mb-6 font-display text-3xl text-white sm:text-4xl md:text-5xl lg:text-6xl">
             Soumettre ma villa
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-base text-white/70 sm:text-lg">
             Rejoignez le programme propriétaire Diamant Noir. Présentez votre bien ou collez le lien de votre annonce Airbnb.
           </p>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-6">
+      <section className="page-px py-14 md:py-24">
         <div className="mx-auto max-w-2xl">
           <div className="mb-10 p-6 bg-gold/10 border border-gold/30 rounded-xl">
             <p className="text-navy/80 text-sm">
@@ -68,7 +68,7 @@ export default function SoumettreMaVillaPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-navy mb-1">Nom *</label>
                 <input
@@ -76,7 +76,7 @@ export default function SoumettreMaVillaPage() {
                   name="name"
                   type="text"
                   required
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
               <div>
@@ -86,7 +86,7 @@ export default function SoumettreMaVillaPage() {
                   name="email"
                   type="email"
                   required
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function SoumettreMaVillaPage() {
                 id="phone"
                 name="phone"
                 type="tel"
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
               />
             </div>
 
@@ -110,7 +110,7 @@ export default function SoumettreMaVillaPage() {
                 name="airbnb_url"
                 type="url"
                 placeholder="https://www.airbnb.fr/rooms/..."
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
               />
               <p className="text-xs text-navy/60 mt-1">
                 Collez l&apos;URL de votre annonce Airbnb pour que nous récupérions automatiquement les détails et photos.
@@ -128,21 +128,21 @@ export default function SoumettreMaVillaPage() {
                   name="villa_name"
                   type="text"
                   placeholder="Nom de la villa"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
                 <input
                   id="villa_location"
                   name="villa_location"
                   type="text"
                   placeholder="Localisation (ville, quartier)"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
                 <textarea
                   id="villa_description"
                   name="villa_description"
                   rows={3}
                   placeholder="Description courte (capacité, équipements...)"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
+                  className="w-full resize-none rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function SoumettreMaVillaPage() {
                 id="message"
                 name="message"
                 rows={3}
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
+                className="w-full resize-none rounded-lg border border-navy/20 bg-white px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
               />
             </div>
 
@@ -183,7 +183,7 @@ export default function SoumettreMaVillaPage() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="w-full rounded-full bg-navy text-white py-4 px-6 hover:bg-gold hover:text-navy transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+              className="tap-target w-full rounded-full bg-navy px-6 py-4 font-medium text-white transition-colors hover:bg-gold hover:text-navy flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {status === "sending" ? "Envoi en cours..." : "Envoyer ma demande"}
               <ArrowRight size={18} />

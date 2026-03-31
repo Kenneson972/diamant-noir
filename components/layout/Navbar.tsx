@@ -238,7 +238,12 @@ export const Navbar = () => {
             : "bg-transparent py-4 md:py-5"
         }`}
       >
-        <div className="relative mx-auto flex min-h-12 max-w-7xl items-center justify-between gap-0.5 px-2 sm:gap-2 sm:px-6">
+        {/*
+          Grille 3 colonnes (pas de logo en absolute) : la zone centrale est réservée au wordmark,
+          la droite ne peut plus recouvrir le logo. Téléphone en clair uniquement à partir de lg ;
+          en dessous : icône seule (toutes largeurs) pour éviter le chevauchement md/tablette/mobile paysage.
+        */}
+        <div className="relative mx-auto grid min-h-12 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-2 sm:gap-x-3 sm:px-6">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
@@ -252,29 +257,27 @@ export const Navbar = () => {
             </span>
           </button>
 
-          <div className="pointer-events-none absolute inset-0 flex min-w-0 items-center justify-center px-6 max-[380px]:px-5 sm:px-24 md:px-32">
-            <div className="pointer-events-auto min-w-0 max-w-[min(100%,11rem)] sm:max-w-none">
-              <BrandLogo
-                variant={isSolid ? "onLight" : "onDark"}
-                size="sm"
-                showIcon={false}
-                priority={pathname === "/"}
-                className="max-[360px]:scale-[0.92] max-[360px]:origin-center"
-              />
-            </div>
+          <div className="flex min-w-0 justify-center px-1 sm:px-2">
+            <BrandLogo
+              variant={isSolid ? "onLight" : "onDark"}
+              size="sm"
+              showIcon={false}
+              priority={pathname === "/"}
+              className="min-w-0 max-w-full justify-center whitespace-normal [&>span.font-display]:block [&>span.font-display]:min-w-0 [&>span.font-display]:truncate [&>span.font-display]:text-center max-[360px]:scale-[0.92] max-[360px]:origin-center"
+            />
           </div>
 
-          {/* Rangée utilitaire type vitrine : téléphone | favoris | compte | réserver (sans « Obtenir l’app ») */}
-          <div className="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-1 sm:gap-2 md:gap-4">
+          {/* Rangée utilitaire : téléphone texte (lg+) | icône (&lt;lg) | favoris | compte | réserver */}
+          <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target hidden items-center text-[12px] font-medium tracking-[0.02em] transition-colors md:inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target hidden items-center text-[12px] font-medium tracking-[0.02em] transition-colors lg:inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
             >
               {CONCIERGE_TEL}
             </a>
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target hidden h-11 w-11 items-center justify-center sm:flex md:hidden ${utility} focus:outline-none focus-visible:ring-2`}
+              className={`tap-target inline-flex h-11 w-11 shrink-0 items-center justify-center lg:hidden ${utility} focus:outline-none focus-visible:ring-2`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
               <Phone size={20} strokeWidth={1.25} aria-hidden />

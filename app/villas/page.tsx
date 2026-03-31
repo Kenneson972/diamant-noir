@@ -75,7 +75,7 @@ export default async function VillasListingPage() {
         />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
-        <div className="relative mx-auto max-w-7xl px-6 pt-40 pb-16">
+        <div className="page-px relative mx-auto max-w-7xl pb-14 pt-28 sm:pt-32 md:pb-16 md:pt-40">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="space-y-5 max-w-2xl">
               <div className="flex items-center gap-3">
@@ -84,12 +84,12 @@ export default async function VillasListingPage() {
                   La Sélection
                 </span>
               </div>
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-white leading-[1.06]">
+              <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-[1.06]">
                 Nos Villas
                 <br />
                 de Légende.
               </h1>
-              <p className="text-white/45 text-lg font-light leading-relaxed max-w-md">
+              <p className="max-w-md text-base font-light leading-relaxed text-white/45 sm:text-lg">
                 Une collection confidentielle de résidences d'exception,
                 choisies pour leur caractère unique et leur environnement hors du commun.
               </p>
@@ -108,7 +108,7 @@ export default async function VillasListingPage() {
 
       {/* ── Split view: list + map ── */}
       {villas.length === 0 ? (
-        <section className="mx-auto max-w-4xl px-6 py-16">
+        <section className="page-px mx-auto max-w-4xl py-14 md:py-16">
           <div className="border border-navy/10 bg-white p-8 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/35 mb-2">
               La Sélection

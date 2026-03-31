@@ -48,7 +48,7 @@ export default function MessageriePage() {
         </div>
         <Skeleton
           className="w-full rounded-none border border-navy/8"
-          style={{ height: "calc(100vh - 280px)", minHeight: 400 }}
+          style={{ height: "calc(100dvh - 260px)", minHeight: 400 }}
         />
       </div>
     );
@@ -100,7 +100,7 @@ export default function MessageriePage() {
 
       <Card
         className="border border-navy/10 shadow-none rounded-none overflow-hidden"
-        style={{ height: "calc(100vh - 280px)", minHeight: 400 }}
+        style={{ height: "calc(100dvh - 260px)", minHeight: 400 }}
       >
         <CardContent className="p-0 h-full">
           <TenantChatbot

@@ -75,6 +75,47 @@ body { font-size: 16px; line-height: 1.6; }
   padding-right: var(--safe-area-right);
 }
 
+/* Mobile-first layout rhythm shared across pages */
+.page-px {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.section-y {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+
+.section-y-compact {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .page-px {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-y {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+  .section-y-compact {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-y {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
 /* Scroll reveal animation */
 .reveal {
   opacity: 0;

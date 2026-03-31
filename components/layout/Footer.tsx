@@ -15,9 +15,9 @@ export const Footer = () => {
   }
 
   return (
-    <footer className="border-t border-black/10 bg-white py-16 text-navy">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
+    <footer className="border-t border-black/10 bg-white py-12 text-navy md:py-16">
+      <div className="page-px mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4">
           <div className="space-y-4">
             <BrandLogo variant="onLight" size="sm" className="self-start" />
             <p className="text-sm leading-relaxed text-navy/55">
@@ -129,7 +129,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-8 text-xs uppercase tracking-[0.1em] text-navy/40 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-7 text-xs uppercase tracking-[0.1em] text-navy/40 md:mt-16 md:flex-row md:pt-8">
           <p>© 2026 Diamant Noir. Tous droits réservés.</p>
           <div className="flex gap-6">
             <Link href="/confidentialite" className="transition-colors hover:text-black">

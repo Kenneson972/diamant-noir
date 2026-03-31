@@ -184,7 +184,7 @@ export default function ConciergeDashboard() {
   return (
     <main className="flex min-h-screen flex-col bg-offwhite">
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
+      <header className="safe-top sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
         <div className="mx-auto flex min-h-24 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-0">
           <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-white font-display text-xl">
@@ -244,12 +244,12 @@ export default function ConciergeDashboard() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-white border-b pt-12 pb-12 px-6">
+      <section className="page-px bg-white border-b py-10 md:pt-12 md:pb-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold">Vue d'ensemble</span>
-              <h2 className="font-display text-4xl text-navy">Mon Portefeuille de Villas</h2>
+              <h2 className="font-display text-3xl text-navy md:text-4xl">Mon Portefeuille de Villas</h2>
               <p className="text-sm text-navy/60 max-w-md">
                 Gérez vos propriétés, suivez les performances et optimisez vos réservations depuis ce hub central.
               </p>
@@ -283,7 +283,7 @@ export default function ConciergeDashboard() {
       </section>
 
       {/* Grid of Villas */}
-      <section className="mx-auto w-full max-w-7xl p-6 py-12">
+      <section className="page-px mx-auto w-full max-w-7xl py-10 md:py-12">
         {error && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             Erreur Supabase : {error}. Vérifie les clés `.env.local`, la RLS et que tes villas existent.

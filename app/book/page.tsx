@@ -92,12 +92,12 @@ export default async function BookPage({
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-        <div className="relative z-10 flex min-h-[78vh] flex-col justify-end px-6 pb-14 pt-28 md:pb-20 md:pt-32">
+        <div className="page-px relative z-10 flex min-h-[78vh] flex-col justify-end pb-12 pt-24 md:pb-20 md:pt-32">
           <div className="mx-auto w-full max-w-3xl space-y-5 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/50">
               Réservation
             </p>
-            <h1 className="font-display text-4xl leading-[1.08] text-white md:text-6xl lg:text-7xl">
+            <h1 className="font-display text-3xl leading-[1.08] text-white sm:text-4xl md:text-6xl lg:text-7xl">
               Réserver votre séjour
             </h1>
             <p className="mx-auto max-w-lg text-sm font-light tracking-[0.12em] text-white/65">
@@ -110,7 +110,7 @@ export default async function BookPage({
             <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_20px_50px_rgba(0,0,0,0.18)] sm:flex-row sm:divide-x sm:divide-y-0">
               <Link
                 href="#catalogue"
-                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+              className="group flex min-h-12 flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-5"
               >
                 <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
@@ -120,7 +120,7 @@ export default async function BookPage({
               </Link>
               <Link
                 href="#catalogue"
-                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+              className="group flex min-h-12 flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-5"
               >
                 <Users className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
@@ -143,7 +143,7 @@ export default async function BookPage({
         </div>
       </section>
 
-      <section id="catalogue" className="relative z-10 mx-auto max-w-7xl scroll-mt-28 px-6 pb-20 pt-12 md:pt-16">
+      <section id="catalogue" className="page-px relative z-10 mx-auto max-w-7xl scroll-mt-28 pb-16 pt-10 md:pb-20 md:pt-16">
         <div className="mb-10 md:mb-14">
           <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
             Catalogue
@@ -156,7 +156,7 @@ export default async function BookPage({
         <SearchResults initialVillas={villas} />
       </section>
 
-      <section className="border-t border-black/8 bg-white px-6 py-20 md:py-28">
+      <section className="page-px border-t border-black/8 bg-white py-16 md:py-28">
         <div className="mx-auto max-w-2xl space-y-8 text-center">
           <MessageCircle
             className="mx-auto text-navy/25"

@@ -70,12 +70,12 @@ export default function ContactPage() {
       />
 
       <LandingSection bg="white">
-        <p className="mx-auto mb-16 max-w-2xl text-center text-sm leading-relaxed text-navy/65 md:mb-20 md:text-base">
+        <p className="mx-auto mb-12 max-w-2xl text-center text-sm leading-relaxed text-navy/65 md:mb-20 md:text-base">
           Écrivez-nous pour un projet sur mesure, ou parcourez les réponses rapides ci-dessous — le chatbot
           reste disponible en bas à droite.
         </p>
 
-        <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
+        <div className="grid gap-12 md:gap-14 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-6">
             <LandingBlockTitle title="Écrire au concierge" />
             <p className="-mt-4 mb-8 text-sm text-navy/70">
@@ -91,7 +91,7 @@ export default function ContactPage() {
                   name="name"
                   type="text"
                   required
-                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
               <div>
@@ -103,7 +103,7 @@ export default function ContactPage() {
                   name="email"
                   type="email"
                   required
-                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
               <div>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                   name="subject"
                   type="text"
                   required
-                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
               <div>
@@ -127,7 +127,7 @@ export default function ContactPage() {
                   name="message"
                   rows={5}
                   required
-                  className="w-full resize-none rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full resize-none rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
                 />
               </div>
               {formState === "sent" && (

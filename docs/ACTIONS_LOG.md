@@ -11,6 +11,24 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-03-31T24:58:00Z | type: ui | Cursor — Revue mobile globale (public + légal + espace-client + dashboard)
+- **agent**: `cursor`
+- **summary**: Implémentation complète de la revue mobile “tout le site” : socle mobile-first partagé (`.page-px`, `.section-y`, `.section-y-compact`), adaptation des shells marketing, harmonisation des parcours publics clés (home, listing villas, fiche villa, booking, contact), ajustements des pages secondaires/légales et densification mobile de l’espace-client + dashboards (headers safe-area, tableaux scrollables, cartes/stats sur petits écrans).
+- **files**: [`app/globals.css`, `components/marketing/landing-sections.tsx`, `components/layout/Footer.tsx`, `app/page.tsx`, `app/villas/page.tsx`, `app/villas/[id]/page.tsx`, `app/book/page.tsx`, `app/contact/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `app/terms/page.tsx`, `app/confidentialite/page.tsx`, `app/cookies/page.tsx`, `app/espace-client/layout.tsx`, `app/espace-client/page.tsx`, `app/espace-client/messagerie/page.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`]
+- **why**: Retour utilisateur : impression de “copie réduite” au lieu d’une vraie adaptation mobile contextuelle.
+- **impact**: Rythme et hiérarchie plus lisibles sur 320–390px, meilleures zones tactiles, moins de débordements, meilleure cohérence entre pages publiques et surfaces applicatives.
+- **verify**: `npm run build` OK ; smoke local `GET /`=200, `GET /villas`=200, `GET /book`=200, `GET /contact`=200 (et 404 attendu sur `/villas/test-id`).
+- **session**: `docs/logs/2026-03-31.md`
+
+## 2026-03-31T24:15:00Z | type: ui | Cursor — Navbar mobile: grille 3 cols + téléphone lg seulement
+- **agent**: `cursor`
+- **summary**: Suppression du positionnement absolu du logo ; layout en `grid` (menu | logo `minmax(0,1fr)` | actions) pour empêcher la colonne droite de recouvrir le wordmark. Numéro en texte affiché uniquement à partir de `lg` ; en dessous, icône téléphone seule (`lg:hidden`). Truncate + `whitespace-normal` sur le wordmark si l’espace manque.
+- **files**: [`components/layout/Navbar.tsx`]
+- **why**: Chevauchement logo / téléphone (texte + icône) sur mobile et paysage tablette (md avec numéro long).
+- **impact**: Barre lisible sans superposition ; numéro complet sur grands écrans uniquement.
+- **verify**: `npm run build` OK.
+- **session**: `docs/logs/2026-03-31.md`
+
 ## 2026-03-31T23:58:00Z | type: ui | Cursor — Mobile navbar + chatbot (safe-area, z-index, tap targets)
 - **agent**: `cursor`
 - **summary**: Passe responsive ciblée: safe-area top pour header et drawer, logo centré borné sur très petits écrans, CompareBar en z-40 sous le FAB chatbot (z-52), FAB remonté quand la barre de comparaison est visible, panneau chat en `100dvh` + zones safe + suggestions/envoi 44px, badge FAB icône Gem au lieu d’emoji.

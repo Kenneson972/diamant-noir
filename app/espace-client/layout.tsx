@@ -142,7 +142,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
 
         {/* Mobile header */}
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-navy/10 bg-white/95">
+          <header className="safe-top md:hidden sticky top-0 z-40 flex items-center justify-between px-3 sm:px-4 h-14 border-b border-navy/10 bg-white/95">
             <div className="flex min-w-0 items-center gap-3">
               <BrandLogo variant="onLight" size="sm" />
               <Link
@@ -181,13 +181,13 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
                   name={userInfo.name}
                   url={userInfo.avatar}
                   size="sm"
-                  className="border border-navy/10 shrink-0 ml-1"
+                  className="border border-navy/10 shrink-0 ml-1 max-[420px]:hidden"
                 />
               )}
             </div>
           </header>
 
-          <main className="flex-1 p-5 md:p-10 max-w-5xl w-full mx-auto">
+          <main className="page-px flex-1 max-w-5xl w-full mx-auto py-4 md:py-10">
             {!userInfo && (
               <div className="mb-8 border border-gold/20 bg-gold/[0.04] p-5 md:p-6">
                 <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-navy/35 mb-1">

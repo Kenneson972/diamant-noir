@@ -208,7 +208,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── Titre & Localisation ── */}
-      <div className="mx-auto max-w-7xl px-6 pt-10 pb-6">
+      <div className="page-px mx-auto max-w-7xl pb-6 pt-8 md:pt-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -217,7 +217,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 {villa!.location || "Martinique"}
               </p>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl text-navy">
+            <h1 className="font-display text-3xl md:text-5xl text-navy">
               {villa!.name}
             </h1>
             <div className="mt-4 flex flex-wrap items-center gap-2 text-sm font-medium text-navy/60">
@@ -237,10 +237,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── Contenu principal ── */}
-      <div className="mx-auto max-w-7xl px-6 pb-28 pt-8">
-        <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">
+      <div className="page-px mx-auto max-w-7xl pb-20 pt-6 md:pb-28 md:pt-8">
+        <div className="grid items-start gap-10 md:gap-12 lg:grid-cols-[1fr_380px]">
           {/* ── Colonne gauche ── */}
-          <div className="space-y-16">
+          <div className="space-y-12 md:space-y-16">
             <section className="lg:hidden">
               <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-xl shadow-navy/5 sm:p-6">
                 <BookingForm
@@ -282,7 +282,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             {villa.amenities && villa.amenities.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
                   {villa.amenities.slice(0, 8).map((item: string, i: number) => (
                     <div key={i} className="flex flex-col gap-3">
                       <div className="text-navy">{getIcon(item)}</div>
@@ -383,7 +383,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
               <h3 className="font-display text-lg text-navy mt-10 mb-6">Services à la carte</h3>
               <p className="text-sm text-navy/60 mb-6">Composez votre séjour parmi l’ensemble de nos services sur mesure.</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-navy/70">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4 text-sm text-navy/70">
                 {(villa.a_la_carte_services?.length
                   ? villa.a_la_carte_services
                   : [
@@ -569,7 +569,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
       {/* ── Recommandées ── */}
       {recommendedVillas.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 pb-16">
+        <section className="page-px mx-auto max-w-7xl pb-16">
           <h3 className="font-display text-3xl text-navy mb-8">Recommandées pour vous</h3>
           <div className="grid gap-6 md:grid-cols-3">
             {recommendedVillas.map((item) => {
@@ -605,10 +605,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       )}
 
       {/* ── CTA bas de page ── */}
-      <div className="bg-navy py-20 text-center px-6">
+      <div className="page-px bg-navy py-16 text-center md:py-20">
         <div className="mx-auto max-w-xl space-y-6">
           <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Diamant Noir</p>
-          <h3 className="font-display text-4xl text-white">Prêt pour l'exception ?</h3>
+          <h3 className="font-display text-3xl text-white md:text-4xl">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link
             href="/contact"

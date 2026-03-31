@@ -26,12 +26,12 @@ export function LandingHero({
       ? "text-center mx-auto max-w-4xl"
       : "text-center md:text-left md:mx-0 max-w-4xl md:max-w-3xl";
   return (
-    <section className={`relative ${bg} px-6 py-20 md:py-28 lg:min-h-[42vh] lg:flex lg:items-end lg:pb-20`}>
+    <section className={`relative page-px ${bg} py-16 md:py-24 lg:min-h-[42vh] lg:flex lg:items-end lg:pb-20`}>
       <div className={`mx-auto w-full ${textAlign}`}>
         <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-gold">{eyebrow}</p>
-        <h1 className="font-display text-4xl text-balance text-white md:text-5xl lg:text-6xl">{title}</h1>
+        <h1 className="font-display text-3xl text-balance text-white sm:text-4xl md:text-5xl lg:text-6xl">{title}</h1>
         {subtitle ? (
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:mx-0">{subtitle}</p>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 md:mx-0 md:mt-6">{subtitle}</p>
         ) : null}
       </div>
     </section>
@@ -52,10 +52,10 @@ export function LandingHeroCompact({
 }) {
   const bg = variant === "black" ? "bg-black" : "bg-navy";
   return (
-    <section className={`relative ${bg} px-6 py-16 md:py-20`}>
+    <section className={`relative page-px ${bg} section-y-compact`}>
       <div className="mx-auto max-w-3xl text-center md:text-left">
         <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-gold">{eyebrow}</p>
-        <h1 className="font-display text-3xl text-white md:text-4xl lg:text-5xl">{title}</h1>
+        <h1 className="font-display text-[1.8rem] text-white sm:text-4xl md:text-4xl lg:text-5xl">{title}</h1>
         {subtitle ? <p className="mx-auto mt-4 max-w-2xl text-white/65 md:mx-0">{subtitle}</p> : null}
       </div>
     </section>
@@ -84,7 +84,7 @@ export function LandingSection({
     navy: "bg-navy text-white",
   };
   return (
-    <section id={id} className={`${map[bg]} px-6 py-16 md:py-24 lg:py-28 ${className}`}>
+    <section id={id} className={`${map[bg]} page-px section-y ${className}`}>
       <div className={`mx-auto ${innerClassName}`}>{children}</div>
     </section>
   );
@@ -138,7 +138,7 @@ export function LandingCtaBand({
   children: ReactNode;
 }) {
   return (
-    <div className="border border-navy/10 bg-navy/[0.03] px-8 py-12 md:px-12 md:py-16">
+    <div className="border border-navy/10 bg-navy/[0.03] px-5 py-9 sm:px-8 sm:py-12 md:px-12 md:py-16">
       <h2 className="mb-6 text-center font-display text-2xl text-navy md:text-3xl">{title}</h2>
       <div className="flex flex-col items-center justify-center gap-6">{children}</div>
     </div>

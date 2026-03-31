@@ -14,9 +14,9 @@ export const metadata = {
 
 function TermsSimple() {
   return (
-    <main className="min-h-screen bg-offwhite px-6 pb-20 pt-28">
+    <main className="page-px min-h-screen bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-6 font-display text-3xl text-navy">Conditions d&apos;utilisation</h1>
+        <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Conditions d&apos;utilisation</h1>
         <p className="mb-6 text-navy/70">
           Les présentes conditions régissent l&apos;utilisation du site Diamant Noir et des services de
           réservation et de conciergerie associés. En utilisant ce site, vous acceptez ces conditions. Pour toute

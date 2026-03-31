@@ -14,9 +14,9 @@ export const metadata = {
 
 function CookiesSimple() {
   return (
-    <main className="min-h-screen bg-offwhite px-6 pb-20 pt-28">
+    <main className="page-px min-h-screen bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-6 font-display text-3xl text-navy">Gestion des cookies</h1>
+        <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Gestion des cookies</h1>
         <p className="mb-6 text-navy/70">
           Ce site peut utiliser des cookies pour le bon fonctionnement de la session (connexion, préférences de
           langue et devise) et, le cas échéant, pour l&apos;analyse d&apos;audience. Vous pouvez configurer votre

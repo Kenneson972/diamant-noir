@@ -353,7 +353,7 @@ export default function EspaceClientPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="flex gap-3 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">
           <Card className="border border-navy/8 bg-white shadow-none rounded-none flex-1">
             <CardContent className="p-3 text-center">
               <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30">Séjours</p>
@@ -397,7 +397,7 @@ export default function EspaceClientPage() {
       )}
 
       {/* Quick actions */}
-      <div className="grid gap-3 sm:grid-cols-2 border-t border-navy/8 pt-8">
+      <div className="grid gap-3 sm:grid-cols-2 border-t border-navy/8 pt-7 md:pt-8">
         <Link href="/espace-client/messagerie" className="no-underline">
           <Card className="border border-navy/8 bg-white shadow-none rounded-none hover:border-navy/20 hover:bg-navy/[0.02] transition-all h-full cursor-pointer">
             <CardContent className="p-5 flex items-center gap-4">

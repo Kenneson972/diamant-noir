@@ -57,7 +57,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-offwhite">
       {/* Hero — vidéo /public/hero.webm (WebM) + poster */}
-      <section className="relative flex min-h-[min(72vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-24 pt-28 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24" aria-labelledby="hero-visually-hidden-title">
+      <section className="relative flex min-h-[min(74vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-20 pt-24 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24" aria-labelledby="hero-visually-hidden-title">
         <h1 id="hero-visually-hidden-title" className="sr-only">
           Diamant Noir — conciergerie de luxe, Martinique
         </h1>
@@ -73,7 +73,7 @@ export default async function HomePage() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/80" />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center page-px text-center">
           <div className="w-full space-y-4 md:space-y-5">
             <div className="flex justify-center animate-in fade-in duration-700">
               <BrandLogo
@@ -92,7 +92,7 @@ export default async function HomePage() {
               <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_12px_40px_rgba(0,0,0,0.14)] sm:flex-row sm:divide-x sm:divide-y-0">
                 <Link
                   href="/villas"
-                  className="group flex flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:py-3.5"
+                  className="group flex min-h-12 flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-3.5"
                 >
                   <MapPin className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
@@ -104,7 +104,7 @@ export default async function HomePage() {
                 </Link>
                 <Link
                   href="/book"
-                  className="group flex flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:py-3.5"
+                  className="group flex min-h-12 flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-3.5"
                 >
                   <CalendarDays className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 </Link>
                 <Link
                   href="/villas"
-                  className="flex min-h-[44px] items-center justify-center bg-navy px-6 py-3 text-center text-[9px] font-bold uppercase tracking-[0.26em] text-white transition-colors hover:bg-navy/90 sm:min-w-[8.5rem] sm:py-3.5"
+                  className="flex min-h-[52px] items-center justify-center bg-navy px-6 py-3 text-center text-[9px] font-bold uppercase tracking-[0.26em] text-white transition-colors hover:bg-navy/90 sm:min-w-[8.5rem] sm:min-h-[44px] sm:py-3.5"
                 >
                   Rechercher
                   <ArrowRight className="ml-1.5 inline h-3 w-3" strokeWidth={1.25} aria-hidden />
@@ -132,8 +132,8 @@ export default async function HomePage() {
       </section>
 
       {/* Trust — bandeau discret type vitrine */}
-      <section className="border-y border-black/[0.07] bg-white py-10 px-6">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
+      <section className="border-y border-black/[0.07] bg-white py-9 md:py-10">
+        <div className="page-px mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-4 text-center sm:gap-x-10">
           <div className="flex items-center gap-2">
             <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
             <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
@@ -152,7 +152,7 @@ export default async function HomePage() {
       </section>
 
       {/* Section collection — titrage type « NOS MAISONS » + grille éditoriale */}
-      <section className="bg-white py-20 px-6 md:py-28 cv-auto">
+      <section className="bg-white section-y page-px cv-auto">
         <div className="mx-auto max-w-6xl space-y-14 md:space-y-20">
           <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl space-y-5 text-center md:text-left">
@@ -217,16 +217,16 @@ export default async function HomePage() {
       </section>
 
       {/* Section Lifestyle Immersive */}
-      <section className="relative overflow-hidden bg-black py-32 text-white lg:py-48 cv-auto">
+      <section className="relative overflow-hidden bg-black py-20 text-white md:py-28 lg:py-40 cv-auto">
         <div className="absolute right-0 top-0 h-full w-1/2 opacity-20">
           <Image src="/villa-hero.jpg" alt="Lifestyle" fill className="object-cover" />
         </div>
-        <div className="mx-auto max-w-7xl px-6 relative">
+        <div className="page-px relative mx-auto max-w-7xl">
           <div className="max-w-xl space-y-12">
             <div className="space-y-6">
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50">Plus qu&apos;un séjour</span>
-              <h2 className="font-display text-5xl md:text-7xl">Un Art de Vivre.</h2>
-              <p className="text-lg text-white/60 font-light leading-relaxed">
+              <h2 className="font-display text-3xl sm:text-5xl md:text-7xl">Un Art de Vivre.</h2>
+              <p className="text-base text-white/60 font-light leading-relaxed sm:text-lg">
                 Chaque propriété de notre collection est un sanctuaire pensé pour 
                 la déconnexion. Nos services de conciergerie privée s'occupent de 
                 chaque détail pour que votre seule préoccupation soit l'instant présent.
@@ -254,9 +254,9 @@ export default async function HomePage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-32 text-center bg-offwhite px-6 cv-auto">
+      <section className="section-y page-px text-center bg-offwhite cv-auto">
         <div className="mx-auto max-w-3xl space-y-8">
-          <h2 className="font-display text-4xl text-navy md:text-6xl">Prêt pour l'exception ?</h2>
+          <h2 className="font-display text-3xl text-navy sm:text-4xl md:text-6xl">Prêt pour l'exception ?</h2>
           <p className="text-navy/60 leading-relaxed">
             Rejoignez le cercle Diamant Noir et vivez des moments hors du temps dans les plus belles résidences de la côte.
           </p>
