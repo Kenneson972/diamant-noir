@@ -531,7 +531,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
+                  className="tap-target inline-flex min-h-11 items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-navy transition-colors hover:border-navy"
                 >
                   Planifier un appel
                 </Link>
@@ -607,12 +607,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── CTA bas de page ── */}
       <div className="page-px bg-navy py-16 text-center md:py-20">
         <div className="mx-auto max-w-xl space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Diamant Noir</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-gold">Diamant Noir</p>
           <h3 className="font-display text-3xl text-white md:text-4xl">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link
             href="/contact"
-            className="inline-block rounded-none border border-gold/50 px-10 py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-navy transition-all duration-300"
+            className="inline-flex min-h-11 items-center justify-center rounded-none border border-gold/50 px-10 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gold transition-all duration-300 hover:bg-gold hover:text-navy"
           >
             Contacter la conciergerie
           </Link>

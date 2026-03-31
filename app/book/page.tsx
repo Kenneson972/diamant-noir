@@ -85,16 +85,16 @@ export default async function BookPage({
   return (
     <main className="min-h-screen bg-offwhite">
       {/* Hero — même langage que l’accueil (noir, barre blanche, pas d’accent or dominant) */}
-      <section className="relative min-h-[78vh] w-full overflow-hidden bg-black">
+      <section className="relative min-h-[70vh] w-full overflow-hidden bg-black md:min-h-[78vh]">
         <div
           className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
           aria-hidden
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-        <div className="page-px relative z-10 flex min-h-[78vh] flex-col justify-end pb-12 pt-24 md:pb-20 md:pt-32">
+        <div className="page-px relative z-10 flex min-h-[70vh] flex-col justify-end pb-12 pt-24 md:min-h-[78vh] md:pb-20 md:pt-32">
           <div className="mx-auto w-full max-w-3xl space-y-5 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/50">
+            <p className="text-[11px] font-bold uppercase tracking-[0.32em] text-white/50">
               Réservation
             </p>
             <h1 className="font-display text-3xl leading-[1.08] text-white sm:text-4xl md:text-6xl lg:text-7xl">
@@ -114,7 +114,7 @@ export default async function BookPage({
               >
                 <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">Dates</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">Dates</p>
                   <p className="mt-1 text-sm font-medium text-navy">Ajouter des dates</p>
                 </div>
               </Link>
@@ -124,7 +124,7 @@ export default async function BookPage({
               >
                 <Users className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">
                     Voyageurs
                   </p>
                   <p className="mt-1 text-sm text-navy/70">Nombre de personnes</p>
@@ -132,7 +132,7 @@ export default async function BookPage({
               </Link>
               <Link
                 href="#catalogue"
-                className="flex min-h-[52px] items-center justify-center bg-navy px-8 py-4 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90 sm:min-w-[10rem]"
+                className="flex min-h-[52px] items-center justify-center bg-navy px-8 py-4 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy/90 sm:min-w-[10rem]"
               >
                 <Search className="mr-2 h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
                 Rechercher
@@ -145,7 +145,7 @@ export default async function BookPage({
 
       <section id="catalogue" className="page-px relative z-10 mx-auto max-w-7xl scroll-mt-28 pb-16 pt-10 md:pb-20 md:pt-16">
         <div className="mb-10 md:mb-14">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/45">
             Catalogue
           </p>
           <h2 className="mt-2 font-display text-3xl text-navy md:text-4xl">
@@ -174,7 +174,7 @@ export default async function BookPage({
           <div className="pt-2">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 border border-navy bg-navy px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+              className="inline-flex min-h-11 items-center gap-2 border border-navy bg-navy px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
             >
               Contacter la conciergerie
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />

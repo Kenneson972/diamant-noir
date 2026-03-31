@@ -354,14 +354,14 @@ export const Chatbot = () => {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className={`group fixed right-[max(1rem,env(safe-area-inset-right,0px))] z-[52] flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-[bottom,colors] duration-200 hover:bg-black/90 motion-safe:sm:hover:scale-105 sm:right-[max(2rem,env(safe-area-inset-right,0px))] sm:h-16 sm:w-16 ${
+          className={`group fixed right-[max(1rem,env(safe-area-inset-right,0px))] z-[52] flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] ring-1 ring-white/10 transition-[bottom,colors,transform] duration-200 hover:bg-black/90 motion-safe:sm:hover:scale-105 sm:right-[max(2rem,env(safe-area-inset-right,0px))] sm:h-16 sm:w-16 ${
             compareCount > 0
-              ? "bottom-[calc(max(1.25rem,env(safe-area-inset-bottom,0px))+5.25rem)] sm:bottom-[calc(max(2rem,env(safe-area-inset-bottom,0px))+5.25rem)]"
+              ? "bottom-[calc(max(1.25rem,env(safe-area-inset-bottom,0px))+6.5rem)] sm:bottom-[calc(max(2rem,env(safe-area-inset-bottom,0px))+6.5rem)]"
               : "bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:bottom-[max(2rem,env(safe-area-inset-bottom,0px))]"
           }`}
           aria-label="Ouvrir le concierge"
         >
-          <Sparkles className="relative z-10 h-7 w-7 motion-safe:animate-pulse sm:h-8 sm:w-8" aria-hidden />
+          <Sparkles className="relative z-10 h-6 w-6 sm:h-7 sm:w-7" aria-hidden />
           <span
             className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-black shadow-lg sm:-right-2 sm:-top-2"
             aria-hidden
@@ -399,7 +399,7 @@ export const Chatbot = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
-                className="tap-target rounded-full transition-colors hover:bg-white/10"
+                className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
                 title="Nouvelle conversation"
                 aria-label="Réinitialiser"
               >
@@ -408,7 +408,7 @@ export const Chatbot = () => {
               {!isMobile && (
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="tap-target rounded-full transition-colors hover:bg-white/10"
+                  className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
                   aria-label={isFullscreen ? "Réduire" : "Agrandir"}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -416,7 +416,7 @@ export const Chatbot = () => {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="tap-target rounded-full transition-colors hover:bg-white/10"
+                className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
                 aria-label="Fermer"
               >
                 <X size={18} />

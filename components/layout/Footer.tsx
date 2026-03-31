@@ -106,7 +106,7 @@ export const Footer = () => {
               <select
                 value={locale}
                 onChange={(e) => setLocale(e.target.value as Locale)}
-                className="rounded border border-black/15 bg-offwhite px-2 py-1 text-sm text-navy focus:outline-none focus:ring-1 focus:ring-black"
+                className="min-h-11 rounded border border-black/15 bg-offwhite px-2 py-1 text-sm text-navy focus:outline-none focus:ring-1 focus:ring-black"
               >
                 {SUPPORTED_LOCALES.map((l) => (
                   <option key={l} value={l}>
@@ -117,7 +117,7 @@ export const Footer = () => {
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as Currency)}
-                className="rounded border border-black/15 bg-offwhite px-2 py-1 text-sm text-navy focus:outline-none focus:ring-1 focus:ring-black"
+                className="min-h-11 rounded border border-black/15 bg-offwhite px-2 py-1 text-sm text-navy focus:outline-none focus:ring-1 focus:ring-black"
               >
                 {SUPPORTED_CURRENCIES.map((c) => (
                   <option key={c} value={c}>

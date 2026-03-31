@@ -22,7 +22,7 @@ function ConfidentialiteSimple() {
           formulaires (réservation, contact, soumission villa) sont utilisées uniquement pour traiter vos
           demandes et améliorer nos services. Nous ne vendons pas vos données à des tiers.
         </p>
-        <p className="mb-6 text-sm text-navy/60">
+        <p className="mb-6 text-base text-navy/60">
           Conformément au RGPD, vous pouvez demander l&apos;accès, la rectification ou la suppression de vos
           données en nous contactant.
         </p>

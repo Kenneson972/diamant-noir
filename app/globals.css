@@ -11,6 +11,8 @@ body {
   padding: 0;
   margin: 0;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -60,6 +62,8 @@ body { font-size: 16px; line-height: 1.6; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .safe-bottom {
@@ -131,6 +135,16 @@ body { font-size: 16px; line-height: 1.6; }
 @media (prefers-reduced-motion: reduce) {
   .reveal { transition: none; }
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+@media (max-width: 768px) {
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  body {
+    background-attachment: scroll;
+  }
 }
 
 /* Glassmorphism card */

@@ -130,7 +130,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
             <Button
               size="sm"
               variant="ghost"
-              className="rounded-none px-2 text-gold hover:text-navy uppercase text-[10px] font-bold tracking-[0.2em] gap-1.5"
+              className="tap-target min-h-11 rounded-none px-3 text-gold hover:text-navy uppercase text-[11px] font-bold tracking-[0.14em] gap-1.5"
             >
               Détail
               <ArrowRight size={11} strokeWidth={1.5} />

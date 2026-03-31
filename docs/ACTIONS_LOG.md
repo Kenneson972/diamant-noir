@@ -1,3 +1,12 @@
+## 2026-03-31T23:35:00Z | type: ui | Cursor — Refonte mobile Navbar + Drawer + Chatbot
+- **agent**: `cursor`
+- **summary**: Refonte mobile-first de la barre de navigation avec logo centré en position absolue, simplification des actions visibles sur mobile (CTA Réserver only), et déplacement des actions secondaires dans le drawer (Téléphone, Favoris, Connexion/Espace client). Ajustement du chatbot mobile avec FAB plus discret et cibles tactiles explicites dans l’entête.
+- **files**: [`components/layout/Navbar.tsx`, `components/chatbot/Chatbot.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Corriger le chevauchement du logo en mobile, réduire le bruit visuel en navbar, et finaliser une expérience mobile premium conforme au plan de refonte.
+- **impact**: Navigation mobile plus claire et stable sur petits écrans ; menu burger enrichi sans surcharger le header ; chatbot plus intégré au design global avec meilleure ergonomie tactile.
+- **verify**: `npm run lint` OK (warning existant `no-img-element` dans `Chatbot.tsx`) ; `npm run build` OK.
+
+---
 # Actions Log
 
 Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent préciser l’agent :
@@ -718,3 +727,11 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **verify**: `npx tsc --noEmit` OK.
 
 ---
+
+## 2026-03-31T23:58:00Z | type: ui | Cursor — Refonte mobile complète multi-phases (public + espace client + dashboard)
+- **agent**: `cursor`
+- **summary**: Application complète mobile-first: navbar re-centrée avec logo absolu centré et actions allégées sous `lg`, drawer renforcé (`safe-x`), normalisation des shells (`globals`, `landing-sections`, `Footer`), passe pages publiques (home/villas/villa/book/contact/soumettre/légales), ajustements éditoriaux + listing map, puis corrections espace-client/dashboard (hit targets 44px, action menus, assistant, analytics header, calendar overflow), et overlays chatbot/compare bar.
+- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `components/marketing/landing-sections.tsx`, `components/layout/Footer.tsx`, `app/page.tsx`, `app/villas/page.tsx`, `components/VillasMapView.tsx`, `app/book/page.tsx`, `app/villas/[id]/page.tsx`, `components/marketing/editorial-blocks.tsx`, `app/contact/page.tsx`, `app/terms/page.tsx`, `app/confidentialite/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `app/dashboard/proprio/page.tsx`, `components/dashboard/ActionMenu.tsx`, `components/espace-client/BookingCard.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `components/AdminCalendar.tsx`, `components/chatbot/Chatbot.tsx`, `components/espace-client/TenantChatbot.tsx`, `components/villas/CompareBar.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Demande explicite d’une adaptation mobile intelligente sur l’ensemble du projet (pas un simple shrink desktop), avec priorité à la lisibilité, aux zones tactiles et à la cohérence cross-pages.
+- **impact**: Navigation mobile plus propre (logo centré), pages publiques et privées moins “desktop réduites”, interactions tactiles renforcées (buttons/menus/chatbot), meilleures protections overflow.
+- **verify**: `npm run lint` OK (warning non bloquant existant `no-img-element` dans `components/chatbot/Chatbot.tsx`) ; `npm run build` OK.

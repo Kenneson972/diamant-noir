@@ -147,13 +147,13 @@ export default function SoumettreMaVillaPage() {
               </div>
             </div>
 
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="tap-target flex min-h-11 items-center gap-3 cursor-pointer rounded-lg px-1">
               <input
                 type="checkbox"
                 checked={noPhotos}
                 onChange={(e) => setNoPhotos(e.target.checked)}
                 name="no_photos"
-                className="rounded border-navy/30 text-gold focus:ring-gold"
+                className="h-5 w-5 rounded border-navy/30 text-gold focus:ring-gold"
               />
               <span className="text-navy/80 text-sm flex items-center gap-2">
                 <ImageOff size={16} />

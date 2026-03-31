@@ -26,8 +26,7 @@ export function CompareBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 animate-fade-up safe-bottom safe-x">
-      {/* Backdrop blur subtle */}
-      <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] md:backdrop-blur-md">
+      <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] lg:backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center gap-4">
 
           {/* Icône + label */}
@@ -91,9 +90,13 @@ export function CompareBar() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={clear}
-              className="text-[10px] text-white/40 hover:text-white transition-colors uppercase tracking-[0.15em] hidden sm:block"
+              className="tap-target inline-flex h-11 w-11 items-center justify-center text-white/40 transition-colors hover:text-white sm:h-auto sm:w-auto sm:px-2 sm:text-[10px] sm:uppercase sm:tracking-[0.15em]"
+              aria-label="Effacer la comparaison"
             >
-              Effacer
+              <span className="sm:hidden">
+                <X size={14} />
+              </span>
+              <span className="hidden sm:inline">Effacer</span>
             </button>
             <button
               onClick={handleCompare}

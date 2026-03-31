@@ -84,7 +84,7 @@ export default async function HomePage() {
                 priority
               />
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/55 animate-in fade-in duration-700">
+            <p className="text-[11px] font-bold uppercase tracking-[0.38em] text-white/55 animate-in fade-in duration-700">
               CONCIERGERIE PRIVÉE · Martinique
             </p>
 
@@ -96,7 +96,7 @@ export default async function HomePage() {
                 >
                   <MapPin className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
-                    <p className="text-[8px] font-bold uppercase tracking-[0.28em] text-navy/40">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">
                       Destination
                     </p>
                     <p className="mt-0.5 text-[13px] font-medium leading-tight text-navy">Martinique</p>
@@ -108,7 +108,7 @@ export default async function HomePage() {
                 >
                   <CalendarDays className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
-                    <p className="text-[8px] font-bold uppercase tracking-[0.28em] text-navy/40">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">
                       Arrivée → Départ
                     </p>
                     <p className="mt-0.5 text-[13px] leading-tight text-navy/70">Choisir mes dates</p>
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 </Link>
                 <Link
                   href="/villas"
-                  className="flex min-h-[52px] items-center justify-center bg-navy px-6 py-3 text-center text-[9px] font-bold uppercase tracking-[0.26em] text-white transition-colors hover:bg-navy/90 sm:min-w-[8.5rem] sm:min-h-[44px] sm:py-3.5"
+                  className="flex min-h-[52px] items-center justify-center bg-navy px-6 py-3 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90 sm:min-w-[8.5rem] sm:min-h-[44px] sm:py-3.5"
                 >
                   Rechercher
                   <ArrowRight className="ml-1.5 inline h-3 w-3" strokeWidth={1.25} aria-hidden />
@@ -136,16 +136,16 @@ export default async function HomePage() {
         <div className="page-px mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-4 text-center sm:gap-x-10">
           <div className="flex items-center gap-2">
             <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/55">
               4,9 / 5
             </span>
           </div>
           <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/45">
             100+ séjours
           </span>
           <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/45">
             Conciergerie 24/7
           </span>
         </div>
@@ -166,7 +166,7 @@ export default async function HomePage() {
             </div>
             <Link
               href="/villas"
-              className="group flex shrink-0 items-center justify-center gap-2 self-center text-[10px] font-semibold uppercase tracking-[0.28em] text-navy underline-offset-[10px] hover:underline md:self-end"
+              className="group flex shrink-0 items-center justify-center gap-2 self-center text-[11px] font-semibold uppercase tracking-[0.2em] text-navy underline-offset-[10px] hover:underline md:self-end"
             >
               Voir tout le catalogue
               <ArrowRight size={14} strokeWidth={1.25} className="transition-transform group-hover:translate-x-0.5" />
@@ -202,7 +202,7 @@ export default async function HomePage() {
                     />
                   </div>
                   <div className="mt-5 space-y-2 text-left px-0">
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy md:text-[10px]">
+                    <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-navy md:text-[10px]">
                       {villa.name}
                     </h3>
                     <p className="text-sm font-normal text-navy/50 leading-snug">
@@ -218,13 +218,13 @@ export default async function HomePage() {
 
       {/* Section Lifestyle Immersive */}
       <section className="relative overflow-hidden bg-black py-20 text-white md:py-28 lg:py-40 cv-auto">
-        <div className="absolute right-0 top-0 h-full w-1/2 opacity-20">
+        <div className="absolute right-0 top-0 h-full w-1/3 opacity-20 sm:w-1/2">
           <Image src="/villa-hero.jpg" alt="Lifestyle" fill className="object-cover" />
         </div>
         <div className="page-px relative mx-auto max-w-7xl">
           <div className="max-w-xl space-y-12">
             <div className="space-y-6">
-              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50">Plus qu&apos;un séjour</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.26em] text-white/50">Plus qu&apos;un séjour</span>
               <h2 className="font-display text-3xl sm:text-5xl md:text-7xl">Un Art de Vivre.</h2>
               <p className="text-base text-white/60 font-light leading-relaxed sm:text-lg">
                 Chaque propriété de notre collection est un sanctuaire pensé pour 

@@ -129,7 +129,8 @@ export default function AdminAssistantPage() {
           </div>
           <button 
             onClick={() => router.push("/dashboard/proprio")}
-            className="rounded-full p-2 text-white/20 hover:bg-white/5 hover:text-white transition-all"
+            className="tap-target flex h-11 w-11 items-center justify-center rounded-full text-white/20 transition-all hover:bg-white/5 hover:text-white"
+            aria-label="Retour au dashboard"
           >
             <ArrowLeft size={18} />
           </button>
@@ -170,7 +171,8 @@ export default function AdminAssistantPage() {
             <button 
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-gold p-2 text-navy hover:scale-105 transition-all disabled:opacity-50"
+              className="tap-target absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg bg-gold text-navy transition-all hover:scale-105 disabled:opacity-50"
+              aria-label="Envoyer le message"
             >
               <Send size={16} />
             </button>

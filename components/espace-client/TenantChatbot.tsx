@@ -156,7 +156,7 @@ export function TenantChatbot({ guestEmail, guestName, bookingId }: TenantChatbo
               key={action}
               type="button"
               onClick={() => sendMessage(action)}
-              className="rounded-full border border-navy/10 bg-offwhite px-3 py-1.5 text-[11px] font-medium text-navy/70 hover:bg-gold/10 hover:text-navy transition-colors"
+              className="tap-target min-h-11 rounded-full border border-navy/10 bg-offwhite px-4 py-2 text-[11px] font-medium text-navy/70 transition-colors hover:bg-gold/10 hover:text-navy"
             >
               {action}
             </button>

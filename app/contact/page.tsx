@@ -141,7 +141,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={formState === "sending"}
-                className="tap-target inline-flex w-full items-center justify-center border border-navy bg-navy px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:border-gold hover:bg-gold hover:text-navy disabled:opacity-50"
+                className="tap-target inline-flex w-full items-center justify-center border border-navy bg-navy px-4 py-3 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:border-gold hover:bg-gold hover:text-navy disabled:opacity-50"
               >
                 {formState === "sending" ? "Envoi…" : "Envoyer"}
               </button>

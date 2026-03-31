@@ -199,7 +199,7 @@ export default function ConciergeDashboard() {
             <Button
               variant="outline"
               size="sm"
-              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-gold/20 bg-gold/5 px-0 text-gold transition-all hover:bg-gold hover:text-navy sm:h-auto sm:w-auto sm:gap-2 sm:px-6"
+              className="flex h-11 w-11 shrink-0 items-center justify-center gap-0 rounded-full border-gold/20 bg-gold/5 px-0 text-gold transition-all hover:bg-gold hover:text-navy sm:h-auto sm:w-auto sm:gap-2 sm:px-6"
               onClick={() => router.push("/dashboard/proprio/assistant")}
               aria-label="Assistant IA"
             >
@@ -209,7 +209,7 @@ export default function ConciergeDashboard() {
             <Button
               variant="outline"
               size="sm"
-              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
+              className="flex h-11 w-11 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/analytics")}
               aria-label="Analytics"
             >
@@ -219,7 +219,7 @@ export default function ConciergeDashboard() {
             <Button
               variant="outline"
               size="sm"
-              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
+              className="flex h-11 w-11 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/submissions")}
               aria-label="Soumissions"
             >
@@ -229,7 +229,7 @@ export default function ConciergeDashboard() {
             <Button
               variant="outline"
               size="sm"
-              className="flex h-10 w-10 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
+              className="flex h-11 w-11 shrink-0 items-center justify-center gap-0 rounded-full border-navy/10 px-0 sm:h-auto sm:w-auto sm:gap-2 sm:px-4"
               onClick={() => router.push("/dashboard/proprio/new")}
               aria-label="Nouvelle villa"
             >
@@ -345,7 +345,7 @@ export default function ConciergeDashboard() {
                       },
                     ]}
                     trigger={
-                      <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-sm hover:bg-white transition-colors cursor-pointer">
+                      <div className="tap-target h-11 w-11 flex items-center justify-center rounded-full bg-white/95 shadow-sm hover:bg-white transition-colors cursor-pointer">
                         <MoreVertical size={14} className="text-navy" />
                       </div>
                     }

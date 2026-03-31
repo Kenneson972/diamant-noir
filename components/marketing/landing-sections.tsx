@@ -26,9 +26,9 @@ export function LandingHero({
       ? "text-center mx-auto max-w-4xl"
       : "text-center md:text-left md:mx-0 max-w-4xl md:max-w-3xl";
   return (
-    <section className={`relative page-px ${bg} py-16 md:py-24 lg:min-h-[42vh] lg:flex lg:items-end lg:pb-20`}>
+    <section className={`relative page-px ${bg} py-12 md:py-24 lg:min-h-[42vh] lg:flex lg:items-end lg:pb-20`}>
       <div className={`mx-auto w-full ${textAlign}`}>
-        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-gold">{eyebrow}</p>
+        <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.4em] text-gold">{eyebrow}</p>
         <h1 className="font-display text-3xl text-balance text-white sm:text-4xl md:text-5xl lg:text-6xl">{title}</h1>
         {subtitle ? (
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 md:mx-0 md:mt-6">{subtitle}</p>
@@ -54,7 +54,7 @@ export function LandingHeroCompact({
   return (
     <section className={`relative page-px ${bg} section-y-compact`}>
       <div className="mx-auto max-w-3xl text-center md:text-left">
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-gold">{eyebrow}</p>
+        <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.36em] text-gold">{eyebrow}</p>
         <h1 className="font-display text-[1.8rem] text-white sm:text-4xl md:text-4xl lg:text-5xl">{title}</h1>
         {subtitle ? <p className="mx-auto mt-4 max-w-2xl text-white/65 md:mx-0">{subtitle}</p> : null}
       </div>
@@ -121,7 +121,7 @@ export function LandingBlockTitle({
   return (
     <div className={`mb-10 md:mb-14 ${a}`}>
       {eyebrow ? (
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">{eyebrow}</p>
+        <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.34em] text-navy/45">{eyebrow}</p>
       ) : null}
       <h2 className="font-display text-3xl text-navy md:text-4xl">{title}</h2>
       <span className={`mt-4 block h-px w-12 bg-gold ${align === "center" ? "mx-auto" : ""}`} aria-hidden />

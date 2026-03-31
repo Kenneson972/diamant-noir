@@ -95,7 +95,7 @@ export default async function VillasListingPage() {
               </p>
             </div>
             <div className="flex items-end gap-3 md:pb-2">
-              <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
+              <span className="font-display text-5xl sm:text-6xl md:text-8xl text-white/10 leading-none select-none">
                 {String(villas.length).padStart(2, "0")}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-4">
