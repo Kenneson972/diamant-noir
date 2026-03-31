@@ -255,7 +255,7 @@ export const Navbar = () => {
         </div>
       </aside>
 
-      {/* Barre supérieure — mobile-first : menu à gauche, logo centré absolu, actions minimales à droite */}
+      {/* Barre supérieure — mobile dédié + desktop dédié pour éviter tout chevauchement */}
       <header
         className={`safe-top fixed top-0 z-50 w-full transition-[background,box-shadow,padding] duration-300 ${
           isSolid
@@ -263,7 +263,48 @@ export const Navbar = () => {
             : "bg-transparent py-4 md:py-5"
         }`}
       >
-        <div className="relative mx-auto flex min-h-12 max-w-7xl items-center justify-between px-2 sm:px-6">
+        {/* Mobile / tablette (< xl) */}
+        <div className="relative mx-auto flex min-h-12 max-w-7xl items-center justify-between px-2 sm:px-4 xl:hidden">
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            className="tap-target relative z-20 flex h-11 w-11 shrink-0 items-center justify-center text-navy"
+            aria-expanded={menuOpen}
+            aria-controls="site-nav-drawer"
+          >
+            <Menu size={22} strokeWidth={1.25} aria-hidden />
+          </button>
+
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-full max-w-[12.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center px-2">
+            <BrandLogo
+              variant="onLight"
+              size="sm"
+              showIcon={false}
+              priority={pathname === "/"}
+              className="pointer-events-auto justify-center whitespace-nowrap [&>span.font-display]:text-center [&>span.font-display]:text-[0.98rem] [&>span.font-display]:tracking-[0.1em] sm:[&>span.font-display]:text-[1.04rem] sm:[&>span.font-display]:tracking-[0.12em]"
+            />
+          </div>
+
+          <div className="relative z-20 flex min-w-0 items-center justify-end gap-1.5 sm:gap-2">
+            <Link
+              href="/login?redirect=/espace-client"
+              className="tap-target inline-flex h-11 w-11 items-center justify-center text-navy transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
+              aria-label="Connexion / Inscription"
+            >
+              <User size={20} strokeWidth={1.25} aria-hidden />
+            </Link>
+
+            <Link
+              href="/book"
+              className="tap-target shrink-0 border border-navy bg-navy px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            >
+              Res.
+            </Link>
+          </div>
+        </div>
+
+        {/* Desktop (>= xl) */}
+        <div className="relative mx-auto hidden min-h-12 max-w-7xl items-center justify-between px-2 sm:px-6 xl:flex">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
@@ -277,40 +318,40 @@ export const Navbar = () => {
             </span>
           </button>
 
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 flex w-full max-w-[13.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center px-2 sm:max-w-[16rem] sm:px-4">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 flex w-full max-w-[16rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center px-4">
             <BrandLogo
               variant={isSolid ? "onLight" : "onDark"}
               size="sm"
               showIcon={false}
               priority={pathname === "/"}
-              className="pointer-events-auto justify-center whitespace-nowrap [&>span.font-display]:text-center [&>span.font-display]:text-[0.92rem] [&>span.font-display]:tracking-[0.09em] sm:[&>span.font-display]:text-[1.05rem] sm:[&>span.font-display]:tracking-[0.13em]"
+              className="pointer-events-auto justify-center whitespace-nowrap [&>span.font-display]:text-center [&>span.font-display]:text-[1.05rem] [&>span.font-display]:tracking-[0.13em]"
             />
           </div>
 
-          {/* Actions: mobile+tablet (lt lg) = user + réserver ; desktop (lg+) = utilitaires complets */}
+          {/* Actions desktop */}
           <div className="relative z-10 flex min-w-0 items-center justify-end gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target hidden items-center text-[12px] font-medium tracking-[0.02em] transition-colors lg:inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target inline-flex items-center text-[12px] font-medium tracking-[0.02em] transition-colors ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
             >
               {CONCIERGE_TEL}
             </a>
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target hidden h-11 w-11 shrink-0 items-center justify-center lg:inline-flex ${utility} focus:outline-none focus-visible:ring-2`}
+              className={`tap-target hidden h-11 w-11 shrink-0 items-center justify-center ${utility} focus:outline-none focus-visible:ring-2`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
               <Phone size={20} strokeWidth={1.25} aria-hidden />
             </a>
 
             <span
-              className={`hidden h-3 w-px shrink-0 lg:block ${divider}`}
+              className={`h-3 w-px shrink-0 ${divider}`}
               aria-hidden
             />
 
             <Link
               href="/villas"
-              className={`tap-target relative hidden h-11 w-11 items-center justify-center transition-opacity lg:flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target relative flex h-11 w-11 items-center justify-center transition-opacity ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label={
                 wishlistCount > 0
                   ? `Favoris, ${wishlistCount} villa${wishlistCount > 1 ? "s" : ""}`
@@ -330,7 +371,7 @@ export const Navbar = () => {
 
             <Link
               href="/login?redirect=/espace-client"
-              className={`tap-target h-11 w-11 items-center justify-center transition-opacity inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target inline-flex h-11 w-11 items-center justify-center transition-opacity ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label="Connexion / Inscription"
             >
               <User size={20} strokeWidth={1.25} aria-hidden />
@@ -344,8 +385,7 @@ export const Navbar = () => {
                   : "border-white/90 bg-white/10 text-white hover:bg-white/20 focus-visible:ring-white md:backdrop-blur-sm"
               }`}
             >
-              <span className="inline lg:hidden">Res.</span>
-              <span className="hidden lg:inline">Réserver</span>
+              <span>Réserver</span>
             </Link>
           </div>
         </div>

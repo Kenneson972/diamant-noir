@@ -735,3 +735,13 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **why**: Demande explicite d’une adaptation mobile intelligente sur l’ensemble du projet (pas un simple shrink desktop), avec priorité à la lisibilité, aux zones tactiles et à la cohérence cross-pages.
 - **impact**: Navigation mobile plus propre (logo centré), pages publiques et privées moins “desktop réduites”, interactions tactiles renforcées (buttons/menus/chatbot), meilleures protections overflow.
 - **verify**: `npm run lint` OK (warning non bloquant existant `no-img-element` dans `components/chatbot/Chatbot.tsx`) ; `npm run build` OK.
+
+---
+
+## 2026-03-31T23:31:00Z | type: ui | Cursor — Navbar mobile dédiée (fix overlap final)
+- **agent**: `cursor`
+- **summary**: Remplacement de la logique mixte par deux barres distinctes: une navbar dédiée mobile/tablette (`xl:hidden`) avec logo centré absolu et actions minimales (`User + Res.`), et une navbar desktop dédiée (`xl:flex`) avec utilitaires complets. Ajustement de la zone logo et des couches `z-index` pour éliminer le chevauchement `DIAMANT NOIR` / actions sur petits écrans.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Le header restait visuellement instable sur mobile (superposition du wordmark et des actions), malgré les ajustements progressifs.
+- **impact**: Stabilisation structurelle du header mobile, lisibilité restaurée et comportement cohérent entre mobile et desktop.
+- **verify**: `npm run lint` OK (warning non bloquant existant dans `components/chatbot/Chatbot.tsx`).
