@@ -268,7 +268,7 @@ export const Navbar = () => {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="tap-target relative z-20 flex h-11 w-11 shrink-0 items-center justify-center text-navy"
+            className={`tap-target relative z-20 flex h-11 w-11 shrink-0 items-center justify-center ${barText}`}
             aria-expanded={menuOpen}
             aria-controls="site-nav-drawer"
           >
@@ -277,7 +277,7 @@ export const Navbar = () => {
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-full max-w-[12.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center px-2">
             <BrandLogo
-              variant="onLight"
+              variant={isSolid ? "onLight" : "onDark"}
               size="sm"
               showIcon={false}
               priority={pathname === "/"}
@@ -288,7 +288,7 @@ export const Navbar = () => {
           <div className="relative z-20 flex min-w-0 items-center justify-end gap-1.5 sm:gap-2">
             <Link
               href="/login?redirect=/espace-client"
-              className="tap-target inline-flex h-11 w-11 items-center justify-center text-navy transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
+              className={`tap-target inline-flex h-11 w-11 items-center justify-center transition-opacity ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label="Connexion / Inscription"
             >
               <User size={20} strokeWidth={1.25} aria-hidden />
@@ -296,7 +296,11 @@ export const Navbar = () => {
 
             <Link
               href="/book"
-              className="tap-target shrink-0 border border-navy bg-navy px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+              className={`tap-target shrink-0 border px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                isSolid
+                  ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
+                  : "border-white/90 bg-white/10 text-white hover:bg-white/20 focus-visible:ring-white"
+              }`}
             >
               Res.
             </Link>
