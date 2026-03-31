@@ -11,8 +11,10 @@ import {
   RotateCcw,
   ExternalLink,
   Phone,
+  Gem,
 } from "lucide-react";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { useCompare } from "@/contexts/CompareContext";
 import type {
   ChatMessage,
   ChatbotRequest,
@@ -173,6 +175,7 @@ export const Chatbot = () => {
 
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { count: compareCount } = useCompare();
 
   const hidden = Boolean(
     pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")
@@ -349,13 +352,21 @@ export const Chatbot = () => {
       {/* FAB */}
       {!isOpen && (
         <button
+          type="button"
           onClick={() => setIsOpen(true)}
-          className="group fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90 sm:bottom-8 sm:right-8 sm:h-16 sm:w-16"
+          className={`group fixed right-[max(1rem,env(safe-area-inset-right,0px))] z-[52] flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-[bottom,colors] duration-200 hover:bg-black/90 motion-safe:sm:hover:scale-105 sm:right-[max(2rem,env(safe-area-inset-right,0px))] sm:h-16 sm:w-16 ${
+            compareCount > 0
+              ? "bottom-[calc(max(1.25rem,env(safe-area-inset-bottom,0px))+5.25rem)] sm:bottom-[calc(max(2rem,env(safe-area-inset-bottom,0px))+5.25rem)]"
+              : "bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:bottom-[max(2rem,env(safe-area-inset-bottom,0px))]"
+          }`}
           aria-label="Ouvrir le concierge"
         >
-          <Sparkles className="relative z-10 animate-pulse" size={28} />
-          <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-[10px] font-bold text-black shadow-lg">
-            💎
+          <Sparkles className="relative z-10 h-7 w-7 motion-safe:animate-pulse sm:h-8 sm:w-8" aria-hidden />
+          <span
+            className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-black shadow-lg sm:-right-2 sm:-top-2"
+            aria-hidden
+          >
+            <Gem className="h-3 w-3" strokeWidth={2} />
           </span>
         </button>
       )}
@@ -363,14 +374,14 @@ export const Chatbot = () => {
       {/* Fenêtre de chat */}
       {isOpen && (
         <div
-          className={`fixed z-50 flex flex-col bg-white shadow-2xl transition-all ${
+          className={`fixed z-[52] flex min-h-0 flex-col bg-white shadow-2xl transition-all ${
             isFullscreen || isMobile
-              ? "inset-0 h-screen w-screen rounded-none"
+              ? "inset-0 h-[100dvh] max-h-[100dvh] w-screen rounded-none"
               : "bottom-6 right-6 h-[620px] w-[420px] rounded-[32px]"
           }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 bg-black p-5 text-white">
+          <div className="safe-top flex shrink-0 items-center justify-between border-b border-white/10 bg-black p-4 text-white sm:p-5">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
@@ -414,7 +425,7 @@ export const Chatbot = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto bg-[#FAFAFA] p-5 space-y-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#FAFAFA] p-4 pb-3 space-y-4 sm:p-5">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -496,9 +507,10 @@ export const Chatbot = () => {
                 {quickSuggestions.map((s, i) => (
                   <button
                     key={i}
+                    type="button"
                     onClick={() => sendMessage(s)}
                     disabled={isLoading}
-                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black hover:bg-black hover:text-white disabled:opacity-50"
+                    className="tap-target min-h-11 rounded-full border border-black/15 bg-white px-4 py-2.5 text-left text-xs font-semibold leading-snug text-black transition-colors hover:border-black hover:bg-black hover:text-white disabled:opacity-50 sm:min-h-0 sm:py-2"
                   >
                     {s}
                   </button>
@@ -509,8 +521,8 @@ export const Chatbot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Zone de saisie */}
-          <div className="border-t border-black/10 bg-white p-4">
+          {/* Zone de saisie — safe-area bas (home indicator iOS) */}
+          <div className="shrink-0 border-t border-black/10 bg-white p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:p-4">
             <div className="flex items-end gap-2">
               <textarea
                 ref={textareaRef}
@@ -520,12 +532,13 @@ export const Chatbot = () => {
                 placeholder="Tapez votre message..."
                 disabled={isLoading}
                 rows={1}
-                className="flex-1 resize-none rounded-2xl border border-black/10 bg-[#FAFAFA] px-4 py-3 text-sm text-black placeholder:text-black/30 focus:border-black focus:outline-none disabled:opacity-50"
+                className="min-h-11 flex-1 resize-none rounded-2xl border border-black/10 bg-[#FAFAFA] px-4 py-3 text-base text-black placeholder:text-black/30 focus:border-black focus:outline-none disabled:opacity-50 sm:min-h-0 sm:text-sm"
               />
               <button
+                type="button"
                 onClick={() => sendMessage()}
                 disabled={!inputMessage.trim() || isLoading}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-all hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-40"
+                className="tap-target flex shrink-0 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-40 min-h-11 min-w-11 sm:h-10 sm:w-10 sm:min-h-0 sm:min-w-0"
                 aria-label="Envoyer"
               >
                 <Send size={16} />

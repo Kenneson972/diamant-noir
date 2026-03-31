@@ -25,7 +25,7 @@ export function CompareBar() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-up safe-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-40 animate-fade-up safe-bottom safe-x">
       {/* Backdrop blur subtle */}
       <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] md:backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center gap-4">

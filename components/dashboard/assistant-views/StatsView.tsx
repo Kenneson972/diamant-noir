@@ -52,7 +52,7 @@ export function StatsView({ data }: { data: any }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpiList.map((kpi, i) => (
           <div key={i} className="rounded-3xl bg-[#0D0D14] border border-white/5 p-6 hover:border-white/10 transition-all">
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2">{kpi.label}</p>

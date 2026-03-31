@@ -102,7 +102,7 @@ export const Navbar = () => {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-[55] bg-black/45 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-[55] bg-black/45 transition-opacity duration-300 md:backdrop-blur-sm"
           onClick={closeMenu}
         />
       ) : null}
@@ -114,7 +114,7 @@ export const Navbar = () => {
         aria-modal="true"
         aria-label="Menu de navigation"
         inert={!menuOpen ? true : undefined}
-        className={`fixed inset-y-0 left-0 z-[60] flex w-full max-w-[26rem] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`safe-top fixed inset-y-0 left-0 z-[60] flex w-full max-w-[26rem] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
@@ -232,13 +232,13 @@ export const Navbar = () => {
 
       {/* Barre supérieure — logo centré, menu à gauche, CTA à droite */}
       <header
-        className={`fixed top-0 z-50 w-full transition-[background,box-shadow,padding] duration-300 ${
+        className={`safe-top fixed top-0 z-50 w-full transition-[background,box-shadow,padding] duration-300 ${
           isSolid
-            ? "border-b border-black/[0.06] bg-white/95 py-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md"
+            ? "border-b border-black/[0.06] bg-white/95 py-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] md:backdrop-blur-md"
             : "bg-transparent py-4 md:py-5"
         }`}
       >
-        <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-between gap-1 px-4 sm:gap-2 sm:px-6">
+        <div className="relative mx-auto flex min-h-12 max-w-7xl items-center justify-between gap-0.5 px-2 sm:gap-2 sm:px-6">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
@@ -252,13 +252,14 @@ export const Navbar = () => {
             </span>
           </button>
 
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-16 sm:px-28 md:px-32">
-            <div className="pointer-events-auto">
+          <div className="pointer-events-none absolute inset-0 flex min-w-0 items-center justify-center px-6 max-[380px]:px-5 sm:px-24 md:px-32">
+            <div className="pointer-events-auto min-w-0 max-w-[min(100%,11rem)] sm:max-w-none">
               <BrandLogo
                 variant={isSolid ? "onLight" : "onDark"}
-                size="md"
+                size="sm"
                 showIcon={false}
                 priority={pathname === "/"}
+                className="max-[360px]:scale-[0.92] max-[360px]:origin-center"
               />
             </div>
           </div>
@@ -273,7 +274,7 @@ export const Navbar = () => {
             </a>
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target flex h-11 w-11 items-center justify-center md:hidden ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
+              className={`tap-target hidden h-11 w-11 items-center justify-center sm:flex md:hidden ${utility} focus:outline-none focus-visible:ring-2`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
               <Phone size={20} strokeWidth={1.25} aria-hidden />
@@ -286,7 +287,7 @@ export const Navbar = () => {
 
             <Link
               href="/villas"
-              className={`tap-target relative flex h-11 w-11 items-center justify-center transition-opacity ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target relative hidden h-11 w-11 items-center justify-center transition-opacity sm:flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label={
                 wishlistCount > 0
                   ? `Favoris, ${wishlistCount} villa${wishlistCount > 1 ? "s" : ""}`
@@ -317,7 +318,7 @@ export const Navbar = () => {
               className={`tap-target shrink-0 border px-2.5 py-2 text-[8px] font-bold uppercase tracking-[0.16em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:px-5 sm:py-2.5 sm:text-[10px] sm:tracking-[0.22em] ${
                 isSolid
                   ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
-                  : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white"
+                  : "border-white/90 bg-white/10 text-white hover:bg-white/20 focus-visible:ring-white md:backdrop-blur-sm"
               }`}
             >
               <span className="sm:hidden">Res.</span>

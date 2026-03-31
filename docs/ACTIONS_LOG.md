@@ -11,6 +11,37 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-03-31T23:58:00Z | type: ui | Cursor — Mobile navbar + chatbot (safe-area, z-index, tap targets)
+- **agent**: `cursor`
+- **summary**: Passe responsive ciblée: safe-area top pour header et drawer, logo centré borné sur très petits écrans, CompareBar en z-40 sous le FAB chatbot (z-52), FAB remonté quand la barre de comparaison est visible, panneau chat en `100dvh` + zones safe + suggestions/envoi 44px, badge FAB icône Gem au lieu d’emoji.
+- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `components/villas/CompareBar.tsx`, `components/chatbot/Chatbot.tsx`]
+- **why**: Demande utilisateur: rendu mobile « super propre » sur navbar et chatbot.
+- **impact**: Moins de chevauchement logo/actions, pas de FAB masquant la comparaison, meilleure ergonomie iOS (notch, home indicator).
+- **verify**: `npm run build` OK ; lint sur fichiers modifiés OK.
+- **session**: `docs/logs/2026-03-31.md`
+
+## 2026-03-31T22:40:00Z | type: ui+perf | Cursor — Passe responsive/perf complémentaire (navbar prioritaire)
+- **agent**: `cursor`
+- **summary**: Nouveau tour complet mobile avec priorité navbar et perf mobile: simplification de la barre top sur très petits écrans, réduction des effets blur côté mobile, harmonisation headers dashboard, et correction du layout KPI assistant en mobile.
+- **files**: [`components/layout/Navbar.tsx`, `components/layout/BrandLogo.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`, `components/dashboard/assistant-views/StatsView.tsx`]
+- **why**: Signal utilisateur indiquant persistance d’un bug mobile après la première passe.
+- **impact**: Header mobile plus robuste entre 320-390px, charge visuelle réduite sur mobile, lisibilité dashboard améliorée.
+- **verify**: Séquence appliquée `modif -> npm run build -> npm run dev`; smoke localhost `/` = 200, `/villas` = 200, `/dashboard/proprio` = 200.
+- **session**: `docs/logs/2026-03-31.md`
+
+---
+
+## 2026-03-31T22:37:00Z | type: ui+perf | Cursor — Correctif navbar mobile + stabilisation runtime local
+- **agent**: `cursor`
+- **summary**: Ajustement ciblé de la navbar mobile pour supprimer les chevauchements (wordmark plus compact, zones de sécurité horizontales revues, actions secondaires masquées sur très petits écrans) et stabilisation du runtime localhost (nettoyage `.next` + relance dev après conflit build/dev).
+- **files**: [`components/layout/BrandLogo.tsx`, `components/layout/Navbar.tsx`]
+- **why**: Retour utilisateur: problème mobile toujours présent, priorité navbar.
+- **impact**: Header mobile plus lisible entre 320-390px, meilleure hiérarchie des actions, suppression des overlaps visuels.
+- **verify**: `npm run build` OK ; `npm run dev -- -p 3000` relancé proprement ; smoke localhost `/` = 200, `/villas` = 200.
+- **session**: `docs/logs/2026-03-31.md`
+
+---
+
 ## 2026-03-31T23:25:00Z | type: ui+perf | Cursor — Passe responsive mobile P0/P1 (public + dashboards + espace-client)
 - **agent**: `cursor`
 - **summary**: Correction mobile complète prioritaire: fondations overflow/header, parcours booking mobile sur fiche villa, comportement carte/listing villas, lightbox galerie, dashboard proprio (actions mobiles + assistant split layout + tabs/kpis/tables), espace-client (tap targets), compare bar/chatbot (safe-area + cibles tactiles), FAQ contact (longues lignes).
