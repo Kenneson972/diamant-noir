@@ -63,7 +63,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
 
         <div className="relative z-10 p-6 md:p-8">
           <span
-            className={`mb-4 inline-flex items-center rounded-full border px-2 py-1 uppercase text-[9px] font-bold tracking-[0.35em] ${
+            className={`mb-4 inline-flex items-center rounded-full border px-2 py-1 uppercase text-[10px] font-bold tracking-[0.35em] ${
               isToday
                 ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                 : "border-gold/25 bg-gold/10 text-white"
@@ -104,7 +104,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
               { label: "Durée", value: `${nights} nuit${nights > 1 ? "s" : ""}` },
             ].map(({ label, value }) => (
               <div key={label}>
-                <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-white/30 mb-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-white/30 mb-1">
                   {label}
                 </p>
                 <p className="text-sm font-medium text-white">{value}</p>
@@ -113,8 +113,15 @@ function UpcomingStayHero({ booking }: { booking: any }) {
           </div>
 
           {!isToday && daysUntil <= maxDays && (
-            <div className="mb-6 max-w-xs" aria-label={`J-${daysUntil}`}>
-              <div className="bg-white/10 h-1 rounded-full overflow-hidden">
+            <div className="mb-6 max-w-xs">
+              <div
+                role="progressbar"
+                aria-valuenow={progressValue}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Progression avant le séjour — J-${daysUntil}`}
+                className="bg-white/10 h-1 rounded-full overflow-hidden"
+              >
                 <div className="bg-gold h-full rounded-full" style={{ width: `${progressValue}%` }} />
               </div>
             </div>
@@ -248,7 +255,7 @@ export default function EspaceClientPage() {
     return (
       <Card className="border border-navy/10 bg-white shadow-none rounded-none">
         <CardContent className="px-8 py-14 text-center space-y-5">
-          <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-navy/30">Espace Client</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">Espace Client</p>
           <p className="font-display text-xl text-navy">Connexion requise</p>
           <p className="text-sm text-navy/50 max-w-md mx-auto">
             Connectez-vous pour voir vos réservations et votre livret d’accueil.
@@ -280,7 +287,7 @@ export default function EspaceClientPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
             <h1 className="font-display text-2xl text-navy mt-1">
               Bonjour{firstName ? `, ${firstName}` : ""}
             </h1>
@@ -316,7 +323,7 @@ export default function EspaceClientPage() {
         <Card className="border border-gold/15 bg-gold/[0.03] shadow-none rounded-none">
           <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1">
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1">
                 Conciergerie
               </p>
               <p className="text-sm text-navy/60">
@@ -343,7 +350,7 @@ export default function EspaceClientPage() {
       <div>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
             <h1 className="font-display text-2xl text-navy mt-1">
               Bonjour{firstName ? `, ${firstName}` : ""}
             </h1>
@@ -356,20 +363,20 @@ export default function EspaceClientPage() {
         <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">
           <Card className="border border-navy/8 bg-white shadow-none rounded-none flex-1">
             <CardContent className="p-3 text-center">
-              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30">Séjours</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Séjours</p>
               <p className="text-lg font-bold text-navy mt-0.5">{bookings.length}</p>
             </CardContent>
           </Card>
           <Card className="border border-navy/8 bg-white shadow-none rounded-none flex-1">
             <CardContent className="p-3 text-center">
-              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30">Nuits</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Nuits</p>
               <p className="text-lg font-bold text-navy mt-0.5">{totalNights}</p>
             </CardContent>
           </Card>
           {daysUntil !== null && daysUntil > 0 && (
             <Card className="border border-gold/20 bg-gold/[0.03] shadow-none rounded-none flex-1">
               <CardContent className="p-3 text-center">
-                <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30">Prochain</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Prochain</p>
                 <p className="text-lg font-bold text-gold mt-0.5">J-{daysUntil}</p>
               </CardContent>
             </Card>
@@ -384,7 +391,7 @@ export default function EspaceClientPage() {
       {otherBookings.length > 0 && (
         <div className="space-y-4">
           {upcomingBooking && (
-            <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-navy/30">
+            <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">
               Historique
             </p>
           )}

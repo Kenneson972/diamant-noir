@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   X,
@@ -76,9 +77,11 @@ function VillaCard({ villa }: { villa: SuggestedVilla }) {
       className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white p-3 text-left transition-all hover:border-black/30 hover:shadow-sm"
     >
       {villa.imageUrl && (
-        <img
+        <Image
           src={villa.imageUrl}
           alt={villa.name}
+          width={80}
+          height={56}
           className="h-14 w-20 flex-shrink-0 rounded-xl object-cover"
         />
       )}
@@ -172,6 +175,7 @@ export const Chatbot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sessionIdRef = useRef<string>("");
+  const fabRef = useRef<HTMLButtonElement>(null);
 
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -352,6 +356,7 @@ export const Chatbot = () => {
       {/* FAB */}
       {!isOpen && (
         <button
+          ref={fabRef}
           type="button"
           onClick={() => setIsOpen(true)}
           className={`group fixed right-[max(1rem,env(safe-area-inset-right,0px))] z-[52] flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] ring-1 ring-white/10 transition-[bottom,colors,transform] duration-200 hover:bg-black/90 motion-safe:sm:hover:scale-105 sm:right-[max(2rem,env(safe-area-inset-right,0px))] sm:h-16 sm:w-16 ${
@@ -374,6 +379,9 @@ export const Chatbot = () => {
       {/* Fenêtre de chat */}
       {isOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Concierge Diamant Noir"
           className={`fixed z-[52] flex min-h-0 flex-col bg-white shadow-2xl transition-all ${
             isFullscreen || isMobile
               ? "inset-0 h-[100dvh] max-h-[100dvh] w-screen rounded-none"
@@ -387,7 +395,8 @@ export const Chatbot = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
                   D
                 </div>
-                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400" />
+                {/* "online" indicator — token: #4ade80 */}
+                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black bg-[#4ade80]" />
               </div>
               <div>
                 <h3 className="font-display text-lg tracking-wide">Conciergerie IA</h3>
@@ -415,7 +424,7 @@ export const Chatbot = () => {
                 </button>
               )}
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => { setIsOpen(false); fabRef.current?.focus(); }}
                 className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
                 aria-label="Fermer"
               >
@@ -488,13 +497,13 @@ export const Chatbot = () => {
                   D
                 </div>
                 <div className="flex items-center gap-1 rounded-2xl border border-black/10 bg-white px-4 py-3">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30" />
+                  <span className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30" />
                   <span
-                    className="h-2 w-2 animate-bounce rounded-full bg-black/30"
+                    className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30"
                     style={{ animationDelay: "0.2s" }}
                   />
                   <span
-                    className="h-2 w-2 animate-bounce rounded-full bg-black/30"
+                    className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30"
                     style={{ animationDelay: "0.4s" }}
                   />
                 </div>

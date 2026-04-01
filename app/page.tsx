@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Star, Calendar, ShieldCheck, MapPin, CalendarDays } from "lucide-react";
+import { ArrowRight, Star, Calendar, ShieldCheck } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { unstable_noStore as noStore } from "next/cache";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { BookingSearchBar } from "@/components/booking/BookingSearchBar";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-offwhite">
       {/* Hero — vidéo /public/hero.webm (WebM) + poster */}
-      <section className="relative flex min-h-[min(74vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-20 pt-24 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24" aria-labelledby="hero-visually-hidden-title">
+      <section className="relative flex min-h-[min(60vh,500px)] w-full flex-col justify-center overflow-hidden bg-black py-20 pt-24 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24" aria-labelledby="hero-visually-hidden-title">
         <h1 id="hero-visually-hidden-title" className="sr-only">
           Diamant Noir — conciergerie de luxe, Martinique
         </h1>
@@ -89,39 +90,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mx-auto w-full max-w-4xl pt-2 md:pt-3 animate-in fade-in duration-700 delay-75">
-              <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_12px_40px_rgba(0,0,0,0.14)] sm:flex-row sm:divide-x sm:divide-y-0">
-                <Link
-                  href="/villas"
-                  className="group flex min-h-12 flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-3.5"
-                >
-                  <MapPin className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
-                  <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">
-                      Destination
-                    </p>
-                    <p className="mt-0.5 text-[13px] font-medium leading-tight text-navy">Martinique</p>
-                  </div>
-                </Link>
-                <Link
-                  href="/book"
-                  className="group flex min-h-12 flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] sm:min-h-0 sm:py-3.5"
-                >
-                  <CalendarDays className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
-                  <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40">
-                      Arrivée → Départ
-                    </p>
-                    <p className="mt-0.5 text-[13px] leading-tight text-navy/70">Choisir mes dates</p>
-                  </div>
-                </Link>
-                <Link
-                  href="/villas"
-                  className="flex min-h-[52px] items-center justify-center bg-navy px-6 py-3 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90 sm:min-w-[8.5rem] sm:min-h-[44px] sm:py-3.5"
-                >
-                  Rechercher
-                  <ArrowRight className="ml-1.5 inline h-3 w-3" strokeWidth={1.25} aria-hidden />
-                </Link>
-              </div>
+              <BookingSearchBar variant="hero" />
             </div>
           </div>
         </div>
@@ -136,16 +105,16 @@ export default async function HomePage() {
         <div className="page-px mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-4 text-center sm:gap-x-10">
           <div className="flex items-center gap-2">
             <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/55">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/65">
               4,9 / 5
             </span>
           </div>
           <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/45">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/65">
             100+ séjours
           </span>
           <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/45">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy/65">
             Conciergerie 24/7
           </span>
         </div>
@@ -179,9 +148,11 @@ export default async function HomePage() {
               <p className="mt-2 text-xs text-navy/50">
                 {featuredError ? `Statut: ${featuredError}` : "Ajoutez des villas dans Supabase pour les afficher ici."}
               </p>
-              <p className="mt-3 text-[10px] uppercase tracking-widest text-navy/40">
-                Supabase: {featuredCount} ligne(s) reçue(s)
-              </p>
+              {process.env.NODE_ENV === 'development' && (
+                <p className="mt-3 text-[10px] uppercase tracking-widest text-navy/40">
+                  Supabase: {featuredCount} ligne(s) reçue(s)
+                </p>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6">

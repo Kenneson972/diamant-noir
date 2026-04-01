@@ -37,7 +37,7 @@ export default function VillasMapView({ villas }: Props) {
   return (
     <div className="relative">
       {/* ── Toolbar ── */}
-      <div className="sticky top-[72px] z-20 flex items-center justify-between border-b border-navy/8 bg-offwhite px-4 py-3 sm:px-6">
+      <div className="sticky top-[calc(72px+env(safe-area-inset-top))] z-20 flex items-center justify-between border-b border-navy/8 bg-offwhite px-4 py-3 sm:px-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-navy/40">
           {villas.length} propriété{villas.length > 1 ? "s" : ""}
         </p>
@@ -109,7 +109,7 @@ export default function VillasMapView({ villas }: Props) {
                   />
                   {/* Tier badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="rounded-none border border-gold/40 bg-black/55 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-gold">
+                    <span className="rounded-none border border-gold/40 bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
                       {tier}
                     </span>
                   </div>
@@ -151,7 +151,7 @@ export default function VillasMapView({ villas }: Props) {
       </div>
 
       {mapVisible && (
-        <div className="h-[300px] border-t border-navy/8 md:hidden">
+        <div className="h-[50vh] min-h-[280px] border-t border-navy/8 md:hidden">
           <VillaLeafletMap
             villas={villas}
             hoveredId={hoveredId}

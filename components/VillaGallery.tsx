@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
 
@@ -13,6 +13,8 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
   const galleryImages = images.filter(Boolean);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const openAt = (index: number) => { setActiveIndex(index); setIsOpen(true); };
   const close = () => setIsOpen(false);
@@ -29,6 +31,12 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [isOpen, showPrev, showNext]);
+
+  useEffect(() => {
+    if (isOpen && closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+  }, [isOpen]);
 
   if (galleryImages.length === 0) {
     return (
@@ -66,7 +74,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
             onClick={() => openAt(0)}
             className="col-span-2 row-span-2 relative overflow-hidden group focus:outline-none"
           >
-            <Image src={galleryImages[0]} alt={`${title} 1`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" priority />
+            <Image src={galleryImages[0]} alt={`${title} 1`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:hover:scale-100" priority />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
           </button>
 
@@ -84,7 +92,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               >
                 {img ? (
                   <>
-                    <Image src={img} alt={`${title} ${i + 2}`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                    <Image src={img} alt={`${title} ${i + 2}`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:hover:scale-100" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
                     {isLast && (
                       <div className="absolute inset-0 bg-navy/60 flex items-center justify-center">
@@ -112,7 +120,12 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
 
       {/* ── Lightbox ── */}
       {isOpen && (
-        <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Galerie photos — ${title}`}
+          className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col modal-enter"
+        >
           {/* Header */}
           <div className="flex items-center justify-between gap-3 px-4 py-5 shrink-0 sm:px-6">
             <span className="font-display text-white/60 text-sm tracking-widest">
@@ -122,6 +135,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               {title}
             </span>
             <button
+              ref={closeBtnRef}
               onClick={close}
               className="tap-target rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
               aria-label="Fermer"
@@ -175,7 +189,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
                     activeIndex === i ? "border-gold scale-105 opacity-100" : "border-transparent opacity-30 hover:opacity-60"
                   }`}
                 >
-                  <Image src={img} alt="" fill className="object-cover" />
+                  <Image src={img} alt={`${title} — aperçu photo ${i + 1}`} fill className="object-cover" />
                 </button>
               ))}
             </div>

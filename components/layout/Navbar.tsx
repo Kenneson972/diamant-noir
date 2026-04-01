@@ -271,6 +271,7 @@ export const Navbar = () => {
             className={`tap-target relative z-20 flex h-11 w-11 shrink-0 items-center justify-center ${barText}`}
             aria-expanded={menuOpen}
             aria-controls="site-nav-drawer"
+            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             <Menu size={22} strokeWidth={1.25} aria-hidden />
           </button>
@@ -315,6 +316,7 @@ export const Navbar = () => {
             className={`tap-target relative z-10 flex shrink-0 items-center gap-2 ${barText}`}
             aria-expanded={menuOpen}
             aria-controls="site-nav-drawer"
+            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             <Menu size={22} strokeWidth={1.25} aria-hidden />
             <span className="hidden text-[10px] font-semibold uppercase tracking-[0.35em] sm:inline">

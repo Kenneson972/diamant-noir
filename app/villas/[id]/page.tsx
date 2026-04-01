@@ -198,7 +198,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   }
 
   return (
-    <main className="min-h-screen bg-offwhite">
+    <main className="min-h-screen bg-offwhite pb-[80px] sm:pb-0">
       <VillaViewTracker villaId={villa!.id} />
  
 
@@ -401,9 +401,9 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
             {/* Calendrier (large) */}
             <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-6">Disponibilités</h2>
-              <div className="rounded-2xl border border-navy/10 bg-white p-5 sm:p-7">
-                <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display font-normal text-2xl text-navy">Disponibilités</h2>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-semibold text-navy">
                     Arrivée: {villa.check_in_time || "17:00"}
                   </span>
@@ -411,8 +411,8 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     Départ: {villa.check_out_time || "10:00"}
                   </span>
                 </div>
-                <AvailabilityCalendar villaId={villa.id} />
               </div>
+              <AvailabilityCalendar villaId={villa.id} basePrice={villa.price} />
             </section>
 
             {/* Carte */}
@@ -603,6 +603,28 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           </div>
         </section>
       )}
+
+      {/* Mobile sticky booking bar */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-30 sm:hidden border-t border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3"
+        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-navy/50">À partir de</p>
+            <p className="text-base font-semibold text-navy">
+              {villa!.price.toLocaleString("fr-FR")} €
+              <span className="text-xs font-normal text-navy/50"> / nuit</span>
+            </p>
+          </div>
+          <Link
+            href={`/book?villaId=${villa!.id}&guests=2`}
+            className="flex-1 max-w-[180px] text-center bg-navy text-white py-3 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-navy/90 transition-colors"
+          >
+            Réserver
+          </Link>
+        </div>
+      </div>
 
       {/* ── CTA bas de page ── */}
       <div className="page-px bg-navy py-16 text-center md:py-20">

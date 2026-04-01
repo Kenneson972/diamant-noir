@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ChevronLeft, 
-  Star, 
-  Calendar, 
-  Users, 
-  ShieldCheck, 
+import {
+  ChevronLeft,
+  Calendar,
+  Users,
+  ShieldCheck,
   Info,
   CreditCard,
   Lock,
@@ -29,11 +28,15 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [guestEmail, setGuestEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchVilla = async () => {
       const supabase = getSupabaseBrowser();
       if (!supabase) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      setGuestEmail(session?.user?.email ?? null);
 
       const { data, error } = await supabase
         .from("villas")
@@ -68,7 +71,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
           endDate: checkout, 
           villaId,
           guests: guestsCount,
-          guestName: "Client Site Web" // Nom par défaut
+          guestName: guestEmail ?? "Invité"
         }),
       });
       const payload = await response.json();
@@ -86,7 +89,9 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent" />
+        <div role="status" className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent">
+          <span className="sr-only">Chargement en cours</span>
+        </div>
       </div>
     );
   }
@@ -105,13 +110,27 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const totalAmount = priceResult ? priceResult.total + cleaningFee + serviceFee : 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 lg:py-20">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-20">
       <div className="mb-12">
         <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/40 hover:text-navy transition-colors group">
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           Modifier la sélection
         </Link>
         <h1 className="mt-6 font-display text-4xl text-navy lg:text-5xl">Confirmer et payer</h1>
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-black/10 bg-white p-4 sm:hidden"
+        style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
+      >
+        <button
+          onClick={handleConfirmBooking}
+          disabled={checkoutLoading}
+          className="w-full bg-navy py-3 text-[11px] font-bold uppercase tracking-[0.3em] text-white transition-colors hover:bg-gold hover:text-navy disabled:opacity-50"
+        >
+          {checkoutLoading ? "Chargement…" : "Confirmer la réservation"}
+        </button>
       </div>
 
       <div className="grid gap-16 lg:grid-cols-[1fr_400px]">
@@ -197,7 +216,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
               </div>
             </div>
             <p className="text-xs text-navy/40">
-              En sélectionnant le bouton ci-dessous, j'accepte les <span className="underline">Règles de la maison</span>, les <span className="underline">Règles de sécurité pour les expériences</span> et la <span className="underline">Politique de remboursement des voyageurs</span>.
+              En sélectionnant le bouton ci-dessous, j'accepte les <Link href="/terms" className="underline hover:opacity-70 transition-opacity">Règles de la maison</Link>, les <span className="underline">Règles de sécurité pour les expériences</span> et la <span className="underline">Politique de remboursement des voyageurs</span>.
             </p>
             
             {error && (
@@ -213,7 +232,9 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
               className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-2xl bg-navy py-5 text-[10px] font-bold uppercase tracking-[0.3em] text-white shadow-2xl transition-all hover:bg-gold hover:text-navy disabled:opacity-50 md:w-auto md:px-12"
             >
               {checkoutLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <div role="status" className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent">
+                  <span className="sr-only">Chargement en cours</span>
+                </div>
               ) : (
                 <>
                   Confirmer et payer
@@ -227,7 +248,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
         {/* Right Column: Price Summary Sticky */}
         <div className="relative">
           <div className="sticky top-32 space-y-6">
-            <div className="rounded-[32px] border border-navy/10 bg-white p-6 shadow-xl lg:p-8">
+            <div className="rounded-[32px] border border-navy/10 bg-white p-4 sm:p-6 shadow-xl lg:p-8">
               <div className="flex gap-4 pb-6 border-b border-navy/5">
                 <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-xl">
                   <Image 
@@ -240,11 +261,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">{villa.location}</p>
                   <h4 className="font-display text-lg leading-tight text-navy">{villa.name}</h4>
-                  <div className="flex items-center gap-1 text-[10px] font-bold">
-                    <Star size={12} className="fill-gold text-gold" />
-                    <span>4.98</span>
-                    <span className="text-navy/40 font-normal underline decoration-navy/10 underline-offset-2">128 avis</span>
-                  </div>
+                  {/* Rating masqué — données non dynamiques */}
                 </div>
               </div>
 

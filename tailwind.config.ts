@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "430px",
+      },
       colors: {
         gold: "#D4AF37",
         /**
@@ -33,6 +36,22 @@ const config: Config = {
           "0%":   { opacity: "0", filter: "blur(8px)" },
           "100%": { opacity: "1", filter: "blur(0)"   },
         },
+        "line-draw": {
+          "0%":   { transform: "scaleX(0)", transformOrigin: "left" },
+          "100%": { transform: "scaleX(1)", transformOrigin: "left" },
+        },
+        "stagger-fade": {
+          "0%":   { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "gold-shimmer": {
+          "0%":   { backgroundPosition: "-200% center" },
+          "100%": { backgroundPosition: "200% center" },
+        },
+        "scale-in": {
+          "0%":   { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.6s ease-out forwards",
@@ -40,6 +59,10 @@ const config: Config = {
         shimmer: "shimmer 2s infinite linear",
         "blur-fade": "blur-fade 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
         "fade-in-slow": "blur-fade 0.9s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
+        "line-draw": "line-draw 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+        "stagger-fade": "stagger-fade 0.5s ease-out forwards",
+        "gold-shimmer": "gold-shimmer 2.5s linear infinite",
+        "scale-in": "scale-in 0.3s ease-out forwards",
       },
     },
   },

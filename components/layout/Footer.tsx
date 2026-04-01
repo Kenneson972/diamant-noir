@@ -30,22 +30,22 @@ export const Footer = () => {
             <h4 className="mb-6 text-xs uppercase tracking-[0.2em] text-black/40">{t("footer.explore")}</h4>
             <ul className="space-y-4 text-sm text-navy/70">
               <li>
-                <Link href="/villas" className="transition-colors hover:text-black">
+                <Link href="/villas" className="block py-2 transition-colors hover:text-black">
                   {t("nav.villas")}
                 </Link>
               </li>
               <li>
-                <Link href="/prestations" className="transition-colors hover:text-black">
+                <Link href="/prestations" className="block py-2 transition-colors hover:text-black">
                   {t("nav.prestations")}
                 </Link>
               </li>
               <li>
-                <Link href="/qui-sommes-nous" className="transition-colors hover:text-black">
+                <Link href="/qui-sommes-nous" className="block py-2 transition-colors hover:text-black">
                   {t("nav.about")}
                 </Link>
               </li>
               <li>
-                <Link href="/soumettre-ma-villa" className="transition-colors hover:text-black">
+                <Link href="/soumettre-ma-villa" className="block py-2 transition-colors hover:text-black">
                   {t("footer.submit_villa")}
                 </Link>
               </li>
@@ -56,17 +56,17 @@ export const Footer = () => {
             <h4 className="mb-6 text-xs uppercase tracking-[0.2em] text-black/40">{t("footer.support")}</h4>
             <ul className="space-y-4 text-sm text-navy/70">
               <li>
-                <Link href="/contact" className="transition-colors hover:text-black">
+                <Link href="/contact" className="block py-2 transition-colors hover:text-black">
                   {t("footer.contact_faq")}
                 </Link>
               </li>
               <li>
-                <Link href="/contact#faq" className="transition-colors hover:text-black">
+                <Link href="/contact#faq" className="block py-2 transition-colors hover:text-black">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="transition-colors hover:text-black">
+                <Link href="/terms" className="block py-2 transition-colors hover:text-black">
                   {t("footer.terms")}
                 </Link>
               </li>
@@ -129,7 +129,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-7 text-xs uppercase tracking-[0.1em] text-navy/40 md:mt-16 md:flex-row md:pt-8">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-7 text-xs uppercase tracking-[0.1em] text-navy/55 md:mt-16 md:flex-row md:pt-8">
           <p>© 2026 Diamant Noir. Tous droits réservés.</p>
           <div className="flex gap-6">
             <Link href="/confidentialite" className="transition-colors hover:text-black">

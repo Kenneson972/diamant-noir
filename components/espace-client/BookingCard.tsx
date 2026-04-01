@@ -84,6 +84,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
           </div>
         )}
         <span
+          role="status"
           className={`absolute top-2.5 right-2.5 inline-flex items-center rounded-full border px-2 py-1 uppercase text-[9px] font-bold tracking-[0.2em] ${chipClass}`}
         >
           {status.label}

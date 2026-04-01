@@ -1,3 +1,27 @@
+## 2026-04-02T00:30:00Z | type: docs | Cursor — Log session Claude (kb-mobile-responsive) + vérif checklist vs code + sync règle workspace
+- **agent**: `cursor`
+- **summary**: Journal `docs/logs/2026-04-01.md` : session Claude sur **kb-mobile-responsive** (backdrop ciblé, checklist 22 points, 7 gaps iOS/375–640). **Synchronisation** des fichiers workspace (hors repo `diamant-noir`) : [`.cursor/rules/kb-mobile-responsive.mdc`](../../.cursor/rules/kb-mobile-responsive.mdc), [`client-builder/03-architecture/kb-mobile-responsive.mdc`](../../.cursor/rules/client-builder/03-architecture/kb-mobile-responsive.mdc). Vérification code : `xs` 430px, 44px, safe-area, `pb-[80px]` fiche villa, `.glass-card` — documenté dans le log ; push GitHub du dépôt app.
+- **files**: [`docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`] + hors repo : `DIAMANTNOIR/.cursor/rules/kb-mobile-responsive.mdc`, `DIAMANTNOIR/.cursor/rules/client-builder/03-architecture/kb-mobile-responsive.mdc`
+- **why**: Tracer la doc métier Claude et prouver l’alignement partiel site / règle avant déploiement.
+- **impact**: Règle Karibloom à jour localement ; site inchangé par ce commit sauf logs si déjà modifiés — le push délivre surtout les changements UI mobile déjà dans la branche.
+- **verify**: `npm run build` ; `git push origin main`.
+
+## 2026-04-01T23:50:00Z | type: ui | mobile | Claude Code — Parcours réservation mobile (xs 430px, sticky, 44px)
+- **agent**: `claude`
+- **summary**: Session **Claude Code** : breakpoint Tailwind **`xs: 430px`** ; `BookingSearchBar` / `VillaSelectionCard` / `CheckoutView` (sticky CTA, paddings, tap 44px) ; `SearchResults` (toggles 44px, chips `shrink-0`) ; fiche villa barre book sticky + offset scroll ; `VillasMapView` hauteur carte + safe-area ; landing + `/book` heros `min-h` ; Leaflet attribution 10px dans `globals.css`. Build OK.
+- **files**: [`tailwind.config.ts`, `components/booking/BookingSearchBar.tsx`, `components/booking/VillaSelectionCard.tsx`, `components/booking/CheckoutView.tsx`, `components/booking/SearchResults.tsx`, `app/globals.css`, `app/page.tsx`, `app/book/page.tsx`, `app/villas/[id]/page.tsx`, `components/VillasMapView.tsx`, `docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Renforcer lisibilité et ergonomie mobile sur recherche villa, carte, checkout et fiche produit.
+- **impact**: Meilleure utilisation au pouce sous ~430px, CTA visibles en mobile, carte moins écrasée.
+- **verify**: `npm run build` OK (Claude).
+
+## 2026-04-01T21:30:00Z | type: ui | a11y | perf | Claude Code — 3 vagues (prod, accessibilité, animations)
+- **agent**: `claude`
+- **summary**: Session terminal **Claude Code** : (1) `globals.css` / `page.tsx` / `CheckoutView.tsx` / `espace-client/page.tsx` — scroll & backdrop sous reduced-motion, trust strip, checkout invité + a11y spinners, lien CGU, rating statique masqué, 9px→10px ; (2) `Navbar`, `VillaGallery`, `Chatbot`, `BookingCard`, `Footer` — aria, dialog lightbox, Image Next dans chatbot, focus, reduced-motion ; (3) `tailwind.config.ts` + `globals.css` — keyframes polish + classes + désactivation motion réduite. Build : 44 pages, 0 erreur.
+- **files**: [`app/globals.css`, `app/page.tsx`, `components/booking/CheckoutView.tsx`, `app/espace-client/page.tsx`, `components/layout/Navbar.tsx`, `components/VillaGallery.tsx`, `components/chatbot/Chatbot.tsx`, `components/espace-client/BookingCard.tsx`, `components/layout/Footer.tsx`, `tailwind.config.ts`, `docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Renforcer prod (motion/backdrop), accessibilité et cohérence visuelle avant livraison.
+- **impact**: Parcours checkout et espace client plus propres ; composants marketing/chat/galerie plus conformes WCAG de base ; animations optionnelles et respect `prefers-reduced-motion`.
+- **verify**: `npm run build` OK (Claude) ; `npm run dev` pour smoke local.
+
 ## 2026-04-01T12:00:00Z | type: docs | Cursor — Règle workflow : vérifier localhost après build
 - **agent**: `cursor`
 - **summary**: Ajout dans `kb-workflow-orchestration.mdc` (section « Vérification avant de considérer terminé ») d’une consigne explicite : pour Next.js, ne pas se limiter à `npm run build` — lancer `npm run dev` depuis le bon dossier (`diamant-noir/`), vérifier le port, purge `.next` si besoin, smoke HTTP 200. **Synchronisation** : même paragraphe appliqué au pack source `CLIENT BUILDER KARIBLOOM/client-builder-rules/01-core/kb-workflow-orchestration.mdc`.
