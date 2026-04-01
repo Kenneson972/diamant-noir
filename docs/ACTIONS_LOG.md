@@ -1,3 +1,19 @@
+## 2026-04-01T12:00:00Z | type: docs | Cursor — Règle workflow : vérifier localhost après build
+- **agent**: `cursor`
+- **summary**: Ajout dans `kb-workflow-orchestration.mdc` (section « Vérification avant de considérer terminé ») d’une consigne explicite : pour Next.js, ne pas se limiter à `npm run build` — lancer `npm run dev` depuis le bon dossier (`diamant-noir/`), vérifier le port, purge `.next` si besoin, smoke HTTP 200. **Synchronisation** : même paragraphe appliqué au pack source `CLIENT BUILDER KARIBLOOM/client-builder-rules/01-core/kb-workflow-orchestration.mdc`.
+- **files**: [`.cursor/rules/kb-workflow-orchestration.mdc`, `.cursor/rules/client-builder/01-core/kb-workflow-orchestration.mdc`, `CLIENT BUILDER KARIBLOOM/client-builder-rules/01-core/kb-workflow-orchestration.mdc`, `docs/ACTIONS_LOG.md`]
+- **why**: Retour utilisateur : localhost mal lancé / build vert mais dev cassé.
+- **impact**: Les agents sont guidés pour valider le serveur de dev, pas seulement le build production.
+- **verify**: Relecture des deux fichiers `.mdc`.
+
+## 2026-04-01T00:30:00Z | type: ui | Cursor — Dashboard proprio premium éditorial
+- **agent**: `cursor`
+- **summary**: Aligner l'espace propriétaire sur le design système "luxe/éditorial" du site (navy/or, fonts display, filets or). Création d'un layout unifié avec un `ProprioChrome` persistant. Introduction de `ProprioPageIntro` et `ProprioSectionHeading`. Application de ce nouveau look aux pages Index, Analytics, Submissions, Assistant et au détail d'une Villa, remplaçant l'interface générique et le terminal sombre par un environnement plus chaleureux et premium.
+- **files**: [`components/dashboard/proprio/ui.tsx`, `app/dashboard/proprio/layout.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`]
+- **why**: Demande client pour un design plus aligné sur le positionnement luxe de la marque au sein de l'espace admin/proprio.
+- **impact**: Le dashboard est plus luxueux, avec un header unifié, des intros de pages narratives, une interface assistant plus "salon privé", et une gestion unifiée de la navigation interne.
+- **verify**: `npm run lint` OK, `npm run build` OK.
+
 ## 2026-03-31T23:35:00Z | type: ui | Cursor — Refonte mobile Navbar + Drawer + Chatbot
 - **agent**: `cursor`
 - **summary**: Refonte mobile-first de la barre de navigation avec logo centré en position absolue, simplification des actions visibles sur mobile (CTA Réserver only), et déplacement des actions secondaires dans le drawer (Téléphone, Favoris, Connexion/Espace client). Ajustement du chatbot mobile avec FAB plus discret et cibles tactiles explicites dans l’entête.

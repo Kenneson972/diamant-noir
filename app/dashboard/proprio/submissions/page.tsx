@@ -20,6 +20,8 @@ type Submission = {
   created_at: string;
 };
 
+import { ProprioPageIntro } from "@/components/dashboard/proprio/ui";
+
 export default function SubmissionsPage() {
   const router = useRouter();
   const supabase = getSupabaseBrowser();
@@ -99,19 +101,13 @@ export default function SubmissionsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-offwhite">
-      <header className="safe-top sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
-        <div className="page-px mx-auto flex h-16 max-w-7xl items-center justify-between">
-          <Link
-            href="/dashboard/proprio"
-            className="flex items-center gap-2 text-navy/70 hover:text-navy"
-          >
-            <ArrowLeft size={20} />
-            Retour
-          </Link>
-          <h1 className="font-display text-lg text-navy">Soumissions villas</h1>
-        </div>
-      </header>
+    <>
+      <ProprioPageIntro
+        eyebrow="Leads & Prospection"
+        title="Soumissions de villas"
+        subtitle="Gérez les demandes de propriétaires souhaitant rejoindre le catalogue Diamant Noir."
+        variant="white"
+      />
 
       <div className="page-px mx-auto max-w-4xl py-8 md:py-10">
         {loading ? (
@@ -127,21 +123,21 @@ export default function SubmissionsPage() {
             {submissions.map((s) => (
               <li
                 key={s.id}
-                className="bg-white border border-navy/10 rounded-xl p-4 sm:p-6"
+                className="group bg-white border border-navy/10 shadow-sm rounded-2xl p-6 transition-all hover:shadow-md hover:border-gold/30"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-display text-lg text-navy">{s.name}</span>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-display text-xl text-navy">{s.name}</span>
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full ${
                           s.status === "pending"
-                            ? "bg-amber-100 text-amber-800"
+                            ? "bg-gold/10 text-gold"
                             : s.status === "accepted"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-emerald-500/10 text-emerald-600"
                             : s.status === "rejected"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-sky-100 text-sky-800"
+                            ? "bg-red-500/10 text-red-600"
+                            : "bg-navy/5 text-navy/70"
                         }`}
                       >
                         {statusLabel[s.status] || s.status}
@@ -149,13 +145,13 @@ export default function SubmissionsPage() {
                     </div>
                     <a
                       href={`mailto:${s.email}`}
-                      className="flex items-center gap-1 text-sm text-navy/70 hover:text-gold"
+                      className="flex items-center gap-1.5 text-sm text-navy/70 hover:text-gold transition-colors"
                     >
                       <Mail size={14} />
                       {s.email}
                     </a>
                     {s.villa_name && (
-                      <p className="flex items-center gap-1 text-sm text-navy/70">
+                      <p className="flex items-center gap-1.5 text-sm text-navy/70 mt-1">
                         <Home size={14} />
                         {s.villa_name}
                         {s.villa_location && ` — ${s.villa_location}`}
@@ -166,21 +162,21 @@ export default function SubmissionsPage() {
                         href={s.airbnb_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-gold hover:underline"
+                        className="text-sm text-gold hover:underline mt-1 inline-block font-medium"
                       >
                         Voir annonce Airbnb
                       </a>
                     )}
                     {s.no_photos && (
-                      <p className="text-xs text-navy/60">Sans photos — Diamant s&apos;en charge</p>
+                      <p className="text-[11px] uppercase tracking-widest font-bold text-navy/40 mt-2">Sans photos — Diamant s&apos;en charge</p>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
                     {s.status === "pending" && (
                       <>
                         <Button
                           size="sm"
-                          className="bg-green-600 hover:bg-green-700 text-white rounded-full"
+                          className="bg-navy text-white hover:bg-gold hover:text-navy rounded-full tap-target transition-all"
                           onClick={() => updateStatus(s.id, "accepted")}
                           disabled={updating === s.id}
                         >
@@ -190,7 +186,7 @@ export default function SubmissionsPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-red-200 text-red-700 hover:bg-red-50 rounded-full"
+                          className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 rounded-full tap-target"
                           onClick={() => updateStatus(s.id, "rejected")}
                           disabled={updating === s.id}
                         >
@@ -200,25 +196,27 @@ export default function SubmissionsPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="rounded-full"
+                          className="border-navy/10 text-navy/70 hover:bg-navy/5 hover:text-navy rounded-full tap-target"
                           onClick={() => updateStatus(s.id, "info_requested")}
                           disabled={updating === s.id}
                         >
                           <MessageCircle size={14} />
-                          Demander infos
+                          Infos
                         </Button>
                       </>
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-navy/50 mt-3">
-                  Reçue le {new Date(s.created_at).toLocaleDateString("fr-FR")}
-                </p>
+                <div className="mt-6 pt-4 border-t border-navy/5">
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-navy/40">
+                    Reçue le {new Date(s.created_at).toLocaleDateString("fr-FR")}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
-    </main>
+    </>
   );
 }

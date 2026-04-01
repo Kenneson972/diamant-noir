@@ -15,6 +15,8 @@ type VillaStats = {
   revenue: number;
 };
 
+import { ProprioPageIntro } from "@/components/dashboard/proprio/ui";
+
 export default function AnalyticsPage() {
   const router = useRouter();
   const supabase = getSupabaseBrowser();
@@ -59,19 +61,13 @@ export default function AnalyticsPage() {
   }, [supabase, router]);
 
   return (
-    <main className="min-h-screen bg-offwhite">
-      <header className="safe-top sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
-        <div className="page-px mx-auto flex h-16 max-w-7xl items-center justify-between gap-2">
-          <Link href="/dashboard/proprio" className="tap-target flex items-center gap-2 text-navy/70 hover:text-navy">
-            <ArrowLeft size={20} />
-            Retour
-          </Link>
-          <h1 className="flex min-w-0 items-center gap-2 truncate font-display text-base text-navy sm:text-lg">
-            <BarChart3 size={22} />
-            <span className="truncate">Analytics par villa</span>
-          </h1>
-        </div>
-      </header>
+    <>
+      <ProprioPageIntro
+        eyebrow="Performances"
+        title="Analytics par villa"
+        subtitle="Suivez les vues, clics, réservations et chiffre d'affaires généré pour chacune de vos propriétés."
+        variant="white"
+      />
 
       <div className="page-px mx-auto max-w-5xl py-8 md:py-10">
         {loading ? (
@@ -109,6 +105,6 @@ export default function AnalyticsPage() {
           </div>
         )}
       </div>
-    </main>
+    </>
   );
 }

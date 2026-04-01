@@ -116,16 +116,16 @@ export default function AdminAssistantPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full flex-col bg-[#0A0A0F] text-white md:h-screen md:w-screen md:flex-row md:overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col bg-navy text-white md:h-screen md:w-screen md:flex-row md:overflow-hidden">
       {/* LEFT PANE: TERMINAL */}
-      <div className="flex w-full max-w-none flex-col border-b border-white/5 bg-[#0D0D14] md:w-[420px] md:min-w-[380px] md:max-w-[450px] md:border-b-0 md:border-r">
+      <div className="flex w-full max-w-none flex-col border-b border-white/10 bg-black/20 md:w-[420px] md:min-w-[380px] md:max-w-[450px] md:border-b-0 md:border-r">
         {/* Terminal Header */}
-        <div className="flex items-center justify-between border-b border-white/5 p-4 md:p-6">
+        <div className="flex items-center justify-between border-b border-white/10 p-4 md:p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
-              <Terminal size={18} />
+              <Sparkles size={18} />
             </div>
-            <h1 className="font-display text-sm font-bold uppercase tracking-widest text-gold/80">Terminal Admin</h1>
+            <h1 className="font-display text-base uppercase tracking-widest text-gold">Assistant IA</h1>
           </div>
           <button 
             onClick={() => router.push("/dashboard/proprio")}
@@ -186,7 +186,7 @@ export default function AdminAssistantPage() {
       </div>
 
       {/* RIGHT PANE: VISUAL CONTEXT */}
-      <div className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-4 custom-scrollbar md:p-12">
+      <div className="flex-1 overflow-y-auto bg-navy/50 p-4 custom-scrollbar md:p-12">
         {/* STRATEGIC ALERT BAR */}
         {strategicAlert && (
           <div className={`mb-8 flex items-center gap-4 rounded-3xl border p-6 animate-in slide-in-from-top-4 duration-500 ${
@@ -251,7 +251,7 @@ export default function AdminAssistantPage() {
             </div>
             <div className="space-y-4 max-w-xl">
               <h2 className="font-display text-5xl text-white">Hub Intelligence V2</h2>
-              <p className="text-white/40 leading-relaxed uppercase tracking-[0.2em] text-xs">
+              <p className="text-white/40 leading-relaxed uppercase tracking-[0.2em] text-[11px] font-bold">
                 Votre directeur de stratégie IA proactif pour Diamant Noir. 
                 Analyse, détection d'anomalies et croissance.
               </p>

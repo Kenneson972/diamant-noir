@@ -12,6 +12,7 @@ import { getSupabaseBrowser } from "@/lib/supabase"
 import { AdminCalendar } from "@/components/AdminCalendar"
 import { revalidateVillas } from "@/lib/actions"
 import { ActionMenu } from "@/components/dashboard/ActionMenu"
+import { ProprioPageIntro, ProprioSectionHeading } from "@/components/dashboard/proprio/ui"
 
 // Recharts for stats
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -932,45 +933,29 @@ export default function VillaDashboard() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-offwhite">
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/95 md:bg-white/80 md:backdrop-blur-md">
-        <div className="mx-auto flex min-h-24 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-0">
-          <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => router.push("/dashboard/proprio")}
-              className="rounded-full h-10 w-10 p-0 text-navy/40 hover:text-navy hover:bg-navy/5"
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <div className="flex min-w-0 flex-col">
-              <div className="flex min-w-0 items-center gap-3">
-                <h1 className="truncate font-display text-xl leading-none text-navy sm:text-2xl">{villa?.name}</h1>
-                <span className={`rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
-                  form.is_published ? "bg-emerald-50 text-emerald-600" : "bg-navy/5 text-navy/40"
-                }`}>
-                  {form.is_published ? "Publié" : "Brouillon"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] uppercase tracking-widest text-gold font-bold">Gestion Villa</span>
-                <span className="h-1 w-1 rounded-full bg-navy/10" />
-                <Link href={`/villas/${villaId}`} target="_blank" className="text-[10px] uppercase tracking-widest text-navy/40 hover:text-navy flex items-center gap-1">
-                  Voir en ligne <ExternalLink size={10} />
-                </Link>
-              </div>
-            </div>
+    <>
+      <ProprioPageIntro
+        eyebrow="Éditeur de Villa"
+        title={villa?.name || "Chargement..."}
+        variant="white"
+        actions={
+          <div className="flex items-center gap-4">
+            <span className={`rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
+              form.is_published ? "bg-emerald-50 text-emerald-600" : "bg-navy/5 text-navy/40"
+            }`}>
+              {form.is_published ? "Publié" : "Brouillon"}
+            </span>
+            {!isNew && (
+              <Link href={`/villas/${villaId}`} target="_blank" className="tap-target text-[10px] uppercase tracking-widest text-navy/60 hover:text-navy flex items-center gap-2 font-bold">
+                Voir en ligne <ExternalLink size={14} />
+              </Link>
+            )}
           </div>
-          <Button variant="ghost" size="sm" onClick={handleSignOut} className="tap-target rounded-full text-navy/60 hover:text-navy">
-            <LogOut size={18} />
-          </Button>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main Content Area with Tabs */}
-      <div className="mx-auto w-full max-w-7xl flex-1 p-6 pb-20">
+      <div className="page-px mx-auto w-full max-w-7xl flex-1 py-8 md:py-10">
         <Tabs defaultValue="planning" className="space-y-8">
           <div className="flex flex-col gap-6 border-b pb-6 md:flex-row md:items-center md:justify-between">
             <TabsList className="h-auto w-full overflow-x-auto rounded-2xl bg-navy/5 p-1 no-scrollbar md:w-auto">
@@ -1050,7 +1035,7 @@ export default function VillaDashboard() {
             <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
               <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
                 <div className="mb-8 flex items-center justify-between">
-                  <h3 className="font-display text-2xl text-navy">Disponibilités</h3>
+                  <ProprioSectionHeading title="Disponibilités" />
                   <div className="flex gap-2">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">
                       <span className="h-2 w-2 rounded-full bg-emerald-600" />
@@ -1158,7 +1143,7 @@ export default function VillaDashboard() {
           <TabsContent value="content" className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm outline-none space-y-8">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-3xl text-navy">Éditeur de Villa</h3>
+                <ProprioSectionHeading title="Éditeur de Villa" />
                 <div className="flex items-center gap-3 rounded-full bg-navy/5 px-4 py-2">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Statut:</span>
                   <label className="relative inline-flex cursor-pointer items-center">
@@ -1557,7 +1542,7 @@ export default function VillaDashboard() {
 
           <TabsContent value="settings" className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm outline-none space-y-8">
             <div className="flex flex-col gap-2">
-              <h3 className="font-display text-3xl text-navy">Gestion Financière & Tarifs</h3>
+              <ProprioSectionHeading title="Gestion Financière & Tarifs" />
               <p className="text-navy/60">Configurez vos prix saisonniers et consultez les performances de {villa?.name}.</p>
             </div>
 
@@ -1663,7 +1648,7 @@ export default function VillaDashboard() {
           <TabsContent value="reservations" className="space-y-8 outline-none">
             <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="font-display text-3xl text-navy">Registre des Réservations</h3>
+                <ProprioSectionHeading title="Registre des Réservations" />
                 <div className="flex gap-3">
                   <Button variant="outline" size="sm" className="rounded-full border-navy/10 gap-2 h-10 px-6 text-[10px] font-bold uppercase tracking-widest">
                     <Filter size={14} /> Filtrer
@@ -1824,7 +1809,7 @@ export default function VillaDashboard() {
               <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                   <div>
-                    <h3 className="font-display text-3xl text-navy">Carnet de Maintenance</h3>
+                    <ProprioSectionHeading title="Carnet de Maintenance" />
                     <p className="text-sm text-navy/40">Suivez les tâches et l'entretien de la propriété.</p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
@@ -1888,6 +1873,6 @@ export default function VillaDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </main>
+    </>
   )
 }
