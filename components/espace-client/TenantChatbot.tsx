@@ -16,6 +16,7 @@ interface TenantChatbotProps {
   guestName?: string;
   bookingId?: string;
   userId?: string; // Supabase auth user.id — used for stable localStorage session key
+  villaId?: string;
 }
 
 // ── Session ID (stable localStorage) ─────────────────────────────────────────
@@ -64,6 +65,7 @@ export function TenantChatbot({
   guestName,
   bookingId,
   userId,
+  villaId,
 }: TenantChatbotProps) {
   const supabase = getSupabaseBrowser();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -121,7 +123,7 @@ export function TenantChatbot({
     if (!supabase) return;
     try {
       // @ts-ignore — chat_messages may not be in generated Supabase types yet
-      await supabase.from("chat_messages").insert({
+      await supabase.from("chat_messages").upsert({
         session_id: sessionId,
         user_id: userId ?? guestEmail,
         role,
@@ -147,7 +149,7 @@ export function TenantChatbot({
       const res = await fetch("/api/chat/tenant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, sessionId, bookingId, guestEmail }),
+        body: JSON.stringify({ message: trimmed, sessionId, bookingId, villaId, guestEmail }),
       });
       const data = await res.json();
       const reply: string = data.success

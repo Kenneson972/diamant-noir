@@ -166,6 +166,7 @@ export default function MessageriePage() {
           guestName={user.name}
           bookingId={booking?.id}
           userId={userId}
+          villaId={booking?.villa_id}
         />
       </div>
     </div>
