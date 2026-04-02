@@ -179,11 +179,8 @@ export default function ChecklistPage() {
 
     if (!booking || !supabase) return;
     setSaving(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
-      .from("bookings")
-      .update({ checklist_state: next })
-      .eq("id", booking.id);
+    // @ts-ignore — checklist_state JSONB column not yet in Supabase generated types
+    await supabase.from("bookings").update({ checklist_state: next }).eq("id", booking.id);
     setSaving(false);
   };
 
@@ -291,7 +288,7 @@ export default function ChecklistPage() {
                         ? "bg-[#D4AF37] border-[#D4AF37]"
                         : "border-[rgba(13,27,42,0.18)] hover:border-[#D4AF37]",
                     ].join(" ")}
-                    aria-checked={isChecked}
+                    aria-pressed={isChecked}
                     aria-label={`Marquer "${label}" comme ${isChecked ? "non complété" : "complété"}`}
                   >
                     {isChecked && (
