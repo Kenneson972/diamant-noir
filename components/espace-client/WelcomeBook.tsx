@@ -22,6 +22,20 @@ const isEmpty = (v: WelcomeBookProps["villa"]) =>
   !v.emergency_contacts;
 
 export function WelcomeBook({ villa }: WelcomeBookProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyPassword = async () => {
+    if (!villa.wifi_password) return;
+    try {
+      await navigator.clipboard.writeText(villa.wifi_password);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API not available
+    }
+  };
+
   const sections: Array<{
     id: "wifi" | "checkout" | "reco" | "emergency";
     title: string;
@@ -35,19 +49,50 @@ export function WelcomeBook({ villa }: WelcomeBookProps) {
       icon: <Wifi size={16} className="text-gold shrink-0" />,
       visible: Boolean(villa.wifi_name || villa.wifi_password),
       content: (
-        <div className="text-sm text-navy/70 leading-relaxed space-y-1">
+        <div className="text-sm text-navy/70 leading-relaxed space-y-3">
           {villa.wifi_name ? (
             <p>
               <span className="font-medium text-navy">Réseau :</span> {villa.wifi_name}
             </p>
           ) : null}
           {villa.wifi_password ? (
-            <p>
-              <span className="font-medium text-navy">Mot de passe :</span>{" "}
-              <code className="bg-navy/5 px-2 py-0.5 rounded text-navy font-mono text-xs border border-navy/10">
-                {villa.wifi_password}
-              </code>
-            </p>
+            <div>
+              <p className="font-medium text-navy mb-2">Mot de passe :</p>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 border border-navy/10 bg-offwhite px-3 py-1.5 flex-1">
+                  <span className="font-mono text-xs text-navy flex-1 select-all">
+                    {showPassword ? villa.wifi_password : "•".repeat(villa.wifi_password.length)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="text-navy/30 hover:text-navy transition-colors"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? (
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                        <path d="M2 8s2-5 6-5 6 5 6 5-2 5-6 5-6-5-6-5z" stroke="currentColor" strokeWidth="1" />
+                        <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1" />
+                        <path d="M2 2l12 12" stroke="currentColor" strokeWidth="1" />
+                      </svg>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                        <path d="M2 8s2-5 6-5 6 5 6 5-2 5-6 5-6-5-6-5z" stroke="currentColor" strokeWidth="1" />
+                        <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={copyPassword}
+                  className="text-[9px] font-bold uppercase tracking-[0.15em] border border-navy/15 px-3 py-1.5 text-navy/50 hover:border-gold hover:text-gold transition-colors shrink-0"
+                  aria-label="Copier le mot de passe Wi-Fi"
+                >
+                  {copied ? "Copié ✓" : "Copier"}
+                </button>
+              </div>
+            </div>
           ) : null}
         </div>
       ),
