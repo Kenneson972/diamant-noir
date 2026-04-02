@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageTopbar } from "@/components/espace-client/PageTopbar";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 function BookingCardSkeleton() {
@@ -247,6 +248,8 @@ export default function EspaceClientPage() {
 
   if (bookings.length === 0) {
     return (
+      <>
+        <PageTopbar title="Mon Séjour" />
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -303,11 +306,17 @@ export default function EspaceClientPage() {
           </CardContent>
         </Card>
       </div>
+      </>
     );
   }
 
   // ── Main dashboard ──
   return (
+    <>
+      <PageTopbar
+        title="Mon Séjour"
+        badge={daysUntil !== null && daysUntil > 0 ? `J — ${daysUntil}` : undefined}
+      />
     <div className="space-y-10">
       {/* Header personnalisé */}
       <div>
@@ -399,5 +408,6 @@ export default function EspaceClientPage() {
         </Link>
       </div>
     </div>
+    </>
   );
 }
