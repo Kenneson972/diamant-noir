@@ -88,6 +88,7 @@ const NAV_ITEMS = [
   },
 ] as const;
 
+// Bottom bar mobile: 4 main tabs (Conciergerie accessible via desktop sidebar or future "Plus" menu)
 const BOTTOM_NAV = NAV_ITEMS.slice(0, 4);
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -197,14 +198,15 @@ export function EspaceClientShell({
           <p className="font-display text-[14px] font-normal text-[#0D1B2A]">
             Espace Client
           </p>
-          <div
+          <button
+            type="button"
             className="w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] shrink-0 cursor-pointer"
             style={{ background: "linear-gradient(135deg, #D4AF37, #9A7B24)", color: "#0D1B2A", fontFamily: "var(--font-playfair)", display: "flex", alignItems: "center", justifyContent: "center" }}
             onClick={onSignOut}
-            title="Déconnexion"
+            aria-label="Déconnexion"
           >
             {userInitial ?? "?"}
-          </div>
+          </button>
         </header>
 
         {/* Zone contenu */}

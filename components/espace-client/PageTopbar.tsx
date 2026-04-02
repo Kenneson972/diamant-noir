@@ -6,7 +6,7 @@ interface PageTopbarProps {
 
 export function PageTopbar({ section = "Diamant Noir", title, badge }: PageTopbarProps) {
   return (
-    <div className="h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] flex items-center px-8 shrink-0">
+    <div className="hidden md:flex h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] items-center px-8 shrink-0">
       <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">
         {section}
       </span>
