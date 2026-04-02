@@ -43,8 +43,10 @@ export default function LivretPrintPage() {
         .eq("id", bk.villa_id)
         .single();
 
-      setVilla(villaRaw as VillaPrint);
-      setDates({ start: bk.start_date, end: bk.end_date });
+      if (villaRaw) {
+        setVilla(villaRaw as unknown as VillaPrint);
+        setDates({ start: bk.start_date, end: bk.end_date });
+      }
       setReady(true);
     })();
   }, [supabase]);
