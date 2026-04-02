@@ -36,7 +36,7 @@ export default function MessageriePage() {
     })();
   }, [supabase]);
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -71,8 +71,8 @@ export default function MessageriePage() {
       >
         <CardContent className="p-0 h-full">
           <TenantChatbot
-            guestEmail={user!.email}
-            guestName={user!.name}
+            guestEmail={user.email}
+            guestName={user.name}
             bookingId={latestBookingId}
           />
         </CardContent>
