@@ -161,8 +161,6 @@ export default function EspaceClientPage() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string | undefined>(undefined);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-  const [isAuthed, setIsAuthed] = useState<boolean>(false);
-
   useEffect(() => {
     if (!supabase) {
       setLoading(false);
@@ -174,12 +172,9 @@ export default function EspaceClientPage() {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session?.user?.email) {
-        setIsAuthed(false);
         setLoading(false);
         return;
       }
-
-      setIsAuthed(true);
       const email = session.user.email;
       setFirstName(session.user.user_metadata?.full_name?.split(" ")[0]);
       setAvatarUrl(session.user.user_metadata?.avatar_url);
@@ -247,38 +242,6 @@ export default function EspaceClientPage() {
           </div>
         </div>
       </div>
-    );
-  }
-
-  // ── Empty state ──
-  if (!isAuthed) {
-    return (
-      <Card className="border border-navy/10 bg-white shadow-none rounded-none">
-        <CardContent className="px-8 py-14 text-center space-y-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">Espace Client</p>
-          <p className="font-display text-xl text-navy">Connexion requise</p>
-          <p className="text-sm text-navy/50 max-w-md mx-auto">
-            Connectez-vous pour voir vos réservations et votre livret d’accueil.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/login?redirect=/espace-client" className="no-underline">
-              <Button
-                className="rounded-none uppercase text-[10px] font-bold tracking-[0.25em] px-6"
-              >
-                Se connecter
-              </Button>
-            </Link>
-            <Link href="/villas" className="no-underline">
-              <Button
-                variant="outline"
-                className="rounded-none border-navy/25 text-navy uppercase text-[10px] font-bold tracking-[0.25em] px-6"
-              >
-                Voir les villas
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
     );
   }
 
