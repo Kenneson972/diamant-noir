@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
 import { cookies } from "next/headers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -25,6 +25,13 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
 });
 
 export const metadata = {
@@ -55,7 +62,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className="scroll-smooth">
-      <body className={`${inter.variable} ${playfair.variable} bg-offwhite`}>
+      <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} bg-offwhite`}>
         <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <WishlistProvider>
             <CompareProvider>
