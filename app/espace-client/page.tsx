@@ -32,126 +32,64 @@ function BookingCardSkeleton() {
 }
 
 // ─── Hero upcoming stay ───────────────────────────────────────────────────────
-function villaHeroSrc(booking: { villa?: { image_url?: string | null; image_urls?: string[] | null } }) {
-  const v = booking.villa;
-  if (!v) return "/villa-hero.jpg";
-  if (v.image_url) return v.image_url;
-  const first = v.image_urls?.[0];
-  return first || "/villa-hero.jpg";
-}
-
 function UpcomingStayHero({ booking }: { booking: any }) {
   const startDate = new Date(booking.start_date);
   const endDate = new Date(booking.end_date);
   const daysUntil = Math.ceil((startDate.getTime() - Date.now()) / 86400000);
   const nights = Math.round((endDate.getTime() - startDate.getTime()) / 86400000);
   const isToday = daysUntil <= 0 && Date.now() < endDate.getTime();
-  const heroImg = villaHeroSrc(booking);
 
-  // Progress: 0% = 30+ days, 100% = today
-  const maxDays = 30;
-  const progressValue = isToday ? 100 : Math.max(0, Math.round(((maxDays - daysUntil) / maxDays) * 100));
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
 
   return (
-    <Card className="overflow-hidden border border-navy/10 bg-navy shadow-none rounded-none p-0">
-      <CardContent className="p-0 relative">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url('${heroImg.replace(/'/g, "%27")}')` }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy/80 to-transparent" aria-hidden />
+    <div
+      className="bg-white border border-[rgba(13,27,42,0.07)] flex flex-col sm:flex-row sm:items-start gap-0"
+      style={{ borderTop: "2px solid #D4AF37" }}
+    >
+      {/* Gauche */}
+      <div className="flex-1 min-w-0 px-6 py-6">
+        <p className="text-[8px] tracking-[0.26em] uppercase text-[#D4AF37] mb-3">
+          {isToday ? "Séjour en cours" : "Votre prochain séjour"}
+        </p>
+        <h2 className="font-display text-2xl font-normal text-[#0D1B2A] mb-2">
+          {booking.villa?.name ?? "Villa Diamant Noir"}
+        </h2>
+        {booking.villa?.location && (
+          <p className="font-cormorant italic text-[14px] font-light text-[rgba(13,27,42,0.35)] mb-1">
+            {booking.villa.location}, Martinique
+          </p>
+        )}
+        <p className="font-cormorant italic text-[14px] font-light text-[rgba(13,27,42,0.45)] mb-5">
+          {fmt(startDate)} → {fmt(endDate)} · {nights} nuit{nights > 1 ? "s" : ""}
+        </p>
+        <Link
+          href="/espace-client/livret"
+          className="text-[8px] tracking-[0.2em] uppercase text-[#D4AF37] hover:opacity-75 transition-opacity"
+          style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}
+        >
+          Voir le livret →
+        </Link>
+      </div>
 
-        <div className="relative z-10 p-6 md:p-8">
-          <span
-            className={`mb-4 inline-flex items-center rounded-full border px-2 py-1 uppercase text-[10px] font-bold tracking-[0.35em] ${
-              isToday
-                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                : "border-gold/25 bg-gold/10 text-white"
-            }`}
-          >
-            {isToday ? "Séjour en cours" : `Prochain séjour · J-${daysUntil}`}
-          </span>
+      {/* Séparateur vertical desktop */}
+      <div className="hidden sm:block w-px self-stretch bg-[rgba(13,27,42,0.07)]" />
+      {/* Séparateur horizontal mobile */}
+      <div className="sm:hidden h-px mx-6 bg-[rgba(13,27,42,0.07)]" />
 
-          <h2 className="font-display text-2xl md:text-3xl text-white mb-1">
-            {booking.villa?.name ?? "Villa Diamant Noir"}
-          </h2>
-          {booking.villa?.location && (
-            <p className="text-sm text-white/45 mb-4 tracking-wide">
-              {booking.villa.location}, Martinique
-            </p>
-          )}
-
-          <div className="mb-6 h-px max-w-md bg-white/15" />
-
-          <div className="flex flex-wrap gap-8 mb-5">
-            {[
-              {
-                label: "Arrivée",
-                value: startDate.toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-              },
-              {
-                label: "Départ",
-                value: endDate.toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-              },
-              { label: "Durée", value: `${nights} nuit${nights > 1 ? "s" : ""}` },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-white/30 mb-1">
-                  {label}
-                </p>
-                <p className="text-sm font-medium text-white">{value}</p>
-              </div>
-            ))}
-          </div>
-
-          {!isToday && daysUntil <= maxDays && (
-            <div className="mb-6 max-w-xs">
-              <div
-                role="progressbar"
-                aria-valuenow={progressValue}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={`Progression avant le séjour — J-${daysUntil}`}
-                className="bg-white/10 h-1 rounded-full overflow-hidden"
-              >
-                <div className="bg-gold h-full rounded-full" style={{ width: `${progressValue}%` }} />
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-3">
-            <Link href={`/espace-client/reservations/${booking.id}`} className="no-underline">
-              <Button
-                size="sm"
-                className="rounded-none bg-white/10 text-white border border-white/20 hover:bg-white hover:text-navy uppercase text-[10px] font-bold tracking-[0.25em] px-5 py-2.5 gap-2"
-              >
-                <BookOpen size={13} strokeWidth={1.25} />
-                Livret d&apos;accueil
-              </Button>
-            </Link>
-            <Link href="/espace-client/messagerie" className="no-underline">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="rounded-none text-white/80 hover:text-white border border-white/10 hover:border-white/25 hover:bg-white/10 uppercase text-[10px] font-bold tracking-[0.25em] px-5 py-2.5 gap-2"
-              >
-                <MessageCircle size={13} strokeWidth={1.25} />
-                Conciergerie
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Droite — compteur jours */}
+      <div className="px-6 py-6 flex flex-col items-start sm:items-end justify-center gap-1 shrink-0 min-w-[100px]">
+        <p
+          className="font-display font-normal text-[#0D1B2A] leading-none"
+          style={{ fontSize: "40px" }}
+        >
+          {isToday ? "·" : Math.max(0, daysUntil)}
+        </p>
+        <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.32)]">
+          {isToday ? "Séjour en cours" : "jours"}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -358,6 +296,77 @@ export default function EspaceClientPage() {
 
       {/* Hero — prochain séjour */}
       {upcomingBooking && <UpcomingStayHero booking={upcomingBooking} />}
+
+      {/* Accès rapide */}
+      {upcomingBooking && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 border border-[rgba(13,27,42,0.07)]">
+          {[
+            {
+              label: "Avant l'arrivée",
+              sub: "Checklist",
+              href: "/espace-client/checklist",
+              icon: (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <rect x="2" y="2" width="12" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
+                  <path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1" />
+                </svg>
+              ),
+            },
+            {
+              label: "Wi-Fi",
+              sub: "Accès réseau",
+              href: "/espace-client/livret",
+              icon: (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M1 6c1.9-2 4.5-3 7-3s5.1 1 7 3M4 9.5c1.1-1.1 2.4-1.7 4-1.7s2.9.6 4 1.7M8 13h.01" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                </svg>
+              ),
+            },
+            {
+              label: "Calendrier",
+              sub: "Planifier le séjour",
+              href: "/espace-client/checklist",
+              icon: (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <rect x="2" y="3" width="12" height="11" rx="1" stroke="currentColor" strokeWidth="1" />
+                  <path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" strokeWidth="1" />
+                </svg>
+              ),
+            },
+            {
+              label: "PDF Livret",
+              sub: "Télécharger",
+              href: "/espace-client/livret/print",
+              icon: (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M3 2h7l3 3v9H3z" stroke="currentColor" strokeWidth="1" />
+                  <path d="M10 2v3h3M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1" />
+                </svg>
+              ),
+            },
+          ].map(({ label, sub, href, icon }) => (
+            <Link
+              key={label}
+              href={href}
+              className={[
+                "group flex flex-col gap-[10px] px-5 py-5",
+                "border-l border-[rgba(13,27,42,0.07)] first:border-l-0",
+                "hover:bg-[rgba(13,27,42,0.015)] transition-colors no-underline",
+              ].join(" ")}
+            >
+              <span className="text-[rgba(13,27,42,0.28)] group-hover:text-[rgba(13,27,42,0.5)] transition-colors">
+                {icon}
+              </span>
+              <span className="text-[8px] tracking-[0.2em] uppercase text-[#0D1B2A] font-medium">
+                {label}
+              </span>
+              <span className="font-cormorant italic text-[13px] font-light text-[rgba(13,27,42,0.4)]">
+                {sub}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Autres réservations */}
       {otherBookings.length > 0 && (
