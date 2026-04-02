@@ -357,9 +357,19 @@ body { font-size: 16px; line-height: 1.6; }
 /* Entrée modale / lightbox */
 .modal-enter { animation: scale-in 0.25s ease-out forwards; }
 
+/* Chat — Typing indicator dots */
+@keyframes dn-typing-bounce {
+  0%, 60%, 100% { opacity: 0.2; transform: translateY(0); }
+  30% { opacity: 0.9; transform: translateY(-3px); }
+}
+.dn-typing-dot {
+  display: inline-block;
+  animation: dn-typing-bounce 1.2s ease-in-out infinite;
+}
+
 /* Désactiver toutes les nouvelles animations si reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .stagger-item, .line-luxury-animated, .modal-enter {
+  .stagger-item, .line-luxury-animated, .modal-enter, .dn-typing-dot {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
