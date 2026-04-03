@@ -9,20 +9,8 @@ export const runtime = "nodejs";
  * Cron Vercel (toutes les heures) — synchronise tous les canaux OTA de toutes les villas.
  * Compatible legacy (ical_url Airbnb uniquement) ET nouveau format (ota_channels JSONB).
  */
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const vercelCronHeader = request.headers.get("x-vercel-cron");
-    const cronSecret = process.env.CRON_SECRET || process.env.SYNC_CRON_SECRET;
-    const authHeader = request.headers.get("authorization");
-
-    if (vercelCronHeader !== "1") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized cron request" }, { status: 401 });
-    }
-
     if (
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
       !process.env.SUPABASE_SERVICE_ROLE_KEY

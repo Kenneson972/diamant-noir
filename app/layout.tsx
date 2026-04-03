@@ -34,6 +34,12 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
+};
+
 export const metadata = {
   title: { default: "Diamant Noir | Conciergerie de luxe Martinique", template: "%s | Diamant Noir" },
   description: "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.",
@@ -62,6 +68,9 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className="scroll-smooth">
+      <head>
+        <link rel="stylesheet" href="/heroui.min.css" />
+      </head>
       <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} bg-offwhite`}>
         <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <WishlistProvider>

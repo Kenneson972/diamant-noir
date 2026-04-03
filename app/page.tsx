@@ -1,21 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import {
-  ArrowRight,
-  Star,
-  Calendar,
-  ShieldCheck,
-  Building2,
-  Headphones,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowRight, Star, Calendar, ShieldCheck } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { unstable_noStore as noStore } from "next/cache";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { BrandLogo } from "@/components/layout/BrandLogo";
-import { BookingSearchBar } from "@/components/booking/BookingSearchBar";
 import { HomeAudienceScroll } from "@/components/home/HomeAudienceScroll";
+import { HomeHeroPrimaryActions } from "@/components/home/HomeHeroPrimaryActions";
+import { ProprietairesTransitionLink } from "@/components/home/ProprietairesTransitionLink";
 
 export const dynamic = "force-dynamic";
 
@@ -102,50 +95,10 @@ export default async function HomePage() {
               Martinique · Collection privée
             </p>
             <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-75 md:max-w-lg md:text-base">
-              Une même page pour les voyageurs et les propriétaires — choisissez votre parcours.
+              Réservez un séjour d&apos;exception au cœur de la Martinique — villas privées, conciergerie dédiée.
             </p>
 
-            <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-100 sm:grid-cols-2 sm:gap-4">
-              <a
-                href="#reserver-un-sejour"
-                className="group flex min-h-[48px] flex-col items-start gap-0.5 rounded-none border border-white/28 bg-white/[0.12] px-4 py-3.5 text-left backdrop-blur-sm transition-colors hover:bg-white/[0.18] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
-              >
-                <span className="text-[8px] font-bold uppercase tracking-[0.28em] text-white/45">
-                  Voyageurs
-                </span>
-                <span className="flex w-full items-center justify-between gap-2 font-display text-lg text-white md:text-xl">
-                  Réserver un séjour
-                  <ArrowRight
-                    className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-                    strokeWidth={1.25}
-                    aria-hidden
-                  />
-                </span>
-              </a>
-              <Link
-                href="/proprietaires"
-                className="group flex min-h-[48px] flex-col items-start gap-0.5 rounded-none border border-white/28 bg-white/[0.12] px-4 py-3.5 text-left backdrop-blur-sm transition-colors hover:bg-white/[0.18] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
-              >
-                <span className="text-[8px] font-bold uppercase tracking-[0.28em] text-white/45">
-                  Propriétaires
-                </span>
-                <span className="flex w-full items-center justify-between gap-2 font-display text-lg text-white md:text-xl">
-                  Confier ma villa
-                  <ArrowRight
-                    className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-                    strokeWidth={1.25}
-                    aria-hidden
-                  />
-                </span>
-              </Link>
-            </div>
-
-            <div
-              id="reserver-un-sejour"
-              className="mx-auto w-full max-w-4xl scroll-mt-28 pt-1 animate-in fade-in duration-700 delay-150 md:scroll-mt-24 md:pt-2"
-            >
-              <BookingSearchBar variant="hero" />
-            </div>
+            <HomeHeroPrimaryActions />
           </div>
         </div>
 
@@ -241,62 +194,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Propriétaires — même index, ancre dédiée (+ ?pour=proprietaire) */}
-      <section
-        id="proprietaires"
-        className="scroll-mt-28 border-y border-white/10 bg-navy py-20 text-white md:scroll-mt-24 md:py-28 cv-auto"
-      >
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mx-auto max-w-3xl space-y-5 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-gold/90">Programme propriétaires</p>
-            <h2 className="font-display text-3xl leading-tight md:text-5xl">
-              Pourquoi confier votre villa à Diamant Noir ?
-            </h2>
-            <p className="text-base leading-relaxed text-white/65 md:text-lg">
-              Mise en avant premium, conciergerie exigeante et gestion complète pour protéger votre bien tout en
-              maximisant ses performances — sans compromis sur le standing.
-            </p>
-          </div>
-          <ul className="mx-auto mt-14 grid max-w-5xl gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            <li className="space-y-3 text-left">
-              <TrendingUp className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-              <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-white">Visibilité & revenue</h3>
-              <p className="text-sm leading-relaxed text-white/55">
-                Positionnement luxe, pricing et diffusion alignés sur une clientèle haut de gamme.
-              </p>
-            </li>
-            <li className="space-y-3 text-left">
-              <Headphones className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-              <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-white">Conciergerie 24/7</h3>
-              <p className="text-sm leading-relaxed text-white/55">
-                Accueil, housekeeping, demandes voyageurs : une équipe dédiée sur le terrain.
-              </p>
-            </li>
-            <li className="space-y-3 text-left sm:col-span-2 lg:col-span-1">
-              <Building2 className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-              <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-white">Sérénité propriétaire</h3>
-              <p className="text-sm leading-relaxed text-white/55">
-                Suivi transparent, standards élevés et relation de confiance sur la durée.
-              </p>
-            </li>
-          </ul>
-          <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-            <Link
-              href="/soumettre-ma-villa"
-              className="btn-luxury inline-flex min-h-11 items-center justify-center bg-gold px-8 text-navy hover:bg-gold/90"
-            >
-              Soumettre ma villa
-            </Link>
-            <Link
-              href="/login?redirect=/dashboard/proprio"
-              className="inline-flex min-h-11 items-center justify-center border border-white/35 px-6 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-            >
-              Espace propriétaire
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Section Lifestyle Immersive */}
       <section className="relative overflow-hidden bg-black py-32 text-white lg:py-48 cv-auto">
         <div className="absolute right-0 top-0 h-full w-1/2 opacity-20">
@@ -347,12 +244,9 @@ export default async function HomePage() {
               <Link href="/book" className="btn-luxury bg-black text-white">
                 Réserver votre villa
               </Link>
-              <Link
-                href="/proprietaires"
-                className="inline-flex min-h-11 items-center justify-center border border-navy/25 px-6 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
-              >
+              <ProprietairesTransitionLink className="inline-flex min-h-11 items-center justify-center border border-navy/25 px-6 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30">
                 Confier ma villa
-              </Link>
+              </ProprietairesTransitionLink>
             </div>
           </div>
           <p className="border-t border-black/10 pt-10 text-sm text-navy/50">

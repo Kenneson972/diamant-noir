@@ -218,3 +218,4 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
     </div>
   );
 }
+

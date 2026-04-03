@@ -26,7 +26,7 @@ function TermsSimple() {
           </Link>
           .
         </p>
-        <p className="text-base text-navy/60">Dernière mise à jour : 2026. Diamant Noir — Conciergerie de luxe, Martinique.</p>
+        <p className="text-sm text-navy/60">Dernière mise à jour : 2026. Diamant Noir — Conciergerie de luxe, Martinique.</p>
         <Link href="/" className="mt-8 inline-block font-medium text-gold hover:underline">
           Retour à l&apos;accueil
         </Link>
@@ -65,7 +65,7 @@ export default function TermsPage() {
 
       <LandingSectionNarrow bg="offwhite">
         <LandingBlockTitle eyebrow="Mise à jour" title="Mentions" />
-        <p className="text-base text-navy/65">
+        <p className="text-sm text-navy/65">
           Dernière mise à jour : 2026. Diamant Noir — Conciergerie de luxe, Martinique.
         </p>
       </LandingSectionNarrow>

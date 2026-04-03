@@ -11,14 +11,14 @@
 - **Synchronisation iCal** : Mise à jour automatique des calendriers avec Airbnb et Booking.com.
 
 ## 🛠️ Stack Technique
-- **Framework** : Next.js 15 (App Router)
+- **Framework** : Next.js 14 (App Router)
 - **Base de données** : Supabase (PostgreSQL + Auth)
 - **Paiements** : Stripe Checkout
 - **Automatisations** : n8n Workflows + AI Agents (DeepSeek/OpenAI)
-- **UI/UX** : Tailwind CSS + Radix primitives (via `components/ui`)
+- **UI/UX** : Tailwind CSS + Shadcn/UI
 
 ## 📈 État du Projet
-Consultez le fichier [RECAP.md](./RECAP.md) pour le détail complet de l'avancement et des dernières mises à jour (31 Mars 2026).
+Consultez le fichier [RECAP.md](./RECAP.md) pour le détail complet de l'avancement et des dernières mises à jour (24 Janvier 2026).
 
 ---
 *Diamant Noir - Excellence, Performance, Prestige.*

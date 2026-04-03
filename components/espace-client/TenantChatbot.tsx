@@ -1,55 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { getSupabaseBrowser } from "@/lib/supabase";
-
-// ── Types ────────────────────────────────────────────────────────────────────
+import { useState, useEffect } from "react";
+import { Send, MessageCircle } from "lucide-react";
+import { Button, TextArea, ScrollShadow, Chip, Avatar, Spinner } from "@heroui/react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
-  timestamp: Date;
 }
 
 interface TenantChatbotProps {
   guestEmail: string;
   guestName?: string;
   bookingId?: string;
-  userId?: string; // Supabase auth user.id — used for stable localStorage session key
   villaId?: string;
 }
-
-// ── Session ID (stable localStorage) ─────────────────────────────────────────
-
-function getOrCreateSessionId(userId?: string): string {
-  const key = `dk_session_${userId ?? "guest"}`;
-  try {
-    const existing = localStorage.getItem(key);
-    if (existing) return existing;
-    const newId = `tenant-${userId ?? "anon"}-${Date.now()}`;
-    localStorage.setItem(key, newId);
-    return newId;
-  } catch {
-    // localStorage unavailable (SSR, private browsing edge case)
-    return `tenant-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-  }
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function formatTime(d: Date): string {
-  return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-}
-
-function makeWelcomeMessage(guestName?: string): Message {
-  return {
-    role: "assistant",
-    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Diamant Noir. Comment puis-je vous aider pendant votre séjour ?`,
-    timestamp: new Date(),
-  };
-}
-
-// ── Quick actions ─────────────────────────────────────────────────────────────
 
 const QUICK_ACTIONS = [
   "Signaler un problème",
@@ -58,113 +23,62 @@ const QUICK_ACTIONS = [
   "Horaires check-in/out",
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
-export function TenantChatbot({
-  guestEmail,
-  guestName,
-  bookingId,
-  userId,
-  villaId,
-}: TenantChatbotProps) {
-  const supabase = getSupabaseBrowser();
-  const [messages, setMessages] = useState<Message[]>([]);
+export function TenantChatbot({ guestEmail, guestName, bookingId }: TenantChatbotProps) {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: `Bonjour${guestName ? ` ${guestName}` : ""} 👋\n\nJe suis votre assistante SAV Diamant Noir. Comment puis-je vous aider pendant votre séjour ?`,
+    },
+  ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
-  const [sessionId] = useState<string>(() => {
-    if (typeof window === "undefined") return `tenant-${Date.now()}`;
-    return getOrCreateSessionId(userId);
-  });
-  const endRef = useRef<HTMLDivElement>(null);
+  const [sessionId] = useState(
+    () => `tenant-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+  );
 
-  // ── Load history from Supabase ──────────────────────────────────────────────
   useEffect(() => {
-    if (!supabase) {
-      setMessages([makeWelcomeMessage(guestName)]);
-      setHistoryLoaded(true);
-      return;
-    }
-    (async () => {
-      try {
-        // @ts-ignore — chat_messages may not be in generated Supabase types yet
-        const { data } = await supabase
-          .from("chat_messages")
-          .select("role, content, created_at")
-          .eq("session_id", sessionId)
-          .order("created_at", { ascending: true });
+    const el = document.getElementById("dn-chat-end");
+    el?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-        if (data && (data as unknown[]).length > 0) {
-          setMessages(
-            (data as Array<{ role: string; content: string; created_at: string }>).map((m) => ({
-              role: m.role as "user" | "assistant",
-              content: m.content,
-              timestamp: new Date(m.created_at),
-            }))
-          );
-        } else {
-          setMessages([makeWelcomeMessage(guestName)]);
-        }
-      } catch {
-        // chat_messages table not yet created — fall back to welcome message
-        setMessages([makeWelcomeMessage(guestName)]);
-      }
-      setHistoryLoaded(true);
-    })();
-  }, [supabase, sessionId, guestName]);
-
-  // ── Scroll to bottom on new messages ───────────────────────────────────────
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  // ── Save message to Supabase ────────────────────────────────────────────────
-  const saveMessage = async (role: "user" | "assistant", content: string) => {
-    if (!supabase) return;
-    try {
-      // @ts-ignore — chat_messages may not be in generated Supabase types yet
-      await supabase.from("chat_messages").upsert({
-        session_id: sessionId,
-        user_id: userId ?? guestEmail,
-        role,
-        content,
-      });
-    } catch {
-      // Graceful degradation — UI state already updated, persistence optional
-    }
-  };
-
-  // ── Send message ────────────────────────────────────────────────────────────
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
 
     setInput("");
-    const userMsg: Message = { role: "user", content: trimmed, timestamp: new Date() };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
     setLoading(true);
-    await saveMessage("user", trimmed);
 
     try {
       const res = await fetch("/api/chat/tenant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, sessionId, bookingId, villaId, guestEmail }),
+        body: JSON.stringify({
+          message: trimmed,
+          sessionId,
+          bookingId,
+          guestEmail,
+        }),
       });
+
       const data = await res.json();
-      const reply: string = data.success
-        ? data.response
-        : "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.";
-      const assistantMsg: Message = { role: "assistant", content: reply, timestamp: new Date() };
-      setMessages((prev) => [...prev, assistantMsg]);
-      await saveMessage("assistant", reply);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.success
+            ? data.response
+            : "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.",
+        },
+      ]);
     } catch {
-      const errorMsg: Message = {
-        role: "assistant",
-        content: "Impossible de contacter le service. Veuillez nous appeler directement.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Impossible de contacter le service. Veuillez nous appeler directement.",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -175,134 +89,108 @@ export function TenantChatbot({
     sendMessage(input);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<Element>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage(input);
     }
   };
 
-  // ── Loading skeleton (history loading) ─────────────────────────────────────
-  if (!historyLoaded) {
-    return (
-      <div className="flex h-full items-center justify-center bg-[#FAFAF8]">
-        <div className="flex gap-1.5">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className="dn-typing-dot w-2 h-2 rounded-full bg-[rgba(13,27,42,0.15)]"
-              style={{ animationDelay: `${i * 160}ms` }}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full bg-[#FAFAF8]">
-      {/* Messages */}
-      <div
-        className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-4"
-        role="log"
-        aria-live="polite"
-        aria-label="Historique de conversation"
-      >
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex flex-col gap-1 ${
-              msg.role === "user" ? "items-end" : "items-start"
-            }`}
-          >
-            <div
-              className={
-                msg.role === "user"
-                  ? "max-w-[78%] bg-[#0D1B2A] text-white px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line"
-                  : "max-w-[78%] bg-white border border-[rgba(13,27,42,0.08)] px-4 py-3 font-cormorant text-[14px] font-light leading-relaxed whitespace-pre-line text-[#0D1B2A]"
-              }
-              style={{
-                borderRadius: msg.role === "user" ? "8px 0 8px 8px" : "0 8px 8px 8px",
-              }}
-            >
-              {msg.content}
-            </div>
-            <span className="text-[6.5px] tracking-[0.12em] uppercase text-[rgba(13,27,42,0.22)] px-1">
-              {formatTime(msg.timestamp)}
-            </span>
-          </div>
-        ))}
-
-        {/* Typing indicator */}
-        {loading && (
-          <div className="flex items-start">
-            <div
-              className="bg-white border border-[rgba(13,27,42,0.08)] px-4 py-3 flex items-center gap-1.5"
-              style={{ borderRadius: "0 8px 8px 8px" }}
-            >
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className="dn-typing-dot w-1.5 h-1.5 rounded-full bg-[rgba(13,27,42,0.3)]"
-                  style={{ animationDelay: `${i * 160}ms` }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div ref={endRef} />
+    <div className="flex flex-col h-full rounded-2xl border border-navy/10 bg-white overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-navy/10 bg-navy">
+        <MessageCircle size={18} className="text-gold" />
+        <div>
+          <p className="text-sm font-medium text-white">Assistante SAV</p>
+          <p className="text-[10px] text-white/40 uppercase tracking-wider">Diamant Noir · Support</p>
+        </div>
+        <span className="ml-auto flex items-center gap-1.5 text-[10px] text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+          En ligne
+        </span>
       </div>
 
-      {/* Quick actions — shown only when single welcome message */}
-      {messages.length === 1 && !loading && (
-        <div className="px-5 pb-3 flex flex-wrap gap-2 shrink-0">
+      {/* Messages */}
+      <ScrollShadow className="flex-1 min-h-0">
+        <div className="p-5 space-y-4">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              {msg.role === "assistant" && (
+                <Avatar size="sm" variant="soft" color="warning" className="shrink-0 mt-0.5 bg-navy/10">
+                  <Avatar.Fallback className="text-[10px] font-bold text-navy/60">DN</Avatar.Fallback>
+                </Avatar>
+              )}
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
+                  msg.role === "user"
+                    ? "bg-navy text-white rounded-br-sm"
+                    : "bg-navy/5 text-navy rounded-bl-sm"
+                }`}
+              >
+                {msg.content}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex justify-start gap-2">
+              <Avatar size="sm" variant="soft" color="warning" className="shrink-0 mt-0.5 bg-navy/10">
+                <Avatar.Fallback className="text-[10px] font-bold text-navy/60">DN</Avatar.Fallback>
+              </Avatar>
+              <div className="bg-navy/5 rounded-2xl rounded-bl-sm px-4 py-3">
+                <Spinner size="sm" className="text-gold" />
+              </div>
+            </div>
+          )}
+          <div id="dn-chat-end" />
+        </div>
+      </ScrollShadow>
+
+      {/* Quick actions */}
+      {messages.length === 1 && (
+        <div className="px-5 pb-3 flex flex-wrap gap-2">
           {QUICK_ACTIONS.map((action) => (
-            <button
+            <Chip
               key={action}
-              type="button"
+              size="sm"
+              variant="secondary"
+              color="default"
               onClick={() => sendMessage(action)}
-              className="border border-[rgba(13,27,42,0.10)] bg-white px-4 py-2 text-[8px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.5)] hover:border-[rgba(212,175,55,0.4)] hover:text-[#D4AF37] transition-colors"
+              className="cursor-pointer text-[11px] font-medium hover:bg-gold/10 hover:text-navy transition-colors"
             >
               {action}
-            </button>
+            </Chip>
           ))}
         </div>
       )}
 
-      {/* Input zone */}
-      <div className="border-t border-[rgba(13,27,42,0.07)] bg-white px-4 pb-4 pt-3 shrink-0">
-        <form onSubmit={handleSubmit} className="flex items-end gap-3">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Écrivez votre message…"
-            rows={1}
-            className="flex-1 bg-[#FAFAF8] border border-[rgba(13,27,42,0.10)] px-4 py-3 font-cormorant italic text-[14px] text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.3)] focus:outline-none focus:border-[rgba(212,175,55,0.5)] resize-none"
-            style={{ minHeight: 44, maxHeight: 120 }}
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            aria-label="Envoyer le message"
-            className="shrink-0 h-[44px] w-[44px] flex items-center justify-center bg-[#0D1B2A] text-white hover:bg-[#D4AF37] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path d="M12 7L2 2l2 5-2 5 10-5z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </form>
-        <div className="flex items-center justify-between mt-2 px-0.5">
-          <p className="text-[6.5px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.2)]">
-            Échanges conservés pour la qualité du service
-          </p>
-          <p className="text-[6.5px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.2)]">
-            Conversation sauvegardée
-          </p>
-        </div>
-      </div>
+      {/* Input */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-end gap-3 px-4 py-3 border-t border-navy/10"
+      >
+        <TextArea
+          value={input}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Écrivez votre message..."
+          rows={1}
+          className="flex-1 rounded-xl border border-navy/20 px-4 py-3 text-sm text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold bg-transparent resize-none"
+          style={{ minHeight: 44, maxHeight: 120 }}
+        />
+        <Button
+          type="submit"
+          isIconOnly
+          isDisabled={loading || !input.trim()}
+          variant="ghost"
+          className="h-11 w-11 shrink-0 rounded-xl bg-gold text-navy hover:bg-navy hover:text-white transition-colors"
+        >
+          <Send size={15} />
+        </Button>
+      </form>
     </div>
   );
 }

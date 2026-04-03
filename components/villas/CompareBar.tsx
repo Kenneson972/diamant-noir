@@ -25,8 +25,9 @@ export function CompareBar() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 animate-fade-up safe-bottom safe-x">
-      <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] lg:backdrop-blur-md">
+    <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-up">
+      {/* Backdrop blur subtle */}
+      <div className="bg-navy/95 backdrop-blur-md border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.35)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center gap-4">
 
           {/* Icône + label */}
@@ -66,7 +67,7 @@ export function CompareBar() {
                 <button
                   onClick={() => remove(item.id)}
                   aria-label={`Retirer ${item.name} de la comparaison`}
-                  className="tap-target ml-1 shrink-0 text-white/30 transition-colors hover:text-white"
+                  className="ml-1 text-white/30 hover:text-white transition-colors shrink-0"
                 >
                   <X size={12} />
                 </button>
@@ -90,19 +91,15 @@ export function CompareBar() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={clear}
-              className="tap-target inline-flex h-11 w-11 items-center justify-center text-white/40 transition-colors hover:text-white sm:h-auto sm:w-auto sm:px-2 sm:text-[10px] sm:uppercase sm:tracking-[0.15em]"
-              aria-label="Effacer la comparaison"
+              className="text-[10px] text-white/40 hover:text-white transition-colors uppercase tracking-[0.15em] hidden sm:block"
             >
-              <span className="sm:hidden">
-                <X size={14} />
-              </span>
-              <span className="hidden sm:inline">Effacer</span>
+              Effacer
             </button>
             <button
               onClick={handleCompare}
               disabled={count < 2}
               className={`
-                tap-target flex items-center gap-2 px-4 py-2.5 sm:px-5
+                flex items-center gap-2 px-5 py-2.5
                 text-[10px] font-bold uppercase tracking-[0.2em]
                 transition-all duration-200
                 ${count >= 2

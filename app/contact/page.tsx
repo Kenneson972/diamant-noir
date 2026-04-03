@@ -70,12 +70,12 @@ export default function ContactPage() {
       />
 
       <LandingSection bg="white">
-        <p className="mx-auto mb-12 max-w-2xl text-center text-sm leading-relaxed text-navy/65 md:mb-20 md:text-base">
+        <p className="mx-auto mb-16 max-w-2xl text-center text-sm leading-relaxed text-navy/65 md:mb-20 md:text-base">
           Écrivez-nous pour un projet sur mesure, ou parcourez les réponses rapides ci-dessous — le chatbot
           reste disponible en bas à droite.
         </p>
 
-        <div className="grid gap-12 md:gap-14 lg:grid-cols-12 lg:gap-20">
+        <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-6">
             <LandingBlockTitle title="Écrire au concierge" />
             <p className="-mt-4 mb-8 text-sm text-navy/70">
@@ -91,7 +91,7 @@ export default function ContactPage() {
                   name="name"
                   type="text"
                   required
-                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
+                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
               <div>
@@ -103,7 +103,7 @@ export default function ContactPage() {
                   name="email"
                   type="email"
                   required
-                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
+                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
               <div>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                   name="subject"
                   type="text"
                   required
-                  className="w-full min-h-11 rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
+                  className="w-full rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
               <div>
@@ -127,7 +127,7 @@ export default function ContactPage() {
                   name="message"
                   rows={5}
                   required
-                  className="w-full resize-none rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-base text-navy focus:border-gold focus:outline-none md:text-sm"
+                  className="w-full resize-none rounded-none border border-navy/20 bg-offwhite px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
               {formState === "sent" && (
@@ -141,7 +141,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={formState === "sending"}
-                className="tap-target inline-flex w-full items-center justify-center border border-navy bg-navy px-4 py-3 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:border-gold hover:bg-gold hover:text-navy disabled:opacity-50"
+                className="tap-target inline-flex w-full items-center justify-center border border-navy bg-navy px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:border-gold hover:bg-gold hover:text-navy disabled:opacity-50"
               >
                 {formState === "sending" ? "Envoi…" : "Envoyer"}
               </button>
@@ -163,13 +163,13 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left text-sm font-medium text-navy transition-colors hover:bg-white md:text-base"
+                    className="flex w-full items-center justify-between px-4 py-4 text-left text-sm font-medium text-navy transition-colors hover:bg-white md:text-base"
                   >
-                    <span className="min-w-0 flex-1 pr-2">{item.q}</span>
+                    {item.q}
                     {openFaq === i ? (
-                      <ChevronUp size={18} strokeWidth={1} className="shrink-0" aria-hidden />
+                      <ChevronUp size={18} strokeWidth={1} aria-hidden />
                     ) : (
-                      <ChevronDown size={18} strokeWidth={1} className="shrink-0" aria-hidden />
+                      <ChevronDown size={18} strokeWidth={1} aria-hidden />
                     )}
                   </button>
                   {openFaq === i && <div className="border-t border-navy/5 px-4 pb-4 text-sm text-navy/75">{item.a}</div>}

@@ -15,8 +15,6 @@ type VillaStats = {
   revenue: number;
 };
 
-import { ProprioPageIntro } from "@/components/dashboard/proprio/ui";
-
 export default function AnalyticsPage() {
   const router = useRouter();
   const supabase = getSupabaseBrowser();
@@ -61,15 +59,21 @@ export default function AnalyticsPage() {
   }, [supabase, router]);
 
   return (
-    <>
-      <ProprioPageIntro
-        eyebrow="Performances"
-        title="Analytics par villa"
-        subtitle="Suivez les vues, clics, réservations et chiffre d'affaires généré pour chacune de vos propriétés."
-        variant="white"
-      />
+    <main className="min-h-screen bg-offwhite">
+      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <Link href="/dashboard/proprio" className="flex items-center gap-2 text-navy/70 hover:text-navy">
+            <ArrowLeft size={20} />
+            Retour
+          </Link>
+          <h1 className="font-display text-lg text-navy flex items-center gap-2">
+            <BarChart3 size={22} />
+            Analytics par villa
+          </h1>
+        </div>
+      </header>
 
-      <div className="page-px mx-auto max-w-5xl py-8 md:py-10">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-gold" />
@@ -79,8 +83,8 @@ export default function AnalyticsPage() {
             Aucune donnée pour le moment. Les vues et clics sur les fiches villas seront enregistrés ici (table villa_events).
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-navy/10 bg-white">
-            <table className="min-w-[640px] w-full overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full border border-navy/10 rounded-xl overflow-hidden bg-white">
               <thead>
                 <tr className="bg-navy/5 text-left text-xs uppercase tracking-wider text-navy/70">
                   <th className="p-4 font-semibold">Villa</th>
@@ -105,6 +109,6 @@ export default function AnalyticsPage() {
           </div>
         )}
       </div>
-    </>
+    </main>
   );
 }

@@ -33,31 +33,6 @@ function getClientIP(request: Request): string {
   return request.headers.get("x-real-ip") || "unknown";
 }
 
-function getAllowedOrigins(): Set<string> {
-  const origins = new Set<string>();
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  if (baseUrl) {
-    try {
-      origins.add(new URL(baseUrl).origin);
-    } catch {
-      // Ignore invalid NEXT_PUBLIC_BASE_URL values.
-    }
-  }
-
-  const vercelUrl = process.env.VERCEL_URL;
-  if (vercelUrl) {
-    origins.add(`https://${vercelUrl}`);
-  }
-
-  const vercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercelProductionUrl) {
-    origins.add(`https://${vercelProductionUrl}`);
-  }
-
-  return origins;
-}
-
 // Réponse de fallback si n8n est indisponible
 function buildFallbackResponse(
   sessionId: string,
@@ -245,24 +220,13 @@ export async function POST(request: Request) {
   }
 }
 
-export async function OPTIONS(request: Request) {
-  const origin = request.headers.get("origin");
-  const allowedOrigins = getAllowedOrigins();
-  const isAllowed = origin ? allowedOrigins.has(origin) : false;
-
-  if (!isAllowed) {
-    return new NextResponse(null, { status: 403 });
-  }
-
-  const allowedOrigin = origin ?? "";
-
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": allowedOrigin,
+      "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
-      Vary: "Origin",
     },
   });
 }

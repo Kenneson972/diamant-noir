@@ -2,6 +2,23 @@
 
 type EditorialQuote = { quote: string; author: string; place: string };
 
+/**
+ * Visuels dédiés `/proprietaires` — déposer les fichiers dans `public/proprietaires/`
+ * puis remplacer les chemins (ex. `/proprietaires/pourquoi.jpg`).
+ * Tant que les fichiers n’existent pas, les fallbacks pointent vers `/villa-hero.jpg`.
+ */
+export const PROPRIO_LANDING_IMAGES = {
+  splitPourquoi: "/villa-hero.jpg",
+  splitInclusions: "/villa-hero.jpg",
+  fondTemoignage: "/villa-hero.jpg",
+} as const;
+
+export const PROPRIO_LANDING_IMAGE_ALTS = {
+  splitPourquoi: "Villa de prestige en Martinique",
+  splitInclusions: "Intérieur et standing — gestion clé en main",
+  fondTemoignage: "",
+} as const;
+
 export const INCLUSIONS = [
   "Estimation de valeur locative",
   "Check-in / Check-out",

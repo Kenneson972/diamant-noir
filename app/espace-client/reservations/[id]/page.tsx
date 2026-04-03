@@ -6,9 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Skeleton, Alert, Breadcrumbs, Card, Chip, Button, Separator } from "@heroui/react";
 
 function getNights(start: string, end: string) {
   return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86400000);
@@ -42,19 +40,6 @@ function statusChipProps(status: string): { color: "success" | "warning" | "dang
     case "pending": return { color: "warning", label: "En attente" };
     case "cancelled": return { color: "danger", label: "Annulée" };
     default: return { color: "default", label: status };
-  }
-}
-
-function chipClass(color: "success" | "warning" | "danger" | "default") {
-  switch (color) {
-    case "success":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
-    case "warning":
-      return "border-amber-200 bg-amber-50 text-amber-700";
-    case "danger":
-      return "border-red-200 bg-red-50 text-red-700";
-    default:
-      return "border-navy/10 bg-offwhite text-navy/60";
   }
 }
 
@@ -117,10 +102,13 @@ export default function ReservationDetailPage() {
   if (error || !data) {
     return (
       <div className="py-10 space-y-6 max-w-lg mx-auto">
-        <div className="rounded-none border border-red-200 bg-red-50 px-4 py-3 text-red-800">
-          <p className="font-display text-sm mb-1">Impossible d&apos;afficher la réservation</p>
-          <p className="text-sm">{error ?? "Erreur inattendue."}</p>
-        </div>
+        <Alert status="danger" className="rounded-none border-red-200">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title className="font-display text-sm">Impossible d&apos;afficher la réservation</Alert.Title>
+            <Alert.Description>{error ?? "Erreur inattendue."}</Alert.Description>
+          </Alert.Content>
+        </Alert>
         <div className="text-center">
           <Link
             href="/espace-client"
@@ -140,17 +128,12 @@ export default function ReservationDetailPage() {
 
   return (
     <div className="space-y-6">
-      <nav className="text-[10px] uppercase tracking-[0.2em] text-navy/40" aria-label="Fil d’Ariane">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li>
-            <Link href="/espace-client" className="hover:text-navy transition-colors">
-              Espace client
-            </Link>
-          </li>
-          <li className="text-navy/20">/</li>
-          <li className="text-navy/50">Livret séjour</li>
-        </ol>
-      </nav>
+      <Breadcrumbs className="text-[10px] uppercase tracking-[0.2em] text-navy/40">
+        <Breadcrumbs.Item href="/espace-client">Espace client</Breadcrumbs.Item>
+        <Breadcrumbs.Item href={`/espace-client/reservations/${booking.id}`}>
+          Livret séjour
+        </Breadcrumbs.Item>
+      </Breadcrumbs>
 
       <Link href="/espace-client" className="inline-block no-underline">
         <Button
@@ -167,29 +150,27 @@ export default function ReservationDetailPage() {
 
       {/* Booking summary */}
       <Card className="border border-navy/8 bg-white shadow-none rounded-none">
-        <CardHeader className="px-6 pt-6 pb-4">
+        <Card.Header className="px-6 pt-6 pb-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
-            <CardTitle className="font-display text-xl text-navy font-normal">
+            <Card.Title className="font-display text-xl text-navy font-normal">
               {villa?.name ?? "Votre séjour"}
-            </CardTitle>
+            </Card.Title>
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className={`inline-flex items-center rounded-full border px-2 py-1 uppercase text-[9px] font-bold tracking-[0.2em] ${chipClass(chipStatus.color)}`}
-              >
+              <Chip size="sm" variant="soft" color={chipStatus.color} className="uppercase text-[9px] font-bold tracking-[0.2em]">
                 {chipStatus.label}
-              </span>
+              </Chip>
               {booking.price && (
-                <span className="inline-flex items-center rounded-full border border-navy/10 bg-offwhite px-2 py-1 uppercase text-[9px] font-bold tracking-[0.2em] text-navy/70">
+                <Chip size="sm" variant="secondary" color="default" className="uppercase text-[9px] font-bold tracking-[0.2em]">
                   {Number(booking.price).toLocaleString("fr-FR")} €
-                </span>
+                </Chip>
               )}
             </div>
           </div>
-        </CardHeader>
+        </Card.Header>
 
-        <div className="h-px w-full bg-navy/10" />
+        <Separator />
 
-        <CardContent className="px-6 py-5">
+        <Card.Content className="px-6 py-5">
           <div className="grid gap-6 sm:grid-cols-3 text-sm">
             {/* Dates */}
             <div className="flex items-start gap-3">
@@ -228,7 +209,7 @@ export default function ReservationDetailPage() {
               </div>
             )}
           </div>
-        </CardContent>
+        </Card.Content>
       </Card>
 
       {/* Livret d'accueil */}
@@ -236,17 +217,17 @@ export default function ReservationDetailPage() {
         <WelcomeBook villa={villa} />
       ) : (
         <Card className="border border-navy/8 bg-white shadow-none rounded-none">
-          <CardContent className="p-6 text-center">
+          <Card.Content className="p-6 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/25">
               Livret d&apos;accueil disponible une fois la réservation confirmée
             </p>
-          </CardContent>
+          </Card.Content>
         </Card>
       )}
 
       {/* Lien messagerie */}
       <Card className="border border-gold/15 bg-gold/[0.03] shadow-none rounded-none">
-        <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <Card.Content className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-sm text-navy/55">Un problème ou une question sur votre séjour ?</p>
           <Link
             href="/espace-client/messagerie"
@@ -254,7 +235,7 @@ export default function ReservationDetailPage() {
           >
             Contacter le SAV →
           </Link>
-        </CardContent>
+        </Card.Content>
       </Card>
     </div>
   );

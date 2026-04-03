@@ -116,28 +116,27 @@ export default function AdminAssistantPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full flex-col bg-navy text-white md:h-screen md:w-screen md:flex-row md:overflow-hidden">
+    <main className="flex h-screen w-screen overflow-hidden bg-[#0A0A0F] text-white">
       {/* LEFT PANE: TERMINAL */}
-      <div className="flex w-full max-w-none flex-col border-b border-white/10 bg-black/20 md:w-[420px] md:min-w-[380px] md:max-w-[450px] md:border-b-0 md:border-r">
+      <div className="flex w-[450px] flex-col border-r border-white/5 bg-[#0D0D14]">
         {/* Terminal Header */}
-        <div className="flex items-center justify-between border-b border-white/10 p-4 md:p-6">
+        <div className="flex items-center justify-between border-b border-white/5 p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
-              <Sparkles size={18} />
+              <Terminal size={18} />
             </div>
-            <h1 className="font-display text-base uppercase tracking-widest text-gold">Assistant IA</h1>
+            <h1 className="font-display text-sm font-bold uppercase tracking-widest text-gold/80">Terminal Admin</h1>
           </div>
           <button 
             onClick={() => router.push("/dashboard/proprio")}
-            className="tap-target flex h-11 w-11 items-center justify-center rounded-full text-white/20 transition-all hover:bg-white/5 hover:text-white"
-            aria-label="Retour au dashboard"
+            className="rounded-full p-2 text-white/20 hover:bg-white/5 hover:text-white transition-all"
           >
             <ArrowLeft size={18} />
           </button>
         </div>
 
         {/* Terminal Chat Area */}
-        <div className="max-h-[52vh] flex-1 overflow-y-auto p-4 space-y-5 scrollbar-hide md:max-h-none md:p-6 md:space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
           {messages.map((m, i) => (
             <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-xs leading-relaxed ${
@@ -160,7 +159,7 @@ export default function AdminAssistantPage() {
         </div>
 
         {/* Terminal Input */}
-        <div className="border-t border-white/5 bg-black/20 p-4 md:p-6">
+        <div className="border-t border-white/5 bg-black/20 p-6">
           <form onSubmit={handleSendMessage} className="relative">
             <input
               value={input}
@@ -171,8 +170,7 @@ export default function AdminAssistantPage() {
             <button 
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="tap-target absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg bg-gold text-navy transition-all hover:scale-105 disabled:opacity-50"
-              aria-label="Envoyer le message"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-gold p-2 text-navy hover:scale-105 transition-all disabled:opacity-50"
             >
               <Send size={16} />
             </button>
@@ -186,7 +184,7 @@ export default function AdminAssistantPage() {
       </div>
 
       {/* RIGHT PANE: VISUAL CONTEXT */}
-      <div className="flex-1 overflow-y-auto bg-navy/50 p-4 custom-scrollbar md:p-12">
+      <div className="flex-1 bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-12 overflow-y-auto custom-scrollbar">
         {/* STRATEGIC ALERT BAR */}
         {strategicAlert && (
           <div className={`mb-8 flex items-center gap-4 rounded-3xl border p-6 animate-in slide-in-from-top-4 duration-500 ${
@@ -251,12 +249,12 @@ export default function AdminAssistantPage() {
             </div>
             <div className="space-y-4 max-w-xl">
               <h2 className="font-display text-5xl text-white">Hub Intelligence V2</h2>
-              <p className="text-white/40 leading-relaxed uppercase tracking-[0.2em] text-[11px] font-bold">
+              <p className="text-white/40 leading-relaxed uppercase tracking-[0.2em] text-xs">
                 Votre directeur de stratégie IA proactif pour Diamant Noir. 
                 Analyse, détection d'anomalies et croissance.
               </p>
             </div>
-          <div className="mt-10 grid w-full max-w-lg grid-cols-1 gap-3 sm:grid-cols-2 md:mt-12 md:gap-4">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-lg mt-12">
               <button 
                 onClick={() => setInput("Analyse mes revenus et mon occupation")}
                 className="flex items-center gap-4 rounded-3xl border border-white/5 bg-white/5 p-6 hover:bg-white/10 transition-all text-left group"

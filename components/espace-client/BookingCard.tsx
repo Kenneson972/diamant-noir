@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, Chip, Button } from "@heroui/react";
 
 interface Booking {
   id: string;
@@ -56,17 +55,6 @@ export function BookingCard({ booking }: { booking: Booking }) {
   const location = booking.villa?.location;
   const img = villaImageUrl(booking.villa);
 
-  const chipClass =
-    status.chipColor === "success"
-      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-      : status.chipColor === "warning"
-        ? "bg-amber-50 text-amber-700 border-amber-200"
-        : status.chipColor === "danger"
-          ? "bg-red-50 text-red-700 border-red-200"
-          : status.chipColor === "accent"
-            ? "bg-gold/10 text-navy border-gold/25"
-            : "bg-offwhite text-navy/60 border-navy/10";
-
   return (
     <Card className="overflow-hidden border border-navy/8 bg-white p-0 gap-0 shadow-none hover:border-navy/15 hover:shadow-sm transition-all rounded-none">
       <div className="relative aspect-[16/7] overflow-hidden bg-navy/5">
@@ -83,15 +71,17 @@ export function BookingCard({ booking }: { booking: Booking }) {
             <p className="text-[10px] font-medium text-navy/25 text-center truncate max-w-full">{villaName}</p>
           </div>
         )}
-        <span
-          role="status"
-          className={`absolute top-2.5 right-2.5 inline-flex items-center rounded-full border px-2 py-1 uppercase text-[9px] font-bold tracking-[0.2em] ${chipClass}`}
+        <Chip
+          color={status.chipColor}
+          size="sm"
+          variant="soft"
+          className="absolute top-2.5 right-2.5 uppercase text-[9px] font-bold tracking-[0.2em]"
         >
           {status.label}
-        </span>
+        </Chip>
       </div>
 
-      <CardContent className="p-5 gap-4 flex flex-col">
+      <Card.Content className="p-5 gap-4 flex flex-col">
         <div className="min-w-0">
           <p className="font-display text-base text-navy truncate">{villaName}</p>
           {location && (
@@ -131,14 +121,14 @@ export function BookingCard({ booking }: { booking: Booking }) {
             <Button
               size="sm"
               variant="ghost"
-              className="tap-target min-h-11 rounded-none px-3 text-gold hover:text-navy uppercase text-[11px] font-bold tracking-[0.14em] gap-1.5"
+              className="rounded-none px-2 text-gold hover:text-navy uppercase text-[10px] font-bold tracking-[0.2em] gap-1.5"
             >
               Détail
               <ArrowRight size={11} strokeWidth={1.5} />
             </Button>
           </Link>
         </div>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

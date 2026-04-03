@@ -33,9 +33,15 @@ function getCoordFallback(location: string | null): [number, number] {
   return [14.6415, -61.0242]; // Centre Martinique
 }
 
+const FALLBACK_VILLAS: VillaMapItem[] = [
+  { id: "1", name: "Villa Diamant Noir", location: "Le Diamant, Martinique", price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247] },
+  { id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique", price: 1200, image: "/villa-hero.jpg", coords: [14.4917, -61.0650] },
+  { id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique", price: 900, image: "/villa-hero.jpg", coords: [14.5361, -61.0261] },
+];
+
 export default async function VillasListingPage() {
   noStore();
-  let villas: VillaMapItem[] = [];
+  let villas: VillaMapItem[] = FALLBACK_VILLAS;
 
   try {
     const supabase = getSupabaseServer();
@@ -75,7 +81,7 @@ export default async function VillasListingPage() {
         />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
-        <div className="page-px relative mx-auto max-w-7xl pb-14 pt-28 sm:pt-32 md:pb-16 md:pt-40">
+        <div className="relative mx-auto max-w-7xl px-6 pt-40 pb-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="space-y-5 max-w-2xl">
               <div className="flex items-center gap-3">
@@ -84,18 +90,18 @@ export default async function VillasListingPage() {
                   La Sélection
                 </span>
               </div>
-              <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-[1.06]">
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-white leading-[1.06]">
                 Nos Villas
                 <br />
                 de Légende.
               </h1>
-              <p className="max-w-md text-base font-light leading-relaxed text-white/45 sm:text-lg">
+              <p className="text-white/45 text-lg font-light leading-relaxed max-w-md">
                 Une collection confidentielle de résidences d'exception,
                 choisies pour leur caractère unique et leur environnement hors du commun.
               </p>
             </div>
             <div className="flex items-end gap-3 md:pb-2">
-              <span className="font-display text-5xl sm:text-6xl md:text-8xl text-white/10 leading-none select-none">
+              <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
                 {String(villas.length).padStart(2, "0")}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-4">
@@ -107,23 +113,7 @@ export default async function VillasListingPage() {
       </section>
 
       {/* ── Split view: list + map ── */}
-      {villas.length === 0 ? (
-        <section className="page-px mx-auto max-w-4xl py-14 md:py-16">
-          <div className="border border-navy/10 bg-white p-8 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/35 mb-2">
-              La Sélection
-            </p>
-            <h2 className="font-display text-2xl text-navy mb-3">
-              Aucune villa publiée pour le moment
-            </h2>
-            <p className="text-sm text-navy/55 max-w-xl mx-auto">
-              Publiez au moins une villa depuis le dashboard propriétaire pour alimenter cette page.
-            </p>
-          </div>
-        </section>
-      ) : (
-        <VillasMapView villas={villas} />
-      )}
+      <VillasMapView villas={villas} />
     </main>
   );
 }

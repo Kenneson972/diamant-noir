@@ -1,52 +1,3 @@
-## 2026-04-02T00:30:00Z | type: docs | Cursor — Log session Claude (kb-mobile-responsive) + vérif checklist vs code + sync règle workspace
-- **agent**: `cursor`
-- **summary**: Journal `docs/logs/2026-04-01.md` : session Claude sur **kb-mobile-responsive** (backdrop ciblé, checklist 22 points, 7 gaps iOS/375–640). **Synchronisation** des fichiers workspace (hors repo `diamant-noir`) : [`.cursor/rules/kb-mobile-responsive.mdc`](../../.cursor/rules/kb-mobile-responsive.mdc), [`client-builder/03-architecture/kb-mobile-responsive.mdc`](../../.cursor/rules/client-builder/03-architecture/kb-mobile-responsive.mdc). Vérification code : `xs` 430px, 44px, safe-area, `pb-[80px]` fiche villa, `.glass-card` — documenté dans le log ; push GitHub du dépôt app.
-- **files**: [`docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`] + hors repo : `DIAMANTNOIR/.cursor/rules/kb-mobile-responsive.mdc`, `DIAMANTNOIR/.cursor/rules/client-builder/03-architecture/kb-mobile-responsive.mdc`
-- **why**: Tracer la doc métier Claude et prouver l’alignement partiel site / règle avant déploiement.
-- **impact**: Règle Karibloom à jour localement ; site inchangé par ce commit sauf logs si déjà modifiés — le push délivre surtout les changements UI mobile déjà dans la branche.
-- **verify**: `npm run build` ; `git push origin main`.
-
-## 2026-04-01T23:50:00Z | type: ui | mobile | Claude Code — Parcours réservation mobile (xs 430px, sticky, 44px)
-- **agent**: `claude`
-- **summary**: Session **Claude Code** : breakpoint Tailwind **`xs: 430px`** ; `BookingSearchBar` / `VillaSelectionCard` / `CheckoutView` (sticky CTA, paddings, tap 44px) ; `SearchResults` (toggles 44px, chips `shrink-0`) ; fiche villa barre book sticky + offset scroll ; `VillasMapView` hauteur carte + safe-area ; landing + `/book` heros `min-h` ; Leaflet attribution 10px dans `globals.css`. Build OK.
-- **files**: [`tailwind.config.ts`, `components/booking/BookingSearchBar.tsx`, `components/booking/VillaSelectionCard.tsx`, `components/booking/CheckoutView.tsx`, `components/booking/SearchResults.tsx`, `app/globals.css`, `app/page.tsx`, `app/book/page.tsx`, `app/villas/[id]/page.tsx`, `components/VillasMapView.tsx`, `docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`]
-- **why**: Renforcer lisibilité et ergonomie mobile sur recherche villa, carte, checkout et fiche produit.
-- **impact**: Meilleure utilisation au pouce sous ~430px, CTA visibles en mobile, carte moins écrasée.
-- **verify**: `npm run build` OK (Claude).
-
-## 2026-04-01T21:30:00Z | type: ui | a11y | perf | Claude Code — 3 vagues (prod, accessibilité, animations)
-- **agent**: `claude`
-- **summary**: Session terminal **Claude Code** : (1) `globals.css` / `page.tsx` / `CheckoutView.tsx` / `espace-client/page.tsx` — scroll & backdrop sous reduced-motion, trust strip, checkout invité + a11y spinners, lien CGU, rating statique masqué, 9px→10px ; (2) `Navbar`, `VillaGallery`, `Chatbot`, `BookingCard`, `Footer` — aria, dialog lightbox, Image Next dans chatbot, focus, reduced-motion ; (3) `tailwind.config.ts` + `globals.css` — keyframes polish + classes + désactivation motion réduite. Build : 44 pages, 0 erreur.
-- **files**: [`app/globals.css`, `app/page.tsx`, `components/booking/CheckoutView.tsx`, `app/espace-client/page.tsx`, `components/layout/Navbar.tsx`, `components/VillaGallery.tsx`, `components/chatbot/Chatbot.tsx`, `components/espace-client/BookingCard.tsx`, `components/layout/Footer.tsx`, `tailwind.config.ts`, `docs/logs/2026-04-01.md`, `docs/ACTIONS_LOG.md`]
-- **why**: Renforcer prod (motion/backdrop), accessibilité et cohérence visuelle avant livraison.
-- **impact**: Parcours checkout et espace client plus propres ; composants marketing/chat/galerie plus conformes WCAG de base ; animations optionnelles et respect `prefers-reduced-motion`.
-- **verify**: `npm run build` OK (Claude) ; `npm run dev` pour smoke local.
-
-## 2026-04-01T12:00:00Z | type: docs | Cursor — Règle workflow : vérifier localhost après build
-- **agent**: `cursor`
-- **summary**: Ajout dans `kb-workflow-orchestration.mdc` (section « Vérification avant de considérer terminé ») d’une consigne explicite : pour Next.js, ne pas se limiter à `npm run build` — lancer `npm run dev` depuis le bon dossier (`diamant-noir/`), vérifier le port, purge `.next` si besoin, smoke HTTP 200. **Synchronisation** : même paragraphe appliqué au pack source `CLIENT BUILDER KARIBLOOM/client-builder-rules/01-core/kb-workflow-orchestration.mdc`.
-- **files**: [`.cursor/rules/kb-workflow-orchestration.mdc`, `.cursor/rules/client-builder/01-core/kb-workflow-orchestration.mdc`, `CLIENT BUILDER KARIBLOOM/client-builder-rules/01-core/kb-workflow-orchestration.mdc`, `docs/ACTIONS_LOG.md`]
-- **why**: Retour utilisateur : localhost mal lancé / build vert mais dev cassé.
-- **impact**: Les agents sont guidés pour valider le serveur de dev, pas seulement le build production.
-- **verify**: Relecture des deux fichiers `.mdc`.
-
-## 2026-04-01T00:30:00Z | type: ui | Cursor — Dashboard proprio premium éditorial
-- **agent**: `cursor`
-- **summary**: Aligner l'espace propriétaire sur le design système "luxe/éditorial" du site (navy/or, fonts display, filets or). Création d'un layout unifié avec un `ProprioChrome` persistant. Introduction de `ProprioPageIntro` et `ProprioSectionHeading`. Application de ce nouveau look aux pages Index, Analytics, Submissions, Assistant et au détail d'une Villa, remplaçant l'interface générique et le terminal sombre par un environnement plus chaleureux et premium.
-- **files**: [`components/dashboard/proprio/ui.tsx`, `app/dashboard/proprio/layout.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`]
-- **why**: Demande client pour un design plus aligné sur le positionnement luxe de la marque au sein de l'espace admin/proprio.
-- **impact**: Le dashboard est plus luxueux, avec un header unifié, des intros de pages narratives, une interface assistant plus "salon privé", et une gestion unifiée de la navigation interne.
-- **verify**: `npm run lint` OK, `npm run build` OK.
-
-## 2026-03-31T23:35:00Z | type: ui | Cursor — Refonte mobile Navbar + Drawer + Chatbot
-- **agent**: `cursor`
-- **summary**: Refonte mobile-first de la barre de navigation avec logo centré en position absolue, simplification des actions visibles sur mobile (CTA Réserver only), et déplacement des actions secondaires dans le drawer (Téléphone, Favoris, Connexion/Espace client). Ajustement du chatbot mobile avec FAB plus discret et cibles tactiles explicites dans l’entête.
-- **files**: [`components/layout/Navbar.tsx`, `components/chatbot/Chatbot.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
-- **why**: Corriger le chevauchement du logo en mobile, réduire le bruit visuel en navbar, et finaliser une expérience mobile premium conforme au plan de refonte.
-- **impact**: Navigation mobile plus claire et stable sur petits écrans ; menu burger enrichi sans surcharger le header ; chatbot plus intégré au design global avec meilleure ergonomie tactile.
-- **verify**: `npm run lint` OK (warning existant `no-img-element` dans `Chatbot.tsx`) ; `npm run build` OK.
-
----
 # Actions Log
 
 Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent préciser l’agent :
@@ -60,129 +11,135 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
-## 2026-03-31T24:58:00Z | type: ui | Cursor — Revue mobile globale (public + légal + espace-client + dashboard)
-- **agent**: `cursor`
-- **summary**: Implémentation complète de la revue mobile “tout le site” : socle mobile-first partagé (`.page-px`, `.section-y`, `.section-y-compact`), adaptation des shells marketing, harmonisation des parcours publics clés (home, listing villas, fiche villa, booking, contact), ajustements des pages secondaires/légales et densification mobile de l’espace-client + dashboards (headers safe-area, tableaux scrollables, cartes/stats sur petits écrans).
-- **files**: [`app/globals.css`, `components/marketing/landing-sections.tsx`, `components/layout/Footer.tsx`, `app/page.tsx`, `app/villas/page.tsx`, `app/villas/[id]/page.tsx`, `app/book/page.tsx`, `app/contact/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `app/terms/page.tsx`, `app/confidentialite/page.tsx`, `app/cookies/page.tsx`, `app/espace-client/layout.tsx`, `app/espace-client/page.tsx`, `app/espace-client/messagerie/page.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`]
-- **why**: Retour utilisateur : impression de “copie réduite” au lieu d’une vraie adaptation mobile contextuelle.
-- **impact**: Rythme et hiérarchie plus lisibles sur 320–390px, meilleures zones tactiles, moins de débordements, meilleure cohérence entre pages publiques et surfaces applicatives.
-- **verify**: `npm run build` OK ; smoke local `GET /`=200, `GET /villas`=200, `GET /book`=200, `GET /contact`=200 (et 404 attendu sur `/villas/test-id`).
-- **session**: `docs/logs/2026-03-31.md`
+## 2026-03-31T18:45:00Z | type: ui | Cursor — Navbar mobile : plus de chevauchement logo / actions
 
-## 2026-03-31T24:15:00Z | type: ui | Cursor — Navbar mobile: grille 3 cols + téléphone lg seulement
 - **agent**: `cursor`
-- **summary**: Suppression du positionnement absolu du logo ; layout en `grid` (menu | logo `minmax(0,1fr)` | actions) pour empêcher la colonne droite de recouvrir le wordmark. Numéro en texte affiché uniquement à partir de `lg` ; en dessous, icône téléphone seule (`lg:hidden`). Truncate + `whitespace-normal` sur le wordmark si l’espace manque.
-- **files**: [`components/layout/Navbar.tsx`]
-- **why**: Chevauchement logo / téléphone (texte + icône) sur mobile et paysage tablette (md avec numéro long).
-- **impact**: Barre lisible sans superposition ; numéro complet sur grands écrans uniquement.
+- **summary**: Colonne droite trop large sur <400px (tél. + favoris + compte + « Réserver ») — le wordmark manquait d’espace. Suppression du `pt` safe-area en double sur `<header>`, retrait du préfixe Tailwind invalide `xs:inline`, grille plus serrée (`px-2`, `gap-x-1.5`), logo un peu plus petit via clamp, icônes `h-9` sous 400px. Sous 400px : pas d’icône téléphone dans la barre (numéro dans le tiroir), CTA réservation en icône calendrier + `aria-label` ; à partir de 400px : libellé « Réserver » comme avant.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Plainte utilisateur : header mobile toujours cassé (chevauchement).
+- **impact**: Barre utilisable sur iPhone étroit ; appel et résa restent accessibles (menu / libellé selon breakpoint).
+- **verify**: `npm run build` OK ; ESLint fichier Navbar OK.
+
+---
+
+## 2026-04-05T17:30:00Z | type: config | Cursor — Vercel : modules manquants `components/home`
+
+- **agent**: `cursor`
+- **summary**: Le `main` référencait `@/components/home/*` sans fichiers versionnés → échec build Vercel. Ajout commit `components/home/` (4 fichiers) + push ; restauration locale `.gitignore` depuis HEAD.
+- **files**: [`components/home/HomeAudienceScroll.tsx`, `components/home/HomeHeroPrimaryActions.tsx`, `components/home/ProprietairesTransitionLink.tsx`, `components/home/use-view-transition-navigate.ts`, `.gitignore`, `docs/ACTIONS_LOG.md`]
+- **why**: Module not found sur le déploiement.
+- **impact**: Build Vercel peut repasser au vert sur le commit poussé.
+- **verify**: `git push` OK.
+
+---
+
+## 2026-04-05T16:00:00Z | type: ui | Cursor — Accueil : transitions hero (résa + proprio)
+
+- **agent**: `cursor`
+- **summary**: Composant client `HomeHeroPrimaryActions` — sur mobile la barre de recherche est repliée jusqu’au clic « Réserver un séjour » (grid `0fr` → `1fr`, fade/slide, scroll smooth, hash `#reserver-un-sejour`) ; desktop inchangé visuellement (barre visible). « Confier ma villa » (hero + bas de page) : `ProprietairesTransitionLink` + `useViewTransitionNavigate` (`document.startViewTransition` si dispo, sinon `router.push` ; respect `prefers-reduced-motion`). `HomeAudienceScroll` : `?pour=sejour` met le hash, émet `diamant-reveal-booking`, puis scroll. CSS `::view-transition-old/new(root)` dans `globals.css`.
+- **files**: [`app/page.tsx`, `app/globals.css`, `components/home/HomeHeroPrimaryActions.tsx`, `components/home/HomeAudienceScroll.tsx`, `components/home/ProprietairesTransitionLink.tsx`, `components/home/use-view-transition-navigate.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Demande animations à l’interaction et révélation de la recherche réservation.
+- **impact**: Parcours voyageur plus guidé sur mobile ; navigation propriétaires plus fluide sur Chrome/Edge récents.
 - **verify**: `npm run build` OK.
-- **session**: `docs/logs/2026-03-31.md`
-
-## 2026-03-31T23:58:00Z | type: ui | Cursor — Mobile navbar + chatbot (safe-area, z-index, tap targets)
-- **agent**: `cursor`
-- **summary**: Passe responsive ciblée: safe-area top pour header et drawer, logo centré borné sur très petits écrans, CompareBar en z-40 sous le FAB chatbot (z-52), FAB remonté quand la barre de comparaison est visible, panneau chat en `100dvh` + zones safe + suggestions/envoi 44px, badge FAB icône Gem au lieu d’emoji.
-- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `components/villas/CompareBar.tsx`, `components/chatbot/Chatbot.tsx`]
-- **why**: Demande utilisateur: rendu mobile « super propre » sur navbar et chatbot.
-- **impact**: Moins de chevauchement logo/actions, pas de FAB masquant la comparaison, meilleure ergonomie iOS (notch, home indicator).
-- **verify**: `npm run build` OK ; lint sur fichiers modifiés OK.
-- **session**: `docs/logs/2026-03-31.md`
-
-## 2026-03-31T22:40:00Z | type: ui+perf | Cursor — Passe responsive/perf complémentaire (navbar prioritaire)
-- **agent**: `cursor`
-- **summary**: Nouveau tour complet mobile avec priorité navbar et perf mobile: simplification de la barre top sur très petits écrans, réduction des effets blur côté mobile, harmonisation headers dashboard, et correction du layout KPI assistant en mobile.
-- **files**: [`components/layout/Navbar.tsx`, `components/layout/BrandLogo.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `app/dashboard/proprio/submissions/page.tsx`, `components/dashboard/assistant-views/StatsView.tsx`]
-- **why**: Signal utilisateur indiquant persistance d’un bug mobile après la première passe.
-- **impact**: Header mobile plus robuste entre 320-390px, charge visuelle réduite sur mobile, lisibilité dashboard améliorée.
-- **verify**: Séquence appliquée `modif -> npm run build -> npm run dev`; smoke localhost `/` = 200, `/villas` = 200, `/dashboard/proprio` = 200.
-- **session**: `docs/logs/2026-03-31.md`
 
 ---
 
-## 2026-03-31T22:37:00Z | type: ui+perf | Cursor — Correctif navbar mobile + stabilisation runtime local
+## 2026-04-05T14:15:00Z | type: config | Cursor — Build Next : cache `.next` incohérent
+
 - **agent**: `cursor`
-- **summary**: Ajustement ciblé de la navbar mobile pour supprimer les chevauchements (wordmark plus compact, zones de sécurité horizontales revues, actions secondaires masquées sur très petits écrans) et stabilisation du runtime localhost (nettoyage `.next` + relance dev après conflit build/dev).
-- **files**: [`components/layout/BrandLogo.tsx`, `components/layout/Navbar.tsx`]
-- **why**: Retour utilisateur: problème mobile toujours présent, priorité navbar.
-- **impact**: Header mobile plus lisible entre 320-390px, meilleure hiérarchie des actions, suppression des overlaps visuels.
-- **verify**: `npm run build` OK ; `npm run dev -- -p 3000` relancé proprement ; smoke localhost `/` = 200, `/villas` = 200.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Échec `next build` (PageNotFoundError sur routes API existantes) résolu par `rm -rf .next` puis rebuild ; `npm run dev` relancé sur le port 3000.
+- **files**: [`docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Artefacts `.next` désynchronisés ou build partiel dans un environnement restreint.
+- **impact**: Build vert à nouveau ; en cas d’erreurs « Cannot find module for page » sur des fichiers présents, nettoyer `.next` puis reconstruire.
+- **verify**: `npm run build` OK (50 routes) ; dev server démarre.
 
 ---
 
-## 2026-03-31T23:25:00Z | type: ui+perf | Cursor — Passe responsive mobile P0/P1 (public + dashboards + espace-client)
+## 2026-04-05T12:00:00Z | type: ui | Cursor — `/proprietaires` : flux sous-hero épuré + médias centralisés
+
 - **agent**: `cursor`
-- **summary**: Correction mobile complète prioritaire: fondations overflow/header, parcours booking mobile sur fiche villa, comportement carte/listing villas, lightbox galerie, dashboard proprio (actions mobiles + assistant split layout + tabs/kpis/tables), espace-client (tap targets), compare bar/chatbot (safe-area + cibles tactiles), FAQ contact (longues lignes).
-- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `app/villas/[id]/page.tsx`, `components/VillasMapView.tsx`, `components/VillaGallery.tsx`, `app/dashboard/proprio/page.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`, `app/espace-client/layout.tsx`, `components/villas/CompareBar.tsx`, `components/chatbot/Chatbot.tsx`, `app/contact/page.tsx`]
-- **why**: Site déployé signalé “buggé mobile” par l’utilisateur; nécessité de rétablir une UX utilisable sur 320-390px sans casser desktop.
-- **impact**: Navigation et actions critiques accessibles sur mobile, réduction des débordements, meilleure ergonomie tactile (>=44px), meilleure compatibilité safe-area iOS sur éléments fixes.
-- **verify**: `npm run build` OK ; `npm run dev -- -p 3000` actif ; smoke localhost `GET /villas` = 200, `GET /dashboard/proprio` = 200.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Fusion intro « Pourquoi » et 3 piliers dans un seul `EditorialImageSplit` ; inclusions en split sur fond `offwhite`, listes et pack allégés ; témoignage pleine largeur sur fond blanc voilé ; `PROPRIO_LANDING_IMAGES` / `PROPRIO_LANDING_IMAGE_ALTS` dans `lib/proprietaires-data.ts` (fallback `villa-hero` jusqu’à dépôt `public/proprietaires/*`) ; `EditorialImageSplit` : `sectionClassName`, `textColClassName`, `imageWrapperClassName`, typo/colonnes plus aérées.
+- **files**: [`app/proprietaires/page.tsx`, `lib/proprietaires-data.ts`, `components/marketing/editorial-blocks.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Disposition sous le hero jugée chargée ; besoin d’emplacements clairs pour futures images dédiées.
+- **impact**: Parcours plus lisible, alternance blanc/offwhite maîtrisée ; remplacer les chemins média dans `proprietaires-data` quand les assets existent.
+- **verify**: `read_lints` sur fichiers modifiés ; build local peut échouer si routes API manquantes (env).
 
 ---
 
-## 2026-03-31T22:40:00Z | type: ui | Cursor — Hero: baseline prioritaire “CONCIERGERIE PRIVÉE”
+## 2026-04-04T18:30:00Z | type: ui | Cursor — `/proprietaires` : enrichissement visuel sans nouveau copy
+
 - **agent**: `cursor`
-- **summary**: Mise à jour du libellé éditorial du hero pour mettre “CONCIERGERIE PRIVÉE” en premier.
-- **files**: [`app/page.tsx`]
-- **why**: Demande utilisateur explicite de prioriser ce message de positionnement dans la zone hero.
-- **impact**: Hiérarchie de marque clarifiée dès le premier écran.
-- **verify**: Relecture du rendu texte dans le hero.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Hero : retrait de l’eyebrow « Programme propriétaires · Martinique » au profit d’une règle or ; deux `EditorialImageSplit` (pourquoi + inclusions/pack) avec cadrages `object-position` sur `/villa-hero.jpg` ; grille 3 piliers seule ; témoignage sur fond image léger + dégradé ; `EditorialImageSplit` accepte `eyebrow?` et `imageClassName?`.
+- **files**: [`app/proprietaires/page.tsx`, `components/marketing/editorial-blocks.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Landing propriétaires plus éditoriale / moins « brochure programme », sans texte additionnel.
+- **impact**: Parcours visuel plus riche, même wording métier et metadata SEO inchangés.
+- **verify**: `read_lints` (fichiers modifiés) ; `npm run build` OK.
 
 ---
 
-## 2026-03-31T22:15:00Z | type: security+config+script | Cursor — Préparation V1 GitHub/Vercel + hardening pre-prod
+## 2026-04-04T14:00:00Z | type: ui | Cursor — Accueil : retrait bloc « Programme propriétaires »
+
 - **agent**: `cursor`
-- **summary**: Préparation publication V1: ajout `.gitignore` projet (blocage `.env*`, `.next`, artefacts), durcissement `dashboard/team/[secret]` (secret serveur + `notFound()`), sécurisation `GET /api/sync` (header cron + `CRON_SECRET/SYNC_CRON_SECRET`), restriction CORS `OPTIONS /api/chat` à une allowlist, ajustement `vercel.json` (cron daily compatible Hobby), ajout des variables d’environnement de sécurité dans `.env.local.example`, installation dépendances manquantes (`recharts`, `@dnd-kit/*`) et déploiement Vercel en production.
-- **files**: [`.gitignore`, `.env.local.example`, `app/dashboard/team/[secret]/page.tsx`, `app/api/sync/route.ts`, `app/api/chat/route.ts`, `vercel.json`, `package.json`, `package-lock.json`]
-- **why**: Rendre la V1 publiable sans fuite de secrets, réduire l’exposition des endpoints sensibles, et obtenir une URL de démonstration stable.
-- **impact**: Production Vercel active sur `https://diamant-noir.vercel.app`; accès non autorisé bloqué sur `/dashboard/team/*`, `/api/sync` et CORS externe sur `/api/chat`.
-- **verify**: `npm run build` OK; déploiement Vercel OK; smoke checks HTTP: `/`=200, `/villas`=200, `/dashboard/team/test`=404, `/api/sync`=403, `OPTIONS /api/chat` (origin externe)=403.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Suppression de la section `id="proprietaires"` (doublon avec `/proprietaires`), sous-titre hero recentré voyageurs ; entrées propriétaires conservées via carte hero + CTA bas + navbar.
+- **files**: [`app/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Demande client — index locataire sans le long bloc programme proprio désormais couvert par la landing dédiée.
+- **impact**: Page d’accueil plus courte, message réservation/clé en main voyageurs en premier.
+- **verify**: `read_lints` sur `app/page.tsx`.
 
 ---
 
-## 2026-03-31T21:05:00Z | type: ui+config | Cursor — Retrait Chakra/HeroUI, espace client sur Radix+Tailwind
+## 2026-04-04T12:00:00Z | type: ui | Cursor — HomeAudienceScroll : `?pour=proprietaire` → `/proprietaires`
+
 - **agent**: `cursor`
-- **summary**: Suppression de `@heroui/react` et `@chakra-ui/react` (et assets CSS HeroUI) ; migration des routes `/espace-client` (layout, pages, components) vers `components/ui` + HTML/Tailwind ; retrait de `optimizePackageImports` pour HeroUI et de l’injection CSS globale. Fix lint/hooks sur `WelcomeBook` + correction syntaxe `SearchResults`.
-- **files**: [`app/layout.tsx`, `next.config.mjs`, `app/espace-client/layout.tsx`, `app/espace-client/head.tsx`, `app/espace-client/page.tsx`, `app/espace-client/messagerie/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/reservations/[id]/page.tsx`, `components/espace-client/*`, `components/booking/SearchResults.tsx`, `components/chatbot/Chatbot.tsx`, `package.json`, `package-lock.json`]
-- **why**: Uniformiser la stack UI sur Radix + Tailwind, éliminer la dette multi-lib et éviter les fuites CSS / divergences visuelles.
-- **impact**: UI plus cohérente et maintenable ; bundle allégé (suppression 2 libs UI) ; `/espace-client` reste premium sans dépendance HeroUI.
-- **verify**: `npm run build` OK.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Alignement avec la landing dédiée : sur `/`, `pour=proprietaire|proprietaires` déclenche `router.replace('/proprietaires')` au lieu du scroll vers l’ancre `#proprietaires` ; parcours séjour inchangé (scroll `#reserver-un-sejour`).
+- **files**: [`components/home/HomeAudienceScroll.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Session Claude Code a livré `/proprietaires` + liens directs ; anciens bookmarks `/?pour=proprietaire` restaient sur la home.
+- **impact**: Un seul parcours propriétaire « canon » vers la landing.
+- **verify**: `read_lints` sur fichier modifié ; recette manuelle `/?pour=proprietaire`.
 
 ---
 
-## 2026-03-31T21:06:00Z | type: ui | Cursor — Nettoyage assets HeroUI
-- **agent**: `cursor`
-- **summary**: Suppression des fichiers `public/heroui.min.css` et `public/heroui-v3.min.css` devenus inutiles après la migration de `/espace-client`.
-- **files**: [`public/heroui.min.css`, `public/heroui-v3.min.css`]
-- **why**: Éviter des assets morts et toute tentation de réintroduction implicite de HeroUI.
-- **impact**: Repo plus propre, moins d’ambiguïté sur la stack UI.
-- **verify**: `npm run build` OK.
-- **session**: `docs/logs/2026-03-31.md`
+## 2026-04-04T11:55:00Z | type: ui | Claude Code (terminal) — Landing `/proprietaires` + data partagée + navigation + sitemap
 
----
-
-## 2026-03-31T21:15:00Z | type: docs | Cursor — Mise à jour récap projet
-- **agent**: `cursor`
-- **summary**: Mise à jour du récap global (`RECAP.md`) et alignement du `README.md` sur l’état actuel (Next 15/React 19, UI unifiée Radix+Tailwind, espace client, fiche villa data-driven, note calendrier).
-- **files**: [`RECAP.md`, `README.md`]
-- **why**: Garder une vue projet fiable pour onboarding, décisions UI et état réel du repo.
-- **impact**: Documentation plus exacte, décisions UI figées noir sur blanc.
-- **verify**: Relecture + cohérence avec `docs/ACTIONS_LOG.md` et `docs/logs/2026-03-31.md`.
-- **session**: `docs/logs/2026-03-31.md`
-
----
-
-## 2026-03-31T21:28:00Z | type: docs+ui+config | Claude Code (terminal) — Récap actions session
 - **agent**: `claude`
-- **summary**: Actions opérées via terminal (Claude Code) durant la session : nettoyage dépendances UI (retrait Chakra/HeroUI), régénération lockfile (`npm install`), builds de validation (`npm run build`) et relance du serveur local, plus corrections associées (fallback villas → 404/empty state, styles calendrier disponibilité, corrections lint/syntaxe).
-- **files**: [`package.json`, `package-lock.json`, `next.config.mjs`, `app/layout.tsx`, `app/villas/page.tsx`, `app/villas/[id]/page.tsx`, `components/booking/AvailabilityCalendar.tsx`, `components/booking/SearchResults.tsx`, `components/espace-client/*`, `components/chatbot/Chatbot.tsx`, `README.md`, `RECAP.md`, `docs/logs/2026-03-31.md`]
-- **why**: Assurer traçabilité “terminal Claude Code” demandée (audit), et garantir stabilité via build/dev répétés après refactors UI.
-- **impact**: Historique complet des actions terminal, build vert, environnement local relancé.
-- **verify**: `npm run build` OK ; `npm run dev -- -p 3000` OK.
-- **session**: `docs/logs/2026-03-31.md`
+- **summary**: Page `app/proprietaires/page.tsx` (hero vidéo, sections marketing, CTA soumission / login proprio), extraction `lib/proprietaires-data.ts` (INCLUSIONS + témoignage), imports depuis `app/prestations/page.tsx`, liens home + navbar vers `/proprietaires`, `app/sitemap.ts` avec entrée `/proprietaires` et `NEXT_PUBLIC_BASE_URL`, correctifs build (imports login / `TenantMagicLinkFlow`, retrait prop `basePrice` sur `AvailabilityCalendar`). Refus des flags `ignoreBuildErrors` / `ignoreDuringBuilds` sur `next.config.mjs`.
+- **files**: (voir `git log` diamant-noir : commits ~7347692, 0c610f3, 6cbf7dc, fix imports + villa detail)
+- **why**: Spec `2026-04-03-proprietaires-landing-design.md` + plan Superpowers.
+- **impact**: Parcours propriétaires dédié, SEO/sitemap, une seule source pour les inclusions prestations/landing.
+- **verify**: `npm run build` OK (rapport terminal session Claude).
+
+---
+
+## 2026-04-03T23:45:00Z | type: docs | Cursor — Prompt Superpowers landing propriétaires
+
+- **agent**: `cursor`
+- **summary**: Ajout d’un prompt autonome pour Claude Code (workflow Superpowers) : page `/proprietaires`, CTA prioritaire vers `/soumettre-ma-villa`, MAJ liens « Confier ma villa », navbar, sitemap, SEO, règles UI/audit.
+- **files**: [`docs/superpowers/prompts/claude-code-landing-proprietaires.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Demande utilisateur pour cibler les propriétaires au clic « Confier ma villa » sans dictée d’implémentation manuelle ligne à ligne.
+- **impact**: Fichier prêt à coller dans Claude Code ; exécution du prompt = nouvelle route + redirections à faire par l’agent cible.
+- **verify**: relecture du markdown ; pas de changement runtime tant que le prompt n’est pas exécuté.
+
+---
+
+## 2026-04-03T22:30:00Z | type: api+ui | Cursor — Restauration import annonces (listing-import + n8n/OpenAI)
+
+- **agent**: `cursor`
+- **summary**: Réintroduction du flux import multi-OTA : `lib/listing-import` (allowlist, garde-fous hostname, JSON-LD/OG/regex), `lib/listing-import-ai` (n8n puis OpenAI, unwrap réponse), `POST /api/import-airbnb` avec `{ url, useAi }`, dashboard propriétaire avec case IA et mapping étendu (lieu, prix, SdB, surface, horaires, coords, règles, équipements, images). Doc n8n + variables `LISTING_IMPORT_*` dans `.env.local.example`.
+- **files**: [`lib/listing-import-types.ts`, `lib/listing-import.ts`, `lib/listing-import-ai.ts`, `app/api/import-airbnb/route.ts`, `app/dashboard/proprio/[villaId]/page.tsx`, `.env.local.example`, `docs/n8n/PROMPT_CLAUDE_CODE_LISTING_IMPORT_N8N.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-03.md`]
+- **why**: Audit des transcripts : le module avait été livré puis perdu (undo / non commit) ; alignement avec discussions import intelligent + enrichissement n8n.
+- **impact**: Import au-delà d’Airbnb strict, champs formulaire mieux préremplis ; enrichissement IA optionnel comme avant.
+- **verify**: `read_lints` OK sur fichiers modifiés ; `tsc --noEmit` échoue sur `SearchResults.tsx` (erreur pré-existante hors périmètre).
+
+---
+
+## 2026-04-03T20:15:00Z | type: ui | Cursor — Home : duo voyageurs / propriétaires (même index)
+
+- **agent**: `cursor`
+- **summary**: Hero avec deux chemins (« Réserver un séjour » / « Confier ma villa »), barre `BookingSearchBar` sous l’ancre `#reserver-un-sejour`, section `#proprietaires` (arguments + CTA soumission / espace proprio), défilement automatique via `?pour=proprietaire|sejour`, entrée menu « Propriétaires » vers `/?pour=proprietaire`, CTA bas de page dual + lien connexion proprio.
+- **files**: [`app/page.tsx`, `components/home/HomeAudienceScroll.tsx`, `components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-03.md`]
+- **why**: Retour client (visiteurs perdus) + demande de réappliquer les changements après undo ; une seule home avec différenciation par ancres / query.
+- **impact**: Parcours clairs locataires vs propriétaires sans URL d’accueil séparée ; liens marketing `/?pour=proprietaire` possibles.
+- **verify**: `read_lints` OK sur fichiers touchés ; `npm run build` échoue côté dépôt sur `@heroui/react` manquant (pré-existant hors périmètre).
 
 ---
 
@@ -767,21 +724,3 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **verify**: `npx tsc --noEmit` OK.
 
 ---
-
-## 2026-03-31T23:58:00Z | type: ui | Cursor — Refonte mobile complète multi-phases (public + espace client + dashboard)
-- **agent**: `cursor`
-- **summary**: Application complète mobile-first: navbar re-centrée avec logo absolu centré et actions allégées sous `lg`, drawer renforcé (`safe-x`), normalisation des shells (`globals`, `landing-sections`, `Footer`), passe pages publiques (home/villas/villa/book/contact/soumettre/légales), ajustements éditoriaux + listing map, puis corrections espace-client/dashboard (hit targets 44px, action menus, assistant, analytics header, calendar overflow), et overlays chatbot/compare bar.
-- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `components/marketing/landing-sections.tsx`, `components/layout/Footer.tsx`, `app/page.tsx`, `app/villas/page.tsx`, `components/VillasMapView.tsx`, `app/book/page.tsx`, `app/villas/[id]/page.tsx`, `components/marketing/editorial-blocks.tsx`, `app/contact/page.tsx`, `app/terms/page.tsx`, `app/confidentialite/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `app/dashboard/proprio/page.tsx`, `components/dashboard/ActionMenu.tsx`, `components/espace-client/BookingCard.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `components/AdminCalendar.tsx`, `components/chatbot/Chatbot.tsx`, `components/espace-client/TenantChatbot.tsx`, `components/villas/CompareBar.tsx`, `app/dashboard/proprio/analytics/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
-- **why**: Demande explicite d’une adaptation mobile intelligente sur l’ensemble du projet (pas un simple shrink desktop), avec priorité à la lisibilité, aux zones tactiles et à la cohérence cross-pages.
-- **impact**: Navigation mobile plus propre (logo centré), pages publiques et privées moins “desktop réduites”, interactions tactiles renforcées (buttons/menus/chatbot), meilleures protections overflow.
-- **verify**: `npm run lint` OK (warning non bloquant existant `no-img-element` dans `components/chatbot/Chatbot.tsx`) ; `npm run build` OK.
-
----
-
-## 2026-03-31T23:31:00Z | type: ui | Cursor — Navbar mobile dédiée (fix overlap final)
-- **agent**: `cursor`
-- **summary**: Remplacement de la logique mixte par deux barres distinctes: une navbar dédiée mobile/tablette (`xl:hidden`) avec logo centré absolu et actions minimales (`User + Res.`), et une navbar desktop dédiée (`xl:flex`) avec utilitaires complets. Ajustement de la zone logo et des couches `z-index` pour éliminer le chevauchement `DIAMANT NOIR` / actions sur petits écrans.
-- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
-- **why**: Le header restait visuellement instable sur mobile (superposition du wordmark et des actions), malgré les ajustements progressifs.
-- **impact**: Stabilisation structurelle du header mobile, lisibilité restaurée et comportement cohérent entre mobile et desktop.
-- **verify**: `npm run lint` OK (warning non bloquant existant dans `components/chatbot/Chatbot.tsx`).

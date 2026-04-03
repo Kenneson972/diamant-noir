@@ -19,12 +19,8 @@ const sizeClasses: Record<
   NonNullable<BrandLogoProps["size"]>,
   { box: string; wordmark: string }
 > = {
-  sm: { box: "h-7 w-7 md:h-8 md:w-8", wordmark: "text-sm tracking-[0.16em] sm:text-base sm:tracking-[0.2em]" },
-  md: {
-    box: "h-9 w-9 md:h-10 md:w-10",
-    wordmark:
-      "text-sm tracking-[0.14em] sm:text-base sm:tracking-[0.18em] md:text-xl md:tracking-[0.3em]",
-  },
+  sm: { box: "h-7 w-7 md:h-8 md:w-8", wordmark: "text-base tracking-[0.22em]" },
+  md: { box: "h-9 w-9 md:h-10 md:w-10", wordmark: "text-xl tracking-[0.3em]" },
   lg: { box: "h-12 w-12 md:h-14 md:w-14", wordmark: "text-2xl tracking-[0.32em]" },
   auth: { box: "h-16 w-16", wordmark: "text-2xl tracking-[0.32em]" },
   hero: {
@@ -77,7 +73,7 @@ export function BrandLogo({
     </>
   );
 
-  const wrapClass = `inline-flex items-center gap-2 whitespace-nowrap md:gap-3 ${className}`;
+  const wrapClass = `inline-flex items-center gap-2 md:gap-3 ${className}`;
 
   if (linkToHome) {
     return (

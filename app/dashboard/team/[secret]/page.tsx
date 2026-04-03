@@ -1,17 +1,6 @@
 import { TeamCalendar } from "@/components/TeamCalendar";
-import { notFound } from "next/navigation";
 
-type TeamDashboardPageProps = {
-  params: Promise<{ secret: string }>;
-};
-
-export default async function TeamDashboard({ params }: TeamDashboardPageProps) {
-  const { secret } = await params;
-  const expectedSecret = process.env.TEAM_DASH_SECRET;
-  if (!expectedSecret || secret !== expectedSecret) {
-    notFound();
-  }
-
+export default function TeamDashboard() {
   return (
     <main className="min-h-screen bg-offwhite px-6 pt-12 pb-12 text-navy">
       <div className="mx-auto max-w-4xl space-y-6">

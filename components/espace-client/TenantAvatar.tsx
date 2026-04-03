@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { Avatar } from "@heroui/react";
 
 function initialsFromName(name?: string) {
   if (!name?.trim()) return "?";
@@ -14,12 +14,6 @@ function initialsFromName(name?: string) {
 }
 
 type TenantAvatarSize = "sm" | "md" | "lg";
-
-const sizeClass: Record<TenantAvatarSize, string> = {
-  sm: "h-8 w-8 text-[10px]",
-  md: "h-10 w-10 text-[11px]",
-  lg: "h-12 w-12 text-[12px]",
-};
 
 export function TenantAvatar({
   name,
@@ -35,21 +29,9 @@ export function TenantAvatar({
   const initials = initialsFromName(name);
 
   return (
-    <div
-      className={[
-        "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy/5 text-navy/60",
-        sizeClass[size],
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-      aria-label={name ? `Avatar de ${name}` : "Avatar"}
-    >
-      {url ? (
-        <Image src={url} alt="" fill sizes="48px" className="object-cover" />
-      ) : (
-        <span className="font-bold">{initials}</span>
-      )}
-    </div>
+    <Avatar size={size} variant="default" className={className}>
+      {url ? <Avatar.Image src={url} alt="" /> : null}
+      <Avatar.Fallback className="font-bold text-navy/60">{initials}</Avatar.Fallback>
+    </Avatar>
   );
 }

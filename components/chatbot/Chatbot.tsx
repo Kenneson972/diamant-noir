@@ -1,337 +1,222 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  X,
-  Send,
-  Maximize2,
-  Minimize2,
-  Sparkles,
-  RotateCcw,
-  ExternalLink,
-  Phone,
-  Gem,
-} from "lucide-react";
+import { MessageCircle, X, Send, Smile, Maximize2, Minimize2, Sparkles, Headphones, RotateCcw } from "lucide-react";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { useCompare } from "@/contexts/CompareContext";
-import type {
-  ChatMessage,
-  ChatbotRequest,
-  ChatbotResponse,
-  ChatStage,
-  LeadData,
-  SuggestedVilla,
-  ChatCta,
-} from "@/types/chatbot";
 
-// ─── Suggestions par défaut ───────────────────────────────────────────────────
-const DEFAULT_SUGGESTIONS = [
-  "Découvrir nos villas",
-  "Demander une disponibilité",
-  "Tarifs et services",
-  "Contacter le concierge",
+const QUICK_SUGGESTIONS = {
+  default: [
+    "Villas avec piscine 🏊‍♂️",
+    "Tarifs haute saison 💰",
+    "Réserver maintenant 📅",
+    "Services conciergerie ✨",
+  ],
+  booking: [
+    "Réserver pour 2 personnes",
+    "Réserver pour 4 personnes",
+    "Réserver pour 8 personnes",
+    "Voir les disponibilités",
+  ],
+  pricing: [
+    "Tarif pour une semaine",
+    "Tarif pour un weekend",
+    "Tarif par nuit",
+    "Y a-t-il des réductions ?",
+  ],
+};
+
+const EMOJIS = [
+  "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
+  "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
+  "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩",
+  "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣",
+  "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬",
+  "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔",
+  "👍", "👎", "👌", "✌️", "🤞", "🤟", "🤘", "🤙", "👏", "🙌",
 ];
 
-const BOOKING_SUGGESTIONS = [
-  "Réserver pour 2 personnes",
-  "Réserver pour 4 personnes",
-  "Réserver pour 8 personnes",
-  "Voir les disponibilités",
-];
-
-const PRICING_SUGGESTIONS = [
-  "Tarif pour une semaine",
-  "Tarif pour un weekend",
-  "Tarif par nuit",
-  "Y a-t-il des offres ?",
-];
-
-// ─── Utilitaires ──────────────────────────────────────────────────────────────
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-}
-
-function getOrCreateSessionId(): string {
-  if (typeof window === "undefined") return generateId();
-  let id = localStorage.getItem("diamant_noir_session_id");
-  if (!id) {
-    id = `session-${generateId()}`;
-    localStorage.setItem("diamant_noir_session_id", id);
-  }
-  return id;
-}
-
-function clearSession(): void {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("diamant_noir_session_id");
-  }
-}
-
-// ─── Composant VillaCard (suggestion inline) ──────────────────────────────────
-function VillaCard({ villa }: { villa: SuggestedVilla }) {
-  return (
-    <a
-      href={villa.slug ? `/villas/${villa.slug}` : `/villas/${villa.id}`}
-      className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white p-3 text-left transition-all hover:border-black/30 hover:shadow-sm"
-    >
-      {villa.imageUrl && (
-        <Image
-          src={villa.imageUrl}
-          alt={villa.name}
-          width={80}
-          height={56}
-          className="h-14 w-20 flex-shrink-0 rounded-xl object-cover"
-        />
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-black">{villa.name}</p>
-        {villa.location && (
-          <p className="text-xs text-black/50">{villa.location}</p>
-        )}
-        <p className="text-xs font-medium text-black/70">
-          À partir de {villa.pricePerNight.toLocaleString("fr-FR")} €/nuit
-        </p>
-        {villa.matchReason && (
-          <p className="mt-0.5 text-[11px] italic text-black/40">{villa.matchReason}</p>
-        )}
-      </div>
-      <ExternalLink size={14} className="flex-shrink-0 text-black/30" />
-    </a>
-  );
-}
-
-// ─── Composant CTA ────────────────────────────────────────────────────────────
-function CtaButton({ cta }: { cta: ChatCta }) {
-  if (!cta || cta.type === "none") return null;
-
-  const href = cta.url || (cta.villaId ? `/villas/${cta.villaId}` : "/contact");
-  const label = cta.label || "En savoir plus";
-
-  return (
-    <a
-      href={href}
-      className="mt-2 inline-flex items-center gap-2 rounded-full border border-black bg-black px-5 py-2.5 text-xs font-semibold text-white transition-all hover:bg-black/85"
-    >
-      {cta.type === "callback" || cta.type === "contact" ? (
-        <Phone size={14} />
-      ) : (
-        <ExternalLink size={14} />
-      )}
-      {label}
-    </a>
-  );
-}
-
-// ─── Rendu du contenu d'un message ────────────────────────────────────────────
-function MessageContent({ content }: { content: string }) {
-  const urlRegex = /(https?:\/\/[^\s]+|\/(villas|book|contact|experience)[^\s]*)/g;
-  return (
-    <>
-      {content.split("\n").map((line, i) => {
-        const parts: (string | React.ReactElement)[] = [];
-        let last = 0;
-        let match;
-        urlRegex.lastIndex = 0;
-        while ((match = urlRegex.exec(line)) !== null) {
-          if (match.index > last) parts.push(line.slice(last, match.index));
-          const url = match[0];
-          parts.push(
-            <a
-              key={`l-${i}-${parts.length}`}
-              href={url}
-              target={url.startsWith("http") ? "_blank" : undefined}
-              rel={url.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="underline underline-offset-2 opacity-80 hover:opacity-100"
-            >
-              {url}
-            </a>
-          );
-          last = match.index + match[0].length;
-        }
-        if (last < line.length) parts.push(line.slice(last));
-        return (
-          <p key={i} className="mb-1.5 last:mb-0">
-            {parts}
-          </p>
-        );
-      })}
-    </>
-  );
-}
-
-// ─── Composant principal ──────────────────────────────────────────────────────
 export const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [quickSuggestions, setQuickSuggestions] = useState<string[]>([]);
-  const [currentStage, setCurrentStage] = useState<ChatStage>("greet");
-  const [leadData, setLeadData] = useState<Partial<LeadData>>({});
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const sessionIdRef = useRef<string>("");
-  const fabRef = useRef<HTMLButtonElement>(null);
-
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { count: compareCount } = useCompare();
 
   const hidden = Boolean(
     pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")
   );
 
-  // Extraction du villaId depuis la page courante (/villas/[id])
-  const currentVillaId = (() => {
-    if (!pathname) return undefined;
-    const match = pathname.match(/^\/villas\/([^/]+)/);
-    return match?.[1];
-  })();
+  // Gestion de la session ID
+  const getOrCreateSessionId = () => {
+    if (typeof window === "undefined") return "";
+    let sessionId = localStorage.getItem("diamant_noir_session_id");
+    if (!sessionId) {
+      sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      localStorage.setItem("diamant_noir_session_id", sessionId);
+    }
+    return sessionId;
+  };
 
   // Message de bienvenue
   useEffect(() => {
     if (messages.length === 0) {
-      setMessages([{
-        id: generateId(),
-        role: "assistant",
+      const welcomeMessage = {
+        role: "assistant" as const,
         content:
-          "Bonjour, bienvenue chez Diamant Noir.\n\nJe suis votre concierge privé. Je peux vous présenter nos villas, vous aider à trouver la résidence idéale, et préparer votre séjour.\n\nComment puis-je vous être utile ?",
-        timestamp: Date.now(),
-      }]);
-      setQuickSuggestions(DEFAULT_SUGGESTIONS);
+          "Bonjour ! Je suis l'assistante Diamant Noir 💎\n\n" +
+          "Je suis là pour vous aider à découvrir nos villas d'exception et répondre à toutes vos questions sur les réservations.\n\n" +
+          "Comment puis-je vous aider aujourd'hui ?",
+      };
+      setMessages([welcomeMessage]);
+      setTimeout(() => {
+        setQuickSuggestions(QUICK_SUGGESTIONS.default);
+      }, 300);
     }
-  }, [messages.length]);
-
-  // Écoute de l'événement d'ouverture depuis d'autres composants
-  useEffect(() => {
-    const handler = () => setIsOpen(true);
-    window.addEventListener("openChatbot", handler);
-    return () => window.removeEventListener("openChatbot", handler);
   }, []);
 
-  // Auto-scroll
+  // Écouter les événements pour ouvrir le chatbot
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    const handleOpenChatbot = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener("openChatbot", handleOpenChatbot);
+    return () => {
+      window.removeEventListener("openChatbot", handleOpenChatbot);
+    };
+  }, []);
 
-  // Auto-resize textarea
+  // Fermer le sélecteur d'émojis en cliquant à l'extérieur
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      if (inputMessage) {
-        textareaRef.current.style.height =
-          Math.min(textareaRef.current.scrollHeight, 150) + "px";
+    const handleClickOutside = (event: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+        if (!(event.target as Element).closest(".emoji-btn")) {
+          setShowEmojiPicker(false);
+        }
       }
+    };
+    if (showEmojiPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [inputMessage]);
+  }, [showEmojiPicker]);
 
-  const sendMessage = useCallback(
-    async (text?: string) => {
-      const toSend = (text || inputMessage).trim();
-      if (!toSend || isLoading) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-      if (!sessionIdRef.current) {
-        sessionIdRef.current = getOrCreateSessionId();
-      }
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-      setInputMessage("");
-      setIsLoading(true);
-      setQuickSuggestions([]);
+  // Rendu des messages avec détection de liens
+  const renderMessageContent = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+|\/(villas|book|contact|experience))/g;
+    return content.split("\n").map((line, lineIndex) => {
+      const parts: (string | React.ReactElement)[] = [];
+      let lastIndex = 0;
+      let match;
 
-      const userMsg: ChatMessage = {
-        id: generateId(),
-        role: "user",
-        content: toSend,
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, userMsg]);
-
-      try {
-        const requestBody: ChatbotRequest = {
-          message: toSend,
-          sessionId: sessionIdRef.current,
-          locale: "fr",
-          currentPage: pathname || "/",
-          villaId: currentVillaId,
-          knownLeadData: leadData,
-          currentStage,
-          source: "website_chatbot",
-        };
-
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const data: ChatbotResponse = await res.json();
-
-        if (!data.success) throw new Error("API error");
-
-        // Mise à jour sessionId confirmé
-        if (data.sessionId) sessionIdRef.current = data.sessionId;
-
-        // Mise à jour stage
-        if (data.stage) setCurrentStage(data.stage);
-
-        // Fusion des données lead collectées
-        if (data.leadUpdate && Object.keys(data.leadUpdate).length > 0) {
-          setLeadData((prev) => ({ ...prev, ...data.leadUpdate }));
+      while ((match = urlRegex.exec(line)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(line.slice(lastIndex, match.index));
         }
-
-        // Suggestions rapides dynamiques
-        const lower = toSend.toLowerCase();
-        if (data.suggestedQuickReplies && data.suggestedQuickReplies.length > 0) {
-          setQuickSuggestions(data.suggestedQuickReplies);
-        } else if (lower.includes("réserver") || lower.includes("disponibilité")) {
-          setQuickSuggestions(BOOKING_SUGGESTIONS);
-        } else if (lower.includes("prix") || lower.includes("tarif")) {
-          setQuickSuggestions(PRICING_SUGGESTIONS);
+        const url = match[0];
+        let href = url;
+        if (url.startsWith("https://")) {
+          href = url;
         } else {
-          setQuickSuggestions(DEFAULT_SUGGESTIONS);
+          href = url;
         }
-
-        const assistantMsg: ChatMessage = {
-          id: generateId(),
-          role: "assistant",
-          content: data.reply,
-          timestamp: Date.now(),
-          metadata: {
-            intent: data.intent,
-            stage: data.stage,
-            cta: data.cta,
-            suggestedVillas: data.suggestedVillas,
-            comparisonData: data.comparisonData,
-            preBooking: data.preBooking,
-            shouldEscalate: data.shouldEscalateToHuman,
-          },
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-      } catch (err) {
-        console.error("[Chatbot] Error:", err);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: generateId(),
-            role: "assistant",
-            content:
-              "Je rencontre une difficulté technique passagère. Veuillez réessayer ou contacter directement notre équipe.",
-            timestamp: Date.now(),
-          },
-        ]);
-        setQuickSuggestions(DEFAULT_SUGGESTIONS);
-      } finally {
-        setIsLoading(false);
+        parts.push(
+          <a
+            key={`link-${lineIndex}-${parts.length}`}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-black underline underline-offset-2 hover:text-black/70"
+          >
+            {url}
+          </a>
+        );
+        lastIndex = match.index + match[0].length;
       }
-    },
-    [inputMessage, isLoading, pathname, currentVillaId, leadData, currentStage]
-  );
+      if (lastIndex < line.length) {
+        parts.push(line.slice(lastIndex));
+      }
+      return (
+        <p key={lineIndex} className="mb-2 last:mb-0">
+          {parts}
+        </p>
+      );
+    });
+  };
+
+  const sendMessage = async (messageText?: string) => {
+    const messageToSend = messageText || inputMessage.trim();
+    if (!messageToSend || isLoading) return;
+
+    setInputMessage("");
+    setIsLoading(true);
+    setShowEmojiPicker(false);
+    setQuickSuggestions([]);
+
+    setMessages((prev) => [...prev, { role: "user", content: messageToSend }]);
+
+    try {
+      const sessionId = getOrCreateSessionId();
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: messageToSend,
+          sessionid: sessionId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const chatResponse = data.response || "Désolé, je n'ai pas pu traiter votre demande.";
+
+      setMessages((prev) => [...prev, { role: "assistant", content: chatResponse }]);
+
+      // Suggestions contextuelles
+      const lower = messageToSend.toLowerCase();
+      if (lower.includes("réserver") || lower.includes("disponibilité") || lower.includes("booking")) {
+        setQuickSuggestions(QUICK_SUGGESTIONS.booking);
+      } else if (lower.includes("prix") || lower.includes("tarif") || lower.includes("coût")) {
+        setQuickSuggestions(QUICK_SUGGESTIONS.pricing);
+      } else {
+        setQuickSuggestions(QUICK_SUGGESTIONS.default);
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Oups, j'ai un petit souci technique 😅\n\nPeux-tu réessayer dans quelques instants ?",
+        },
+      ]);
+      setQuickSuggestions(QUICK_SUGGESTIONS.default);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -340,92 +225,104 @@ export const Chatbot = () => {
     }
   };
 
-  const handleReset = () => {
-    clearSession();
-    sessionIdRef.current = "";
-    setMessages([]);
-    setLeadData({});
-    setCurrentStage("greet");
-    setQuickSuggestions([]);
+  const insertEmoji = (emoji: string) => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = inputMessage;
+      const newText = text.substring(0, start) + emoji + text.substring(end);
+      setInputMessage(newText);
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+      }, 0);
+    } else {
+      setInputMessage((prev) => prev + emoji);
+    }
+    setShowEmojiPicker(false);
   };
 
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      if (inputMessage) {
+        textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + "px";
+      }
+    }
+  }, [inputMessage]);
+
+  // Ne pas afficher le chatbot sur le dashboard / login (after all hooks)
   if (hidden) return null;
 
   return (
     <>
-      {/* FAB */}
+      {/* FAB Button */}
       {!isOpen && (
         <button
-          ref={fabRef}
-          type="button"
           onClick={() => setIsOpen(true)}
-          className={`group fixed right-[max(1rem,env(safe-area-inset-right,0px))] z-[52] flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] ring-1 ring-white/10 transition-[bottom,colors,transform] duration-200 hover:bg-black/90 motion-safe:sm:hover:scale-105 sm:right-[max(2rem,env(safe-area-inset-right,0px))] sm:h-16 sm:w-16 ${
-            compareCount > 0
-              ? "bottom-[calc(max(1.25rem,env(safe-area-inset-bottom,0px))+6.5rem)] sm:bottom-[calc(max(2rem,env(safe-area-inset-bottom,0px))+6.5rem)]"
-              : "bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:bottom-[max(2rem,env(safe-area-inset-bottom,0px))]"
-          }`}
-          aria-label="Ouvrir le concierge"
+          className="group fixed bottom-8 right-8 z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90"
+          aria-label="Ouvrir le chat"
         >
-          <Sparkles className="relative z-10 h-6 w-6 sm:h-7 sm:w-7" aria-hidden />
-          <span
-            className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-black shadow-lg sm:-right-2 sm:-top-2"
-            aria-hidden
-          >
-            <Gem className="h-3 w-3" strokeWidth={2} />
+          <Sparkles className="relative z-10 animate-pulse" size={28} />
+          <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-[10px] font-bold text-black shadow-lg">
+            💎
           </span>
         </button>
       )}
 
-      {/* Fenêtre de chat */}
+      {/* Chat Window */}
       {isOpen && (
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Concierge Diamant Noir"
-          className={`fixed z-[52] flex min-h-0 flex-col bg-white shadow-2xl transition-all ${
+          className={`fixed z-50 flex flex-col bg-white shadow-2xl transition-all ${
             isFullscreen || isMobile
-              ? "inset-0 h-[100dvh] max-h-[100dvh] w-screen rounded-none"
-              : "bottom-6 right-6 h-[620px] w-[420px] rounded-[32px]"
+              ? "inset-0 h-screen w-screen rounded-none"
+              : "bottom-6 right-6 h-[600px] w-[400px] rounded-[32px]"
           }`}
         >
           {/* Header */}
-          <div className="safe-top flex shrink-0 items-center justify-between border-b border-white/10 bg-black p-4 text-white sm:p-5">
+          <div className="flex items-center justify-between border-b border-white/10 bg-black p-5 text-white">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
                   D
                 </div>
-                {/* "online" indicator — token: #4ade80 */}
-                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black bg-[#4ade80]" />
+                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400"></span>
               </div>
               <div>
                 <h3 className="font-display text-lg tracking-wide">Conciergerie IA</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
-                  Diamant Noir
-                </p>
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/50">
+                  <span>Diamant Noir</span>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={handleReset}
-                className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
-                title="Nouvelle conversation"
-                aria-label="Réinitialiser"
+                onClick={() => {
+                  localStorage.removeItem("diamant_noir_session_id");
+                  setMessages([{
+                    role: "assistant",
+                    content: "Chat réinitialisé. Comment puis-je vous aider ?"
+                  }]);
+                }}
+                className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                title="Réinitialiser"
               >
                 <RotateCcw size={16} />
               </button>
               {!isMobile && (
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                  className="rounded-full p-2 hover:bg-white/10 transition-colors"
                   aria-label={isFullscreen ? "Réduire" : "Agrandir"}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
               )}
               <button
-                onClick={() => { setIsOpen(false); fabRef.current?.focus(); }}
-                className="tap-target flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                onClick={() => setIsOpen(false)}
+                className="rounded-full p-2 hover:bg-white/10 transition-colors"
                 aria-label="Fermer"
               >
                 <X size={18} />
@@ -434,105 +331,89 @@ export const Chatbot = () => {
           </div>
 
           {/* Messages */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#FAFAFA] p-4 pb-3 space-y-4 sm:p-5">
-            {messages.map((msg) => (
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-offwhite">
+            {messages.map((message, index) => (
               <div
-                key={msg.id}
-                className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                key={index}
+                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {msg.role === "assistant" && (
+                {message.role === "assistant" && (
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black font-display text-sm font-bold text-white">
                     D
                   </div>
                 )}
                 <div
-                  className={`flex max-w-[86%] flex-col gap-2 ${
-                    msg.role === "user" ? "items-end" : "items-start"
+                  className={`max-w-[85%] rounded-[24px] px-5 py-3.5 shadow-sm ${
+                    message.role === "user"
+                      ? "rounded-tr-none bg-gradient-to-tr from-black to-neutral-900 text-white"
+                      : "rounded-tl-none border border-black/10 bg-white text-black"
                   }`}
                 >
-                  <div
-                    className={`rounded-[24px] px-5 py-3.5 shadow-sm ${
-                      msg.role === "user"
-                        ? "rounded-tr-none bg-gradient-to-tr from-black to-neutral-800 text-white"
-                        : "rounded-tl-none border border-black/10 bg-white text-black"
-                    }`}
-                  >
-                    <div className="text-sm font-medium leading-relaxed">
-                      <MessageContent content={msg.content} />
-                    </div>
+                  <div className="text-sm leading-relaxed font-medium">
+                    {renderMessageContent(message.content)}
                   </div>
-
-                  {/* Villas suggérées */}
-                  {msg.metadata?.suggestedVillas && msg.metadata.suggestedVillas.length > 0 && (
-                    <div className="w-full space-y-2">
-                      {msg.metadata.suggestedVillas.map((v) => (
-                        <VillaCard key={v.id} villa={v} />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* CTA */}
-                  {msg.metadata?.cta && msg.metadata.cta.type !== "none" && (
-                    <CtaButton cta={msg.metadata.cta} />
-                  )}
-
-                  {/* Escalade humain */}
-                  {msg.metadata?.shouldEscalate && (
-                    <a
-                      href="/contact"
-                      className="mt-1 inline-flex items-center gap-2 rounded-full border border-black/20 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black"
-                    >
-                      <Phone size={12} />
-                      Parler à un conseiller
-                    </a>
-                  )}
                 </div>
               </div>
             ))}
-
-            {/* Typing indicator */}
             {isLoading && (
               <div className="flex gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black font-display text-sm font-bold text-white">
                   D
                 </div>
                 <div className="flex items-center gap-1 rounded-2xl border border-black/10 bg-white px-4 py-3">
-                  <span className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30" />
-                  <span
-                    className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30"
-                    style={{ animationDelay: "0.2s" }}
-                  />
-                  <span
-                    className="h-2 w-2 animate-bounce motion-reduce:animate-none rounded-full bg-black/30"
-                    style={{ animationDelay: "0.4s" }}
-                  />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30"></span>
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30" style={{ animationDelay: "0.2s" }}></span>
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30" style={{ animationDelay: "0.4s" }}></span>
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
 
-            {/* Quick suggestions */}
+            {/* Quick Suggestions */}
             {quickSuggestions.length > 0 && !isLoading && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {quickSuggestions.map((s, i) => (
+              <div className="flex flex-wrap gap-2 pt-2">
+                {quickSuggestions.map((suggestion, index) => (
                   <button
-                    key={i}
-                    type="button"
-                    onClick={() => sendMessage(s)}
+                    key={index}
+                    onClick={() => sendMessage(suggestion)}
+                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black hover:bg-black hover:text-white"
                     disabled={isLoading}
-                    className="tap-target min-h-11 rounded-full border border-black/15 bg-white px-4 py-2.5 text-left text-xs font-semibold leading-snug text-black transition-colors hover:border-black hover:bg-black hover:text-white disabled:opacity-50 sm:min-h-0 sm:py-2"
                   >
-                    {s}
+                    {suggestion}
                   </button>
                 ))}
               </div>
             )}
-
-            <div ref={messagesEndRef} />
           </div>
 
-          {/* Zone de saisie — safe-area bas (home indicator iOS) */}
-          <div className="shrink-0 border-t border-black/10 bg-white p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:p-4">
+          {/* Input */}
+          <div className="relative border-t border-black/10 bg-white p-4">
+            {showEmojiPicker && (
+              <div
+                ref={emojiPickerRef}
+                className="absolute bottom-full left-0 right-0 mb-2 max-h-64 overflow-y-auto rounded-2xl border border-black/10 bg-white p-4 shadow-xl"
+              >
+                <div className="grid grid-cols-10 gap-2">
+                  {EMOJIS.map((emoji, index) => (
+                    <button
+                      key={index}
+                      onClick={() => insertEmoji(emoji)}
+                      className="rounded-lg p-2 text-xl transition-colors hover:bg-black/5"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="flex items-end gap-2">
+              <button
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="rounded-full p-2 text-black/50 transition-colors hover:bg-black/5 hover:text-black"
+                aria-label="Émojis"
+              >
+                <Smile size={20} />
+              </button>
               <textarea
                 ref={textareaRef}
                 value={inputMessage}
@@ -541,16 +422,15 @@ export const Chatbot = () => {
                 placeholder="Tapez votre message..."
                 disabled={isLoading}
                 rows={1}
-                className="min-h-11 flex-1 resize-none rounded-2xl border border-black/10 bg-[#FAFAFA] px-4 py-3 text-base text-black placeholder:text-black/30 focus:border-black focus:outline-none disabled:opacity-50 sm:min-h-0 sm:text-sm"
+                className="flex-1 resize-none rounded-2xl border border-black/10 bg-offwhite px-4 py-3 text-sm text-black focus:border-black focus:outline-none"
               />
               <button
-                type="button"
                 onClick={() => sendMessage()}
                 disabled={!inputMessage.trim() || isLoading}
-                className="tap-target flex shrink-0 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-40 min-h-11 min-w-11 sm:h-10 sm:w-10 sm:min-h-0 sm:min-w-0"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-all hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Envoyer"
               >
-                <Send size={16} />
+                <Send size={18} />
               </button>
             </div>
           </div>

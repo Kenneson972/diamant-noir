@@ -1,5 +1,6 @@
 // app/proprietaires/page.tsx
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -11,13 +12,17 @@ import {
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import {
   LandingSection,
-  LandingBlockTitle,
   LandingCtaBand,
 } from "@/components/marketing/landing-sections";
-import { EditorialFigureBand } from "@/components/marketing/editorial-blocks";
+import {
+  EditorialFigureBand,
+  EditorialImageSplit,
+} from "@/components/marketing/editorial-blocks";
 import {
   INCLUSIONS_COL_A,
   INCLUSIONS_COL_B,
+  PROPRIO_LANDING_IMAGE_ALTS,
+  PROPRIO_LANDING_IMAGES,
   TEMOIGNAGE_PROPRIO,
 } from "@/lib/proprietaires-data";
 
@@ -30,7 +35,7 @@ export const metadata: Metadata = {
 export default function ProprietairesPage() {
   return (
     <main className="min-h-screen bg-offwhite">
-      {/* ─── Section 1 : Hero vidéo ─── */}
+      {/* ─── Hero vidéo ─── */}
       <section
         className="relative flex min-h-[min(72vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-24 pt-28 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
         aria-labelledby="proprio-hero-title"
@@ -61,9 +66,12 @@ export default function ProprietairesPage() {
                 priority
               />
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-gold/90 animate-in fade-in duration-700">
-              Programme propriétaires · Martinique
-            </p>
+            <div
+              className="flex justify-center animate-in fade-in duration-700"
+              aria-hidden
+            >
+              <span className="h-px w-16 bg-gold/85 md:w-24" />
+            </div>
             <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-75 md:max-w-lg md:text-base">
               Confiez votre villa à une conciergerie d&apos;exception. Visibilité, revenus, sérénité.
             </p>
@@ -106,119 +114,144 @@ export default function ProprietairesPage() {
         </div>
       </section>
 
-      {/* ─── Section 2 : Pourquoi Diamant Noir ─── */}
-      <LandingSection bg="offwhite">
-        <LandingBlockTitle
-          eyebrow="Programme propriétaires"
-          title="Pourquoi confier votre villa à Diamant Noir ?"
-        />
-        <p className="-mt-4 mb-14 max-w-2xl text-sm leading-relaxed text-navy/65 md:text-[15px]">
-          Mise en avant premium, conciergerie exigeante et gestion complète pour protéger votre bien
-          tout en maximisant ses performances.
-        </p>
-        <ul className="grid gap-10 sm:grid-cols-3">
-          <li className="space-y-3">
-            <TrendingUp className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-            <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-navy">
-              Visibilité &amp; revenue
-            </h3>
-            <p className="text-sm leading-relaxed text-navy/55">
-              Positionnement luxe, pricing et diffusion alignés sur une clientèle haut de gamme.
+      {/* ─── Intro + piliers : un seul bloc image | texte ─── */}
+      <EditorialImageSplit
+        title="Pourquoi confier votre villa à Diamant Noir ?"
+        imagePosition="left"
+        imageSrc={PROPRIO_LANDING_IMAGES.splitPourquoi}
+        imageAlt={PROPRIO_LANDING_IMAGE_ALTS.splitPourquoi}
+        imageClassName="object-[center_32%] md:object-[center_28%]"
+        sectionClassName="mt-6 bg-white md:mt-8"
+        textColClassName="lg:max-w-xl"
+        body={
+          <>
+            <p className="max-w-prose text-[15px] leading-relaxed text-navy/65 md:text-[16px]">
+              Mise en avant premium, conciergerie exigeante et gestion complète pour protéger votre bien
+              tout en maximisant ses performances.
             </p>
-          </li>
-          <li className="space-y-3">
-            <Headphones className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-            <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-navy">
-              Conciergerie 24/7
-            </h3>
-            <p className="text-sm leading-relaxed text-navy/55">
-              Accueil, housekeeping, demandes voyageurs : une équipe dédiée sur le terrain.
-            </p>
-          </li>
-          <li className="space-y-3">
-            <Building2 className="text-gold/80" size={22} strokeWidth={1.25} aria-hidden />
-            <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-navy">
-              Sérénité propriétaire
-            </h3>
-            <p className="text-sm leading-relaxed text-navy/55">
-              Suivi transparent, standards élevés et relation de confiance sur la durée.
-            </p>
-          </li>
-        </ul>
-      </LandingSection>
+            <div className="mt-14 border-t border-navy/10 pt-14">
+              <ul className="grid gap-14 md:grid-cols-3 md:gap-x-10 md:gap-y-0 lg:gap-x-14">
+                <li>
+                  <TrendingUp className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
+                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
+                    Visibilité &amp; revenue
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
+                    Positionnement luxe, pricing et diffusion alignés sur une clientèle haut de gamme.
+                  </p>
+                </li>
+                <li>
+                  <Headphones className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
+                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
+                    Conciergerie 24/7
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
+                    Accueil, housekeeping, demandes voyageurs : une équipe dédiée sur le terrain.
+                  </p>
+                </li>
+                <li>
+                  <Building2 className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
+                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
+                    Sérénité propriétaire
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
+                    Suivi transparent, standards élevés et relation de confiance sur la durée.
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </>
+        }
+      />
 
-      {/* ─── Section 3 : 20% TTC ─── */}
       <EditorialFigureBand
         label="Transparence"
         figure="20%"
         caption="TTC sur le montant net des nuitées collectées — frais de ménage et blanchisserie facturés aux voyageurs, hors commission."
       />
 
-      {/* ─── Section 4 : Inclusions + Pack démarrage ─── */}
-      <LandingSection bg="white">
-        <LandingBlockTitle eyebrow="Gestion complète" title="Inclus dans la formule" />
-        <p className="-mt-4 mb-12 max-w-2xl text-sm leading-relaxed text-navy/65 md:text-[15px]">
-          Le périmètre contractuel que nous mettons en œuvre pour votre villa en gestion clé en main.
-        </p>
-        <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <ul className="space-y-4">
-            {INCLUSIONS_COL_A.map((line) => (
-              <li key={line} className="flex gap-3 text-sm text-navy/85 md:text-[15px]">
-                <span className="mt-0.5 shrink-0 text-gold" aria-hidden>
-                  <Check size={18} strokeWidth={1} />
-                </span>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-          <ul className="space-y-4">
-            {INCLUSIONS_COL_B.map((line) => (
-              <li key={line} className="flex gap-3 text-sm text-navy/85 md:text-[15px]">
-                <span className="mt-0.5 shrink-0 text-gold" aria-hidden>
-                  <Check size={18} strokeWidth={1} />
-                </span>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Pack démarrage */}
-        <div className="mt-14 border border-navy/10 bg-offwhite/40 px-8 py-10 md:px-12">
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
-            Première location · En supplément
-          </p>
-          <p className="text-sm leading-relaxed text-navy/75 md:text-[15px]">
-            <span className="font-semibold text-navy">En supplément</span> — uniquement pour la{" "}
-            <span className="font-semibold">première location</span> réalisée par notre conciergerie — un{" "}
-            <span className="font-semibold">pack de démarrage</span> vous sera facturé (sucre, café, eau,
-            poivre, huile, épices, papier toilette, savon, boîte à clefs, inventaire).
-          </p>
-        </div>
-      </LandingSection>
-
-      {/* ─── Section 5 : Témoignage propriétaire ─── */}
-      <LandingSection bg="offwhite">
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.45em] text-navy/40">
-          Ils nous font confiance
-        </p>
-        <blockquote className="max-w-3xl border-t border-navy/10 pt-8">
-          <p className="font-display text-xl leading-relaxed text-navy md:text-2xl">
-            &ldquo;{TEMOIGNAGE_PROPRIO.quote}&rdquo;
-          </p>
-          <footer className="mt-6">
-            <cite className="not-italic text-sm font-semibold text-navy">
-              {TEMOIGNAGE_PROPRIO.author}
-            </cite>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-navy/45">
-              {TEMOIGNAGE_PROPRIO.place}
+      <EditorialImageSplit
+        title="Inclus dans la formule"
+        imagePosition="right"
+        imageSrc={PROPRIO_LANDING_IMAGES.splitInclusions}
+        imageAlt={PROPRIO_LANDING_IMAGE_ALTS.splitInclusions}
+        imageClassName="object-[center_65%] md:object-[center_70%]"
+        sectionClassName="bg-offwhite"
+        textColClassName="lg:max-w-2xl"
+        body={
+          <>
+            <p className="max-w-prose text-[15px] leading-relaxed text-navy/65 md:text-[16px]">
+              Le périmètre contractuel que nous mettons en œuvre pour votre villa en gestion clé en main.
             </p>
-          </footer>
-        </blockquote>
-      </LandingSection>
+            <div className="mt-10 grid gap-x-16 gap-y-5 sm:grid-cols-2">
+              <ul className="space-y-4">
+                {INCLUSIONS_COL_A.map((line) => (
+                  <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
+                    <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
+                      <Check size={16} strokeWidth={1} />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-4">
+                {INCLUSIONS_COL_B.map((line) => (
+                  <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
+                    <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
+                      <Check size={16} strokeWidth={1} />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-12 max-w-prose border-t border-navy/10 pt-10">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.35em] text-navy/40">
+                Première location · En supplément
+              </p>
+              <p className="text-sm leading-relaxed text-navy/70 md:text-[15px]">
+                <span className="font-semibold text-navy">En supplément</span> — uniquement pour la{" "}
+                <span className="font-semibold">première location</span> réalisée par notre conciergerie —{" "}
+                un <span className="font-semibold">pack de démarrage</span> vous sera facturé (sucre,
+                café, eau, poivre, huile, épices, papier toilette, savon, boîte à clefs, inventaire).
+              </p>
+            </div>
+          </>
+        }
+      />
 
-      {/* ─── Section 6 : CTA final ─── */}
-      <LandingSection bg="white">
+      {/* ─── Témoignage ─── */}
+      <section className="relative overflow-hidden bg-white px-6 py-20 md:py-24 lg:py-28">
+        <Image
+          src={PROPRIO_LANDING_IMAGES.fondTemoignage}
+          alt={PROPRIO_LANDING_IMAGE_ALTS.fondTemoignage || ""}
+          fill
+          className="object-cover object-[center_40%] opacity-[0.12]"
+          sizes="100vw"
+          aria-hidden={!PROPRIO_LANDING_IMAGE_ALTS.fondTemoignage}
+        />
+        <div className="absolute inset-0 bg-white/88 backdrop-blur-[1px]" aria-hidden />
+        <div className="relative z-10 mx-auto max-w-3xl text-center md:text-left">
+          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.42em] text-navy/38">
+            Ils nous font confiance
+          </p>
+          <blockquote className="border-t border-navy/10 pt-10">
+            <p className="font-display text-[1.35rem] leading-snug text-navy md:text-2xl md:leading-snug">
+              &ldquo;{TEMOIGNAGE_PROPRIO.quote}&rdquo;
+            </p>
+            <footer className="mt-8">
+              <cite className="not-italic text-sm font-semibold text-navy">
+                {TEMOIGNAGE_PROPRIO.author}
+              </cite>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-navy/42">
+                {TEMOIGNAGE_PROPRIO.place}
+              </p>
+            </footer>
+          </blockquote>
+        </div>
+      </section>
+
+      <LandingSection bg="offwhite">
         <LandingCtaBand title="Prêt à confier votre villa ?">
           <Link href="/soumettre-ma-villa" className="btn-luxury bg-black text-white">
             Soumettre ma villa

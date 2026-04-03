@@ -54,10 +54,13 @@ diamant-noir/
 │   │   └── sync/                 # Synchronisation iCal (cron)
 │   ├── book/                     # Recherche + checkout 2 étapes
 │   ├── dashboard/
-│   │   ├── proprio/              # Dashboard propriétaire
-│   │   │   ├── page.tsx          # Liste villas
-│   │   │   ├── assistant/        # Assistant IA (Command Center)
-│   │   │   └── [villaId]/        # Fiche villa (édition, résas)
+│   │   ├── proprio/              # Dashboard propriétaire (layout + chrome partagé)
+│   │   │   ├── layout.tsx        # ProprioChrome sticky sur toutes les routes proprio
+│   │   │   ├── page.tsx          # Liste villas + intro navy
+│   │   │   ├── analytics/        # Stats par villa (tableau éditorial)
+│   │   │   ├── submissions/      # Soumissions villas (leads)
+│   │   │   ├── assistant/        # Assistant IA (thème « salon privé » navy/or)
+│   │   │   └── [villaId]/        # Fiche villa (édition, résas, sections avec filet or)
 │   │   └── team/[secret]/        # Page équipe (accès par secret)
 │   ├── login/                    # Connexion Supabase
 │   ├── villas/                   # Catalogue + fiche villa
@@ -83,6 +86,8 @@ diamant-noir/
 │   ├── dashboard/                # Admin
 │   │   ├── ActionMenu.tsx
 │   │   ├── SortableImage.tsx
+│   │   ├── proprio/              # Dashboard propriétaire (chrome + intros)
+│   │   │   └── ui.tsx            # ProprioChrome, ProprioPageIntro, StatTile, SectionHeading
 │   │   └── assistant-views/      # Vues du Command Center
 │   │       ├── BookingsView.tsx
 │   │       ├── MaintenanceView.tsx
@@ -146,10 +151,12 @@ diamant-noir/
 | Route | Description |
 |-------|-------------|
 | `/login` | Connexion — redirection vers `/dashboard/proprio` après succès |
-| `/dashboard/proprio` | Liste des villas (filtre Publiées/Toutes, accès assistant + détail) |
+| `/dashboard/proprio` | Liste des villas (intro éditoriale, filtres, ProprioChrome) |
 | `/dashboard/proprio/new` | Création d’une nouvelle villa |
-| `/dashboard/proprio/[villaId]` | Fiche villa : édition, réservations, statut Publié/Brouillon, suppression |
-| `/dashboard/proprio/assistant` | Assistant IA admin (Command Center : chat + panneau visuel) |
+| `/dashboard/proprio/analytics` | Vues / clics / résas / CA par villa |
+| `/dashboard/proprio/submissions` | Gestion des soumissions « soumettre ma villa » |
+| `/dashboard/proprio/[villaId]` | Fiche villa : onglets, calendrier, contenu premium, finances |
+| `/dashboard/proprio/assistant` | Assistant IA (Command Center : chat + panneau visuel, thème aligné marque) |
 | `/dashboard/team/[secret]` | Page équipe (accès par secret dans l’URL) |
 
 ---
@@ -192,6 +199,7 @@ diamant-noir/
 - **Undo** : suppression villa et résa avec délai 10 s et bouton « Annuler »
 - **Statut Publié/Brouillon** : toggle sur la fiche villa, filtrage côté public (villas publiées uniquement)
 - **Filtre** dans la liste : « Publiées » ou « Toutes »
+- **UI propriétaire (2026-04-01)** : `app/dashboard/proprio/layout.tsx` + `components/dashboard/proprio/ui.tsx` — navigation sticky unifiée (`ProprioChrome`), intros de page (`ProprioPageIntro`), titres de section (`ProprioSectionHeading`) ; pages index, analytics, submissions, assistant et détail villa alignées sur le langage visuel luxe (navy, or, typo display).
 
 ### 7.4 Données & sync
 
@@ -222,7 +230,7 @@ Fichier modèle : `.env.local.example`. À copier en `.env.local`.
 
 - **Plateforme** : Vercel
 - **Cron** (`vercel.json`) : `/api/sync` toutes les heures (`0 * * * *`)
-- **Build** : `npm run build` — **Dev** : `npm run dev` (ou `npm run dev -- -p 3002` pour le port 3002)
+- **Build** : `npm run build` — **Dev** : depuis le dossier `diamant-noir/`, `npm run dev` (port 3000 par défaut ; libérer le port ou purger `.next` si erreur 500). Vérification recommandée : HTTP 200 sur `/` après démarrage.
 
 ---
 
@@ -254,5 +262,17 @@ Fichier modèle : `.env.local.example`. À copier en `.env.local`.
 
 ---
 
-**Dernière mise à jour :** 2026-03-31  
-**Version :** 0.9.0 (UI unifiée Radix+Tailwind, Next 15/React 19)
+## 12. Session 2026-04-01 (récap)
+
+| Thème | Détail |
+|--------|--------|
+| **Dashboard propriétaire** | Refonte « éditoriale / premium » : `ProprioChrome` (logo, liens portfolio / IA / stats / leads / nouvelle villa / déconnexion), `ProprioPageIntro` sur l’index et les sous-pages, cartes soumissions et tableau analytics harmonisés, assistant en palette navy/or (moins « terminal pur »), détail villa avec en-tête intro + sections sous filet or. |
+| **Fichiers clés** | `components/dashboard/proprio/ui.tsx`, `app/dashboard/proprio/layout.tsx`, pages sous `app/dashboard/proprio/*`. |
+| **Docs & règles** | Entrées `ACTIONS_LOG` + `docs/logs/2026-04-01.md`. Règle workflow (hors repo app) : vérifier `npm run dev` + smoke localhost après build — synchronisée vers le pack `client-builder-rules`. |
+| **Git / déploiement** | Push `main` → `github.com/Kenneson972/diamant-noir` (commit dashboard) ; Vercel déploie si le projet est connecté. |
+| **Vérifs** | `npm run lint` / `npm run build` OK sur la livrée dashboard. |
+
+---
+
+**Dernière mise à jour :** 2026-04-01  
+**Version :** 0.9.1 (dashboard proprio éditorial + doc session)

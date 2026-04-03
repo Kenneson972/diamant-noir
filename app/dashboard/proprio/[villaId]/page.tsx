@@ -12,7 +12,6 @@ import { getSupabaseBrowser } from "@/lib/supabase"
 import { AdminCalendar } from "@/components/AdminCalendar"
 import { revalidateVillas } from "@/lib/actions"
 import { ActionMenu } from "@/components/dashboard/ActionMenu"
-import { ProprioPageIntro, ProprioSectionHeading } from "@/components/dashboard/proprio/ui"
 
 // Recharts for stats
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -47,6 +46,7 @@ export default function VillaDashboard() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [importingAirbnb, setImportingAirbnb] = useState(false)
+  const [importUseAi, setImportUseAi] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [pendingBookingDelete, setPendingBookingDelete] = useState<{ id: string; label: string } | null>(null)
@@ -364,8 +364,8 @@ export default function VillaDashboard() {
   };
 
   const handleAirbnbImport = async () => {
-    if (!form.airbnb_url) {
-      setError("Veuillez renseigner une URL Airbnb");
+    if (!form.airbnb_url?.trim()) {
+      setError("Veuillez coller l'URL de votre annonce (Airbnb, Booking, etc.)");
       return;
     }
     setImportingAirbnb(true);
@@ -373,26 +373,61 @@ export default function VillaDashboard() {
     setSuccess(null);
 
     try {
-      const response = await fetch('/api/import-airbnb', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: form.airbnb_url })
+      const response = await fetch("/api/import-airbnb", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: form.airbnb_url.trim(), useAi: importUseAi }),
       });
 
       const data = await response.json();
 
       if (response.ok && data) {
-        setForm(prev => ({
-          ...prev,
-          name: data.name || prev.name,
-          description: data.description || prev.description,
-          capacity: data.capacity ? String(data.capacity) : prev.capacity,
-          image_url: data.image_url || prev.image_url,
-          image_urls: data.image_urls && data.image_urls.length > 0 
-            ? Array.from(new Set([...prev.image_urls, ...data.image_urls]))
-            : prev.image_urls
-        }));
-        setSuccess("Données et images Airbnb importées ! Vérifiez et enregistrez.");
+        setForm((prev) => {
+          const nextAmenities =
+            Array.isArray(data.amenities) && data.amenities.length > 0
+              ? Array.from(
+                  new Set([...prev.amenities, ...data.amenities.map((x: string) => String(x).trim())])
+                )
+              : prev.amenities;
+
+          return {
+            ...prev,
+            name: data.name || prev.name,
+            description: data.description || prev.description,
+            location: data.location || prev.location,
+            capacity: data.capacity != null ? String(data.capacity) : prev.capacity,
+            price_per_night:
+              data.price_per_night != null ? String(data.price_per_night) : prev.price_per_night,
+            bathrooms_count:
+              data.bathrooms_count != null ? String(data.bathrooms_count) : prev.bathrooms_count,
+            surface_m2: data.surface_m2 != null ? String(data.surface_m2) : prev.surface_m2,
+            check_in_time: data.check_in_time || prev.check_in_time,
+            check_out_time: data.check_out_time || prev.check_out_time,
+            latitude: data.latitude != null ? String(data.latitude) : prev.latitude,
+            longitude: data.longitude != null ? String(data.longitude) : prev.longitude,
+            house_rules: data.house_rules || prev.house_rules,
+            image_url: data.image_url || prev.image_url,
+            image_urls:
+              data.image_urls && data.image_urls.length > 0
+                ? Array.from(new Set([...prev.image_urls, ...data.image_urls]))
+                : prev.image_urls,
+            amenities: nextAmenities,
+          };
+        });
+
+        const warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean).join(" · ") : "";
+        const aiHint =
+          data.ai_used === true
+            ? " Complément IA appliqué sur les champs vides."
+            : importUseAi && data.ai_note
+              ? ` (IA : ${String(data.ai_note).slice(0, 120)})`
+              : "";
+
+        setSuccess(
+          `Annonce importée — vérifiez les champs puis enregistrez.${aiHint}${
+            warnings ? ` Avertissements : ${warnings}` : ""
+          }`
+        );
       } else {
         setError(data.error || "Échec de l'importation");
       }
@@ -933,59 +968,75 @@ export default function VillaDashboard() {
   }
 
   return (
-    <>
-      <ProprioPageIntro
-        eyebrow="Éditeur de Villa"
-        title={villa?.name || "Chargement..."}
-        variant="white"
-        actions={
-          <div className="flex items-center gap-4">
-            <span className={`rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
-              form.is_published ? "bg-emerald-50 text-emerald-600" : "bg-navy/5 text-navy/40"
-            }`}>
-              {form.is_published ? "Publié" : "Brouillon"}
-            </span>
-            {!isNew && (
-              <Link href={`/villas/${villaId}`} target="_blank" className="tap-target text-[10px] uppercase tracking-widest text-navy/60 hover:text-navy flex items-center gap-2 font-bold">
-                Voir en ligne <ExternalLink size={14} />
-              </Link>
-            )}
+    <main className="flex min-h-screen flex-col bg-offwhite">
+      {/* Navigation Header */}
+      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+          <div className="flex items-center gap-6">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => router.push("/dashboard/proprio")}
+              className="rounded-full h-10 w-10 p-0 text-navy/40 hover:text-navy hover:bg-navy/5"
+            >
+              <ArrowLeft size={20} />
+            </Button>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3">
+                <h1 className="font-display text-2xl text-navy leading-none">{villa?.name}</h1>
+                <span className={`rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
+                  form.is_published ? "bg-emerald-50 text-emerald-600" : "bg-navy/5 text-navy/40"
+                }`}>
+                  {form.is_published ? "Publié" : "Brouillon"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] uppercase tracking-widest text-gold font-bold">Gestion Villa</span>
+                <span className="h-1 w-1 rounded-full bg-navy/10" />
+                <Link href={`/villas/${villaId}`} target="_blank" className="text-[10px] uppercase tracking-widest text-navy/40 hover:text-navy flex items-center gap-1">
+                  Voir en ligne <ExternalLink size={10} />
+                </Link>
+              </div>
+            </div>
           </div>
-        }
-      />
+          <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-full text-navy/60 hover:text-navy">
+            <LogOut size={18} />
+          </Button>
+        </div>
+      </header>
 
       {/* Main Content Area with Tabs */}
-      <div className="page-px mx-auto w-full max-w-7xl flex-1 py-8 md:py-10">
+      <div className="mx-auto w-full max-w-7xl flex-1 p-6 pb-20">
         <Tabs defaultValue="planning" className="space-y-8">
-          <div className="flex flex-col gap-6 border-b pb-6 md:flex-row md:items-center md:justify-between">
-            <TabsList className="h-auto w-full overflow-x-auto rounded-2xl bg-navy/5 p-1 no-scrollbar md:w-auto">
-              <TabsTrigger value="planning" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b pb-6">
+            <TabsList className="bg-navy/5 p-1 h-12 rounded-2xl">
+              <TabsTrigger value="planning" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Calendar size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Planning</span>
               </TabsTrigger>
-              <TabsTrigger value="content" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="content" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <FileText size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Contenu</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="settings" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Settings size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Réglages</span>
               </TabsTrigger>
-              <TabsTrigger value="reservations" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="reservations" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Calendar size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Réservations</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="analytics" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <TrendingUp size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Analyses</span>
               </TabsTrigger>
-              <TabsTrigger value="maintenance" className="gap-2 rounded-xl px-3 sm:px-6 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="maintenance" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <ListChecks size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Maintenance</span>
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex gap-3">
               {!isNew && (
                 <Button
                   variant="ghost"
@@ -1035,7 +1086,7 @@ export default function VillaDashboard() {
             <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
               <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
                 <div className="mb-8 flex items-center justify-between">
-                  <ProprioSectionHeading title="Disponibilités" />
+                  <h3 className="font-display text-2xl text-navy">Disponibilités</h3>
                   <div className="flex gap-2">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">
                       <span className="h-2 w-2 rounded-full bg-emerald-600" />
@@ -1143,7 +1194,7 @@ export default function VillaDashboard() {
           <TabsContent value="content" className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm outline-none space-y-8">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <ProprioSectionHeading title="Éditeur de Villa" />
+                <h3 className="font-display text-3xl text-navy">Éditeur de Villa</h3>
                 <div className="flex items-center gap-3 rounded-full bg-navy/5 px-4 py-2">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Statut:</span>
                   <label className="relative inline-flex cursor-pointer items-center">
@@ -1435,7 +1486,7 @@ export default function VillaDashboard() {
                         items={form.image_urls}
                         strategy={rectSortingStrategy}
                       >
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <div className="grid grid-cols-3 gap-3">
                           {form.image_urls.map((url) => (
                             <SortableImage
                               key={url}
@@ -1469,24 +1520,41 @@ export default function VillaDashboard() {
 
                 <div className="rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Importation Magique Airbnb</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Import annonce (OTA)</h4>
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
                       <Wand2 size={16} />
                     </div>
                   </div>
                   <p className="text-xs text-navy/60 leading-relaxed mb-6">
-                    Collez l'URL de votre annonce Airbnb pour pré-remplir automatiquement le nom, la description et la capacité.
+                    Collez le lien public de votre fiche (Airbnb, Booking, Abritel, etc.). Les métadonnées et le texte de
+                    page sont analysés ; optionnellement, l&apos;IA complète les champs encore vides (n8n ou OpenAI selon
+                    la config serveur).
                   </p>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">URL de l'annonce Airbnb</label>
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">
+                        URL de l&apos;annonce
+                      </label>
                       <Input 
                         value={form.airbnb_url} 
                         onChange={handleChange("airbnb_url")} 
-                        placeholder="https://www.airbnb.com/rooms/..." 
+                        placeholder="https://www.airbnb.com/rooms/… ou booking.com/hotel/…" 
                         className="rounded-xl" 
                       />
                     </div>
+                    <label className="flex cursor-pointer items-start gap-3 text-left">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-4 w-4 rounded border-navy/25 text-gold focus:ring-gold"
+                        checked={importUseAi}
+                        onChange={(e) => setImportUseAi(e.target.checked)}
+                      />
+                      <span className="text-xs leading-relaxed text-navy/70">
+                        Compléter avec l&apos;IA les informations manquantes (après extraction automatique). Nécessite{" "}
+                        <code className="rounded bg-navy/5 px-1">LISTING_IMPORT_N8N_WEBHOOK_URL</code> ou{" "}
+                        <code className="rounded bg-navy/5 px-1">LISTING_IMPORT_OPENAI_API_KEY</code> sur le serveur.
+                      </span>
+                    </label>
                     <Button 
                       onClick={handleAirbnbImport} 
                       disabled={importingAirbnb || !form.airbnb_url}
@@ -1542,14 +1610,14 @@ export default function VillaDashboard() {
 
           <TabsContent value="settings" className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm outline-none space-y-8">
             <div className="flex flex-col gap-2">
-              <ProprioSectionHeading title="Gestion Financière & Tarifs" />
+              <h3 className="font-display text-3xl text-navy">Gestion Financière & Tarifs</h3>
               <p className="text-navy/60">Configurez vos prix saisonniers et consultez les performances de {villa?.name}.</p>
             </div>
 
             <div className="grid gap-12 lg:grid-cols-[1fr_350px]">
               <div className="space-y-10">
                 {/* Statistiques */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="rounded-3xl bg-offwhite p-6">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-1">Revenus (30j)</p>
                     <p className="text-2xl font-bold text-navy">€{stats.revenue.toLocaleString()}</p>
@@ -1648,7 +1716,7 @@ export default function VillaDashboard() {
           <TabsContent value="reservations" className="space-y-8 outline-none">
             <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
               <div className="flex items-center justify-between mb-8">
-                <ProprioSectionHeading title="Registre des Réservations" />
+                <h3 className="font-display text-3xl text-navy">Registre des Réservations</h3>
                 <div className="flex gap-3">
                   <Button variant="outline" size="sm" className="rounded-full border-navy/10 gap-2 h-10 px-6 text-[10px] font-bold uppercase tracking-widest">
                     <Filter size={14} /> Filtrer
@@ -1660,7 +1728,7 @@ export default function VillaDashboard() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[760px] text-left">
+                <table className="w-full text-left">
                   <thead>
                     <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">
                       <th className="pb-4 pl-4 font-bold">Client</th>
@@ -1809,7 +1877,7 @@ export default function VillaDashboard() {
               <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                   <div>
-                    <ProprioSectionHeading title="Carnet de Maintenance" />
+                    <h3 className="font-display text-3xl text-navy">Carnet de Maintenance</h3>
                     <p className="text-sm text-navy/40">Suivez les tâches et l'entretien de la propriété.</p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
@@ -1873,6 +1941,6 @@ export default function VillaDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+    </main>
   )
 }

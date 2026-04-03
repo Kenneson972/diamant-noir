@@ -13,8 +13,6 @@ import { useRouter } from "next/navigation"
 import { revalidateVillas } from "@/lib/actions"
 import { ActionMenu } from "@/components/dashboard/ActionMenu"
 
-import { ProprioPageIntro } from "@/components/dashboard/proprio/ui"
-
 export default function ConciergeDashboard() {
   const router = useRouter()
   const supabase = getSupabaseBrowser()
@@ -184,45 +182,104 @@ export default function ConciergeDashboard() {
     : villas
 
   return (
-    <>
-      <ProprioPageIntro
-        eyebrow="Vue d'ensemble"
-        title="Mon Portefeuille de Villas"
-        subtitle="Gérez vos propriétés, suivez les performances et optimisez vos réservations depuis ce hub central."
-        variant="navy"
-        actions={
-          <div className="flex gap-4 items-center flex-wrap">
-            <div className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-center min-w-[120px] border border-white/10">
-              <p className="text-2xl font-bold text-white">{villas.length}</p>
-              <p className="text-[10px] uppercase tracking-widest text-gold font-bold">Villas</p>
+    <main className="flex min-h-screen flex-col bg-offwhite">
+      {/* Header */}
+      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-white font-display text-xl">
+              D
             </div>
-            <div className="rounded-2xl bg-white/10 backdrop-blur-md p-4 text-center min-w-[120px] border border-white/10">
-              <p className="text-2xl font-bold text-white">{upcomingCount}</p>
-              <p className="text-[10px] uppercase tracking-widest text-gold font-bold">Arrivées</p>
+            <div className="flex flex-col">
+              <h1 className="font-display text-xl text-navy leading-none">Administration</h1>
+              <p className="text-[10px] uppercase tracking-widest text-gold mt-1 font-bold">Conciergerie de Luxe</p>
             </div>
           </div>
-        }
-      />
-
-      {/* Grid of Villas */}
-      <section className="page-px mx-auto w-full max-w-7xl py-10 md:py-12">
-        <div className="mb-8 flex items-center justify-between border-b border-navy/10 pb-4">
-          <h2 className="font-display text-xl text-navy">Catalogue</h2>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-widest text-navy/40 font-bold">Filtre</span>
-            <button
-              type="button"
-              onClick={() => setShowPublishedOnly((prev) => !prev)}
-              className={`rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all ${
-                showPublishedOnly
-                  ? "bg-gold text-navy"
-                  : "bg-navy/5 text-navy/60 hover:text-navy hover:bg-navy/10"
-              }`}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-2 rounded-full border-gold/20 bg-gold/5 text-gold hover:bg-gold hover:text-navy transition-all px-6"
+              onClick={() => router.push("/dashboard/proprio/assistant")}
             >
-              {showPublishedOnly ? "Publiées" : "Toutes"}
-            </button>
+              <Sparkles size={16} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Assistant IA</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              onClick={() => router.push("/dashboard/proprio/analytics")}
+            >
+              <BarChart3 size={16} />
+              <span>Analytics</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              onClick={() => router.push("/dashboard/proprio/submissions")}
+            >
+              <FileText size={16} />
+              <span>Soumissions</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-2 rounded-full border-navy/10"
+              onClick={() => router.push("/dashboard/proprio/new")}
+            >
+              <Plus size={16} />
+              <span>Nouvelle Villa</span>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-full text-navy/60 hover:text-navy">
+              <LogOut size={18} />
+            </Button>
           </div>
         </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="bg-white border-b pt-12 pb-12 px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold">Vue d'ensemble</span>
+              <h2 className="font-display text-4xl text-navy">Mon Portefeuille de Villas</h2>
+              <p className="text-sm text-navy/60 max-w-md">
+                Gérez vos propriétés, suivez les performances et optimisez vos réservations depuis ce hub central.
+              </p>
+            </div>
+            <div className="flex gap-4 items-center flex-wrap">
+              <div className="rounded-2xl bg-offwhite p-4 text-center min-w-[120px]">
+                <p className="text-2xl font-bold text-navy">{villas.length}</p>
+                <p className="text-[10px] uppercase tracking-widest text-navy/40 font-bold">Villas</p>
+              </div>
+              <div className="rounded-2xl bg-offwhite p-4 text-center min-w-[120px]">
+                <p className="text-2xl font-bold text-navy">{upcomingCount}</p>
+                <p className="text-[10px] uppercase tracking-widest text-navy/40 font-bold">Arrivées</p>
+              </div>
+              <div className="flex items-center gap-3 rounded-full bg-white px-4 py-2 border border-navy/10">
+                <span className="text-[10px] uppercase tracking-widest text-navy/40 font-bold">Filtre</span>
+                <button
+                  type="button"
+                  onClick={() => setShowPublishedOnly((prev) => !prev)}
+                  className={`rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    showPublishedOnly
+                      ? "bg-gold text-navy"
+                      : "bg-offwhite text-navy/50 hover:text-navy"
+                  }`}
+                >
+                  {showPublishedOnly ? "Publiées" : "Toutes"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Grid of Villas */}
+      <section className="mx-auto w-full max-w-7xl p-6 py-12">
         {error && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             Erreur Supabase : {error}. Vérifie les clés `.env.local`, la RLS et que tes villas existent.
@@ -284,7 +341,7 @@ export default function ConciergeDashboard() {
                       },
                     ]}
                     trigger={
-                      <div className="tap-target h-11 w-11 flex items-center justify-center rounded-full bg-white/95 shadow-sm hover:bg-white transition-colors cursor-pointer">
+                      <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-sm hover:bg-white transition-colors cursor-pointer">
                         <MoreVertical size={14} className="text-navy" />
                       </div>
                     }
@@ -334,6 +391,6 @@ export default function ConciergeDashboard() {
       
       {/* Debug Panel */}
       <SupabaseDebug />
-    </>
+    </main>
   )
 }

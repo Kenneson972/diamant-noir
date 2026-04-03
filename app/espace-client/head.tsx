@@ -1,4 +1,8 @@
 export default function Head() {
-  return null;
+  return (
+    <>
+      <link rel="stylesheet" href="/heroui-v3.min.css" />
+    </>
+  );
 }
 

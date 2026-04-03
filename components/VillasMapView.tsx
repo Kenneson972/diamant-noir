@@ -37,13 +37,13 @@ export default function VillasMapView({ villas }: Props) {
   return (
     <div className="relative">
       {/* ── Toolbar ── */}
-      <div className="sticky top-[calc(72px+env(safe-area-inset-top))] z-20 flex items-center justify-between border-b border-navy/8 bg-offwhite px-4 py-3 sm:px-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-navy/40">
+      <div className="sticky top-[72px] z-20 bg-offwhite/95 backdrop-blur-sm border-b border-navy/8 px-6 py-3 flex items-center justify-between">
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
           {villas.length} propriété{villas.length > 1 ? "s" : ""}
         </p>
         <button
           onClick={() => setMapVisible((v) => !v)}
-          className="tap-target flex items-center gap-2 rounded-none border border-navy/15 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-navy transition-all duration-200 hover:bg-navy hover:text-white hover:border-navy"
+          className="tap-target flex items-center gap-2 rounded-none border border-navy/15 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-all duration-200 hover:bg-navy hover:text-white hover:border-navy"
         >
           {mapVisible ? (
             <>
@@ -91,8 +91,6 @@ export default function VillasMapView({ villas }: Props) {
                 data-villa={villa.id}
                 onMouseEnter={() => setHoveredId(villa.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                onFocus={() => setHoveredId(villa.id)}
-                onBlur={() => setHoveredId(null)}
                 className={`group block overflow-hidden rounded-none border border-transparent transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite ${
                   hoveredId === villa.id
                     ? "border-navy/15 shadow-[0_12px_40px_rgba(0,0,0,0.08)] -translate-y-px"
@@ -109,7 +107,7 @@ export default function VillasMapView({ villas }: Props) {
                   />
                   {/* Tier badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="rounded-none border border-gold/40 bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+                    <span className="rounded-none border border-gold/40 bg-black/30 px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
                       {tier}
                     </span>
                   </div>
@@ -149,17 +147,6 @@ export default function VillasMapView({ villas }: Props) {
           </div>
         )}
       </div>
-
-      {mapVisible && (
-        <div className="h-[50vh] min-h-[280px] border-t border-navy/8 md:hidden">
-          <VillaLeafletMap
-            villas={villas}
-            hoveredId={hoveredId}
-            onHover={setHoveredId}
-            onSelect={handleSelect}
-          />
-        </div>
-      )}
     </div>
   );
 }

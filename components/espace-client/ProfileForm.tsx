@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { TextField, Label, Input, Description, Button, Alert } from "@heroui/react";
 import { Loader2, Check } from "lucide-react";
 
 interface ProfileFormProps {
@@ -126,11 +125,14 @@ export function ProfileForm({
 
   return (
     <form onSubmit={handleSave} className="space-y-5">
-      {demoMode ? (
-        <div className="rounded-none border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-          Mode démo — les modifications ne sont pas sauvegardées.
-        </div>
-      ) : null}
+      {demoMode && (
+        <Alert status="warning" className="rounded-none border-amber-200">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description className="text-xs">Mode démo — les modifications ne sont pas sauvegardées.</Alert.Description>
+          </Alert.Content>
+        </Alert>
+      )}
 
       <div className="flex items-center gap-5 pb-6 mb-6 border-b border-navy/8">
         <TenantAvatar name={name} url={displayAvatar} size="lg" className="border border-navy/10 shrink-0" />
@@ -158,51 +160,46 @@ export function ProfileForm({
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Adresse e-mail</label>
-        <Input type="email" value={email} readOnly disabled className="rounded-xl bg-navy/5 text-navy/50 border-navy/10" />
-        <p className="text-[10px] text-navy/30">L&apos;email ne peut pas être modifié.</p>
-      </div>
+      <TextField value={email} isReadOnly isDisabled className="w-full">
+        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Adresse e-mail</Label>
+        <Input type="email" className="rounded-xl bg-navy/5 text-navy/50 border-navy/10" />
+        <Description className="text-[10px] text-navy/30">L&apos;email ne peut pas être modifié.</Description>
+      </TextField>
 
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Nom complet</label>
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={demoMode}
-          placeholder="Votre nom"
-          className="rounded-xl border-navy/20"
-        />
-      </div>
+      <TextField value={name} onChange={setName} isDisabled={demoMode} className="w-full">
+        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Nom complet</Label>
+        <Input placeholder="Votre nom" className="rounded-xl border-navy/20" />
+      </TextField>
 
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Téléphone</label>
-        <Input
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          disabled={demoMode}
-          placeholder="+596 696 00 00 00"
-          className="rounded-xl border-navy/20"
-        />
-      </div>
+      <TextField value={phone} onChange={setPhone} isDisabled={demoMode} className="w-full">
+        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Téléphone</Label>
+        <Input type="tel" placeholder="+596 696 00 00 00" className="rounded-xl border-navy/20" />
+      </TextField>
 
-      {error ? (
-        <div className="rounded-none border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
-          {error}
-        </div>
-      ) : null}
+      {error && (
+        <Alert status="danger" className="rounded-none border-red-200">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description className="text-xs">{error}</Alert.Description>
+          </Alert.Content>
+        </Alert>
+      )}
 
-      {saved ? (
-        <div className="rounded-none border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
-          Modifications sauvegardées.
-        </div>
-      ) : null}
+      {saved && (
+        <Alert status="success" className="rounded-none border-emerald-200">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description className="text-xs">Modifications sauvegardées.</Alert.Description>
+          </Alert.Content>
+        </Alert>
+      )}
 
       <Button
         type="submit"
-        disabled={loading || demoMode}
-        className="h-12 w-full rounded-xl bg-navy text-white font-bold uppercase tracking-widest text-[10px] hover:bg-gold hover:text-navy border-0"
+        variant="primary"
+        fullWidth
+        isDisabled={loading || demoMode}
+        className="h-12 rounded-xl bg-navy text-white font-bold uppercase tracking-widest text-[10px] hover:bg-gold hover:text-navy border-0"
       >
         {loading ? (
           <span className="flex items-center gap-2 justify-center">
