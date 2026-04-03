@@ -18,7 +18,7 @@ export const INCLUSIONS = [
   "Gestion dynamique des prix",
 ] as const;
 
-export const MID_INCLUSIONS = Math.ceil(INCLUSIONS.length / 2);
+const MID_INCLUSIONS = Math.ceil(INCLUSIONS.length / 2);
 export const INCLUSIONS_COL_A = INCLUSIONS.slice(0, MID_INCLUSIONS);
 export const INCLUSIONS_COL_B = INCLUSIONS.slice(MID_INCLUSIONS);
 
