@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-03T23:10:00Z | type: config | Cursor — Dépendance manquante `recharts` (build Vercel)
+
+- **agent**: `cursor`
+- **summary**: Imports `recharts` dans `app/dashboard/proprio/[villaId]/page.tsx` et `components/dashboard/assistant-views/StatsView.tsx` sans entrée `package.json` → module not found en CI. Ajout `recharts@^3.8.1` (peer React 19 OK).
+- **files**: [`package.json`, `package-lock.json`, `docs/ACTIONS_LOG.md`]
+- **why**: Aligner dépendances avec le code dashboard.
+- **impact**: Graphiques villa + assistant compilent sur Vercel.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-03T23:05:00Z | type: config | Cursor — Dépendances manquantes `@dnd-kit/*` (build Vercel)
 
 - **agent**: `cursor`
