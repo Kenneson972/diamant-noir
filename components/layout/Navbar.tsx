@@ -239,37 +239,37 @@ export const Navbar = () => {
         }`}
       >
         {/*
-          Grille 3 colonnes (mobile inclus) : évite le chevauchement logo / boutons
-          de l’ancien positionnement absolute + px-24.
+          Deux demi-ranges flexibles (1fr / 1fr) + colonne centrale auto : le logo reste
+          au centre *de l’écran*, même si la rangée droite est plus chargée que le menu.
+          L’ancien auto–1fr–auto poussait le wordmark sous le hamburger (traits sur le « D »).
         */}
-        <div className="mx-auto grid h-12 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 gap-y-0 px-2 sm:gap-x-3 sm:px-6">
-          <div className="flex min-w-0 justify-start">
+        <div className="mx-auto grid min-h-12 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
+          <div className="flex min-w-0 items-center justify-start">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`tap-target flex shrink-0 items-center gap-1.5 sm:gap-2 ${barText}`}
+              className={`flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md sm:min-w-0 sm:justify-start sm:gap-2 ${barText} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-expanded={menuOpen}
               aria-controls="site-nav-drawer"
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             >
-              <Menu size={22} strokeWidth={1.25} aria-hidden />
+              <Menu size={22} strokeWidth={1.25} aria-hidden className="shrink-0" />
               <span className="hidden text-[10px] font-semibold uppercase tracking-[0.35em] sm:inline">
                 Menu
               </span>
             </button>
           </div>
 
-          <div className="flex min-w-0 justify-center px-1 sm:px-2">
+          <div className="pointer-events-none flex max-w-[calc(100vw-7rem)] min-w-0 justify-center px-1 sm:max-w-none sm:px-2">
             <BrandLogo
               variant={isSolid ? "onLight" : "onDark"}
               size="md"
               showIcon={false}
               priority={pathname === "/"}
-              className="min-w-0 max-w-full justify-center [&_span.font-display]:text-[clamp(0.52rem,2.4vw+0.32rem,1.25rem)] [&_span.font-display]:leading-tight [&_span.font-display]:tracking-[0.1em] sm:[&_span.font-display]:tracking-[0.22em] md:[&_span.font-display]:tracking-[0.3em]"
+              className="pointer-events-auto min-w-0 max-w-full justify-center whitespace-nowrap [&_span.font-display]:text-[clamp(0.55rem,2.2vw+0.36rem,1.25rem)] [&_span.font-display]:leading-none [&_span.font-display]:tracking-[0.12em] sm:[&_span.font-display]:leading-tight sm:[&_span.font-display]:tracking-[0.22em] md:[&_span.font-display]:tracking-[0.3em]"
             />
           </div>
 
-          {/* Rangée utilitaire : sur très petit écran on compresse les écarts */}
           <div className="flex min-w-0 items-center justify-end gap-0.5 min-[400px]:gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
