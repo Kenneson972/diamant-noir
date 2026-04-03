@@ -9,11 +9,9 @@ import {
   EyeOff,
   Loader2,
   Lock,
-  LogIn,
   Mail,
   Send,
   User,
-  UserPlus,
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -93,7 +91,7 @@ function PasswordPanel({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) {
-      setError("Supabase n'est pas configuré.")
+      setError("Supabase n’est pas configuré.")
       return
     }
     setLoading(true)
@@ -129,7 +127,7 @@ function PasswordPanel({
       return
     }
     if (!supabase) {
-      setError("Supabase n'est pas configuré.")
+      setError("Supabase n’est pas configuré.")
       return
     }
     setLoading(true)
@@ -165,17 +163,17 @@ function PasswordPanel({
   if (signupSuccess === "confirm_email") {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <Send size={22} strokeWidth={1.25} className="text-navy/35" aria-hidden />
+        <Send size={20} strokeWidth={1.25} className="text-[rgba(13,27,42,0.30)]" aria-hidden />
         <div className="space-y-2">
-          <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
+          <h2 className="font-display text-2xl text-[#0D1B2A]">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-black/12" />
         </div>
-        <p className="text-sm leading-relaxed text-navy/55">
+        <p className="text-sm leading-relaxed text-[rgba(13,27,42,0.55)]">
           Nous avons envoyé un lien de confirmation à{" "}
-          <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour activer votre compte, puis
-          vous pourrez vous connecter.
+          <span className="font-medium text-[#0D1B2A]">{email}</span>. Cliquez sur le lien pour
+          activer votre compte, puis vous pourrez vous connecter.
         </p>
-        <p className="text-xs leading-relaxed text-navy/40">
+        <p className="text-xs leading-relaxed text-[rgba(13,27,42,0.40)]">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -188,7 +186,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+          className="text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.35)] transition-colors hover:text-[#0D1B2A]"
         >
           ← Retour à la connexion
         </button>
@@ -198,74 +196,25 @@ function PasswordPanel({
 
   return (
     <div className="relative z-[1] space-y-8">
-      <div
-        className="isolate grid grid-cols-2 gap-px border border-black/12 bg-black/12"
-        role="tablist"
-        aria-label="Connexion ou inscription"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "login"}
-          onClick={() => {
-            setMode("login")
-            setError(null)
-            setFieldErrors({})
-          }}
-          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
-            mode === "login"
-              ? "bg-navy text-white"
-              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
-          }`}
-        >
-          <LogIn size={14} strokeWidth={1.25} aria-hidden />
-          Connexion
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "signup"}
-          onClick={() => {
-            setMode("signup")
-            setError(null)
-            setFieldErrors({})
-          }}
-          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
-            mode === "signup"
-              ? "bg-navy text-white"
-              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
-          }`}
-        >
-          <UserPlus size={14} strokeWidth={1.25} aria-hidden />
-          Inscription
-        </button>
-      </div>
-
-      <p className="text-sm leading-relaxed text-navy/50">
-        {mode === "login"
-          ? "Connectez-vous avec l’email et le mot de passe de votre compte propriétaire."
-          : "Créez un compte pour accéder au tableau de bord des biens et des réservations."}
-      </p>
-
-      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-8">
+      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-7">
         {error && (
           <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
         )}
-        <div className="space-y-6">
+        <div className="space-y-5">
           {mode === "signup" && (
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
+                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
               >
-                Nom <span className="font-normal normal-case tracking-normal text-navy/30">(optionnel)</span>
+                Nom <span className="font-normal normal-case tracking-normal text-[rgba(13,27,42,0.30)]">(optionnel)</span>
               </label>
               <div className="relative">
                 <User
-                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
-                  size={16}
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                  size={15}
                   strokeWidth={1.25}
                   aria-hidden
                 />
@@ -276,22 +225,22 @@ function PasswordPanel({
                   placeholder="Prénom Nom"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
           )}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label
               htmlFor="email-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
+              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Mail
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
-                size={16}
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                size={15}
                 strokeWidth={1.25}
                 aria-hidden
               />
@@ -303,21 +252,21 @@ function PasswordPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
               />
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label
               htmlFor="password-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
+              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
             >
               Mot de passe <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Lock
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
-                size={16}
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                size={15}
                 strokeWidth={1.25}
                 aria-hidden
               />
@@ -331,35 +280,35 @@ function PasswordPanel({
                 required
                 minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
                 aria-describedby={mode === "signup" ? "password-hint" : undefined}
-                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
-                className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
-                {showPassword ? <EyeOff size={18} strokeWidth={1.25} /> : <Eye size={18} strokeWidth={1.25} />}
+                {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
               </button>
             </div>
             {mode === "signup" && (
-              <p id="password-hint" className="text-xs text-navy/40">
+              <p id="password-hint" className="text-xs text-[rgba(13,27,42,0.40)]">
                 Au moins {MIN_PASSWORD_LEN} caractères.
               </p>
             )}
           </div>
           {mode === "signup" && (
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label
                 htmlFor="password-confirm"
-                className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
+                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
               <div className="relative">
                 <Lock
-                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
-                  size={16}
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                  size={15}
                   strokeWidth={1.25}
                   aria-hidden
                 />
@@ -376,15 +325,15 @@ function PasswordPanel({
                   required
                   aria-invalid={Boolean(fieldErrors.confirm)}
                   aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
-                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
-                  {showConfirm ? <EyeOff size={18} strokeWidth={1.25} /> : <Eye size={18} strokeWidth={1.25} />}
+                  {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
                 </button>
               </div>
               {fieldErrors.confirm && (
@@ -399,7 +348,7 @@ function PasswordPanel({
           type="submit"
           disabled={loading}
           aria-busy={loading}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B2A]/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -417,21 +366,25 @@ function PasswordPanel({
         </button>
       </form>
 
-      {mode === "login" && (
-        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
+      {/* Liens discrets Connexion / Inscription */}
+      {mode === "login" ? (
+        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Pas encore de compte ?{" "}
-          <Link href={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="text-navy underline-offset-4 hover:underline">
+          <button
+            type="button"
+            onClick={() => { setMode("signup"); setError(null); setFieldErrors({}) }}
+            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+          >
             S&apos;inscrire
-          </Link>
+          </button>
         </p>
-      )}
-      {mode === "signup" && (
-        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
+      ) : (
+        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Déjà un compte ?{" "}
           <button
             type="button"
-            onClick={() => setMode("login")}
-            className="text-navy underline-offset-4 hover:underline"
+            onClick={() => { setMode("login"); setError(null); setFieldErrors({}) }}
+            className="text-[#0D1B2A] underline-offset-4 hover:underline"
           >
             Se connecter
           </button>
