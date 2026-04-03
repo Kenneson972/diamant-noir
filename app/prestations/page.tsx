@@ -23,32 +23,13 @@ import {
   EditorialServiceGrid,
   type EditorialQuote,
 } from "@/components/marketing/editorial-blocks";
+import { INCLUSIONS_COL_A, INCLUSIONS_COL_B } from "@/lib/proprietaires-data";
 
 export const metadata = {
   title: "Prestations — Gestion complète en conciergerie | Diamant Noir",
   description:
     "Gestion complète en conciergerie : commission 20 % TTC, prestations incluses et pack de démarrage. Diamant Noir, Martinique.",
 };
-
-const INCLUSIONS = [
-  "Estimation de valeur locative",
-  "Check-in / Check-out",
-  "Prise de photos professionnelles",
-  "Rédaction et diffusion d'annonces de location sur différentes plateformes ou optimisation d'une annonce existante par notre conciergerie",
-  "Contrôles qualité",
-  "Pilotage des réservations",
-  "Échanges avec les locataires",
-  "Organisation des ménages, de petites réparations et suivi des différents intervenants",
-  "Entretien et mise en place du linge de maison",
-  "Réassort des consommables de bienvenue (à nos frais)",
-  "Encaissement et reversement des loyers",
-  "Suivi des commentaires et valorisation de ceux-ci",
-  "Gestion dynamique des prix",
-] as const;
-
-const MID = Math.ceil(INCLUSIONS.length / 2);
-const COL_A = INCLUSIONS.slice(0, MID);
-const COL_B = INCLUSIONS.slice(MID);
 
 const SERVICES_HIGHLIGHT = [
   { icon: Car, label: "Transferts & accueil" },
@@ -142,7 +123,7 @@ export default function PrestationsPage() {
         </p>
         <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
           <ul className="space-y-4">
-            {COL_A.map((line) => (
+            {INCLUSIONS_COL_A.map((line) => (
               <li key={line} className="flex gap-3 text-sm text-navy/85 md:text-[15px]">
                 <span className="mt-0.5 shrink-0 text-gold" aria-hidden>
                   <Check size={18} strokeWidth={1} />
@@ -152,7 +133,7 @@ export default function PrestationsPage() {
             ))}
           </ul>
           <ul className="space-y-4">
-            {COL_B.map((line) => (
+            {INCLUSIONS_COL_B.map((line) => (
               <li key={line} className="flex gap-3 text-sm text-navy/85 md:text-[15px]">
                 <span className="mt-0.5 shrink-0 text-gold" aria-hidden>
                   <Check size={18} strokeWidth={1} />
