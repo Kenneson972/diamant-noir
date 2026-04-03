@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-03T23:05:00Z | type: config | Cursor — Dépendances manquantes `@dnd-kit/*` (build Vercel)
+
+- **agent**: `cursor`
+- **summary**: `SortableImage` + `app/dashboard/proprio/[villaId]/page.tsx` importent `@dnd-kit/core`, `sortable`, `utilities` sans les déclarer dans `package.json` → échec `next build` sur Vercel. Ajout `@dnd-kit/core@^6.3.1`, `@dnd-kit/sortable@^10.0.0`, `@dnd-kit/utilities@^3.2.2` ; `npm install` met à jour le lockfile.
+- **files**: [`package.json`, `package-lock.json`, `docs/ACTIONS_LOG.md`]
+- **why**: Module not found en CI.
+- **impact**: Build dashboard proprio (réordonnancement galerie) résout les packages.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-03T22:55:00Z | type: config | Cursor — Vercel : `npm install` + HeroUI / Tailwind peers
 
 - **agent**: `cursor`
