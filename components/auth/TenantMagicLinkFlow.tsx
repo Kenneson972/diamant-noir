@@ -338,7 +338,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
         <form onSubmit={handleProfileSubmit} className="space-y-6">
           <fieldset className="space-y-3 border-0 p-0">
-            <legend className="mb-2 block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+            <legend className="mb-2 block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
               Civilité <span className="text-red-600">*</span>
             </legend>
             <div className="flex flex-wrap gap-4">
@@ -368,7 +368,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label htmlFor="tenant-fn" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+              <label htmlFor="tenant-fn" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
                 Prénom <span className="text-red-600">*</span>
               </label>
             <input
@@ -378,11 +378,11 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
             />
             </div>
             <div className="space-y-2">
-              <label htmlFor="tenant-ln" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+              <label htmlFor="tenant-ln" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
                 Nom <span className="text-red-600">*</span>
               </label>
               <input
@@ -392,13 +392,13 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="tenant-phone" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+            <label htmlFor="tenant-phone" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
               Téléphone mobile <span className="text-red-600">*</span>
             </label>
             <input
@@ -410,7 +410,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
-              className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
             />
           </div>
 
