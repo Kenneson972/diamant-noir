@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { getSupabaseBrowser } from "@/lib/supabase"
 import {
@@ -16,6 +16,7 @@ import {
   UserPlus,
 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { BrandLogo } from "@/components/layout/BrandLogo"
 import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
 
@@ -25,6 +26,30 @@ import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
  */
 
 const MIN_PASSWORD_LEN = 8
+
+function loginUrlErrorMessage(code: string | null): string | null {
+  if (!code) return null
+  let decoded = code
+  try {
+    decoded = decodeURIComponent(code.replace(/\+/g, " "))
+  } catch {
+    decoded = code
+  }
+  const low = decoded.toLowerCase()
+  if (low === "missing_code") {
+    return "Lien incomplet ou expiré. Redemandez un code ou ouvrez le dernier email reçu."
+  }
+  if (low === "configuration") {
+    return "Connexion momentanément indisponible. Réessayez dans quelques instants."
+  }
+  if (low.includes("expired") || low.includes("otp_expired")) {
+    return "Code ou lien expiré. Demandez un nouveau code."
+  }
+  if (decoded.length > 0 && decoded.length < 180) {
+    return decoded
+  }
+  return "La connexion a échoué. Réessayez."
+}
 
 function formatSupabaseAuthMessage(message: string): string {
   const m = message.toLowerCase()
@@ -74,18 +99,23 @@ function PasswordPanel({
     }
     setLoading(true)
     setError(null)
-    const { error: signError } = await supabase.auth.signInWithPassword({ email, password })
+    const cleanEmail = email.trim().toLowerCase()
+    setEmail(cleanEmail)
+    const { error: signError } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password,
+    })
     if (signError) {
       setError(
         signError.message.toLowerCase().includes("invalid")
           ? "Identifiants incorrects. Vérifiez votre email et votre mot de passe."
           : formatSupabaseAuthMessage(signError.message)
       )
-      setLoading(false)
     } else {
       router.push(redirectTo)
       router.refresh()
     }
+    setLoading(false)
   }
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -105,9 +135,11 @@ function PasswordPanel({
     }
     setLoading(true)
     setError(null)
+    const cleanEmail = email.trim().toLowerCase()
+    setEmail(cleanEmail)
     const origin = typeof window !== "undefined" ? window.location.origin : ""
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
+      email: cleanEmail,
       password,
       options: {
         emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
@@ -245,7 +277,7 @@ function PasswordPanel({
                   placeholder="Prénom Nom"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 />
               </div>
             </div>
@@ -272,7 +304,7 @@ function PasswordPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
               />
             </div>
           </div>
@@ -299,11 +331,11 @@ function PasswordPanel({
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
-                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                aria-describedby={mode === "signup" ? "password-hint" : undefined}
+                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
               />
               <button
                 type="button"
-                tabIndex={-1}
                 onClick={() => setShowPassword((s) => !s)}
                 className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
@@ -345,11 +377,10 @@ function PasswordPanel({
                   required
                   aria-invalid={Boolean(fieldErrors.confirm)}
                   aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
-                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 />
                 <button
                   type="button"
-                  tabIndex={-1}
                   onClick={() => setShowConfirm((s) => !s)}
                   className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
@@ -368,6 +399,7 @@ function PasswordPanel({
         <button
           type="submit"
           disabled={loading}
+          aria-busy={loading}
           className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
@@ -411,22 +443,48 @@ function PasswordPanel({
 }
 
 function LoginSideVideo() {
+  const [reduceMotion, setReduceMotion] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const apply = () => setReduceMotion(mq.matches)
+    apply()
+    mq.addEventListener("change", apply)
+    return () => mq.removeEventListener("change", apply)
+  }, [])
+
   return (
-    <div className="relative z-0 min-h-[220px] w-full shrink-0 overflow-hidden bg-black lg:min-h-0 lg:flex-1">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/villa-hero.jpg"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-      >
-        <source src="/login-side.mp4" type="video/mp4" />
-      </video>
+    <div className="relative z-0 h-[200px] w-full shrink-0 overflow-hidden bg-black lg:h-auto lg:flex-[1.5]">
+      {reduceMotion ? (
+        <Image
+          src="/villa-hero.jpg"
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 60vw, 100vw"
+          className="pointer-events-none object-cover"
+          priority={false}
+        />
+      ) : (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/villa-hero.jpg"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        >
+          <source src="/login-side.mp4" type="video/mp4" />
+        </video>
+      )}
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 lg:bg-gradient-to-r"
         aria-hidden
       />
+      {/* Badge Martinique */}
+      <div className="pointer-events-none absolute bottom-5 left-6 z-10" aria-hidden>
+        <p className="mb-1 text-[8px] tracking-[0.28em] uppercase text-[#D4AF37]">Martinique</p>
+        <div className="h-px w-5 bg-[#D4AF37] opacity-60" />
+      </div>
     </div>
   )
 }
@@ -436,6 +494,7 @@ function LoginForm() {
   const redirectTo = searchParams.get("redirect") || "/dashboard/proprio"
   const isTenant = redirectTo.startsWith("/espace-client")
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
+  const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
 
   const title = isTenant ? "Votre espace" : "Espace propriétaire"
   const eyebrow = isTenant ? "Locataires · Lien magique" : "Propriétaires · Accès sécurisé"
@@ -460,6 +519,12 @@ function LoginForm() {
             <span className="block h-px w-10 bg-black/12" />
             <p className="text-sm text-navy/45">{tagline}</p>
           </div>
+
+          {urlAuthError && (
+            <p role="alert" className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {urlAuthError}
+            </p>
+          )}
 
           {isTenant ? (
             <TenantMagicLinkFlow redirectTo={redirectTo} />
@@ -501,8 +566,11 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-[100dvh] items-center justify-center bg-offwhite">
+        <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-offwhite px-6">
           <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
+          <p className="text-sm text-navy/45" role="status">
+            Chargement de la page de connexion…
+          </p>
         </main>
       }
     >
