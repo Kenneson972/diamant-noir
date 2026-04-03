@@ -17,7 +17,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { BrandLogo } from "@/components/layout/BrandLogo"
 import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
 
 /**
@@ -497,27 +496,28 @@ function LoginForm() {
   const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
 
   const title = isTenant ? "Votre espace" : "Espace propriétaire"
-  const eyebrow = isTenant ? "Locataires · Lien magique" : "Propriétaires · Accès sécurisé"
   const tagline = isTenant
     ? "Réservations, livret et conciergerie."
     : "Suivi des biens et des réservations."
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-offwhite lg:flex-row">
-      {/* Mobile : vidéo en haut ; desktop : colonne gauche */}
+    <main className="flex min-h-[100dvh] flex-col bg-white lg:flex-row">
       <LoginSideVideo />
 
-      <div className="relative z-[1] flex w-full flex-col justify-center border-black/8 px-6 py-12 lg:w-[min(100%,28rem)] lg:shrink-0 lg:border-l lg:px-12 lg:py-16 xl:w-[min(100%,32rem)]">
-        <div className="mx-auto w-full max-w-sm space-y-10">
-          <BrandLogo variant="onLight" size="sm" />
+      <div className="relative z-[1] flex w-full flex-col justify-center border-black/[0.06] bg-white px-6 py-10 lg:w-[min(100%,26rem)] lg:shrink-0 lg:border-l lg:px-10 lg:py-14">
+        <div className="mx-auto w-full max-w-xs space-y-8">
+          {/* Logo texte */}
+          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">
+            Diamant Noir
+          </p>
 
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-navy/40">{eyebrow}</p>
-            <h1 className="font-display text-[1.85rem] leading-tight text-navy md:text-[2.1rem]">
+          {/* Titre + tagline */}
+          <div className="space-y-2">
+            <h1 className="font-display text-[1.9rem] leading-tight text-[#0D1B2A]">
               {title}
             </h1>
-            <span className="block h-px w-10 bg-black/12" />
-            <p className="text-sm text-navy/45">{tagline}</p>
+            <span className="block h-px w-8 bg-black/12" />
+            <p className="text-sm text-[rgba(13,27,42,0.45)]">{tagline}</p>
           </div>
 
           {urlAuthError && (
@@ -532,28 +532,29 @@ function LoginForm() {
             <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/8 pt-6 text-[10px] uppercase tracking-[0.18em] text-navy/35">
-            <Link href="/" className="transition-colors hover:text-navy">
+          {/* Footer */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.30)]">
+            <Link href="/" className="transition-colors hover:text-[#0D1B2A]">
               ← Retour au site
             </Link>
             {isTenant ? (
               <Link
                 href="/login?redirect=/dashboard/proprio"
-                className="transition-colors hover:text-navy"
+                className="transition-colors hover:text-[#0D1B2A]"
               >
-                Accès propriétaire
+                Accès propriétaire →
               </Link>
             ) : (
               <Link
                 href="/login?redirect=/espace-client"
-                className="transition-colors hover:text-navy"
+                className="transition-colors hover:text-[#0D1B2A]"
               >
-                Espace locataire
+                Espace locataire →
               </Link>
             )}
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.25em] text-navy/25">
+          <p className="text-[9px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">
             © 2026 Diamant Noir
           </p>
         </div>
