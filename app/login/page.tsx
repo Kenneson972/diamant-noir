@@ -567,7 +567,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-offwhite px-6">
+        <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-white px-6">
           <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
           <p className="text-sm text-navy/45" role="status">
             Chargement de la page de connexion…
