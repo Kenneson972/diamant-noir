@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { getSupabaseBrowser } from "@/lib/supabase"
 import {
@@ -9,12 +9,14 @@ import {
   EyeOff,
   Loader2,
   Lock,
+  LogIn,
   Mail,
   Send,
   User,
+  UserPlus,
 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+import { BrandLogo } from "@/components/layout/BrandLogo"
 import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
 
 /**
@@ -24,34 +26,10 @@ import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
 
 const MIN_PASSWORD_LEN = 8
 
-function loginUrlErrorMessage(code: string | null): string | null {
-  if (!code) return null
-  let decoded = code
-  try {
-    decoded = decodeURIComponent(code.replace(/\+/g, " "))
-  } catch {
-    decoded = code
-  }
-  const low = decoded.toLowerCase()
-  if (low === "missing_code") {
-    return "Lien incomplet ou expiré. Redemandez un code ou ouvrez le dernier email reçu."
-  }
-  if (low === "configuration") {
-    return "Connexion momentanément indisponible. Réessayez dans quelques instants."
-  }
-  if (low.includes("expired") || low.includes("otp_expired")) {
-    return "Code ou lien expiré. Demandez un nouveau code."
-  }
-  if (decoded.length > 0 && decoded.length < 180) {
-    return decoded
-  }
-  return "La connexion a échoué. Réessayez."
-}
-
 function formatSupabaseAuthMessage(message: string): string {
   const m = message.toLowerCase()
   if (m.includes("already registered") || m.includes("user already")) {
-    return "Un compte existe déjà avec cet email. Passez à l’onglet Connexion."
+    return "Un compte existe déjà avec cet email. Utilisez le bouton Se connecter."
   }
   if (m.includes("password") && (m.includes("least") || m.includes("short"))) {
     return `Le mot de passe doit contenir au moins ${MIN_PASSWORD_LEN} caractères.`
@@ -91,28 +69,23 @@ function PasswordPanel({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) {
-      setError("Supabase n’est pas configuré.")
+      setError("Supabase n'est pas configuré.")
       return
     }
     setLoading(true)
     setError(null)
-    const cleanEmail = email.trim().toLowerCase()
-    setEmail(cleanEmail)
-    const { error: signError } = await supabase.auth.signInWithPassword({
-      email: cleanEmail,
-      password,
-    })
+    const { error: signError } = await supabase.auth.signInWithPassword({ email, password })
     if (signError) {
       setError(
         signError.message.toLowerCase().includes("invalid")
           ? "Identifiants incorrects. Vérifiez votre email et votre mot de passe."
           : formatSupabaseAuthMessage(signError.message)
       )
+      setLoading(false)
     } else {
       router.push(redirectTo)
       router.refresh()
     }
-    setLoading(false)
   }
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -127,16 +100,14 @@ function PasswordPanel({
       return
     }
     if (!supabase) {
-      setError("Supabase n’est pas configuré.")
+      setError("Supabase n'est pas configuré.")
       return
     }
     setLoading(true)
     setError(null)
-    const cleanEmail = email.trim().toLowerCase()
-    setEmail(cleanEmail)
     const origin = typeof window !== "undefined" ? window.location.origin : ""
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email: cleanEmail,
+      email,
       password,
       options: {
         emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
@@ -163,17 +134,17 @@ function PasswordPanel({
   if (signupSuccess === "confirm_email") {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <Send size={20} strokeWidth={1.25} className="text-[rgba(13,27,42,0.30)]" aria-hidden />
+        <Send size={22} strokeWidth={1.25} className="text-navy/35" aria-hidden />
         <div className="space-y-2">
-          <h2 className="font-display text-2xl text-[#0D1B2A]">Confirmez votre email</h2>
+          <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-black/12" />
         </div>
-        <p className="text-sm leading-relaxed text-[rgba(13,27,42,0.55)]">
+        <p className="text-sm leading-relaxed text-navy/55">
           Nous avons envoyé un lien de confirmation à{" "}
-          <span className="font-medium text-[#0D1B2A]">{email}</span>. Cliquez sur le lien pour
-          activer votre compte, puis vous pourrez vous connecter.
+          <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour activer votre compte, puis
+          vous pourrez vous connecter.
         </p>
-        <p className="text-xs leading-relaxed text-[rgba(13,27,42,0.40)]">
+        <p className="text-xs leading-relaxed text-navy/40">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -186,7 +157,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.35)] transition-colors hover:text-[#0D1B2A]"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -196,25 +167,74 @@ function PasswordPanel({
 
   return (
     <div className="relative z-[1] space-y-8">
-      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-7">
+      <div
+        className="isolate grid grid-cols-2 gap-px border border-black/12 bg-black/12"
+        role="tablist"
+        aria-label="Connexion ou inscription"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "login"}
+          onClick={() => {
+            setMode("login")
+            setError(null)
+            setFieldErrors({})
+          }}
+          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
+            mode === "login"
+              ? "bg-navy text-white"
+              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
+          }`}
+        >
+          <LogIn size={14} strokeWidth={1.25} aria-hidden />
+          Connexion
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "signup"}
+          onClick={() => {
+            setMode("signup")
+            setError(null)
+            setFieldErrors({})
+          }}
+          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
+            mode === "signup"
+              ? "bg-navy text-white"
+              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
+          }`}
+        >
+          <UserPlus size={14} strokeWidth={1.25} aria-hidden />
+          Inscription
+        </button>
+      </div>
+
+      <p className="text-sm leading-relaxed text-navy/50">
+        {mode === "login"
+          ? "Connectez-vous avec l’email et le mot de passe de votre compte propriétaire."
+          : "Créez un compte pour accéder au tableau de bord des biens et des réservations."}
+      </p>
+
+      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-8">
         {error && (
           <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
         )}
-        <div className="space-y-5">
+        <div className="space-y-6">
           {mode === "signup" && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
               >
-                Nom <span className="font-normal normal-case tracking-normal text-[rgba(13,27,42,0.30)]">(optionnel)</span>
+                Nom <span className="font-normal normal-case tracking-normal text-navy/30">(optionnel)</span>
               </label>
               <div className="relative">
                 <User
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
-                  size={15}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
+                  size={16}
                   strokeWidth={1.25}
                   aria-hidden
                 />
@@ -225,22 +245,22 @@ function PasswordPanel({
                   placeholder="Prénom Nom"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 />
               </div>
             </div>
           )}
-          <div className="space-y-1">
+          <div className="space-y-2">
             <label
               htmlFor="email-pass"
-              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Mail
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
-                size={15}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
+                size={16}
                 strokeWidth={1.25}
                 aria-hidden
               />
@@ -252,21 +272,21 @@ function PasswordPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-4 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
               />
             </div>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <label
               htmlFor="password-pass"
-              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
             >
               Mot de passe <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Lock
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
-                size={15}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
+                size={16}
                 strokeWidth={1.25}
                 aria-hidden
               />
@@ -279,36 +299,36 @@ function PasswordPanel({
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
-                aria-describedby={mode === "signup" ? "password-hint" : undefined}
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
               />
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => setShowPassword((s) => !s)}
-                className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
+                className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
-                {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
+                {showPassword ? <EyeOff size={18} strokeWidth={1.25} /> : <Eye size={18} strokeWidth={1.25} />}
               </button>
             </div>
             {mode === "signup" && (
-              <p id="password-hint" className="text-xs text-[rgba(13,27,42,0.40)]">
+              <p id="password-hint" className="text-xs text-navy/40">
                 Au moins {MIN_PASSWORD_LEN} caractères.
               </p>
             )}
           </div>
           {mode === "signup" && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               <label
                 htmlFor="password-confirm"
-                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
               <div className="relative">
                 <Lock
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
-                  size={15}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
+                  size={16}
                   strokeWidth={1.25}
                   aria-hidden
                 />
@@ -325,15 +345,16 @@ function PasswordPanel({
                   required
                   aria-invalid={Boolean(fieldErrors.confirm)}
                   aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                  className="tap-target w-full rounded-none border border-black/12 bg-white py-3.5 pl-11 pr-14 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 />
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
+                  className="tap-target absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-navy/40 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
-                  {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
+                  {showConfirm ? <EyeOff size={18} strokeWidth={1.25} /> : <Eye size={18} strokeWidth={1.25} />}
                 </button>
               </div>
               {fieldErrors.confirm && (
@@ -347,8 +368,7 @@ function PasswordPanel({
         <button
           type="submit"
           disabled={loading}
-          aria-busy={loading}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B2A]/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -366,25 +386,21 @@ function PasswordPanel({
         </button>
       </form>
 
-      {/* Liens discrets Connexion / Inscription */}
-      {mode === "login" ? (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+      {mode === "login" && (
+        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
           Pas encore de compte ?{" "}
-          <button
-            type="button"
-            onClick={() => { setMode("signup"); setError(null); setFieldErrors({}) }}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
-          >
+          <Link href={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="text-navy underline-offset-4 hover:underline">
             S&apos;inscrire
-          </button>
+          </Link>
         </p>
-      ) : (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+      )}
+      {mode === "signup" && (
+        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
           Déjà un compte ?{" "}
           <button
             type="button"
-            onClick={() => { setMode("login"); setError(null); setFieldErrors({}) }}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+            onClick={() => setMode("login")}
+            className="text-navy underline-offset-4 hover:underline"
           >
             Se connecter
           </button>
@@ -395,48 +411,22 @@ function PasswordPanel({
 }
 
 function LoginSideVideo() {
-  const [reduceMotion, setReduceMotion] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const apply = () => setReduceMotion(mq.matches)
-    apply()
-    mq.addEventListener("change", apply)
-    return () => mq.removeEventListener("change", apply)
-  }, [])
-
   return (
-    <div className="relative z-0 h-[200px] w-full shrink-0 overflow-hidden bg-black lg:h-auto lg:flex-[1.5]">
-      {reduceMotion ? (
-        <Image
-          src="/villa-hero.jpg"
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 60vw, 100vw"
-          className="pointer-events-none object-cover"
-          priority={false}
-        />
-      ) : (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/villa-hero.jpg"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        >
-          <source src="/login-side.mp4" type="video/mp4" />
-        </video>
-      )}
+    <div className="relative z-0 min-h-[220px] w-full shrink-0 overflow-hidden bg-black lg:min-h-0 lg:flex-1">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/villa-hero.jpg"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/login-side.mp4" type="video/mp4" />
+      </video>
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 lg:bg-gradient-to-r"
         aria-hidden
       />
-      {/* Badge Martinique */}
-      <div className="pointer-events-none absolute bottom-5 left-6 z-10" aria-hidden>
-        <p className="mb-1 text-[8px] tracking-[0.28em] uppercase text-[#D4AF37]">Martinique</p>
-        <div className="h-px w-5 bg-[#D4AF37] opacity-60" />
-      </div>
     </div>
   )
 }
@@ -446,38 +436,30 @@ function LoginForm() {
   const redirectTo = searchParams.get("redirect") || "/dashboard/proprio"
   const isTenant = redirectTo.startsWith("/espace-client")
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
-  const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
 
   const title = isTenant ? "Votre espace" : "Espace propriétaire"
+  const eyebrow = isTenant ? "Locataires · Lien magique" : "Propriétaires · Accès sécurisé"
   const tagline = isTenant
     ? "Réservations, livret et conciergerie."
     : "Suivi des biens et des réservations."
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-white lg:flex-row">
+    <main className="flex min-h-[100dvh] flex-col bg-offwhite lg:flex-row">
+      {/* Mobile : vidéo en haut ; desktop : colonne gauche */}
       <LoginSideVideo />
 
-      <div className="relative z-[1] flex w-full flex-col justify-center border-black/[0.06] bg-white px-6 py-10 lg:w-[min(100%,26rem)] lg:shrink-0 lg:border-l lg:px-10 lg:py-14">
-        <div className="mx-auto w-full max-w-xs space-y-8">
-          {/* Logo texte */}
-          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">
-            Diamant Noir
-          </p>
+      <div className="relative z-[1] flex w-full flex-col justify-center border-black/8 px-6 py-12 lg:w-[min(100%,28rem)] lg:shrink-0 lg:border-l lg:px-12 lg:py-16 xl:w-[min(100%,32rem)]">
+        <div className="mx-auto w-full max-w-sm space-y-10">
+          <BrandLogo variant="onLight" size="sm" />
 
-          {/* Titre + tagline */}
-          <div className="space-y-2">
-            <h1 className="font-display text-[1.9rem] leading-tight text-[#0D1B2A]">
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-navy/40">{eyebrow}</p>
+            <h1 className="font-display text-[1.85rem] leading-tight text-navy md:text-[2.1rem]">
               {title}
             </h1>
-            <span className="block h-px w-8 bg-black/12" />
-            <p className="text-sm text-[rgba(13,27,42,0.45)]">{tagline}</p>
+            <span className="block h-px w-10 bg-black/12" />
+            <p className="text-sm text-navy/45">{tagline}</p>
           </div>
-
-          {urlAuthError && (
-            <p role="alert" className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              {urlAuthError}
-            </p>
-          )}
 
           {isTenant ? (
             <TenantMagicLinkFlow redirectTo={redirectTo} />
@@ -485,29 +467,28 @@ function LoginForm() {
             <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
           )}
 
-          {/* Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.30)]">
-            <Link href="/" className="transition-colors hover:text-[#0D1B2A]">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/8 pt-6 text-[10px] uppercase tracking-[0.18em] text-navy/35">
+            <Link href="/" className="transition-colors hover:text-navy">
               ← Retour au site
             </Link>
             {isTenant ? (
               <Link
                 href="/login?redirect=/dashboard/proprio"
-                className="transition-colors hover:text-[#0D1B2A]"
+                className="transition-colors hover:text-navy"
               >
-                Accès propriétaire →
+                Accès propriétaire
               </Link>
             ) : (
               <Link
                 href="/login?redirect=/espace-client"
-                className="transition-colors hover:text-[#0D1B2A]"
+                className="transition-colors hover:text-navy"
               >
-                Espace locataire →
+                Espace locataire
               </Link>
             )}
           </div>
 
-          <p className="text-[9px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-navy/25">
             © 2026 Diamant Noir
           </p>
         </div>
@@ -520,11 +501,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-white px-6">
+        <main className="flex min-h-[100dvh] items-center justify-center bg-offwhite">
           <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
-          <p className="text-sm text-navy/45" role="status">
-            Chargement de la page de connexion…
-          </p>
         </main>
       }
     >

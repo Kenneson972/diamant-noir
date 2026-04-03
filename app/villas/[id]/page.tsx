@@ -121,7 +121,7 @@ const getIcon = (amenity: string) => {
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   noStore();
-  let villa: VillaDetails | null = null;
+  let villa: VillaDetails = fallbackVilla;
   let recommendedVillas: RecommendedVilla[] = [];
 
   try {
@@ -184,9 +184,6 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         longitude: data.longitude ?? null,
         map_embed_url: data.map_embed_url ?? null,
       };
-    } else {
-      // Ne pas afficher de villa fallback si l'ID n'existe pas en base
-      notFound();
     }
 
     if (!recommendationsResult.error && recommendationsResult.data) {
@@ -194,64 +191,52 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     }
   } catch (error) {
     console.error("Supabase fetch error (villa details):", error);
-    notFound();
   }
 
   return (
-    <main className="min-h-screen bg-offwhite pb-[80px] sm:pb-0">
-      <VillaViewTracker villaId={villa!.id} />
- 
+    <main className="min-h-screen bg-offwhite">
+      <VillaViewTracker villaId={villa.id} />
 
       {/* ── Galerie plein largeur ── */}
       <div className="pt-16 md:pt-20">
-        <VillaGallery images={villa!.images} title={villa!.name} />
+        <VillaGallery images={villa.images} title={villa.name} />
       </div>
 
       {/* ── Titre & Localisation ── */}
-      <div className="page-px mx-auto max-w-7xl pb-6 pt-8 md:pt-10">
+      <div className="mx-auto max-w-7xl px-6 pt-10 pb-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="h-px w-6 bg-gold" />
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
-                {villa!.location || "Martinique"}
+                {villa.location || "Martinique"}
               </p>
             </div>
-            <h1 className="font-display text-3xl md:text-5xl text-navy">
-              {villa!.name}
+            <h1 className="font-display text-4xl md:text-5xl text-navy">
+              {villa.name}
             </h1>
-            <div className="mt-4 flex flex-wrap items-center gap-2 text-sm font-medium text-navy/60">
-              <span>{villa!.capacity} voyageurs</span>
+            <div className="flex items-center gap-3 mt-4 text-sm text-navy/60 font-medium">
+              <span>{villa.capacity} voyageurs</span>
               <span>·</span>
-              <span>{villa!.rooms?.length || 4} chambres</span>
+              <span>{villa.rooms?.length || 4} chambres</span>
               <span>·</span>
-              <span>{villa!.bathrooms_count || villa!.rooms?.length || 4} salles de bain</span>
+              <span>{villa.bathrooms_count || villa.rooms?.length || 4} salles de bain</span>
               <span>·</span>
-              <span>{villa!.surface_m2 || 250} m²</span>
+              <span>{villa.surface_m2 || 250} m²</span>
             </div>
           </div>
           <div className="pb-1">
-            <VillaHeaderActions villaName={villa!.name} villaId={villa!.id} />
+            <VillaHeaderActions villaName={villa.name} villaId={villa.id} />
           </div>
         </div>
       </div>
 
       {/* ── Contenu principal ── */}
-      <div className="page-px mx-auto max-w-7xl pb-20 pt-6 md:pb-28 md:pt-8">
-        <div className="grid items-start gap-10 md:gap-12 lg:grid-cols-[1fr_380px]">
+      <div className="mx-auto max-w-7xl px-6 pb-28 pt-8">
+        <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">
+          
           {/* ── Colonne gauche ── */}
-          <div className="space-y-12 md:space-y-16">
-            <section className="lg:hidden">
-              <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-xl shadow-navy/5 sm:p-6">
-                <BookingForm
-                  villaId={villa.id}
-                  basePrice={villa.price}
-                  capacity={villa.capacity}
-                  checkInTime={villa.check_in_time || "17:00"}
-                  checkOutTime={villa.check_out_time || "10:00"}
-                />
-              </div>
-            </section>
+          <div className="space-y-16">
             
             {/* Description */}
             <section className="space-y-8">
@@ -282,7 +267,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             {villa.amenities && villa.amenities.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {villa.amenities.slice(0, 8).map((item: string, i: number) => (
                     <div key={i} className="flex flex-col gap-3">
                       <div className="text-navy">{getIcon(item)}</div>
@@ -383,7 +368,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
               <h3 className="font-display text-lg text-navy mt-10 mb-6">Services à la carte</h3>
               <p className="text-sm text-navy/60 mb-6">Composez votre séjour parmi l’ensemble de nos services sur mesure.</p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4 text-sm text-navy/70">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-navy/70">
                 {(villa.a_la_carte_services?.length
                   ? villa.a_la_carte_services
                   : [
@@ -412,7 +397,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   </span>
                 </div>
               </div>
-              <AvailabilityCalendar villaId={villa.id} basePrice={villa.price} />
+              <AvailabilityCalendar villaId={villa.id} />
             </section>
 
             {/* Carte */}
@@ -531,7 +516,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <Link
                   href="/contact"
-                  className="tap-target inline-flex min-h-11 items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-navy transition-colors hover:border-navy"
+                  className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
                 >
                   Planifier un appel
                 </Link>
@@ -569,7 +554,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
       {/* ── Recommandées ── */}
       {recommendedVillas.length > 0 && (
-        <section className="page-px mx-auto max-w-7xl pb-16">
+        <section className="mx-auto max-w-7xl px-6 pb-16">
           <h3 className="font-display text-3xl text-navy mb-8">Recommandées pour vous</h3>
           <div className="grid gap-6 md:grid-cols-3">
             {recommendedVillas.map((item) => {
@@ -627,14 +612,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── CTA bas de page ── */}
-      <div className="page-px bg-navy py-16 text-center md:py-20">
+      <div className="bg-navy py-20 text-center px-6">
         <div className="mx-auto max-w-xl space-y-6">
-          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-gold">Diamant Noir</p>
-          <h3 className="font-display text-3xl text-white md:text-4xl">Prêt pour l'exception ?</h3>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Diamant Noir</p>
+          <h3 className="font-display text-4xl text-white">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link
             href="/contact"
-            className="inline-flex min-h-11 items-center justify-center rounded-none border border-gold/50 px-10 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gold transition-all duration-300 hover:bg-gold hover:text-navy"
+            className="inline-block rounded-none border border-gold/50 px-10 py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-navy transition-all duration-300"
           >
             Contacter la conciergerie
           </Link>
