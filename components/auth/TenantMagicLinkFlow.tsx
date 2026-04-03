@@ -9,10 +9,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Loader2,
-  LogIn,
   Mail,
   User,
-  UserPlus,
 } from "lucide-react"
 import { getSupabaseBrowser } from "@/lib/supabase"
 
@@ -64,10 +62,15 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       setError("Supabase n'est pas configuré.")
       return false
     }
+    const trimmed = email.trim().toLowerCase()
+    if (!trimmed) {
+      setError("Indiquez une adresse email.")
+      return false
+    }
     setLoading(true)
     setError(null)
     const { error: otpError } = await supabase.auth.signInWithOtp({
-      email,
+      email: trimmed,
       options: { emailRedirectTo },
     })
     setLoading(false)
@@ -75,6 +78,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       setError("Impossible d'envoyer le code. Vérifiez votre adresse.")
       return false
     }
+    setEmail(trimmed)
     setResendSec(RESEND_COOLDOWN_SEC)
     return true
   }, [supabase, email, emailRedirectTo])
@@ -104,7 +108,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
       for (const type of tryTypes) {
         const { error: vErr } = await supabase.auth.verifyOtp({
-          email,
+          email: email.trim().toLowerCase(),
           token,
           type,
         })
@@ -268,7 +272,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               onChange={(e) => setDigitAt(i, e.target.value)}
               onKeyDown={(e) => onOtpKeyDown(i, e)}
               aria-label={`Chiffre ${i + 1} sur ${OTP_LEN}`}
-              className="tap-target h-12 w-10 border-0 border-b-2 border-navy/25 bg-transparent text-center font-display text-xl text-navy transition-colors focus:border-navy focus:outline-none focus:ring-0 sm:h-14 sm:w-12 sm:text-2xl"
+              className="tap-target h-12 w-11 min-w-[44px] border-0 border-b-2 border-navy/25 bg-transparent text-center font-display text-xl tabular-nums text-navy transition-colors focus:border-navy focus:outline-none focus:ring-0 sm:h-14 sm:w-12 sm:text-2xl"
             />
           ))}
         </div>
@@ -367,15 +371,15 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               <label htmlFor="tenant-fn" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
                 Prénom <span className="text-red-600">*</span>
               </label>
-              <input
-                id="tenant-fn"
-                type="text"
-                autoComplete="given-name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
-              />
+            <input
+              id="tenant-fn"
+              type="text"
+              autoComplete="given-name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+            />
             </div>
             <div className="space-y-2">
               <label htmlFor="tenant-ln" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
@@ -388,7 +392,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
               />
             </div>
           </div>
@@ -406,7 +410,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
-              className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+              className="tap-target w-full rounded-none border border-black/12 bg-white px-4 py-3.5 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
             />
           </div>
 
@@ -457,46 +461,9 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
     )
   }
 
-  /* ─── Étape email (onglets + formulaire) ─── */
+  /* ─── Étape email (email → continuer) ─── */
   return (
     <div className="relative z-[1] space-y-8">
-      <div
-        className="isolate grid grid-cols-2 gap-px border border-black/12 bg-black/12"
-        role="tablist"
-        aria-label="Connexion ou inscription"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "login"}
-          id="tab-login-magic"
-          onClick={() => switchMode("login")}
-          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
-            mode === "login"
-              ? "bg-navy text-white"
-              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
-          }`}
-        >
-          <LogIn size={14} strokeWidth={1.25} aria-hidden />
-          Connexion
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "signup"}
-          id="tab-signup-magic"
-          onClick={() => switchMode("signup")}
-          className={`flex min-h-[48px] cursor-pointer touch-manipulation items-center justify-center gap-2 px-2 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:tracking-[0.22em] ${
-            mode === "signup"
-              ? "bg-navy text-white"
-              : "bg-white text-navy/60 hover:bg-navy/[0.04] hover:text-navy active:bg-navy/[0.06]"
-          }`}
-        >
-          <UserPlus size={14} strokeWidth={1.25} aria-hidden />
-          Inscription
-        </button>
-      </div>
-
       <form onSubmit={handleEmailSubmit} className="space-y-6" aria-label="Email">
         {error && (
           <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -504,14 +471,17 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           </p>
         )}
 
-        <div className="space-y-2">
-          <label htmlFor="email-auth" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+        <div className="space-y-1">
+          <label
+            htmlFor="email-auth"
+            className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+          >
             Adresse email <span className="text-red-600">*</span>
           </label>
           <div className="relative">
             <Mail
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/25"
-              size={16}
+              className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+              size={15}
               strokeWidth={1.25}
               aria-hidden
             />
@@ -523,9 +493,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className={`tap-target w-full rounded-none border bg-white py-3.5 pl-11 pr-4 text-navy placeholder:text-navy/25 transition-colors focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy ${
-                mode === "signup" ? "border-navy/15" : "border-black/12"
-              }`}
+              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
             />
           </div>
         </div>
@@ -533,7 +501,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         <button
           type="submit"
           disabled={loading}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B2A]/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -551,28 +519,30 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         </button>
       </form>
 
-      {mode === "login" && (
-        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
+      {/* Liens discrets Connexion / Inscription */}
+      {mode === "login" ? (
+        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Pas encore de compte ?{" "}
           <button
             type="button"
             onClick={() => switchMode("signup")}
-            className="text-navy underline-offset-4 hover:underline"
+            className="text-[#0D1B2A] underline-offset-4 hover:underline"
           >
             S&apos;inscrire
           </button>
         </p>
-      )}
-      {mode === "signup" && (
-        <p className="text-center text-[10px] uppercase tracking-[0.2em] text-navy/35">
+      ) : (
+        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Déjà un compte ?{" "}
-          <button type="button" onClick={() => switchMode("login")} className="text-navy underline-offset-4 hover:underline">
+          <button
+            type="button"
+            onClick={() => switchMode("login")}
+            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+          >
             Se connecter
           </button>
         </p>
       )}
-
-      {/* Mode démo retiré : l'espace client est connecté aux vraies réservations */}
     </div>
   )
 }
