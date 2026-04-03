@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-04T12:00:00Z | type: ui | Cursor — Navbar : logo centré écran (plus de hamburger sur le « D »)
+
+- **agent**: `cursor`
+- **summary**: Grille `auto – 1fr – auto` : colonne droite plus large que la gauche, le bloc « centre » était décalé ; le wordmark se retrouvait sous l’icône menu (traits blancs sur le D). Passage à `minmax(0,1fr) auto minmax(0,1fr)` + lien logo `pointer-events-auto` dans un wrapper `pointer-events-none` ; bouton menu sans classe `.tap-target` globale (conflit `inline-flex`/largeur) ; `whitespace-nowrap` + `max-w` sur le logo.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Capture utilisateur : header visuellement « cassé », logo téléphone/icônes tassés.
+- **impact**: Logo réellement centré ; Menu et actions restent aux bandeaux gauche/droite équilibrés.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-03T23:10:00Z | type: config | Cursor — Dépendance manquante `recharts` (build Vercel)
 
 - **agent**: `cursor`
