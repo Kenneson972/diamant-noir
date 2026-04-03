@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-03T22:55:00Z | type: config | Cursor — Vercel : `npm install` + HeroUI / Tailwind peers
+
+- **agent**: `cursor`
+- **summary**: Échec CI Vercel — `@heroui/react@3` peer `tailwindcss@>=4` vs projet en Tailwind 3. Ajout `.npmrc` avec `legacy-peer-deps=true` (aligné sur l’install locale documentée). Régénération `package-lock.json` après install propre.
+- **files**: [`.npmrc`, `package-lock.json`, `docs/ACTIONS_LOG.md`]
+- **why**: `npm install` sur Vercel sans legacy échoue sur les peer dependencies.
+- **impact**: Install + build Vercel reprennent ; comportement runtime inchangé (styles HeroUI via `public/heroui-v3.min.css`).
+- **verify**: `rm -rf node_modules package-lock.json && npm install && npm run build` OK en local.
+
+---
+
 ## 2026-03-31T18:45:00Z | type: ui | Cursor — Navbar mobile : plus de chevauchement logo / actions
 
 - **agent**: `cursor`
