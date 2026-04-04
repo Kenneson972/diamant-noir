@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 /** Hero plein impact — image + dégradé, titre display en capitales (réf. style magazine / LC) */
 export function EditorialHeroImmersive({
@@ -86,20 +87,22 @@ export function EditorialServiceGrid({
   return (
     <section className="bg-offwhite px-6 py-20 md:py-28 lg:py-32">
       <div className="mx-auto max-w-6xl">
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/40">{eyebrow}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{eyebrow}</p>
         <h2 className="mt-4 font-display text-3xl text-navy md:text-4xl lg:text-[2.75rem]">{title}</h2>
         {subtitle ? (
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-navy/65 md:text-[17px]">{subtitle}</p>
         ) : null}
         <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 lg:gap-x-12">
-          {items.map(({ icon: Icon, label }) => (
-            <div key={label} className="flex flex-col items-start border-t border-navy/10 pt-8">
+          {items.map(({ icon: Icon, label }, index) => (
+            <ScrollReveal key={label} delay={index * 80}>
+            <div className="flex flex-col items-start border-t border-navy/10 pt-8">
               <Icon className="h-7 w-7 text-gold" strokeWidth={1} aria-hidden />
               <span className="mt-5 text-[10px] font-bold uppercase tracking-[0.22em] text-navy leading-snug">
                 {label}
               </span>
             </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>
@@ -153,7 +156,7 @@ export function EditorialImageSplit({
       className={`flex flex-col justify-center px-6 py-14 md:px-12 md:py-16 lg:px-16 lg:py-20 ${textColClassName}`.trim()}
     >
       {eyebrow ? (
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/40">{eyebrow}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{eyebrow}</p>
       ) : null}
       <h2
         className={`max-w-prose font-display text-2xl leading-snug text-navy md:text-3xl lg:text-[2.25rem] ${eyebrow ? "mt-4" : ""}`}
@@ -206,8 +209,9 @@ export function EditorialQuotes({
         <h2 className="mt-4 max-w-3xl font-display text-3xl leading-tight md:text-4xl">{title}</h2>
         <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
         <div className="mt-16 grid gap-12 md:grid-cols-3 md:gap-10">
-          {quotes.map((q) => (
-            <blockquote key={q.author} className="flex flex-col border-t border-white/15 pt-8">
+          {quotes.map((q, index) => (
+            <ScrollReveal key={q.author} delay={index * 120}>
+            <blockquote className="flex flex-col border-t border-white/15 pt-8">
               <p className="flex-1 text-sm font-light leading-relaxed text-white/85 md:text-[15px]">
                 &ldquo;{q.quote}&rdquo;
               </p>
@@ -216,6 +220,7 @@ export function EditorialQuotes({
                 <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/45">{q.place}</p>
               </footer>
             </blockquote>
+            </ScrollReveal>
           ))}
         </div>
       </div>
@@ -228,17 +233,32 @@ export function EditorialFigureBand({
   label,
   figure,
   caption,
+  /** Si défini, `caption` reste la ligne visible ; le texte long est dans un `<details>`. */
+  detailsCaption,
+  detailsSummaryLabel = "En savoir plus",
 }: {
   label: string;
   figure: string;
   caption: string;
+  detailsCaption?: string;
+  detailsSummaryLabel?: string;
 }) {
   return (
     <section className="border-y border-navy/10 bg-offwhite px-6 py-16 md:py-20">
       <div className="mx-auto max-w-6xl text-center md:text-left">
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/40">{label}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{label}</p>
         <p className="mt-4 font-display text-6xl text-navy md:text-7xl lg:text-8xl">{figure}</p>
         <p className="mt-4 max-w-xl text-sm uppercase tracking-[0.18em] text-navy/55 md:mx-0">{caption}</p>
+        {detailsCaption ? (
+          <details className="mt-5 max-w-xl text-left">
+            <summary className="cursor-pointer list-none text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 outline-none transition-colors hover:text-navy [&::-webkit-details-marker]:hidden">
+              {detailsSummaryLabel}
+            </summary>
+            <p className="mt-4 text-sm normal-case leading-relaxed tracking-normal text-navy/65 md:text-[15px]">
+              {detailsCaption}
+            </p>
+          </details>
+        ) : null}
       </div>
     </section>
   );

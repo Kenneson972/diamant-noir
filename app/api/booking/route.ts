@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/book?canceled=true&bookingId=${booking.id}`,
+      cancel_url: `${baseUrl}/villas?canceled=true&bookingId=${booking.id}`,
       metadata: {
         bookingId: booking.id,
         villaId: villaId

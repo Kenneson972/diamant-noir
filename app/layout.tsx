@@ -1,8 +1,7 @@
 import "./globals.css";
 import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
 import { cookies } from "next/headers";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { SiteFrame } from "@/components/layout/SiteFrame";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { CompareProvider } from "@/contexts/CompareContext";
@@ -75,9 +74,7 @@ export default async function RootLayout({
         <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <WishlistProvider>
             <CompareProvider>
-              <Navbar />
-              {children}
-              <Footer />
+              <SiteFrame>{children}</SiteFrame>
               <ChatbotDynamic />
               <CompareBar />
             </CompareProvider>

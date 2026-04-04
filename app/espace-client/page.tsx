@@ -43,45 +43,47 @@ function UpcomingStayHero({ booking }: { booking: any }) {
 
   return (
     <div
-      className="bg-white border border-[rgba(13,27,42,0.07)] flex flex-col sm:flex-row sm:items-start gap-0"
+      className="bg-white border border-[rgba(13,27,42,0.07)] flex flex-col sm:flex-row sm:items-stretch gap-0 overflow-hidden"
       style={{ borderTop: "2px solid #D4AF37" }}
     >
-      <div className="flex-1 min-w-0 px-6 py-6">
-        <p className="text-[8px] tracking-[0.26em] uppercase text-[#D4AF37] mb-3">
+      <div className="flex-1 min-w-0 px-7 py-8">
+        <p className="text-[9px] tracking-[0.32em] uppercase text-[#D4AF37] mb-4">
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
-        <h2 className="font-display text-2xl font-normal text-[#0D1B2A] mb-2">
+        <h2 className="font-display text-[22px] font-normal text-[#0D1B2A] leading-snug mb-2">
           {booking.villa?.name ?? "Villa Diamant Noir"}
         </h2>
         {booking.villa?.location && (
-          <p className="font-cormorant italic text-[14px] font-light text-[rgba(13,27,42,0.35)] mb-1">
+          <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">
             {booking.villa.location}, Martinique
           </p>
         )}
-        <p className="font-cormorant italic text-[14px] font-light text-[rgba(13,27,42,0.45)] mb-5">
-          {fmt(startDate)} → {fmt(endDate)} · {nights} nuit{nights > 1 ? "s" : ""}
+        <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mb-7">
+          {fmt(startDate)} – {fmt(endDate)} · {nights} nuit{nights > 1 ? "s" : ""}
         </p>
         <Link
           href="/espace-client/livret"
-          className="text-[8px] tracking-[0.2em] uppercase text-[#D4AF37] underline underline-offset-4 decoration-[rgba(212,175,55,0.4)] hover:decoration-[#D4AF37] transition-colors no-underline"
-          style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}
+          className="inline-flex items-center gap-2 text-[9px] tracking-[0.22em] uppercase text-[#D4AF37] hover:text-[rgba(212,175,55,0.7)] transition-colors no-underline"
         >
-          Voir le livret →
+          Consulter le livret
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </Link>
       </div>
 
-      <div className="hidden sm:block w-px self-stretch bg-[rgba(13,27,42,0.07)] mx-0" />
-      <div className="sm:hidden h-px mx-6 bg-[rgba(13,27,42,0.07)]" />
+      <div className="hidden sm:block w-px self-stretch bg-[rgba(13,27,42,0.06)]" />
+      <div className="sm:hidden h-px mx-7 bg-[rgba(13,27,42,0.06)]" />
 
-      <div className="px-6 py-6 flex flex-col items-start sm:items-end justify-center gap-1 shrink-0 min-w-[100px]">
+      <div className="px-7 py-8 flex flex-col items-start sm:items-center justify-center gap-1.5 shrink-0 sm:min-w-[120px]">
         <p
           className="font-display font-normal text-[#0D1B2A] leading-none"
-          style={{ fontSize: "40px" }}
+          style={{ fontSize: "48px", letterSpacing: "-0.02em" }}
         >
-          {isToday ? "·" : Math.max(0, daysUntil)}
+          {isToday ? "✦" : Math.max(0, daysUntil)}
         </p>
-        <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.32)]">
-          {isToday ? "Séjour en cours" : "jours"}
+        <p className="text-[9px] tracking-[0.28em] uppercase text-[rgba(13,27,42,0.28)]">
+          {isToday ? "en cours" : "jours"}
         </p>
       </div>
     </div>
@@ -184,16 +186,16 @@ export default function EspaceClientPage() {
     return (
       <>
         <PageTopbar title="Mon Séjour" />
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-8">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
-            <h1 className="font-display text-2xl text-navy mt-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/25">Espace Client</p>
+            <h1 className="font-display text-3xl font-normal text-navy mt-2 leading-none">
               Bonjour{firstName ? `, ${firstName}` : ""}
             </h1>
-            <span className="mt-2 block h-px w-10 bg-gold/50" />
+            <span className="mt-3 block h-px w-8 bg-gold/60" />
           </div>
-          <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0" />
+          <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0 mt-1" />
         </div>
 
         <Card className="border border-navy/8 bg-white shadow-none rounded-none">
@@ -251,41 +253,39 @@ export default function EspaceClientPage() {
         title="Mon Séjour"
         badge={daysUntil !== null && daysUntil > 0 ? `J — ${daysUntil}` : undefined}
       />
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* Header personnalisé */}
       <div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/30">Espace Client</p>
-            <h1 className="font-display text-2xl text-navy mt-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/25">Espace Client</p>
+            <h1 className="font-display text-3xl font-normal text-navy mt-2 leading-none">
               Bonjour{firstName ? `, ${firstName}` : ""}
             </h1>
-            <span className="mt-2 block h-px w-10 bg-gold/50" />
+            <span className="mt-3 block h-px w-8 bg-gold/60" />
           </div>
-          <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0" />
+          <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0 mt-1" />
         </div>
 
-        {/* Stats bar */}
-        <div className="flex gap-3 mt-4">
-          <Card className="border border-navy/8 bg-white shadow-none rounded-none flex-1">
-            <Card.Content className="p-3 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Séjours</p>
-              <p className="text-lg font-bold text-navy mt-0.5">{bookings.length}</p>
-            </Card.Content>
-          </Card>
-          <Card className="border border-navy/8 bg-white shadow-none rounded-none flex-1">
-            <Card.Content className="p-3 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Nuits</p>
-              <p className="text-lg font-bold text-navy mt-0.5">{totalNights}</p>
-            </Card.Content>
-          </Card>
+        {/* Stats — ligne éditoriale */}
+        <div className="flex items-center gap-7 mt-6 pt-6 border-t border-navy/8">
+          <div>
+            <p className="font-display font-normal text-[26px] text-navy leading-none">{bookings.length}</p>
+            <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Séjour{bookings.length > 1 ? "s" : ""}</p>
+          </div>
+          <div className="w-px h-9 bg-navy/10" />
+          <div>
+            <p className="font-display font-normal text-[26px] text-navy leading-none">{totalNights}</p>
+            <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Nuit{totalNights > 1 ? "s" : ""}</p>
+          </div>
           {daysUntil !== null && daysUntil > 0 && (
-            <Card className="border border-gold/20 bg-gold/[0.03] shadow-none rounded-none flex-1">
-              <Card.Content className="p-3 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Prochain</p>
-                <p className="text-lg font-bold text-gold mt-0.5">J-{daysUntil}</p>
-              </Card.Content>
-            </Card>
+            <>
+              <div className="w-px h-9 bg-navy/10" />
+              <div>
+                <p className="font-display font-normal text-[26px] text-gold leading-none">J–{daysUntil}</p>
+                <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Prochain séjour</p>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -295,72 +295,77 @@ export default function EspaceClientPage() {
 
       {/* Accès rapide */}
       {upcomingBooking && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 border border-[rgba(13,27,42,0.07)]">
-          {[
-            {
-              label: "Avant l'arrivée",
-              sub: "Checklist",
-              href: "/espace-client/checklist",
-              icon: (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <rect x="2" y="2" width="12" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
-                  <path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              ),
-            },
-            {
-              label: "Wi-Fi",
-              sub: "Accès réseau",
-              href: "/espace-client/livret",
-              icon: (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M1 6c1.9-2 4.5-3 7-3s5.1 1 7 3M4 9.5c1.1-1.1 2.4-1.7 4-1.7s2.9.6 4 1.7M8 13h.01" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                </svg>
-              ),
-            },
-            {
-              label: "Calendrier",
-              sub: "Planifier le séjour",
-              href: "/espace-client/checklist",
-              icon: (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <rect x="2" y="3" width="12" height="11" rx="1" stroke="currentColor" strokeWidth="1" />
-                  <path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              ),
-            },
-            {
-              label: "PDF Livret",
-              sub: "Télécharger",
-              href: "/espace-client/livret/print",
-              icon: (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M3 2h7l3 3v9H3z" stroke="currentColor" strokeWidth="1" />
-                  <path d="M10 2v3h3M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              ),
-            },
-          ].map(({ label, sub, href, icon }) => (
-            <Link
-              key={label}
-              href={href}
-              className={[
-                "group flex flex-col gap-[10px] px-5 py-5",
-                "border-l border-[rgba(13,27,42,0.07)] first:border-l-0",
-                "hover:border-l-[rgba(212,175,55,0.35)] hover:bg-[rgba(212,175,55,0.025)] transition-colors no-underline",
-              ].join(" ")}
-            >
-              <span className="text-[rgba(13,27,42,0.28)] group-hover:text-[rgba(13,27,42,0.5)] transition-colors">
-                {icon}
-              </span>
-              <span className="text-[8px] tracking-[0.2em] uppercase text-[#0D1B2A] font-medium">
-                {label}
-              </span>
-              <span className="font-cormorant italic text-[13px] font-light text-[rgba(13,27,42,0.4)]">
-                {sub}
-              </span>
-            </Link>
-          ))}
+        <div>
+          <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25 mb-4">Accès rapide</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 border border-[rgba(13,27,42,0.07)]">
+            {[
+              {
+                label: "Checklist",
+                sub: "Avant l'arrivée",
+                href: "/espace-client/checklist",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                    <rect x="2.5" y="2.5" width="13" height="13" rx="1" stroke="currentColor" strokeWidth="1" />
+                    <path d="M6 6h6M6 9h6M6 12h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
+              {
+                label: "Wi-Fi",
+                sub: "Code & réseau",
+                href: "/espace-client/livret",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                    <path d="M1.5 7c2-2.2 4.8-3.5 7.5-3.5s5.5 1.3 7.5 3.5M5 10.5c1.1-1.2 2.5-1.9 4-1.9s2.9.7 4 1.9M9 14.5h.01" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
+              {
+                label: "Calendrier",
+                sub: "Ajouter au planning",
+                href: "/espace-client/checklist",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                    <rect x="2.5" y="3.5" width="13" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
+                    <path d="M2.5 8h13M6 2.5v2M12 2.5v2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
+              {
+                label: "Livret PDF",
+                sub: "Télécharger",
+                href: "/espace-client/livret/print",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                    <path d="M4 2h8l4 4v10H4z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+                    <path d="M12 2v4h4M6 9h6M6 12h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
+            ].map(({ label, sub, href, icon }) => (
+              <Link
+                key={label}
+                href={href}
+                className={[
+                  "group flex flex-col gap-3 px-5 py-6 min-h-[110px]",
+                  "border-l border-[rgba(13,27,42,0.07)] first:border-l-0",
+                  "hover:bg-[rgba(212,175,55,0.03)] transition-colors duration-200 no-underline",
+                ].join(" ")}
+              >
+                <span className="text-[rgba(13,27,42,0.22)] group-hover:text-[rgba(212,175,55,0.7)] transition-colors duration-200">
+                  {icon}
+                </span>
+                <span>
+                  <span className="block text-[10px] tracking-[0.22em] uppercase text-[#0D1B2A] font-medium mb-1">
+                    {label}
+                  </span>
+                  <span className="font-cormorant italic text-[13px] font-light text-[rgba(13,27,42,0.35)]">
+                    {sub}
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 
@@ -368,7 +373,7 @@ export default function EspaceClientPage() {
       {otherBookings.length > 0 && (
         <div className="space-y-4">
           {upcomingBooking && (
-            <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">
+            <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25">
               Historique
             </p>
           )}
@@ -380,37 +385,36 @@ export default function EspaceClientPage() {
         </div>
       )}
 
-      {/* Quick actions */}
-      <div className="grid gap-3 sm:grid-cols-2 border-t border-navy/8 pt-8">
-        <Link href="/espace-client/messagerie" className="no-underline">
-          <Card className="border border-navy/8 bg-white shadow-none rounded-none hover:border-navy/20 hover:bg-navy/[0.02] transition-all h-full cursor-pointer">
-            <Card.Content className="p-5 flex items-center gap-4">
-              <MessageCircle size={20} strokeWidth={1} className="text-navy/25 shrink-0" />
-              <div className="flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy mb-0.5">
-                  Messagerie SAV
+      {/* Services */}
+      <div>
+        <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25 mb-4">Services</p>
+        <div className="grid gap-[1px] sm:grid-cols-2 bg-[rgba(13,27,42,0.07)]">
+          <Link href="/espace-client/messagerie" className="group no-underline bg-white hover:bg-[rgba(212,175,55,0.025)] transition-colors duration-200">
+            <div className="px-6 py-5 flex items-center gap-4">
+              <MessageCircle size={18} strokeWidth={1} className="text-navy/20 group-hover:text-[rgba(212,175,55,0.6)] shrink-0 transition-colors duration-200" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
+                  Messagerie
                 </p>
-                <p className="text-xs text-navy/40">Contacter la conciergerie</p>
+                <p className="font-cormorant italic text-[13px] font-light text-navy/35 mt-0.5">Contacter la conciergerie</p>
               </div>
-              <ArrowRight size={14} strokeWidth={1} className="text-navy/20 shrink-0" />
-            </Card.Content>
-          </Card>
-        </Link>
+              <ArrowRight size={13} strokeWidth={1} className="text-navy/15 group-hover:text-navy/30 shrink-0 transition-colors duration-200" />
+            </div>
+          </Link>
 
-        <Link href="/espace-client/profil" className="no-underline">
-          <Card className="border border-navy/8 bg-white shadow-none rounded-none hover:border-navy/20 hover:bg-navy/[0.02] transition-all h-full cursor-pointer">
-            <Card.Content className="p-5 flex items-center gap-4">
-              <BookOpen size={20} strokeWidth={1} className="text-navy/25 shrink-0" />
-              <div className="flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy mb-0.5">
+          <Link href="/espace-client/profil" className="group no-underline bg-white hover:bg-[rgba(212,175,55,0.025)] transition-colors duration-200">
+            <div className="px-6 py-5 flex items-center gap-4">
+              <BookOpen size={18} strokeWidth={1} className="text-navy/20 group-hover:text-[rgba(212,175,55,0.6)] shrink-0 transition-colors duration-200" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
                   Mon profil
                 </p>
-                <p className="text-xs text-navy/40">Informations personnelles</p>
+                <p className="font-cormorant italic text-[13px] font-light text-navy/35 mt-0.5">Informations personnelles</p>
               </div>
-              <ArrowRight size={14} strokeWidth={1} className="text-navy/20 shrink-0" />
-            </Card.Content>
-          </Card>
-        </Link>
+              <ArrowRight size={13} strokeWidth={1} className="text-navy/15 group-hover:text-navy/30 shrink-0 transition-colors duration-200" />
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
     </>

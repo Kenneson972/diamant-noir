@@ -42,8 +42,8 @@ function SuccessContent() {
       <main className="min-h-screen bg-offwhite pt-32 pb-20 px-6">
         <div className="mx-auto max-w-lg text-center">
           <p className="text-navy/80 mb-6">{error || "Une erreur est survenue."}</p>
-          <Link href="/book" className="text-gold font-medium hover:underline">
-            Retour à la réservation
+          <Link href="/villas" className="text-gold font-medium hover:underline">
+            Retour au catalogue
           </Link>
         </div>
       </main>

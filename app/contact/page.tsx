@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Mail, MessageCircle, ChevronDown } from "lucide-react";
 import {
   LandingShell,
   LandingHero,
@@ -163,16 +163,24 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    aria-expanded={openFaq === i}
                     className="flex w-full items-center justify-between px-4 py-4 text-left text-sm font-medium text-navy transition-colors hover:bg-white md:text-base"
                   >
                     {item.q}
-                    {openFaq === i ? (
-                      <ChevronUp size={18} strokeWidth={1} aria-hidden />
-                    ) : (
-                      <ChevronDown size={18} strokeWidth={1} aria-hidden />
-                    )}
+                    <ChevronDown
+                      size={18}
+                      strokeWidth={1}
+                      aria-hidden
+                      className={`shrink-0 transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
+                    />
                   </button>
-                  {openFaq === i && <div className="border-t border-navy/5 px-4 pb-4 text-sm text-navy/75">{item.a}</div>}
+                  <div
+                    className={`grid transition-all duration-300 ease-out ${openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-navy/5 px-4 pb-4 pt-3 text-sm text-navy/75">{item.a}</div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

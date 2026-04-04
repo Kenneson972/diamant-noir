@@ -8,7 +8,7 @@ interface BookingSearchBarProps {
   initialCheckin?: string;
   initialCheckout?: string;
   initialGuests?: number;
-  /** "page" = stay on /book, "hero" = redirect to /book from homepage */
+  /** Redirection vers le catalogue unique `/villas` (dates en query). */
   variant?: "page" | "hero";
 }
 
@@ -87,14 +87,8 @@ export function BookingSearchBar({
     if (checkout) params.set("checkout", checkout);
     params.set("guests", String(guests));
 
-    if (variant === "hero") {
-      router.push(`/book?${params.toString()}#catalogue`);
-    } else {
-      router.push(`/book?${params.toString()}#catalogue`);
-      setTimeout(() => {
-        document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
+    const path = `/villas?${params.toString()}`;
+    router.push(path);
   };
 
   const formatDate = (d: string) => {
@@ -243,19 +237,19 @@ export function BookingSearchBar({
                 type="button"
                 onClick={() => setGuests(Math.max(1, guests - 1))}
                 disabled={guests <= 1}
-                className="flex h-8 w-8 items-center justify-center border border-black/15 text-navy transition-colors hover:border-navy/40 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex h-11 w-11 items-center justify-center border border-black/15 text-navy transition-colors hover:border-navy/40 disabled:opacity-30 disabled:cursor-not-allowed"
                 aria-label="Réduire"
               >
                 <Minus size={13} strokeWidth={1.5} />
               </button>
-              <span className="w-5 text-center text-base font-semibold text-navy tabular-nums">
+              <span className="w-6 text-center text-base font-semibold text-navy tabular-nums">
                 {guests}
               </span>
               <button
                 type="button"
                 onClick={() => setGuests(Math.min(12, guests + 1))}
                 disabled={guests >= 12}
-                className="flex h-8 w-8 items-center justify-center border border-black/15 text-navy transition-colors hover:border-navy/40 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex h-11 w-11 items-center justify-center border border-black/15 text-navy transition-colors hover:border-navy/40 disabled:opacity-30 disabled:cursor-not-allowed"
                 aria-label="Augmenter"
               >
                 <Plus size={13} strokeWidth={1.5} />
@@ -265,7 +259,7 @@ export function BookingSearchBar({
           <button
             type="button"
             onClick={() => setGuestOpen(false)}
-            className="mt-4 w-full border border-navy bg-navy py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90"
+            className="mt-4 flex min-h-[44px] w-full items-center justify-center border border-navy bg-navy py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90"
           >
             Confirmer
           </button>

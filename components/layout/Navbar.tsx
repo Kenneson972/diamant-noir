@@ -1,22 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, Mail, Heart, User, CalendarDays } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useHomeAudience } from "@/contexts/HomeAudienceContext";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
-const NAV_ITEMS: { href: string; label: string }[] = [
+const NAV_ITEMS_DEFAULT: { href: string; label: string }[] = [
   { href: "/", label: "Accueil" },
   { href: "/villas", label: "Nos villas" },
   { href: "/prestations", label: "Prestations" },
   { href: "/qui-sommes-nous", label: "À propos" },
   { href: "/contact", label: "Contact" },
   { href: "/proprietaires", label: "Propriétaires" },
+];
+
+/** Ordre et libellés orientés propriétaire : catalogue en dernier, libellé « Locations ». */
+const NAV_ITEMS_PROPRIETAIRE: { href: string; label: string }[] = [
+  { href: "/", label: "Accueil" },
+  { href: "/proprietaires", label: "Propriétaires" },
+  { href: "/prestations", label: "Prestations" },
+  { href: "/qui-sommes-nous", label: "À propos" },
+  { href: "/contact", label: "Contact" },
+  { href: "/villas", label: "Locations" },
 ];
 
 const CONCIERGE_TEL = "+596 96 00 00 00";
@@ -30,6 +41,25 @@ export const Navbar = () => {
   const supabase = getSupabaseBrowser();
   const { locale, setLocale, currency, setCurrency } = useLocale();
   const { count: wishlistCount } = useWishlist();
+  const { audience } = useHomeAudience();
+
+  const navItems = useMemo(() => {
+    if (audience === "voyageur") {
+      return NAV_ITEMS_DEFAULT.filter((i) => i.href !== "/proprietaires");
+    }
+    if (audience === "proprietaire") {
+      return NAV_ITEMS_PROPRIETAIRE;
+    }
+    return NAV_ITEMS_DEFAULT;
+  }, [audience]);
+
+  const loginHref =
+    audience === "proprietaire" ? "/login?redirect=/dashboard/proprio" : "/login?redirect=/espace-client";
+
+  const primaryCtaHref = audience === "proprietaire" ? "/proprietaires" : "/villas";
+  const primaryCtaLabel = audience === "proprietaire" ? "Confier ma villa" : "Réserver";
+  const primaryCtaAria =
+    audience === "proprietaire" ? "Confier ma villa — propriétaires" : "Réserver";
 
   useEffect(() => {
     if (supabase) {
@@ -76,24 +106,66 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  /**
+   * Hero sombre sous la nav (vidéo, bg-navy, image pleine largeur) : chrome clair + barre transparente en haut.
+   * Sans ça, `text-navy` sur vitrage au-dessus d’un fond sombre reste illisible (même encré #0A0A0A).
+   */
+  const isDarkHeroRoute = useMemo(() => {
+    const p = pathname ?? "";
+    if (p === "/" || p === "/proprietaires") return true;
+    if (p === "/book" || p.startsWith("/book/")) return true;
+    if (p === "/contact") return true;
+    if (p === "/villas" || p.startsWith("/villas/")) return true;
+    if (p === "/soumettre-ma-villa") return true;
+    if (p === "/prestations" || p.startsWith("/prestations/")) return true;
+    if (p === "/qui-sommes-nous") return true;
+    return false;
+  }, [pathname]);
+
+  useEffect(() => {
+    setIsScrolled(typeof window !== "undefined" && window.scrollY > 24);
+  }, [pathname]);
+
   if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
     return null;
   }
 
-  const isTransparentPage = pathname === "/";
-  const isSolid = !isTransparentPage || isScrolled;
+  /** Barre blanche dès qu’on dépasse le seuil — toutes les pages (plus seulement l’accueil). */
+  const isSolid = isScrolled;
+  /** En haut de page transparente : chrome « sombre » (texte blanc) uniquement sur hero noir ; sinon chrome lisible sur fond clair. */
+  const useLightTransparentChrome = !isSolid && !isDarkHeroRoute;
 
   const routeActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname?.startsWith(`${href}/`);
   };
 
-  const barText = isSolid ? "text-navy" : "text-white";
-  const utility = isSolid ? "text-navy hover:text-navy/75" : "text-white hover:text-white/85";
-  const utilityFocus = isSolid
-    ? "focus-visible:ring-navy/40"
-    : "focus-visible:ring-white/60";
-  const divider = isSolid ? "bg-navy/20" : "bg-white/35";
+  const barText = isSolid || useLightTransparentChrome ? "text-navy" : "text-white";
+  const utility =
+    isSolid || useLightTransparentChrome
+      ? "text-navy hover:text-navy/75"
+      : "text-white hover:text-white/85";
+  const utilityFocus =
+    isSolid || useLightTransparentChrome
+      ? "focus-visible:ring-navy/40"
+      : "focus-visible:ring-white/60";
+  const divider =
+    isSolid || useLightTransparentChrome ? "bg-navy/20" : "bg-white/35";
+
+  const logoVariant: "onLight" | "onDark" =
+    !isSolid && isDarkHeroRoute ? "onDark" : "onLight";
+
+  const primaryCtaSolidStyle =
+    isSolid || useLightTransparentChrome
+      ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
+      : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white";
+
+  /** Pages fond clair : jamais `bg-transparent` seul (illisible) — léger vitrage ; hero sombre : vraie transparence. */
+  const headerSurfaceClass = isSolid
+    ? "border-b border-black/[0.06] bg-white/95 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))]"
+    : useLightTransparentChrome
+      ? "border-b border-black/[0.06] bg-white/92 pb-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(1rem+env(safe-area-inset-top,0px))] md:pb-5 md:pt-[calc(1.25rem+env(safe-area-inset-top,0px))]"
+      : "border-b border-transparent bg-transparent pb-4 pt-[calc(1rem+env(safe-area-inset-top,0px))] md:pb-5 md:pt-[calc(1.25rem+env(safe-area-inset-top,0px))]";
 
   return (
     <>
@@ -102,7 +174,7 @@ export const Navbar = () => {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-[55] bg-black/45 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-[112] bg-black/45 backdrop-blur-sm transition-opacity duration-300"
           onClick={closeMenu}
         />
       ) : null}
@@ -114,7 +186,7 @@ export const Navbar = () => {
         aria-modal="true"
         aria-label="Menu de navigation"
         inert={!menuOpen ? true : undefined}
-        className={`fixed inset-y-0 left-0 z-[60] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-y-0 left-0 z-[115] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
@@ -131,14 +203,14 @@ export const Navbar = () => {
 
         <nav className="flex-1 overflow-y-auto px-2 py-2" aria-label="Navigation principale">
           <ul className="flex flex-col gap-0.5">
-            {NAV_ITEMS.map(({ href, label }) => {
+            {navItems.map(({ href, label }) => {
               const active = routeActive(href);
               return (
                 <li key={href}>
                   <Link
                     href={href}
                     onClick={closeMenu}
-                    className={`block px-4 py-3.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
+                    className={`flex min-h-[44px] items-center px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
                       active ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
                     }`}
                   >
@@ -152,7 +224,7 @@ export const Navbar = () => {
                 <Link
                   href="/espace-client"
                   onClick={closeMenu}
-                  className={`block px-4 py-3.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
+                  className={`flex min-h-[44px] items-center px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
                     routeActive("/espace-client") ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
                   }`}
                 >
@@ -162,17 +234,28 @@ export const Navbar = () => {
             ) : null}
             <li className="pt-2">
               <Link
-                href="/book"
+                href={primaryCtaHref}
                 onClick={closeMenu}
-                className="mx-4 block border border-navy bg-navy px-4 py-3.5 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90"
+                className="mx-4 flex min-h-[44px] items-center justify-center border border-navy bg-navy px-4 py-3 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90"
               >
-                Réserver
+                {primaryCtaLabel}
               </Link>
             </li>
+            {audience === "proprietaire" ? (
+              <li className="px-4 pt-2">
+                <Link
+                  href="/villas"
+                  onClick={closeMenu}
+                  className="block py-2 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-navy/45 underline-offset-4 hover:text-navy/70 hover:underline"
+                >
+                  Voir les villas
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
 
-        <div className="border-t border-black/8 bg-[#f4f4f4] px-5 py-6 text-[13px] leading-relaxed text-navy/75">
+        <div className="border-t border-black/8 bg-[#f4f4f4] px-5 pt-6 text-[13px] leading-relaxed text-navy/75" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex gap-3">
             <Phone size={18} strokeWidth={1.25} className="mt-0.5 shrink-0 text-navy/45" aria-hidden />
             <div>
@@ -232,11 +315,7 @@ export const Navbar = () => {
 
       {/* Barre supérieure — logo centré, menu à gauche, CTA à droite */}
       <header
-        className={`fixed top-0 z-50 w-full transition-[background,box-shadow,padding] duration-300 ${
-          isSolid
-            ? "border-b border-black/[0.06] bg-white/95 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))]"
-            : "bg-transparent pb-4 pt-[calc(1rem+env(safe-area-inset-top,0px))] md:pb-5 md:pt-[calc(1.25rem+env(safe-area-inset-top,0px))]"
-        }`}
+        className={`fixed top-0 z-[100] w-full transition-[background,box-shadow,padding,border-color] duration-300 ${headerSurfaceClass}`}
       >
         {/*
           Deux demi-ranges flexibles (1fr / 1fr) + colonne centrale auto : le logo reste
@@ -262,11 +341,12 @@ export const Navbar = () => {
 
           <div className="pointer-events-none flex max-w-[calc(100vw-7rem)] min-w-0 justify-center px-1 sm:max-w-none sm:px-2">
             <BrandLogo
-              variant={isSolid ? "onLight" : "onDark"}
-              size="md"
-              showIcon={false}
+              variant={logoVariant}
+              size="nav"
+              showIcon
+              showWordmark={false}
               priority={pathname === "/"}
-              className="pointer-events-auto min-w-0 max-w-full justify-center whitespace-nowrap [&_span.font-display]:text-[clamp(0.55rem,2.2vw+0.36rem,1.25rem)] [&_span.font-display]:leading-none [&_span.font-display]:tracking-[0.12em] sm:[&_span.font-display]:leading-tight sm:[&_span.font-display]:tracking-[0.22em] md:[&_span.font-display]:tracking-[0.3em]"
+              className="pointer-events-auto shrink-0 justify-center"
             />
           </div>
 
@@ -300,7 +380,9 @@ export const Navbar = () => {
               {wishlistCount > 0 ? (
                 <span
                   className={`absolute right-1 top-1.5 h-2 w-2 rounded-full ring-2 ${
-                    isSolid ? "bg-navy ring-white" : "bg-white ring-black/20"
+                    isSolid || useLightTransparentChrome
+                      ? "bg-navy ring-white"
+                      : "bg-white ring-black/20"
                   }`}
                   aria-hidden
                 />
@@ -308,7 +390,7 @@ export const Navbar = () => {
             </Link>
 
             <Link
-              href="/login?redirect=/espace-client"
+              href={loginHref}
               className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center transition-opacity min-[400px]:h-10 min-[400px]:w-10 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label="Connexion / Inscription"
             >
@@ -316,16 +398,12 @@ export const Navbar = () => {
             </Link>
 
             <Link
-              href="/book"
-              aria-label="Réserver"
-              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 min-[400px]:h-auto min-[400px]:w-auto min-[400px]:max-w-[5.75rem] min-[400px]:px-3 min-[400px]:py-2 min-[400px]:text-[9px] min-[400px]:font-bold min-[400px]:uppercase min-[400px]:leading-snug min-[400px]:tracking-[0.18em] sm:max-w-none sm:px-5 sm:text-[10px] sm:tracking-[0.22em] ${
-                isSolid
-                  ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
-                  : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white"
-              }`}
+              href={primaryCtaHref}
+              aria-label={primaryCtaAria}
+              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 min-[400px]:h-auto min-[400px]:w-auto min-[400px]:max-w-[5.75rem] min-[400px]:px-3 min-[400px]:py-2 min-[400px]:text-[9px] min-[400px]:font-bold min-[400px]:uppercase min-[400px]:leading-snug min-[400px]:tracking-[0.18em] sm:max-w-none sm:px-5 sm:text-[10px] sm:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
               <CalendarDays size={18} strokeWidth={1.25} className="min-[400px]:hidden" aria-hidden />
-              <span className="hidden min-[400px]:inline">Réserver</span>
+              <span className="hidden min-[400px]:inline">{primaryCtaLabel}</span>
             </Link>
           </div>
         </div>

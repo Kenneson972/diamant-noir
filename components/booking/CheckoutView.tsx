@@ -100,7 +100,9 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
         <p className="text-navy/60">Villa non trouvée</p>
-        <Link href="/book" className="text-gold underline">Retour à la recherche</Link>
+        <Link href="/villas" className="text-gold underline">
+          Retour au catalogue
+        </Link>
       </div>
     );
   }

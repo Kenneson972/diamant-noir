@@ -9,7 +9,7 @@ import {
   Headphones,
   TrendingUp,
 } from "lucide-react";
-import { BrandLogo } from "@/components/layout/BrandLogo";
+import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import {
   LandingSection,
@@ -42,15 +42,12 @@ const PILIER_ICONS = [TrendingUp, Headphones, Building2] as const;
 
 export default function ProprietairesPage() {
   return (
-    <main className="min-h-screen bg-offwhite">
+    <main className="min-h-screen bg-offwhite animate-fade-up [animation-duration:500ms]">
       {/* ─── Hero vidéo ─── */}
       <section
         className="relative flex min-h-[min(72vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-24 pt-28 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
         aria-labelledby="proprio-hero-title"
       >
-        <h1 id="proprio-hero-title" className="sr-only">
-          Diamant Noir — Programme propriétaires, Martinique
-        </h1>
         <video
           autoPlay
           muted
@@ -64,26 +61,10 @@ export default function ProprietairesPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/80" />
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
-          <div className="w-full space-y-4 md:space-y-5">
-            <div className="flex justify-center animate-in fade-in duration-700">
-              <BrandLogo
-                variant="onDark"
-                size="hero"
-                showWordmark={false}
-                linkToHome={false}
-                priority
-              />
-            </div>
-            <div
-              className="flex justify-center overflow-hidden"
-              aria-hidden
-            >
-              <span className="h-px w-16 animate-line-draw bg-gold/85 md:w-24 [animation-delay:200ms] [animation-fill-mode:backwards]" />
-            </div>
-            <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-200 md:max-w-lg md:text-base">
-              Confiez votre villa à une conciergerie d&apos;exception. Visibilité, revenus, sérénité.
-            </p>
-
+          <HeroWordmarkBaseline
+            headingId="proprio-hero-title"
+            titleLabel="Diamant Noir — Programme propriétaires — Confiance, réactivité, excellence"
+          >
             <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
               <Link
                 href="/soumettre-ma-villa"
@@ -118,7 +99,7 @@ export default function ProprietairesPage() {
                 </span>
               </Link>
             </div>
-          </div>
+          </HeroWordmarkBaseline>
         </div>
       </section>
 

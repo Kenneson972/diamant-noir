@@ -16,7 +16,7 @@ export function HeroSearchWidget() {
     if (checkin) params.set("checkin", checkin);
     if (checkout) params.set("checkout", checkout);
     params.set("guests", guests);
-    router.push(`/book?${params.toString()}`);
+    router.push(`/villas?${params.toString()}`);
   }
 
   return (

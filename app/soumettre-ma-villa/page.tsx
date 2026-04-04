@@ -44,8 +44,8 @@ export default function SoumettreMaVillaPage() {
 
   return (
     <main className="min-h-screen bg-offwhite">
-      <section className="relative bg-navy py-24 px-6">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative bg-navy py-24 px-6 pt-32 md:pt-36">
+        <div className="mx-auto max-w-4xl text-center animate-in fade-in slide-in-from-bottom-3 duration-700">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold mb-4">
             Devenez partenaire
           </p>
@@ -60,7 +60,7 @@ export default function SoumettreMaVillaPage() {
 
       <section className="py-16 md:py-24 px-6">
         <div className="mx-auto max-w-2xl">
-          <div className="mb-10 p-6 bg-gold/10 border border-gold/30 rounded-xl">
+          <div className="mb-10 p-6 bg-gold/10 border border-gold/30">
             <p className="text-navy/80 text-sm">
               Après étude de votre dossier, nous vous recontacterons. Une réponse automatique de confirmation vous sera envoyée par email. 
               Si votre villa est retenue, nous vous proposerons une collaboration officielle et, après validation, une inscription à l&apos;espace propriétaire.
@@ -76,7 +76,7 @@ export default function SoumettreMaVillaPage() {
                   name="name"
                   type="text"
                   required
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
               <div>
@@ -86,7 +86,7 @@ export default function SoumettreMaVillaPage() {
                   name="email"
                   type="email"
                   required
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function SoumettreMaVillaPage() {
                 id="phone"
                 name="phone"
                 type="tel"
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
               />
             </div>
 
@@ -110,7 +110,7 @@ export default function SoumettreMaVillaPage() {
                 name="airbnb_url"
                 type="url"
                 placeholder="https://www.airbnb.fr/rooms/..."
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
               />
               <p className="text-xs text-navy/60 mt-1">
                 Collez l&apos;URL de votre annonce Airbnb pour que nous récupérions automatiquement les détails et photos.
@@ -128,21 +128,21 @@ export default function SoumettreMaVillaPage() {
                   name="villa_name"
                   type="text"
                   placeholder="Nom de la villa"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
                 <input
                   id="villa_location"
                   name="villa_location"
                   type="text"
                   placeholder="Localisation (ville, quartier)"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
+                  className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
                 />
                 <textarea
                   id="villa_description"
                   name="villa_description"
                   rows={3}
                   placeholder="Description courte (capacité, équipements...)"
-                  className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
+                  className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
                 />
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function SoumettreMaVillaPage() {
                 id="message"
                 name="message"
                 rows={3}
-                className="w-full rounded-lg border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
+                className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none resize-none"
               />
             </div>
 
@@ -183,7 +183,7 @@ export default function SoumettreMaVillaPage() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="w-full rounded-full bg-navy text-white py-4 px-6 hover:bg-gold hover:text-navy transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full border border-navy bg-navy text-white py-4 px-6 hover:border-gold hover:bg-gold hover:text-navy transition-colors font-bold text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 disabled:opacity-50 min-h-[44px]"
             >
               {status === "sending" ? "Envoi en cours..." : "Envoyer ma demande"}
               <ArrowRight size={18} />

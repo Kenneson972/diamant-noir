@@ -385,7 +385,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             </section>
 
             {/* Calendrier (large) */}
-            <section className="pt-10 border-t border-navy/10">
+            <section id="reserver-sejour" className="scroll-mt-28 pt-10 border-t border-navy/10">
               <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="font-display font-normal text-2xl text-navy">Disponibilités</h2>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -603,7 +603,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             </p>
           </div>
           <Link
-            href={`/book?villaId=${villa!.id}&guests=2`}
+            href="#reserver-sejour"
             className="flex-1 max-w-[180px] text-center bg-navy text-white py-3 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-navy/90 transition-colors"
           >
             Réserver

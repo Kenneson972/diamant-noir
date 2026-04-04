@@ -121,7 +121,7 @@ export function LandingBlockTitle({
   return (
     <div className={`mb-10 md:mb-14 ${a}`}>
       {eyebrow ? (
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">{eyebrow}</p>
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">{eyebrow}</p>
       ) : null}
       <h2 className="font-display text-3xl text-navy md:text-4xl">{title}</h2>
       <span className={`mt-4 block h-px w-12 bg-gold ${align === "center" ? "mx-auto" : ""}`} aria-hidden />

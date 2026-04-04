@@ -39,6 +39,45 @@ const MID_INCLUSIONS = Math.ceil(INCLUSIONS.length / 2);
 export const INCLUSIONS_COL_A = INCLUSIONS.slice(0, MID_INCLUSIONS);
 export const INCLUSIONS_COL_B = INCLUSIONS.slice(MID_INCLUSIONS);
 
+/** Affichage initial sur la landing proprio ; le reste est dans un `<details>`. */
+export const INCLUSIONS_HIGHLIGHT_COUNT = 4;
+export const INCLUSIONS_HIGHLIGHTS = INCLUSIONS.slice(0, INCLUSIONS_HIGHLIGHT_COUNT);
+const INCLUSIONS_REMAINING = INCLUSIONS.slice(INCLUSIONS_HIGHLIGHT_COUNT);
+const MID_REST = Math.ceil(INCLUSIONS_REMAINING.length / 2);
+export const INCLUSIONS_REST_COL_A = INCLUSIONS_REMAINING.slice(0, MID_REST);
+export const INCLUSIONS_REST_COL_B = INCLUSIONS_REMAINING.slice(MID_REST);
+
+/** Piliers : ligne courte au-dessus, détail dans « En savoir plus ». */
+export const WHY_PILLARS = [
+  {
+    title: "Visibilité & revenue",
+    short: "Positionnement luxe et diffusion ciblée haut de gamme.",
+    detail:
+      "Positionnement luxe, pricing et diffusion alignés sur une clientèle haut de gamme.",
+  },
+  {
+    title: "Conciergerie 24/7",
+    short: "Accueil, entretien et demandes voyageurs, équipe sur le terrain.",
+    detail:
+      "Accueil, housekeeping, demandes voyageurs : une équipe dédiée sur le terrain.",
+  },
+  {
+    title: "Sérénité propriétaire",
+    short: "Suivi transparent et relation de confiance dans la durée.",
+    detail:
+      "Suivi transparent, standards élevés et relation de confiance sur la durée.",
+  },
+] as const;
+
+export const COMMISSION_CAPTION_BRIEF =
+  "TTC sur le montant net des nuitées collectées.";
+
+export const COMMISSION_CAPTION_FULL =
+  "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission.";
+
+export const PREMIERE_LOCATION_SUPPLEMENT =
+  "En supplément — uniquement pour la première location réalisée par notre conciergerie — un pack de démarrage vous sera facturé (sucre, café, eau, poivre, huile, épices, papier toilette, savon, boîte à clefs, inventaire).";
+
 export const TEMOIGNAGE_PROPRIO: EditorialQuote = {
   quote:
     "Au-delà de la location, c'est un partenaire qui sécurise le bien, les réservations et la relation voyageurs. Une vraie tranquillité pour un propriétaire exigeant.",

@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useHomeAudience } from "@/contexts/HomeAudienceContext";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
 export const Footer = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { locale, setLocale, currency, setCurrency, t } = useLocale();
+  const { audience, clearAudience } = useHomeAudience();
 
   if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
     return null;
@@ -21,34 +24,77 @@ export const Footer = () => {
           <div className="space-y-4">
             <BrandLogo variant="onLight" size="sm" className="self-start" />
             <p className="text-sm leading-relaxed text-navy/55">
-              Un sanctuaire côtier exclusif conçu pour ceux qui recherchent
-              la rareté, la tranquillité et une élégance raffinée.
+              {audience === "proprietaire" ? (
+                <>
+                  Conciergerie haut de gamme en Martinique : valorisation de biens d&apos;exception et relation
+                  voyageurs pour les propriétaires qui exigent sérénité et exigence.
+                </>
+              ) : (
+                <>
+                  Un sanctuaire côtier exclusif conçu pour ceux qui recherchent la rareté, la tranquillité et une
+                  élégance raffinée.
+                </>
+              )}
             </p>
           </div>
 
           <div>
             <h4 className="mb-6 text-xs uppercase tracking-[0.2em] text-black/40">{t("footer.explore")}</h4>
             <ul className="space-y-4 text-sm text-navy/70">
-              <li>
-                <Link href="/villas" className="block py-2 transition-colors hover:text-black">
-                  {t("nav.villas")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/prestations" className="block py-2 transition-colors hover:text-black">
-                  {t("nav.prestations")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/qui-sommes-nous" className="block py-2 transition-colors hover:text-black">
-                  {t("nav.about")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/soumettre-ma-villa" className="block py-2 transition-colors hover:text-black">
-                  {t("footer.submit_villa")}
-                </Link>
-              </li>
+              {audience === "proprietaire" ? (
+                <>
+                  <li>
+                    <Link href="/proprietaires" className="block py-2 transition-colors hover:text-black">
+                      Propriétaires
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/soumettre-ma-villa" className="block py-2 transition-colors hover:text-black">
+                      {t("footer.submit_villa")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/prestations" className="block py-2 transition-colors hover:text-black">
+                      {t("nav.prestations")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/villas" className="block py-2 transition-colors hover:text-black">
+                      Locations (catalogue)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/qui-sommes-nous" className="block py-2 transition-colors hover:text-black">
+                      {t("nav.about")}
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link href="/villas" className="block py-2 transition-colors hover:text-black">
+                      {t("nav.villas")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/prestations" className="block py-2 transition-colors hover:text-black">
+                      {t("nav.prestations")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/qui-sommes-nous" className="block py-2 transition-colors hover:text-black">
+                      {t("nav.about")}
+                    </Link>
+                  </li>
+                  {audience !== "voyageur" ? (
+                    <li>
+                      <Link href="/soumettre-ma-villa" className="block py-2 transition-colors hover:text-black">
+                        {t("footer.submit_villa")}
+                      </Link>
+                    </li>
+                  ) : null}
+                </>
+              )}
             </ul>
           </div>
 
@@ -128,6 +174,21 @@ export const Footer = () => {
             </div>
           </div>
         </div>
+
+        {(audience === "voyageur" || audience === "proprietaire") && (
+          <div className="mt-10 flex justify-center border-t border-black/10 pt-8">
+            <button
+              type="button"
+              onClick={() => {
+                clearAudience();
+                router.push("/");
+              }}
+              className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
+            >
+              Changer de parcours
+            </button>
+          </div>
+        )}
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-8 text-xs uppercase tracking-[0.1em] text-navy/40 md:flex-row">
           <p>© 2026 Diamant Noir. Tous droits réservés.</p>

@@ -37,7 +37,7 @@ export default function VillasMapView({ villas }: Props) {
   return (
     <div className="relative">
       {/* ── Toolbar ── */}
-      <div className="sticky top-[72px] z-20 bg-offwhite/95 backdrop-blur-sm border-b border-navy/8 px-6 py-3 flex items-center justify-between">
+      <div className="sticky top-[calc(72px+env(safe-area-inset-top,0px))] z-20 bg-offwhite/95 backdrop-blur-sm border-b border-navy/8 px-6 py-3 flex items-center justify-between">
         <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
           {villas.length} propriété{villas.length > 1 ? "s" : ""}
         </p>
@@ -115,7 +115,7 @@ export default function VillasMapView({ villas }: Props) {
 
                 {/* Info sous l'image */}
                 <div className="pt-4 space-y-1.5 px-1 pb-2">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-gold">{tier}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-gold">{tier}</p>
                   <p className="font-display font-normal text-xl text-navy leading-snug">
                     {villa.name}
                   </p>

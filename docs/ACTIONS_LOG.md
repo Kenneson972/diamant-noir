@@ -11,6 +11,138 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-01T00:35:00Z | type: ui | Cursor — Navbar illisible sur heroes sombres (contact, villas…) + z-index
+
+- **agent**: `cursor`
+- **summary**: **`isDarkHeroRoute`** étendu à **`/contact`**, **`/villas`**, **`/soumettre-ma-villa`**, **`/prestations`**, **`/qui-sommes-nous`** (et sous-chemins villas/prestations) — même chrome **texte blanc / logo clair** qu’à l’accueil sur hero sombre ; évite **navy sur fond sombre** à travers le vitrage. **Header `z-[100]`** ; overlay menu **`z-[112]`**, tiroir **`z-[115]`** ; **`HomeAudienceGate` `z-[110]`** pour rester au-dessus de la barre.
+- **files**: [`components/layout/Navbar.tsx`, `components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Bug — barre « invisible » : encre navy (#0A0A0A) confondue avec hero **bg-navy** derrière le blur.
+- **impact**: Nav lisible sur toutes les landing à bandeau sombre ; gate accueil toujours au-dessus de la nav.
+- **verify**: lint OK.
+
+---
+
+## 2026-04-01T00:25:00Z | type: ui | Cursor — Navbar : header invisible en haut des pages claires (fix vitrage)
+
+- **agent**: `cursor`
+- **summary**: Sur routes **sans** hero sombre, en `scrollY ≤ 24` la barre n’était plus **`bg-transparent` seule** (texte navy peu visible / ressenti « pas de header ») : **`headerSurfaceClass`** avec **`bg-white/92 backdrop-blur-md`** + bord léger ; hero sombre (`/`, `/proprietaires`, `/book`) conserve **transparence** jusqu’au scroll.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Bug rapporté — header visible seulement après scroll sur les autres pages.
+- **impact**: Nav toujours lisible en haut de page sur fond clair ; effet « glass » cohérent avec le passage barre pleine au scroll.
+- **verify**: lint OK.
+
+---
+
+## 2026-04-01T00:10:00Z | type: ui | Cursor — Navbar : barre transparente → blanche au scroll sur tout le site
+
+- **agent**: `cursor`
+- **summary**: Suppression du cas **`pathname === "/"`** seul pour la transparence : **`isSolid = scrollY > 24`** partout (hors `/dashboard`, `/login`). **`isDarkHeroRoute`** (`/`, `/proprietaires`, `/book`) : texte / logo **clair** tant que la barre est transparente ; **autres pages** : chrome **navy** en haut de page pour lisibilité sur fond clair. **CTA** primaire : style blanc sur hero noir, style navy sur fond clair. Resync scroll au **`pathname`**. **`logoVariant`** dérivé de `isDarkHeroRoute` + scroll.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Même comportement qu’à l’accueil (effet scroll) sur toutes les pages marketing.
+- **impact**: Nav cohérente ; pas de texte blanc illisible sur pages claires.
+- **verify**: relecture logique + lint fichier.
+
+---
+
+## 2026-03-31T23:55:00Z | type: ui | Cursor — Hero wordmark + baseline partagés ; `/proprietaires` aligné accueil
+
+- **agent**: `cursor`
+- **summary**: **`HeroWordmarkBaseline`** (`components/marketing/HeroWordmarkBaseline.tsx`) — mot **DIAMANT NOIR** + *Confiance · Réactivité · Excellence* ; **`app/page.tsx`** refactor pour l’utiliser. **`app/proprietaires/page.tsx`** : même hero (remplace pictogramme, filet or, paragraphe) ; **CTAs** Soumettre / Espace propriétaire conservés sous la baseline via `children`.
+- **files**: [`components/marketing/HeroWordmarkBaseline.tsx`, `app/page.tsx`, `app/proprietaires/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Cohérence visuelle accueil ↔ landing propriétaires.
+- **impact**: Première lecture identique ; conversion proprio inchangée sous le hero.
+- **verify**: compilation OK ; `next build` échoue ailleurs sur routes API manquantes (projet).
+
+---
+
+## 2026-03-31T23:45:00Z | type: ui | Cursor — Hero : échange header/logo + baseline Confiance / Réactivité / Excellence
+
+- **agent**: `cursor`
+- **summary**: **Navbar** : pictogramme seul (`showIcon`, `showWordmark={false}`) au centre. **Accueil hero** : mot **DIAMANT NOIR** (wordmark `BrandLogo`, taille fluide) + seul sous-texte visible *Confiance · Réactivité · Excellence* (tracking, filet discret). Suppression **`HomeHeroAudience`** du hero (CTA audience déjà couverts par sections suivantes + `HomeBottomCta`).
+- **files**: [`components/layout/Navbar.tsx`, `app/page.tsx`, `components/home/HomeHeroAudience.tsx` (supprimé), `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Demande design — inverser logo header / titre hero et alléger le hero à une baseline élégante.
+- **impact**: Première lecture plus premium et moins chargée ; parcours proprio/voyageur passe par le contenu sous le hero.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-03-31T22:30:00Z | type: ui | Cursor — Home & book orientés audience (proprio / locataire)
+
+- **agent**: `cursor`
+- **summary**: **`HomeHeroAudience`**, **`HomeTrustBand`**, **`HomeFeaturedAudience`** (section proprio `#offre-proprietaire` vs grille villas `#locataire`), **`HomeLifestyleAudience`** ; **`HomeAudienceScroll`** : `?pour=proprietaire` → `/` + scroll `#offre-proprietaire` (plus de redirect `/proprietaires`). **`Navbar`** : ordre + libellé **Locations** pour proprio ; **`login`** → `/login?redirect=/dashboard/proprio` si audience proprio. **`Footer`** : colonne explore + baseline adaptées proprio. **`BookLandingMarketing`** : variante marketing `/book` propriétaire vs voyageur. **`HomeBottomCta`** : libellé secondaire catalogue.
+- **files**: [`app/page.tsx`, `components/home/HomeHeroAudience.tsx`, `components/home/HomeTrustBand.tsx`, `components/home/HomeFeaturedAudience.tsx`, `components/home/HomeLifestyleAudience.tsx`, `components/home/HomeAudienceScroll.tsx`, `components/home/HomeBottomCta.tsx`, `components/book/BookLandingMarketing.tsx`, `app/book/page.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Demande — l’accueil et les pages marketing doivent être réellement tournés propriétaire vs locataire (pas seulement navbar/footer).
+- **impact**: Parcours propriétaire : hero, bandeau confiance, section centrale et lifestyle dédiés ; `/book` ne force plus le copy « réserver un séjour » pour les proprios.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-03-31T20:15:00Z | type: ui | Cursor — Parcours site selon gate (audience locataire / propriétaire)
+
+- **agent**: `cursor`
+- **summary**: **`HomeAudienceContext`** + **`SiteFrame`** (`HomeAudienceProvider` autour de Navbar / children / Footer) ; lecture **`sessionStorage`** `dn_home_audience` + événement **`dn-home-audience`** après choix gate (`HomeAudienceGate`). **`Navbar`** : masquer **Propriétaires** si `voyageur` ; CTA principal **Confier ma villa** → `/proprietaires` si `proprietaire` + lien secondaire **Voir les villas** dans le tiroir. **`Footer`** : masquer **Soumettre ma villa** si `voyageur` ; bouton **Changer de parcours** (clear + `/`). **`HomeBottomCta`** (client) : variantes voyageur / propriétaire / neutre. **`/login`** : liens croisés masqués selon audience + flow.
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/layout/SiteFrame.tsx`, `app/layout.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `components/home/HomeBottomCta.tsx`, `components/home/HomeAudienceGate.tsx`, `app/page.tsx`, `app/login/page.tsx`, `tests/login/redesign.spec.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Demande produit — après le gate, parcours unique (location vs confier) sans bloquer les URLs directes.
+- **impact**: Navigation et CTA alignés sur le choix gate ; possibilité de réinitialiser le choix.
+- **verify**: `npm run build` OK ; Playwright login specs mis à jour + cas audience.
+
+---
+
+## 2026-03-31T18:30:00Z | type: ui | Cursor — Espace client plans 1–3 (layout shell, hero, chat)
+
+- **agent**: `cursor`
+- **summary**: Restauration alignée sur les plans Superpowers : **`app/espace-client/layout.tsx`** — auth obligatoire (redirect `/login?redirect=`), **`EspaceClientShell`** + **`EspaceClientProviders`**, contenu paddé ; **`PageTopbar`** visible mobile ; **`page.tsx`** — hero séjour **blanc** (bordure or), suppression garde « connexion » dupliquée ; **`TenantChatbot`** v2 (design clair, `role="log"`, points `dn-typing-dot`, persistance `chat_messages`, session `localStorage`) ; **`messagerie/page.tsx`** — `dynamic()` lazy, **`PageTopbar`**, bandeau villa/dates, retrait badge « En ligne ». Migration SQL **`checklist_state`** + **`chat_messages`** + RLS.
+- **files**: [`app/espace-client/layout.tsx`, `app/espace-client/page.tsx`, `app/espace-client/messagerie/page.tsx`, `components/espace-client/TenantChatbot.tsx`, `components/espace-client/PageTopbar.tsx`, `supabase/migrations/20260403120000_espace_client_chat_checklist.sql`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: Annulation utilisateur ayant retiré l’implémentation ; réalignement specs plans 1–3.
+- **impact**: Parcours locataire cohérent (shell sidebar/blanc) ; messagerie allégée ; chat persisté après migration Supabase.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-04T06:00:00Z | type: ui | Cursor — Catalogue unique `/villas` ; `/book` sans liste dupliquée
+
+- **agent**: `cursor`
+- **summary**: **Suppression de la redondance** entre liste catalogue et page réservation : **`/villas`** = seul catalogue (carte + liste) avec bannière optionnelle si **`?checkin=&checkout=&guests=`** ; **`/book`** sans `SearchResults` — page d’orientation + rappel tunnel (checkout inchangé si **`villaId`+dates**). **Navigation** : Navbar / accueil / `HomeAudienceScroll` / `HeroSearchWidget` / `BookingSearchBar` → **`/villas`** (dates en query). **Stripe** `cancel_url` → **`/villas`**. Fiche villa : barre mobile **Réserver** → **`#reserver-sejour`** (calendrier). Composants **`SearchResults`** / **`VillaSelectionCard`** toujours dans le repo (réutilisables), plus montés sur `/book`.
+- **files**: [`app/book/page.tsx`, `app/villas/page.tsx`, `app/villas/[id]/page.tsx`, `components/booking/BookingSearchBar.tsx`, `components/HeroSearchWidget.tsx`, `components/layout/Navbar.tsx`, `app/page.tsx`, `components/home/HomeAudienceScroll.tsx`, `components/booking/CheckoutView.tsx`, `app/success/page.tsx`, `app/api/booking/route.ts`, `docs/ACTIONS_LOG.md`]
+- **why**: Éviter deux listes de villas quasi identiques (UX / maintenance).
+- **impact**: Un seul parcours « choisir une villa » ; `/book` sert au tunnel explicatif + paiement Stripe.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-04T05:15:00Z | type: docs | Journal — travail Claude Code (terminal) consigné
+
+- **agent**: `claude` (session **Claude Code** CLI)
+- **summary**: Traçabilité dans `docs/logs/2026-04-04.md` : workflow n8n importable **Diamant Noir — Chatbot Concierge V1** (`docs/n8n/diamant-noir-chatbot-v1.json`) — webhook, contexte villas, agent OpenAI, parsing JSON, branches IF, Supabase (`continueOnFail`), notification équipe ; guide **`docs/n8n/SETUP.md`** (import, credentials, SQL `chatbot_leads` / `pre_bookings`, curl, prod) ; installation plugin officiel **frontend-design** (Anthropic) dans le cache `~/.claude/plugins/...` ; mémoire session : variable **`N8N_WEBHOOK_URL`**, intégration avec l’API **`/api/chat`** existante.
+- **files**: [`docs/n8n/diamant-noir-chatbot-v1.json`, `docs/n8n/SETUP.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Demande utilisateur de documenter dans les logs ce que Claude Code a réalisé (audit / reprise d’équipe).
+- **impact**: Historique lisible côté projet ; pas de changement runtime applicatif.
+- **verify**: Fichiers relus.
+
+---
+
+## 2026-03-31T12:00:00Z | type: ui | Cursor — Login vidéo webm ; hero sans double CTA ; gate blanc plein écran
+
+- **agent**: `cursor`
+- **summary**: **`/login`** : source vidéo alignée sur **`/public/login-side.webm`** (fichier réel ; l’ancienne ref `.mp4` ne chargeait rien). **Hero** : suppression des deux blocs Voyageurs/Propriétaires (`HomeHeroPrimaryActions` supprimé) ; un seul lien « Réserver un séjour » → **`/book`**. **`HomeAudienceGate`** : fond **`bg-white`** plein écran, **`z-[100]`** au-dessus de la navbar, **`overflow: hidden`** sur le body tant que le gate est visible ; cartes et typo en thème clair (navy / or).
+- **files**: [`app/login/page.tsx`, `app/page.tsx`, `components/home/HomeAudienceGate.tsx`, `components/home/HomeHeroPrimaryActions.tsx` (supprimé), `docs/ACTIONS_LOG.md`]
+- **why**: Undo utilisateur + demande : vidéo login visible, pas de double choix dans le hero, gate masque tout le site avec rendu blanc premium.
+- **impact**: Login : vidéo de nouveau visible. Accueil : hero simplifié ; gate couvre entièrement l’UI au premier chargement.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-05T14:00:00Z | type: ui | Cursor — Accueil sans barre recherche hero ; landing proprio progressive disclosure
+
+- **agent**: `cursor`
+- **summary**: **`HomeHeroPrimaryActions`** : plus de `BookingSearchBar` ; « Réserver un séjour » → **`/book`** en `Link`. **`HomeAudienceScroll`** : `?pour=sejour|voyageur` → `router.replace('/book')`. **`HomeAudienceGate`** : choix voyageur → `router.push('/book')` (plus d’événement reveal). **`/proprietaires`** : piliers avec texte court + `<details>` « En savoir plus » ; commission 20 % avec **`EditorialFigureBand`** `detailsCaption` ; 4 inclusions visibles + `<details>` liste complète + paragraphe première location ; données **`WHY_PILLARS`**, **`INCLUSIONS_*`**, **`PREMIERE_LOCATION_SUPPLEMENT`** dans `lib/proprietaires-data.ts`. **`EditorialFigureBand`** : props optionnelles `detailsCaption` / `detailsSummaryLabel` (rétrocompat prestations).
+- **files**: [`components/home/HomeHeroPrimaryActions.tsx`, `components/home/HomeAudienceScroll.tsx`, `components/home/HomeAudienceGate.tsx`, `app/proprietaires/page.tsx`, `lib/proprietaires-data.ts`, `components/marketing/editorial-blocks.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Plan « moins d’info proprio + hero voyageur sans recherche ».
+- **impact**: Hero plus léger ; landing proprio moins dense au premier scroll ; contenu légal conservé dans les replis.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-04T15:00:00Z | type: docs | Cursor — Prompt Claude Code : gate audience accueil + UI Pro Max
 
 - **agent**: `cursor`

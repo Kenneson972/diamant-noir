@@ -5,12 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const SEJOUR_KEYS = new Set(["sejour", "voyageur", "voyageurs"]);
 
-const REVEAL_BOOKING_EVENT = "diamant-reveal-booking";
-
 /**
  * Sur `/` avec `?pour=` :
- * - propriétaire(s) → navigation vers la landing dédiée `/proprietaires`
- * - séjour / voyageur → scroll vers `#reserver-un-sejour`
+ * - propriétaire(s) → reste sur `/`, scroll vers `#offre-proprietaire`
+ * - locataire(s) → reste sur `/`, scroll vers `#locataire`
+ * - séjour / voyageur (hors locataire explicite) → `/villas` (catalogue unique)
  */
 export function HomeAudienceScroll() {
   const searchParams = useSearchParams();
@@ -22,20 +21,32 @@ export function HomeAudienceScroll() {
     const key = pour.toLowerCase();
 
     if (key === "proprietaire" || key === "proprietaires") {
-      router.replace("/proprietaires");
+      router.replace("/");
+      const id = "offre-proprietaire";
+      const run = () => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(run);
+      });
+      return;
+    }
+
+    if (key === "locataire" || key === "locataires") {
+      router.replace("/");
+      const id = "locataire";
+      const run = () => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(run);
+      });
       return;
     }
 
     if (!SEJOUR_KEYS.has(key)) return;
 
-    const el = document.getElementById("reserver-un-sejour");
-    if (!el) return;
-    window.history.replaceState(null, "", "#reserver-un-sejour");
-    window.dispatchEvent(new Event(REVEAL_BOOKING_EVENT));
-    const frame = requestAnimationFrame(() => {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    return () => cancelAnimationFrame(frame);
+    router.replace("/villas");
   }, [pour, router]);
 
   return null;

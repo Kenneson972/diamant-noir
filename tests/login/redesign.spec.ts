@@ -33,13 +33,35 @@ test.describe("Login Page — Redesign", () => {
     await expect(page.locator("input[type='password']")).toBeVisible();
   });
 
-  test("footer 'Accès propriétaire' présent sur flow locataire", async ({ page }) => {
+  test("footer 'Accès propriétaire' présent sur flow locataire (audience neutre)", async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.removeItem("dn_home_audience");
+    });
     await page.goto("http://localhost:3000/login?redirect=/espace-client");
     await expect(page.getByText(/accès propriétaire/i)).toBeVisible();
   });
 
-  test("footer 'Espace locataire' présent sur flow propriétaire", async ({ page }) => {
+  test("footer 'Espace locataire' présent sur flow propriétaire (audience neutre)", async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.removeItem("dn_home_audience");
+    });
     await page.goto("http://localhost:3000/login?redirect=/dashboard/proprio");
     await expect(page.getByText(/espace locataire/i)).toBeVisible();
+  });
+
+  test("lien Accès propriétaire masqué si gate audience voyageur", async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem("dn_home_audience", "voyageur");
+    });
+    await page.goto("http://localhost:3000/login?redirect=/espace-client");
+    await expect(page.getByText(/accès propriétaire/i)).toHaveCount(0);
+  });
+
+  test("lien Espace locataire masqué si gate audience propriétaire", async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem("dn_home_audience", "proprietaire");
+    });
+    await page.goto("http://localhost:3000/login?redirect=/dashboard/proprio");
+    await expect(page.getByText(/espace locataire/i)).toHaveCount(0);
   });
 });

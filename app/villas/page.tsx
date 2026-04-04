@@ -39,8 +39,29 @@ const FALLBACK_VILLAS: VillaMapItem[] = [
   { id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique", price: 900, image: "/villa-hero.jpg", coords: [14.5361, -61.0261] },
 ];
 
-export default async function VillasListingPage() {
+function formatIsoDateFr(d: string) {
+  try {
+    return new Date(d + "T00:00:00").toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return d;
+  }
+}
+
+export default async function VillasListingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   noStore();
+  const sp = await searchParams;
+  const qCheckin = typeof sp.checkin === "string" ? sp.checkin : "";
+  const qCheckout = typeof sp.checkout === "string" ? sp.checkout : "";
+  const qGuests = typeof sp.guests === "string" ? sp.guests : "";
+  const dateIntent = Boolean(qCheckin && qCheckout);
   let villas: VillaMapItem[] = FALLBACK_VILLAS;
 
   try {
@@ -83,7 +104,7 @@ export default async function VillasListingPage() {
 
         <div className="relative mx-auto max-w-7xl px-6 pt-40 pb-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div className="space-y-5 max-w-2xl">
+            <div className="space-y-5 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center gap-3">
                 <span className="h-px w-10 bg-gold" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">
@@ -95,16 +116,16 @@ export default async function VillasListingPage() {
                 <br />
                 de Légende.
               </h1>
-              <p className="text-white/45 text-lg font-light leading-relaxed max-w-md">
+              <p className="text-white/65 text-lg font-light leading-relaxed max-w-md">
                 Une collection confidentielle de résidences d'exception,
                 choisies pour leur caractère unique et leur environnement hors du commun.
               </p>
             </div>
-            <div className="flex items-end gap-3 md:pb-2">
+            <div className="flex items-end gap-3 md:pb-2 animate-in fade-in duration-700 delay-300">
               <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
                 {String(villas.length).padStart(2, "0")}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/45 mb-4">
                 propriétés
               </span>
             </div>
@@ -112,8 +133,25 @@ export default async function VillasListingPage() {
         </div>
       </section>
 
-      {/* ── Split view: list + map ── */}
-      <VillasMapView villas={villas} />
+      {dateIntent && (
+        <div className="border-b border-navy/10 bg-white px-6 py-4">
+          <div className="mx-auto flex max-w-7xl flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-navy">
+              <span className="font-bold uppercase tracking-[0.2em] text-navy/45">Dates</span>{" "}
+              du {formatIsoDateFr(qCheckin)} au {formatIsoDateFr(qCheckout)}
+              {qGuests ? ` · ${qGuests} voyageur${parseInt(qGuests, 10) > 1 ? "s" : ""}` : ""}
+            </p>
+            <p className="text-xs text-navy/50">
+              Ouvrez une villa pour vérifier les disponibilités et finaliser sur la fiche.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Split view: list + map (catalogue unique) ── */}
+      <div id="catalogue" className="scroll-mt-24">
+        <VillasMapView villas={villas} />
+      </div>
     </main>
   );
 }
