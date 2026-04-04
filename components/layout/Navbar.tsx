@@ -162,10 +162,10 @@ export const Navbar = () => {
 
   /** Pages fond clair : jamais `bg-transparent` seul (illisible) — léger vitrage ; hero sombre : vraie transparence. */
   const headerSurfaceClass = isSolid
-    ? "border-b border-black/[0.06] bg-white/95 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))]"
+    ? "border-b border-black/[0.06] bg-white/95 pb-2 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.5rem+env(safe-area-inset-top,0px))]"
     : useLightTransparentChrome
-      ? "border-b border-black/[0.06] bg-white/92 pb-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(1rem+env(safe-area-inset-top,0px))] md:pb-5 md:pt-[calc(1.25rem+env(safe-area-inset-top,0px))]"
-      : "border-b border-transparent bg-transparent pb-4 pt-[calc(1rem+env(safe-area-inset-top,0px))] md:pb-5 md:pt-[calc(1.25rem+env(safe-area-inset-top,0px))]";
+      ? "border-b border-black/[0.06] bg-white/92 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))] md:pb-4 md:pt-[calc(1rem+env(safe-area-inset-top,0px))]"
+      : "border-b border-transparent bg-transparent pb-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] md:pb-4 md:pt-[calc(1rem+env(safe-area-inset-top,0px))]";
 
   return (
     <>
@@ -322,7 +322,7 @@ export const Navbar = () => {
           au centre *de l’écran*, même si la rangée droite est plus chargée que le menu.
           L’ancien auto–1fr–auto poussait le wordmark sous le hamburger (traits sur le « D »).
         */}
-        <div className="mx-auto grid min-h-12 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
+        <div className="mx-auto grid min-h-10 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
           <div className="flex min-w-0 items-center justify-start">
             <button
               type="button"

@@ -22,9 +22,9 @@ const sizeClasses: Record<
   sm: { box: "h-7 w-7 md:h-8 md:w-8", wordmark: "text-base tracking-[0.22em]" },
   md: { box: "h-9 w-9 md:h-10 md:w-10", wordmark: "text-xl tracking-[0.3em]" },
   lg: { box: "h-12 w-12 md:h-14 md:w-14", wordmark: "text-2xl tracking-[0.32em]" },
-  /** Pictogramme header — très visible (sans wordmark) */
+  /** Pictogramme header — lisible sans dominer la barre (icône seule, pas de wordmark) */
   nav: {
-    box: "h-14 w-14 min-[400px]:h-16 min-[400px]:w-16 sm:h-[4.5rem] sm:w-[4.5rem] md:h-20 md:w-20 lg:h-24 lg:w-24 xl:h-28 xl:w-28",
+    box: "h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 lg:h-14 lg:w-14",
     wordmark: "text-2xl tracking-[0.32em]",
   },
   auth: { box: "h-16 w-16", wordmark: "text-2xl tracking-[0.32em]" },
@@ -53,7 +53,7 @@ export function BrandLogo({
       : size === "hero"
         ? "(max-width: 640px) 112px, (max-width: 1024px) 176px, 208px"
         : size === "nav"
-          ? "(max-width: 400px) 56px, (max-width: 640px) 64px, (max-width: 768px) 72px, (max-width: 1024px) 80px, (max-width: 1280px) 96px, 112px"
+          ? "(max-width: 640px) 40px, (max-width: 768px) 44px, (max-width: 1024px) 48px, 56px"
           : "(max-width: 768px) 36px, 40px";
 
   const inner = (

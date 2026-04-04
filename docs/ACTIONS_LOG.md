@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-03-31T12:00:00Z | type: ui | Cursor — Navbar moins imposante (logo + padding)
+
+- **agent**: `cursor`
+- **summary**: Taille **`BrandLogo` `nav`** réduite (≈40–56px au lieu de 56–112px) ; **`sizes`** image alignés ; grille header **`min-h-10`** ; **`headerSurfaceClass`** avec **padding vertical** un peu resserré (barre moins haute).
+- **files**: [`components/layout/BrandLogo.tsx`, `components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Feedback — barre trop dominante, surtout à cause du pictogramme trop grand.
+- **impact**: Header plus discret, hiérarchie plus équilibrée avec le contenu.
+- **verify**: lint OK.
+
+---
+
 ## 2026-04-01T00:35:00Z | type: ui | Cursor — Navbar illisible sur heroes sombres (contact, villas…) + z-index
 
 - **agent**: `cursor`
