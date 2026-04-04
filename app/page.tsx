@@ -9,6 +9,7 @@ import { BrandLogo } from "@/components/layout/BrandLogo";
 import { HomeAudienceScroll } from "@/components/home/HomeAudienceScroll";
 import { HomeHeroPrimaryActions } from "@/components/home/HomeHeroPrimaryActions";
 import { ProprietairesTransitionLink } from "@/components/home/ProprietairesTransitionLink";
+import { HomeAudienceGate } from "@/components/home/HomeAudienceGate";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-offwhite">
+      <HomeAudienceGate />
       {/* Hero — vidéo /public/hero.webm (WebM) + poster */}
       <section className="relative flex min-h-[min(72vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-24 pt-28 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24" aria-labelledby="hero-visually-hidden-title">
         <h1 id="hero-visually-hidden-title" className="sr-only">

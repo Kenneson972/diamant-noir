@@ -11,6 +11,17 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-04T15:00:00Z | type: docs | Cursor — Prompt Claude Code : gate audience accueil + UI Pro Max
+
+- **agent**: `cursor`
+- **summary**: Nouveau fichier `docs/superpowers/prompts/claude-code-home-audience-gate.md` — prompt prêt à coller pour implémenter l’option B (choix voyageur / propriétaire à l’ouverture de `/`), animations luxe discret, invocation obligatoire du skill **ui-ux-pro-max**, intégration `HomeHeroPrimaryActions` / `HomeAudienceScroll`, stockage localStorage ou sessionStorage, motion CSS/Tailwind sans framer par défaut.
+- **files**: [`docs/superpowers/prompts/claude-code-home-audience-gate.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Demande utilisateur : bon prompt pour Claude Code et références design Pro Max.
+- **impact**: Réutilisable pour une session Claude Code / Superpowers sans repartir de zéro.
+- **verify**: Fichier relu ; pas d’impact build.
+
+---
+
 ## 2026-04-04T12:00:00Z | type: ui | Cursor — Navbar : logo centré écran (plus de hamburger sur le « D »)
 
 - **agent**: `cursor`
@@ -768,3 +779,8 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **verify**: `npx tsc --noEmit` OK.
 
 ---
+
+---
+
+## 2026-04-04 — HomeAudienceGate (/)
+Nouveau composant `HomeAudienceGate` : écran de choix d'audience (voyageur / propriétaire) au premier chargement. sessionStorage `dn_home_audience`. Overlay glassmorphism z-40, focus trap, Escape + skip. Dispatch `diamant-reveal-booking` pour voyageur, `router.push('/proprietaires')` pour proprio.
