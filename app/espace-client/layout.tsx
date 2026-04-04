@@ -1,222 +1,70 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Calendar, MessageCircle, User, LogOut } from "lucide-react";
-import { BrandLogo } from "@/components/layout/BrandLogo";
+import { EspaceClientShell } from "@/components/espace-client/EspaceClientShell";
 import { EspaceClientProviders } from "@/components/espace-client/EspaceClientProviders";
-import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
-import { Spinner, Button, Separator, Chip } from "@heroui/react";
-
-const NAV = [
-  { href: "/espace-client", label: "Mes réservations", icon: Calendar, exact: true },
-  { href: "/espace-client/messagerie", label: "Messagerie SAV", icon: MessageCircle },
-  { href: "/espace-client/profil", label: "Mon profil", icon: User },
-];
 
 export default function EspaceClientLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [checking, setChecking] = useState(true);
-  const [userInfo, setUserInfo] = useState<{ name?: string; email?: string; avatar?: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string | undefined>();
+  const [userInitial, setUserInitial] = useState<string>("?");
   const supabase = getSupabaseBrowser();
 
   useEffect(() => {
     if (!supabase) {
-      setChecking(false);
-      setUserInfo(null);
+      setLoading(false);
       return;
     }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        setChecking(false);
-        setUserInfo(null);
-      } else {
-        setChecking(false);
-        setUserInfo({
-          name: session.user.user_metadata?.full_name,
-          email: session.user.email,
-          avatar: session.user.user_metadata?.avatar_url,
-        });
+    (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.user) {
+        const redirect = pathname || "/espace-client";
+        router.replace(`/login?redirect=${encodeURIComponent(redirect)}`);
+        return;
       }
-    });
-  }, [supabase, router]);
+      const meta = session.user.user_metadata;
+      setUserName(meta?.full_name || session.user.email?.split("@")[0]);
+      setUserInitial((meta?.full_name?.[0] || session.user.email?.[0] || "?").toUpperCase());
+      setLoading(false);
+    })();
+  }, [supabase, router, pathname]);
 
   const handleSignOut = async () => {
     await supabase?.auth.signOut();
     router.push("/");
   };
 
+  if (loading) {
+    return (
+      <EspaceClientProviders>
+        <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-[rgba(212,175,55,0.2)] border-t-[#D4AF37] rounded-full animate-spin" />
+        </div>
+      </EspaceClientProviders>
+    );
+  }
+
+  if (!supabase) {
+    return (
+      <EspaceClientProviders>
+        <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
+          <p className="text-sm text-[rgba(13,27,42,0.6)]">Configuration indisponible.</p>
+        </div>
+      </EspaceClientProviders>
+    );
+  }
+
   return (
     <EspaceClientProviders>
-      {checking ? (
-        <div className="flex min-h-screen items-center justify-center bg-offwhite">
-          <Spinner size="lg" className="text-gold" />
-        </div>
-      ) : (
-      <div className="flex min-h-screen bg-offwhite">
-        {/* Sidebar desktop */}
-        <aside className="hidden md:flex w-64 flex-col bg-white border-r border-navy/10 shrink-0">
-          <div className="flex flex-col flex-1 px-6 py-8">
-            <div className="mb-10">
-              <BrandLogo variant="onLight" size="sm" />
-            </div>
-
-            <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-4">
-              Espace Locataire
-            </p>
-
-            <nav className="flex flex-col gap-1 flex-1">
-              {NAV.map(({ href, label, icon: Icon, exact }) => {
-                const active = exact ? pathname === href : pathname?.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors border-l-2 ${
-                      active
-                        ? "border-gold text-navy bg-navy/5"
-                        : "border-transparent text-navy/45 hover:text-navy hover:border-navy/20"
-                    }`}
-                  >
-                    <Icon size={15} strokeWidth={1} />
-                    {label}
-                    {active && (
-                      <Chip
-                        size="sm"
-                        variant="soft"
-                        color="accent"
-                        className="ml-auto h-4 min-h-0 px-1.5 text-[8px] font-bold uppercase tracking-[0.15em]"
-                      >
-                        actif
-                      </Chip>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <Separator className="my-4" />
-
-            {userInfo && (
-              <div className="flex items-center gap-3 min-w-0 mb-4">
-                <TenantAvatar
-                  name={userInfo.name}
-                  url={userInfo.avatar}
-                  size="md"
-                  className="border border-navy/10 shrink-0"
-                />
-                <div className="min-w-0 flex-1">
-                  {userInfo.name && (
-                    <p className="text-[11px] font-bold text-navy truncate">{userInfo.name}</p>
-                  )}
-                  {userInfo.email && (
-                    <p className="text-[10px] text-navy/35 truncate max-w-[120px]">{userInfo.email}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onPress={handleSignOut}
-              className="justify-start gap-2 text-navy/40 hover:text-navy px-0 h-auto py-1.5 w-full"
-            >
-              <LogOut size={15} strokeWidth={1} />
-              Déconnexion
-            </Button>
-          </div>
-        </aside>
-
-        {/* Mobile header */}
-        <div className="flex flex-col flex-1 min-w-0">
-          <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-5 h-14 border-b border-navy/10 bg-white/95 backdrop-blur-md">
-            <div className="flex min-w-0 items-center gap-3">
-              <BrandLogo variant="onLight" size="sm" />
-              <Link
-                href="/espace-client"
-                className="font-display text-xs text-navy/50 tracking-wide truncate border-l border-navy/10 pl-3"
-              >
-                Espace Client
-              </Link>
-            </div>
-            <div className="flex items-center gap-1">
-              {NAV.map(({ href, icon: Icon, exact }) => {
-                const active = exact ? pathname === href : pathname?.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`p-1.5 transition-colors ${
-                      active ? "text-navy" : "text-navy/40 hover:text-navy"
-                    }`}
-                  >
-                    <Icon size={18} strokeWidth={1} />
-                  </Link>
-                );
-              })}
-              <Button
-                variant="ghost"
-                size="sm"
-                isIconOnly
-                onPress={handleSignOut}
-                className="text-navy/40 hover:text-navy w-9 h-9 min-w-0"
-                aria-label="Déconnexion"
-              >
-                <LogOut size={18} strokeWidth={1} />
-              </Button>
-              {userInfo && (
-                <TenantAvatar
-                  name={userInfo.name}
-                  url={userInfo.avatar}
-                  size="sm"
-                  className="border border-navy/10 shrink-0 ml-1"
-                />
-              )}
-            </div>
-          </header>
-
-          <main className="flex-1 p-5 md:p-10 max-w-5xl w-full mx-auto">
-            {!userInfo && (
-              <div className="mb-8 border border-gold/20 bg-gold/[0.04] p-5 md:p-6">
-                <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-navy/35 mb-1">
-                  Accès invité
-                </p>
-                <p className="font-display text-lg text-navy mb-1">Connectez-vous pour accéder à vos réservations</p>
-                <p className="text-sm text-navy/50 max-w-2xl">
-                  Cet espace affiche vos séjours, votre livret d’accueil et la messagerie conciergerie. Sans compte, vous
-                  pouvez tout de même parcourir nos villas.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Link href="/login?redirect=/espace-client" className="no-underline">
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      className="rounded-none uppercase text-[10px] font-bold tracking-[0.25em] px-5"
-                    >
-                      Se connecter
-                    </Button>
-                  </Link>
-                  <Link href="/villas" className="no-underline">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="rounded-none border-navy/25 text-navy uppercase text-[10px] font-bold tracking-[0.25em] px-5"
-                    >
-                      Découvrir les villas
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
-            {children}
-          </main>
-        </div>
-      </div>
-      )}
+      <EspaceClientShell userName={userName} userInitial={userInitial} onSignOut={handleSignOut}>
+        <div className="p-5 md:p-10 max-w-5xl w-full mx-auto">{children}</div>
+      </EspaceClientShell>
     </EspaceClientProviders>
   );
 }
