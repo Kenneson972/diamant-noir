@@ -10,6 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import {
   LandingSection,
   LandingCtaBand,
@@ -19,11 +20,16 @@ import {
   EditorialImageSplit,
 } from "@/components/marketing/editorial-blocks";
 import {
-  INCLUSIONS_COL_A,
-  INCLUSIONS_COL_B,
+  COMMISSION_CAPTION_BRIEF,
+  COMMISSION_CAPTION_FULL,
+  INCLUSIONS_HIGHLIGHTS,
+  INCLUSIONS_REST_COL_A,
+  INCLUSIONS_REST_COL_B,
+  PREMIERE_LOCATION_SUPPLEMENT,
   PROPRIO_LANDING_IMAGE_ALTS,
   PROPRIO_LANDING_IMAGES,
   TEMOIGNAGE_PROPRIO,
+  WHY_PILLARS,
 } from "@/lib/proprietaires-data";
 
 export const metadata: Metadata = {
@@ -31,6 +37,8 @@ export const metadata: Metadata = {
   description:
     "Confiez votre villa en Martinique à Diamant Noir : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
 };
+
+const PILIER_ICONS = [TrendingUp, Headphones, Building2] as const;
 
 export default function ProprietairesPage() {
   return (
@@ -67,16 +75,16 @@ export default function ProprietairesPage() {
               />
             </div>
             <div
-              className="flex justify-center animate-in fade-in duration-700"
+              className="flex justify-center overflow-hidden"
               aria-hidden
             >
-              <span className="h-px w-16 bg-gold/85 md:w-24" />
+              <span className="h-px w-16 animate-line-draw bg-gold/85 md:w-24 [animation-delay:200ms] [animation-fill-mode:backwards]" />
             </div>
-            <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-75 md:max-w-lg md:text-base">
+            <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-200 md:max-w-lg md:text-base">
               Confiez votre villa à une conciergerie d&apos;exception. Visibilité, revenus, sérénité.
             </p>
 
-            <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-100 sm:grid-cols-2 sm:gap-4">
+            <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
               <Link
                 href="/soumettre-ma-villa"
                 className="group flex min-h-[48px] flex-col items-start gap-0.5 rounded-none border border-gold/55 bg-gold/[0.12] px-4 py-3.5 text-left backdrop-blur-sm transition-colors hover:bg-gold/[0.20] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
@@ -130,35 +138,37 @@ export default function ProprietairesPage() {
               tout en maximisant ses performances.
             </p>
             <div className="mt-14 border-t border-navy/10 pt-14">
-              <ul className="grid gap-14 md:grid-cols-3 md:gap-x-10 md:gap-y-0 lg:gap-x-14">
-                <li>
-                  <TrendingUp className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
-                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
-                    Visibilité &amp; revenue
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
-                    Positionnement luxe, pricing et diffusion alignés sur une clientèle haut de gamme.
-                  </p>
-                </li>
-                <li>
-                  <Headphones className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
-                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
-                    Conciergerie 24/7
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
-                    Accueil, housekeeping, demandes voyageurs : une équipe dédiée sur le terrain.
-                  </p>
-                </li>
-                <li>
-                  <Building2 className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
-                  <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
-                    Sérénité propriétaire
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-navy/55">
-                    Suivi transparent, standards élevés et relation de confiance sur la durée.
-                  </p>
-                </li>
+              <ul className="grid gap-10 md:grid-cols-3 md:gap-x-10 lg:gap-x-14">
+                {WHY_PILLARS.map((pillar, index) => {
+                  const Icon = PILIER_ICONS[index];
+                  return (
+                    <li key={pillar.title}>
+                      <ScrollReveal delay={index * 120}>
+                        <Icon className="text-gold/75" size={20} strokeWidth={1.15} aria-hidden />
+                        <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
+                          {pillar.title}
+                        </h3>
+                        <p className="mt-3 text-sm leading-relaxed text-navy/55">{pillar.short}</p>
+                      </ScrollReveal>
+                    </li>
+                  );
+                })}
               </ul>
+              <details className="mt-12 border-t border-navy/10 pt-10">
+                <summary className="cursor-pointer list-none text-center text-[10px] font-bold uppercase tracking-[0.32em] text-navy/45 outline-none transition-colors hover:text-navy md:text-left [&::-webkit-details-marker]:hidden">
+                  En savoir plus
+                </summary>
+                <div className="mt-8 grid gap-8 md:grid-cols-3 md:gap-x-8">
+                  {WHY_PILLARS.map((pillar) => (
+                    <div key={`${pillar.title}-detail`}>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy">
+                        {pillar.title}
+                      </p>
+                      <p className="mt-3 text-sm leading-relaxed text-navy/60">{pillar.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </details>
             </div>
           </>
         }
@@ -167,7 +177,9 @@ export default function ProprietairesPage() {
       <EditorialFigureBand
         label="Transparence"
         figure="20%"
-        caption="TTC sur le montant net des nuitées collectées — frais de ménage et blanchisserie facturés aux voyageurs, hors commission."
+        caption={COMMISSION_CAPTION_BRIEF}
+        detailsCaption={COMMISSION_CAPTION_FULL}
+        detailsSummaryLabel="Détails de la commission"
       />
 
       <EditorialImageSplit
@@ -183,39 +195,49 @@ export default function ProprietairesPage() {
             <p className="max-w-prose text-[15px] leading-relaxed text-navy/65 md:text-[16px]">
               Le périmètre contractuel que nous mettons en œuvre pour votre villa en gestion clé en main.
             </p>
-            <div className="mt-10 grid gap-x-16 gap-y-5 sm:grid-cols-2">
-              <ul className="space-y-4">
-                {INCLUSIONS_COL_A.map((line) => (
-                  <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
-                    <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
-                      <Check size={16} strokeWidth={1} />
-                    </span>
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-              <ul className="space-y-4">
-                {INCLUSIONS_COL_B.map((line) => (
-                  <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
-                    <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
-                      <Check size={16} strokeWidth={1} />
-                    </span>
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="mt-12 max-w-prose border-t border-navy/10 pt-10">
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.35em] text-navy/40">
-                Première location · En supplément
-              </p>
-              <p className="text-sm leading-relaxed text-navy/70 md:text-[15px]">
-                <span className="font-semibold text-navy">En supplément</span> — uniquement pour la{" "}
-                <span className="font-semibold">première location</span> réalisée par notre conciergerie —{" "}
-                un <span className="font-semibold">pack de démarrage</span> vous sera facturé (sucre,
-                café, eau, poivre, huile, épices, papier toilette, savon, boîte à clefs, inventaire).
-              </p>
-            </div>
+            <ul className="mt-10 space-y-4">
+              {INCLUSIONS_HIGHLIGHTS.map((line) => (
+                <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
+                  <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
+                    <Check size={16} strokeWidth={1} />
+                  </span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+            <details className="mt-10 border-t border-navy/10 pt-10">
+              <summary className="cursor-pointer list-none text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45 outline-none transition-colors hover:text-navy [&::-webkit-details-marker]:hidden">
+                Voir toute la liste et les détails
+              </summary>
+              <div className="mt-8 grid gap-x-12 gap-y-5 sm:grid-cols-2">
+                <ul className="space-y-4">
+                  {INCLUSIONS_REST_COL_A.map((line) => (
+                    <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
+                      <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
+                        <Check size={16} strokeWidth={1} />
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+                <ul className="space-y-4">
+                  {INCLUSIONS_REST_COL_B.map((line) => (
+                    <li key={line} className="flex gap-3 text-[14px] leading-snug text-navy/80 md:text-[15px]">
+                      <span className="mt-0.5 shrink-0 text-gold/90" aria-hidden>
+                        <Check size={16} strokeWidth={1} />
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-10 max-w-prose border-t border-navy/10 pt-10">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.35em] text-navy/55">
+                  Première location · En supplément
+                </p>
+                <p className="text-sm leading-relaxed text-navy/70 md:text-[15px]">{PREMIERE_LOCATION_SUPPLEMENT}</p>
+              </div>
+            </details>
           </>
         }
       />
@@ -231,8 +253,8 @@ export default function ProprietairesPage() {
           aria-hidden={!PROPRIO_LANDING_IMAGE_ALTS.fondTemoignage}
         />
         <div className="absolute inset-0 bg-white/88 backdrop-blur-[1px]" aria-hidden />
-        <div className="relative z-10 mx-auto max-w-3xl text-center md:text-left">
-          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.42em] text-navy/38">
+        <ScrollReveal delay={0}><div className="relative z-10 mx-auto max-w-3xl text-center md:text-left">
+          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.42em] text-navy/55">
             Ils nous font confiance
           </p>
           <blockquote className="border-t border-navy/10 pt-10">
@@ -248,7 +270,7 @@ export default function ProprietairesPage() {
               </p>
             </footer>
           </blockquote>
-        </div>
+        </div></ScrollReveal>
       </section>
 
       <LandingSection bg="offwhite">

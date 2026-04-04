@@ -7,7 +7,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { HomeAudienceScroll } from "@/components/home/HomeAudienceScroll";
-import { HomeHeroPrimaryActions } from "@/components/home/HomeHeroPrimaryActions";
 import { ProprietairesTransitionLink } from "@/components/home/ProprietairesTransitionLink";
 import { HomeAudienceGate } from "@/components/home/HomeAudienceGate";
 
@@ -93,14 +92,22 @@ export default async function HomePage() {
                 priority
               />
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/55 animate-in fade-in duration-700">
+            <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/55 animate-in fade-in duration-700 delay-100">
               Martinique · Collection privée
             </p>
-            <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-75 md:max-w-lg md:text-base">
+            <p className="mx-auto max-w-md text-sm leading-relaxed text-white/72 animate-in fade-in duration-700 delay-200 md:max-w-lg md:text-base">
               Réservez un séjour d&apos;exception au cœur de la Martinique — villas privées, conciergerie dédiée.
             </p>
 
-            <HomeHeroPrimaryActions />
+            <div className="flex justify-center pt-2 animate-in fade-in duration-700 delay-150">
+              <Link
+                href="/book"
+                className="inline-flex min-h-[48px] items-center gap-2 border border-white/35 bg-white/10 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/18 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+              >
+                Réserver un séjour
+                <ArrowRight className="h-4 w-4" strokeWidth={1.25} aria-hidden />
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -111,7 +118,7 @@ export default async function HomePage() {
 
       {/* Trust — bandeau discret type vitrine */}
       <section className="border-y border-black/[0.07] bg-white py-10 px-6">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
+        <ScrollReveal delay={100}><div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
           <div className="flex items-center gap-2">
             <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
             <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
@@ -126,11 +133,15 @@ export default async function HomePage() {
           <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
             Conciergerie 24/7
           </span>
-        </div>
+        </div></ScrollReveal>
       </section>
 
-      {/* Section collection — titrage type « NOS MAISONS » + grille éditoriale */}
-      <section className="bg-white py-20 px-6 md:py-28 cv-auto">
+      {/* Section collection — voyageurs / locataires (ancre gate + ?pour=locataire) */}
+      <section
+        id="locataire"
+        tabIndex={-1}
+        className="scroll-mt-24 bg-white py-20 px-6 md:py-28 cv-auto"
+      >
         <div className="mx-auto max-w-6xl space-y-14 md:space-y-20">
           <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl space-y-5 text-center md:text-left">
@@ -165,9 +176,9 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6">
-              {featuredVillas.slice(0, 3).map((villa) => (
+              {featuredVillas.slice(0, 3).map((villa, index) => (
+                <ScrollReveal key={villa.id} delay={index * 100}>
                 <Link
-                  key={villa.id}
                   href={`/villas/${villa.id}`}
                   aria-label={`Voir ${villa.name}`}
                   className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-4"
@@ -190,6 +201,7 @@ export default async function HomePage() {
                     </p>
                   </div>
                 </Link>
+                </ScrollReveal>
               ))}
             </div>
           )}
@@ -235,7 +247,7 @@ export default async function HomePage() {
 
       {/* Bottom CTA */}
       <section className="py-32 text-center bg-offwhite px-6 cv-auto">
-        <div className="mx-auto max-w-3xl space-y-10">
+        <ScrollReveal delay={0}><div className="mx-auto max-w-3xl space-y-10">
           <div className="space-y-8">
             <h2 className="font-display text-4xl text-navy md:text-6xl">Prêt pour l&apos;exception ?</h2>
             <p className="leading-relaxed text-navy/60">
@@ -257,7 +269,7 @@ export default async function HomePage() {
               Connexion espace propriétaire
             </Link>
           </p>
-        </div>
+        </div></ScrollReveal>
       </section>
     </main>
   );

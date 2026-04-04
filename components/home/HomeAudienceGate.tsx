@@ -1,21 +1,11 @@
 "use client";
 
 /**
- * HomeAudienceGate — Écran de choix d'audience au premier chargement de `/`
+ * HomeAudienceGate — Choix d'audience au premier chargement de `/`
  *
- * STORAGE: sessionStorage (clé `dn_home_audience`)
- *   - "voyageur"     → expérience réservation
- *   - "proprietaire" → navigation vers /proprietaires
- * Le gate réapparaît à chaque nouvelle session navigateur.
- * Pour persister entre sessions, remplacer sessionStorage par localStorage (3 occurrences ci-dessous).
- *
- * DEEPLINK: si l'URL contient `?pour=`, le gate est ignoré
- * (HomeAudienceScroll gère déjà le routage par query param).
- *
- * Z-INDEX: z-40 — sous la Navbar (z-50). Le logo Diamant Noir reste accessible.
- *
- * ANIMATION: CSS/Tailwind uniquement — pas de framer-motion.
- * REDUCED-MOTION: classes `motion-reduce:transition-none` sur toutes les transitions.
+ * STORAGE: sessionStorage (`dn_home_audience`)
+ * Z-INDEX: z-[100] — au-dessus de la navbar (z-50), fond opaque pour masquer tout le site.
+ * DEEPLINK: `?pour=` présent → gate ignoré (ex. `?pour=locataire` depuis le choix voyageur)
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -23,28 +13,27 @@ import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 const STORAGE_KEY = "dn_home_audience";
-const REVEAL_EVENT = "diamant-reveal-booking";
 
 export function HomeAudienceGate() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
-  const [entered, setEntered] = useState(false); // controls scale/opacity enter transition
+  const [entered, setEntered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFocusRef = useRef<HTMLButtonElement>(null);
   const mounted = useRef(true);
 
   useEffect(() => {
-    return () => { mounted.current = false; };
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
-  // Client-only: check storage + URL
   useEffect(() => {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     const hasPour = new URLSearchParams(window.location.search).has("pour");
     if (!stored && !hasPour) {
       setVisible(true);
-      // Trigger enter animation on next frame
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           if (mounted.current) setEntered(true);
@@ -53,14 +42,21 @@ export function HomeAudienceGate() {
     }
   }, []);
 
-  // Focus first card when gate becomes visible
+  useEffect(() => {
+    if (!visible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [visible]);
+
   useEffect(() => {
     if (visible && entered) {
       firstFocusRef.current?.focus();
     }
   }, [visible, entered]);
 
-  // Focus trap
   useEffect(() => {
     if (!visible || !dialogRef.current) return;
     const getFocusable = () =>
@@ -91,7 +87,6 @@ export function HomeAudienceGate() {
     return () => document.removeEventListener("keydown", trap);
   }, [visible]);
 
-  // Escape key
   useEffect(() => {
     if (!visible) return;
     const onKey = (e: KeyboardEvent) => {
@@ -99,10 +94,10 @@ export function HomeAudienceGate() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  const animateOut = useCallback((onDone: () => void, delay = 300) => {
+  const animateOut = useCallback((onDone: () => void, delay = 200) => {
     setExiting(true);
     setTimeout(() => {
       if (mounted.current) {
@@ -121,9 +116,9 @@ export function HomeAudienceGate() {
   const chooseVoyageur = useCallback(() => {
     sessionStorage.setItem(STORAGE_KEY, "voyageur");
     animateOut(() => {
-      window.dispatchEvent(new Event(REVEAL_EVENT));
+      router.replace("/?pour=locataire");
     }, 300);
-  }, [animateOut]);
+  }, [animateOut, router]);
 
   const chooseProprio = useCallback(() => {
     sessionStorage.setItem(STORAGE_KEY, "proprietaire");
@@ -139,83 +134,89 @@ export function HomeAudienceGate() {
   return (
     <div
       className={[
-        "fixed inset-0 z-40 flex items-center justify-center px-5",
-        "transition-opacity duration-300 ease-in motion-reduce:transition-none",
+        "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto px-5 py-10",
+        "bg-white",
+        "transition-opacity duration-[200ms] ease-in motion-reduce:transition-none",
         isVisible ? "opacity-100" : "opacity-0",
       ].join(" ")}
+      aria-hidden={!isVisible}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/55 backdrop-blur-[1.5px]" aria-hidden />
-
-      {/* Dialog */}
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="gate-title"
         className={[
-          "relative z-10 flex w-full max-w-2xl flex-col items-center gap-6",
+          "relative z-10 flex w-full max-w-2xl flex-col items-center gap-8",
           "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:transition-none motion-reduce:transform-none",
-          isVisible ? "translate-y-0 scale-100 opacity-100" : "translate-y-2 scale-95 opacity-0",
+          isVisible ? "translate-y-0 scale-100 opacity-100" : "translate-y-2 scale-[0.98] opacity-0",
         ].join(" ")}
       >
-        {/* Eyebrow */}
-        <p className="text-[9px] font-bold uppercase tracking-[0.45em] text-white/50">
+        <p
+          className="text-[9px] font-bold uppercase tracking-[0.45em] text-navy/40 animate-stagger-fade [animation-fill-mode:backwards]"
+          style={{ animationDelay: '150ms' }}
+        >
           Bienvenue · Diamant Noir
         </p>
 
-        {/* Title */}
         <h2
           id="gate-title"
-          className="text-center font-display text-3xl text-white/95 md:text-4xl"
+          className="text-center font-display text-3xl leading-tight text-navy md:text-[2.25rem] animate-stagger-fade [animation-fill-mode:backwards]"
+          style={{ animationDelay: '220ms' }}
         >
-          Comment pouvons-nous<br />vous aider ?
+          Comment pouvons-nous
+          <br />
+          vous aider ?
         </h2>
+        <span className="-mt-4 block h-px w-12 bg-navy/12" aria-hidden />
 
-        {/* Cards */}
-        <div className="mt-2 grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Voyageur */}
+        <div
+          className="mt-1 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 animate-stagger-fade [animation-fill-mode:backwards]"
+          style={{ animationDelay: '300ms' }}
+        >
           <button
             ref={firstFocusRef}
+            type="button"
             onClick={chooseVoyageur}
-            className="group flex min-h-[120px] flex-col items-start gap-2 border border-gold/45 bg-gold/[0.08] px-6 py-7 text-left backdrop-blur-md transition-all duration-200 hover:bg-gold/[0.14] hover:shadow-[0_0_0_1px_rgba(212,175,55,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 active:scale-[0.98] motion-reduce:transition-none"
+            className="group flex min-h-[120px] flex-col items-start gap-2 border border-gold/35 bg-white px-6 py-7 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-gold/50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 active:scale-[0.98] motion-reduce:transition-none"
           >
-            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold/70">
+            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold/80">
               Voyageurs
             </span>
-            <span className="font-display text-xl leading-tight text-white">
+            <span className="font-display text-xl leading-tight text-navy">
               Je réserve un séjour
             </span>
             <ArrowRight
-              className="mt-auto h-4 w-4 text-gold/60 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none"
+              className="mt-auto h-4 w-4 text-gold/70 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none"
               strokeWidth={1.25}
               aria-hidden
             />
           </button>
 
-          {/* Propriétaire */}
           <button
+            type="button"
             onClick={chooseProprio}
-            className="group flex min-h-[120px] flex-col items-start gap-2 border border-white/22 bg-white/[0.07] px-6 py-7 text-left backdrop-blur-md transition-all duration-200 hover:bg-white/[0.13] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98] motion-reduce:transition-none"
+            className="group flex min-h-[120px] flex-col items-start gap-2 border border-navy/12 bg-offwhite px-6 py-7 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-navy/20 hover:bg-white hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 active:scale-[0.98] motion-reduce:transition-none"
           >
-            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/45">
+            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-navy/45">
               Propriétaires
             </span>
-            <span className="font-display text-xl leading-tight text-white">
+            <span className="font-display text-xl leading-tight text-navy">
               Je suis propriétaire
             </span>
             <ArrowRight
-              className="mt-auto h-4 w-4 text-white/45 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none"
+              className="mt-auto h-4 w-4 text-navy/40 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none"
               strokeWidth={1.25}
               aria-hidden
             />
           </button>
         </div>
 
-        {/* Skip */}
         <button
+          type="button"
           onClick={dismiss}
-          className="text-[9px] font-medium uppercase tracking-[0.28em] text-white/30 underline-offset-4 transition-colors duration-150 hover:text-white/55 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+          className="text-[9px] font-medium uppercase tracking-[0.28em] text-navy/35 underline-offset-4 transition-colors duration-150 hover:text-navy/55 focus:outline-none focus-visible:ring-1 focus-visible:ring-navy/30 animate-stagger-fade [animation-fill-mode:backwards]"
+          style={{ animationDelay: '420ms' }}
         >
           Continuer sans choisir
         </button>
