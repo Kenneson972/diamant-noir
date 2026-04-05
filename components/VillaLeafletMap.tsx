@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import type { LatLngBounds } from "leaflet";
 
 export type VillaMapItem = {
   id: string;
@@ -23,6 +24,7 @@ interface Props {
   hoveredId: string | null;
   onHover: (id: string | null) => void;
   onSelect: (id: string) => void;
+  onBoundsChange?: (bounds: LatLngBounds) => void;
 }
 
 function makeHouseIcon(L: any, active: boolean) {
@@ -52,10 +54,12 @@ function makeHouseIcon(L: any, active: boolean) {
   });
 }
 
-export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect }: Props) {
+export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, onBoundsChange }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<Record<string, any>>({});
+  const onBoundsChangeRef = useRef(onBoundsChange);
+  useEffect(() => { onBoundsChangeRef.current = onBoundsChange; }, [onBoundsChange]);
 
   // Init map once
   useEffect(() => {
@@ -106,7 +110,7 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect }
       marker.bindPopup(popupHtml, { maxWidth: 220, closeButton: false, className: "dn-leaflet-popup", offset: [0, 0] });
 
       marker.on("click", () => {
-        window.location.href = `/villas/${villa.id}`;
+        onSelect(villa.id);
       });
       marker.on("mouseover", function (this: any) {
         this.openPopup();
@@ -120,12 +124,23 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect }
       markersRef.current[villa.id] = marker;
     });
 
+    // Bounds callback — viewport filter
+    const emitBounds = () => {
+      if (onBoundsChangeRef.current) onBoundsChangeRef.current(map.getBounds());
+    };
+    map.on("moveend", emitBounds);
+    map.on("zoomend", emitBounds);
+
     // Fit bounds sur les villas
     if (villas.length > 0) {
       try {
         const L2 = require("leaflet");
         const bounds = L2.latLngBounds(villas.map((v) => v.coords));
         map.fitBounds(bounds, { padding: [60, 60], maxZoom: 12 });
+        // Émettre les bounds initiales après le fitBounds
+        setTimeout(() => {
+          if (mapRef.current) emitBounds();
+        }, 600);
       } catch {}
     }
 
