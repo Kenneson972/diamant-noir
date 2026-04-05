@@ -97,8 +97,8 @@ export default function VillasMapView({ villas }: Props) {
                     : "hover:border-navy/10 hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:-translate-y-px"
                 }`}
               >
-                {/* Image portrait */}
-                <div className="relative aspect-[4/3] sm:aspect-[3/4] overflow-hidden rounded-none">
+                {/* Image portrait — toujours 3/4 */}
+                <div className="relative aspect-[3/4] overflow-hidden rounded-none">
                   <Image
                     src={villa.image || "/villa-hero.jpg"}
                     alt={villa.name}
@@ -107,16 +107,25 @@ export default function VillasMapView({ villas }: Props) {
                   />
                   {/* Tier badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="rounded-none border border-gold/40 bg-black/30 px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
+                    <span className="rounded-none border border-gold/40 bg-black/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
                       {tier}
                     </span>
+                  </div>
+                  {/* Overlay gradient bottom — prix visible */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60">
+                      À partir de
+                    </p>
+                    <p className="font-display text-lg text-white leading-none mt-0.5">
+                      {villa.price.toLocaleString("fr-FR")} €
+                      <span className="text-xs font-sans font-normal text-white/50"> / nuit</span>
+                    </p>
                   </div>
                 </div>
 
                 {/* Info sous l'image */}
-                <div className="pt-4 space-y-1.5 px-1 pb-2">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-gold">{tier}</p>
-                  <p className="font-display font-normal text-xl text-navy leading-snug">
+                <div className="pt-3 space-y-1 px-1 pb-2">
+                  <p className="font-display font-normal text-lg text-navy leading-snug">
                     {villa.name}
                   </p>
                   {villa.location && (
@@ -124,9 +133,9 @@ export default function VillasMapView({ villas }: Props) {
                       {villa.location}
                     </p>
                   )}
-                  <p className="text-sm font-bold text-navy pt-1">
-                    {villa.price.toLocaleString("fr-FR")} €{" "}
-                    <span className="font-normal text-navy/40 text-xs">/ nuit</span>
+                  <p className="text-xs text-navy/55 pt-0.5">
+                    {villa.price.toLocaleString("fr-FR")} €
+                    <span className="text-navy/35"> / nuit</span>
                   </p>
                 </div>
               </Link>

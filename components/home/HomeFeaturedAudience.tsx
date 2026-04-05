@@ -30,21 +30,20 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
       <section
         id="offre-proprietaire"
         tabIndex={-1}
-        className="scroll-mt-24 bg-white py-20 px-6 md:py-28 cv-auto"
+        className="scroll-mt-24 bg-white py-14 px-6 md:py-20 cv-auto"
       >
-        <div className="mx-auto max-w-6xl space-y-12 md:space-y-16">
-          <div className="max-w-2xl space-y-5 text-center md:text-left">
-            <h2 className="text-[clamp(1.125rem,2.4vw,1.5rem)] font-semibold uppercase tracking-[0.2em] text-navy">
+        <div className="mx-auto max-w-6xl space-y-8 md:space-y-12">
+          <div className="flex items-center justify-between border-b border-navy/8 pb-6">
+            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/40">
               Propriétaires
-            </h2>
-            <p className="font-display text-3xl leading-[1.12] text-navy md:text-5xl">
-              Confiez votre villa, nous gérons le reste
-            </p>
-            <span className="mx-auto block h-px w-14 bg-black/15 md:mx-0" />
-            <p className="text-sm leading-relaxed text-navy/60 md:text-base">
-              Mise en ligne, tarification, ménage, accueil voyageurs et suivi des revenus — une équipe locale
-              pour valoriser votre bien sans la charge quotidienne.
-            </p>
+            </span>
+            <Link
+              href="/proprietaires"
+              className="group flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
+            >
+              En savoir plus
+              <ArrowRight size={12} strokeWidth={1.5} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
 
           <div className="grid gap-6 border border-navy/10 bg-offwhite p-8 md:grid-cols-2 md:p-12">
@@ -95,27 +94,20 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
     <section
       id="locataire"
       tabIndex={-1}
-      className="scroll-mt-24 bg-white py-20 px-6 md:py-28 cv-auto"
+      className="scroll-mt-24 bg-white py-14 px-6 md:py-20 cv-auto"
     >
-      <div className="mx-auto max-w-6xl space-y-14 md:space-y-20">
-        <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl space-y-5 text-center md:text-left">
-            <h2 className="text-[clamp(1.125rem,2.4vw,1.5rem)] font-semibold uppercase tracking-[0.2em] text-navy">
-              {audience === "voyageur" ? "Pour votre séjour" : "Nos villas"}
-            </h2>
-            <p className="font-display text-3xl leading-[1.12] text-navy md:text-5xl">
-              {audience === "voyageur"
-                ? "Des adresses d'exception pour votre prochain voyage"
-                : "Une collection privée d’adresses d’exception"}
-            </p>
-            <span className="mx-auto block h-px w-14 bg-black/15 md:mx-0" />
-          </div>
+      <div className="mx-auto max-w-6xl space-y-10 md:space-y-14">
+        {/* Header minimaliste */}
+        <div className="flex items-center justify-between border-b border-navy/8 pb-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/40">
+            {audience === "voyageur" ? "La sélection" : "Nos villas"}
+          </span>
           <Link
             href="/villas"
-            className="group flex shrink-0 items-center justify-center gap-2 self-center text-[10px] font-semibold uppercase tracking-[0.28em] text-navy underline-offset-[10px] hover:underline md:self-end"
+            className="group flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
           >
-            Voir tout le catalogue
-            <ArrowRight size={14} strokeWidth={1.25} className="transition-transform group-hover:translate-x-0.5" />
+            Tout voir
+            <ArrowRight size={12} strokeWidth={1.5} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
@@ -132,7 +124,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
             {featuredVillas.slice(0, 3).map((villa, index) => (
               <ScrollReveal key={villa.id} delay={index * 100}>
                 <Link
@@ -140,20 +132,29 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
                   aria-label={`Voir ${villa.name}`}
                   className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-4"
                 >
+                  {/* Image portrait avec overlay prix */}
                   <div className="relative aspect-[3/4] w-full overflow-hidden bg-navy/5">
                     <Image
                       src={villa.image || "/villa-hero.jpg"}
                       alt={villa.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.03]"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
-                  </div>
-                  <div className="mt-5 space-y-2 px-0 text-left">
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy md:text-[10px]">
-                      {villa.name}
-                    </h3>
-                    <p className="text-sm font-normal leading-snug text-navy/50">{villa.loc}</p>
+                    {/* Gradient + infos bas de photo */}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pb-5 pt-16 px-5">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">
+                        {villa.loc}
+                      </p>
+                      <p className="font-display text-lg text-white leading-snug mt-1">
+                        {villa.name}
+                      </p>
+                      {villa.price > 0 && (
+                        <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+                          {villa.price.toLocaleString("fr-FR")} € / nuit
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </Link>
               </ScrollReveal>

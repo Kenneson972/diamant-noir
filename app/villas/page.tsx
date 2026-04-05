@@ -104,7 +104,7 @@ export default async function VillasListingPage({
 
         <div className="relative mx-auto max-w-7xl px-6 pt-24 pb-10 xs:pt-32 xs:pb-12 md:pt-40 md:pb-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div className="space-y-5 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center gap-3">
                 <span className="h-px w-10 bg-gold" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">
@@ -116,10 +116,6 @@ export default async function VillasListingPage({
                 <br />
                 de Légende.
               </h1>
-              <p className="text-white/65 text-lg font-light leading-relaxed max-w-md">
-                Une collection confidentielle de résidences d'exception,
-                choisies pour leur caractère unique et leur environnement hors du commun.
-              </p>
             </div>
             <div className="flex items-end gap-3 md:pb-2 animate-in fade-in duration-700 delay-300">
               <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
