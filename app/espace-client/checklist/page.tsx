@@ -213,7 +213,7 @@ export default function ChecklistPage() {
       <div className="max-w-2xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-[8px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">
+          <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">
             Checklist avant-arrivée
           </p>
           <h1 className="font-display text-2xl font-normal text-[#0D1B2A] mb-1">
@@ -235,11 +235,11 @@ export default function ChecklistPage() {
             >
               {checked} / {total}
             </span>
-            <span className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.32)]">
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.32)]">
               étapes complétées
             </span>
             {saving && (
-              <span className="text-[7px] tracking-[0.15em] uppercase text-[rgba(13,27,42,0.25)] ml-auto">
+              <span className="text-[10px] tracking-[0.15em] uppercase text-[rgba(13,27,42,0.25)] ml-auto">
                 Sauvegarde…
               </span>
             )}
@@ -325,7 +325,7 @@ export default function ChecklistPage() {
                         <button
                           type="button"
                           onClick={() => downloadICS(booking)}
-                          className="text-[7px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
                         >
                           iCal
                         </button>
@@ -333,7 +333,7 @@ export default function ChecklistPage() {
                           href={googleCalendarUrl(booking)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[7px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
+                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
                           style={{ textDecoration: "none" }}
                         >
                           Google Calendar
@@ -342,7 +342,7 @@ export default function ChecklistPage() {
                           href={outlookCalendarUrl(booking)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[7px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
+                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
                           style={{ textDecoration: "none" }}
                         >
                           Outlook
@@ -354,7 +354,7 @@ export default function ChecklistPage() {
                     {cta === "livret" && !isChecked && (
                       <Link
                         href="/espace-client/livret#checkinout"
-                        className="inline-block mt-2 text-[7px] tracking-[0.16em] uppercase text-[#D4AF37] underline underline-offset-4 decoration-[rgba(212,175,55,0.4)] hover:decoration-[#D4AF37] transition-colors no-underline"
+                        className="inline-block mt-2 text-[10px] tracking-[0.16em] uppercase text-[#D4AF37] underline underline-offset-4 decoration-[rgba(212,175,55,0.4)] hover:decoration-[#D4AF37] transition-colors no-underline"
                         style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}
                       >
                         Voir dans le livret →
@@ -371,7 +371,7 @@ export default function ChecklistPage() {
         <div className="mt-8">
           <Link
             href="/espace-client"
-            className="text-[8px] tracking-[0.18em] uppercase text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] transition-colors no-underline"
+            className="text-[10px] tracking-[0.18em] uppercase text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] transition-colors no-underline"
             style={{ textDecoration: "none" }}
           >
             ← Retour à mon séjour

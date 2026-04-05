@@ -73,13 +73,13 @@ export default function LivretPrintPage() {
       `}</style>
 
       <div className="no-print py-4 px-6 border-b border-[rgba(13,27,42,0.07)] flex items-center justify-between">
-        <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.4)]">
+        <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.4)]">
           {ready ? "Prêt à imprimer" : "Chargement…"}
         </p>
         <button
           type="button"
           onClick={() => window.print()}
-          className="text-[8px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+          className="text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
         >
           Imprimer
         </button>
@@ -88,7 +88,7 @@ export default function LivretPrintPage() {
       <div className="max-w-2xl mx-auto px-8 py-10">
         {/* Header */}
         <div className="mb-8 pb-6 border-b border-[rgba(13,27,42,0.12)]">
-          <p className="text-[8px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">
+          <p className="text-[10px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">
             Diamant Noir · Conciergerie
           </p>
           <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
@@ -108,7 +108,7 @@ export default function LivretPrintPage() {
 
         {(villa?.wifi_name || villa?.wifi_password) && (
           <section className="mb-8">
-            <h2 className="text-[8px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Wi-Fi & accès</h2>
+            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Wi-Fi & accès</h2>
             {villa.wifi_name && (
               <p className="font-cormorant text-[16px] text-[#0D1B2A]">
                 Réseau : <strong>{villa.wifi_name}</strong>
@@ -126,7 +126,7 @@ export default function LivretPrintPage() {
         )}
 
         <section className="mb-8">
-          <h2 className="text-[8px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Check-in / Check-out</h2>
+          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Check-in / Check-out</h2>
           <p className="font-cormorant text-[16px] text-[#0D1B2A]">Check-in : À partir de 16h00</p>
           <p className="font-cormorant text-[16px] text-[#0D1B2A]">Check-out : Avant 11h00</p>
           {villa?.checkout_instructions && (
@@ -138,7 +138,7 @@ export default function LivretPrintPage() {
 
         {villa?.local_recommendations && (
           <section className="mb-8">
-            <h2 className="text-[8px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">À proximité</h2>
+            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">À proximité</h2>
             <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed">
               {villa.local_recommendations}
             </p>
@@ -146,7 +146,7 @@ export default function LivretPrintPage() {
         )}
 
         <section className="mb-8">
-          <h2 className="text-[8px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Urgences</h2>
+          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Urgences</h2>
           <div className="grid grid-cols-2 gap-3">
             {[
               { name: "SAMU", number: "15" },
@@ -168,7 +168,7 @@ export default function LivretPrintPage() {
         </section>
 
         <div className="pt-6 border-t border-[rgba(13,27,42,0.08)]">
-          <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
+          <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
             Diamant Noir · Conciergerie de luxe, Martinique
           </p>
         </div>
