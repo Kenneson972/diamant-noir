@@ -18,18 +18,58 @@
  * → Apparition initiale :
  *   useLayoutEffect (synchrone avant paint) élimine le flash de contenu.
  *   Pendant la vérification : fond blanc opaque = aucun contenu visible.
+ *
+ * → Cohérence URL / storage :
+ *   `hydrateAudienceFromUrlIfNeeded()` en premier — sinon `?pour=` masque le gate mais le storage
+ *   reste vide jusqu’au provider (sections home et scroll #offre-proprietaire faux négatifs).
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import {
   HOME_AUDIENCE_STORAGE_KEY,
+  HOME_AUDIENCE_GATE_REOPEN_PENDING_KEY,
+  hydrateAudienceFromUrlIfNeeded,
   notifyHomeAudienceChange,
 } from "@/contexts/HomeAudienceContext";
+import { acquireBodyScrollLock } from "@/lib/bodyScrollLock";
+
+/** Même logique que le premier paint — réutilisé au retour BFCache. */
+function readGateInitialShow(): boolean {
+  let wantReopen = false;
+  try {
+    wantReopen = sessionStorage.getItem(HOME_AUDIENCE_GATE_REOPEN_PENDING_KEY) === "1";
+  } catch {
+    /* private mode */
+  }
+  if (!wantReopen) {
+    hydrateAudienceFromUrlIfNeeded();
+  }
+
+  let stored: string | null = null;
+  try {
+    stored = sessionStorage.getItem(HOME_AUDIENCE_STORAGE_KEY);
+  } catch {
+    /* private mode */
+  }
+  const hasPour = new URLSearchParams(window.location.search).has("pour");
+  const show = (wantReopen && !stored) || (!stored && !hasPour);
+
+  if (show && wantReopen) {
+    try {
+      sessionStorage.removeItem(HOME_AUDIENCE_GATE_REOPEN_PENDING_KEY);
+    } catch {
+      /* private mode */
+    }
+  }
+
+  return show;
+}
 
 export function HomeAudienceGate() {
   const router = useRouter();
+  const pathname = usePathname();
   // null = vérification en cours | true = afficher | false = masquer
   const [decision, setDecision] = useState<boolean | null>(null);
   const [entered, setEntered] = useState(false);
@@ -41,6 +81,7 @@ export function HomeAudienceGate() {
   const mounted = useRef(true);
 
   useEffect(() => {
+    mounted.current = true;
     return () => {
       mounted.current = false;
     };
@@ -48,16 +89,28 @@ export function HomeAudienceGate() {
 
   // ── Vérification synchrone AVANT le premier paint ─────────────────────────
   useLayoutEffect(() => {
-    const stored = sessionStorage.getItem(HOME_AUDIENCE_STORAGE_KEY);
-    const hasPour = new URLSearchParams(window.location.search).has("pour");
-    const show = !stored && !hasPour;
+    const show = readGateInitialShow();
     setDecision(show);
-    if (show) {
-      requestAnimationFrame(() => {
-        if (mounted.current) setEntered(true);
-      });
-    }
+    setEntered(show);
   }, []);
+
+  /** Retour arrière / BFCache : réaligner l’état du gate sur sessionStorage + URL. */
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      const show = readGateInitialShow();
+      setDecision(show);
+      setExiting(false);
+      setLoadingChoice(null);
+      setEntered(show);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, [pathname]);
+
+  // Réouverture « Changer de parcours » : `HomeAudienceGateLoader` change la clé → remontage →
+  // le `useLayoutEffect` ci-dessus (deps []) rejoue `readGateInitialShow()` à chaque instance.
 
   // ── Prefetch des destinations ─────────────────────────────────────────────
   useEffect(() => {
@@ -65,14 +118,10 @@ export function HomeAudienceGate() {
     router.prefetch("/villas");
   }, [router]);
 
-  // ── Scroll lock ───────────────────────────────────────────────────────────
+  // ── Scroll lock (compteur partagé avec Navbar menu mobile) ─────────────────
   useEffect(() => {
     if (decision !== true) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return acquireBodyScrollLock();
   }, [decision]);
 
   // ── Focus initial ─────────────────────────────────────────────────────────
@@ -140,17 +189,16 @@ export function HomeAudienceGate() {
     startExit();
   }, [startExit]);
 
-  // ── Voyageur — navigation same-page ──────────────────────────────────────
-  // Le gate doit se fermer lui-même pour révéler la page d'accueil.
-  // Sortie (150ms) + navigation déclenchées simultanément.
+  // ── Voyageur — même page, sans query ─────────────────────────────────────
+  // On évite `/?pour=locataire` ici pour ne pas déclencher le scroll automatique
+  // de HomeAudienceScroll et reproduire un comportement plus stable (comme proprio).
   const chooseVoyageur = useCallback(() => {
     if (loadingChoice) return;
     sessionStorage.setItem(HOME_AUDIENCE_STORAGE_KEY, "voyageur");
     notifyHomeAudienceChange();
     setLoadingChoice("voyageur");
     startExit();
-    router.replace("/?pour=locataire");
-  }, [loadingChoice, router, startExit]);
+  }, [loadingChoice, startExit]);
 
   // ── Propriétaire — navigation vers une page différente ───────────────────
   // Le gate reste visible (couverture blanche) pendant le chargement de /proprietaires.
@@ -194,7 +242,7 @@ export function HomeAudienceGate() {
           ? "opacity-100 pointer-events-none"
           : [
               "transition-opacity duration-[180ms] ease-out motion-reduce:transition-none",
-              isVisible ? "opacity-100" : "opacity-0",
+              isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
             ].join(" "),
       ].join(" ")}
       aria-hidden={!isVisible}

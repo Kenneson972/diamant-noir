@@ -45,7 +45,7 @@ export default function ProprietairesPage() {
     <main className="min-h-screen bg-offwhite animate-fade-up [animation-duration:500ms]">
       {/* ─── Hero vidéo ─── */}
       <section
-        className="relative flex min-h-[min(72vh,720px)] w-full flex-col justify-center overflow-hidden bg-black py-24 pt-28 md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
+        className="relative flex min-h-[min(60vh,500px)] w-full flex-col justify-center overflow-hidden bg-black py-20 pt-24 xs:min-h-[min(65vh,580px)] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
         aria-labelledby="proprio-hero-title"
       >
         <video

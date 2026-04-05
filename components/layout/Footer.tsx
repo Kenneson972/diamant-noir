@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useHomeAudience } from "@/contexts/HomeAudienceContext";
+import { replaceHomeAndRequestGateReopen } from "@/lib/homeAudienceNavigation";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
@@ -11,7 +12,7 @@ export const Footer = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { locale, setLocale, currency, setCurrency, t } = useLocale();
-  const { audience, clearAudience } = useHomeAudience();
+  const { audience, clearAudience, requestGateReopen } = useHomeAudience();
 
   if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
     return null;
@@ -20,7 +21,7 @@ export const Footer = () => {
   return (
     <footer className="border-t border-black/10 bg-white py-16 text-navy">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 xs:gap-12 md:grid-cols-4">
           <div className="space-y-4">
             <BrandLogo variant="onLight" size="sm" className="self-start" />
             <p className="text-sm leading-relaxed text-navy/55">
@@ -181,7 +182,7 @@ export const Footer = () => {
               type="button"
               onClick={() => {
                 clearAudience();
-                router.push("/");
+                replaceHomeAndRequestGateReopen(router, requestGateReopen);
               }}
               className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
             >

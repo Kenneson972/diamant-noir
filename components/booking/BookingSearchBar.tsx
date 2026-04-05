@@ -54,11 +54,9 @@ export function BookingSearchBar({
     const reposition = () => {
       if (guestBtnRef.current) {
         const rect = guestBtnRef.current.getBoundingClientRect();
-        setDropdownStyle({
-          top: rect.bottom + 4,
-          left: rect.left,
-          width: Math.max(rect.width, 280),
-        });
+        const w = Math.min(Math.max(rect.width, 280), window.innerWidth - 16);
+        const left = Math.max(8, Math.min(rect.left, window.innerWidth - w - 8));
+        setDropdownStyle({ top: rect.bottom + 4, left, width: w });
       }
     };
     window.addEventListener("scroll", reposition, true);
@@ -72,11 +70,9 @@ export function BookingSearchBar({
   const openGuestDropdown = () => {
     if (guestBtnRef.current) {
       const rect = guestBtnRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: Math.max(rect.width, 280),
-      });
+      const w = Math.min(Math.max(rect.width, 280), window.innerWidth - 16);
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - w - 8));
+      setDropdownStyle({ top: rect.bottom + 4, left, width: w });
     }
     setGuestOpen((prev) => !prev);
   };

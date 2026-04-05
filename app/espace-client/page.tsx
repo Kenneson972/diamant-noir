@@ -47,7 +47,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
       style={{ borderTop: "2px solid #D4AF37" }}
     >
       <div className="flex-1 min-w-0 px-7 py-8">
-        <p className="text-[9px] tracking-[0.32em] uppercase text-[#D4AF37] mb-4">
+        <p className="text-[10px] tracking-[0.32em] uppercase text-[#D4AF37] mb-4">
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
         <h2 className="font-display text-[22px] font-normal text-[#0D1B2A] leading-snug mb-2">
@@ -63,7 +63,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
         </p>
         <Link
           href="/espace-client/livret"
-          className="inline-flex items-center gap-2 text-[9px] tracking-[0.22em] uppercase text-[#D4AF37] hover:text-[rgba(212,175,55,0.7)] transition-colors no-underline"
+          className="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-[#D4AF37] hover:text-[rgba(212,175,55,0.7)] transition-colors no-underline"
         >
           Consulter le livret
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -82,7 +82,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
         >
           {isToday ? "✦" : Math.max(0, daysUntil)}
         </p>
-        <p className="text-[9px] tracking-[0.28em] uppercase text-[rgba(13,27,42,0.28)]">
+        <p className="text-[10px] tracking-[0.28em] uppercase text-[rgba(13,27,42,0.28)]">
           {isToday ? "en cours" : "jours"}
         </p>
       </div>
@@ -271,19 +271,19 @@ export default function EspaceClientPage() {
         <div className="flex items-center gap-7 mt-6 pt-6 border-t border-navy/8">
           <div>
             <p className="font-display font-normal text-[26px] text-navy leading-none">{bookings.length}</p>
-            <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Séjour{bookings.length > 1 ? "s" : ""}</p>
+            <p className="text-[10px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Séjour{bookings.length > 1 ? "s" : ""}</p>
           </div>
           <div className="w-px h-9 bg-navy/10" />
           <div>
             <p className="font-display font-normal text-[26px] text-navy leading-none">{totalNights}</p>
-            <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Nuit{totalNights > 1 ? "s" : ""}</p>
+            <p className="text-[10px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Nuit{totalNights > 1 ? "s" : ""}</p>
           </div>
           {daysUntil !== null && daysUntil > 0 && (
             <>
               <div className="w-px h-9 bg-navy/10" />
               <div>
                 <p className="font-display font-normal text-[26px] text-gold leading-none">J–{daysUntil}</p>
-                <p className="text-[9px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Prochain séjour</p>
+                <p className="text-[10px] tracking-[0.32em] uppercase text-navy/30 mt-1.5">Prochain séjour</p>
               </div>
             </>
           )}
@@ -296,7 +296,7 @@ export default function EspaceClientPage() {
       {/* Accès rapide */}
       {upcomingBooking && (
         <div>
-          <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25 mb-4">Accès rapide</p>
+          <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25 mb-4">Accès rapide</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 border border-[rgba(13,27,42,0.07)]">
             {[
               {
@@ -373,7 +373,7 @@ export default function EspaceClientPage() {
       {otherBookings.length > 0 && (
         <div className="space-y-4">
           {upcomingBooking && (
-            <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25">
+            <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25">
               Historique
             </p>
           )}
@@ -387,7 +387,7 @@ export default function EspaceClientPage() {
 
       {/* Services */}
       <div>
-        <p className="text-[9px] tracking-[0.38em] uppercase text-navy/25 mb-4">Services</p>
+        <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25 mb-4">Services</p>
         <div className="grid gap-[1px] sm:grid-cols-2 bg-[rgba(13,27,42,0.07)]">
           <Link href="/espace-client/messagerie" className="group no-underline bg-white hover:bg-[rgba(212,175,55,0.025)] transition-colors duration-200">
             <div className="px-6 py-5 flex items-center gap-4">

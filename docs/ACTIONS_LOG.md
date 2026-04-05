@@ -11,6 +11,182 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-04T22:30:00Z | type: ui | Cursor — Header : max-width logo vs colonne droite (anti-chevauchement sm–md)
+
+- **agent**: `cursor`
+- **summary**: Colonne centrale (logo) : suppression du `sm:max-w-none` qui levait toute limite dès `sm` alors que téléphone + favoris s’ajoutent ; remplacement par `max-w` responsive (`8rem` → `13rem` → `20rem`, puis `lg:max-w-none`) pour réserver l’espace des actions et éviter le débordement de grille.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **why**: Grille `1fr / auto / 1fr` + colonne `auto` sans plafond : la zone logo pouvait forcer un dépassement de viewport quand la droite devenait large (icônes + CTA texte).
+- **impact**: Plus de chevauchement visuel entre logo et actions sur tablette / `sm`–`md`.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-05T01:45:00Z | type: ui | Cursor — Header mobile réellement responsive (densité réduite)
+
+- **agent**: `cursor`
+- **summary**: `Navbar` mobile : réduction des actions visibles (<`sm`) ; téléphone + favoris cachés en très petit écran, CTA compact en icône jusqu’à `md`, texte CTA uniquement à partir de `md`.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Chevauchement persistant sur mobile (trop d’éléments dans la colonne droite + CTA texte précoce).
+- **impact**: Header stable sur petit viewport, sans overlap.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-05T01:30:00Z | type: ui | Cursor — Header mobile : numéro concierge stabilisé
+
+- **agent**: `cursor`
+- **summary**: `Navbar` mobile/tablette : le numéro complet est repoussé à `lg` (`lg:inline-flex`) avec `whitespace-nowrap`; l’icône téléphone reste visible jusqu’à `lg` (`lg:hidden`) pour éviter le wrap cassé du header.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Sur certains breakpoints mobiles, le numéro `+596 96 00 00 00` apparaissait trop tôt et se cassait sur plusieurs lignes, déformant la barre.
+- **impact**: Header mobile plus compact et stable (plus de bloc téléphone en 2-3 lignes).
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-05T01:10:00Z | type: ui | Cursor — Gate voyageur : suppression du `?pour=locataire` au clic
+
+- **agent**: `cursor`
+- **summary**: `HomeAudienceGate.chooseVoyageur` n’appelle plus `router.replace('/?pour=locataire')`; le choix voyageur persiste en storage puis ferme simplement le gate.
+- **files**: [`components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Le passage par query déclenchait la logique `HomeAudienceScroll` (replace + scroll de section) et introduisait un comportement de scroll instable côté index.
+- **impact**: Parcours voyageur aligné au ressenti du parcours propriétaire (pas de scroll forcé, fermeture propre du gate).
+- **verify**: `PLAYWRIGHT_BROWSERS_PATH=0 node <voyageur click check>` OK (`url: '/'`, `overflow: 'visible'`, gate démonté) ; `npm run build` OK ; `npx tsc --noEmit` OK.
+
+---
+
+## 2026-04-05T00:55:00Z | type: ui | Cursor — Fix « Je réserve un séjour » (gate restait monté, scroll lock bloqué)
+
+- **agent**: `cursor`
+- **summary**: `HomeAudienceGate` : le guard `mounted` est réinitialisé au montage d’effet (`mounted.current = true`) pour éviter un état `false` persistant ; la fermeture `startExit` après clic voyageur (`Je réserve un séjour`) s’applique à nouveau correctement à chaque cycle.
+- **files**: [`components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Après plusieurs cycles, l’overlay restait en `opacity-0` (toujours monté) avec `body overflow: hidden` ; l’utilisateur devait refresh. Cause: garde `mounted` non réarmé dans certains cycles dev/navigation.
+- **impact**: Parcours voyageur répétable sans blocage ni refresh.
+- **verify**: `PLAYWRIGHT_BROWSERS_PATH=0 node <repro voyageur x6>` OK (`overlay:null`, `overflow:visible`) ; `npm run build` OK.
+
+---
+
+## 2026-04-05T00:35:00Z | type: ui | Cursor — Gate audience : overlay non-bloquant + ouverture sans dépendance RAF
+
+- **agent**: `cursor`
+- **summary**: `HomeAudienceGate` : overlay masqué en `pointer-events-none` (évite interception des clics quand `opacity-0`) ; ouverture du gate rendue déterministe via `setEntered(show)` dans `useLayoutEffect` et `pageshow` (plus de dépendance à `requestAnimationFrame`).
+- **files**: [`components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: En repro multi-cycles, le gate pouvait rester monté mais invisible et capter les interactions ; dans certains timings le RAF ne rejouait pas l’entrée du gate, donnant l’impression d’un état bloqué sans F5.
+- **impact**: « Changer de parcours » répétable sans blocage d’UI (menu/nav/footer) et réouverture plus fiable.
+- **verify**: `PLAYWRIGHT_BROWSERS_PATH=0 node <repro script>` (cycles navbar + footer) ; `npx tsc --noEmit` OK ; `npm run build` OK.
+
+---
+
+## 2026-03-31T22:30:00Z | type: ui | Cursor — Gate audience : remontage par clé + suppression effet `gateReopenSignal`
+
+- **agent**: `cursor`
+- **summary**: **`HomeAudienceGateLoader`** (`key={gateReopenSignal}`) ; **`HomeAudienceGate`** : retrait **`useHomeAudience`**, ref **`lastHandledReopenGen`** et **`useEffect`** de réouverture (redondants avec le remontage) ; **`replaceHomeAndRequestGateReopen`** : **`router.refresh()`** si déjà sur **`/`** sans query.
+- **files**: [`components/home/HomeAudienceGate.tsx`, `components/home/HomeAudienceGateLoader.tsx`, `app/page.tsx`, `lib/homeAudienceNavigation.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
+- **why**: **`router.replace("/")`** no-op sur `/` + doubles cycles ; le remontage réexécute **`readGateInitialShow()`** dans **`useLayoutEffect`** à chaque instance.
+- **impact**: « Changer de parcours » répété sans dépendre d’un effet fragile ni F5.
+- **verify**: `npx tsc --noEmit` OK ; `npm run build` OK.
+
+---
+
+## 2026-04-05T14:00:00Z | type: ui | Cursor — `gateReopenSignal` monotonique (suppression `consume` → 0)
+
+- **agent**: `cursor`
+- **summary**: Suppression **`consumeGateReopenSignal`** ; **`gateReopenSignal`** n’est plus remis à **0** ; **`HomeAudienceGate`** : ref **`lastHandledReopenGen`** pour traiter chaque incrément une seule fois (bug 2ᵉ / 3ᵉ « Changer de parcours » sans gate).
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`, `docs/superpowers/prompts/claude-code-fix-changer-parcours-refresh.md`]
+- **why**: `setState(0)` + doubles **`requestGateReopen`** pouvaient faire **perdre** un nouveau tick ou réappliquer un état incohérent après plusieurs cycles.
+- **impact**: Réouvertures répétées du gate fiables.
+- **verify**: `npx tsc --noEmit` OK.
+
+---
+
+## 2026-04-05T12:00:00Z | type: ui | Cursor — « Changer de parcours » répété : anti-race `?pour=` + rAF après tout `replace`
+
+- **agent**: `cursor`
+- **summary**: **`hydrateAudienceFromUrlIfNeeded`** ignore l’hydratation si **`dn_gate_reopen_pending`** ; **`replaceHomeAndRequestGateReopen`** : **`requestAnimationFrame(requestGateReopen)`** après **chaque** **`router.replace("/")`** (y compris `/?pour=…` → `/`) ; effet gate : si storage audience + pending réouverture → **purge** du storage puis ouverture.
+- **files**: [`contexts/HomeAudienceContext.tsx`, `lib/homeAudienceNavigation.ts`, `components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: `?pour=` pouvait re-remplir **`dn_home_audience`** entre **`clearAudience`** et l’effet → early return sans gate ; le 2ᵉ bump manquait quand **`isHome && hasParams`**.
+- **impact**: Gate visible en boucle sans F5.
+- **verify**: `npx tsc --noEmit` OK.
+
+---
+
+## 2026-03-31T21:15:00Z | type: ui | Cursor — Audit gate audience : scroll lock global + BFCache + nav
+
+- **agent**: `cursor`
+- **summary**: **`lib/bodyScrollLock`** (compteur) ; **`SiteFrame`** : `resetBodyScrollLock` sur `pathname` (`useLayoutEffect`) + **`pageshow` persisted** ; **`HomeAudienceGate`** / **Navbar** : `acquireBodyScrollLock` ; **`readGateInitialShow`** + resync BFCache ; **`replaceHomeAndRequestGateReopen`** (Navbar/Footer). Doc **`docs/audits/home-audience-gate.md`**.
+- **files**: [`lib/bodyScrollLock.ts`, `lib/homeAudienceNavigation.ts`, `components/layout/SiteFrame.tsx`, `components/home/HomeAudienceGate.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `contexts/HomeAudienceContext.tsx` (commentaire), `docs/audits/home-audience-gate.md`, `docs/superpowers/prompts/claude-code-opera-home-gate-bug.md`]
+- **why**: Courses **`body.overflow`** gate vs menu ; cleanups manquants ; état gate après BFCache ; séquence « Changer de parcours » dupliquée.
+- **impact**: Navigation vers `/` fiable (scroll utilisable) ; cohérence multi-navigateurs.
+- **verify**: `npx tsc --noEmit`, `npm run build` OK.
+
+---
+
+## 2026-03-31T20:30:00Z | type: ui | Cursor — Opera : « Changer de parcours » sans F5 (`requestGateReopen` + rAF)
+
+- **agent**: `cursor`
+- **summary**: Suppression du pipeline **`CustomEvent`** / **`scheduleHomeAudienceGateReopen`** ; **`requestGateReopen()`** incrémente **`gateReopenSignal`** dans le provider ; **Navbar / Footer** appellent **`requestGateReopen()`** puis **`requestAnimationFrame(() => requestGateReopen())`** après **`router.replace("/")`** (2ᵉ signal si **`pathname`** n’est pas encore `/`).
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Opera ordonne différemment microtasks / navigation ; le chemin direct + bump après paint évite de devoir rafraîchir.
+- **impact**: Même comportement qu’en Chrome sur « Changer de parcours ».
+- **verify**: `npx tsc --noEmit` OK.
+
+---
+
+## 2026-03-31T19:00:00Z | type: ui | Cursor — Gate réouverture : `gateReopenSignal` dans le provider (fix refresh obligatoire)
+
+- **agent**: `cursor`
+- **summary**: **`gateReopenSignal` / `consumeGateReopenSignal`** ; provider écoute **`HOME_AUDIENCE_GATE_REOPEN_EVENT`** avec coalesce ; gate : effet **`[gateReopenSignal, pathname]`** ; **`scheduleHomeAudienceGateReopen`** allégé (sync + microtask + 80 ms).
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Événements window sans listener si gate démonté ; `pathname` pas `/` au tick sync ; boucles si plusieurs bumps après consume.
+- **impact**: « Changer de parcours » sans F5.
+- **verify**: tsc OK.
+
+---
+
+## 2026-03-31T17:00:00Z | type: ui | Cursor — « Changer de parcours » réouvre le gate sur `/`
+
+- **agent**: `cursor`
+- **summary**: **`HOME_AUDIENCE_GATE_REOPEN_EVENT`** + **`requestHomeAudienceGateReopen()`** ; **`HomeAudienceGate`** écoute et réaffiche le dialog si storage vide ; **Navbar / Footer** après **`clearAudience` + `replace("/")`** appellent **`setTimeout(..., 0)`** pour laisser monter le gate depuis une autre route.
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/home/HomeAudienceGate.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Même URL `/` sans remount → état local `decision` restait à `false`.
+- **impact**: Retour explicite au choix voyageur / propriétaire.
+- **verify**: tsc OK.
+
+---
+
+## 2026-03-31T18:00:00Z | type: ui | Cursor — Gate réouverture fiable (flag + relances + skip hydrate)
+
+- **agent**: `cursor`
+- **summary**: **`scheduleHomeAudienceGateReopen()`** remplace **`request`** : **`dn_gate_reopen_pending`** en sessionStorage, **plusieurs `dispatch`** (0 / 50 / 120 / 300 ms). **`HomeAudienceGate`** : `useLayoutEffect` avec `wantReopen` → **pas** d’**`hydrateAudienceFromUrlIfNeeded`** si réouverture (évite `?pour=` qui re-remplit le storage) ; **`tryOpenGateFromReopenRequest`** ; **`usePathname`** pour consommer le flag quand la route devient **`/`** (gate monté après navigation). **Navbar / Footer** : **`scheduleHomeAudienceGateReopen()`** après **`replace("/")`**.
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/home/HomeAudienceGate.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Événement seul ou `setTimeout(0)` perdus si le gate n’est pas monté ; course avec hydrate URL.
+- **impact**: Réouverture du gate cohérente depuis toute page et depuis `/` avec ancienne query.
+- **verify**: tsc OK.
+
+---
+
+## 2026-03-31T16:00:00Z | type: ui | Cursor — Audience : hydratation `/?pour=` → sessionStorage (cohérence gate / home)
+
+- **agent**: `cursor`
+- **summary**: **`hydrateAudienceFromUrlIfNeeded()`** — sur `/` uniquement, si pas de valeur en storage, map **`pour=locataire|locataires` → voyageur**, **`pour=proprietaire|proprietaires` → propriétaire** ; évite gate masqué par `hasPour` avec contexte encore `null` (nav neutre, mauvaise section featured, scroll vers `#offre-proprietaire` absent). **`useLayoutEffect`** dans le provider pour sync état avant paint ; gate appelle la même hydratation avant la règle d’affichage.
+- **files**: [`contexts/HomeAudienceContext.tsx`, `components/home/HomeAudienceGate.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Double source de vérité URL vs storage sans pont.
+- **impact**: Deep links et partages `?pour=` alignés avec nav, blocs home et scroll.
+- **verify**: lint OK.
+
+---
+
+## 2026-03-31T14:00:00Z | type: ui | Cursor — Changer de parcours dans le menu + `replace("/")`
+
+- **agent**: `cursor`
+- **summary**: Bouton **Changer de parcours** dans le **tiroir nav** (`clearAudience` + fermeture menu + `router.replace("/")`) quand audience voyageur ou propriétaire ; footer aligné sur **`replace`** au lieu de **`push`** pour `/` sans query (`pour=locataire`) et moins d’empilement historique.
+- **files**: [`components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Accès au gate depuis le menu ; cohérence avec le footer.
+- **impact**: Réaffichage du gate sur l’accueil après reset + navigation propre.
+- **verify**: lint OK.
+
+---
+
 ## 2026-03-31T12:00:00Z | type: ui | Cursor — Navbar moins imposante (logo + padding)
 
 - **agent**: `cursor`

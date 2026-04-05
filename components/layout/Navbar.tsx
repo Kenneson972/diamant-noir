@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Phone, Mail, Heart, User, CalendarDays } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useHomeAudience } from "@/contexts/HomeAudienceContext";
+import { acquireBodyScrollLock } from "@/lib/bodyScrollLock";
+import { replaceHomeAndRequestGateReopen } from "@/lib/homeAudienceNavigation";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
 const NAV_ITEMS_DEFAULT: { href: string; label: string }[] = [
@@ -35,13 +37,14 @@ const CONCIERGE_TEL_HREF = "tel:+59696000000";
 
 export const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
   const supabase = getSupabaseBrowser();
   const { locale, setLocale, currency, setCurrency } = useLocale();
   const { count: wishlistCount } = useWishlist();
-  const { audience } = useHomeAudience();
+  const { audience, clearAudience, requestGateReopen } = useHomeAudience();
 
   const navItems = useMemo(() => {
     if (audience === "voyageur") {
@@ -77,17 +80,19 @@ export const Navbar = () => {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+  const changeParcours = useCallback(() => {
+    clearAudience();
+    closeMenu();
+    replaceHomeAndRequestGateReopen(router, requestGateReopen);
+  }, [clearAudience, closeMenu, requestGateReopen, router]);
+
   useEffect(() => {
     closeMenu();
   }, [pathname, closeMenu]);
 
   useEffect(() => {
     if (!menuOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return acquireBodyScrollLock();
   }, [menuOpen]);
 
   useEffect(() => {
@@ -252,6 +257,17 @@ export const Navbar = () => {
                 </Link>
               </li>
             ) : null}
+            {(audience === "voyageur" || audience === "proprietaire") && (
+              <li className="px-4 pt-3">
+                <button
+                  type="button"
+                  onClick={changeParcours}
+                  className="w-full min-h-[44px] py-2 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
+                >
+                  Changer de parcours
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
 
@@ -339,7 +355,7 @@ export const Navbar = () => {
             </button>
           </div>
 
-          <div className="pointer-events-none flex max-w-[calc(100vw-7rem)] min-w-0 justify-center px-1 sm:max-w-none sm:px-2">
+          <div className="pointer-events-none relative z-10 flex min-w-0 max-w-[calc(100vw-8rem)] justify-center px-1 sm:max-w-[calc(100vw-13rem)] sm:px-2 md:max-w-[calc(100vw-20rem)] lg:max-w-none">
             <BrandLogo
               variant={logoVariant}
               size="nav"
@@ -350,16 +366,15 @@ export const Navbar = () => {
             />
           </div>
 
-          <div className="flex min-w-0 items-center justify-end gap-0.5 min-[400px]:gap-1 sm:gap-2 md:gap-4">
+          {/*
+            Barre : jamais de numéro en texte ici (largeur fixe → wrap / chevauchement logo sur tablette).
+            Appel : icône seule (sm+) + numéro lisible dans le menu / footer. Touch 44px (kb-mobile-responsive).
+          */}
+          <div className="flex min-w-0 items-center justify-end gap-0.5 overflow-x-clip min-[400px]:gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
-              className={`tap-target hidden items-center text-[12px] font-medium tracking-[0.02em] transition-colors md:inline-flex ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
-            >
-              {CONCIERGE_TEL}
-            </a>
-            <a
-              href={CONCIERGE_TEL_HREF}
-              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center min-[400px]:h-10 min-[400px]:w-10 sm:h-11 sm:w-11 md:hidden max-[399px]:hidden ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
+              title={CONCIERGE_TEL}
+              className={`tap-target hidden h-10 w-10 shrink-0 items-center justify-center sm:flex sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
               <Phone size={20} strokeWidth={1.25} aria-hidden />
@@ -369,7 +384,7 @@ export const Navbar = () => {
 
             <Link
               href="/villas"
-              className={`tap-target relative flex h-9 w-9 shrink-0 items-center justify-center transition-opacity min-[400px]:h-10 min-[400px]:w-10 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target relative hidden h-10 w-10 shrink-0 items-center justify-center transition-opacity sm:flex sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label={
                 wishlistCount > 0
                   ? `Favoris, ${wishlistCount} villa${wishlistCount > 1 ? "s" : ""}`
@@ -400,10 +415,10 @@ export const Navbar = () => {
             <Link
               href={primaryCtaHref}
               aria-label={primaryCtaAria}
-              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 min-[400px]:h-auto min-[400px]:w-auto min-[400px]:max-w-[5.75rem] min-[400px]:px-3 min-[400px]:py-2 min-[400px]:text-[9px] min-[400px]:font-bold min-[400px]:uppercase min-[400px]:leading-snug min-[400px]:tracking-[0.18em] sm:max-w-none sm:px-5 sm:text-[10px] sm:tracking-[0.22em] ${primaryCtaSolidStyle}`}
+              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:max-w-none md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
-              <CalendarDays size={18} strokeWidth={1.25} className="min-[400px]:hidden" aria-hidden />
-              <span className="hidden min-[400px]:inline">{primaryCtaLabel}</span>
+              <CalendarDays size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
+              <span className="hidden md:inline">{primaryCtaLabel}</span>
             </Link>
           </div>
         </div>

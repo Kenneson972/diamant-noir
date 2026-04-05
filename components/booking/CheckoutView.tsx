@@ -112,7 +112,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const totalAmount = priceResult ? priceResult.total + cleaningFee + serviceFee : 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-20">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-24 sm:pb-12 lg:py-20">
       <div className="mb-12">
         <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/40 hover:text-navy transition-colors group">
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
