@@ -108,7 +108,7 @@ export function AvailabilityAlert({
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Email */}
           <div>
-            <label className="block text-[9px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
+            <label className="block text-[10px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
               Votre email
             </label>
             <input
@@ -124,7 +124,7 @@ export function AvailabilityAlert({
           {/* Dates */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[9px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
                 Arrivée souhaitée
               </label>
               <input
@@ -137,7 +137,7 @@ export function AvailabilityAlert({
               />
             </div>
             <div>
-              <label className="block text-[9px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-navy/45 mb-1.5">
                 Départ souhaité
               </label>
               <input
@@ -179,7 +179,7 @@ export function AvailabilityAlert({
             </button>
           </div>
 
-          <p className="text-[9px] text-navy/30 leading-relaxed">
+          <p className="text-[10px] text-navy/30 leading-relaxed">
             Vos données sont utilisées uniquement pour cette alerte.
             Aucun démarchage commercial.
           </p>

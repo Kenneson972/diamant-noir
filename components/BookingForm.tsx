@@ -47,10 +47,9 @@ export const BookingForm = ({
       }
 
       const { data, error: fetchError } = await supabaseBrowser
-        .from("bookings")
+        .from("booking_calendar_slots")
         .select("start_date,end_date")
-        .eq("villa_id", villaId)
-        .in("status", ["pending", "confirmed"]);
+        .eq("villa_id", villaId);
 
       if (fetchError) {
         setError("Impossible de charger les disponibilités");

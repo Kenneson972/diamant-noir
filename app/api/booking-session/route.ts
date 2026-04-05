@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     }
   }
 
-  const supabase = getSupabaseServer();
+  const supabase = supabaseAdmin();
   const { data: booking, error: bookingError } = await supabase
     .from("bookings")
     // Security: never return PII here; session_id can leak via URLs/logs.

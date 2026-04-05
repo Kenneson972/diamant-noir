@@ -264,7 +264,7 @@ export function HomeAudienceGate() {
         ].join(" ")}
       >
         <p
-          className="text-[9px] font-bold uppercase tracking-[0.45em] text-navy/40 animate-stagger-fade [animation-fill-mode:backwards]"
+          className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/40 animate-stagger-fade [animation-fill-mode:backwards]"
           style={{ animationDelay: "60ms" }}
         >
           Bienvenue · Diamant Noir
@@ -293,7 +293,7 @@ export function HomeAudienceGate() {
             disabled={!!loadingChoice}
             className="group flex min-h-[120px] flex-col items-start gap-2 border border-gold/35 bg-white px-6 py-7 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-gold/50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
           >
-            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold/80">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold/80">
               Voyageurs
             </span>
             <span className="font-display text-xl leading-tight text-navy">
@@ -317,7 +317,7 @@ export function HomeAudienceGate() {
             disabled={!!loadingChoice}
             className="group flex min-h-[120px] flex-col items-start gap-2 border border-navy/12 bg-offwhite px-6 py-7 text-left shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-navy/20 hover:bg-white hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
           >
-            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-navy/45">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/45">
               Propriétaires
             </span>
             <span className="font-display text-xl leading-tight text-navy">
@@ -339,7 +339,7 @@ export function HomeAudienceGate() {
           <button
             type="button"
             onClick={dismiss}
-            className="text-[9px] font-medium uppercase tracking-[0.28em] text-navy/35 underline-offset-4 transition-colors duration-150 hover:text-navy/55 focus:outline-none focus-visible:ring-1 focus-visible:ring-navy/30 animate-stagger-fade [animation-fill-mode:backwards]"
+            className="text-[10px] font-medium uppercase tracking-[0.28em] text-navy/35 underline-offset-4 transition-colors duration-150 hover:text-navy/55 focus:outline-none focus-visible:ring-1 focus-visible:ring-navy/30 animate-stagger-fade [animation-fill-mode:backwards]"
             style={{ animationDelay: "260ms" }}
           >
             Continuer sans choisir

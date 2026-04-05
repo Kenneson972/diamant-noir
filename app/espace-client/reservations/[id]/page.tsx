@@ -156,11 +156,11 @@ export default function ReservationDetailPage() {
               {villa?.name ?? "Votre séjour"}
             </Card.Title>
             <div className="flex items-center gap-2 flex-wrap">
-              <Chip size="sm" variant="soft" color={chipStatus.color} className="uppercase text-[9px] font-bold tracking-[0.2em]">
+              <Chip size="sm" variant="soft" color={chipStatus.color} className="uppercase text-[10px] font-bold tracking-[0.2em]">
                 {chipStatus.label}
               </Chip>
               {booking.price && (
-                <Chip size="sm" variant="secondary" color="default" className="uppercase text-[9px] font-bold tracking-[0.2em]">
+                <Chip size="sm" variant="secondary" color="default" className="uppercase text-[10px] font-bold tracking-[0.2em]">
                   {Number(booking.price).toLocaleString("fr-FR")} €
                 </Chip>
               )}
@@ -176,7 +176,7 @@ export default function ReservationDetailPage() {
             <div className="flex items-start gap-3">
               <Calendar size={14} strokeWidth={1.25} className="text-gold mt-0.5 shrink-0" />
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Dates</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Dates</p>
                 <p className="text-navy">
                   {new Date(booking.start_date).toLocaleDateString("fr-FR", {
                     day: "numeric",
@@ -202,7 +202,7 @@ export default function ReservationDetailPage() {
               <div className="flex items-start gap-3">
                 <MapPin size={14} strokeWidth={1.25} className="text-gold mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Lieu</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Lieu</p>
                   <p className="text-navy">{villa.location}</p>
                   <p className="text-navy/40 text-xs">Martinique</p>
                 </div>

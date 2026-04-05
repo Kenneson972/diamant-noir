@@ -138,7 +138,7 @@ export function ProfileForm({
         <TenantAvatar name={name} url={displayAvatar} size="lg" className="border border-navy/10 shrink-0" />
         {!demoMode && userId ? (
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-navy/40 mb-2">Photo de profil</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40 mb-2">Photo de profil</p>
             <label className="cursor-pointer inline-flex items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/50 hover:border-navy hover:text-navy transition-colors">
               <input
                 type="file"
@@ -155,7 +155,7 @@ export function ProfileForm({
                 "Changer la photo"
               )}
             </label>
-            <p className="text-[9px] text-navy/25 mt-1.5">JPG, PNG ou WebP · max 2 Mo</p>
+            <p className="text-[10px] text-navy/25 mt-1.5">JPG, PNG ou WebP · max 2 Mo</p>
           </div>
         ) : null}
       </div>

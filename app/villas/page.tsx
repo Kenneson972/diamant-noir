@@ -102,7 +102,7 @@ export default async function VillasListingPage({
         />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
-        <div className="relative mx-auto max-w-7xl px-6 pt-40 pb-16">
+        <div className="relative mx-auto max-w-7xl px-6 pt-24 pb-10 xs:pt-32 xs:pb-12 md:pt-40 md:pb-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="space-y-5 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center gap-3">

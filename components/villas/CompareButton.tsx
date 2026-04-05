@@ -28,7 +28,7 @@ export function CompareButton({ villa }: CompareButtonProps) {
       disabled={!selected && !canAdd}
       className={`
         flex items-center gap-1.5
-        text-[9px] font-semibold uppercase tracking-[0.2em]
+        text-[10px] font-semibold uppercase tracking-[0.2em]
         transition-colors duration-150
         ${selected
           ? "text-gold"

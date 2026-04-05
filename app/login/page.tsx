@@ -174,7 +174,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.35)] transition-colors hover:text-[#0D1B2A]"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.35)] transition-colors hover:text-[#0D1B2A]"
         >
           ← Retour à la connexion
         </button>
@@ -195,7 +195,7 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
               >
                 Nom <span className="font-normal normal-case tracking-normal text-[rgba(13,27,42,0.30)]">(optionnel)</span>
               </label>
@@ -221,7 +221,7 @@ function PasswordPanel({
           <div className="space-y-1">
             <label
               htmlFor="email-pass"
-              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
@@ -247,7 +247,7 @@ function PasswordPanel({
           <div className="space-y-1">
             <label
               htmlFor="password-pass"
-              className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
             >
               Mot de passe <span className="text-red-600">*</span>
             </label>
@@ -289,7 +289,7 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-confirm"
-                className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
@@ -355,7 +355,7 @@ function PasswordPanel({
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Pas encore de compte ?{" "}
           <button
             type="button"
@@ -370,7 +370,7 @@ function PasswordPanel({
           </button>
         </p>
       ) : (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Déjà un compte ?{" "}
           <button
             type="button"
@@ -474,7 +474,7 @@ function LoginForm() {
             <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.30)]">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.30)]">
             <Link href="/" className="transition-colors hover:text-[#0D1B2A]">
               ← Retour au site
             </Link>
@@ -494,7 +494,7 @@ function LoginForm() {
             ) : null}
           </div>
 
-          <p className="text-[9px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">© 2026 Diamant Noir</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">© 2026 Diamant Noir</p>
         </div>
       </div>
     </main>

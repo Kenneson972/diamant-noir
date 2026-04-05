@@ -194,7 +194,7 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
             className={animating ? "text-gold" : ""}
           />
           {unreadCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-navy leading-none">
+            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-navy leading-none">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
@@ -222,7 +222,7 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
                 Notifications
               </span>
               {unreadCount > 0 && (
-                <span className="bg-gold text-navy text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-gold text-navy text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   {unreadCount}
                 </span>
               )}
@@ -231,7 +231,7 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
-                  className="text-[9px] text-navy/40 dark:text-white/40 hover:text-gold transition-colors uppercase tracking-wider px-2 py-1"
+                  className="text-[10px] text-navy/40 dark:text-white/40 hover:text-gold transition-colors uppercase tracking-wider px-2 py-1"
                 >
                   Tout lire
                 </button>
@@ -301,16 +301,16 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
                         {/* Score IA si villa_submission */}
                         {notif.type === "villa_submission" && score !== undefined && (
                           <div className="flex items-center gap-2 mt-1.5">
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${SCORE_COLOR(score)}`}>
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${SCORE_COLOR(score)}`}>
                               Score {score}/100
                             </span>
                             {tier && (
-                              <span className="text-[9px] font-semibold text-gold uppercase tracking-wider">
+                              <span className="text-[10px] font-semibold text-gold uppercase tracking-wider">
                                 {tier}
                               </span>
                             )}
                             {notif.metadata?.ai_recommendation === "auto_review" && (
-                              <span className="flex items-center gap-0.5 text-[9px] text-green-600">
+                              <span className="flex items-center gap-0.5 text-[10px] text-green-600">
                                 <Sparkles size={9} /> Dossier fort
                               </span>
                             )}
@@ -319,10 +319,10 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
 
                         {/* Footer : timestamp + lien */}
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[9px] text-navy/35 dark:text-white/35">
+                          <span className="text-[10px] text-navy/35 dark:text-white/35">
                             {timeAgo(notif.created_at)}
                           </span>
-                          <span className="flex items-center gap-0.5 text-[9px] text-gold hover:text-gold/80">
+                          <span className="flex items-center gap-0.5 text-[10px] text-gold hover:text-gold/80">
                             Voir <ExternalLink size={9} />
                           </span>
                         </div>

@@ -175,7 +175,7 @@ export default function AdminAssistantPage() {
               <Send size={16} />
             </button>
           </form>
-          <div className="mt-4 flex items-center justify-center gap-4 text-[9px] font-bold uppercase tracking-widest text-white/20">
+          <div className="mt-4 flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/20">
             <span className="flex items-center gap-1"><Zap size={10} /> Mode Haute Performance</span>
             <span className="h-1 w-1 rounded-full bg-white/10" />
             <span className="flex items-center gap-1"><Database size={10} /> Supabase Connecté</span>

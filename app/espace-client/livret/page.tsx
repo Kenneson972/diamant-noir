@@ -121,13 +121,13 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
         <div className="space-y-5">
           {villa.wifi_name && (
             <div>
-              <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Réseau</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Réseau</p>
               <p className="font-cormorant text-[17px] text-[#0D1B2A]">{villa.wifi_name}</p>
             </div>
           )}
           {villa.wifi_password && (
             <div>
-              <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Mot de passe</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Mot de passe</p>
               <div className="flex items-center gap-3">
                 <div className="flex-1 flex items-center gap-2 border border-[rgba(13,27,42,0.09)] bg-[#FAFAF8] px-3 py-2">
                   <span className="font-mono text-[13px] text-[#0D1B2A] flex-1 select-all">
@@ -156,7 +156,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
                 <button
                   type="button"
                   onClick={copyPassword}
-                  className="shrink-0 text-[8px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-2 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                  className="shrink-0 text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-2 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
                   aria-label="Copier le mot de passe Wi-Fi"
                 >
                   {copied ? "Copié ✓" : "Copier"}
@@ -171,16 +171,16 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
       return (
         <div className="space-y-5">
           <div>
-            <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-in</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-in</p>
             <p className="font-cormorant text-[16px] text-[#0D1B2A]">À partir de 16h00</p>
           </div>
           <div>
-            <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-out</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-out</p>
             <p className="font-cormorant text-[16px] text-[#0D1B2A]">Avant 11h00</p>
           </div>
           {villa.checkout_instructions && (
             <div>
-              <p className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Instructions</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Instructions</p>
               <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
                 {villa.checkout_instructions}
               </p>
@@ -191,7 +191,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(villa.name + " " + villa.location + " Martinique")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[8px] tracking-[0.18em] uppercase text-[#D4AF37] hover:opacity-80 transition-opacity"
+              className="inline-flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase text-[#D4AF37] hover:opacity-80 transition-opacity"
               style={{ textDecoration: "none" }}
             >
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -231,7 +231,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
           ].map(({ name, number, desc }) => (
             <div key={name} className="flex items-center gap-4">
               <div className="flex-1">
-                <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)]">{desc}</p>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)]">{desc}</p>
                 <p className="font-cormorant text-[17px] text-[#0D1B2A] font-light">{name}</p>
               </div>
               <a
@@ -246,7 +246,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
           ))}
           {villa.emergency_contacts && (
             <div className="pt-4 border-t border-[rgba(13,27,42,0.07)]">
-              <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)] mb-2">Contact villa</p>
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)] mb-2">Contact villa</p>
               <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line">
                 {villa.emergency_contacts}
               </p>
@@ -321,7 +321,7 @@ export default function LivretPage() {
         {/* Header */}
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[8px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">Votre villa</p>
+            <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">Votre villa</p>
             <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
               {villa?.name ?? "Livret d'accueil"}
             </h1>
@@ -334,7 +334,7 @@ export default function LivretPage() {
           <button
             type="button"
             onClick={handlePrint}
-            className="hidden sm:flex items-center gap-2 text-[8px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2.5 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors shrink-0"
+            className="hidden sm:flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2.5 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors shrink-0"
           >
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
               <path d="M3 2h7l3 3v9H3z" stroke="currentColor" strokeWidth="1" />
@@ -375,7 +375,7 @@ export default function LivretPage() {
                     <span className={active ? "text-[#D4AF37]" : "text-[rgba(13,27,42,0.22)]"}>
                       {SECTION_ICONS[id]}
                     </span>
-                    <span className="text-[9px] tracking-[0.16em] uppercase flex-1">{label}</span>
+                    <span className="text-[10px] tracking-[0.16em] uppercase flex-1">{label}</span>
                     <svg
                       width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden
                       className={active ? "text-[#D4AF37]" : "text-[rgba(13,27,42,0.15)]"}
@@ -396,7 +396,7 @@ export default function LivretPage() {
                     type="button"
                     onClick={() => setActiveSection(id)}
                     className={[
-                      "text-[8px] tracking-[0.16em] uppercase px-3 py-2 border transition-colors",
+                      "text-[10px] tracking-[0.16em] uppercase px-3 py-2 border transition-colors",
                       activeSection === id
                         ? "border-[#D4AF37] text-[#D4AF37] bg-[rgba(212,175,55,0.04)]"
                         : "border-[rgba(13,27,42,0.1)] text-[rgba(13,27,42,0.45)] hover:border-[rgba(13,27,42,0.25)]",
@@ -410,7 +410,7 @@ export default function LivretPage() {
 
             {/* ── Content area ── */}
             <div className="flex-1 min-w-0 md:border-l md:border-[rgba(13,27,42,0.07)] md:pl-8">
-              <p className="text-[8px] tracking-[0.26em] uppercase text-[#D4AF37] mb-3">
+              <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-3">
                 {SECTIONS.find((s) => s.id === activeSection)?.label}
               </p>
               <SectionContent id={activeSection} villa={villa!} />
@@ -420,7 +420,7 @@ export default function LivretPage() {
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="text-[8px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2.5 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                  className="text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2.5 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
                 >
                   Télécharger le livret PDF →
                 </button>

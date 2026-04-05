@@ -11,6 +11,28 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-05T22:00:00Z | type: ui+a11y+docs | Claude Code — Mobile hero, typo 9→10px, screenshots 390px
+
+- **agent**: `claude`
+- **summary**: **EditorialHeroImmersive** (`editorial-blocks.tsx`) : `min-h-[88vh]` remplacé par des hauteurs progressives (`min-h-[400px]` → `xs:min-h-[460px]` → `md:min-h-[88vh]`) pour éviter un hero ~743px sur petit mobile (pages `/prestations`, `/qui-sommes-nous`). **Typo** : remplacement global des `text-[9px]` par `text-[10px]` sur ~13 fichiers (AvailabilityAlert, CompareBar/CompareButton, BookingCard, ProfileForm, login, espace-client profil/réservations/livret, `NotificationBell`, `VillasView`, assistant proprio, etc.). **Docs visuels** : suppression des anciennes captures `docs/screenshots/mobile-390px/*.png`, régénération via script Playwright (dev `next` ; retake home après attente gate). Tableau récap pages (home, propriétaires, prestations, livret, book, villas, login).
+- **files**: [`components/marketing/editorial-blocks.tsx`, `components/booking/AvailabilityAlert.tsx`, `components/villas/CompareBar.tsx`, `components/villas/CompareButton.tsx`, `components/espace-client/BookingCard.tsx`, `components/espace-client/ProfileForm.tsx`, `app/login/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/reservations/[id]/page.tsx`, `app/espace-client/livret/page.tsx`, `components/dashboard/NotificationBell.tsx`, `components/dashboard/assistant-views/VillasView.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `docs/screenshots/mobile-390px/` (régénéré), `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Lisibilité WCAG / confort mobile ; héros éditorial trop haut sur iPhone ; jeu de captures à jour pour revue design.
+- **impact**: UI plus lisible ; héros proportionné ; assets screenshot pour documentation.
+- **verify**: Session Claude : `curl` localhost → 200 après rebuild dev ; script Playwright OK sur les vues ciblées.
+
+---
+
+## 2026-04-05T18:00:00Z | type: sql+security+api | Cursor — Espace client : RLS bookings, vue calendrier, checklist, session Stripe
+
+- **agent**: `cursor`
+- **summary**: Migration `tenant_bookings_rls_calendar_fix.sql` : vue `booking_calendar_slots` (dates sans PII), suppression de `bookings_public_read`, policy `tenant_own_bookings_update` pour la checklist ; nettoyage RLS `support_tickets`. UI : `AvailabilityCalendar` + `BookingForm` lisent la vue ; checklist filtre `status = confirmed` + comparaison de dates ; `/api/booking-session` utilise `supabaseAdmin()` pour lire la réservation par `stripe_session_id` sans dépendre du SELECT public.
+- **files**: [`supabase/migrations/tenant_bookings_rls_calendar_fix.sql`, `components/booking/AvailabilityCalendar.tsx`, `components/BookingForm.tsx`, `app/espace-client/checklist/page.tsx`, `app/api/booking-session/route.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Fuite des lignes `bookings` via l’API anon ; checklist non persistée (pas d’UPDATE RLS) ; filtre `upcoming` incohérent avec le schéma ; route session Stripe cassée si SELECT public retiré.
+- **impact**: Calendrier public inchangé fonctionnellement ; données invités non exposées en masse ; locataires peuvent sauver la checklist ; récupération post-paiement fiable.
+- **verify**: `npm run build` (à lancer après `supabase db push` ou SQL Editor sur le projet).
+
+---
+
 ## 2026-04-04T22:30:00Z | type: ui | Cursor — Header : max-width logo vs colonne droite (anti-chevauchement sm–md)
 
 - **agent**: `cursor`

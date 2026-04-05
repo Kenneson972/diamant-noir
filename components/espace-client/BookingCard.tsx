@@ -75,7 +75,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
           color={status.chipColor}
           size="sm"
           variant="soft"
-          className="absolute top-2.5 right-2.5 uppercase text-[9px] font-bold tracking-[0.2em]"
+          className="absolute top-2.5 right-2.5 uppercase text-[10px] font-bold tracking-[0.2em]"
         >
           {status.label}
         </Chip>

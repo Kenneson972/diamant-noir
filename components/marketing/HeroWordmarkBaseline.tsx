@@ -34,7 +34,7 @@ export function HeroWordmarkBaseline({ headingId, titleLabel, children }: Props)
         className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150"
         aria-hidden={false}
       >
-        <span className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-b border-white/[0.12] pb-6 text-[9px] font-medium uppercase tracking-[0.42em] text-white/[0.72] sm:gap-x-5 sm:text-[10px] sm:tracking-[0.46em] md:gap-x-7 md:text-[11px]">
+        <span className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-b border-white/[0.12] pb-6 text-[10px] font-medium uppercase tracking-[0.42em] text-white/[0.72] sm:gap-x-5 sm:tracking-[0.46em] md:gap-x-7 md:text-[11px]">
           <span className="text-white/[0.88]">Confiance</span>
           <span className="select-none font-light text-white/25" aria-hidden>
             ·

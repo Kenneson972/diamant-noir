@@ -37,14 +37,14 @@ export function BookLandingMarketing({
   if (audience === "proprietaire") {
     return (
       <>
-        <section className="relative min-h-[78vh] w-full overflow-hidden bg-black">
+        <section className="relative min-h-[490px] w-full overflow-hidden bg-black xs:min-h-[520px] md:min-h-[78vh]">
           <div
             className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
             aria-hidden
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-          <div className="relative z-10 flex min-h-[78vh] flex-col justify-end px-6 pb-14 pt-28 md:pb-20 md:pt-32">
+          <div className="relative z-10 flex min-h-[490px] flex-col justify-end px-6 pb-8 pt-24 xs:min-h-[520px] md:min-h-[78vh] md:pb-20 md:pt-32">
             <div className="mx-auto w-full max-w-3xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
               <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/65">
                 Espace propriétaires
@@ -67,7 +67,7 @@ export function BookLandingMarketing({
                 >
                   <Building2 className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
                     <p className="mt-1 text-sm font-medium text-navy">L&apos;offre propriétaires</p>
                   </div>
                 </Link>
@@ -77,7 +77,7 @@ export function BookLandingMarketing({
                 >
                   <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
                     <p className="mt-1 text-sm text-navy/70">Soumettre ma villa</p>
                   </div>
                 </Link>
@@ -172,14 +172,14 @@ export function BookLandingMarketing({
 
   return (
     <>
-      <section className="relative min-h-[78vh] w-full overflow-hidden bg-black">
+      <section className="relative min-h-[490px] w-full overflow-hidden bg-black xs:min-h-[520px] md:min-h-[78vh]">
         <div
           className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
           aria-hidden
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-        <div className="relative z-10 flex min-h-[78vh] flex-col justify-end px-6 pb-14 pt-28 md:pb-20 md:pt-32">
+        <div className="relative z-10 flex min-h-[490px] flex-col justify-end px-6 pb-8 pt-24 xs:min-h-[520px] md:min-h-[78vh] md:pb-20 md:pt-32">
           <div className="mx-auto w-full max-w-3xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
             <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/65">Réservation</p>
             <h1 className="font-display text-4xl leading-[1.08] text-white md:text-6xl lg:text-7xl">
@@ -199,7 +199,7 @@ export function BookLandingMarketing({
               >
                 <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
                   <p className="mt-1 text-sm font-medium text-navy">Parcourir le catalogue</p>
                 </div>
               </Link>
@@ -209,7 +209,7 @@ export function BookLandingMarketing({
               >
                 <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
                   <p className="mt-1 text-sm text-navy/70">Dates sur la fiche villa</p>
                 </div>
               </Link>

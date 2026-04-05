@@ -347,7 +347,7 @@ export default function EspaceClientPage() {
                 key={label}
                 href={href}
                 className={[
-                  "group flex flex-col gap-3 px-5 py-6 min-h-[110px]",
+                  "group flex flex-col gap-3 px-3 py-4 xs:px-5 xs:py-6 min-h-[88px] xs:min-h-[110px]",
                   "border-l border-[rgba(13,27,42,0.07)] first:border-l-0",
                   "hover:bg-[rgba(212,175,55,0.03)] transition-colors duration-200 no-underline",
                 ].join(" ")}

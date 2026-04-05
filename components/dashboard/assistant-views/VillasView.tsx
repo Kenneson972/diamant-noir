@@ -73,7 +73,7 @@ export function VillasView({ data }: { data: any }) {
 
               <div className="flex gap-2 pt-2">
                 {(villa.amenities || []).slice(0, 4).map((a: string, idx: number) => (
-                  <span key={idx} className="rounded-lg bg-white/5 px-2 py-1 text-[9px] text-white/30 border border-white/5">
+                  <span key={idx} className="rounded-lg bg-white/5 px-2 py-1 text-[10px] text-white/30 border border-white/5">
                     {a}
                   </span>
                 ))}

@@ -24,10 +24,9 @@ export const AvailabilityCalendar = ({ villaId }: { villaId: string }) => {
       if (!supabase) return;
 
       const { data, error } = await supabase
-        .from("bookings")
+        .from("booking_calendar_slots")
         .select("start_date, end_date")
-        .eq("villa_id", villaId)
-        .in("status", ["pending", "confirmed"]);
+        .eq("villa_id", villaId);
 
       if (!error && data) {
         const events = data.map((b: any) => ({

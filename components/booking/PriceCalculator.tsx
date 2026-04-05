@@ -86,7 +86,7 @@ export function PriceCalculator({
       <div className="grid grid-cols-2 gap-px bg-navy/10 border border-navy/10">
         {/* Arrivée */}
         <div className="bg-white px-4 py-3">
-          <label className="block text-[9px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
             Arrivée
           </label>
           <input
@@ -102,7 +102,7 @@ export function PriceCalculator({
         </div>
         {/* Départ */}
         <div className="bg-white px-4 py-3">
-          <label className="block text-[9px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
             Départ
           </label>
           <input
@@ -118,7 +118,7 @@ export function PriceCalculator({
       {/* Voyageurs */}
       <div className="flex items-center gap-3 border border-navy/10 px-4 py-3">
         <Users size={14} className="text-navy/40 shrink-0" />
-        <label className="text-[9px] uppercase tracking-[0.2em] text-navy/40 flex-1">
+        <label className="text-[10px] uppercase tracking-[0.2em] text-navy/40 flex-1">
           Voyageurs
         </label>
         <div className="flex items-center gap-3">

@@ -52,7 +52,7 @@ export default async function HomePage() {
       <HomeAudienceGateLoader />
       {/* Hero — vidéo /public/hero.webm (WebM) + poster : mot « DIAMANT NOIR » + baseline (header = pictogramme) */}
       <section
-        className="relative flex min-h-[min(60vh,500px)] w-full flex-col justify-center overflow-hidden bg-black py-20 pt-24 xs:min-h-[min(65vh,580px)] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
+        className="relative flex min-h-[220px] w-full flex-col justify-center overflow-hidden bg-black pt-24 xs:min-h-[260px] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
         aria-labelledby="hero-title"
       >
         <video

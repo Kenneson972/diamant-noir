@@ -137,8 +137,8 @@ export default function ChecklistPage() {
         .from("bookings")
         .select("id, start_date, end_date, checklist_state, villa_id, status")
         .eq("guest_email", session.user.email)
-        .in("status", ["confirmed", "upcoming"])
-        .gt("end_date", new Date().toISOString())
+        .eq("status", "confirmed")
+        .gt("end_date", new Date().toISOString().slice(0, 10))
         .order("start_date", { ascending: true })
         .limit(1);
 
@@ -302,7 +302,7 @@ export default function ChecklistPage() {
                   <div className="flex-1 min-w-0">
                     <p
                       className={[
-                        "text-[9px] tracking-[0.18em] uppercase mb-0.5 transition-colors",
+                        "text-[10px] tracking-[0.18em] uppercase mb-0.5 transition-colors",
                         isChecked
                           ? "text-[rgba(13,27,42,0.3)] line-through decoration-[rgba(13,27,42,0.2)]"
                           : "text-[#0D1B2A] font-medium",

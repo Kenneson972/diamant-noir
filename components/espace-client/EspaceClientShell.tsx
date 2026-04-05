@@ -153,7 +153,7 @@ export function EspaceClientShell({
                 <Icon active={active} />
                 <span
                   className={[
-                    "text-[9px] tracking-[0.2em] uppercase",
+                    "text-[10px] tracking-[0.2em] uppercase",
                     active
                       ? "text-[#0D1B2A] font-medium"
                       : "text-[rgba(13,27,42,0.32)] font-normal",

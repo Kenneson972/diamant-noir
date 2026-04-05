@@ -267,7 +267,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             {villa.amenities && villa.amenities.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6">
                   {villa.amenities.slice(0, 8).map((item: string, i: number) => (
                     <div key={i} className="flex flex-col gap-3">
                       <div className="text-navy">{getIcon(item)}</div>

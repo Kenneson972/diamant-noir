@@ -326,7 +326,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
         <form onSubmit={handleProfileSubmit} className="space-y-6">
           <fieldset className="space-y-3 border-0 p-0">
-            <legend className="mb-2 block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+            <legend className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
               Civilité <span className="text-red-600">*</span>
             </legend>
             <div className="flex flex-wrap gap-4">
@@ -356,7 +356,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <label htmlFor="tenant-fn" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+              <label htmlFor="tenant-fn" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
                 Prénom <span className="text-red-600">*</span>
               </label>
               <input
@@ -370,7 +370,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               />
             </div>
             <div className="space-y-1">
-              <label htmlFor="tenant-ln" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+              <label htmlFor="tenant-ln" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
                 Nom <span className="text-red-600">*</span>
               </label>
               <input
@@ -386,7 +386,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="tenant-phone" className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+            <label htmlFor="tenant-phone" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
               Téléphone mobile <span className="text-red-600">*</span>
             </label>
             <input
@@ -462,7 +462,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         <div className="space-y-1">
           <label
             htmlFor="email-auth"
-            className="block text-[9px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+            className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
           >
             Adresse email <span className="text-red-600">*</span>
           </label>
@@ -509,7 +509,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Pas encore de compte ?{" "}
           <button
             type="button"
@@ -520,7 +520,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           </button>
         </p>
       ) : (
-        <p className="text-center text-[9px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
           Déjà un compte ?{" "}
           <button
             type="button"

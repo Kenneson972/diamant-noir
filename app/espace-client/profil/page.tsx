@@ -46,7 +46,7 @@ export default function ProfilPage() {
     return (
       <Card className="border border-navy/10 bg-white shadow-none rounded-none max-w-lg">
         <Card.Content className="px-8 py-14 text-center space-y-5">
-          <p className="text-[9px] font-bold uppercase tracking-[0.35em] text-navy/30">Profil</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">Profil</p>
           <p className="font-display text-xl text-navy">Connexion requise</p>
           <p className="text-sm text-navy/50 max-w-md mx-auto">
             Connectez-vous pour accéder à vos informations personnelles.
@@ -108,7 +108,7 @@ export default function ProfilPage() {
               <FileText size={16} className="text-gold" />
               Mes documents
             </Card.Title>
-            <Chip size="sm" variant="soft" color="default" className="text-[9px] uppercase tracking-[0.2em]">
+            <Chip size="sm" variant="soft" color="default" className="text-[10px] uppercase tracking-[0.2em]">
               Bientôt disponible
             </Chip>
           </div>

@@ -60,7 +60,7 @@ export function CompareBar() {
                   <p className="text-white text-xs font-medium truncate max-w-[120px]">
                     {item.name}
                   </p>
-                  <p className="text-white/45 text-[9px] tracking-wide truncate max-w-[120px]">
+                  <p className="text-white/45 text-[10px] tracking-wide truncate max-w-[120px]">
                     {item.location}
                   </p>
                 </div>
@@ -80,7 +80,7 @@ export function CompareBar() {
                 key={`empty-${i}`}
                 className="w-[140px] h-[52px] border border-dashed border-white/15 shrink-0 flex items-center justify-center"
               >
-                <span className="text-[9px] text-white/25 uppercase tracking-[0.15em]">
+                <span className="text-[10px] text-white/25 uppercase tracking-[0.15em]">
                   + Villa
                 </span>
               </div>

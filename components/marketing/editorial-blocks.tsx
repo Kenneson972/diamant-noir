@@ -18,7 +18,7 @@ export function EditorialHeroImmersive({
   imageAlt?: string;
 }) {
   return (
-    <section className="relative min-h-[88vh] w-full overflow-hidden bg-black">
+    <section className="relative min-h-[400px] w-full overflow-hidden bg-black xs:min-h-[460px] md:min-h-[88vh]">
       <Image
         src={imageSrc}
         alt={imageAlt || "Ambiance villa de luxe"}
@@ -29,7 +29,7 @@ export function EditorialHeroImmersive({
         sizes="100vw"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25" aria-hidden />
-      <div className="relative z-10 flex min-h-[88vh] flex-col justify-end px-6 pb-16 pt-28 md:px-10 md:pb-24 lg:px-16 lg:pb-28">
+      <div className="relative z-10 flex min-h-[400px] flex-col justify-end px-6 pb-12 pt-28 xs:min-h-[460px] md:min-h-[88vh] md:px-10 md:pb-24 lg:px-16 lg:pb-28">
         <div className="mx-auto w-full max-w-6xl">
           <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.55em] text-gold md:text-[11px]">{eyebrow}</p>
           <h1 className="max-w-5xl font-display text-[clamp(2.25rem,6vw,4.75rem)] font-normal uppercase leading-[1.05] tracking-[0.08em] text-white">

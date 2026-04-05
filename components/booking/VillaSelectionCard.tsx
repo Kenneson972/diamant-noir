@@ -71,7 +71,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           sizes="(max-width: 1024px) 100vw, 42vw"
           className="object-cover transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100"
         />
-        <div className="absolute left-4 top-4 border border-white/30 bg-white/95 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-navy backdrop-blur-sm">
+        <div className="absolute left-4 top-4 border border-white/30 bg-white/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy backdrop-blur-sm">
           {villa.location || "Martinique"}
         </div>
       </div>
