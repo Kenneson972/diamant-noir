@@ -34,9 +34,21 @@ function getCoordFallback(location: string | null): [number, number] {
 }
 
 const FALLBACK_VILLAS: VillaMapItem[] = [
-  { id: "1", name: "Villa Diamant Noir", location: "Le Diamant, Martinique", price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247] },
-  { id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique", price: 1200, image: "/villa-hero.jpg", coords: [14.4917, -61.0650] },
-  { id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique", price: 900, image: "/villa-hero.jpg", coords: [14.5361, -61.0261] },
+  {
+    id: "1", name: "Villa Diamant Noir", location: "Le Diamant, Martinique",
+    price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247],
+    images: ["/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
+  },
+  {
+    id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique",
+    price: 1200, image: "/villa-hero.jpg", coords: [14.4917, -61.0650],
+    images: ["/villa-hero.jpg"], capacity: 8, surface: 350, amenities: ["Piscine", "Vue mer", "Plage directe"], tier: "Exclusive",
+  },
+  {
+    id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique",
+    price: 900, image: "/villa-hero.jpg", coords: [14.5361, -61.0261],
+    images: ["/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
+  },
 ];
 
 function formatIsoDateFr(d: string) {
@@ -68,22 +80,42 @@ export default async function VillasListingPage({
     const supabase = getSupabaseServer();
     const { data, error } = await supabase
       .from("villas")
-      .select("id,name,location,price_per_night,image_url,image_urls,latitude,longitude")
+      .select("id,name,location,price_per_night,image_url,image_urls,latitude,longitude,capacity,surface_m2,amenities,collection_tier")
       .eq("is_published", true)
       .order("created_at", { ascending: false });
 
     if (!error && data && data.length > 0) {
-      villas = data.map((villa) => ({
-        id: villa.id,
-        name: villa.name,
-        location: villa.location || "Martinique",
-        price: villa.price_per_night,
-        image: villa.image_url || villa.image_urls?.[0] || "/villa-hero.jpg",
-        coords:
-          villa.latitude && villa.longitude
-            ? [villa.latitude, villa.longitude] as [number, number]
-            : getCoordFallback(villa.location),
-      }));
+      villas = data.map((villa) => {
+        const rawAmenities = villa.amenities;
+        const amenities: string[] = Array.isArray(rawAmenities)
+          ? rawAmenities
+          : typeof rawAmenities === "string"
+          ? [rawAmenities]
+          : [];
+
+        const allImages: string[] = Array.isArray(villa.image_urls)
+          ? villa.image_urls
+          : villa.image_url
+          ? [villa.image_url]
+          : [];
+
+        return {
+          id: villa.id,
+          name: villa.name,
+          location: villa.location || "Martinique",
+          price: villa.price_per_night,
+          image: allImages[0] || "/villa-hero.jpg",
+          coords:
+            villa.latitude && villa.longitude
+              ? [villa.latitude, villa.longitude] as [number, number]
+              : getCoordFallback(villa.location),
+          images: allImages.length > 0 ? allImages : ["/villa-hero.jpg"],
+          capacity: typeof villa.capacity === "number" ? villa.capacity : null,
+          surface: typeof villa.surface_m2 === "number" ? villa.surface_m2 : null,
+          amenities,
+          tier: villa.collection_tier || null,
+        };
+      });
     }
   } catch (err) {
     console.error("Supabase fetch error (villas):", err);

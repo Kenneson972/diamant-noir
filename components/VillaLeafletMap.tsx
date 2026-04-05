@@ -10,6 +10,12 @@ export type VillaMapItem = {
   price: number;
   image: string | null;
   coords: [number, number];
+  // Quick View fields
+  images: string[];
+  capacity: number | null;
+  surface: number | null;
+  amenities: string[];
+  tier: string | null;
 };
 
 interface Props {
