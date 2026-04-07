@@ -122,7 +122,7 @@ export default async function VillasListingPage({
   }
 
   return (
-    <main className="min-h-screen bg-offwhite">
+    <main className="min-h-dvh bg-offwhite">
       {/* ── Hero Header ── */}
       <section className="relative bg-navy overflow-hidden">
         <div
@@ -134,7 +134,7 @@ export default async function VillasListingPage({
         />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
-        <div className="relative mx-auto max-w-7xl px-6 pt-24 pb-10 xs:pt-32 xs:pb-12 md:pt-40 md:pb-16">
+        <div className="relative mx-auto max-w-7xl px-5 pb-12 pt-24 sm:px-6 xs:pb-14 md:pb-16 md:pt-24">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center gap-3">

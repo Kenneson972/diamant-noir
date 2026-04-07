@@ -111,12 +111,24 @@ const getIcon = (amenity: string) => {
   const a = amenity.toLowerCase();
   if (a.includes("wifi")) return <Wifi size={18} strokeWidth={1} />;
   if (a.includes("climatisation") || a.includes("clim")) return <Wind size={18} strokeWidth={1} />;
-  if (a.includes("piscine")) return <Waves size={18} strokeWidth={1} />;
-  if (a.includes("café") || a.includes("café")) return <Coffee size={18} strokeWidth={1} />;
-  if (a.includes("mer") || a.includes("vue")) return <Waves size={18} strokeWidth={1} />;
-  if (a.includes("chef") || a.includes("cuisine")) return <Shield size={18} strokeWidth={1} />;
+  if (a.includes("piscine") || a.includes("jacuzzi")) return <Waves size={18} strokeWidth={1} />;
+  if (a.includes("café") || a.includes("coffee")) return <Coffee size={18} strokeWidth={1} />;
+  if (a.includes("mer") || a.includes("vue") || a.includes("plage")) return <Waves size={18} strokeWidth={1} />;
+  if (a.includes("chef") || a.includes("cuisine") || a.includes("réfrigérateur")) return <Shield size={18} strokeWidth={1} />;
   return <Check size={18} strokeWidth={1} />;
 };
+
+/** Intérieur : liste dédiée ou repli sur `amenities` (import OTA). Extérieur : jamais dupliqué depuis `amenities`. */
+function getEquipmentDisplayLists(villa: Pick<VillaDetails, "amenities" | "equipment_interior" | "equipment_exterior">): {
+  interior: string[];
+  exterior: string[];
+} {
+  const amenities = (villa.amenities ?? []).map((s) => String(s).trim()).filter(Boolean);
+  const interiorExplicit = (villa.equipment_interior ?? []).map((s) => String(s).trim()).filter(Boolean);
+  const exterior = (villa.equipment_exterior ?? []).map((s) => String(s).trim()).filter(Boolean);
+  const interior = interiorExplicit.length > 0 ? interiorExplicit : amenities;
+  return { interior, exterior };
+}
 
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -193,8 +205,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     console.error("Supabase fetch error (villa details):", error);
   }
 
+  const { interior: equipmentInteriorList, exterior: equipmentExteriorList } = getEquipmentDisplayLists(villa);
+  const showEquipmentDetail = equipmentInteriorList.length > 0 || equipmentExteriorList.length > 0;
+  const equipmentGridTwoCols = equipmentInteriorList.length > 0 && equipmentExteriorList.length > 0;
+
   return (
-    <main className="min-h-screen bg-offwhite">
+    <main className="min-h-dvh bg-offwhite pb-24 sm:pb-0">
       <VillaViewTracker villaId={villa.id} />
 
       {/* ── Galerie plein largeur ── */}
@@ -303,34 +319,40 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             )}
 
-            {/* Tous les équipements */}
-            <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">Tous les équipements</h2>
-              <div className="grid gap-8 md:grid-cols-2">
-                <div>
-                  <h3 className="font-display text-lg text-navy mb-4">Intérieur</h3>
-                  <div className="space-y-2 text-sm text-navy/70">
-                    {(villa.equipment_interior?.length ? villa.equipment_interior : villa.amenities || []).map((item, index) => (
-                      <p key={`eq-int-${index}`} className="flex items-center gap-2">
-                        <span className="text-gold">•</span>
-                        {item}
-                      </p>
-                    ))}
-                  </div>
+            {/* Tous les équipements (détail : pas de duplication extérieur = même liste que incontournables) */}
+            {showEquipmentDetail && (
+              <section className="pt-10 border-t border-navy/10">
+                <h2 className="font-display font-normal text-2xl text-navy mb-8">Tous les équipements</h2>
+                <div className={`grid gap-8 ${equipmentGridTwoCols ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+                  {equipmentInteriorList.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-lg text-navy mb-4">Intérieur</h3>
+                      <div className="space-y-2 text-sm text-navy/70">
+                        {equipmentInteriorList.map((item, index) => (
+                          <p key={`eq-int-${index}`} className="flex items-center gap-2">
+                            <span className="text-gold">•</span>
+                            {item}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {equipmentExteriorList.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-lg text-navy mb-4">Extérieur</h3>
+                      <div className="space-y-2 text-sm text-navy/70">
+                        {equipmentExteriorList.map((item, index) => (
+                          <p key={`eq-ext-${index}`} className="flex items-center gap-2">
+                            <span className="text-gold">•</span>
+                            {item}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-display text-lg text-navy mb-4">Extérieur</h3>
-                  <div className="space-y-2 text-sm text-navy/70">
-                    {(villa.equipment_exterior?.length ? villa.equipment_exterior : villa.amenities || []).map((item, index) => (
-                      <p key={`eq-ext-${index}`} className="flex items-center gap-2">
-                        <span className="text-gold">•</span>
-                        {item}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
+              </section>
+            )}
 
             {/* Services inclus */}
             <section className="pt-10 border-t border-navy/10">
@@ -591,8 +613,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
       {/* Mobile sticky booking bar */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-30 sm:hidden border-t border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3"
-        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+        className="fixed bottom-0 left-0 right-0 z-30 sm:hidden border-t border-black/10 bg-white/95 px-4 pt-3 backdrop-blur-none pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]"
       >
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -604,7 +625,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           </div>
           <Link
             href="#reserver-sejour"
-            className="flex-1 max-w-[180px] text-center bg-navy text-white py-3 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-navy/90 transition-colors"
+            className="flex min-h-[48px] min-w-[44px] flex-1 max-w-[min(180px,42vw)] items-center justify-center bg-navy px-2 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy/90"
           >
             Réserver
           </Link>

@@ -19,7 +19,7 @@ export default async function BookPage({
 
   if (villaId && checkin && checkout) {
     return (
-      <main className="min-h-screen bg-offwhite pt-20">
+      <main className="min-h-dvh bg-offwhite pt-20">
         <CheckoutView villaId={villaId} checkin={checkin} checkout={checkout} guestsCount={guestsParam} />
       </main>
     );
@@ -33,7 +33,7 @@ export default async function BookPage({
   const hasDateOnly = Boolean(checkin && checkout && !villaId);
 
   return (
-    <main className="min-h-screen bg-offwhite">
+    <main className="min-h-dvh bg-offwhite">
       <BookLandingMarketing
         catalogueHref={catalogueHref}
         hasDateOnly={hasDateOnly}

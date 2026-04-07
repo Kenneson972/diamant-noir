@@ -2,34 +2,21 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Menu, X, Phone, Mail, Heart, User, CalendarDays } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { useHomeAudience } from "@/contexts/HomeAudienceContext";
 import { acquireBodyScrollLock } from "@/lib/bodyScrollLock";
-import { replaceHomeAndRequestGateReopen } from "@/lib/homeAudienceNavigation";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
-const NAV_ITEMS_DEFAULT: { href: string; label: string }[] = [
+const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/", label: "Accueil" },
   { href: "/villas", label: "Nos villas" },
-  { href: "/prestations", label: "Prestations" },
+  { href: "/prestations", label: "Conciergerie" },
   { href: "/qui-sommes-nous", label: "À propos" },
   { href: "/contact", label: "Contact" },
-  { href: "/proprietaires", label: "Propriétaires" },
-];
-
-/** Ordre et libellés orientés propriétaire : catalogue en dernier, libellé « Locations ». */
-const NAV_ITEMS_PROPRIETAIRE: { href: string; label: string }[] = [
-  { href: "/", label: "Accueil" },
-  { href: "/proprietaires", label: "Propriétaires" },
-  { href: "/prestations", label: "Prestations" },
-  { href: "/qui-sommes-nous", label: "À propos" },
-  { href: "/contact", label: "Contact" },
-  { href: "/villas", label: "Locations" },
 ];
 
 const CONCIERGE_TEL = "+596 96 00 00 00";
@@ -37,32 +24,20 @@ const CONCIERGE_TEL_HREF = "tel:+59696000000";
 
 export const Navbar = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
   const supabase = getSupabaseBrowser();
   const { locale, setLocale, currency, setCurrency } = useLocale();
   const { count: wishlistCount } = useWishlist();
-  const { audience, clearAudience, requestGateReopen } = useHomeAudience();
 
-  const navItems = useMemo(() => {
-    if (audience === "voyageur") {
-      return NAV_ITEMS_DEFAULT.filter((i) => i.href !== "/proprietaires");
-    }
-    if (audience === "proprietaire") {
-      return NAV_ITEMS_PROPRIETAIRE;
-    }
-    return NAV_ITEMS_DEFAULT;
-  }, [audience]);
+  const navItems = NAV_ITEMS;
 
-  const loginHref =
-    audience === "proprietaire" ? "/login?redirect=/dashboard/proprio" : "/login?redirect=/espace-client";
+  const loginHref = "/login?redirect=/espace-client";
 
-  const primaryCtaHref = audience === "proprietaire" ? "/proprietaires" : "/villas";
-  const primaryCtaLabel = audience === "proprietaire" ? "Confier ma villa" : "Réserver";
-  const primaryCtaAria =
-    audience === "proprietaire" ? "Confier ma villa — propriétaires" : "Réserver";
+  const primaryCtaHref = "/villas";
+  const primaryCtaLabel = "Réserver";
+  const primaryCtaAria = "Réserver";
 
   useEffect(() => {
     if (supabase) {
@@ -79,12 +54,6 @@ export const Navbar = () => {
   }, [supabase]);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
-
-  const changeParcours = useCallback(() => {
-    clearAudience();
-    closeMenu();
-    replaceHomeAndRequestGateReopen(router, requestGateReopen);
-  }, [clearAudience, closeMenu, requestGateReopen, router]);
 
   useEffect(() => {
     closeMenu();
@@ -167,9 +136,9 @@ export const Navbar = () => {
 
   /** Pages fond clair : jamais `bg-transparent` seul (illisible) — léger vitrage ; hero sombre : vraie transparence. */
   const headerSurfaceClass = isSolid
-    ? "border-b border-black/[0.06] bg-white/95 pb-2 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.5rem+env(safe-area-inset-top,0px))]"
+    ? "border-b border-black/[0.06] bg-white/95 pb-2 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-none md:backdrop-blur-md pt-[calc(0.5rem+env(safe-area-inset-top,0px))]"
     : useLightTransparentChrome
-      ? "border-b border-black/[0.06] bg-white/92 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))] md:pb-4 md:pt-[calc(1rem+env(safe-area-inset-top,0px))]"
+      ? "border-b border-black/[0.06] bg-white/92 pb-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] backdrop-blur-none md:backdrop-blur-md pt-[calc(0.75rem+env(safe-area-inset-top,0px))] md:pb-4 md:pt-[calc(1rem+env(safe-area-inset-top,0px))]"
       : "border-b border-transparent bg-transparent pb-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] md:pb-4 md:pt-[calc(1rem+env(safe-area-inset-top,0px))]";
 
   return (
@@ -179,7 +148,7 @@ export const Navbar = () => {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-[112] bg-black/45 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-[112] bg-black/50 backdrop-blur-none md:backdrop-blur-sm transition-opacity duration-300"
           onClick={closeMenu}
         />
       ) : null}
@@ -246,28 +215,6 @@ export const Navbar = () => {
                 {primaryCtaLabel}
               </Link>
             </li>
-            {audience === "proprietaire" ? (
-              <li className="px-4 pt-2">
-                <Link
-                  href="/villas"
-                  onClick={closeMenu}
-                  className="block py-2 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-navy/45 underline-offset-4 hover:text-navy/70 hover:underline"
-                >
-                  Voir les villas
-                </Link>
-              </li>
-            ) : null}
-            {(audience === "voyageur" || audience === "proprietaire") && (
-              <li className="px-4 pt-3">
-                <button
-                  type="button"
-                  onClick={changeParcours}
-                  className="w-full min-h-[44px] py-2 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
-                >
-                  Changer de parcours
-                </button>
-              </li>
-            )}
           </ul>
         </nav>
 

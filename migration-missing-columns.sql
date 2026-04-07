@@ -12,6 +12,9 @@ ALTER TABLE public.villas ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT 
 -- Villas : équipements (liste)
 ALTER TABLE public.villas ADD COLUMN IF NOT EXISTS amenities TEXT[] DEFAULT '{}';
 
+-- Villas : sous-ensemble amenities issus d'un import OTA (pastille Import dashboard)
+ALTER TABLE public.villas ADD COLUMN IF NOT EXISTS amenities_import_labels TEXT[] DEFAULT '{}';
+
 -- Villas : détail des chambres (JSON)
 ALTER TABLE public.villas ADD COLUMN IF NOT EXISTS rooms_details JSONB DEFAULT '[]';
 

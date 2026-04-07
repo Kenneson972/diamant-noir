@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   Anchor,
-  ArrowRight,
   Calendar,
   Car,
   Check,
@@ -9,6 +8,7 @@ import {
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
+import { VillaSubmissionForm } from "@/components/marketing/VillaSubmissionForm";
 import {
   LandingShell,
   LandingSection,
@@ -161,19 +161,21 @@ export default function PrestationsPage() {
             poivre, huile, épices, papier toilette, savon, boîte à clefs, inventaire).
           </p>
         </div>
+      </LandingSection>
 
-        <div className="mx-auto mt-20 flex max-w-2xl flex-col items-center gap-8 text-center">
-          <Link href="/soumettre-ma-villa" className="btn-luxury bg-black text-white">
-            Soumettre ma villa
-            <ArrowRight size={16} strokeWidth={1} />
+      <LandingSection id="soumettre" bg="offwhite">
+        <LandingBlockTitle eyebrow="Devenez partenaire" title="Soumettre ma villa" />
+        <p className="-mt-4 mb-12 max-w-2xl text-sm leading-relaxed text-navy/65 md:text-[15px]">
+          Rejoignez le programme propriétaire Diamant Noir. Présentez votre bien ou collez le lien
+          de votre annonce Airbnb.
+        </p>
+        <VillaSubmissionForm />
+        <p className="mt-8 text-center text-sm text-navy/60">
+          Une question ?{" "}
+          <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
+            Contactez-nous
           </Link>
-          <p className="text-xs text-navy/45">
-            Une question sur cette formule ?{" "}
-            <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
-              Contactez-nous
-            </Link>
-          </p>
-        </div>
+        </p>
       </LandingSection>
     </LandingShell>
   );

@@ -24,3 +24,10 @@ test-results/
 # System
 .DS_Store
 .vercel
+
+# Debug / local artifacts
+.airbnb-debug*.html
+supabase/.temp/
+
+# Local brainstorm / tooling cache (not for repo)
+.superpowers/

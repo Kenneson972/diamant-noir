@@ -262,7 +262,7 @@ export const Chatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group fixed bottom-8 right-8 z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90"
+          className="group fixed z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
           aria-label="Ouvrir le chat"
         >
           <Sparkles className="relative z-10 animate-pulse" size={28} />
@@ -277,8 +277,8 @@ export const Chatbot = () => {
         <div
           className={`fixed z-50 flex flex-col bg-white shadow-2xl transition-all ${
             isFullscreen || isMobile
-              ? "inset-0 h-screen w-screen rounded-none"
-              : "bottom-6 right-6 h-[600px] w-[400px] rounded-[32px]"
+              ? "inset-0 h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] rounded-none"
+              : "bottom-6 right-6 h-[600px] max-h-[85dvh] w-[400px] max-w-[calc(100vw-2rem)] rounded-[32px]"
           }`}
         >
           {/* Header */}

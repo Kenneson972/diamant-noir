@@ -6,6 +6,7 @@ import {
   parseListingFromHtml,
 } from "@/lib/listing-import";
 import type { ListingFieldSource, ListingImportApiResponse } from "@/lib/listing-import-types";
+import { normalizeImportedAmenities } from "@/lib/amenity-import-normalize";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,11 @@ export async function POST(req: Request) {
     const enrichment = await enrichListingWithAi(parsed, url, html, { useAi });
     const merged = enrichment.merged;
 
+    const amenitiesNormalized =
+      Array.isArray(merged.amenities) && merged.amenities.length > 0
+        ? normalizeImportedAmenities(merged.amenities)
+        : merged.amenities;
+
     function sourceable(
       row: typeof merged,
       k: keyof typeof merged
@@ -60,6 +66,10 @@ export async function POST(req: Request) {
       "latitude",
       "longitude",
       "house_rules",
+      "cancellation_policy",
+      "safety_info",
+      "environment",
+      "nearby_points",
       "amenities",
       "image_url",
       "image_urls",
@@ -76,6 +86,7 @@ export async function POST(req: Request) {
 
     const payload: ListingImportApiResponse = {
       ...merged,
+      amenities: amenitiesNormalized ?? merged.amenities,
       image_url: merged.image_url ?? parsed.image_url,
       image_urls:
         merged.image_urls?.length ? merged.image_urls : parsed.image_urls,

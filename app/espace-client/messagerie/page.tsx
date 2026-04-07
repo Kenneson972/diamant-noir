@@ -150,7 +150,7 @@ export default function MessageriePage() {
 
       <div
         className="flex-1 min-h-0 overflow-hidden"
-        style={{ height: "calc(100vh - 280px)", minHeight: 400 }}
+        style={{ height: "calc(100dvh - 280px)", minHeight: 400 }}
       >
         <TenantChatbot
           guestEmail={user.email}

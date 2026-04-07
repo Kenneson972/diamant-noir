@@ -14,7 +14,7 @@ export const metadata = {
 
 function CookiesSimple() {
   return (
-    <main className="page-px min-h-screen bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
+    <main className="page-px min-h-dvh bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Gestion des cookies</h1>
         <p className="mb-6 text-navy/70">

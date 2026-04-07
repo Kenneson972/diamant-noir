@@ -42,7 +42,7 @@ const PILIER_ICONS = [TrendingUp, Headphones, Building2] as const;
 
 export default function ProprietairesPage() {
   return (
-    <main className="min-h-screen bg-offwhite animate-fade-up [animation-duration:500ms]">
+    <main className="min-h-dvh bg-offwhite animate-fade-up [animation-duration:500ms]">
       {/* ─── Hero vidéo ─── */}
       <section
         className="relative flex min-h-[370px] w-full flex-col justify-center overflow-hidden bg-black pb-10 pt-24 xs:min-h-[400px] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
@@ -63,7 +63,7 @@ export default function ProprietairesPage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="proprio-hero-title"
-            titleLabel="Diamant Noir — Programme propriétaires — Confiance, réactivité, excellence"
+            titleLabel="Diamant Noir — Programme propriétaires — Conciergerie en privée"
           >
             <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
               <Link
@@ -224,7 +224,7 @@ export default function ProprietairesPage() {
       />
 
       {/* ─── Témoignage ─── */}
-      <section className="relative overflow-hidden bg-white px-6 py-20 md:py-24 lg:py-28">
+      <section className="relative overflow-hidden bg-white px-5 py-20 sm:px-6 md:py-24 lg:py-28">
         <Image
           src={PROPRIO_LANDING_IMAGES.fondTemoignage}
           alt={PROPRIO_LANDING_IMAGE_ALTS.fondTemoignage || ""}

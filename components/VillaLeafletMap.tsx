@@ -124,12 +124,34 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
       markersRef.current[villa.id] = marker;
     });
 
-    // Bounds callback — viewport filter
+    // Bounds callback — viewport filter (safe: getBounds() throws if map has no layout yet)
     const emitBounds = () => {
-      if (onBoundsChangeRef.current) onBoundsChangeRef.current(map.getBounds());
+      if (!onBoundsChangeRef.current) return;
+      const m = mapRef.current;
+      if (!m) return;
+      try {
+        const size = m.getSize();
+        if (!size || size.x === 0 || size.y === 0) return;
+        onBoundsChangeRef.current(m.getBounds());
+      } catch {
+        /* map tearing down, hidden container, or Leaflet not ready */
+      }
     };
     map.on("moveend", emitBounds);
     map.on("zoomend", emitBounds);
+
+    map.whenReady(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          try {
+            map.invalidateSize({ animate: false });
+            emitBounds();
+          } catch {
+            /* ignore */
+          }
+        });
+      });
+    });
 
     // Fit bounds sur les villas
     if (villas.length > 0) {
@@ -137,10 +159,15 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
         const L2 = require("leaflet");
         const bounds = L2.latLngBounds(villas.map((v) => v.coords));
         map.fitBounds(bounds, { padding: [60, 60], maxZoom: 12 });
-        // Émettre les bounds initiales après le fitBounds
         setTimeout(() => {
-          if (mapRef.current) emitBounds();
-        }, 600);
+          if (!mapRef.current) return;
+          try {
+            mapRef.current.invalidateSize({ animate: false });
+            emitBounds();
+          } catch {
+            /* ignore */
+          }
+        }, 400);
       } catch {}
     }
 

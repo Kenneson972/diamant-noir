@@ -11,6 +11,203 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-09T14:00:00Z | type: ui | Cursor — Wording « Conciergerie en privée » + cartes hero masquées après choix
+
+- **agent**: `cursor`
+- **summary**: `HeroWordmarkBaseline` + `titleLabel` accueil/propriétaires : **Conciergerie en privée**. `HomeLifestyleAudience` : phrase alignée (grammaire + accord). `HeroAudienceCards` : après **Espace Voyageur** → cartes retirées, affichage **uniquement** `HeroSearchWidget` ; après **Espace Propriétaire** → `null` (disparition + scroll `#offre-proprietaire`). Correction ancien bug `setShowSearch((p) => !p)` sur le clic voyageur.
+- **files**: [`components/marketing/HeroWordmarkBaseline.tsx`, `app/page.tsx`, `app/proprietaires/page.tsx`, `components/home/HeroAudienceCards.tsx`, `components/home/HomeLifestyleAudience.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Brief — formulation exacte + ne plus afficher le duo de cartes une fois le parcours choisi.
+- **verify**: `npm run build` OK ; `npm run dev` relancé.
+
+---
+
+## 2026-04-09T12:00:00Z | type: ui | Cursor — Hero : Conciergerie privée + triplet micro-typo ; suppression gate orphelin
+
+- **agent**: `cursor`
+- **summary**: `HeroWordmarkBaseline` : ligne *Conciergerie privée* (font-display, tracking) sous le wordmark ; *Confiance · Réactivité · Excellence* en **micro** (7–8px, tracking large, opacité basse). `app/page.tsx` / `app/proprietaires/page.tsx` : `titleLabel` a11y mis à jour. Suppression de `components/home/HomeAudienceGate.tsx` (non importé, imports cassés vs `HomeAudienceContext` — bloquait `npm run build`). Commentaire `bodyScrollLock` généralisé.
+- **files**: [`components/marketing/HeroWordmarkBaseline.tsx`, `app/page.tsx`, `app/proprietaires/page.tsx`, `lib/bodyScrollLock.ts`, `docs/ACTIONS_LOG.md`]
+- **why**: Brief gérant — intention principale visible, valeurs en discret ; build vert après refacto contexte sans gate.
+- **impact**: Hero plus lisible hiérarchiquement ; plus d’erreur TS sur fichier gate mort.
+- **verify**: `npm run build` OK ; `npm run dev` relancé après build.
+
+---
+
+## 2026-04-07T18:00:00Z | type: docs | Cursor — Audit complet Karibloom + RECAP + traçabilité journaux
+
+- **agent**: `cursor`
+- **summary**: Nouveau document `docs/audits/audit-complet-2026-04-07.md` : audit statique multi-domaines (viewport/safe area, mobile blur/dvh, SEO racine, headers sécurité, API Bearer+owner, import/normalisation équipements, a11y, P1–P3 recommandations). `RECAP.md` réécrit en profondeur : sections audit, traçabilité (ACTIONS_LOG, `docs/logs/`, clarification absence de dumps terminal versionnés ; sessions Claude documentées via `agent: claude`), chronologie 2026-04-05 / 06 / 07, tâches alignées audit. `docs/logs/2026-04-07.md` complété.
+- **files**: [`docs/audits/audit-complet-2026-04-07.md`, `RECAP.md`, `docs/logs/2026-04-07.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Demande utilisateur — audit avec toutes les règles disponibles + récap projet unifié incluant références « terminal Claude » (journalisation via ACTIONS_LOG / logs, pas stdout archivé).
+- **impact**: Point d’entrée unique pour l’état qualité du code et l’historique des livraisons récentes.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-06T23:55:00Z | type: ui+perf | Cursor — Mobile : padding fiche villa, tap delay, overlay menu
+
+- **agent**: `cursor`
+- **summary**: Fiche villa (`/villas/[id]`) : `pb-24 sm:pb-0` sur `<main>` pour ne pas masquer le contenu derrière la barre fixe mobile. `globals.css` : `touch-action: manipulation` sur boutons/contrôles pour réduire le délai de tap. `Navbar` overlay mobile menu : `backdrop-blur-none md:backdrop-blur-sm`, fond légèrement renforcé (`bg-black/50`).
+- **files**: [`app/villas/[id]/page.tsx`, `app/globals.css`, `components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Skill mobile-responsive — safe reading above sticky bar ; perf Chrome Android sur blur plein écran ; réactivité tactile.
+- **impact**: Dernière section de la fiche villa lisible sur mobile ; overlay menu moins coûteux sur petit écran.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-06T23:30:00Z | type: ui+perf | Cursor — Mobile-responsive : overflow, dvh, assistant, navbar blur
+
+- **agent**: `cursor`
+- **summary**: `globals.css` : `overflow-x: hidden` sur `html`/`body`. `Navbar` : `backdrop-blur` actif à partir de `md:` seulement (Chrome Android). Assistant admin : `100dvh`, colonne terminal `w-full` + split vertical mobile / `md:w-[450px]`, padding droit responsive. Messagerie locataire : `calc(100dvh - 280px)`. `VillasMapView` : hauteur carte `100dvh` + `min-h-[280px]`.
+- **files**: [`app/globals.css`, `components/layout/Navbar.tsx`, `app/dashboard/proprio/assistant/page.tsx`, `app/espace-client/messagerie/page.tsx`, `components/VillasMapView.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Skill mobile-responsive — réduire scroll horizontal, barre d’adresse mobile, GPU blur, largeurs fixes.
+- **impact**: Meilleure stabilité viewport tactile ; moins de coût blur sur petit écran ; assistant utilisable sur téléphone.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-06T22:00:00Z | type: docs | Cursor — Sync règles Builder, skill mobile-responsive, audit mobile diamant-noir
+
+- **agent**: `cursor`
+- **summary**: Synchronisation du pack `client-builder` (DIAMANTNOIR → `CLIENT BUILDER KARIBLOOM/client-builder-rules/`) ; `kb-mobile-responsive.mdc` du pack = redirecteur vers le skill ; création du skill `.cursor/skills/mobile-responsive/` (copie miroir `client-builder-rules/skills/mobile-responsive/`) ; `kb-action-documentation` alignée (fichier racine + `01-core` dans Builder) ; `_INDEX` mis à jour. Audit mobile statique du projet `diamant-noir` (viewport OK, gaps overflow-x / vh / largeurs fixes / backdrop).
+- **files**: [`.cursor/rules/client-builder/`, `.cursor/skills/mobile-responsive/`, `.cursor/rules/kb-action-documentation.mdc`, `CLIENT BUILDER KARIBLOOM/client-builder-rules/`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Alignement agence après mise à jour des règles ; skill mobile réutilisable ; traçabilité audit.
+- **impact**: Builder et projet client partagent le même pack + skill ; checklist d’amélioration mobile documentée.
+- **verify**: Revue fichiers ; pas de `npm run build` requis (docs + markdown + copie).
+
+---
+
+## 2026-04-06T18:45:00Z | type: ui | Cursor — Éditeur villa : TOC, filtres réservations, sync iCal, checklist, extractions
+
+- **agent**: `cursor`
+- **summary**: Correction JSX (section équipements) ; onglet Contenu : TOC ancres + CTA fiche publique + checklist publication non bloquante ; Planning : filtres recherche/statut/source sur le registre, export CSV client, carte sync iCal alimentée par `villa_ical_feeds` + rafraîchissement après `/api/sync` ; Contenu : encart état sync sous bloc iCal. Composants extraits sous `components/dashboard/villa-editor/` (`VillaBookingsRegistry`, `PlanningIcalSyncCard`, `VillaPublishChecklist`, `IcalConnectivityStatus`).
+- **files**: [`app/dashboard/proprio/[villaId]/page.tsx`, `components/dashboard/villa-editor/VillaBookingsRegistry.tsx`, `components/dashboard/villa-editor/PlanningIcalSyncCard.tsx`, `components/dashboard/villa-editor/VillaPublishChecklist.tsx`, `components/dashboard/villa-editor/IcalConnectivityStatus.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Plan « éditeur complet » sans changer le modèle de données ; lisibilité, confiance produit (sync réelle), guidance publication.
+- **impact**: Propriétaire filtre/exporte les réservations, voit dernière sync quand les feeds existent, suit une checklist avant publication.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-06T12:00:00Z | type: ui | Cursor — Éditeur villa : onglets simplifiés, analyses factices retirées
+
+- **agent**: `cursor`
+- **summary**: Suppression des onglets **Réservations**, **Analyses** et **Maintenance** dans la barre d’édition. Le registre des réservations est regroupé sous **Planning** ; le carnet de maintenance et un lien vers `/dashboard/proprio/analytics` (données réelles multi-villas) sont sous **Réglages**. Retrait de l’import **recharts** sur cette page (graphiques en dur). Conseil conciergerie adapté à la Martinique. Bouton **Ajouter** tâche branché sur un `ref` + `handleAddTask`.
+- **files**: [`app/dashboard/proprio/[villaId]/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Moins d’onglets redondants ou trompeurs ; une seule entrée pour les analyses basées sur l’API existante.
+- **impact**: Navigation plus courte ; pas de courbes factices dans l’éditeur ; planning + tableau des résas au même endroit.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-07T02:00:00Z | type: api+sql | Cursor — Migration Supabase MCP + normalisation équipements import
+
+- **agent**: `cursor`
+- **summary**: Migration `amenities_import_labels` appliquée sur projet Supabase **DIAMANT NOIR** (MCP `apply_migration`). Nouveau module `lib/amenity-import-normalize.ts` : alias FR/EN, règles « contient », déduplication → pastilles catalogue cochées auto après import ; `POST /api/import-airbnb` passe `amenities` par `normalizeImportedAmenities`.
+- **files**: [`lib/amenity-import-normalize.ts`, `app/api/import-airbnb/route.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Aligner les libellés OTA sur le catalogue dashboard et activer les suggestions sans saisie manuelle.
+- **impact**: Import Airbnb remplit souvent directement les cases suggestion (Wi-Fi, Lave-linge, Piscine, etc.) ; le reste reste en personnalisés.
+- **verify**: MCP migration success ; `npm run build` ; test tsx sur échantillon FR.
+
+---
+
+## 2026-04-07T01:00:00Z | type: ui+sql | Cursor — Équipements : grille catalogue + perso + marque Import persistée
+
+- **agent**: `cursor`
+- **summary**: Grille **Suggestions** toujours visible (`lib/villa-amenities-suggested.ts`) ; section **Personnalisés** pour libellés hors catalogue (import Airbnb = texte exact) avec pastilles **Import** (vert) ou **Perso** (violet) ; colonne `amenities_import_labels` + migration SQL ; import et save alimentent / filtrent les marques ; collage multi-lignes synchronise les marques Import restantes.
+- **files**: [`lib/villa-amenities-suggested.ts`, `app/dashboard/proprio/[villaId]/page.tsx`, `supabase/migrations/20260407120000_villas_amenities_import_labels.sql`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Pastilles présentes dans l’éditeur + distinguer équipements issus de l’OTA des ajouts manuels, sans catalogue « luxe » hors sujet.
+- **impact**: Après migration Supabase et enregistrement, les marques Import survivent au rechargement.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-07T00:15:00Z | type: ui | Cursor — Dashboard équipements : badges = items importés / liste réelle
+
+- **agent**: `cursor`
+- **summary**: Pastilles cliquables pour chaque entrée de `amenities` (libellés réels import Airbnb), retrait au clic ; champ + bouton « Ajouter » ; zone repliable saisie multi-lignes pour collage / édition masse.
+- **files**: [`app/dashboard/proprio/[villaId]/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Reprendre le confort visuel des anciens badges tout en liant 1:1 aux équipements importés, sans catalogue prédéfini.
+- **impact**: Après import, la liste apparaît en badges ; même donnée sauvegardée qu’avant.
+- **verify**: `read_lints`.
+
+---
+
+## 2026-04-06T23:30:00Z | type: ui | Cursor — Dashboard : équipements = liste libre (plus de badges prédéfinis)
+
+- **agent**: `cursor`
+- **summary**: Suppression des pastilles « luxe » (Piscine Infinity, Héliport, etc.) ; un seul champ **Équipements** (textarea 1 ligne = 1 item) lié à `amenities`. Détail intérieur / extérieur renommé en optionnel avec texte d’aide aligné.
+- **files**: [`app/dashboard/proprio/[villaId]/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Les badges n’étaient pas les vrais équipements (import Airbnb / réalité du logement) et créaient une double logique.
+- **impact**: Les propriétaires éditent la même liste que celle stockée en base et affichée sur la fiche / les cartes.
+- **verify**: `read_lints` sur le fichier modifié.
+
+---
+
+## 2026-04-06T22:45:00Z | type: ui | Cursor — Équipements fiche villa + dashboard
+
+- **agent**: `cursor`
+- **summary**: Fiche `villas/[id]` : `getEquipmentDisplayLists` — intérieur = `equipment_interior` ou repli sur `amenities` ; **extérieur sans repli** (suppression du doublon liste identique). Section « Tous les équipements » masquée si aucune liste ; grille 1 ou 2 colonnes. Icônes incontournables : jacuzzi, coffee, plage, réfrigérateur. Dashboard : aide contextuelle sous les zones int/ext et renommage « Badges incontournables ».
+- **files**: [`app/villas/[id]/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: La colonne extérieur reprenait par erreur `amenities`, donc doublon intérieur/extérieur après import OTA.
+- **impact**: Lecture cohérente pour les voyageurs ; propriétaire comprend le rôle badges vs listes.
+- **verify**: `read_lints` ; dev relancé sur le port 3000.
+
+---
+
+## 2026-04-06T20:30:00Z | type: api | Cursor — Import Airbnb : règles, horaires, équipements (HTML profond)
+
+- **agent**: `cursor`
+- **summary**: Extraction depuis le JSON embarqué Airbnb loin dans la page : bloc `houseRules` (texte + `check_in` / `check_out`), liste `Amenity` avec `available:true`. Avertissement explicite si `price_per_night` absent (prix souvent non inclus dans le HTML serveur, `structuredDisplayPrice` / `bookingPrefetchData.price` null).
+- **files**: [`lib/listing-import.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Les heuristiques sur `textBlob` (120 ko) ne voyaient pas `houseRules` ni les équipements ; champs restaient vides malgré des données présentes dans la réponse HTTP.
+- **impact**: Import plus complet pour annonces type `airbnb.fr/rooms/29571602` (horaires, règlement, ~30+ équipements) ; prix à compléter manuellement si non servi en SSR.
+- **verify**: `parseListingFromHtml` sur HTML réel + fetch live URL ; `npm run build` OK.
+
+---
+
+## 2026-04-07T12:00:00Z | type: api | Cursor — Import annonce : prix LLM + parser Airbnb
+
+- **agent**: `cursor`
+- **summary**: `unwrapN8nListingBody` mappe les alias `price`, `nightlyPrice`, `prix`, etc. vers `price_per_night` ; `coerceNumber` tolère € / ESP / texte ; fallback OpenAI fusionne avec `forceOverride` comme n8n ; consigne LLM explicite sur `price_per_night`. Parser HTML : `amountMicros`, `qualifyingPrice.amount` (Airbnb).
+- **files**: [`lib/listing-import-ai.ts`, `lib/listing-import.ts`, `docs/ACTIONS_LOG.md`]
+- **why**: Le workflow renvoie souvent `price` au lieu de `price_per_night`, ignoré avant merge ; prix parfois seulement en micro-unités dans le HTML.
+- **impact**: Prix et capacité mieux repris après enrichissement / parse.
+- **verify**: `read_lints` sur fichiers modifiés.
+
+---
+
+## 2026-04-06T12:00:00Z | type: docs | Cursor — Prompt Claude Code + MCP n8n (Listing Import Enrich)
+
+- **agent**: `cursor`
+- **summary**: Ajout de `docs/superpowers/prompts/claude-code-n8n-listing-import-enrich.md` : contexte contrat Next↔n8n, problèmes du workflow actuel, checklist d’amélioration (system/user, suspectKeys, secret via env, max tokens, erreurs HTTP), bloc **PROMPT À COPIER** pour Claude Code avec MCP n8n.
+- **files**: [`docs/superpowers/prompts/claude-code-n8n-listing-import-enrich.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Automatiser l’enrichissement réel des annonces via n8n sans casser `unwrapN8nListingBody` / `callN8nEnrich`.
+- **impact**: Session Claude Code guidée pour modifier le workflow plutôt qu’improviser.
+- **verify**: Relecture markdown ; pas de secret dans le fichier.
+
+---
+
+## 2026-04-05T23:55:00Z | type: ui | Cursor — Passage global héros / sections marketing (gabarit accueil)
+
+- **agent**: `cursor`
+- **summary**: Harmonisation **EditorialHeroImmersive** (prestations, qui-sommes-nous) avec `min-h` index, `max-w-4xl`, `px-5 sm:px-6`, ligne or ; **LandingHero** `md:min-h` aligné index ; **LandingSection** / **LandingCtaBand** / blocs **Editorial** (intro, grille, quotes, figure, image split) en `px-5 sm:px-6` ; **villas** hero header ; **soumettre-ma-villa** hero + corps ; **BookLandingMarketing** (2 variantes) ; témoignage **proprietaires**.
+- **files**: [`components/marketing/editorial-blocks.tsx`, `components/marketing/landing-sections.tsx`, `components/book/BookLandingMarketing.tsx`, `app/villas/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `app/proprietaires/page.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Les pages tierces ne partageaient pas le même retrait horizontal ni les mêmes hauteurs de bandeau que l’accueil.
+- **impact**: Colonnes et bandeaux alignés sur une grille commune sur le site public.
+- **verify**: Pas de `npm run build` (session dev localhost) ; `read_lints` sur fichiers modifiés.
+
+---
+
+## 2026-04-05T23:30:00Z | type: ui | Cursor — Heroes marketing : alignement accueil (pt-24, colonne, ligne or)
+
+- **agent**: `cursor`
+- **summary**: `LandingHero` et `LandingHeroCompact` alignés sur le rythme de l’index / propriétaires : `pt-24` sous navbar fixe, `min-h` progressifs, conteneur `max-w-4xl` + `px-5 sm:px-6`, ligne dorée `h-px w-10` sous le titre ; variante `split` inchangée pour le texte (gauche desktop).
+- **files**: [`components/marketing/landing-sections.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-05.md`]
+- **why**: Pages tierces (contact, cookies, CGU, confidentialité) paraissaient plus « fines » ou décalées vs l’accueil.
+- **impact**: Bandeau hero plus cohérent visuellement avec la home sur toute la largeur utile.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-05T22:00:00Z | type: ui+a11y+docs | Claude Code — Mobile hero, typo 9→10px, screenshots 390px
 
 - **agent**: `claude`

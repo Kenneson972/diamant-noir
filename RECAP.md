@@ -117,6 +117,10 @@ diamant-noir/
 ├── next.config.mjs
 ├── tailwind.config.ts
 ├── vercel.json                   # Crons (sync horaire)
+├── docs/
+│   ├── ACTIONS_LOG.md            # Journal global des changements
+│   ├── audits/audit-complet-2026-04-07.md
+│   └── logs/                     # Journaux de session (YYYY-MM-DD.md)
 ├── GUIDE_INSERT_VILLAS.md
 ├── GUIDE_RECUPERER_CLES_SUPABASE.md
 ├── VERIFICATION_SUPABASE.md
@@ -246,6 +250,13 @@ Fichier modèle : `.env.local.example`. À copier en `.env.local`.
 
 - [ ] Webhooks Stripe pour passer la résa en « Confirmé » après paiement
 - [ ] Livret d’accueil digital par villa (page dédiée / QR code)
+- [ ] Baseline PageSpeed Insights + fichier `MESURES_BASELINE.md` (règle perf Karibloom)
+- [ ] Vérifier si `public/heroui.min.css` est encore nécessaire (chargement global dans `layout.tsx`)
+
+### Pistes audit 2026-04-07
+
+- [ ] CSP progressive en production ; rate limit ciblé sur `/api/contact` et `/api/chat` si besoin
+- [ ] `generateMetadata` sur fiches villa pour partage social optimal
 
 ---
 
@@ -257,22 +268,68 @@ Fichier modèle : `.env.local.example`. À copier en `.env.local`.
 | Assistant IA (Command Center) | ✅ ~95 % |
 | Dashboard admin | ✅ ~100 % |
 | Backend & sync | ✅ ~95 % |
+| Mobile / responsive (passes 2026-04) | ✅ bonne couverture (dvh, safe area, blur maîtrisé) |
+| Import Airbnb + équipements | ✅ normalisation + persistance labels import |
 
 **Estimation globale : ~95 % du projet complété.**
 
 ---
 
-## 12. Session 2026-04-01 (récap)
+## 12. Audit complet & règles (2026-04-07)
+
+Un **audit technique multi-domaines** (stack, mobile, perf, SEO, sécurité, a11y, données) a été rédigé selon le pack **Karibloom Client Builder** et les règles racine du projet :
+
+- **Document principal :** [`docs/audits/audit-complet-2026-04-07.md`](docs/audits/audit-complet-2026-04-07.md)  
+- **Synthèse :** viewport et safe area OK ; APIs dashboard avec auth Bearer + contrôle `owner_id` ; en-têtes HTTP de base présents ; vigilance sur CSS HeroUI global et `backdrop-blur-xl` galerie ; pas de secrets en dur dans le code applicatif.
+
+---
+
+## 13. Traçabilité : journaux Cursor, « terminal Claude » et logs
+
+| Emplacement | Rôle |
+|-------------|------|
+| **`docs/ACTIONS_LOG.md`** | Journal **global** append-only : chaque entrée peut porter `agent: cursor` ou `agent: claude`. |
+| **`docs/logs/YYYY-MM-DD.md`** | Journal **de session** (détail du jour : correctifs, fichiers, vérifs). |
+| **Sorties terminal** | Les **logs bruts de terminal ne sont pas versionnés** dans ce dépôt. Pour retrouver le travail d’une session **Claude Code**, utiliser les entrées **`agent: claude`** dans `ACTIONS_LOG.md` et le fichier `docs/logs/` du jour correspondant (ex. refonte mobile `text-[10px]`, heroes, captures Playwright — 2026-04-05). |
+| **Prompts Claude Code** | `docs/superpowers/prompts/claude-code-*.md` (ex. n8n listing import, home gate, landing propriétaires). |
+
+---
+
+## 14. Chronologie récente des livraisons (résumé)
+
+### 2026-04-05 — Claude Code (mobile, typo, screenshots)
+
+- Heroes éditoriaux : hauteurs progressives sur petit mobile (éviter ~88vh trop haut).
+- Remplacement global `text-[9px]` → `text-[10px]` sur ~13 fichiers (lisibilité / WCAG).
+- Régénération captures `docs/screenshots/mobile-390px/` (Playwright).
+- Détail dans `ACTIONS_LOG` (entrée `agent: claude`) + `docs/logs/2026-04-05.md`.
+
+### 2026-04-06 — Cursor (éditeur villa, mobile, Builder)
+
+- **Éditeur villa :** onglets Planning / Contenu / Réglages ; TOC + ancres + checklist publication ; registre réservations (filtres, CSV) ; sync iCal + `villa_ical_feeds` ; composants extraits `components/dashboard/villa-editor/`.
+- **Import / équipements :** correction doublon extérieur, `getEquipmentDisplayLists`, icônes incontournables.
+- **Mobile :** `overflow-x` global, `min-h-dvh`, assistant / messagerie / carte en `dvh`, navbar blur réservé à `md+`, fiche villa `pb-24` + barre réservation safe area, overlay menu sans blur mobile, `touch-action: manipulation`.
+- **Builder :** sync pack `client-builder` → `CLIENT BUILDER KARIBLOOM/client-builder-rules/`, skill `mobile-responsive`, doc `kb-action-documentation`.
+- **Docs :** `docs/logs/2026-04-06.md`.
+
+### 2026-04-07 — Cursor (import prix, équipements, SQL)
+
+- **Prix import :** alias n8n (`price`, `prix`…), `coerceNumber`, `amountMicros` / `qualifyingPrice` dans le parse HTML.
+- **Équipements :** migration `amenities_import_labels`, `lib/amenity-import-normalize.ts`, grille suggestions + persistance marques Import/Perso, évolution UI dashboard (textarea / badges alignés sur données réelles).
+- **Docs :** `docs/logs/2026-04-07.md`, entrées associées dans `ACTIONS_LOG.md`.
+
+---
+
+## 15. Session 2026-04-01 (historique dashboard)
 
 | Thème | Détail |
 |--------|--------|
 | **Dashboard propriétaire** | Refonte « éditoriale / premium » : `ProprioChrome` (logo, liens portfolio / IA / stats / leads / nouvelle villa / déconnexion), `ProprioPageIntro` sur l’index et les sous-pages, cartes soumissions et tableau analytics harmonisés, assistant en palette navy/or (moins « terminal pur »), détail villa avec en-tête intro + sections sous filet or. |
 | **Fichiers clés** | `components/dashboard/proprio/ui.tsx`, `app/dashboard/proprio/layout.tsx`, pages sous `app/dashboard/proprio/*`. |
-| **Docs & règles** | Entrées `ACTIONS_LOG` + `docs/logs/2026-04-01.md`. Règle workflow (hors repo app) : vérifier `npm run dev` + smoke localhost après build — synchronisée vers le pack `client-builder-rules`. |
-| **Git / déploiement** | Push `main` → `github.com/Kenneson972/diamant-noir` (commit dashboard) ; Vercel déploie si le projet est connecté. |
+| **Docs & règles** | Entrées `ACTIONS_LOG` + `docs/logs/2026-04-01.md`. |
 | **Vérifs** | `npm run lint` / `npm run build` OK sur la livrée dashboard. |
 
 ---
 
-**Dernière mise à jour :** 2026-04-01  
-**Version :** 0.9.1 (dashboard proprio éditorial + doc session)
+**Dernière mise à jour :** 2026-04-07  
+**Version :** 0.9.2 (audit complet + recap sessions + traçabilité journaux)

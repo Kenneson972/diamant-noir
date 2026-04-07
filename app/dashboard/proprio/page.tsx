@@ -182,9 +182,9 @@ export default function ConciergeDashboard() {
     : villas
 
   return (
-    <main className="flex min-h-screen flex-col bg-offwhite">
+    <main className="flex min-h-dvh flex-col bg-offwhite">
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-none md:backdrop-blur-md">
         <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-white font-display text-xl">

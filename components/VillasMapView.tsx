@@ -67,7 +67,7 @@ export default function VillasMapView({ villas }: Props) {
   return (
     <div className="relative">
       {/* ── Toolbar ── */}
-      <div className="sticky top-[calc(72px+env(safe-area-inset-top,0px))] z-20 bg-offwhite/95 backdrop-blur-sm border-b border-navy/8 px-6 py-3 flex items-center justify-between">
+      <div className="sticky top-[calc(72px+env(safe-area-inset-top,0px))] z-20 border-b border-navy/8 bg-offwhite/95 backdrop-blur-none md:backdrop-blur-sm px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
             {villas.length} propriété{villas.length > 1 ? "s" : ""}
@@ -208,7 +208,7 @@ export default function VillasMapView({ villas }: Props) {
 
         {/* ── Map panel ── */}
         {mapVisible && (
-          <div className="hidden md:block md:w-[42%] lg:w-[38%] shrink-0 sticky top-[120px] h-[calc(100vh-120px)]">
+          <div className="hidden md:block md:w-[42%] lg:w-[38%] shrink-0 sticky top-[120px] h-[calc(100dvh-120px)] min-h-[280px]">
             <VillaLeafletMap
               villas={villas}
               hoveredId={hoveredId}

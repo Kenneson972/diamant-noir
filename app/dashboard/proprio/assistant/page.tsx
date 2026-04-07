@@ -116,9 +116,9 @@ export default function AdminAssistantPage() {
   };
 
   return (
-    <main className="flex h-screen w-screen overflow-hidden bg-[#0A0A0F] text-white">
+    <main className="flex h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-[#0A0A0F] text-white md:h-screen md:flex-row">
       {/* LEFT PANE: TERMINAL */}
-      <div className="flex w-[450px] flex-col border-r border-white/5 bg-[#0D0D14]">
+      <div className="flex min-h-0 w-full flex-1 flex-col border-b border-white/5 bg-[#0D0D14] md:w-[450px] md:shrink-0 md:flex-none md:border-b-0 md:border-r md:border-white/5">
         {/* Terminal Header */}
         <div className="flex items-center justify-between border-b border-white/5 p-6">
           <div className="flex items-center gap-3">
@@ -184,7 +184,7 @@ export default function AdminAssistantPage() {
       </div>
 
       {/* RIGHT PANE: VISUAL CONTEXT */}
-      <div className="flex-1 bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-12 overflow-y-auto custom-scrollbar">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-[radial-gradient(circle_at_center,_#171717_0%,_#000000_100%)] p-6 custom-scrollbar md:p-12">
         {/* STRATEGIC ALERT BAR */}
         {strategicAlert && (
           <div className={`mb-8 flex items-center gap-4 rounded-3xl border p-6 animate-in slide-in-from-top-4 duration-500 ${

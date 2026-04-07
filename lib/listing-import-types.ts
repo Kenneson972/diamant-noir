@@ -17,6 +17,10 @@ export type ListingImportResult = {
   latitude?: number | null;
   longitude?: number | null;
   house_rules?: string | null;
+  cancellation_policy?: string | null;
+  safety_info?: string | null;
+  environment?: string | null;
+  nearby_points?: string[] | null;
   /** Liste brute (badges / équipements) — fusionnée avec le formulaire */
   amenities?: string[] | null;
   image_url?: string | null;

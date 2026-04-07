@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useRef, ChangeEvent } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, LogOut, Settings, Calendar, FileText, ExternalLink, Plus, X, Check, Star, Wifi, Wind, Waves, Coffee, Shield, MapPin, ListChecks, TrendingUp, RefreshCw, Download, Filter, MoreVertical, Wand2, Trash2, Edit, CheckCircle, XCircle, CreditCard, Link as LinkIcon } from "lucide-react"
+import { ArrowLeft, LogOut, Settings, Calendar, FileText, ExternalLink, Plus, X, Check, Star, Wifi, Wind, Waves, Coffee, Shield, MapPin, ListChecks, RefreshCw, MoreVertical, Wand2, Trash2, Edit, CheckCircle, XCircle, CreditCard, Link as LinkIcon, Sparkles, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,9 +12,10 @@ import { getSupabaseBrowser } from "@/lib/supabase"
 import { AdminCalendar } from "@/components/AdminCalendar"
 import { revalidateVillas } from "@/lib/actions"
 import { ActionMenu } from "@/components/dashboard/ActionMenu"
-
-// Recharts for stats
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { PlanningIcalSyncCard } from "@/components/dashboard/villa-editor/PlanningIcalSyncCard"
+import { VillaBookingsRegistry } from "@/components/dashboard/villa-editor/VillaBookingsRegistry"
+import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist"
+import { IcalConnectivityStatus } from "@/components/dashboard/villa-editor/IcalConnectivityStatus"
 
 // DND Kit
 import {
@@ -32,6 +33,18 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableImage } from "@/components/dashboard/SortableImage";
+import { SUGGESTED_AMENITY_LABELS, SUGGESTED_AMENITY_SET } from "@/lib/villa-amenities-suggested";
+
+function AmenityImportTag({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-0.5 rounded-md bg-emerald-600/12 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-800 ${className}`}
+    >
+      <Sparkles className="h-2.5 w-2.5 shrink-0" aria-hidden />
+      Import
+    </span>
+  );
+}
 
 export default function VillaDashboard() {
   const params = useParams()
@@ -41,12 +54,19 @@ export default function VillaDashboard() {
   const supabase = getSupabaseBrowser()
   const [villa, setVilla] = useState<any>(null)
   const [bookings, setBookings] = useState<any[]>([])
+  const [icalFeeds, setIcalFeeds] = useState<
+    { platform?: string | null; last_synced_at?: string | null; last_error?: string | null; is_active?: boolean | null }[]
+  >([])
+  const [bookingSearch, setBookingSearch] = useState("")
+  const [bookingStatusFilter, setBookingStatusFilter] = useState<"all" | "confirmed" | "pending">("all")
+  const [bookingSourceFilter, setBookingSourceFilter] = useState<"all" | "airbnb" | "other">("all")
   const [tasks, setTasks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [importingAirbnb, setImportingAirbnb] = useState(false)
-  const [importUseAi, setImportUseAi] = useState(false)
+  const [importUseAi, setImportUseAi] = useState(true)
+  const [amenityDraft, setAmenityDraft] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [pendingBookingDelete, setPendingBookingDelete] = useState<{ id: string; label: string } | null>(null)
@@ -55,6 +75,7 @@ export default function VillaDashboard() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const bookingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const villaDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const maintenanceTaskInputRef = useRef<HTMLInputElement>(null)
   const isNew = villaId === "new"
   const [form, setForm] = useState({
     name: "",
@@ -69,6 +90,7 @@ export default function VillaDashboard() {
     access_token: "",
     is_published: false,
     amenities: [] as string[],
+    amenities_import_labels: [] as string[],
     rooms_details: [] as { title: string; description: string }[],
     seasonal_prices: [] as { name: string; start_date: string; end_date: string; price: string }[],
     cancellation_policy: "",
@@ -91,6 +113,25 @@ export default function VillaDashboard() {
     longitude: "",
     map_embed_url: "",
   })
+
+  const customAmenityItems = useMemo(
+    () => form.amenities.filter((a) => !SUGGESTED_AMENITY_SET.has(a)),
+    [form.amenities]
+  )
+
+  const contentNavItems = useMemo(
+    () =>
+      [
+        { href: "#content-section-general", label: "Général" },
+        { href: "#content-section-public", label: "Fiche publique" },
+        { href: "#content-section-amenities", label: "Équipements" },
+        { href: "#content-section-rooms", label: "Chambres" },
+        { href: "#content-section-media", label: "Médias" },
+        { href: "#content-section-import", label: "Import OTA" },
+        { href: "#content-section-connectivity", label: "Sync & liens" },
+      ] as const,
+    []
+  )
 
   useEffect(() => {
     async function checkAuth() {
@@ -158,6 +199,9 @@ export default function VillaDashboard() {
           access_token: (d?.access_token as string) || "",
           is_published: Boolean(d?.is_published),
           amenities: Array.isArray(d?.amenities) ? d.amenities as string[] : [],
+          amenities_import_labels: Array.isArray((d as { amenities_import_labels?: unknown })?.amenities_import_labels)
+            ? ((d as { amenities_import_labels: string[] }).amenities_import_labels as string[])
+            : [],
           rooms_details: Array.isArray(d?.rooms_details) ? d.rooms_details as { title: string; description: string }[] : [],
           seasonal_prices: Array.isArray(d?.seasonal_prices) ? d.seasonal_prices as { name: string; start_date: string; end_date: string; price: string }[] : [],
           cancellation_policy: (d?.cancellation_policy as string) || "",
@@ -209,6 +253,12 @@ export default function VillaDashboard() {
         if (tasksData) {
           setTasks(tasksData)
         }
+
+        const { data: feedsData } = await supabase
+          .from("villa_ical_feeds")
+          .select("platform, last_synced_at, last_error, is_active")
+          .eq("villa_id", villaId)
+        setIcalFeeds(feedsData ?? [])
       }
       setLoading(false)
     }
@@ -248,6 +298,41 @@ export default function VillaDashboard() {
       .map((line) => line.trim())
       .filter(Boolean)
 
+  const handleRemoveAmenity = (item: string) => {
+    setForm((prev) => ({
+      ...prev,
+      amenities: prev.amenities.filter((a) => a !== item),
+      amenities_import_labels: prev.amenities_import_labels.filter((a) => a !== item),
+    }))
+  }
+
+  const handleToggleSuggestedAmenity = (label: string) => {
+    setForm((prev) => {
+      const has = prev.amenities.includes(label)
+      if (has) {
+        return {
+          ...prev,
+          amenities: prev.amenities.filter((a) => a !== label),
+          amenities_import_labels: prev.amenities_import_labels.filter((a) => a !== label),
+        }
+      }
+      return {
+        ...prev,
+        amenities: [...prev.amenities, label],
+      }
+    })
+  }
+
+  const handleAddAmenityDraft = () => {
+    const t = amenityDraft.trim()
+    if (!t) return
+    setForm((prev) => {
+      if (prev.amenities.includes(t)) return prev
+      return { ...prev, amenities: [...prev.amenities, t] }
+    })
+    setAmenityDraft("")
+  }
+
   const parseBookingTerms = (value: string) =>
     value
       .split("\n")
@@ -261,15 +346,6 @@ export default function VillaDashboard() {
         }
       })
       .filter((item) => item.question && item.answer)
-
-  const handleToggleAmenity = (amenity: string) => {
-    setForm(prev => ({
-      ...prev,
-      amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
-    }))
-  }
 
   const handleAddRoom = () => {
     setForm(prev => ({
@@ -343,7 +419,7 @@ export default function VillaDashboard() {
   };
 
   const handleSyncIcal = async () => {
-    if (!supabase || isNew) return;
+    if (!supabase || isNew || typeof villaId !== "string") return;
     setSaving(true);
     try {
       const response = await fetch('/api/sync', {
@@ -353,6 +429,11 @@ export default function VillaDashboard() {
       });
       if (response.ok) {
         setSuccess("Synchronisation lancée avec succès.");
+        const { data: feedsData } = await supabase
+          .from("villa_ical_feeds")
+          .select("platform, last_synced_at, last_error, is_active")
+          .eq("villa_id", villaId)
+        if (feedsData) setIcalFeeds(feedsData)
         router.refresh();
       } else {
         setError("Erreur lors de la synchronisation.");
@@ -383,12 +464,41 @@ export default function VillaDashboard() {
 
       if (response.ok && data) {
         setForm((prev) => {
-          const nextAmenities =
+          const importedBatch =
             Array.isArray(data.amenities) && data.amenities.length > 0
-              ? Array.from(
-                  new Set([...prev.amenities, ...data.amenities.map((x: string) => String(x).trim())])
-                )
+              ? data.amenities.map((x: string) => String(x).trim()).filter(Boolean)
+              : [];
+          const batchSet = new Set(importedBatch);
+
+          const nextAmenities =
+            importedBatch.length > 0
+              ? Array.from(new Set([...prev.amenities, ...importedBatch]))
               : prev.amenities;
+
+          const prevOta = new Set(prev.amenities_import_labels);
+          const nextOtaLabels: string[] = [];
+          const otaSeen = new Set<string>();
+          for (const a of nextAmenities) {
+            if (otaSeen.has(a)) continue;
+            if (batchSet.has(a) || prevOta.has(a)) {
+              otaSeen.add(a);
+              nextOtaLabels.push(a);
+            }
+          }
+
+          // Auto-populate equipment_interior_text from imported amenities if empty
+          const importedAmenityLines =
+            importedBatch.length > 0 ? importedBatch.join("\n") : "";
+          const nextEquipmentInterior =
+            !prev.equipment_interior_text.trim() && importedAmenityLines
+              ? importedAmenityLines
+              : prev.equipment_interior_text;
+
+          // nearby_points → nearby_points_text
+          const nextNearbyPoints =
+            Array.isArray(data.nearby_points) && data.nearby_points.length > 0 && !prev.nearby_points_text.trim()
+              ? data.nearby_points.map((x: string) => String(x).trim()).filter(Boolean).join('\n')
+              : prev.nearby_points_text;
 
           return {
             ...prev,
@@ -406,12 +516,18 @@ export default function VillaDashboard() {
             latitude: data.latitude != null ? String(data.latitude) : prev.latitude,
             longitude: data.longitude != null ? String(data.longitude) : prev.longitude,
             house_rules: data.house_rules || prev.house_rules,
+            cancellation_policy: data.cancellation_policy || prev.cancellation_policy,
+            safety_info: data.safety_info || prev.safety_info,
+            environment: data.environment || prev.environment,
+            nearby_points_text: nextNearbyPoints,
             image_url: data.image_url || prev.image_url,
             image_urls:
               data.image_urls && data.image_urls.length > 0
                 ? Array.from(new Set([...prev.image_urls, ...data.image_urls]))
                 : prev.image_urls,
             amenities: nextAmenities,
+            amenities_import_labels: nextOtaLabels,
+            equipment_interior_text: nextEquipmentInterior,
           };
         });
 
@@ -636,6 +752,79 @@ export default function VillaDashboard() {
     }))
   }, [bookings])
 
+  const filteredBookings = useMemo(() => {
+    const q = bookingSearch.trim().toLowerCase()
+    return bookings.filter((b) => {
+      const name = (b.guest_name || "").toLowerCase()
+      const idShort = String(b.id ?? "").toLowerCase()
+      if (q && !name.includes(q) && !idShort.includes(q)) return false
+      if (bookingStatusFilter !== "all" && (b.status || "pending") !== bookingStatusFilter) return false
+      const src = String(b.source || "direct").toLowerCase()
+      if (bookingSourceFilter === "airbnb" && src !== "airbnb") return false
+      if (bookingSourceFilter === "other" && src === "airbnb") return false
+      return true
+    })
+  }, [bookings, bookingSearch, bookingStatusFilter, bookingSourceFilter])
+
+  const icalSyncSummary = useMemo(() => {
+    if (!icalFeeds.length) {
+      return {
+        lastLine: null as string | null,
+        body: "Aucun flux iCal enregistré côté serveur pour cette villa. Enregistrez une URL dans l’onglet Contenu pour activer la synchronisation.",
+        tone: "neutral" as const,
+      }
+    }
+    const times = icalFeeds.map((f) => f.last_synced_at).filter(Boolean) as string[]
+    const lastMs = times.length ? Math.max(...times.map((t) => new Date(t).getTime())) : null
+    const lastLine = lastMs
+      ? `Dernière synchronisation enregistrée : ${new Date(lastMs).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}`
+      : "Aucune date de synchronisation enregistrée pour l’instant."
+    const errs = icalFeeds.filter((f) => f.last_error)
+    const body =
+      errs.length > 0
+        ? `${errs.length} flux signalent une erreur (détail dans Contenu → Sync & liens).`
+        : "Le serveur met à jour les flux périodiquement ; vous pouvez forcer une synchronisation ci-dessous."
+    const tone = errs.length > 0 ? ("warn" as const) : ("ok" as const)
+    return { lastLine, body, tone }
+  }, [icalFeeds])
+
+  const publishChecklistItems = useMemo(() => {
+    const n = form.image_urls.length
+    const desc = form.description.trim().length > 0
+    const photosOk = n >= 3
+    const price =
+      form.price_per_night !== "" &&
+      !Number.isNaN(Number(form.price_per_night)) &&
+      Number(form.price_per_night) > 0
+    const icalOk = form.ical_url.trim().length > 0
+    return [
+      { id: "desc", ok: desc, label: "Description renseignée", optional: false as boolean },
+      { id: "photos", ok: photosOk, label: `Au moins 3 photos (${n} chargée(s))`, optional: false },
+      { id: "price", ok: price, label: "Prix par nuit renseigné", optional: false },
+      { id: "ical", ok: icalOk, label: "URL iCal (recommandé si Airbnb/Booking)", optional: true },
+    ]
+  }, [form.description, form.image_urls, form.price_per_night, form.ical_url])
+
+  const exportBookingsCsv = () => {
+    const headers = ["id", "guest_name", "start_date", "end_date", "source", "status", "payment_status", "price"] as const
+    const escapeCell = (v: unknown) => {
+      const s = String(v ?? "")
+      if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
+      return s
+    }
+    const lines = [
+      headers.join(","),
+      ...filteredBookings.map((b) => headers.map((h) => escapeCell(b[h])).join(",")),
+    ]
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `reservations-villa-${typeof villaId === "string" ? villaId : "export"}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || [])
     if (files.length === 0) return
@@ -833,6 +1022,7 @@ export default function VillaDashboard() {
       access_token: form.access_token.trim() || null,
       is_published: form.is_published,
       amenities: form.amenities,
+      amenities_import_labels: form.amenities_import_labels.filter((x) => form.amenities.includes(x)),
       rooms_details: form.rooms_details,
       seasonal_prices: form.seasonal_prices,
       cancellation_policy: form.cancellation_policy?.trim() || null,
@@ -964,13 +1154,13 @@ export default function VillaDashboard() {
   }
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center bg-offwhite font-display text-2xl text-navy animate-pulse">Chargement...</div>
+    return <div className="flex min-h-dvh items-center justify-center bg-offwhite font-display text-2xl text-navy animate-pulse">Chargement...</div>
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-offwhite">
+    <main className="flex min-h-dvh flex-col bg-offwhite">
       {/* Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-none md:backdrop-blur-md">
         <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-6">
             <Button 
@@ -1010,29 +1200,17 @@ export default function VillaDashboard() {
         <Tabs defaultValue="planning" className="space-y-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b pb-6">
             <TabsList className="bg-navy/5 p-1 h-12 rounded-2xl">
-              <TabsTrigger value="planning" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="planning" className="px-6 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Calendar size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Planning</span>
               </TabsTrigger>
-              <TabsTrigger value="content" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="content" className="px-6 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <FileText size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Contenu</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
+              <TabsTrigger value="settings" className="px-6 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
                 <Settings size={16} />
                 <span className="text-[10px] uppercase tracking-widest font-bold">Réglages</span>
-              </TabsTrigger>
-              <TabsTrigger value="reservations" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
-                <Calendar size={16} />
-                <span className="text-[10px] uppercase tracking-widest font-bold">Réservations</span>
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
-                <TrendingUp size={16} />
-                <span className="text-[10px] uppercase tracking-widest font-bold">Analyses</span>
-              </TabsTrigger>
-              <TabsTrigger value="maintenance" className="px-8 rounded-xl gap-2 data-[state=active]:bg-white data-[state=active]:text-navy data-[state=active]:shadow-sm">
-                <ListChecks size={16} />
-                <span className="text-[10px] uppercase tracking-widest font-bold">Maintenance</span>
               </TabsTrigger>
             </TabsList>
 
@@ -1171,44 +1349,92 @@ export default function VillaDashboard() {
                     )}
                   </div>
                 </div>
-                <div className="rounded-[32px] border border-navy/5 bg-gold/10 p-6 shadow-sm border-gold/20">
-                  <h4 className="text-[10px] uppercase tracking-widest font-bold text-gold mb-2">Synchronisation</h4>
-                  <p className="text-xs text-navy/70 leading-relaxed mb-4">
-                    Votre calendrier Airbnb est synchronisé toutes les heures.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleSyncIcal}
-                    disabled={saving}
-                    className="w-full rounded-full border-gold/20 bg-white/50 text-gold text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
-                  >
-                    {saving ? <RefreshCw size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-                    Synchroniser maintenant
-                  </Button>
-                </div>
+                <PlanningIcalSyncCard
+                  lastLine={icalSyncSummary.lastLine}
+                  body={icalSyncSummary.body}
+                  tone={icalSyncSummary.tone}
+                  saving={saving}
+                  onSync={handleSyncIcal}
+                />
               </div>
             </div>
+
+            <VillaBookingsRegistry
+              bookingsTotal={bookings.length}
+              filteredBookings={filteredBookings}
+              bookingSearch={bookingSearch}
+              onBookingSearchChange={setBookingSearch}
+              bookingStatusFilter={bookingStatusFilter}
+              onBookingStatusFilterChange={setBookingStatusFilter}
+              bookingSourceFilter={bookingSourceFilter}
+              onBookingSourceFilterChange={setBookingSourceFilter}
+              onExportCsv={exportBookingsCsv}
+              renderRowActions={(booking) => (
+                <ActionMenu
+                  items={[
+                    {
+                      label: booking.status === "confirmed" ? "Passer en attente" : "Confirmer",
+                      icon: booking.status === "confirmed" ? <XCircle size={14} /> : <CheckCircle size={14} />,
+                      onClick: () =>
+                        handleUpdateBookingStatus(booking.id, booking.status === "confirmed" ? "pending" : "confirmed"),
+                    },
+                    {
+                      label: booking.payment_status === "paid" ? "Marquer non-payé" : "Marquer comme payé",
+                      icon: <CreditCard size={14} />,
+                      onClick: () =>
+                        handleUpdatePaymentStatus(booking.id, booking.payment_status === "paid" ? "unpaid" : "paid"),
+                    },
+                    {
+                      label: "Copier lien de paiement",
+                      icon: <LinkIcon size={14} />,
+                      onClick: () => {
+                        navigator.clipboard.writeText(`${window.location.origin}/checkout/${booking.id}`)
+                        setSuccess("Lien de paiement copié !")
+                      },
+                    },
+                    {
+                      label: "Supprimer",
+                      icon: <Trash2 size={14} />,
+                      onClick: () => handleDeleteBooking(booking.id),
+                      variant: "danger",
+                    },
+                  ]}
+                />
+              )}
+            />
           </TabsContent>
 
           {/* Content & Settings Placeholders */}
           <TabsContent value="content" className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm outline-none space-y-8">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <h3 className="font-display text-3xl text-navy">Éditeur de Villa</h3>
-                <div className="flex items-center gap-3 rounded-full bg-navy/5 px-4 py-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Statut:</span>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input 
-                      type="checkbox" 
-                      className="peer sr-only" 
-                      checked={form.is_published}
-                      onChange={(e) => handleTogglePublished(e.target.checked)}
-                    />
-                    <div className="peer h-6 w-11 rounded-full bg-navy/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full" />
-                    <span className="ml-3 text-[10px] font-bold uppercase tracking-widest text-navy">
-                      {form.is_published ? "Publié" : "Brouillon"}
-                    </span>
-                  </label>
+                <div className="flex flex-wrap items-center gap-3">
+                  {!isNew && typeof villaId === "string" && (
+                    <Link
+                      href={`/villas/${villaId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-navy hover:bg-slate-100"
+                    >
+                      Voir la fiche publique <ExternalLink size={12} aria-hidden />
+                    </Link>
+                  )}
+                  <div className="flex items-center gap-3 rounded-full bg-navy/5 px-4 py-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Statut:</span>
+                    <label className="relative inline-flex cursor-pointer items-center">
+                      <input 
+                        type="checkbox" 
+                        className="peer sr-only" 
+                        checked={form.is_published}
+                        onChange={(e) => handleTogglePublished(e.target.checked)}
+                      />
+                      <div className="peer h-6 w-11 rounded-full bg-navy/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full" />
+                      <span className="ml-3 text-[10px] font-bold uppercase tracking-widest text-navy">
+                        {form.is_published ? "Publié" : "Brouillon"}
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <p className="text-navy/60">Modifiez le contenu public et les informations de {villa?.name}.</p>
@@ -1220,10 +1446,30 @@ export default function VillaDashboard() {
               </div>
             )}
 
+            <nav
+              aria-label="Sections du contenu"
+              className="flex flex-wrap gap-2 rounded-2xl border border-navy/8 bg-offwhite/80 p-4 lg:sticky lg:top-28 lg:z-10"
+            >
+              <p className="w-full text-[10px] font-bold uppercase tracking-widest text-navy/40 lg:mb-0 lg:w-auto lg:shrink-0 lg:py-1.5">
+                Sur cette page
+              </p>
+              {contentNavItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-full border border-navy/10 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-navy/70 hover:border-gold/40 hover:bg-offwhite"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+
+            <VillaPublishChecklist items={publishChecklistItems} />
+
             <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
               <div className="space-y-10">
                 {/* Infos de base */}
-                <div className="space-y-6">
+                <div id="content-section-general" className="scroll-mt-28 space-y-6">
                   <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Informations Générales</h4>
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-2">
@@ -1288,8 +1534,10 @@ export default function VillaDashboard() {
                       placeholder="Ex: En dehors de la ville"
                     />
                   </div>
+                </div>
 
-                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold pt-4">Fiche villa publique</h4>
+                <div id="content-section-public" className="scroll-mt-28 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Fiche villa publique</h4>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Conditions d&apos;annulation</label>
@@ -1341,9 +1589,133 @@ export default function VillaDashboard() {
                         placeholder={"Plage\nCentre-ville\nRestaurants et bars"}
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div id="content-section-amenities" className="scroll-mt-28 space-y-5">
+                      <div>
+                        <h4 className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Équipements</h4>
+                        <p className="text-[11px] text-navy/45 leading-snug max-w-2xl mt-2">
+                          Le catalogue ci-dessous est <strong className="text-navy/55">toujours visible</strong> dans l’éditeur. Cochez une suggestion pour l’ajouter. L’import OTA ajoute des libellés (souvent hors catalogue) : ils apparaissent en <strong className="text-navy/55">personnalisés</strong> avec la pastille verte « Import » lorsque c’est issu de l’annonce. Enregistrez la villa pour conserver les marques Import.
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Suggestions (catalogue)</p>
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                          {SUGGESTED_AMENITY_LABELS.map((label) => {
+                            const selected = form.amenities.includes(label);
+                            const fromOta = form.amenities_import_labels.includes(label);
+                            return (
+                              <button
+                                key={label}
+                                type="button"
+                                onClick={() => handleToggleSuggestedAmenity(label)}
+                                className={`flex min-h-[4rem] flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-center transition-all ${
+                                  selected
+                                    ? "border-gold bg-gold/10 text-navy shadow-sm"
+                                    : "border-navy/10 bg-white text-navy/45 hover:border-navy/20 hover:bg-offwhite/80"
+                                }`}
+                              >
+                                <span className="text-[10px] font-bold leading-tight">{label}</span>
+                                {selected && fromOta ? <AmenityImportTag /> : null}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-navy/40">
+                          Personnalisés
+                          {customAmenityItems.length > 0 ? ` (${customAmenityItems.length})` : ""}
+                        </p>
+                        <p className="text-[11px] text-navy/45">
+                          Équipements qui ne sont pas dans le catalogue (ex. texte exact Airbnb). Pastille violette = ajout manuel ; verte « Import » = présent dans le dernier import.
+                        </p>
+                        {customAmenityItems.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {customAmenityItems.map((item, idx) => {
+                                const fromOta = form.amenities_import_labels.includes(item);
+                                return (
+                                  <button
+                                    key={`${idx}-${item.slice(0, 40)}`}
+                                    type="button"
+                                    onClick={() => handleRemoveAmenity(item)}
+                                    className={`group flex max-w-full items-start gap-1.5 rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all hover:border-red-200 hover:bg-red-50/80 ${
+                                      fromOta
+                                        ? "border-emerald-400/45 bg-emerald-50/35 text-navy"
+                                        : "border-violet-300/55 bg-violet-50/45 text-navy"
+                                    }`}
+                                    aria-label={`Retirer ${item}`}
+                                  >
+                                    <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                                      <span className="break-words leading-snug">{item}</span>
+                                      <span className="flex flex-wrap items-center gap-1">
+                                        {!fromOta ? (
+                                          <span className="rounded-md bg-violet-600/12 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-900">
+                                            Perso
+                                          </span>
+                                        ) : null}
+                                        {fromOta ? <AmenityImportTag /> : null}
+                                      </span>
+                                    </span>
+                                    <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy/35 group-hover:text-red-500" aria-hidden />
+                                  </button>
+                                );
+                              })}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-navy/38 italic rounded-xl border border-dashed border-navy/12 bg-white px-4 py-4 text-center">
+                            Aucun libellé hors catalogue — un import les remplira souvent automatiquement.
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <Input
+                          value={amenityDraft}
+                          onChange={(e) => setAmenityDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddAmenityDraft();
+                            }
+                          }}
+                          placeholder="Ajouter un équipement personnalisé…"
+                          className="sm:max-w-md rounded-xl"
+                        />
+                        <Button type="button" variant="outline" size="sm" className="rounded-xl shrink-0" onClick={handleAddAmenityDraft}>
+                          Ajouter
+                        </Button>
+                      </div>
+                      <details className="rounded-2xl border border-navy/10 bg-offwhite/50 px-4 py-3">
+                        <summary className="cursor-pointer text-[10px] uppercase tracking-widest font-bold text-navy/50">
+                          Saisie ou collage multi-lignes
+                        </summary>
+                        <p className="text-[11px] text-navy/45 mt-3 mb-2">
+                          Une ligne = un équipement. Les marques « Import » non présentes dans le texte collé seront retirées pour rester cohérentes.
+                        </p>
+                        <textarea
+                          className="min-h-[120px] w-full rounded-xl border border-navy/10 bg-white px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-gold/40"
+                          value={form.amenities.join("\n")}
+                          onChange={(e) => {
+                            const next = parseMultilineList(e.target.value);
+                            setForm((prev) => ({
+                              ...prev,
+                              amenities: next,
+                              amenities_import_labels: prev.amenities_import_labels.filter((x) => next.includes(x)),
+                            }));
+                          }}
+                          placeholder={"Wifi\nClimatisation\nCuisine équipée"}
+                        />
+                      </details>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Équipements intérieurs (1 ligne = 1 item)</label>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Détail intérieur (optionnel, 1 ligne = 1 item)</label>
+                        <p className="text-[11px] text-navy/45 leading-snug">
+                          Colonne « Intérieur » sous « Tous les équipements ». Si vide, la fiche utilise la <strong className="text-navy/55">liste équipements</strong> ci-dessus.
+                        </p>
                         <textarea
                           className="min-h-[110px] w-full rounded-2xl border border-navy/10 bg-white px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-gold/40"
                           value={form.equipment_interior_text}
@@ -1352,7 +1724,10 @@ export default function VillaDashboard() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Équipements extérieurs (1 ligne = 1 item)</label>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Détail extérieur (optionnel, 1 ligne = 1 item)</label>
+                        <p className="text-[11px] text-navy/45 leading-snug">
+                          Colonne « Extérieur » (piscine, terrasse, parking…). <strong className="text-navy/55">Pas de recopie</strong> depuis la liste principale : indiquez uniquement l’extérieur.
+                        </p>
                         <textarea
                           className="min-h-[110px] w-full rounded-2xl border border-navy/10 bg-white px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-gold/40"
                           value={form.equipment_exterior_text}
@@ -1399,32 +1774,10 @@ export default function VillaDashboard() {
                         placeholder={"Comment fonctionne la réservation ?::Vous choisissez la villa puis confirmez avec acompte.\nQuelles sont les conditions d'annulation ?::Jusqu'à 60 jours: 50%. Après: 100%."}
                       />
                     </div>
-                  </div>
-                </div>
-
-                {/* Équipements */}
-                <div className="space-y-6">
-                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Équipements & Services</h4>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {["Piscine Infinity", "Wi-Fi Haut Débit", "Climatisation", "Chef Privé", "Vue Mer", "Accès Plage", "Salle de Sport", "Spa / Sauna", "Cinéma Privé", "Héliport", "Garage 5 places", "Conciergerie 24/7"].map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => handleToggleAmenity(item)}
-                        className={`flex items-center justify-center rounded-xl border px-4 py-3 text-[10px] font-bold uppercase tracking-widest transition-all ${
-                          form.amenities.includes(item)
-                            ? "border-gold bg-gold/10 text-navy"
-                            : "border-navy/10 bg-white text-navy/40 hover:border-navy/20"
-                        }`}
-                      >
-                        {item}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Détail des chambres */}
-                <div className="space-y-6">
+                <div id="content-section-rooms" className="scroll-mt-28 space-y-6">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Détail des Chambres</h4>
                     <Button type="button" variant="outline" size="sm" onClick={handleAddRoom} className="rounded-full h-8 text-[10px]">
@@ -1458,7 +1811,7 @@ export default function VillaDashboard() {
               </div>
 
               <div className="space-y-10">
-                <div className="space-y-6">
+                <div id="content-section-media" className="scroll-mt-28 space-y-6">
                   <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Visuels</h4>
                   <div className="rounded-[32px] border border-navy/5 bg-offwhite p-6">
                     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[24px] bg-navy/10 shadow-inner">
@@ -1518,7 +1871,7 @@ export default function VillaDashboard() {
                   </div>
                 </div>
 
-                <div className="rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
+                <div id="content-section-import" className="scroll-mt-28 rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Import annonce (OTA)</h4>
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
@@ -1575,7 +1928,7 @@ export default function VillaDashboard() {
                   </div>
                 </div>
 
-                <div className="rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
+                <div id="content-section-connectivity" className="scroll-mt-28 rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Liens Externes & Sync</h4>
                     <div className="flex items-center gap-2">
@@ -1603,6 +1956,11 @@ export default function VillaDashboard() {
                       <Input value={form.access_token} onChange={handleChange("access_token")} placeholder="Token de sécurité" className="rounded-xl" />
                     </div>
                   </div>
+                  <IcalConnectivityStatus
+                    lastLine={icalSyncSummary.lastLine}
+                    body={icalSyncSummary.body}
+                    tone={icalSyncSummary.tone}
+                  />
                 </div>
               </div>
             </div>
@@ -1705,237 +2063,107 @@ export default function VillaDashboard() {
                   <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-2">Conseil Conciergerie</p>
                     <p className="text-xs text-white/40 italic">
-                      "Augmentez vos tarifs de 20% pour les périodes de festivals locaux (Cannes, Grand Prix)."
+                      Anticipez la haute saison (vacances scolaires françaises, carnaval, fin d&apos;année) et les pics de demande locale : gardez un prix de base raisonnable hors saison et ajustez à la hausse quand la demande monte en Martinique.
                     </p>
                   </div>
                 </div>
+
+                <Link
+                  href="/dashboard/proprio/analytics"
+                  className="flex items-center gap-4 rounded-[32px] border border-navy/10 bg-offwhite p-6 shadow-sm transition-colors hover:border-gold/30 hover:bg-white"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+                    <BarChart3 className="h-6 w-6" aria-hidden />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Analyses</p>
+                    <p className="font-display text-lg text-navy">Vue multi-villas</p>
+                    <p className="text-xs text-navy/50">Indicateurs réels sur l&apos;ensemble de vos biens.</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 shrink-0 text-navy/30" aria-hidden />
+                </Link>
               </div>
             </div>
-          </TabsContent>
 
-          <TabsContent value="reservations" className="space-y-8 outline-none">
-            <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
+            <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm mt-12">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="font-display text-3xl text-navy">Registre des Réservations</h3>
-                <div className="flex gap-3">
-                  <Button variant="outline" size="sm" className="rounded-full border-navy/10 gap-2 h-10 px-6 text-[10px] font-bold uppercase tracking-widest">
-                    <Filter size={14} /> Filtrer
-                  </Button>
-                  <Button variant="outline" size="sm" className="rounded-full border-navy/10 gap-2 h-10 px-6 text-[10px] font-bold uppercase tracking-widest">
-                    <Download size={14} /> Exporter
-                  </Button>
+                <div>
+                  <h3 className="font-display text-3xl text-navy">Carnet de maintenance</h3>
+                  <p className="text-sm text-navy/40">Suivez les tâches et l&apos;entretien de la propriété.</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+                  <ListChecks aria-hidden />
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">
-                      <th className="pb-4 pl-4 font-bold">Client</th>
-                      <th className="pb-4 font-bold">Dates</th>
-                      <th className="pb-4 font-bold">Provenance</th>
-                      <th className="pb-4 font-bold">Prix</th>
-                      <th className="pb-4 font-bold">Paiement</th>
-                      <th className="pb-4 font-bold">Statut</th>
-                      <th className="pb-4 pr-4 text-right font-bold">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-navy/5">
-                    {bookings.map((booking) => (
-                      <tr key={booking.id} className="group hover:bg-offwhite transition-colors">
-                        <td className="py-5 pl-4">
-                          <p className="font-bold text-navy">{booking.guest_name || "Client Privé"}</p>
-                          <p className="text-[10px] text-navy/40 uppercase tracking-widest">ID: {booking.id.slice(0, 8)}</p>
-                        </td>
-                        <td className="py-5">
-                          <p className="text-sm text-navy">{new Date(booking.start_date).toLocaleDateString('fr-FR')} - {new Date(booking.end_date).toLocaleDateString('fr-FR')}</p>
-                        </td>
-                        <td className="py-5">
-                          <span className={`inline-block rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
-                            booking.source === 'airbnb' ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600'
-                          }`}>
-                            {booking.source || 'Direct'}
-                          </span>
-                        </td>
-                        <td className="py-5">
-                          <p className="font-bold text-navy">€{Number(booking.price).toLocaleString()}</p>
-                        </td>
-                        <td className="py-5">
-                          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
-                            booking.payment_status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                          }`}>
-                            <CreditCard size={10} />
-                            {booking.payment_status === 'paid' ? 'Payé' : 'À payer'}
-                          </span>
-                        </td>
-                        <td className="py-5">
-                          <span className={`inline-block h-2 w-2 rounded-full mr-2 ${
-                            booking.status === 'confirmed' ? 'bg-emerald-500' : 'bg-amber-500'
-                          }`} />
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">
-                            {booking.status === 'confirmed' ? 'Confirmé' : 'En attente'}
-                          </span>
-                        </td>
-                        <td className="py-5 pr-4 text-right">
-                          <ActionMenu
-                            items={[
-                              {
-                                label: booking.status === "confirmed" ? "Passer en attente" : "Confirmer",
-                                icon: booking.status === "confirmed" ? <XCircle size={14} /> : <CheckCircle size={14} />,
-                                onClick: () => handleUpdateBookingStatus(booking.id, booking.status === "confirmed" ? "pending" : "confirmed"),
-                              },
-                              {
-                                label: booking.payment_status === "paid" ? "Marquer non-payé" : "Marquer comme payé",
-                                icon: <CreditCard size={14} />,
-                                onClick: () => handleUpdatePaymentStatus(booking.id, booking.payment_status === "paid" ? "unpaid" : "paid"),
-                              },
-                              {
-                                label: "Copier lien de paiement",
-                                icon: <LinkIcon size={14} />,
-                                onClick: () => {
-                                  // Simulation d'un lien de paiement manuel si Stripe n'est pas encore prêt
-                                  navigator.clipboard.writeText(`${window.location.origin}/checkout/${booking.id}`);
-                                  setSuccess("Lien de paiement copié !");
-                                },
-                              },
-                              {
-                                label: "Supprimer",
-                                icon: <Trash2 size={14} />,
-                                onClick: () => handleDeleteBooking(booking.id),
-                                variant: "danger",
-                              },
-                            ]}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-8 outline-none">
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold mb-8">Évolution des Revenus</h4>
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={[
-                      { name: 'Jan', val: 4000 },
-                      { name: 'Fev', val: 3000 },
-                      { name: 'Mar', val: 2000 },
-                      { name: 'Avr', val: 2780 },
-                      { name: 'Mai', val: 1890 },
-                      { name: 'Juin', val: 2390 },
-                      { name: 'Juil', val: 3490 },
-                    ]}>
-                      <defs>
-                        <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} />
-                      <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} />
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
-                      />
-                      <Area type="monotone" dataKey="val" stroke="#D4AF37" fillOpacity={1} fill="url(#colorVal)" strokeWidth={3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="flex gap-3 mb-10">
+                <Input
+                  ref={maintenanceTaskInputRef}
+                  placeholder="Ajouter une tâche (ex: Nettoyage piscine)..."
+                  className="rounded-2xl border-navy/10 h-14"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const v = e.currentTarget.value.trim()
+                      if (!v) return
+                      void handleAddTask(v).then(() => {
+                        e.currentTarget.value = ""
+                      })
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  className="h-14 rounded-2xl bg-navy px-8 font-bold uppercase tracking-widest text-[10px]"
+                  onClick={async () => {
+                    const el = maintenanceTaskInputRef.current
+                    if (!el) return
+                    const v = el.value.trim()
+                    if (!v) return
+                    await handleAddTask(v)
+                    el.value = ""
+                  }}
+                >
+                  Ajouter
+                </Button>
               </div>
 
-              <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold mb-8">Provenance des Clients</h4>
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={[
-                      { name: 'Airbnb', val: 65 },
-                      { name: 'Booking', val: 20 },
-                      { name: 'Direct', val: 15 },
-                    ]}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} />
-                      <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} />
-                      <Tooltip 
-                        cursor={{fill: '#f8fafc'}}
-                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
-                      />
-                      <Bar dataKey="val" fill="#1e293b" radius={[8, 8, 0, 0]} barSize={40} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="maintenance" className="space-y-8 outline-none">
-            <div className="mx-auto max-w-4xl space-y-8">
-              <div className="rounded-[40px] border border-navy/5 bg-white p-8 shadow-sm">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="font-display text-3xl text-navy">Carnet de Maintenance</h3>
-                    <p className="text-sm text-navy/40">Suivez les tâches et l'entretien de la propriété.</p>
+              <div className="space-y-4">
+                {tasks.length === 0 ? (
+                  <div className="py-12 text-center text-navy/40 italic">
+                    Aucune tâche en cours. Tout est en ordre.
                   </div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
-                    <ListChecks />
-                  </div>
-                </div>
-
-                <div className="flex gap-3 mb-10">
-                  <Input 
-                    placeholder="Ajouter une tâche (ex: Nettoyage piscine)..." 
-                    className="rounded-2xl border-navy/10 h-14"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleAddTask(e.currentTarget.value);
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                  />
-                  <Button className="h-14 rounded-2xl bg-navy px-8 font-bold uppercase tracking-widest text-[10px]">
-                    Ajouter
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  {tasks.length === 0 ? (
-                    <div className="py-12 text-center text-navy/40 italic">
-                      Aucune tâche en cours. Tout est en ordre.
-                    </div>
-                  ) : (
-                    tasks.map((task) => (
-                      <div key={task.id} className="flex items-center justify-between rounded-2xl border border-navy/5 bg-offwhite p-5 group transition-all hover:shadow-md">
-                        <div className="flex items-center gap-4">
-                          <button 
-                            onClick={() => handleToggleTask(task.id, task.status)}
-                            className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
-                              task.status === 'completed' 
-                                ? "bg-emerald-500 border-emerald-500 text-white" 
-                                : "border-navy/10 bg-white"
-                            }`}
-                          >
-                            {task.status === 'completed' && <Check size={14} />}
-                          </button>
-                          <span className={`text-sm font-medium transition-all ${
-                            task.status === 'completed' ? "text-navy/30 line-through" : "text-navy"
-                          }`}>
-                            {task.content}
-                          </span>
-                        </div>
-                        <button 
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="text-navy/10 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                ) : (
+                  tasks.map((task) => (
+                    <div key={task.id} className="flex items-center justify-between rounded-2xl border border-navy/5 bg-offwhite p-5 group transition-all hover:shadow-md">
+                      <div className="flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleTask(task.id, task.status)}
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
+                            task.status === 'completed'
+                              ? "bg-emerald-500 border-emerald-500 text-white"
+                              : "border-navy/10 bg-white"
+                          }`}
                         >
-                          <X size={18} />
+                          {task.status === 'completed' && <Check size={14} />}
                         </button>
+                        <span className={`text-sm font-medium transition-all ${
+                          task.status === 'completed' ? "text-navy/30 line-through" : "text-navy"
+                        }`}>
+                          {task.content}
+                        </span>
                       </div>
-                    ))
-                  )}
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTask(task.id)}
+                        className="text-navy/10 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                        aria-label="Supprimer la tâche"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </TabsContent>

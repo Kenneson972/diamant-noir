@@ -27,8 +27,8 @@ export function CompareBar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-up">
       {/* Backdrop blur subtle */}
-      <div className="bg-navy/95 backdrop-blur-md border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.35)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center gap-4">
+      <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] backdrop-blur-none md:backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-3">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 sm:px-6">
 
           {/* Icône + label */}
           <div className="hidden sm:flex items-center gap-2 text-white/60 shrink-0">

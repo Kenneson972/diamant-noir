@@ -2,7 +2,7 @@ import { TeamCalendar } from "@/components/TeamCalendar";
 
 export default function TeamDashboard() {
   return (
-    <main className="min-h-screen bg-offwhite px-6 pt-12 pb-12 text-navy">
+    <main className="min-h-dvh bg-offwhite px-6 pt-12 pb-12 text-navy">
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.3em] text-[#D4AF37]">

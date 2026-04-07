@@ -18,6 +18,7 @@ export async function POST(request: Request) {
       airbnb_url,
       no_photos,
       message,
+      photo_urls, // string[]
       platforms, // [{ platform, ical_url, label }]
     } = body;
 
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
         airbnb_url: airbnb_url || null,
         no_photos: Boolean(no_photos),
         message: message || null,
+        photo_urls: Array.isArray(photo_urls) && photo_urls.length > 0 ? photo_urls : null,
         platforms: Array.isArray(platforms) && platforms.length > 0 ? platforms : null,
         status: "pending",
       })

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useHomeAudience } from "@/contexts/HomeAudienceContext";
-import { replaceHomeAndRequestGateReopen } from "@/lib/homeAudienceNavigation";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
@@ -12,7 +11,7 @@ export const Footer = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { locale, setLocale, currency, setCurrency, t } = useLocale();
-  const { audience, clearAudience, requestGateReopen } = useHomeAudience();
+  const { audience, clearAudience } = useHomeAudience();
 
   if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
     return null;
@@ -182,7 +181,7 @@ export const Footer = () => {
               type="button"
               onClick={() => {
                 clearAudience();
-                replaceHomeAndRequestGateReopen(router, requestGateReopen);
+                router.push("/");
               }}
               className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
             >

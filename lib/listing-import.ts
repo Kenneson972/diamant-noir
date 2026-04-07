@@ -243,6 +243,190 @@ function scrapeExtraImages(html: string): string[] {
   return acc;
 }
 
+/** Décode une chaîne JSON courante dans les blobs Airbnb (échappements minimaux). */
+function decodeEmbeddedJsonString(s: string): string {
+  return s
+    .replace(/\\n/g, "\n")
+    .replace(/\\"/g, '"')
+    .replace(/\\u0026/g, "&");
+}
+
+/**
+ * Airbnb met souvent `houseRules`, horaires et `Amenity` très loin dans le HTML (>120 ko) :
+ * le bloc `textBlob` des heuristiques texte ne les voit pas. On les prend ici sur le même
+ * `slice` que le reste du scrape JSON.
+ */
+function extractAirbnbHouseRulesAndAmenities(slice: string): Partial<ListingImportResult> {
+  const out: Partial<ListingImportResult> = {};
+
+  const hrIdx = slice.indexOf('"houseRules":[');
+  if (hrIdx >= 0) {
+    const endSub = slice.indexOf('],"listingExpectations"', hrIdx);
+    const chunk =
+      endSub > hrIdx ? slice.slice(hrIdx, endSub + 1) : slice.slice(hrIdx, hrIdx + 15_000);
+    const titles: string[] = [];
+    const titleRe = /"title"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+    let tm: RegExpExecArray | null;
+    while ((tm = titleRe.exec(chunk)) !== null) {
+      const raw = decodeEmbeddedJsonString(tm[1]).trim();
+      if (raw) titles.push(raw);
+    }
+    if (titles.length) {
+      out.house_rules = titles.join("\n");
+      for (const line of titles) {
+        const timeMatch = line.match(/\b([01]?\d|2[0-3]):[0-5]\d\b/);
+        if (!timeMatch) continue;
+        if (
+          /arrivée/i.test(line) ||
+          /check[-\s]?in/i.test(line)
+        ) {
+          if (!out.check_in_time) out.check_in_time = timeMatch[0];
+        }
+        if (
+          /départ/i.test(line) ||
+          /check[-\s]?out/i.test(line)
+        ) {
+          if (!out.check_out_time) out.check_out_time = timeMatch[0];
+        }
+      }
+    }
+  }
+
+  const amenityRe =
+    /"__typename":"Amenity","id":"[^"]+","available":true,"title":"((?:[^"\\]|\\.)*)"/g;
+  const seenAm = new Set<string>();
+  const amenities: string[] = [];
+  let am: RegExpExecArray | null;
+  while ((am = amenityRe.exec(slice)) !== null) {
+    const title = decodeEmbeddedJsonString(am[1]).trim();
+    if (!title || seenAm.has(title)) continue;
+    seenAm.add(title);
+    amenities.push(title);
+  }
+  if (amenities.length) out.amenities = amenities;
+
+  return out;
+}
+
+/**
+ * Extrait les champs clés depuis les blocs JSON embarqués (Airbnb __NEXT_DATA__, etc.)
+ * en recherchant des patterns connus directement dans le HTML brut.
+ */
+function scrapeEmbeddedJsonFields(html: string): Partial<ListingImportResult> {
+  const out: Partial<ListingImportResult> = {};
+  const slice = html.slice(0, 800_000);
+
+  // Capacité — Airbnb: "personCapacity":N ou "person_capacity":N
+  if (!out.capacity) {
+    const m = slice.match(/"person(?:_c|C)apacity"\s*:\s*(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > 0 && n < 200) out.capacity = n; }
+  }
+  // Fallback: "maxGuests":N ou "guestCapacity":N
+  if (!out.capacity) {
+    const m = slice.match(/"(?:maxGuests|guestCapacity|maximumOccupancy)"\s*:\s*(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > 0 && n < 200) out.capacity = n; }
+  }
+
+  // Prix/nuit — pattern JSON courant Airbnb (nombreux formats)
+  const pricePatterns: RegExp[] = [
+    /"nightly_price"\s*:\s*(\d+(?:\.\d+)?)/,
+    /"nightly_price_as_guest"\s*:\s*(\d+(?:\.\d+)?)/,
+    /"(?:basePrice|nightlyPrice|nightlyRate|nightlyPriceAmount)"\s*:\s*(\d+(?:\.\d+)?)/,
+    /"price"\s*:\s*\{"amount"\s*:\s*(\d+(?:\.\d+)?)/,
+    /"amount"\s*:\s*(\d+(?:\.\d+)?)\s*,\s*"currency"\s*:\s*"EUR"/,
+    /"localizedPrice"\s*:\s*"[^"]*?(\d{2,6})[^"]*?€/,
+    /"formattedPrice"\s*:\s*"[^"]*?(\d{2,6})[^"]*€/,
+    /"priceString"\s*:\s*"[^"]*?(\d{2,6})[^"]*€/,
+    /"discountedPrice"\s*:\s*(\d+(?:\.\d+)?)/,
+    // accessibilityLabel: "57 € par nuit" (Airbnb FR)
+    /"accessibilityLabel"\s*:\s*"(\d{2,6})\s*€/,
+  ];
+  for (const re of pricePatterns) {
+    if (!out.price_per_night) {
+      const m = slice.match(re);
+      if (m) { const n = parseFloat(m[1]); if (n > 5 && n < 200_000) { out.price_per_night = n; break; } }
+    }
+  }
+  // Airbnb : montant en micro-unités (ex. 57 € → 57_000_000)
+  if (!out.price_per_night) {
+    const mMicro = slice.match(/"amountMicros"\s*:\s*(\d{6,15})\b/);
+    if (mMicro) {
+      const micros = parseInt(mMicro[1], 10);
+      const euros = micros / 1_000_000;
+      if (euros > 5 && euros < 200_000) out.price_per_night = Math.round(euros * 100) / 100;
+    }
+  }
+  if (!out.price_per_night) {
+    const mQual = slice.match(/"qualifyingPrice"\s*:\s*\{[^}]*"amount"\s*:\s*(\d+(?:\.\d+)?)/);
+    if (mQual) {
+      const n = parseFloat(mQual[1]);
+      if (n > 5 && n < 200_000) out.price_per_night = n;
+    }
+  }
+  // Format texte: "57 € par nuit" ou "€57/nuit" ou "57€/nuit"
+  if (!out.price_per_night) {
+    const m = slice.match(/(\d{2,5})\s*€\s*(?:par\s+nuit|\/\s*nuit)/i)
+      || slice.match(/€\s*(\d{2,5})\s*(?:par\s+nuit|\/\s*nuit)/i)
+      || slice.match(/(\d{2,5})\s*€\s*\/?\s*nuit/i);
+    if (m) { const n = parseInt(m[1], 10); if (n > 5 && n < 200_000) out.price_per_night = n; }
+  }
+
+  // Surface — Airbnb: "squareFeet":N ou "squareMeters":N
+  if (!out.surface_m2) {
+    const m = slice.match(/"squareMeters"\s*:\s*(\d+(?:\.\d+)?)/);
+    if (m) { const n = parseFloat(m[1]); if (n > 0) out.surface_m2 = n; }
+  }
+  if (!out.surface_m2) {
+    const m = slice.match(/"squareFeet"\s*:\s*(\d+(?:\.\d+)?)/);
+    if (m) { const n = parseFloat(m[1]); if (n > 0) out.surface_m2 = Math.round(n * 0.0929); }
+  }
+
+  // Salles de bain — "bathrooms":N (JSON)
+  if (!out.bathrooms_count) {
+    const m = slice.match(/"bathrooms"\s*:\s*(\d+(?:\.\d+)?)\b(?!\s*(?:_|[A-Za-z]))/);
+    if (m) { const n = parseFloat(m[1]); if (n > 0 && n < 50) out.bathrooms_count = n; }
+  }
+
+  // Latitude / Longitude depuis JSON embarqué
+  if (!out.latitude) {
+    const latPatterns = [
+      /"(?:lat|latitude|listing_lat|listingLat|location_lat)"\s*:\s*(-?\d{1,3}\.\d{3,})/,
+      /"lat"\s*:\s*(-?\d{1,3}\.\d{3,})/,
+    ];
+    for (const re of latPatterns) {
+      const m = slice.match(re);
+      if (m) { const n = parseFloat(m[1]); if (Math.abs(n) <= 90) { out.latitude = n; break; } }
+    }
+  }
+  if (!out.longitude) {
+    const lngPatterns = [
+      /"(?:lng|lon|longitude|listing_lng|listingLng|location_lng)"\s*:\s*(-?\d{1,3}\.\d{3,})/,
+      /"lng"\s*:\s*(-?\d{1,3}\.\d{3,})/,
+    ];
+    for (const re of lngPatterns) {
+      const m = slice.match(re);
+      if (m) { const n = parseFloat(m[1]); if (Math.abs(n) <= 180) { out.longitude = n; break; } }
+    }
+  }
+
+  // Politique d'annulation depuis JSON Airbnb
+  if (!out.cancellation_policy) {
+    const m = slice.match(/"(?:cancellationPolicyLabel|cancel_policy_label|cancelPolicy)"\s*:\s*"([^"]{5,200})"/);
+    if (m) out.cancellation_policy = m[1].replace(/\\n/g, '\n').trim();
+  }
+
+  // Règlement, horaires, équipements (JSON loin dans la page — hors fenêtre textBlob)
+  const airbnbPolicy = extractAirbnbHouseRulesAndAmenities(slice);
+  if (!out.check_in_time && airbnbPolicy.check_in_time) out.check_in_time = airbnbPolicy.check_in_time;
+  if (!out.check_out_time && airbnbPolicy.check_out_time) out.check_out_time = airbnbPolicy.check_out_time;
+  if (!out.house_rules && airbnbPolicy.house_rules) out.house_rules = airbnbPolicy.house_rules;
+  if ((!out.amenities || out.amenities.length === 0) && airbnbPolicy.amenities?.length) {
+    out.amenities = airbnbPolicy.amenities;
+  }
+
+  return out;
+}
+
 function parseTimeHint(text: string): string | null {
   const m = text.match(/\b([01]?\d|2[0-3]):[0-5]\d\b/);
   return m ? m[0] : null;
@@ -361,7 +545,8 @@ export function parseListingFromHtml(html: string, pageUrl: string): ListingImpo
 
   const guestMatch =
     textBlob.match(/(\d+)\s*(voyageurs?|guests?|hôtes?|hosts?)/i) ||
-    textBlob.match(/(\d+)\s*(personnes|persons)/i);
+    textBlob.match(/(\d+)\s*(personnes?|persons?)/i) ||
+    textBlob.match(/pour\s+(\d+)\s+(?:personnes?|voyageurs?)/i);
   if (guestMatch && !result.capacity) {
     result.capacity = Math.max(1, parseInt(guestMatch[1], 10));
   }
@@ -374,6 +559,68 @@ export function parseListingFromHtml(html: string, pageUrl: string): ListingImpo
   const surfMatch = textBlob.match(/(\d+)\s*(m²|m2|sq\s*m)/i);
   if (surfMatch && !result.surface_m2) {
     result.surface_m2 = parseInt(surfMatch[1], 10);
+  }
+
+  // Extraction depuis les JSON embarqués (Airbnb __NEXT_DATA__, etc.)
+  const embedded = scrapeEmbeddedJsonFields(html);
+  if (!result.capacity && embedded.capacity) result.capacity = embedded.capacity;
+  if (!result.price_per_night && embedded.price_per_night) result.price_per_night = embedded.price_per_night;
+  if (!result.surface_m2 && embedded.surface_m2) result.surface_m2 = embedded.surface_m2;
+  if (!result.bathrooms_count && embedded.bathrooms_count) result.bathrooms_count = embedded.bathrooms_count;
+  if (!result.latitude && embedded.latitude) result.latitude = embedded.latitude;
+  if (!result.longitude && embedded.longitude) result.longitude = embedded.longitude;
+  if (!result.cancellation_policy && embedded.cancellation_policy) result.cancellation_policy = embedded.cancellation_policy;
+  if (!result.check_in_time && embedded.check_in_time) result.check_in_time = embedded.check_in_time;
+  if (!result.check_out_time && embedded.check_out_time) result.check_out_time = embedded.check_out_time;
+  if (!result.house_rules && embedded.house_rules) result.house_rules = embedded.house_rules;
+  if ((!result.amenities || result.amenities.length === 0) && embedded.amenities?.length) {
+    result.amenities = embedded.amenities;
+  }
+
+  // --- Extraction textuelle champs supplémentaires ---
+
+  // Cancellation policy: phrases clés Airbnb FR
+  if (!result.cancellation_policy) {
+    const cancelMatch = textBlob.match(
+      /(?:annulation|politique d.annulation|cancellation policy)[^\n.]{0,10}[\s:]+([^\n.]{10,300})/i
+    );
+    if (cancelMatch?.[1]) {
+      result.cancellation_policy = cancelMatch[1].trim().slice(0, 300);
+    }
+  }
+
+  // House rules depuis texte
+  if (!result.house_rules) {
+    // Cherche section "Règlement" ou "Règles de la maison"
+    const rulesMatch = textBlob.match(
+      /(?:règles de la maison|règlement intérieur|house rules)[^\n]{0,10}[\n:]+([^\n]{10,500})/i
+    );
+    if (rulesMatch?.[1]) {
+      result.house_rules = rulesMatch[1].trim().slice(0, 500);
+    }
+  }
+
+  // Safety info: liste d'équipements sécurité Airbnb
+  if (!result.safety_info) {
+    const safetyKeywords = [
+      'détecteur de fumée', 'smoke detector', 'détecteur de co', 'co detector',
+      'extincteur', 'fire extinguisher', 'trousse de premiers secours', 'first aid kit',
+      'verrou', 'lock', 'caméra', 'camera',
+    ];
+    const found = safetyKeywords.filter(kw => textBlob.toLowerCase().includes(kw));
+    if (found.length >= 2) {
+      result.safety_info = found.map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
+    }
+  }
+
+  // Environment: type de logement depuis Airbnb
+  if (!result.environment) {
+    const envMatch = textBlob.match(
+      /(?:logement complet|chambre privée|chambre partagée|entire home|private room|entire apartment|entire villa)[^\n,·|]{0,60}/i
+    );
+    if (envMatch?.[0]) {
+      result.environment = envMatch[0].replace(/[·|]/g, '').trim().slice(0, 100);
+    }
   }
 
   const checkIn = textBlob.match(/check[-\s]?in[^0-9]{0,24}([01]?\d|2[0-3]):[0-5]\d/i)
@@ -416,6 +663,12 @@ export function parseListingFromHtml(html: string, pageUrl: string): ListingImpo
 
   if (!result.description && jsonBlocks.length === 0 && !ogDesc) {
     warnings.push("Peu de métadonnées structurées : import partiel probable.");
+  }
+
+  if (result.source === "airbnb" && result.price_per_night == null) {
+    warnings.push(
+      "Prix par nuit absent du HTML Airbnb (souvent injecté uniquement côté client). Indiquez le tarif manuellement ou via votre grille tarifaire."
+    );
   }
 
   return result;

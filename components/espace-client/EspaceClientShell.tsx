@@ -114,7 +114,7 @@ export function EspaceClientShell({
     exact ? pathname === href : pathname?.startsWith(href);
 
   return (
-    <div className="flex min-h-screen bg-[#FAFAF8]">
+    <div className="flex min-h-dvh bg-[#FAFAF8]">
       {/* ── Sidebar desktop ── */}
       <aside
         className="hidden md:flex w-[188px] flex-col bg-white border-r border-[rgba(13,27,42,0.07)] shrink-0"

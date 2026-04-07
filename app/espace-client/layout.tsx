@@ -43,7 +43,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
   if (loading) {
     return (
       <EspaceClientProviders>
-        <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="min-h-dvh bg-[#FAFAF8] flex items-center justify-center">
           <div className="w-8 h-8 border-2 border-[rgba(212,175,55,0.2)] border-t-[#D4AF37] rounded-full animate-spin" />
         </div>
       </EspaceClientProviders>
@@ -53,7 +53,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
   if (!supabase) {
     return (
       <EspaceClientProviders>
-        <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
+        <div className="min-h-dvh bg-[#FAFAF8] flex items-center justify-center p-6">
           <p className="text-sm text-[rgba(13,27,42,0.6)]">Configuration indisponible.</p>
         </div>
       </EspaceClientProviders>

@@ -10,12 +10,21 @@ html,
 body {
   padding: 0;
   margin: 0;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   background-color: #fafafa;
   color: #0a0a0a;
+}
+
+/* Réduit le délai de tap (300ms) sur les contrôles — sans affecter le zoom page */
+button,
+[role="button"],
+[type="submit"],
+[type="button"] {
+  touch-action: manipulation;
 }
 
 .font-display {

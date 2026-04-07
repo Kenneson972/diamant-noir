@@ -31,7 +31,7 @@ function SuccessContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-offwhite pt-32 pb-20 flex items-center justify-center">
+      <main className="min-h-dvh bg-offwhite pt-32 pb-20 flex items-center justify-center">
         <p className="text-navy/60">Chargement de votre confirmation...</p>
       </main>
     );
@@ -39,7 +39,7 @@ function SuccessContent() {
 
   if (error || !data) {
     return (
-      <main className="min-h-screen bg-offwhite pt-32 pb-20 px-6">
+      <main className="min-h-dvh bg-offwhite pt-32 pb-20 px-6">
         <div className="mx-auto max-w-lg text-center">
           <p className="text-navy/80 mb-6">{error || "Une erreur est survenue."}</p>
           <Link href="/villas" className="text-gold font-medium hover:underline">
@@ -54,7 +54,7 @@ function SuccessContent() {
   const isConfirmed = booking?.status === "confirmed" || booking?.payment_status === "paid";
 
   return (
-    <main className="min-h-screen bg-offwhite pt-32 pb-20 px-6">
+    <main className="min-h-dvh bg-offwhite pt-32 pb-20 px-6">
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gold/20 text-gold mb-8">
           <Check className="w-8 h-8" />
@@ -117,7 +117,7 @@ function SuccessContent() {
 export default function SuccessPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-offwhite pt-32 pb-20 flex items-center justify-center">
+      <main className="min-h-dvh bg-offwhite pt-32 pb-20 flex items-center justify-center">
         <p className="text-navy/60">Chargement...</p>
       </main>
     }>

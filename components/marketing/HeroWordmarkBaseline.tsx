@@ -9,12 +9,12 @@ type Props = {
 };
 
 /**
- * Hero vidéo : mot « DIAMANT NOIR » + baseline *Confiance · Réactivité · Excellence*
- * (aligné accueil / landing propriétaires). Optionnel : CTAs ou autre sous la baseline.
+ * Hero vidéo : mot « DIAMANT NOIR » + *Conciergerie en privée* + triplet *Confiance · Réactivité · Excellence*
+ * en micro-typo (accueil / landing propriétaires). Optionnel : CTAs via `children`.
  */
 export function HeroWordmarkBaseline({ headingId, titleLabel, children }: Props) {
   return (
-    <div className="flex w-full flex-col items-center gap-8 md:gap-10">
+    <div className="flex w-full flex-col items-center gap-5 md:gap-6">
       <h1
         id={headingId}
         className="m-0 flex max-w-[min(100%,40rem)] animate-in fade-in flex-col items-center justify-center duration-700"
@@ -30,20 +30,32 @@ export function HeroWordmarkBaseline({ headingId, titleLabel, children }: Props)
           className="max-w-full justify-center [&_span.font-display]:text-[clamp(1.25rem,3.6vw+0.35rem,2.85rem)] [&_span.font-display]:font-normal [&_span.font-display]:leading-[1.06] [&_span.font-display]:tracking-[0.26em] sm:[&_span.font-display]:tracking-[0.32em] md:[&_span.font-display]:tracking-[0.38em]"
         />
       </h1>
+
+      {/* Ligne d’intention — sobre */}
       <p
-        className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150"
+        className="animate-in fade-in slide-in-from-bottom-1 m-0 duration-700 delay-75 motion-reduce:delay-0"
         aria-hidden={false}
       >
-        <span className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-b border-white/[0.12] pb-6 text-[10px] font-medium uppercase tracking-[0.42em] text-white/[0.72] sm:gap-x-5 sm:tracking-[0.46em] md:gap-x-7 md:text-[11px]">
-          <span className="text-white/[0.88]">Confiance</span>
-          <span className="select-none font-light text-white/25" aria-hidden>
+        <span className="font-display text-[0.8125rem] font-normal leading-snug tracking-[0.22em] text-white/[0.92] sm:text-[0.875rem] md:tracking-[0.26em]">
+          Conciergerie en privée
+        </span>
+      </p>
+
+      {/* Triplet valeurs — très petit, discret */}
+      <p
+        className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150 motion-reduce:delay-0"
+        aria-hidden={false}
+      >
+        <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]">
+          <span className="text-white/[0.55]">Confiance</span>
+          <span className="select-none font-extralight text-white/20" aria-hidden>
             ·
           </span>
-          <span className="text-white/[0.88]">Réactivité</span>
-          <span className="select-none font-light text-white/25" aria-hidden>
+          <span className="text-white/[0.55]">Réactivité</span>
+          <span className="select-none font-extralight text-white/20" aria-hidden>
             ·
           </span>
-          <span className="text-white/[0.88]">Excellence</span>
+          <span className="text-white/[0.55]">Excellence</span>
         </span>
       </p>
       {children}

@@ -1,6 +1,6 @@
 /**
  * Verrou de scroll document.body par compteur de références.
- * Évite les courses Navbar (menu mobile) + HomeAudienceGate qui écrasent
+ * Évite les courses Navbar (menu mobile) + overlays plein écran qui écrasent
  * mutuellement `style.overflow` (scroll figé ou inverse).
  */
 

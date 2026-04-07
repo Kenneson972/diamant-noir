@@ -37,15 +37,15 @@ export function BookLandingMarketing({
   if (audience === "proprietaire") {
     return (
       <>
-        <section className="relative min-h-[490px] w-full overflow-hidden bg-black xs:min-h-[520px] md:min-h-[78vh]">
+        <section className="relative min-h-[220px] w-full overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
           <div
             className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
             aria-hidden
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-          <div className="relative z-10 flex min-h-[490px] flex-col justify-end px-6 pb-8 pt-24 xs:min-h-[520px] md:min-h-[78vh] md:pb-20 md:pt-32">
-            <div className="mx-auto w-full max-w-3xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="relative z-10 flex min-h-[220px] flex-col justify-end px-5 pb-8 pt-24 xs:min-h-[260px] md:min-h-[min(68vh,680px)] md:pb-20 md:pt-24 sm:px-6">
+            <div className="mx-auto w-full max-w-4xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
               <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/65">
                 Espace propriétaires
               </p>
@@ -95,7 +95,7 @@ export function BookLandingMarketing({
         </section>
 
         {hasDateOnly && (
-          <section className="border-b border-black/8 bg-white px-6 py-6">
+          <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
             <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
               <div className="flex items-start gap-3 sm:items-center">
                 <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
@@ -117,7 +117,7 @@ export function BookLandingMarketing({
           </section>
         )}
 
-        <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-6 pb-20 pt-12 md:pt-16">
+        <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
           <div className="space-y-6 text-center">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">Une seule vitrine</p>
             <h2 className="font-display text-2xl text-navy md:text-3xl">Catalogue voyageurs &amp; exigence marque</h2>
@@ -144,7 +144,7 @@ export function BookLandingMarketing({
           </div>
         </section>
 
-        <section className="border-t border-black/8 bg-white px-6 py-20 md:py-28">
+        <section className="border-t border-black/8 bg-white px-5 py-20 sm:px-6 md:py-28">
           <ScrollReveal delay={0}>
             <div className="mx-auto max-w-2xl space-y-8 text-center">
               <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />
@@ -172,15 +172,15 @@ export function BookLandingMarketing({
 
   return (
     <>
-      <section className="relative min-h-[490px] w-full overflow-hidden bg-black xs:min-h-[520px] md:min-h-[78vh]">
+      <section className="relative min-h-[220px] w-full overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
         <div
           className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
           aria-hidden
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-offwhite" />
 
-        <div className="relative z-10 flex min-h-[490px] flex-col justify-end px-6 pb-8 pt-24 xs:min-h-[520px] md:min-h-[78vh] md:pb-20 md:pt-32">
-          <div className="mx-auto w-full max-w-3xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="relative z-10 flex min-h-[220px] flex-col justify-end px-5 pb-8 pt-24 xs:min-h-[260px] md:min-h-[min(68vh,680px)] md:pb-20 md:pt-24 sm:px-6">
+          <div className="mx-auto w-full max-w-4xl space-y-5 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
             <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-white/65">Réservation</p>
             <h1 className="font-display text-4xl leading-[1.08] text-white md:text-6xl lg:text-7xl">
               Réserver votre séjour
@@ -227,7 +227,7 @@ export function BookLandingMarketing({
       </section>
 
       {hasDateOnly && (
-        <section className="border-b border-black/8 bg-white px-6 py-6">
+        <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
           <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div className="flex items-start gap-3 sm:items-center">
               <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
@@ -249,7 +249,7 @@ export function BookLandingMarketing({
         </section>
       )}
 
-      <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-6 pb-20 pt-12 md:pt-16">
+      <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
         <div className="space-y-6 text-center">
           <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">Un seul catalogue</p>
           <h2 className="font-display text-2xl text-navy md:text-3xl">Carte, liste et fiches détaillées</h2>
@@ -267,7 +267,7 @@ export function BookLandingMarketing({
         </div>
       </section>
 
-      <section className="border-t border-black/8 bg-white px-6 py-20 md:py-28">
+      <section className="border-t border-black/8 bg-white px-5 py-20 sm:px-6 md:py-28">
         <ScrollReveal delay={0}>
           <div className="mx-auto max-w-2xl space-y-8 text-center">
             <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />

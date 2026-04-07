@@ -1,0 +1,305 @@
+{
+  "name": "DIAMANT NOIR — Listing Import Enrich",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diamant-noir-listing-import",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook-listing",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "diamant-noir-listing-import"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 2 — Validate Auth\n// Vérifie le secret webhook (via variable env n8n : LISTING_WEBHOOK_SECRET)\n// et extrait le body pour les nœuds suivants.\n// Doc : aligner LISTING_IMPORT_N8N_WEBHOOK_SECRET dans .env Next avec\n// LISTING_WEBHOOK_SECRET dans les variables d'environnement n8n.\n// ============================================================\n\nconst incoming = $input.first();\nconst body = incoming.json?.body || incoming.json || {};\nconst headers = incoming.headers || {};\n\n// $env.LISTING_WEBHOOK_SECRET : variable n8n instance (Settings → Variables)\n// Si absente ou vide, aucune vérification de secret.\nconst secret = ($env.LISTING_WEBHOOK_SECRET || '').trim();\nconst incomingSecret = (headers['x-webhook-secret'] || headers['X-Webhook-Secret'] || '').trim();\nconst secretOk = !secret || incomingSecret === secret;\nconst sourceOk = body.source === 'listing_import_enrich';\n\nreturn [{ json: { secretOk, sourceOk, body } }];"
+      },
+      "id": "node-validate-auth",
+      "name": "Validate Auth",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-secret-ok",
+              "leftValue": "={{ $json.secretOk }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-secret",
+      "name": "IF — Secret OK ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\": \"Unauthorized — X-Webhook-Secret invalide ou absent\"}",
+        "options": {
+          "responseCode": 401,
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "node-respond-401",
+      "name": "Respond 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, -200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-source-ok",
+              "leftValue": "={{ $json.sourceOk }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-source",
+      "name": "IF — Source OK ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\": \"Bad Request — source doit être listing_import_enrich\"}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "node-respond-400",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, -200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 7 — Compute Keys\n// Calcule missingKeys (champs vides) et suspectKeys (champs remplis\n// mais potentiellement erronés) à passer au LLM.\n// ============================================================\n\nconst incoming = $input.first().json;\nconst body = incoming.body || incoming || {};\nconst parsed = body.parsed || {};\nconst pageText = body.pageText || '';\nconst pageUrl = body.pageUrl || '';\nconst extractionInstructions = body.extractionInstructions || '';\n\nconst allKeys = ['name','description','location','capacity','price_per_night','bathrooms_count','surface_m2','check_in_time','check_out_time','latitude','longitude','house_rules','amenities'];\n\nfunction isEmpty(v) {\n  if (v == null) return true;\n  if (typeof v === 'string') return v.trim() === '';\n  if (typeof v === 'number') return !isFinite(v);\n  if (Array.isArray(v)) return v.length === 0;\n  return false;\n}\n\nconst missingKeys = allKeys.filter(k => isEmpty(parsed[k]));\nconst suspectKeys = [];\nconst suspectReasons = {};\n\nif (!isEmpty(parsed.price_per_night)) {\n  const p = Number(parsed.price_per_night);\n  if (isNaN(p) || p < 10 || p > 50000) {\n    suspectKeys.push('price_per_night');\n    suspectReasons.price_per_night = 'valeur ' + parsed.price_per_night + ' hors bornes attendues (10-50000€)';\n  }\n}\nif (!isEmpty(parsed.capacity)) {\n  const c = Number(parsed.capacity);\n  if (isNaN(c) || c < 1 || c > 30) {\n    suspectKeys.push('capacity');\n    suspectReasons.capacity = 'valeur ' + parsed.capacity + ' suspecte (attendu 1-30)';\n  }\n}\nif (!isEmpty(parsed.description) && String(parsed.description).trim().length < 40) {\n  suspectKeys.push('description');\n  suspectReasons.description = 'trop courte (' + String(parsed.description).trim().length + ' chars, min 40)';\n}\nif (!isEmpty(parsed.name) && String(parsed.name).trim().length < 3) {\n  suspectKeys.push('name');\n  suspectReasons.name = 'trop court (' + String(parsed.name).trim().length + ' chars)';\n}\nif (!isEmpty(parsed.surface_m2)) {\n  const s = Number(parsed.surface_m2);\n  if (isNaN(s) || s < 10 || s > 10000) {\n    suspectKeys.push('surface_m2');\n    suspectReasons.surface_m2 = 'hors bornes ' + parsed.surface_m2 + ' (10-10000 m2)';\n  }\n}\n\nconst missingKeysText = missingKeys.length > 0 ? missingKeys.join(', ') : '(aucun)';\nconst suspectKeysText = suspectKeys.length > 0\n  ? suspectKeys.map(k => '- ' + k + ' : ' + suspectReasons[k]).join('\\n')\n  : '(aucun)';\n\nreturn [{\n  json: {\n    pageUrl,\n    pageText,\n    extractionInstructions,\n    parsedJson: JSON.stringify(parsed, null, 2),\n    missingKeys: missingKeysText,\n    suspectKeys: suspectKeysText\n  }\n}];"
+      },
+      "id": "node-compute-keys",
+      "name": "Compute Keys",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=URL de la page : {{ $json.pageUrl }}\n\nDONNÉES EXTRAITES PAR LE PARSER (parsed) :\n{{ $json.parsedJson }}\n\nCHAMPS MANQUANTS À REMPLIR (missingKeys) :\n{{ $json.missingKeys }}\n\nCHAMPS SUSPECTS À VÉRIFIER ET CORRIGER SI LE TEXTE LE PROUVE (suspectKeys) :\n{{ $json.suspectKeys }}\n\nTEXTE_PAGE :\n{{ $json.pageText }}\n\nINSTRUCTIONS SUPPLÉMENTAIRES :\n{{ $json.extractionInstructions }}\n\nRenvoie un seul objet JSON plat avec les champs enrichis et/ou corrigés. Pas de markdown.",
+        "options": {
+          "systemMessage": "Tu extrais et corriges un objet JSON décrivant une location de vacances (villa, appartement) à partir du texte d'une page web.\n\nRÈGLES STRICTES :\n1. Utilise UNIQUEMENT les informations présentes dans le TEXTE_PAGE ou déjà dans parsed.\n2. Ne jamais inventer de faits absents du texte. Si une info est absente, mets null ou omet la clé.\n3. Tu PEUX corriger une valeur déjà dans parsed si le TEXTE_PAGE prouve qu'elle est erronée ou incomplète (prix, capacité, surface, titre, horaires, description).\n4. Ne renvoie JAMAIS les clés image_url ou image_urls.\n5. Réponds UNIQUEMENT avec un objet JSON plat. Pas de markdown, pas de texte avant ou après.\n6. Description : si le texte le permet, rédige ou améliore une description propre en 2–6 phrases en français ; sinon laisse null.\n7. Amenities : liste de chaînes courtes déduites du texte, sans HTML.\n8. Si un champ suspect n'est pas mentionné dans le texte, laisse la valeur de parsed ou mets null — ne corrige pas sans preuve.\n\nCHAMPS POSSIBLES :\nname (string), description (string, français), location (string), capacity (number), price_per_night (number, euros), bathrooms_count (number), surface_m2 (number), check_in_time (string, ex: \"14h00\"), check_out_time (string), latitude (number), longitude (number), house_rules (string), amenities (array of strings)."
+        }
+      },
+      "id": "node-llm-enrich",
+      "name": "LLM Enrich",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1100, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.25,
+          "maxTokens": 3500
+        }
+      },
+      "id": "node-lm-openai",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [1100, 220],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NŒUD 9 — Parse & Clean\n// Parse la réponse JSON du LLM, supprime image_url/image_urls,\n// valide qu'au moins un champ utile est présent.\n// ============================================================\n\nconst input = $input.first().json;\nconst rawOutput = input.output || input.text || input.response || input.content || input.message || '';\n\nfunction extractJSON(text) {\n  if (!text || typeof text !== 'string') return null;\n  const t = text.trim();\n  // Tentative 1 : parse direct\n  try { return JSON.parse(t); } catch(e) {}\n  // Tentative 2 : premier bloc {...}\n  const start = t.indexOf('{');\n  const end = t.lastIndexOf('}');\n  if (start >= 0 && end > start) {\n    try { return JSON.parse(t.slice(start, end + 1)); } catch(e) {}\n  }\n  // Tentative 3 : bloc ```json...```\n  const match = t.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (match) {\n    try { return JSON.parse(match[1].trim()); } catch(e) {}\n  }\n  return null;\n}\n\nconst parsed = extractJSON(rawOutput);\n\nif (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {\n  return [{\n    json: {\n      parseOk: false,\n      error: 'LLM response not parseable as JSON. Raw: ' + String(rawOutput).slice(0, 300)\n    }\n  }];\n}\n\n// Supprimer les clés interdites\ndelete parsed.image_url;\ndelete parsed.image_urls;\n\nconst usefulKeys = ['name','description','location','capacity','price_per_night','bathrooms_count','surface_m2','check_in_time','check_out_time','latitude','longitude','house_rules','amenities'];\nconst hasUseful = usefulKeys.some(k => k in parsed && parsed[k] != null);\n\nreturn [{\n  json: {\n    parseOk: hasUseful,\n    listing: parsed,\n    error: hasUseful ? null : 'No useful listing fields in LLM response'\n  }\n}];"
+      },
+      "id": "node-parse-clean",
+      "name": "Parse & Clean",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-parse-ok",
+              "leftValue": "={{ $json.parseOk }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-parse",
+      "name": "IF — Parse OK ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ listing: $json.listing }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "node-respond-200",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1760, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'LLM enrichment failed')) }) }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "node-respond-500",
+      "name": "Respond 500",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1760, -200]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Validate Auth", "type": "main", "index": 0 }]
+      ]
+    },
+    "Validate Auth": {
+      "main": [
+        [{ "node": "IF — Secret OK ?", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF — Secret OK ?": {
+      "main": [
+        [{ "node": "IF — Source OK ?", "type": "main", "index": 0 }],
+        [{ "node": "Respond 401", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF — Source OK ?": {
+      "main": [
+        [{ "node": "Compute Keys", "type": "main", "index": 0 }],
+        [{ "node": "Respond 400", "type": "main", "index": 0 }]
+      ]
+    },
+    "Compute Keys": {
+      "main": [
+        [{ "node": "LLM Enrich", "type": "main", "index": 0 }]
+      ]
+    },
+    "LLM Enrich": {
+      "main": [
+        [{ "node": "Parse & Clean", "type": "main", "index": 0 }],
+        [{ "node": "Respond 500", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [{ "node": "LLM Enrich", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Parse & Clean": {
+      "main": [
+        [{ "node": "IF — Parse OK ?", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF — Parse OK ?": {
+      "main": [
+        [{ "node": "Respond 200", "type": "main", "index": 0 }],
+        [{ "node": "Respond 500", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-diamant-noir", "name": "diamant-noir" },
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-listing-import", "name": "listing-import" }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2026-04-06T00:00:00.000Z",
+  "versionId": "diamant-noir-listing-import-enrich-v2"
+}

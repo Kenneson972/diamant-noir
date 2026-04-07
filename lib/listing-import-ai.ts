@@ -9,7 +9,17 @@ Règles strictes :
 - Ne invente rien : si une info manque, mets null ou omets la clé.
 - Ne renvoie PAS image_url ni image_urls (gérés côté HTML).
 - Réponds uniquement avec un objet JSON plat (pas de markdown).
-Clés possibles : name, description, location, capacity (nombre), price_per_night (nombre), bathrooms_count, surface_m2, check_in_time, check_out_time, latitude, longitude, house_rules (texte), amenities (tableau de chaînes courtes).
+Clés possibles (noms exacts — pour le prix utilise toujours price_per_night en nombre, pas la clé « price », ni chaîne avec symbole €) :
+- name, description, location
+- capacity (nombre entier), price_per_night (nombre : prix par nuit sans devise), bathrooms_count (nombre), surface_m2 (nombre)
+- check_in_time, check_out_time (format HH:MM)
+- latitude (nombre), longitude (nombre)
+- house_rules (texte : règlement intérieur complet)
+- cancellation_policy (texte : politique d'annulation)
+- safety_info (texte : équipements de sécurité présents)
+- environment (texte court : type de logement et environnement, ex: "Logement complet · Appartement en rez-de-jardin")
+- nearby_points (tableau de chaînes courtes : points d'intérêt à proximité)
+- amenities (tableau de chaînes courtes en français : équipements disponibles)
 `.trim();
 
 export function stripHtmlToSnippet(html: string): string {
@@ -81,12 +91,42 @@ export function unwrapN8nListingBody(raw: unknown): Partial<ListingImportResult>
     "latitude",
     "longitude",
     "house_rules",
+    "cancellation_policy",
+    "safety_info",
+    "environment",
+    "nearby_points",
     "amenities",
   ];
   let any = false;
+  const rawR = raw as Record<string, unknown>;
   for (const key of keys) {
-    if (key in raw && raw[key as string] !== undefined) {
-      (out as Record<string, unknown>)[key] = raw[key as string];
+    if (key in rawR && rawR[key as string] !== undefined) {
+      (out as Record<string, unknown>)[key] = rawR[key as string];
+      any = true;
+    }
+  }
+  /** LLM / n8n renvoient souvent `price` ou variantes — le merge attend `price_per_night`. */
+  const priceAlias =
+    rawR.price_per_night ??
+    rawR.price ??
+    rawR.nightly_price ??
+    rawR.nightlyPrice ??
+    rawR.pricePerNight ??
+    rawR.prix ??
+    rawR.prix_nuit;
+  if (priceAlias !== undefined && priceAlias !== null && out.price_per_night == null) {
+    const n = coerceNumber(priceAlias);
+    if (n != null && n > 0) {
+      out.price_per_night = n;
+      any = true;
+    }
+  }
+  const capAlias =
+    rawR.capacity ?? rawR.guests ?? rawR.maxGuests ?? rawR.personCapacity ?? rawR.voyageurs ?? rawR.occupancy;
+  if (capAlias !== undefined && capAlias !== null && out.capacity == null) {
+    const n = coerceNumber(capAlias);
+    if (n != null && n > 0 && n < 500) {
+      out.capacity = Math.round(n);
       any = true;
     }
   }
@@ -104,8 +144,22 @@ function emptyish(v: unknown): boolean {
 function coerceNumber(v: unknown): number | null {
   if (typeof v === "number" && Number.isFinite(v)) return v;
   if (typeof v === "string") {
-    const n = parseFloat(v.replace(",", ".").replace(/\s/g, ""));
-    return Number.isFinite(n) ? n : null;
+    let s = v
+      .trim()
+      .replace(/\u00A0/g, " ")
+      .replace(/€/g, " ")
+      .replace(/EUR/gi, " ")
+      .replace(/par\s+nuit/gi, " ")
+      .replace(/\s+/g, "");
+    s = s.replace(/(\d)[\s']+(?=\d)/g, "$1");
+    const n = parseFloat(s.replace(",", "."));
+    if (Number.isFinite(n)) return n;
+    const m = v.match(/(\d{1,3}(?:[.\s]\d{3})*(?:,\d+)?|\d+(?:[.,]\d+)?)/);
+    if (m) {
+      const n2 = parseFloat(m[1].replace(/\s/g, "").replace(/\./g, "").replace(",", "."));
+      return Number.isFinite(n2) ? n2 : null;
+    }
+    return null;
   }
   return null;
 }
@@ -113,7 +167,8 @@ function coerceNumber(v: unknown): number | null {
 function normalizeMerged(
   parsed: ListingImportResult,
   patch: Partial<ListingImportResult>,
-  source: ListingFieldSource
+  source: ListingFieldSource,
+  forceOverride = false
 ): { merged: ListingImportResult; field_sources: Partial<Record<string, ListingFieldSource>> } {
   const merged: ListingImportResult = { ...parsed };
   const field_sources: Partial<Record<string, ListingFieldSource>> = {};
@@ -131,6 +186,10 @@ function normalizeMerged(
     "latitude",
     "longitude",
     "house_rules",
+    "cancellation_policy",
+    "safety_info",
+    "environment",
+    "nearby_points",
     "amenities",
   ];
 
@@ -147,12 +206,12 @@ function normalizeMerged(
     const next = patch[key];
     if (next === undefined || next === null) continue;
     const cur = merged[key];
-    if (!emptyish(cur)) continue;
+    if (!forceOverride && !emptyish(cur)) continue;
 
-    if (key === "amenities" && Array.isArray(next)) {
+    if ((key === "amenities" || key === "nearby_points") && Array.isArray(next)) {
       const list = next.map((x) => String(x).trim()).filter(Boolean);
       if (list.length) {
-        merged.amenities = list;
+        (merged as Record<string, unknown>)[key] = list;
         field_sources[key] = source;
       }
       continue;
@@ -311,7 +370,7 @@ export async function enrichListingWithAi(
 
   const n8n = await callN8nEnrich(merged, pageUrl, pageText);
   if (n8n.patch && Object.keys(n8n.patch).length > 0) {
-    const r = normalizeMerged(merged, n8n.patch, "n8n");
+    const r = normalizeMerged(merged, n8n.patch, "n8n", true);
     merged = r.merged;
     Object.assign(field_sources, r.field_sources);
     return {
@@ -324,7 +383,7 @@ export async function enrichListingWithAi(
 
   const openai = await callOpenAiEnrich(merged, pageUrl, pageText);
   if (openai.patch && Object.keys(openai.patch).length > 0) {
-    const r = normalizeMerged(merged, openai.patch, "ai");
+    const r = normalizeMerged(merged, openai.patch, "ai", true);
     merged = r.merged;
     Object.assign(field_sources, r.field_sources);
     return {
