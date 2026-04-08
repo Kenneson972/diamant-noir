@@ -52,6 +52,21 @@ const config: Config = {
           "0%":   { opacity: "0", transform: "scale(0.96)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "slide-in-right": {
+          "0%":   { opacity: "0", transform: "translateX(32px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        "slide-in-left": {
+          "0%":   { opacity: "0", transform: "translateX(-32px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "20%":       { transform: "translateX(-5px)" },
+          "40%":       { transform: "translateX(5px)" },
+          "60%":       { transform: "translateX(-3px)" },
+          "80%":       { transform: "translateX(3px)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.6s ease-out forwards",
@@ -63,6 +78,9 @@ const config: Config = {
         "stagger-fade": "stagger-fade 0.5s ease-out forwards",
         "gold-shimmer": "gold-shimmer 2.5s linear infinite",
         "scale-in": "scale-in 0.3s ease-out forwards",
+        "slide-in-right": "slide-in-right 0.28s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
+        "slide-in-left": "slide-in-left 0.28s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
+        shake: "shake 0.35s ease-in-out",
       },
     },
   },
