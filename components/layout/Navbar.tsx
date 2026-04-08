@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, Phone, Mail, Heart, User, CalendarDays } from "lucide-react";
+import { Menu, X, Phone, Mail, Heart, User, Sparkles } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -35,9 +35,9 @@ export const Navbar = () => {
 
   const loginHref = "/login?redirect=/espace-client";
 
-  const primaryCtaHref = "/villas";
-  const primaryCtaLabel = "Réserver";
-  const primaryCtaAria = "Réserver";
+  const primaryCtaHref = "/prestations";
+  const primaryCtaLabel = "Conciergerie";
+  const primaryCtaAria = "Découvrir la conciergerie";
 
   useEffect(() => {
     if (supabase) {
@@ -83,13 +83,17 @@ export const Navbar = () => {
   /**
    * Hero sombre sous la nav (vidéo, bg-navy, image pleine largeur) : chrome clair + barre transparente en haut.
    * Sans ça, `text-navy` sur vitrage au-dessus d’un fond sombre reste illisible (même encré #0A0A0A).
+   *
+   * `/villas` seul = bandeau navy → texte blanc OK. `/villas/[id]` = galerie + offwhite en tête → navy + vitrage,
+   * sinon icônes blanches sur photo claire = invisibles.
    */
   const isDarkHeroRoute = useMemo(() => {
     const p = pathname ?? "";
     if (p === "/" || p === "/proprietaires") return true;
     if (p === "/book" || p.startsWith("/book/")) return true;
     if (p === "/contact") return true;
-    if (p === "/villas" || p.startsWith("/villas/")) return true;
+    if (p === "/villas") return true;
+    if (p.startsWith("/villas/")) return false;
     if (p === "/soumettre-ma-villa") return true;
     if (p === "/prestations" || p.startsWith("/prestations/")) return true;
     if (p === "/qui-sommes-nous") return true;
@@ -148,7 +152,7 @@ export const Navbar = () => {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-[112] bg-black/50 backdrop-blur-none md:backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-[1030] bg-black/50 backdrop-blur-none md:backdrop-blur-sm transition-opacity duration-300"
           onClick={closeMenu}
         />
       ) : null}
@@ -160,7 +164,7 @@ export const Navbar = () => {
         aria-modal="true"
         aria-label="Menu de navigation"
         inert={!menuOpen ? true : undefined}
-        className={`fixed inset-y-0 left-0 z-[115] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-y-0 left-0 z-[1040] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
@@ -278,7 +282,7 @@ export const Navbar = () => {
 
       {/* Barre supérieure — logo centré, menu à gauche, CTA à droite */}
       <header
-        className={`fixed top-0 z-[100] w-full transition-[background,box-shadow,padding,border-color] duration-300 ${headerSurfaceClass}`}
+        className={`fixed top-0 z-[1020] w-full transition-[background,box-shadow,padding,border-color] duration-300 ${headerSurfaceClass}`}
       >
         {/*
           Deux demi-ranges flexibles (1fr / 1fr) + colonne centrale auto : le logo reste
@@ -364,7 +368,7 @@ export const Navbar = () => {
               aria-label={primaryCtaAria}
               className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:max-w-none md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
-              <CalendarDays size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
+              <Sparkles size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
               <span className="hidden md:inline">{primaryCtaLabel}</span>
             </Link>
           </div>
