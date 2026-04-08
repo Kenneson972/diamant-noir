@@ -1,4 +1,3 @@
-import { unstable_noStore as noStore } from "next/cache";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
 import { HomeBottomCta } from "@/components/home/HomeBottomCta";
@@ -9,10 +8,10 @@ import { HomeLifestyleAudience } from "@/components/home/HomeLifestyleAudience";
 import { HomeOwnersSection } from "@/components/home/HomeOwnersSection";
 import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 
-export const dynamic = "force-dynamic";
+// ISR: revalidate every 60s, or immediately when revalidateVillas() is called from dashboard
+export const revalidate = 60;
 
 export default async function HomePage() {
-  noStore();
   let featuredVillas: HomeFeaturedVilla[] = [];
   let featuredError: string | null = null;
   let featuredCount = 0;
@@ -69,7 +68,8 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="hero-title"
-            titleLabel="Diamant Noir — Conciergerie privée — Confiance, réactivité, excellence"
+            titleLabel="Diamant Noir — Conciergerie privée"
+            showValuesTriplet={false}
           />
           <HeroAudienceCards />
         </div>

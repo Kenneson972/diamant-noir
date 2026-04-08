@@ -17,7 +17,7 @@ export function HomeOwnersSection() {
         className="relative scroll-mt-20 overflow-hidden bg-navy py-32 text-white lg:py-44"
       >
         <div className="absolute left-0 top-0 h-full w-2/5 opacity-15">
-          <Image src="/villa-hero.jpg" alt="" fill className="object-cover" aria-hidden />
+          <Image src="/villa-hero.jpg" alt="" fill className="object-cover" aria-hidden loading="lazy" />
         </div>
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="ml-auto max-w-xl space-y-12">

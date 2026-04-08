@@ -15,6 +15,7 @@ const nextConfig = {
     ],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       // Supabase Storage — all paths
       {
@@ -65,9 +66,18 @@ const nextConfig = {
         ],
       },
       {
-        // Reduce caching risk for dynamic API responses
         source: "/api/:path*",
         headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
+        // Immutable cache for Next.js static assets (chunks, fonts, etc.)
+        source: "/_next/static/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        // Long cache for public images (villa photos, etc.)
+        source: "/:path*.{jpg,jpeg,png,webp,avif,svg,ico}",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
       },
     ];
   },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   ArrowLeft,
@@ -711,13 +712,13 @@ function Confirmation({ name }: { name: string }) {
         className="mt-8 animate-fade-up"
         style={{ animationDelay: "240ms" }}
       >
-        <a
+        <Link
           href="/prestations"
           className="inline-flex items-center gap-2 border border-navy bg-navy px-7 py-3.5 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90"
         >
           Découvrir la conciergerie
           <ChevronRight size={14} aria-hidden />
-        </a>
+        </Link>
       </div>
     </div>
   );

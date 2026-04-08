@@ -1,5 +1,4 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { unstable_noStore as noStore } from "next/cache";
 import VillasMapView from "@/components/VillasMapView";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 
@@ -68,7 +67,6 @@ export default async function VillasListingPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  noStore();
   const sp = await searchParams;
   const qCheckin = typeof sp.checkin === "string" ? sp.checkin : "";
   const qCheckout = typeof sp.checkout === "string" ? sp.checkout : "";
