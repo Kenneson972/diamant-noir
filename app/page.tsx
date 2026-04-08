@@ -3,6 +3,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
 import { HomeBottomCta } from "@/components/home/HomeBottomCta";
 import { HomeTrustBand } from "@/components/home/HomeTrustBand";
+import { HomeConciergeHighlight } from "@/components/home/HomeConciergeHighlight";
 import { HomeFeaturedAudience, type HomeFeaturedVilla } from "@/components/home/HomeFeaturedAudience";
 import { HomeLifestyleAudience } from "@/components/home/HomeLifestyleAudience";
 import { HomeOwnersSection } from "@/components/home/HomeOwnersSection";
@@ -68,7 +69,7 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="hero-title"
-            titleLabel="Diamant Noir — Conciergerie en privée — Confiance, réactivité, excellence"
+            titleLabel="Diamant Noir — Conciergerie privée — Confiance, réactivité, excellence"
           />
           <HeroAudienceCards />
         </div>
@@ -81,18 +82,21 @@ export default async function HomePage() {
       {/* Signaux de confiance */}
       <HomeTrustBand />
 
-      {/* Villas en vedette */}
+      {/* Bloc conciergerie */}
+      <HomeConciergeHighlight />
+
+      {/* Art de vivre — voyageurs */}
+      <HomeLifestyleAudience />
+
+      {/* Offre propriétaires — remonte avant les villas */}
+      <HomeOwnersSection />
+
+      {/* Villas — secondaire, en bas */}
       <HomeFeaturedAudience
         featuredVillas={featuredVillas}
         featuredError={featuredError}
         featuredCount={featuredCount}
       />
-
-      {/* Art de vivre — voyageurs */}
-      <HomeLifestyleAudience />
-
-      {/* Offre propriétaires — toujours visible */}
-      <HomeOwnersSection />
 
       {/* CTA final */}
       <HomeBottomCta />
