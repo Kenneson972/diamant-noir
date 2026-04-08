@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Anchor,
+  ArrowRight,
   Calendar,
   Car,
   Check,
@@ -16,7 +17,6 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
-import { VillaSubmissionForm } from "@/components/marketing/VillaSubmissionForm";
 import {
   LandingShell,
   LandingSection,
@@ -367,18 +367,42 @@ export default function PrestationsPage() {
             </div>
           </div>
 
-          {/* Colonne droite : formulaire */}
-          <div>
-            <VillaSubmissionForm />
+          {/* Colonne droite : CTA wizard */}
+          <div className="flex flex-col justify-center">
+            <div className="border border-navy/10 bg-navy px-8 py-10 text-center">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.4em] text-gold/60">
+                Processus en ligne
+              </p>
+              <p className="font-display text-2xl font-normal text-white">
+                5 minutes suffisent.
+              </p>
+              <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/50">
+                Remplissez notre dossier interactif en 4 étapes guidées. Réponse garantie sous 48 h.
+              </p>
+              <Link
+                href="/soumettre-ma-villa"
+                className="mt-8 inline-flex min-h-[52px] items-center gap-3 border border-gold bg-gold px-8 py-4 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-gold/90"
+              >
+                Déposer mon dossier
+                <ArrowRight size={15} aria-hidden />
+              </Link>
+              <div className="mt-6 flex flex-wrap justify-center gap-4 text-[10px] text-white/30">
+                <span>Sans engagement</span>
+                <span>·</span>
+                <span>Réponse 48 h</span>
+                <span>·</span>
+                <span>Commission 20% tout inclus</span>
+              </div>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-navy/50">
+              Une question avant de soumettre ?{" "}
+              <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
+                Contactez-nous directement
+              </Link>
+            </p>
           </div>
         </div>
-
-        <p className="mt-12 text-center text-sm text-navy/50">
-          Une question avant de soumettre ?{" "}
-          <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
-            Contactez-nous directement
-          </Link>
-        </p>
       </LandingSection>
 
     </LandingShell>
