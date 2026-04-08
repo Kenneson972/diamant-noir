@@ -18,8 +18,7 @@ export function HomeLifestyleAudience() {
             <h2 className="font-display text-5xl md:text-7xl">Un Art de Vivre.</h2>
             <p className="text-lg font-light leading-relaxed text-white/60">
               Chaque propriété de notre collection est un sanctuaire pensé pour la déconnexion. Notre conciergerie
-              en privée s&apos;occupe de chaque détail pour que votre seule préoccupation soit l&apos;instant
-              présent.
+              privée s&apos;occupe de chaque détail pour que votre seule préoccupation soit l&apos;instant présent.
             </p>
           </div>
 
@@ -42,10 +41,10 @@ export function HomeLifestyleAudience() {
 
           <p className="pt-2">
             <Link
-              href="/villas"
+              href="/prestations"
               className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/55 underline-offset-8 transition-colors hover:text-white hover:underline"
             >
-              Parcourir les villas
+              Découvrir nos services
             </Link>
           </p>
         </div>
