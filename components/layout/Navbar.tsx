@@ -100,6 +100,9 @@ export const Navbar = () => {
     return false;
   }, [pathname]);
 
+  /** Hub `/prestations` : pas de barre blanche au scroll (chrome clair sur fond sombre conservé). */
+  const prestationsHubTransparentNav = pathname === "/prestations";
+
   useEffect(() => {
     setIsScrolled(typeof window !== "undefined" && window.scrollY > 24);
   }, [pathname]);
@@ -108,8 +111,8 @@ export const Navbar = () => {
     return null;
   }
 
-  /** Barre blanche dès qu’on dépasse le seuil — toutes les pages (plus seulement l’accueil). */
-  const isSolid = isScrolled;
+  /** Barre blanche au scroll — sauf hub Prestations. */
+  const isSolid = isScrolled && !prestationsHubTransparentNav;
   /** En haut de page transparente : chrome « sombre » (texte blanc) uniquement sur hero noir ; sinon chrome lisible sur fond clair. */
   const useLightTransparentChrome = !isSolid && !isDarkHeroRoute;
 
@@ -306,14 +309,14 @@ export const Navbar = () => {
             </button>
           </div>
 
-          <div className="pointer-events-none relative z-10 flex min-w-0 max-w-[calc(100vw-8rem)] justify-center px-1 sm:max-w-[calc(100vw-13rem)] sm:px-2 md:max-w-[calc(100vw-20rem)] lg:max-w-none">
+          <div className="relative z-[1030] flex min-w-0 max-w-[calc(100vw-8rem)] justify-center px-1 sm:max-w-[calc(100vw-13rem)] sm:px-2 md:max-w-[calc(100vw-20rem)] lg:max-w-none">
             <BrandLogo
               variant={logoVariant}
               size="nav"
               showIcon
               showWordmark={false}
               priority={pathname === "/"}
-              className="pointer-events-auto shrink-0 justify-center"
+              className="shrink-0 justify-center"
             />
           </div>
 

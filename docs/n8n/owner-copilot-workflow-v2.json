@@ -1,0 +1,300 @@
+{
+  "name": "Diamant Noir — Copilot Propriétaire v2 (Tool Use + Mémoire Supabase)",
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Webhook — POST /diamant-owner-copilot",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diamant-owner-copilot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "diamant-owner-copilot"
+    },
+
+    {
+      "id": "code-security",
+      "name": "Code — Sécurité & Extraction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "jsCode": "const expected = $env.N8N_OWNER_WEBHOOK_SECRET || '';\nconst received  = ($input.first().json.headers || {})['x-webhook-secret'] || '';\n\nif (expected && received !== expected) {\n  return [{ json: { _authorized: false } }];\n}\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst context = body.context || {};\n\nconst messages_history = Array.isArray(body.messages_history)\n  ? body.messages_history\n      .filter(m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim())\n      .slice(-12)\n  : [];\n\nreturn [{\n  json: {\n    _authorized:      true,\n    message:          String(body.message || '').trim(),\n    sessionid:        body.sessionid  || null,\n    owner_id:         body.owner_id   || null,\n    role:             body.role       || 'owner',\n    source:           body.source     || 'owner_dashboard',\n    messages_history,\n    context\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "if-authorized",
+      "name": "IF — Autorisé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "auth-check",
+              "leftValue": "={{ $json._authorized }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+
+    {
+      "id": "respond-unauthorized",
+      "name": "Respond — 401 Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [720, 480],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 401,
+        "responseBody": "{\"error\":\"Unauthorized\",\"response\":\"Accès refusé.\",\"action\":\"SHOW_STATS\",\"action_data\":{\"strategic_alert\":null}}"
+      }
+    },
+
+    {
+      "id": "postgres-read-history",
+      "name": "Postgres — Lire historique Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [720, 180],
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT role, content FROM owner_chat_history WHERE owner_id = '{{ $json.owner_id }}' AND session_id = '{{ $json.sessionid }}' ORDER BY created_at ASC LIMIT 12",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "diamant-noir-supabase-db",
+          "name": "Diamant Noir — Supabase DB"
+        }
+      }
+    },
+
+    {
+      "id": "code-prepare-context",
+      "name": "Code — Préparer le contexte LLM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 180],
+      "parameters": {
+        "jsCode": "// Récupère les données depuis le nœud Sécurité (pas le nœud Postgres précédent)\nconst sec       = $('Code — Sécurité & Extraction').first().json;\nconst ctx       = sec.context   || {};\nconst portfolio = ctx.portfolio  || {};\nconst today     = ctx.today      || [];\nconst alerts    = ctx.alerts     || [];\nconst tasks     = ctx.tasks_open || [];\nconst villas    = ctx.villas     || [];\nconst stats     = ctx.stats      || {};\nconst metrics   = stats.metrics  || {};\n\nconst portfolioLines = [\n  `Villas : ${portfolio.total_villas ?? 0} total, ${portfolio.published_villas ?? 0} publiée(s)`,\n  `CA encaissé : €${(portfolio.total_revenue_paid ?? 0).toLocaleString('fr-FR')}`,\n  `Réservations à venir : ${portfolio.upcoming_bookings_count ?? 0}`,\n  `Tâches en attente : ${portfolio.pending_tasks_count ?? 0}`,\n  metrics.occupancyRate ? `Taux d'occupation : ${metrics.occupancyRate}%` : null,\n  metrics.revPAR        ? `RevPAR : €${metrics.revPAR}/nuit`              : null\n].filter(Boolean).join(' | ');\n\nconst todayText = today.length === 0\n  ? 'Aucun événement aujourd\\'hui.'\n  : today.map(e => {\n      const label = e.kind === 'check_in' ? 'Arrivée' : e.kind === 'check_out' ? 'Départ' : 'En séjour';\n      return `${label} : ${e.guest_name || 'Voyageur'} — ${e.villa_name}`;\n    }).join('; ');\n\nconst SORDER = { high: 0, medium: 1, low: 2 };\nconst sortedAlerts = [...alerts].sort((a, b) => (SORDER[a.severity] ?? 2) - (SORDER[b.severity] ?? 2));\nconst alertsText = sortedAlerts.length === 0\n  ? 'Aucune alerte active.'\n  : sortedAlerts.slice(0, 5).map(a =>\n      `[${(a.severity || 'INFO').toUpperCase()}] ${a.title}${a.body ? ' — ' + a.body : ''}`\n    ).join('; ');\n\nconst tasksText = tasks.length === 0\n  ? 'Aucune tâche en attente.'\n  : tasks.slice(0, 8).map(t => `• ${t.villa_name} : ${t.content}`).join('; ');\n\nconst villasText = villas.length === 0\n  ? 'Aucune villa enregistrée.'\n  : villas.map(v => `${v.name} (${v.is_published ? 'publiée' : 'non publiée'})`).join(', ');\n\nconst topAlert = sortedAlerts[0] || null;\nconst strategic_alert = topAlert ? {\n  severity: topAlert.severity || 'low',\n  description: topAlert.title + (topAlert.body ? ' — ' + topAlert.body : '')\n} : null;\n\nconst contextText = [\n  `DATE: ${ctx.current_date_iso ? ctx.current_date_iso.slice(0, 10) : 'inconnue'}`,\n  `PORTFOLIO: ${portfolioLines}`,\n  `AUJOURD'HUI: ${todayText}`,\n  `ALERTES: ${alertsText}`,\n  `TÂCHES: ${tasksText}`,\n  `VILLAS: ${villasText}`\n].join('\\n');\n\nreturn [{\n  json: {\n    ...sec,\n    _contextText:      contextText,\n    _strategic_alert:  strategic_alert,\n    _alertsHighCount:  sortedAlerts.filter(a => a.severity === 'high').length,\n    _todayCount:       today.length,\n    _tasksCount:       tasks.length,\n    _portfolioStats:   portfolioLines\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "code-build-messages",
+      "name": "Code — Construire messages Claude (multi-tour + tool)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 180],
+      "parameters": {
+        "jsCode": "// ── Historique : DB Supabase (persistant) > payload UI (session) ─────\nlet dbHistory = [];\ntry {\n  const dbRows = $('Postgres — Lire historique Supabase').all();\n  dbHistory = dbRows\n    .map(item => item.json)\n    .filter(row => row.role && row.content)\n    .map(row => ({ role: String(row.role), content: String(row.content) }));\n} catch(e) { /* Postgres indisponible, utilise payload */ }\n\nconst payloadHistory = $json.messages_history || [];\nconst history        = dbHistory.length > 0 ? dbHistory : payloadHistory;\n\nconst contextText = $json._contextText;\nconst currentMsg  = String($json.message || '').trim();\n\n// ── Prompt système DIAMANT ────────────────────────────────────────\nconst SYSTEM = `Tu es DIAMANT, l'assistant privé et confidentiel de Diamant Noir Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES :\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE PROPRIÉTAIRE fourni — jamais d'invention.\\n2. Si une information est absente du contexte, dis-le clairement.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si explicitement demandé.\\n5. Si des alertes HIGH ou MEDIUM existent, commence TOUJOURS par les mentionner.\\n6. Assure la continuité de la conversation (tu te souviens des échanges précédents).\\n7. Tu parles à UN SEUL propriétaire identifié.\\n\\nTu DOIS utiliser l'outil \\"respond_to_owner\\" pour CHAQUE réponse.`;\n\n// ── Définition de l'outil (Tool Use) ─────────────────────────────\nconst TOOL = {\n  name: 'respond_to_owner',\n  description: 'Répond au propriétaire et sélectionne la vue optimale du tableau de bord à afficher.',\n  input_schema: {\n    type: 'object',\n    properties: {\n      response: {\n        type: 'string',\n        description: 'Réponse en français. Concise (2-4 phrases) sauf si détail demandé. Professionnelle et chaleureuse.'\n      },\n      action: {\n        type: 'string',\n        enum: ['SHOW_STATS', 'SHOW_BOOKINGS', 'SHOW_VILLAS', 'SHOW_TASKS'],\n        description: 'Vue : SHOW_STATS=résumé/revenus/KPIs, SHOW_BOOKINGS=réservations/calendrier, SHOW_VILLAS=villas/annonces, SHOW_TASKS=maintenance/tâches'\n      },\n      strategic_alert: {\n        type: ['object', 'null'],\n        description: 'Alerte critique à mettre en avant. Null si aucune urgence.',\n        properties: {\n          severity: { type: 'string', enum: ['high', 'medium', 'low'] },\n          description: { type: 'string' }\n        }\n      }\n    },\n    required: ['response', 'action']\n  }\n};\n\n// ── Construction des messages multi-tour ─────────────────────────\nlet claudeMessages = [];\n\nif (history.length > 0) {\n  for (let i = 0; i < history.length; i++) {\n    const m = history[i];\n    if (i === 0 && m.role === 'user') {\n      claudeMessages.push({\n        role: 'user',\n        content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${m.content}`\n      });\n    } else {\n      claudeMessages.push({ role: m.role, content: String(m.content) });\n    }\n  }\n  const last = history[history.length - 1];\n  if (!(last.role === 'user' && last.content === currentMsg)) {\n    claudeMessages.push({ role: 'user', content: currentMsg });\n  }\n} else {\n  claudeMessages = [{\n    role: 'user',\n    content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${currentMsg}`\n  }];\n}\n\nconst anthropicBody = {\n  model: 'claude-opus-4-6',\n  max_tokens: 2048,\n  system: SYSTEM,\n  tools: [TOOL],\n  tool_choice: { type: 'any' },\n  messages: claudeMessages\n};\n\nreturn [{ json: { ...$json, _anthropicBody: anthropicBody } }];"
+      }
+    },
+
+    {
+      "id": "http-anthropic",
+      "name": "HTTP — Anthropic Claude (Tool Use)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type",      "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json._anthropicBody }}",
+        "options": {
+          "response": { "response": { "fullResponse": false } },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "anthropic-api-key",
+          "name": "Anthropic API Key"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+
+    {
+      "id": "code-parse-response",
+      "name": "Code — Parser réponse Tool Use",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 120],
+      "parameters": {
+        "jsCode": "const buildData       = $('Code — Construire messages Claude (multi-tour + tool)').first().json;\nconst strategic_alert_fallback = buildData._strategic_alert || null;\nconst statsPayload    = (buildData.context || {}).stats || null;\n\nconst anthropicRaw  = $input.first().json;\nconst stopReason    = anthropicRaw.stop_reason;\nconst contentBlocks = anthropicRaw.content || [];\n\nlet response        = '';\nlet action          = 'SHOW_STATS';\nlet strategic_alert = null;\n\nif (stopReason === 'tool_use') {\n  const toolBlock = contentBlocks.find(b => b.type === 'tool_use' && b.name === 'respond_to_owner');\n  if (toolBlock && toolBlock.input) {\n    response        = String(toolBlock.input.response || '');\n    action          = String(toolBlock.input.action   || 'SHOW_STATS');\n    strategic_alert = toolBlock.input.strategic_alert || null;\n  }\n}\n\nif (!response) {\n  const textBlock = contentBlocks.find(b => b.type === 'text');\n  if (textBlock?.text) {\n    response = textBlock.text.trim();\n    const lower = response.toLowerCase();\n    if (lower.includes('réservation') || lower.includes('arrivée')) action = 'SHOW_BOOKINGS';\n    else if (lower.includes('tâche') || lower.includes('maintenance')) action = 'SHOW_TASKS';\n    else if (lower.includes('villa') && lower.includes('annonce')) action = 'SHOW_VILLAS';\n  }\n}\n\nif (!response) response = 'Je suis à votre disposition. Comment puis-je vous aider ?';\n\nreturn [{\n  json: {\n    response,\n    action,\n    action_data: {\n      context: statsPayload,\n      strategic_alert: strategic_alert || strategic_alert_fallback\n    }\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "respond-success",
+      "name": "Respond — 200 Succès",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1920, 120],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 200,
+        "responseBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+
+    {
+      "id": "code-prep-save",
+      "name": "Code — Préparer sauvegarde mémoire",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2160, 120],
+      "parameters": {
+        "jsCode": "// Récupère les données nécessaires depuis les nœuds précédents\nconst sec      = $('Code — Sécurité & Extraction').first().json;\nconst parseOut = $('Code — Parser réponse Tool Use').first().json;\n\nconst ownerId   = String(sec.owner_id  || '').trim();\nconst sessionId = String(sec.sessionid || '').trim();\nconst userMsg   = String(sec.message   || '').trim();\nconst asstMsg   = String(parseOut.response || '').trim();\n\n// Validation : ne pas sauvegarder si données incomplètes\nif (!ownerId || !sessionId || !userMsg || !asstMsg) {\n  return [{ json: { _save_skipped: true, _reason: 'données incomplètes' } }];\n}\n\n// Retourne 2 items — un par message à insérer\nreturn [\n  { json: { owner_id: ownerId, session_id: sessionId, role: 'user',      content: userMsg } },\n  { json: { owner_id: ownerId, session_id: sessionId, role: 'assistant', content: asstMsg } }\n];"
+      }
+    },
+
+    {
+      "id": "postgres-save-exchange",
+      "name": "Postgres — Sauvegarder échange",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2400, 120],
+      "continueOnFail": true,
+      "parameters": {
+        "operation": "insert",
+        "schema": { "__rl": true, "value": "public", "mode": "list" },
+        "table":  { "__rl": true, "value": "owner_chat_history", "mode": "list" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "owner_id":   "={{ $json.owner_id }}",
+            "session_id": "={{ $json.session_id }}",
+            "role":       "={{ $json.role }}",
+            "content":    "={{ $json.content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "owner_id",   "displayName": "owner_id",   "required": true,  "type": "string", "display": true },
+            { "id": "session_id", "displayName": "session_id", "required": true,  "type": "string", "display": true },
+            { "id": "role",       "displayName": "role",       "required": true,  "type": "string", "display": true },
+            { "id": "content",    "displayName": "content",    "required": true,  "type": "string", "display": true }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "diamant-noir-supabase-db",
+          "name": "Diamant Noir — Supabase DB"
+        }
+      }
+    },
+
+    {
+      "id": "code-fallback",
+      "name": "Code — Fallback (Claude indisponible)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 340],
+      "parameters": {
+        "jsCode": "const buildData  = $('Code — Construire messages Claude (multi-tour + tool)').first().json;\nconst strategic_alert = buildData._strategic_alert || null;\nconst statsPayload    = (buildData.context || {}).stats || null;\n\nconst hasAlertsHigh = buildData._alertsHighCount > 0;\nconst hasToday      = buildData._todayCount > 0;\nconst hasTasks      = buildData._tasksCount > 0;\nconst portfolio     = buildData._portfolioStats || '';\n\nconst parts = [];\nif (hasAlertsHigh) parts.push(`${buildData._alertsHighCount} alerte(s) critique(s) nécessitent votre attention.`);\nif (hasToday)      parts.push(`${buildData._todayCount} événement(s) en cours sur vos villas aujourd'hui.`);\nif (hasTasks)      parts.push(`${buildData._tasksCount} tâche(s) en attente.`);\nif (portfolio)     parts.push(portfolio + '.');\n\nconst response = (parts.length > 0 ? parts.join(' ') : 'Bonjour ! Votre tableau de bord est actif.')\n  + ' (Service IA momentanément limité — données en temps réel disponibles.)';\n\nreturn [{\n  json: {\n    response,\n    action: 'SHOW_STATS',\n    action_data: { context: statsPayload, strategic_alert }\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "respond-fallback",
+      "name": "Respond — 200 Fallback",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1920, 340],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 200,
+        "responseBody": "={{ JSON.stringify($json) }}"
+      }
+    }
+  ],
+
+  "connections": {
+    "Webhook — POST /diamant-owner-copilot": {
+      "main": [[{ "node": "Code — Sécurité & Extraction", "type": "main", "index": 0 }]]
+    },
+    "Code — Sécurité & Extraction": {
+      "main": [[{ "node": "IF — Autorisé ?", "type": "main", "index": 0 }]]
+    },
+    "IF — Autorisé ?": {
+      "main": [
+        [{ "node": "Postgres — Lire historique Supabase", "type": "main", "index": 0 }],
+        [{ "node": "Respond — 401 Unauthorized",          "type": "main", "index": 0 }]
+      ]
+    },
+    "Postgres — Lire historique Supabase": {
+      "main": [[{ "node": "Code — Préparer le contexte LLM", "type": "main", "index": 0 }]]
+    },
+    "Code — Préparer le contexte LLM": {
+      "main": [[{ "node": "Code — Construire messages Claude (multi-tour + tool)", "type": "main", "index": 0 }]]
+    },
+    "Code — Construire messages Claude (multi-tour + tool)": {
+      "main": [[{ "node": "HTTP — Anthropic Claude (Tool Use)", "type": "main", "index": 0 }]]
+    },
+    "HTTP — Anthropic Claude (Tool Use)": {
+      "main": [
+        [{ "node": "Code — Parser réponse Tool Use",        "type": "main", "index": 0 }],
+        [{ "node": "Code — Fallback (Claude indisponible)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Parser réponse Tool Use": {
+      "main": [[{ "node": "Respond — 200 Succès", "type": "main", "index": 0 }]]
+    },
+    "Respond — 200 Succès": {
+      "main": [[{ "node": "Code — Préparer sauvegarde mémoire", "type": "main", "index": 0 }]]
+    },
+    "Code — Préparer sauvegarde mémoire": {
+      "main": [[{ "node": "Postgres — Sauvegarder échange", "type": "main", "index": 0 }]]
+    },
+    "Code — Fallback (Claude indisponible)": {
+      "main": [[{ "node": "Respond — 200 Fallback", "type": "main", "index": 0 }]]
+    }
+  },
+
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "last"
+  },
+  "tags": [
+    { "name": "diamant-noir" },
+    { "name": "owner-copilot" },
+    { "name": "v2" },
+    { "name": "supabase-memory" }
+  ],
+  "meta": {
+    "instanceId": "diamant-noir-owner-copilot-v2"
+  },
+  "id": "diamant-owner-copilot-v2",
+  "versionId": "2.1.0"
+}

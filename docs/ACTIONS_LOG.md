@@ -11,6 +11,284 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-13T21:40:00Z | type: ui | Cursor — Prestations hub : navbar transparente au scroll
+
+- **agent**: `cursor`
+- **summary**: **`Navbar`** — sur **`/prestations` uniquement**, **`isSolid`** reste faux au scroll (barre non blanche, fond **`bg-transparent`** comme en haut de page) ; chrome blanc conservé via **`isDarkHeroRoute`**.
+- **files**: [`components/layout/Navbar.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Demande client : conserver la transparence de la nav pendant le défilement sur la page prestations.
+- **verify**: scroll long sur `/prestations` ; sous-routes `/prestations/services/*` inchangées (barre blanche au scroll si besoin lisibilité).
+
+---
+
+## 2026-04-13T21:25:00Z | type: ui | Cursor — Prestations : fondu transition (retrait bg-black opaque)
+
+- **agent**: `cursor`
+- **summary**: Zone **transition** après le scroll : suppression du **`bg-black`** sur le conteneur (il masquait tout le canvas → bloc noir uniforme). Dégradé **`transparent → #000`** pour retrouver le fondu sur la dernière frame vidéo avant le strip CTA.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Régression visuelle : le dégradé ne pouvait pas révéler la vidéo car peint sur un fond noir opaque.
+- **verify**: contrôle visuel `/prestations` en bas de séquence scroll.
+
+---
+
+## 2026-04-13T21:05:00Z | type: ui | Cursor — Prestations : masquer la pile vidéo fixed après la zone scroll
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** — wrapper **`videoScrollZoneRef`** (hero + driver 500vh + transition) ; **ScrollTrigger** `end: "bottom top"` avec **`onLeave` / `onEnterBack`** pour passer **`visibility: hidden | visible`** sur canvas, vignette, dots et popups `#pvsh-*`. Évite que la dernière frame reste visible sous le hub / footer (éléments `fixed` en `z-0`–`z-20`).
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: L’image canvas en bas de page malgré sections opaques — stacking / viewport : la couche fixed continuait d’être peinte.
+- **verify**: `npm run build` OK ; contrôle manuel `/prestations` en scroll jusqu’au footer puis retour haut.
+
+---
+
+## 2026-04-13T19:15:00Z | type: ui | Cursor — Prestations scroll : plus de bandes claires en fin de séquence
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** + **`VideoScrollHero`** — avant chaque `drawImage`, **remplissage noir** du canvas + dimensions cover en **`Math.ceil`** / position en **`Math.floor`** pour éviter les pixels transparents (body offwhite visible en haut/bas). Zone **transition** vidéo → contenu : fond **`bg-black`** + dégradé plus tôt opaque pour masquer la fin de frame.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: À la fin du scroll, apparition de bandes claires / sensation de « fin d’image » due au canvas non entièrement peint ou transition trop transparente.
+- **verify**: `npm run build` OK ; en dev, rechargement `/prestations`.
+
+---
+
+## 2026-04-13T18:30:00Z | type: ui | Cursor — Popups prestations : recalage frames + glass blanc lisible
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** + **`VideoScrollHero`** — recalage **Ménage** à `337–420` (plus d’affichage sur la séquence cuisine), maintien de **Finance** à `505–560`, suppression du libellé de scène dans les popups (`section.scene` non affiché), refonte visuelle des popups en **glass blanc** lisible (sans accents or/noir), harmonisation des points de progression et des accents du hub `#piliers`.
+- **files**: [`data/prestations-scroll-sections.ts`, `app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Corriger le décalage perçu de contenu popup (ménage vu sur la cuisine), supprimer les mentions de plans, et appliquer une direction visuelle claire et lisible demandée.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-11T20:00:00Z | type: ui | Cursor — Prestations : hub #piliers + Finance sur frames café/tablette
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** — après le scroll canvas : strip CTA, chiffres, grille **`#piliers`** (liens `/prestations/services/[slug]`), bloc soumettre + FAQ ; suppression du long contenu dupliqué (process, copilot, témoignages, inclusions inline). Popups scroll : **« Voir le détail »** → **`router.push`**. CTAs hero/strip → **`#piliers`**. **`VideoScrollHero`** : **Finance `startFrame` 505** (trou 449–504), liens détail en routes service ; **`Link`** sans `preventDefault` scroll.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `data/prestations-scroll-sections.ts` (déjà505–560), `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-11.md`]
+- **why**: Popup Finance alignée sur le plan café + tablette ; page prestations moins chargée, profondeur sur pages service.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-13T16:00:00Z | type: ui | Cursor — Prestations popups : GSAP ne casse plus le centrage vertical
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** + **`VideoScrollHero`** — le `y` GSAP était appliqué sur le même nœud que **`translate-y`** Tailwind, ce qui écrasait le positionnement vertical. **`opacity`** reste sur le panneau **`#pvsh-*`**, **`y`** sur un enfant **`.pvsh-motion`** ; léger ajustement **upper/lower** (`30%` / `68%`).
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Cartes scroll mal placées malgré classes `top` / `vertical`.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-13T14:30:00Z | type: ui | Cursor — Prestations : plus d’hydratation sur le hero (dynamic ssr:false)
+
+- **agent**: `cursor`
+- **summary**: **`app/prestations/page.tsx`** — coquille légère + **`dynamic(..., { ssr: false })`** vers **`PrestationsPageClient.tsx`** (contenu inchangé) + fallback **« Nos Prestations »** pendant le chargement du chunk. Le hero canvas / GSAP / overlays **ne sont plus sérialisés en HTML serveur**, donc plus de mismatch SSR vs bundle client (cache HMR / ancien JS).
+- **files**: [`app/prestations/page.tsx`, `app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Erreur React « Hydration failed » sur `/prestations` (HTML serveur ≠ premier rendu client).
+- **impact**: Brève vue fallback avant l’expérience scroll ; métadonnées inchangées (`layout.tsx`).
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-12T18:00:00Z | type: ui | Cursor — Prestations scroll : glass lisible + popups masqués en haut + hydration
+
+- **agent**: `cursor`
+- **summary**: **`app/prestations/page.tsx`** — cartes **glass** (fond `rgba(14,14,18,0.58)`, **`md:backdrop-blur-xl`**, mobile **~92 % opaque sans blur**), **text-shadow / drop-shadow** sur textes ; **aucune carte** tant que **`ScrollTrigger.progress <= POPUP_MIN_PROGRESS`** (hero / retour haut de page) ; **`activateSection`** met à jour **`currentSectionRef`** ; **`suppressHydrationWarning`** sur wrappers `pvsh-*` (écart SSR/client si HMR).
+- **files**: [`app/prestations/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-12.md`]
+- **why**: Hydration mismatch signalement + demande glass lisible + premier popup qui ne disparaissait pas en remontant.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-12T14:00:00Z | type: ui | Cursor — Prestations page : overlays réels (inline) + mobile + calibrage
+
+- **agent**: `cursor`
+- **summary**: **`app/prestations/page.tsx`** — le hero scroll est **inline** (pas `VideoScrollHero`) : cartes **`pvsh-*`** passées en **navy/or opaque** (fin glass), liste **`text-sm text-white`**, CTA or ; **mobile** : carte **`bottom` + safe-area**, **`max-h` + overflow-y** ; **desktop** : **`vertical`** par section (`upper` / `center` / `lower`) via `scrollSectionVerticalClasses` ; doc calibrage **`startFrame`/`endFrame`** + log opt. **`window.__PVSH_LOG_FRAMES`**.
+- **files**: [`app/prestations/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-12.md`]
+- **why**: Capture utilisateur = ancien glass dans la page ; cartes centrales masquaient le sujet sur mobile ; timing à ajuster avec frames réelles.
+- **impact**: Lisibilité et composition ; outil de debug pour bornes frames.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-11T20:00:00Z | type: ui | Cursor — Prestations : overlays vidéo scroll navy/or + lisibilité
+
+- **agent**: `cursor`
+- **summary**: **`VideoScrollHero`** — cartes section scroll-driven : fond **`bg-navy` solide** (fin du glass / blur), **`border-gold/30`** + barre **`border-l-4` / `border-r-4`** selon côté, ombre renforcée ; typo **liste `text-sm` `text-white/90`**, scène **`text-white/50`**, tagline **`text-gold`**, CTA **`text-gold`** + hover underline.
+- **files**: [`components/prestations/VideoScrollHero.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-11.md`]
+- **why**: Textes illisibles sur verre flouté ; alignement identité noir/or Diamant Noir.
+- **impact**: Contraste stable sur toutes les frames ; meilleure accessibilité lecture.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-11T12:00:00Z | type: ui | Cursor — Login mobile : bandeau média + fondu vers formulaire
+
+- **agent**: `cursor`
+- **summary**: **`LoginSideVideo`** : hauteur mobile **`clamp(220px, 42svh, 420px)`** à la place de **`h-[200px]`** ; overlay **`gradient-to-b`** (transparent → blanc, `lg:hidden`) pour adoucir la jonction avec le panneau blanc quand le formulaire inscription est long.
+- **files**: [`app/login/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-11.md`]
+- **why**: Formulaire inscription élargi — le média restait trop bas ; coupure visuelle nette entre wallpaper et zone formulaire.
+- **impact**: Plus de bandeau immersif proportionnel à l’écran ; transition moins « bâton » sur mobile.
+- **verify**: relecture JSX / lint OK.
+
+---
+
+## 2026-04-09T18:00:00Z | type: script | Cursor — Import workflow n8n (owner-copilot v2)
+
+- **agent**: `cursor`
+- **summary**: Script **`scripts/import-owner-copilot-n8n.mjs`** : POST `N8N_BASE_URL` + `N8N_API_KEY` → `/api/v1/workflows` avec `docs/n8n/owner-copilot-workflow-v2.json`. Doc **`OWNER_COPILOT_AUTOMATION.md`** : import UI + import API. Impossible d’exécuter l’import sans clé API n8n (non présente dans le dépôt).
+- **files**: [`scripts/import-owner-copilot-n8n.mjs`, `docs/n8n/OWNER_COPILOT_AUTOMATION.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Demande d’import du workflow v2 sur n8n.
+- **verify**: `node scripts/import-owner-copilot-n8n.mjs` → message d’aide si env manquant.
+
+---
+
+## 2026-04-09T16:00:00Z | type: docs | Cursor — Guide n8n copilot + payload enrichi
+
+- **agent**: `cursor`
+- **summary**: **`docs/n8n/OWNER_COPILOT_AUTOMATION.md`** : explication sans/s avec n8n, contrat payload/réponse, prompt FR, secret optionnel. **`owner-copilot-n8n-response.example.json`**. **`POST owner-assistant`** : `context` enrichi (`alerts`, `tasks_open`, `villas`, `stats` complet), header **`X-Webhook-Secret`** si `N8N_OWNER_WEBHOOK_SECRET`. Mise à jour **RECAP_COPILOT**, **OWNER_ASSISTANT**, **`.env.local.example`**.
+- **files**: [`app/api/dashboard/owner-assistant/route.ts`, `docs/n8n/OWNER_COPILOT_AUTOMATION.md`, `docs/n8n/owner-copilot-n8n-response.example.json`, `docs/RECAP_COPILOT_PROPRIETAIRE.md`, `docs/OWNER_ASSISTANT_COPILOT.md`, `.env.local.example`, `docs/ACTIONS_LOG.md`]
+- **why**: Automatisation LLM réelle + compréhension du repli local sans n8n.
+- **verify**: `npx tsc --noEmit` OK.
+
+---
+
+## 2026-04-09T14:30:00Z | type: sql | Cursor — Migration owner_alerts appliquée (Supabase MCP)
+
+- **agent**: `cursor`
+- **summary**: Migration **`owner_alerts_ai_action_logs`** appliquée sur le projet Supabase **DIAMANT NOIR** (`apply_migration` MCP) : tables `owner_alerts`, `ai_action_logs`, RLS + policies.
+- **files**: [`supabase/migrations/20260408180000_owner_alerts_ai_action_logs.sql`, `docs/ACTIONS_LOG.md`]
+- **why**: Aligner la base distante sur le schéma attendu par le copilot propriétaire.
+- **verify**: MCP `apply_migration` success ; `list_migrations` inclut la nouvelle version.
+
+---
+
+## 2026-04-09T12:00:00Z | type: security | Cursor — Admin chat allowlist + snapshot tâches
+
+- **agent**: `cursor`
+- **summary**: **`/api/admin/chat`** : Bearer JWT obligatoire + **`isAdminChatAllowedUser`** ([`lib/admin-chat-allowlist.ts`](../lib/admin-chat-allowlist.ts)) via `ADMIN_CHAT_ALLOWED_EMAILS` / `ADMIN_CHAT_ALLOWED_USER_IDS` (sinon 403). **`GET /api/dashboard/owner-assistant`** : champ **`tasks_open`** (aperçu tâches). Page assistant : bloc **Tâches ouvertes**. **`.env.local.example`** mis à jour. Docs **RECAP**, **RECAP_COPILOT**, **OWNER_ASSISTANT** alignés.
+- **files**: [`app/api/admin/chat/route.ts`, `lib/admin-chat-allowlist.ts`, `app/api/dashboard/owner-assistant/route.ts`, `app/dashboard/proprio/assistant/page.tsx`, `.env.local.example`, `RECAP.md`, `docs/RECAP_COPILOT_PROPRIETAIRE.md`, `docs/OWNER_ASSISTANT_COPILOT.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Séparation nette propriétaire (`owner-assistant`) / équipe (`admin/chat`) ; MVP copilot avec points d’attention tâches visibles.
+- **verify**: `npm run build`.
+
+---
+
+## 2026-04-08T21:00:00Z | type: docs | Cursor — Récap séparé copilot propriétaire
+
+- **agent**: `cursor`
+- **summary**: Ajout de **`docs/RECAP_COPILOT_PROPRIETAIRE.md`** : récap autonome (hors `RECAP.md` général), tables, routes, fichiers, suite infra. Liens depuis **`RECAP.md`** et note en tête de **`OWNER_ASSISTANT_COPILOT.md`**.
+- **files**: [`docs/RECAP_COPILOT_PROPRIETAIRE.md`, `RECAP.md`, `docs/OWNER_ASSISTANT_COPILOT.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Demande d’un récap dédié uniquement à cette fonctionnalité.
+- **impact**: Point d’entrée lisible ; la spec technique reste dans `OWNER_ASSISTANT_COPILOT.md`.
+
+---
+
+## 2026-04-08T20:00:00Z | type: docs | Cursor — Spec copilot propriétaire (MD)
+
+- **agent**: `cursor`
+- **summary**: Ajout de **`docs/OWNER_ASSISTANT_COPILOT.md`** : récapitulatif complet (objectif, architecture, fichiers, schéma DB, contrat API, n8n, robustesse, vérifs). Mise à jour de **`RECAP.md`** (route assistant, table API, variables `N8N_OWNER_WEBHOOK_URL`, section Dashboard & IA, arborescence `docs/`).
+- **files**: [`docs/OWNER_ASSISTANT_COPILOT.md`, `RECAP.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Point de référence unique pour ne pas se perdre sur le copilot propriétaire.
+- **impact**: Onboarding et maintenance alignés sur l’implémentation réelle.
+- **verify**: relecture Markdown ; liens relatifs vers `app/` et `lib/` OK.
+
+---
+
+## 2026-04-07T23:30:00Z | type: ui | Cursor — Accueil : retrait triplet hero + Vercel prod
+
+- **agent**: `cursor`
+- **summary**: `HeroWordmarkBaseline` : prop **`showValuesTriplet`** (défaut `true`). **`app/page.tsx`** : `showValuesTriplet={false}` — suppression des trois valeurs micro *Confiance · Réactivité · Excellence* sur l’index ; `titleLabel` a11y sans cette mention. `/proprietaires` inchangé (triplet conservé).
+- **files**: [`components/marketing/HeroWordmarkBaseline.tsx`, `app/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
+- **why**: Brief — alléger le hero d’accueil.
+- **verify**: `npm run build` OK ; `npx vercel deploy --prod --yes` (voir entrée session pour id déploiement) ; `npm run dev` relancé.
+
+---
+
+## 2026-04-08T17:00:00Z | type: docs | Cursor — RECAP projet mis à jour
+
+- **agent**: `cursor`
+- **summary**: `RECAP.md` réécrit : positionnement conciergerie-first, routes & API à jour, structure dossiers, fonctionnalités (navbar, hero, Leaflet/z-index, prestations), chronologie 2026-04-05 → 08, déploiement Vercel, traçabilité, dettes connues.
+- **files**: [`RECAP.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Référence unique alignée sur l’état réel du repo.
+- **impact**: Onboarding et revue projet facilités.
+
+---
+
+## 2026-04-08T16:00:00Z | type: ui | Cursor — Header : clic logo → accueil fiable
+
+- **agent**: `cursor`
+- **summary**: Colonne centrale du `Navbar` : retrait de `pointer-events-none` (les clics ne remontaient pas correctement vers le `<Link>` du logo selon navigateurs). Colonne `z-[1030]` pour rester au-dessus d’un éventuel chevauchement de grille. `BrandLogo` : `aria-label` + `scroll` sur le `Link` vers `/`.
+- **files**: [`components/layout/Navbar.tsx`, `components/layout/BrandLogo.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Logo header ne ramenait pas à l’accueil de façon fiable.
+- **impact**: Navigation client vers `/` et scroll en haut de page au clic sur le logo.
+
+---
+
+## 2026-04-08T15:00:00Z | type: ui | Cursor — `/prestations` : bande noire CTA centrée
+
+- **agent**: `cursor`
+- **summary**: `text-center` sur le conteneur ; `justify-center` sur la rangée bouton + lien ; second lien en `inline-flex` + `min-h-[44px]` pour alignement vertical homogène.
+- **files**: [`app/prestations/page.tsx`, `docs/ACTIONS_LOG.md`]
+- **impact**: Texte commission et CTAs alignés au centre.
+
+---
+
+## 2026-04-08T14:00:00Z | type: ui | Cursor — `/prestations` : bande noire CTA plus compacte
+
+- **agent**: `cursor`
+- **summary**: Section sous hero (fond noir) : `py-8`/`md:py-10` → `py-4`/`md:py-5`, `mt-5` ligne commission → `mt-2.5`/`md:mt-3`, gaps et padding bouton légèrement réduits.
+- **files**: [`app/prestations/page.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Bande trop haute visuellement par rapport au contenu.
+- **impact**: Hauteur de la zone noire diminuée, hiérarchie hero → CTA plus serrée.
+
+---
+
+## 2026-04-08T12:00:00Z | type: ui | Cursor — Hero `/prestations` : image dédiée
+
+- **agent**: `cursor`
+- **summary**: `public/prestations-hero.png` (visuel indoor-outdoor luxe tropical) ; `EditorialHeroImmersive` sur `app/prestations/page.tsx` : `imageSrc` + `imageAlt` mis à jour.
+- **files**: [`app/prestations/page.tsx`, `public/prestations-hero.png`, `docs/ACTIONS_LOG.md`]
+- **why**: Brief — hero conciergerie avec visuel aligné prestations.
+- **impact**: Fond hero `/prestations` remplace le placeholder générique.
+- **verify**: non demandé (`npm run build` volontairement non lancé).
+
+---
+
+## 2026-04-07T22:00:00Z | type: ui | Claude Code — Repositionnement « conciergerie first » + build + Vercel prod
+
+- **agent**: `claude`
+- **summary**: Livraison alignée `docs/superpowers/specs/2026-04-07-conciergerie-first-design.md` : hero — carte **Conciergerie** en premier, navigation vers `/prestations` ; **TrustBand** — Conciergerie 24/7 en tête ; **`HomeConciergeHighlight`** — grille services + CTA prestations ; **ordre sections** home — highlight avant villas, `HomeOwnersSection` avant catalogue mis en avant ; **HomeLifestyleAudience** — CTA vers `/prestations` ; **HomeBottomCta** — action principale conciergerie, villas secondaire ; enrichissements highlight (piliers, inclusions, tarif) ; page **`/prestations`** — hero CTA, bande stats, témoignage, inclusions par catégories, FAQ + rassurances. Spec + plan : `docs/superpowers/specs/2026-04-07-conciergerie-first-design.md`, `docs/superpowers/plans/2026-04-07-conciergerie-first.md`. Commits `main` (extrait) : `830329a` … `3d35c71`.
+- **files**: home (`app/page.tsx`, `components/home/*`), `app/prestations/page.tsx`, navbar / hero selon commits ; docs spec/plan ; `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`
+- **why**: Brief gérant — marque perçue comme maison de conciergerie privée, pas plateforme de location.
+- **impact**: Parcours marketing et hiérarchie CTA orientés conciergerie ; catalogue villas relégué visuellement après.
+- **verify**: `npm run build` OK (warning ESLint existant `Chatbot.tsx` hooks) ; `npx vercel deploy --prod --yes` → **READY**, alias `https://diamant-noir.vercel.app` ; déploiement `dpl_7YjcUErBrKh68G6VBczQ8TPYrir4`.
+
+---
+
+## 2026-04-06T18:30:00Z | type: ui | Cursor — Navbar lisible sur fiches villas + z-index au-dessus de Leaflet
+
+- **agent**: `cursor`
+- **summary**: `isDarkHeroRoute` : `/villas/[id]` n’est plus traité comme hero sombre (galerie / fond clair en tête → chrome navy + vitrage). Header / overlay menu / drawer : z-index **1020 / 1030 / 1040** pour passer au-dessus des panneaux Leaflet (~400–1000). `VillaGallery` lightbox **z-[1100]** ; `VillaQuickView` **1050 / 1060** pour l’aperçu catalogue au-dessus de la carte.
+- **files**: [`components/layout/Navbar.tsx`, `components/VillaGallery.tsx`, `components/VillaQuickView.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Texte blanc sur photo claire = header « invisible » ; carte sticky pouvait recouvrir la barre et le menu (z-100 &lt; Leaflet).
+- **impact**: Navigation toujours visible et cliquable sur `/villas` et fiches villa.
+- **verify**: `npm run build` OK ; `npm run dev` relancé.
+
+---
+
+## 2026-04-06T12:00:00Z | type: ui | Cursor — Wording : « Conciergerie privée » (sans « en »)
+
+- **agent**: `cursor`
+- **summary**: Remplacement de **Conciergerie en privée** par **Conciergerie privée** dans `titleLabel` (`app/page.tsx`, `app/proprietaires/page.tsx`) et dans `HomeLifestyleAudience` (« Notre conciergerie privée s’occupe… »). Le hero `HeroWordmarkBaseline` était déjà à jour.
+- **files**: [`app/page.tsx`, `app/proprietaires/page.tsx`, `components/home/HomeLifestyleAudience.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
+- **why**: Formulation française correcte (nom + adjectif), alignée avec le brief.
+- **impact**: Libellés visibles et a11y cohérents.
+- **verify**: `npm run build` OK.
+
+---
+
 ## 2026-04-09T14:00:00Z | type: ui | Cursor — Wording « Conciergerie en privée » + cartes hero masquées après choix
 
 - **agent**: `cursor`
@@ -1322,3 +1600,15 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ## 2026-04-04 — HomeAudienceGate (/)
 Nouveau composant `HomeAudienceGate` : écran de choix d'audience (voyageur / propriétaire) au premier chargement. sessionStorage `dn_home_audience`. Overlay glassmorphism z-40, focus trap, Escape + skip. Dispatch `diamant-reveal-booking` pour voyageur, `router.push('/proprietaires')` pour proprio.
+
+---
+
+## 2026-04-08T14:50:19Z | type: api | Cursor — Copilot propriétaire (owner-assistant)
+
+- **agent**: `cursor`
+- **summary**: Migration `owner_alerts` + `ai_action_logs` (RLS). Module `lib/owner-assistant-context.ts` (portfolio, aujourd’hui, alertes, filtrage `owner_id`). Route `GET/POST /api/dashboard/owner-assistant` (Bearer JWT, log `ai_action_logs`, n8n optionnel `N8N_OWNER_WEBHOOK_URL`). Page `app/dashboard/proprio/assistant/page.tsx` : snapshot GET + chat POST, plus d’appel à `/api/admin/chat`.
+- **files**: [`supabase/migrations/20260408180000_owner_alerts_ai_action_logs.sql`, `lib/owner-assistant-context.ts`, `app/api/dashboard/owner-assistant/route.ts`, `app/dashboard/proprio/assistant/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-08.md`]
+- **why**: MVP copilot scoped propriétaire, traçabilité, pas de contexte global admin.
+- **impact**: Propriétaires utilisent uniquement l’API dédiée ; appliquer la migration Supabase pour alertes/logs persistants.
+- **verify**: `npm run build` OK.
+

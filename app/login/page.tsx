@@ -401,7 +401,7 @@ function LoginSideVideo() {
   }, [])
 
   return (
-    <div className="relative z-0 h-[200px] w-full shrink-0 overflow-hidden bg-black lg:h-auto lg:flex-[1.5]">
+    <div className="relative z-0 h-[clamp(220px,42svh,420px)] w-full shrink-0 overflow-hidden bg-black lg:h-auto lg:min-h-0 lg:flex-[1.5]">
       {reduceMotion ? (
         <Image
           src="/villa-hero.jpg"
@@ -423,6 +423,11 @@ function LoginSideVideo() {
           <source src="/login-side.webm" type="video/webm" />
         </video>
       )}
+      {/* Mobile: fondu vers le panneau blanc — évite la « coupe » nette quand le formulaire est long */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-gradient-to-b from-transparent via-white/35 to-white lg:hidden"
+        aria-hidden
+      />
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 lg:bg-gradient-to-r"
         aria-hidden

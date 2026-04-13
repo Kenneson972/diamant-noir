@@ -24,7 +24,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[1050] bg-black/40 transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -36,7 +36,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={`Aperçu rapide — ${villa.name}`}
-        className={`fixed inset-x-0 bottom-0 z-50 bg-white max-h-[85dvh] overflow-y-auto transition-transform duration-300 ${
+        className={`fixed inset-x-0 bottom-0 z-[1060] bg-white max-h-[85dvh] overflow-y-auto transition-transform duration-300 ${
           open ? "translate-y-0" : "translate-y-full"
         }`}
         onTouchStart={(e) => setTouchStartY(e.touches[0].clientY)}

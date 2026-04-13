@@ -7,6 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   // Évite que Next utilise un lockfile parent (ex. home) pour le tracing quand plusieurs existent.
   outputFileTracingRoot: path.join(__dirname),
+  // Compression gzip/brotli pour toutes les réponses
+  compress: true,
   experimental: {
     optimizePackageImports: [
       "lucide-react",

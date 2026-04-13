@@ -31,3 +31,8 @@ supabase/.temp/
 
 # Local brainstorm / tooling cache (not for repo)
 .superpowers/
+
+# Prestations / scroll local backups (not for repo)
+app/prestations/*.backup*
+app/prestations/**/*.backup*
+components/prestations/*.backup*

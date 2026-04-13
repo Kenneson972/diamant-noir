@@ -5,14 +5,21 @@ type Props = {
   headingId: string;
   /** Libellé accessible du titre (ex. mention programme propriétaires) */
   titleLabel: string;
+  /** Les trois mots micro *Confiance · Réactivité · Excellence* (masqués sur l’accueil : `false`) */
+  showValuesTriplet?: boolean;
   children?: ReactNode;
 };
 
 /**
- * Hero vidéo : mot « DIAMANT NOIR » + *Conciergerie en privée* + triplet *Confiance · Réactivité · Excellence*
- * en micro-typo (accueil / landing propriétaires). Optionnel : CTAs via `children`.
+ * Hero vidéo : « DIAMANT NOIR » + *Conciergerie privée* + optionnellement les trois mots *Confiance · Réactivité · Excellence* (micro-typo).
+ * Optionnel : CTAs via `children`.
  */
-export function HeroWordmarkBaseline({ headingId, titleLabel, children }: Props) {
+export function HeroWordmarkBaseline({
+  headingId,
+  titleLabel,
+  showValuesTriplet = true,
+  children,
+}: Props) {
   return (
     <div className="flex w-full flex-col items-center gap-5 md:gap-6">
       <h1
@@ -31,33 +38,34 @@ export function HeroWordmarkBaseline({ headingId, titleLabel, children }: Props)
         />
       </h1>
 
-      {/* Ligne d’intention — sobre */}
+      {/* Même « voix » typographique que le wordmark DIAMANT NOIR : font-display, leading 1.06, tracking identique — taille plus basse */}
       <p
         className="animate-in fade-in slide-in-from-bottom-1 m-0 duration-700 delay-75 motion-reduce:delay-0"
         aria-hidden={false}
       >
-        <span className="font-display text-[0.8125rem] font-normal leading-snug tracking-[0.22em] text-white/[0.92] sm:text-[0.875rem] md:tracking-[0.26em]">
-          Conciergerie en privée
+        <span className="font-display font-normal uppercase leading-[1.06] tracking-[0.26em] text-white/[0.88] sm:tracking-[0.32em] md:tracking-[0.38em] text-[clamp(0.62rem,1.35vw+0.28rem,1.05rem)] sm:text-[clamp(0.68rem,1.45vw+0.3rem,1.12rem)]">
+          Conciergerie privée
         </span>
       </p>
 
-      {/* Triplet valeurs — très petit, discret */}
-      <p
-        className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150 motion-reduce:delay-0"
-        aria-hidden={false}
-      >
-        <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]">
-          <span className="text-white/[0.55]">Confiance</span>
-          <span className="select-none font-extralight text-white/20" aria-hidden>
-            ·
+      {showValuesTriplet ? (
+        <p
+          className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150 motion-reduce:delay-0"
+          aria-hidden={false}
+        >
+          <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]">
+            <span className="text-white/[0.55]">Confiance</span>
+            <span className="select-none font-extralight text-white/20" aria-hidden>
+              ·
+            </span>
+            <span className="text-white/[0.55]">Réactivité</span>
+            <span className="select-none font-extralight text-white/20" aria-hidden>
+              ·
+            </span>
+            <span className="text-white/[0.55]">Excellence</span>
           </span>
-          <span className="text-white/[0.55]">Réactivité</span>
-          <span className="select-none font-extralight text-white/20" aria-hidden>
-            ·
-          </span>
-          <span className="text-white/[0.55]">Excellence</span>
-        </span>
-      </p>
+        </p>
+      ) : null}
       {children}
     </div>
   );

@@ -1,0 +1,238 @@
+{
+  "name": "Diamant Noir — Copilot Propriétaire",
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Webhook — POST /diamant-owner-copilot",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diamant-owner-copilot",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "webhookId": "diamant-owner-copilot"
+    },
+
+    {
+      "id": "code-security",
+      "name": "Code — Sécurité & Extraction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300],
+      "parameters": {
+        "jsCode": "// ── Vérification du secret ─────────────────────────────────────────\nconst expected = $env.N8N_OWNER_WEBHOOK_SECRET || '';\nconst received  = ($input.first().json.headers || {})['x-webhook-secret'] || '';\n\n// Si un secret est configuré, on vérifie\nif (expected && received !== expected) {\n  return [{ json: { _authorized: false } }];\n}\n\n// ── Extraction du body ────────────────────────────────────────────\nconst body = $input.first().json.body ?? $input.first().json;\n\nconst context = body.context || {};\n\nreturn [{\n  json: {\n    _authorized: true,\n    message:    String(body.message || '').trim(),\n    sessionid:  body.sessionid || null,\n    owner_id:   body.owner_id  || null,\n    role:       body.role      || 'owner',\n    source:     body.source    || 'owner_dashboard',\n    context\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "if-authorized",
+      "name": "IF — Autorisé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "auth-check",
+              "leftValue": "={{ $json._authorized }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+
+    {
+      "id": "respond-unauthorized",
+      "name": "Respond — 401 Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, 480],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 401,
+        "responseBody": "={\"error\":\"Unauthorized\",\"response\":\"Accès refusé. Vérifiez le secret webhook.\",\"action\":\"SHOW_STATS\",\"action_data\":{\"strategic_alert\":null}}"
+      }
+    },
+
+    {
+      "id": "code-prepare-context",
+      "name": "Code — Préparer le contexte LLM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 180],
+      "parameters": {
+        "jsCode": "const ctx     = $json.context || {};\nconst portfolio = ctx.portfolio || {};\nconst today     = ctx.today     || [];\nconst alerts    = ctx.alerts    || [];\nconst tasks     = ctx.tasks_open || [];\nconst villas    = ctx.villas    || [];\nconst stats     = ctx.stats     || {};\nconst metrics   = stats.metrics || {};\n\n// ── Résumé portfolio ───────────────────────────────────────────────\nconst portfolioSummary = [\n  `Villas : ${portfolio.total_villas ?? 0} total, ${portfolio.published_villas ?? 0} publiée(s)`,\n  `CA encaissé : €${(portfolio.total_revenue_paid ?? 0).toLocaleString('fr-FR')}`,\n  `Réservations à venir : ${portfolio.upcoming_bookings_count ?? 0}`,\n  `Tâches en attente : ${portfolio.pending_tasks_count ?? 0}`,\n  metrics.occupancyRate ? `Taux d'occupation : ${metrics.occupancyRate}%` : '',\n  metrics.revPAR       ? `RevPAR : €${metrics.revPAR}/nuit`               : ''\n].filter(Boolean).join(' | ');\n\n// ── Evénements du jour ─────────────────────────────────────────────\nconst todaySummary = today.length === 0\n  ? 'Aucun événement aujourd\\'hui.'\n  : today.map(e => {\n      const label = e.kind === 'check_in'  ? 'Arrivée'\n                  : e.kind === 'check_out' ? 'Départ'\n                  : 'En séjour';\n      return `${label} : ${e.guest_name || 'Voyageur inconnu'} — ${e.villa_name}`;\n    }).join('; ');\n\n// ── Alertes (max 5, priorisées high→low) ──────────────────────────\nconst SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };\nconst sortedAlerts = [...alerts].sort(\n  (a, b) => (SEVERITY_ORDER[a.severity] ?? 2) - (SEVERITY_ORDER[b.severity] ?? 2)\n);\nconst alertsSummary = sortedAlerts.length === 0\n  ? 'Aucune alerte active.'\n  : sortedAlerts.slice(0, 5).map(a =>\n      `[${a.severity?.toUpperCase() || 'INFO'}] ${a.title}${a.body ? ' — ' + a.body : ''}`\n    ).join('; ');\n\n// ── Tâches ouvertes (max 8) ────────────────────────────────────────\nconst tasksSummary = tasks.length === 0\n  ? 'Aucune tâche en attente.'\n  : tasks.slice(0, 8).map(t => `• ${t.villa_name}: ${t.content}`).join('; ');\n\n// ── Villas ────────────────────────────────────────────────────────\nconst villasSummary = villas.length === 0\n  ? 'Aucune villa enregistrée.'\n  : villas.map(v => `${v.name} (${v.is_published ? 'publiée' : 'non publiée'})`).join(', ');\n\n// ── Alerte stratégique dominante ──────────────────────────────────\nconst topAlert = sortedAlerts[0] || null;\nconst strategic_alert = topAlert ? {\n  severity:    topAlert.severity || 'low',\n  description: topAlert.title + (topAlert.body ? ' — ' + topAlert.body : '')\n} : null;\n\n// ── Texte de contexte pour le LLM (compact) ────────────────────────\nconst contextText = [\n  `DATE: ${ctx.current_date_iso ? ctx.current_date_iso.slice(0,10) : 'inconnue'}`,\n  `PORTFOLIO: ${portfolioSummary}`,\n  `AUJOURD'HUI: ${todaySummary}`,\n  `ALERTES: ${alertsSummary}`,\n  `TÂCHES: ${tasksSummary}`,\n  `VILLAS: ${villasSummary}`\n].join('\\n');\n\nreturn [{\n  json: {\n    ...$json,\n    _contextText:     contextText,\n    _strategic_alert: strategic_alert,\n    _todayCount:      today.length,\n    _alertsHighCount: sortedAlerts.filter(a => a.severity === 'high').length,\n    _tasksCount:      tasks.length,\n    _portfolioStats:  portfolioSummary\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "code-intent",
+      "name": "Code — Détection d'intention",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 180],
+      "parameters": {
+        "jsCode": "const msg = ($json.message || '').toLowerCase();\n\n// Mots-clés → action\nconst INTENTS = [\n  {\n    action: 'SHOW_BOOKINGS',\n    keywords: ['réservation','reservation','booking','séjour','sejour','arrivée','arrivee','départ','depart','voyageur','client','check-in','check-out','calendrier','agenda']\n  },\n  {\n    action: 'SHOW_VILLAS',\n    keywords: ['villa','annonce','propriété','propriete','logement','maison','bien','tarif','prix','nuitée','nuitee','publi']\n  },\n  {\n    action: 'SHOW_TASKS',\n    keywords: ['tâche','tache','maintenance','problème','probleme','réparation','reparation','ménage','menage','nettoyage','entretien','panne','dysfonction','urgence','technicien']\n  },\n  {\n    action: 'SHOW_STATS',\n    keywords: ['chiffre','revenu','argent','revenue','statistique','stat','performance','taux','occupation','résumé','resume','bilan','portfolio','dashboard','tableau de bord','comment ça va','comment ca va','vue d\\'ensemble']\n  }\n];\n\nlet detectedAction = 'SHOW_STATS'; // défaut\nfor (const intent of INTENTS) {\n  if (intent.keywords.some(kw => msg.includes(kw))) {\n    detectedAction = intent.action;\n    break;\n  }\n}\n\n// Forcer SHOW_STATS si message très court (salutation, bonjour, etc.)\nif (msg.length < 15) detectedAction = 'SHOW_STATS';\n\nreturn [{\n  json: {\n    ...$json,\n    _detectedAction: detectedAction\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "http-anthropic",
+      "name": "HTTP — Anthropic Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type",      "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-6\",\n  \"max_tokens\": 1024,\n  \"system\": \"Tu es DIAMANT, l'assistant privé de Diamant Noir Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE fourni — jamais d'invention.\\n2. Si une information est absente, dis-le clairement sans improviser.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si le propriétaire demande du détail.\\n5. Commence TOUJOURS par la priorité maximale : alertes critiques > événements du jour > tâches urgentes > vue générale.\\n6. Ne mentionne jamais d'autres propriétaires ou leurs données.\\n\\nFORMAT DE RÉPONSE — JSON strict, sans markdown autour :\\n{\\\"response\\\":\\\"Texte principal pour le propriétaire.\\\",\\\"action\\\":\\\"SHOW_STATS\\\",\\\"action_data\\\":{\\\"strategic_alert\\\":null}}\\n\\nRÈGLES D'ACTION (utilise l'action déjà détectée si cohérente) :\\n- SHOW_STATS     : vue d'ensemble, résumé, chiffres, performance\\n- SHOW_BOOKINGS  : réservations, arrivées, départs, voyageurs\\n- SHOW_VILLAS    : villas, annonces, propriétés\\n- SHOW_TASKS     : tâches, maintenance, problèmes, réparations\\n\\nSi des alertes HIGH existent, mentionne-les EN PREMIER dans la réponse, puis réponds à la question.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"CONTEXTE PROPRIÉTAIRE:\\n{{ $json._contextText }}\\n\\nACTION SUGGÉRÉE: {{ $json._detectedAction }}\\n\\nQUESTION: {{ $json.message }}\"\n    }\n  ]\n}",
+        "options": {
+          "response": { "response": { "fullResponse": false } },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "anthropic-api-key",
+          "name": "Anthropic API Key"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+
+    {
+      "id": "code-parse-response",
+      "name": "Code — Parser & Formater la réponse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 120],
+      "parameters": {
+        "jsCode": "// Données issues du nœud précédent (Code Intent) via $('Code — Détection d\\'intention')\nconst intentData = $('Code — Détection d\\'intention').first().json;\nconst strategic_alert  = intentData._strategic_alert  || null;\nconst detectedAction   = intentData._detectedAction   || 'SHOW_STATS';\nconst statsPayload     = (intentData.context || {}).stats || null;\n\n// Réponse brute Anthropic\nconst anthropicRaw = $input.first().json;\nconst contentBlock = (anthropicRaw.content || [])[0] || {};\nconst rawText = String(contentBlock.text || anthropicRaw.text || '').trim();\n\n// Tentative de parsing JSON (Claude répond normalement en JSON strict)\nlet parsed = null;\ntry {\n  // Extraire le JSON même si du texte l'entoure\n  const jsonMatch = rawText.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    parsed = JSON.parse(jsonMatch[0]);\n  }\n} catch(e) {\n  // Claude a répondu en texte libre — on l'encapsule\n  parsed = null;\n}\n\nconst response     = parsed?.response    || rawText || 'Je suis à votre disposition. Comment puis-je vous aider ?';\nconst action       = parsed?.action      || detectedAction;\nconst alertFromLLM = parsed?.action_data?.strategic_alert || null;\n\nreturn [{\n  json: {\n    response,\n    action,\n    action_data: {\n      context:         statsPayload,\n      strategic_alert: alertFromLLM || strategic_alert\n    }\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "code-fallback",
+      "name": "Code — Fallback (Claude indisponible)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 340],
+      "parameters": {
+        "jsCode": "// Récupère les données de contexte préparées en amont\nconst intentData = $('Code — Détection d\\'intention').first().json;\nconst strategic_alert = intentData._strategic_alert || null;\nconst detectedAction  = intentData._detectedAction  || 'SHOW_STATS';\nconst statsPayload    = (intentData.context || {}).stats || null;\n\nconst hasAlerts   = intentData._alertsHighCount > 0;\nconst hasToday    = intentData._todayCount > 0;\nconst hasTasks    = intentData._tasksCount > 0;\nconst portfolio   = intentData._portfolioStats || '';\n\nlet response = '';\n\nif (hasAlerts) {\n  response += `⚠️ Attention : ${intentData._alertsHighCount} alerte(s) critique(s) nécessitent votre attention. `;\n}\n\nif (hasToday) {\n  response += `Aujourd'hui : ${intentData._todayCount} événement(s) en cours sur vos villas. `;\n}\n\nif (hasTasks) {\n  response += `${intentData._tasksCount} tâche(s) sont en attente de traitement. `;\n}\n\nif (!response) {\n  response = `Bonjour ! Votre tableau de bord est actif. ${portfolio}. Je reste disponible pour toute question.`;\n} else {\n  response += `Résumé : ${portfolio}.`;\n}\n\nresponse += ' (Service IA temporairement limité — données en temps réel disponibles.)';\n\nreturn [{\n  json: {\n    response,\n    action: detectedAction,\n    action_data: {\n      context: statsPayload,\n      strategic_alert\n    }\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "respond-success",
+      "name": "Respond — 200 Succès",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1920, 120],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 200,
+        "responseBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+
+    {
+      "id": "respond-fallback",
+      "name": "Respond — 200 Fallback",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1920, 340],
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 200,
+        "responseBody": "={{ JSON.stringify($json) }}"
+      }
+    }
+  ],
+
+  "connections": {
+    "Webhook — POST /diamant-owner-copilot": {
+      "main": [
+        [{ "node": "Code — Sécurité & Extraction", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Sécurité & Extraction": {
+      "main": [
+        [{ "node": "IF — Autorisé ?", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF — Autorisé ?": {
+      "main": [
+        [{ "node": "Code — Préparer le contexte LLM", "type": "main", "index": 0 }],
+        [{ "node": "Respond — 401 Unauthorized",      "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Préparer le contexte LLM": {
+      "main": [
+        [{ "node": "Code — Détection d'intention", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Détection d'intention": {
+      "main": [
+        [{ "node": "HTTP — Anthropic Claude", "type": "main", "index": 0 }]
+      ]
+    },
+    "HTTP — Anthropic Claude": {
+      "main": [
+        [{ "node": "Code — Parser & Formater la réponse", "type": "main", "index": 0 }],
+        [{ "node": "Code — Fallback (Claude indisponible)",   "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Parser & Formater la réponse": {
+      "main": [
+        [{ "node": "Respond — 200 Succès", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Fallback (Claude indisponible)": {
+      "main": [
+        [{ "node": "Respond — 200 Fallback", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "last",
+    "errorWorkflow": ""
+  },
+  "tags": [
+    { "name": "diamant-noir" },
+    { "name": "owner-copilot" },
+    { "name": "production" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "diamant-noir-owner-copilot-v1"
+  },
+  "id": "diamant-owner-copilot-v1",
+  "versionId": "1.0.0"
+}

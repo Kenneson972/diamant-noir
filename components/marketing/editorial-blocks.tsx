@@ -10,12 +10,15 @@ export function EditorialHeroImmersive({
   subtitle,
   imageSrc = "/villa-hero.jpg",
   imageAlt = "",
+  actions,
 }: {
   eyebrow: string;
   title: string;
   subtitle: string;
   imageSrc?: string;
   imageAlt?: string;
+  /** Boutons / liens CTA affichés sous le sous-titre, dans le hero */
+  actions?: ReactNode;
 }) {
   return (
     <section className="relative flex min-h-[220px] w-full flex-col justify-end overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
@@ -39,6 +42,7 @@ export function EditorialHeroImmersive({
           <p className="mt-8 max-w-2xl text-base font-light leading-relaxed text-white/85 md:text-lg md:leading-relaxed">
             {subtitle}
           </p>
+          {actions ? <div className="mt-10">{actions}</div> : null}
         </div>
       </div>
     </section>

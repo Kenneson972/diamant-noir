@@ -124,7 +124,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
           role="dialog"
           aria-modal="true"
           aria-label={`Galerie photos — ${title}`}
-          className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col modal-enter"
+          className="fixed inset-0 z-[1100] bg-black/95 backdrop-blur-xl flex flex-col modal-enter"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 shrink-0">

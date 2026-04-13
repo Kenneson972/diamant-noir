@@ -63,7 +63,7 @@ export default function ProprietairesPage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="proprio-hero-title"
-            titleLabel="Diamant Noir — Programme propriétaires — Conciergerie en privée"
+            titleLabel="Diamant Noir — Programme propriétaires — Conciergerie privée"
           >
             <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
               <Link

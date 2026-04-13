@@ -19,11 +19,13 @@ import { ChatbotDynamic } from "@/components/chatbot/ChatbotDynamic";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+  display: "swap",
 });
 
 const cormorant = Cormorant_Garamond({
@@ -31,6 +33,7 @@ const cormorant = Cormorant_Garamond({
   weight: ["300", "400"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
+  display: "swap",
 });
 
 export const viewport = {

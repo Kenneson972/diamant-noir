@@ -84,7 +84,7 @@ export function BrandLogo({
 
   if (linkToHome) {
     return (
-      <Link href="/" className={wrapClass}>
+      <Link href="/" className={wrapClass} aria-label="Diamant Noir — Accueil" scroll>
         {inner}
       </Link>
     );
