@@ -108,6 +108,8 @@ export default function PrestationsPageClient() {
   const currentSectionRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
   const pendingFrameRef = useRef<number | null>(null);
+  /** Évite getContext à chaque frame (coût sensible sur mobile). */
+  const ctx2dRef = useRef<CanvasRenderingContext2D | null>(null);
 
   // ── State ───────────────────────────────────────────────────────────────
   const [isReady, setIsReady] = useState(false);
@@ -127,7 +129,11 @@ export default function PrestationsPageClient() {
       const fi = Math.max(0, Math.min(pendingFrameRef.current ?? index, TOTAL_FRAMES - 1));
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const ctx = canvas.getContext("2d", { alpha: false });
+      let ctx = ctx2dRef.current;
+      if (!ctx) {
+        ctx = canvas.getContext("2d", { alpha: false });
+        ctx2dRef.current = ctx;
+      }
       if (!ctx) return;
       const img = framesRef.current[fi];
       if (!img || !img.complete || img.naturalWidth === 0) return;
@@ -155,6 +161,7 @@ export default function PrestationsPageClient() {
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
     const ctx = canvas.getContext("2d", { alpha: false });
+    ctx2dRef.current = ctx;
     if (ctx) ctx.setTransform(d, 0, 0, d, 0, 0);
     renderFrame(currentFrameRef.current);
   }, [renderFrame]);
@@ -172,6 +179,10 @@ export default function PrestationsPageClient() {
       img.onload = () => {
         framesRef.current[i] = img;
         loaded++;
+        // Décode en arrière-plan : la prochaine frame dessinée est prête sans blocage decode sur le fil UI
+        if (typeof img.decode === "function") {
+          void img.decode().catch(() => {});
+        }
         if (i === 0) {
           renderFrame(0);
           setIsReady(true); // frame 0 preloadée → page visible immédiatement
@@ -184,25 +195,26 @@ export default function PrestationsPageClient() {
       };
     };
 
-    // Mobile : eager réduit à 80 frames (section 1 + début 2) pour ne pas saturer le réseau
-    const eagerCount = isMobileLoad ? 80 : 150;
+    // Eager identique mobile / desktop (150) : le scrub sans lissage + stagger 12ms suffisent sur mobile ; 80 laissait trop de trous
+    const eagerCount = 150;
     for (let i = 0; i < Math.min(eagerCount, TOTAL_FRAMES); i++) loadOne(i);
 
-    // Stagger le reste — setTimeout sur mobile (~50 req/s max), rAF sur desktop
+    // Stagger le reste — mobile un peu plus dense qu’avant (12ms) pour rattraper vite la fin de séquence
     let idx = eagerCount;
     let cancelled = false;
+    const mobileStaggerMs = 12;
     const next = () => {
       if (cancelled || idx >= TOTAL_FRAMES) return;
       loadOne(idx++);
       if (isMobileLoad) {
-        setTimeout(next, 20);
+        setTimeout(next, mobileStaggerMs);
       } else {
         requestAnimationFrame(next);
       }
     };
     if (idx < TOTAL_FRAMES) {
       if (isMobileLoad) {
-        setTimeout(next, 20);
+        setTimeout(next, mobileStaggerMs);
       } else {
         requestAnimationFrame(next);
       }
@@ -283,7 +295,8 @@ export default function PrestationsPageClient() {
       trigger: driver,
       start: "top top",
       end: "bottom bottom",
-      scrub: isMobile ? 0.5 : 1.2,
+      // Mobile : `true` = pas de lissage temporel (0.5s de scrub = forte sensation de latence)
+      scrub: isMobile ? true : 1.2,
       onUpdate: (self) => {
         const progress = self.progress;
         const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);

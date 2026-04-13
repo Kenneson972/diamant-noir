@@ -11,6 +11,16 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-14T12:00:00Z | type: perf | Cursor — Prestations mobile : latence frame (scrub + preload)
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** — ScrollTrigger **`scrub: true`** sur mobile (plus de lissage ~0,5s) ; **150** frames eager (au lieu de 80) ; stagger mobile **12ms** ; **`img.decode()`** après load ; **cache** `CanvasRenderingContext2D` dans **`ctx2dRef`** pour éviter **`getContext`** à chaque RAF.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-14.md`]
+- **why**: Sensation de retard : scrub temporel + frames pas encore en mémoire + coût `getContext` répété.
+- **verify**: `npx tsc --noEmit` ; scroll `/prestations` sur téléphone / simulateur.
+
+---
+
 ## 2026-04-13T23:15:00Z | type: perf | Cursor — Prestations : séquence WebP mobile portrait (`/frames-mobile`)
 
 - **agent**: `cursor`
