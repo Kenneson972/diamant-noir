@@ -11,6 +11,16 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-13T23:15:00Z | type: perf | Cursor — Prestations : séquence WebP mobile portrait (`/frames-mobile`)
+
+- **agent**: `cursor`
+- **summary**: **`public/frames-mobile/`** (~561 WebP portrait 404×720, ~9 Mo) ; **`PrestationsPageClient`** charge **`/frames-mobile`** si viewport **≤767px**, sinon **`/frames`** ; **`<link rel="preload">`** frame 0 avec **`media`** `(max-width: 767px)` / `(min-width: 768px)`.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `public/frames-mobile/*`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Moins de données sur mobile, cadrage portrait adapté à l’écran sans crop paysage.
+- **verify**: build / déploiement ; test `/prestations` mobile vs desktop.
+
+---
+
 ## 2026-04-13T22:30:00Z | type: perf | Cursor — Prestations scroll canvas : perf mobile
 
 - **agent**: `cursor`

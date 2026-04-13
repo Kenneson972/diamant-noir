@@ -163,10 +163,12 @@ export default function PrestationsPageClient() {
   useEffect(() => {
     let loaded = 0;
     let errors = 0;
+    const isMobileLoad = window.matchMedia("(max-width: 767px)").matches;
+    const framesBase = isMobileLoad ? "/frames-mobile" : "/frames";
     const loadOne = (i: number) => {
       const img = new window.Image();
       img.decoding = "async";
-      img.src = `/frames/frame_${String(i + 1).padStart(4, "0")}.webp`;
+      img.src = `${framesBase}/frame_${String(i + 1).padStart(4, "0")}.webp`;
       img.onload = () => {
         framesRef.current[i] = img;
         loaded++;
@@ -182,7 +184,6 @@ export default function PrestationsPageClient() {
       };
     };
 
-    const isMobileLoad = window.matchMedia("(max-width: 767px)").matches;
     // Mobile : eager réduit à 80 frames (section 1 + début 2) pour ne pas saturer le réseau
     const eagerCount = isMobileLoad ? 80 : 150;
     for (let i = 0; i < Math.min(eagerCount, TOTAL_FRAMES); i++) loadOne(i);
@@ -352,7 +353,8 @@ export default function PrestationsPageClient() {
   return (
     <>
       {/* ── Preload frame 0 pour LCP — améliore le Core Web Vital ─────── */}
-      <link rel="preload" as="image" href="/frames/frame_0001.webp" />
+      <link rel="preload" as="image" href="/frames/frame_0001.webp" media="(min-width: 768px)" />
+      <link rel="preload" as="image" href="/frames-mobile/frame_0001.webp" media="(max-width: 767px)" />
 
       {/* ── Canvas fixe — fond de la section vidéo ─────────────────── */}
       <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
