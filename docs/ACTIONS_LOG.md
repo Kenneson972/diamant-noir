@@ -11,6 +11,16 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-13T22:30:00Z | type: perf | Cursor — Prestations scroll canvas : perf mobile
+
+- **agent**: `cursor`
+- **summary**: **`PrestationsPageClient`** — **`getContext("2d", { alpha: false })`** ; **`setTransform`** à la place de **`scale`** cumulatif au resize ; **`scrub`** ScrollTrigger **`0.5`** sur mobile vs **`1.2`** desktop ; chargement frames : eager réduit (80) + **`setTimeout(20)`** en file sur mobile avec flag **`cancelled`** au cleanup.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Canvas plus léger, moins de saturation réseau 4G, scrub plus réactif au doigt, pas d’empilement d’échelle après rotations d’écran.
+- **verify**: `npx tsc --noEmit` OK (session) ; test manuel scroll `/prestations` mobile.
+
+---
+
 ## 2026-04-13T21:40:00Z | type: ui | Cursor — Prestations hub : navbar transparente au scroll
 
 - **agent**: `cursor`

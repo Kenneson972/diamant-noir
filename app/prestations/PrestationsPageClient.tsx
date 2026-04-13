@@ -127,7 +127,7 @@ export default function PrestationsPageClient() {
       const fi = Math.max(0, Math.min(pendingFrameRef.current ?? index, TOTAL_FRAMES - 1));
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", { alpha: false });
       if (!ctx) return;
       const img = framesRef.current[fi];
       if (!img || !img.complete || img.naturalWidth === 0) return;
@@ -154,8 +154,8 @@ export default function PrestationsPageClient() {
     canvas.height = h * d;
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
-    const ctx = canvas.getContext("2d");
-    if (ctx) ctx.scale(d, d);
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (ctx) ctx.setTransform(d, 0, 0, d, 0, 0);
     renderFrame(currentFrameRef.current);
   }, [renderFrame]);
 
@@ -182,18 +182,33 @@ export default function PrestationsPageClient() {
       };
     };
 
-    // Eager : 150 premières frames (couvre sections 1 & 2)
-    for (let i = 0; i < Math.min(150, TOTAL_FRAMES); i++) loadOne(i);
-    // Stagger le reste via rAF
-    let idx = 150;
+    const isMobileLoad = window.matchMedia("(max-width: 767px)").matches;
+    // Mobile : eager réduit à 80 frames (section 1 + début 2) pour ne pas saturer le réseau
+    const eagerCount = isMobileLoad ? 80 : 150;
+    for (let i = 0; i < Math.min(eagerCount, TOTAL_FRAMES); i++) loadOne(i);
+
+    // Stagger le reste — setTimeout sur mobile (~50 req/s max), rAF sur desktop
+    let idx = eagerCount;
+    let cancelled = false;
     const next = () => {
-      if (idx >= TOTAL_FRAMES) return;
+      if (cancelled || idx >= TOTAL_FRAMES) return;
       loadOne(idx++);
-      requestAnimationFrame(next);
+      if (isMobileLoad) {
+        setTimeout(next, 20);
+      } else {
+        requestAnimationFrame(next);
+      }
     };
-    if (idx < TOTAL_FRAMES) requestAnimationFrame(next);
+    if (idx < TOTAL_FRAMES) {
+      if (isMobileLoad) {
+        setTimeout(next, 20);
+      } else {
+        requestAnimationFrame(next);
+      }
+    }
 
     return () => {
+      cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [renderFrame]);
@@ -261,11 +276,13 @@ export default function PrestationsPageClient() {
     /** Tant que le scrub n’a pas commencé (haut de page / hero), aucune carte — évite le1er popup collé + disparition en remontant. */
     const POPUP_MIN_PROGRESS = 0.0001;
 
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
     const mainTrigger = ScrollTrigger.create({
       trigger: driver,
       start: "top top",
       end: "bottom bottom",
-      scrub: 1.2,
+      scrub: isMobile ? 0.5 : 1.2,
       onUpdate: (self) => {
         const progress = self.progress;
         const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
