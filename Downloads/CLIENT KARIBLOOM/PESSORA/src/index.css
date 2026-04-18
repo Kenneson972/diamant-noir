@@ -1,6 +1,6 @@
-@import url(‘https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap’);
 @import "tailwindcss";
 @import "@heroui/styles";
+@import url(‘https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap’);
 
 @theme {
   /* Palette */
@@ -30,8 +30,8 @@
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #faf9f7;
-    color: #111;
+    background-color: var(--color-ivory);
+    color: var(--color-noir);
   }
 
   h1, h2, h3, h4, h5, h6 {
