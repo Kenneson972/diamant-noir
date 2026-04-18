@@ -22,11 +22,24 @@ interface EventWithCount extends Event {
   registrationCount: number;
 }
 
+// Fix 4 — moved outside component (no closure dependencies)
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
 const Evenements = () => {
   const [events, setEvents] = useState<EventWithCount[]>([]);
   const [loading, setLoading] = useState(true);
+  // Fix 1 — error state
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
+  // Fix 3 — cancellation flag in useEffect
   useEffect(() => {
+    let cancelled = false;
+
     const fetchEvents = async () => {
       const today = new Date().toISOString().split('T')[0];
       const { data, error } = await supabase
@@ -36,12 +49,18 @@ const Evenements = () => {
         .gte('date', today)
         .order('date', { ascending: true });
 
-      if (!error && data) {
-        const rows = data as unknown as (Event & { event_registrations: { count: number }[] })[];
+      if (cancelled) return;
+
+      // Fix 1 — distinct error handling
+      if (error) {
+        setFetchError('Impossible de charger les événements. Vérifie ta connexion.');
+      } else if (data) {
+        const rows = data as unknown as (Event & { event_registrations: { count: number | string }[] })[];
         setEvents(
           rows.map((e) => ({
             ...e,
-            registrationCount: e.event_registrations?.[0]?.count ?? 0,
+            // Fix 2 — Number() for registration count
+            registrationCount: Number(e.event_registrations?.[0]?.count ?? 0),
           }))
         );
       }
@@ -49,14 +68,8 @@ const Evenements = () => {
     };
 
     fetchEvents();
+    return () => { cancelled = true; };
   }, []);
-
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-    });
 
   return (
     <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
@@ -77,9 +90,14 @@ const Evenements = () => {
         </div>
 
         {/* Liste événements */}
+        {/* Fix 1 — three-way render: loading / error / content */}
         {loading ? (
           <div className="flex items-center justify-center py-32">
             <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : fetchError ? (
+          <div className="p-16 text-center bg-accent-cream-light rounded-3xl border border-red-100 mb-16">
+            <p className="text-red-600 font-light">{fetchError}</p>
           </div>
         ) : events.length === 0 ? (
           <div className="p-16 text-center bg-accent-cream-light rounded-3xl border border-primary/5 mb-16">
@@ -107,7 +125,8 @@ const Evenements = () => {
                     />
                   ) : (
                     <div className="w-full h-full min-h-[320px] bg-gradient-to-br from-primary to-primary-forest flex items-center justify-center">
-                      <span className="text-6xl">{TYPE_LABELS[event.type].split(' ')[0]}</span>
+                      {/* Fix 6 — aria-hidden on emoji span */}
+                      <span aria-hidden="true" className="text-6xl">{TYPE_LABELS[event.type].split(' ')[0]}</span>
                     </div>
                   )}
                 </div>
@@ -160,11 +179,12 @@ const Evenements = () => {
                     )}
                   </div>
 
+                  {/* Fix 5 — aria-hidden on ArrowRight icon in link */}
                   <Link
                     to={`/evenements/${event.slug}`}
                     className="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl text-sm font-bold uppercase tracking-widest w-fit hover:bg-primary-forest transition-colors"
                   >
-                    Je m'inscris <ArrowRight size={16} />
+                    Je m'inscris <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 </div>
               </div>
@@ -183,11 +203,12 @@ const Evenements = () => {
           <p className="text-xl font-serif italic text-white/80 mb-8 max-w-xl mx-auto">
             Commence par comprendre ton corps. 30 minutes. Gratuit.
           </p>
+          {/* Fix 5 — aria-hidden on ArrowRight icon in CTA link */}
           <Link
             to="/bilan-bien-etre"
             className="inline-flex items-center gap-3 bg-white text-primary px-8 py-4 rounded-2xl text-sm font-bold uppercase tracking-widest hover:bg-white/90 transition-colors"
           >
-            Prendre mon Bilan Bien-être <ArrowRight size={16} />
+            Prendre mon Bilan Bien-être <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
 
