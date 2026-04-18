@@ -26,10 +26,19 @@ function formatDate(dateStr: string) {
   });
 }
 
+const TYPE_FILTER: Record<string, string> = {
+  'Run Club': 'run_club',
+  'Pop-up': 'popup',
+  'Atelier': 'atelier',
+  'Partenariats': 'partenariat',
+};
+
 const Evenements = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<EventWithCount[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeType, setActiveType] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,9 +49,12 @@ const Evenements = () => {
       .eq('active', true)
       .gte('date', todayStr)
       .order('date', { ascending: true })
-      .then(({ data }) => {
-        if (!cancelled && data) setEvents(data as EventWithCount[]);
-        if (!cancelled) setLoading(false);
+      .then(({ data, error: queryError }) => {
+        if (!cancelled) {
+          if (queryError) setError('Impossible de charger les événements.');
+          else if (data) setEvents(data as EventWithCount[]);
+          setLoading(false);
+        }
       });
     return () => {
       cancelled = true;
@@ -51,6 +63,7 @@ const Evenements = () => {
 
   const featured = events[0];
   const rest = events.slice(1);
+  const filteredRest = activeType ? rest.filter((ev) => ev.type === activeType) : rest;
 
   return (
     <div className="min-h-screen">
@@ -83,18 +96,20 @@ const Evenements = () => {
 
       {/* Filter Tabs */}
       <div className="bg-white border-b border-black/[0.08] px-[60px] flex gap-0 h-[60px]">
-        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Partenariats'].map((tab, i) => (
-          <button
-            key={tab}
-            className={`h-full px-[18px] text-[12px] font-normal transition-colors border-b-2 ${
-              i === 0
-                ? 'border-black text-black'
-                : 'border-transparent text-black/60 hover:text-black hover:border-black/20'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Partenariats'].map((tab) => {
+          const isActive = tab === 'Tous' ? activeType === null : activeType === TYPE_FILTER[tab];
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveType(tab === 'Tous' ? null : TYPE_FILTER[tab])}
+              className={`h-full px-[18px] text-[12px] font-normal transition-colors border-b-2 ${
+                isActive ? 'text-black border-black' : 'text-black/60 border-transparent hover:text-black hover:border-black/20'
+              }`}
+            >
+              {tab}
+            </button>
+          );
+        })}
       </div>
 
       {/* Prochain événement — grande card */}
@@ -145,20 +160,21 @@ const Evenements = () => {
 
       {/* Grille événements */}
       <section className="px-[60px] py-[52px]">
-        <h2
-          className="font-display font-light text-[36px] text-black mb-7"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          Tous les événements
-        </h2>
+        {error && <p className="text-[12px] text-red-500 mb-4">{error}</p>}
+
+        {filteredRest.length > 0 && (
+          <h2 className="font-display font-light text-[36px] text-black mb-7" style={{ fontFamily: 'var(--font-display)' }}>
+            Tous les événements
+          </h2>
+        )}
 
         {loading ? (
           <p className="text-[12px] text-black/38">Chargement…</p>
-        ) : rest.length === 0 && !featured ? (
+        ) : filteredRest.length === 0 && !featured ? (
           <p className="text-[12px] text-black/38">Aucun événement à venir.</p>
         ) : (
           <div className="grid grid-cols-3 gap-[14px]">
-            {rest.map((ev) => {
+            {filteredRest.map((ev) => {
               const regCount = Number(ev.event_registrations?.[0]?.count ?? 0);
               const spots = ev.places_max ? ev.places_max - regCount : null;
               const isFull = spots !== null && spots <= 0;

@@ -93,7 +93,7 @@ const Menu = () => {
       {/* Gauffres section */}
       <section className="px-[60px] pb-[52px] bg-[#faf9f7]">
         <SectionTitle title="Gauffres maison" />
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {GAUFFRES.map((g) => (
             <ProductCard key={g.name} {...g} />
           ))}
