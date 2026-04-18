@@ -1,0 +1,41 @@
+@import url(‘https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap’);
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  /* Palette */
+  --color-noir: #0a0a0a;
+  --color-ivory: #faf9f7;
+  --color-accent: #3d6b3e;
+  --color-muted: rgba(0,0,0,0.38);
+
+  /* Typography */
+  --font-display: ‘Cormorant Garamond’, Georgia, serif;
+  --font-sans: ‘DM Sans’, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ‘Cormorant Garamond’, Georgia, serif;
+
+  /* Radius */
+  --radius-card: 16px;
+  --radius-product: 14px;
+  --radius-pill: 24px;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #faf9f7;
+    color: #111;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 300;
+  }
+}
