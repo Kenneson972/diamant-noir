@@ -1,217 +1,258 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, Clock, Users, ArrowRight, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardFooter } from '@heroui/react';
 import { supabase } from '../lib/supabaseClient';
+import { today, getLocalTimeZone } from '@internationalized/date';
+import { ArrowBtn } from '../components/ui/ArrowBtn';
 import type { Event } from '../types/database';
 
-const TYPE_LABELS: Record<Event['type'], string> = {
-  run_club: '🏃 Run Club',
-  popup: '📍 Pop-up',
-  atelier: '🌿 Atelier',
-  event: '🎉 Événement',
-};
-
-const TYPE_COLORS: Record<Event['type'], string> = {
-  run_club: 'bg-primary-forest/15 text-primary-forest',
-  popup: 'bg-primary/10 text-primary',
-  atelier: 'bg-[#EBE6E8] text-rose-800',
-  event: 'bg-accent-leaf/20 text-primary-forest',
-};
-
 interface EventWithCount extends Event {
-  registrationCount: number;
+  event_registrations: { count: number | string }[];
 }
 
-// Fix 4 — moved outside component (no closure dependencies)
-const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('fr-FR', {
-    weekday: 'long',
+const TYPE_LABELS: Record<Event['type'], string> = {
+  run_club: 'Run Club',
+  popup: 'Pop-up',
+  atelier: 'Atelier',
+  event: 'Événement',
+};
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'long',
+    year: 'numeric',
   });
+}
 
 const Evenements = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<EventWithCount[]>([]);
   const [loading, setLoading] = useState(true);
-  // Fix 1 — error state
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Fix 3 — cancellation flag in useEffect
   useEffect(() => {
     let cancelled = false;
-
-    const fetchEvents = async () => {
-      const today = new Date().toISOString().split('T')[0];
-      const { data, error } = await supabase
-        .from('events')
-        .select('*, event_registrations(count)')
-        .eq('active', true)
-        .gte('date', today)
-        .order('date', { ascending: true });
-
-      if (cancelled) return;
-
-      // Fix 1 — distinct error handling
-      if (error) {
-        setFetchError('Impossible de charger les événements. Vérifie ta connexion.');
-      } else if (data) {
-        const rows = data as unknown as (Event & { event_registrations: { count: number | string }[] })[];
-        setEvents(
-          rows.map((e) => ({
-            ...e,
-            // Fix 2 — Number() for registration count
-            registrationCount: Number(e.event_registrations?.[0]?.count ?? 0),
-          }))
-        );
-      }
-      setLoading(false);
+    const todayStr = today(getLocalTimeZone()).toString();
+    supabase
+      .from('events')
+      .select('*, event_registrations(count)')
+      .eq('active', true)
+      .gte('date', todayStr)
+      .order('date', { ascending: true })
+      .then(({ data }) => {
+        if (!cancelled && data) setEvents(data as EventWithCount[]);
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
     };
-
-    fetchEvents();
-    return () => { cancelled = true; };
   }, []);
 
+  const featured = events[0];
+  const rest = events.slice(1);
+
   return (
-    <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
-      <div className="container-custom">
-
-        {/* Hero */}
-        <div className="mb-24 text-center md:text-left">
-          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40 mb-6 block">
-            Agenda PessÓra
-          </span>
-          <h1 className="text-6xl md:text-8xl font-serif text-primary tracking-tighter">
-            Événements à <span className="italic text-primary-forest">venir</span>
-          </h1>
-          <div className="w-24 h-[1px] bg-primary/20 mt-12 mb-8 md:mx-0 mx-auto" />
-          <p className="text-xl text-primary/60 font-light max-w-2xl font-serif italic">
-            Rejoins la communauté PessÓra lors de nos runs, ateliers et pop-ups en Martinique.
+    <div className="min-h-screen">
+      {/* Hero */}
+      <section
+        className="relative flex items-end overflow-hidden"
+        style={{ height: '56vh', minHeight: '320px', background: '#0a0a0a' }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at 55% 40%, rgba(30,60,30,0.45) 0%, transparent 65%), linear-gradient(155deg, #0f1f0f 0%, #0a0a0a 50%, #111 100%)',
+          }}
+        />
+        <div className="relative z-10 px-[60px] pb-[56px]">
+          <p className="text-[9px] tracking-[0.45em] uppercase text-white/35 mb-[16px]">
+            Communauté · Fort-de-France
           </p>
+          <h1
+            className="font-display font-light text-white leading-[0.93] tracking-[-0.02em]"
+            style={{ fontFamily: 'var(--font-display)', fontSize: '68px' }}
+          >
+            Nos
+            <br />
+            <em className="italic text-white/60">événements</em>
+          </h1>
         </div>
+      </section>
 
-        {/* Liste événements */}
-        {/* Fix 1 — three-way render: loading / error / content */}
-        {loading ? (
-          <div className="flex items-center justify-center py-32">
-            <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      {/* Filter Tabs */}
+      <div className="bg-white border-b border-black/[0.08] px-[60px] flex gap-0 h-[60px]">
+        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Événements'].map((tab, i) => (
+          <button
+            key={tab}
+            className={`h-full px-[18px] text-[12px] font-normal transition-colors border-b-2 ${
+              i === 0
+                ? 'border-black text-black'
+                : 'border-transparent text-black/60 hover:text-black hover:border-black/20'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Prochain événement — grande card */}
+      {featured && (
+        <div
+          className="mx-[60px] mt-10 rounded-[20px] overflow-hidden grid grid-cols-2 bg-[#0a0a0a]"
+          style={{ minHeight: '360px' }}
+        >
+          <div className="bg-gradient-to-br from-[#1e3a1e] to-[#0f1f0f] flex items-center justify-center min-h-[280px]">
+            {featured.image_url ? (
+              <img
+                src={featured.image_url}
+                alt={featured.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-[72px] h-[72px] rounded-full border border-white/10 opacity-30" />
+            )}
           </div>
-        ) : fetchError ? (
-          <div className="p-16 text-center bg-accent-cream-light rounded-3xl border border-red-100 mb-16">
-            <p className="text-red-600 font-light">{fetchError}</p>
-          </div>
-        ) : events.length === 0 ? (
-          <div className="p-16 text-center bg-accent-cream-light rounded-3xl border border-primary/5 mb-16">
-            <Calendar size={48} strokeWidth={1} className="mx-auto text-primary/30 mb-6" />
-            <h3 className="text-2xl font-serif text-primary mb-4">Événements en préparation</h3>
-            <p className="text-primary/60 font-light max-w-md mx-auto">
-              De nouveaux événements seront bientôt annoncés. Suis-nous sur Instagram pour ne rien manquer.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-0 mb-32">
-            {events.map((event, index) => (
-              <div
-                key={event.id}
-                className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-0 border-b border-primary/5 last:border-0`}
+          <div className="px-[52px] py-[52px] flex flex-col justify-between">
+            <div>
+              <span className="inline-block text-[8px] tracking-[0.22em] uppercase bg-[#3d6b3e] text-white px-[10px] py-1 rounded-[3px] mb-5">
+                Prochain événement
+              </span>
+              <h2
+                className="font-display font-light text-white leading-[1.0] mb-5"
+                style={{ fontFamily: 'var(--font-display)', fontSize: '46px' }}
               >
-                {/* Image */}
-                <div className="md:w-1/2 aspect-[4/3] md:aspect-auto overflow-hidden bg-primary/5">
-                  {event.image_url ? (
-                    <img
-                      src={event.image_url}
-                      alt={event.title}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full min-h-[320px] bg-gradient-to-br from-primary to-primary-forest flex items-center justify-center">
-                      {/* Fix 6 — aria-hidden on emoji span */}
-                      <span aria-hidden="true" className="text-6xl">{TYPE_LABELS[event.type].split(' ')[0]}</span>
-                    </div>
-                  )}
-                </div>
+                {featured.title}
+                <br />
+                <em className="italic text-white/60">{TYPE_LABELS[featured.type]}</em>
+              </h2>
+              <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 leading-[2.0] mb-9">
+                {formatDate(featured.date)}
+                {featured.heure ? ` · ${featured.heure.slice(0, 5)}` : ''}
+                {featured.location ? ` · ${featured.location}` : ''}
+              </p>
+            </div>
+            <Link
+              to={`/evenements/${featured.slug}`}
+              className="inline-flex items-center justify-center rounded-full bg-white text-black text-[11px] font-normal tracking-[0.12em] uppercase px-7 h-11 self-start hover:bg-white/90 transition-colors"
+            >
+              S'inscrire
+            </Link>
+          </div>
+        </div>
+      )}
 
-                {/* Infos */}
-                <div className="md:w-1/2 p-12 md:p-16 lg:p-20 flex flex-col justify-center gap-6 bg-accent-cream-light">
-                  <span className={`inline-flex w-fit px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${TYPE_COLORS[event.type]}`}>
-                    {TYPE_LABELS[event.type]}
-                  </span>
+      {/* Grille événements */}
+      <section className="px-[60px] py-[52px]">
+        <h2
+          className="font-display font-light text-[36px] text-black mb-7"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          Tous les événements
+        </h2>
 
-                  <h2 className="text-3xl md:text-4xl font-serif text-primary tracking-tight leading-tight">
-                    {event.title}
-                  </h2>
-
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-primary/60 text-sm">
-                      <Calendar size={15} strokeWidth={1.5} />
-                      <span className="capitalize">{formatDate(event.date)}</span>
-                      {event.heure && (
-                        <>
-                          <span className="text-primary/20">·</span>
-                          <Clock size={15} strokeWidth={1.5} />
-                          <span>{event.heure.slice(0, 5)}</span>
-                        </>
-                      )}
-                    </div>
-                    {event.location && (
-                      <div className="flex items-center gap-2 text-primary/60 text-sm">
-                        <MapPin size={15} strokeWidth={1.5} />
-                        <span>{event.location}</span>
-                      </div>
+        {loading ? (
+          <p className="text-[12px] text-black/38">Chargement…</p>
+        ) : rest.length === 0 && !featured ? (
+          <p className="text-[12px] text-black/38">Aucun événement à venir.</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-[14px]">
+            {rest.map((ev) => {
+              const regCount = Number(ev.event_registrations?.[0]?.count ?? 0);
+              const spots = ev.places_max ? ev.places_max - regCount : null;
+              const isFull = spots !== null && spots <= 0;
+              return (
+                <Card
+                  key={ev.id}
+                  className={`bg-white rounded-[16px] border border-black/[0.06] shadow-none overflow-hidden cursor-pointer hover:shadow-lg transition-shadow ${isFull ? 'opacity-60' : ''}`}
+                  onClick={() => !isFull && navigate(`/evenements/${ev.slug}`)}
+                >
+                  <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                    {ev.image_url ? (
+                      <img
+                        src={ev.image_url}
+                        alt={ev.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a1e] to-[#0a0a0a]" />
                     )}
-                  </div>
-
-                  {event.description && (
-                    <p className="text-primary/70 leading-relaxed font-light max-w-md">
-                      {event.description}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <p className="absolute bottom-[14px] left-[14px] text-[8px] tracking-[0.25em] uppercase text-white/75">
+                      {TYPE_LABELS[ev.type]} · {formatDate(ev.date)}
                     </p>
-                  )}
-
-                  <div className="flex items-center gap-6 pt-2">
-                    {event.registrationCount > 0 && (
-                      <div className="flex items-center gap-2 text-primary/50 text-sm">
-                        <Users size={15} strokeWidth={1.5} />
-                        <span>{event.registrationCount} inscrit{event.registrationCount > 1 ? 's' : ''}</span>
-                        {event.places_max && (
-                          <span className="text-primary/30">/ {event.places_max} places</span>
-                        )}
-                      </div>
+                    {isFull && (
+                      <span className="absolute top-[14px] right-[14px] text-[8px] tracking-[0.2em] uppercase bg-black/70 text-white/70 px-[10px] py-1 rounded-[4px]">
+                        Complet
+                      </span>
                     )}
                   </div>
-
-                  {/* Fix 5 — aria-hidden on ArrowRight icon in link */}
-                  <Link
-                    to={`/evenements/${event.slug}`}
-                    className="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl text-sm font-bold uppercase tracking-widest w-fit hover:bg-primary-forest transition-colors"
-                  >
-                    Je m'inscris <ArrowRight size={16} aria-hidden="true" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+                  <CardContent className="px-5 pt-5 pb-0 gap-0">
+                    <p className="text-[8px] tracking-[0.22em] uppercase text-[#3d6b3e] mb-2">
+                      {TYPE_LABELS[ev.type]}
+                    </p>
+                    <h3
+                      className="font-display font-light text-[22px] leading-[1.1] text-black mb-3"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {ev.title}
+                    </h3>
+                    <p className="text-[10px] text-black/38 leading-[1.8]">
+                      {formatDate(ev.date)}
+                      {ev.heure ? ` · ${ev.heure.slice(0, 5)}` : ''}
+                      <br />
+                      {ev.location ?? 'Fort-de-France'}
+                    </p>
+                  </CardContent>
+                  <CardFooter className="px-5 pb-[18px] pt-3 flex items-center justify-between">
+                    <p className="text-[10px] text-black/35">
+                      {spots !== null ? (
+                        isFull ? (
+                          'Complet'
+                        ) : (
+                          <>
+                            <span className="text-[#3d6b3e] font-normal">{spots} places</span>{' '}
+                            disponibles
+                          </>
+                        )
+                      ) : (
+                        <span className="text-[#3d6b3e] font-normal">Entrée libre</span>
+                      )}
+                    </p>
+                    <ArrowBtn size="sm" ariaLabel={`Voir ${ev.title}`} />
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         )}
+      </section>
 
-        {/* CTA Bilan Bien-être */}
-        <div className="rounded-[2.5rem] bg-gradient-to-br from-primary via-[#2D472C] to-[#6B9544] p-12 md:p-16 text-white text-center mb-16">
-          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 mb-4 block">
-            Nouveau
-          </span>
-          <h2 className="text-3xl md:text-5xl font-serif tracking-tight mb-4">
-            Tu viens pour transpirer ?
-          </h2>
-          <p className="text-xl font-serif italic text-white/80 mb-8 max-w-xl mx-auto">
-            Commence par comprendre ton corps. 30 minutes. Gratuit.
+      {/* Run Club banner récurrent */}
+      <div className="mx-[60px] mb-16 rounded-[20px] overflow-hidden bg-[#0a0a0a] flex items-center px-[60px] py-[52px] gap-[60px]">
+        <div className="flex-1">
+          <p className="text-[9px] tracking-[0.42em] uppercase text-white/28 mb-[14px]">
+            Chaque semaine
           </p>
-          {/* Fix 5 — aria-hidden on ArrowRight icon in CTA link */}
-          <Link
-            to="/bilan-bien-etre"
-            className="inline-flex items-center gap-3 bg-white text-primary px-8 py-4 rounded-2xl text-sm font-bold uppercase tracking-widest hover:bg-white/90 transition-colors"
+          <h3
+            className="font-display font-light text-white leading-[1.0] mb-4"
+            style={{ fontFamily: 'var(--font-display)', fontSize: '42px' }}
           >
-            Prendre mon Bilan Bien-être <ArrowRight size={16} aria-hidden="true" />
-          </Link>
+            Run Club
+            <br />
+            <em className="italic text-white/55">Pessóra</em>
+          </h3>
+          <p className="text-[10px] text-white/40 tracking-[0.15em] uppercase">
+            Tous les mercredis · 6h00 · Fort-de-France
+          </p>
         </div>
-
+        <Link
+          to="/evenements"
+          className="inline-flex items-center justify-center rounded-full bg-white text-black text-[11px] font-normal tracking-[0.12em] uppercase px-7 h-11 flex-shrink-0 hover:bg-white/90 transition-colors"
+        >
+          Rejoindre le club
+        </Link>
       </div>
     </div>
   );
