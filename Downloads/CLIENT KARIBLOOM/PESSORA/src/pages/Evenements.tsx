@@ -15,6 +15,7 @@ const TYPE_LABELS: Record<Event['type'], string> = {
   popup: 'Pop-up',
   atelier: 'Atelier',
   event: 'Événement',
+  partenariat: 'Partenariat',
 };
 
 function formatDate(dateStr: string) {
@@ -82,7 +83,7 @@ const Evenements = () => {
 
       {/* Filter Tabs */}
       <div className="bg-white border-b border-black/[0.08] px-[60px] flex gap-0 h-[60px]">
-        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Événements'].map((tab, i) => (
+        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Partenariats'].map((tab, i) => (
           <button
             key={tab}
             className={`h-full px-[18px] text-[12px] font-normal transition-colors border-b-2 ${
