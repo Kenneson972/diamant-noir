@@ -40,7 +40,7 @@ export interface Database {
           date: string
           heure: string | null
           location: string | null
-          type: 'run_club' | 'popup' | 'atelier' | 'event'
+          type: 'run_club' | 'popup' | 'atelier' | 'event' | 'partenariat'
           description: string | null
           image_url: string | null
           places_max: number | null
