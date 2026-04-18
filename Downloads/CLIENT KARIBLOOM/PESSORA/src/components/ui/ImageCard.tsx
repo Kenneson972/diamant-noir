@@ -21,8 +21,11 @@ export const ImageCard = ({
   onPress,
 }: ImageCardProps) => (
   <div
+    role="button"
+    tabIndex={0}
     className={`relative rounded-[16px] overflow-hidden ${aspectRatio} cursor-pointer group`}
     onClick={onPress}
+    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onPress?.(); }}
   >
     <div
       className={`absolute inset-0 ${bgClass} bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.04]`}

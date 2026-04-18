@@ -26,8 +26,7 @@ export const ProductCard = ({
     <CardContent className="p-[18px] pb-0 gap-0">
       <Chip
         size="sm"
-        className="bg-accent text-white text-[8px] tracking-[0.2em] uppercase rounded-[3px] h-auto py-[3px] px-2 mb-[14px]"
-        style={{ backgroundColor: '#3d6b3e' }}
+        className="bg-[#3d6b3e] text-white text-[8px] tracking-[0.2em] uppercase rounded-[3px] h-auto py-[3px] px-2 mb-[14px]"
       >
         {tag}
       </Chip>
