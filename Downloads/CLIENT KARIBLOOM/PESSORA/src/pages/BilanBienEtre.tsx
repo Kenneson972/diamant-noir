@@ -37,6 +37,7 @@ const BilanBienEtre = () => {
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<BilanSlot | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [slotsLoading, setSlotsLoading] = useState(true);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -52,7 +53,7 @@ const BilanBienEtre = () => {
   useEffect(() => {
     let cancelled = false;
     const fetchSlots = async () => {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = today(getLocalTimeZone()).toString();
       const { data, error } = await supabase
         .from('bilan_slots')
         .select('*')
@@ -68,6 +69,7 @@ const BilanBienEtre = () => {
       } else {
         setSlots(data ?? []);
       }
+      setSlotsLoading(false);
     };
     fetchSlots();
     return () => { cancelled = true; };
@@ -98,6 +100,7 @@ const BilanBienEtre = () => {
 
   const onSubmit = async (data: FormData) => {
     if (!selectedSlot) return;
+    setSubmitStatus('idle');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any;
@@ -119,7 +122,11 @@ const BilanBienEtre = () => {
       return;
     }
 
-    await db.from('bilan_slots').update({ disponible: false }).eq('id', selectedSlot.id);
+    const { error: updateError } = await db.from('bilan_slots').update({ disponible: false } as any).eq('id', selectedSlot.id);
+    if (updateError) {
+      if (import.meta.env.DEV) console.error('[BilanBienEtre] slot update error:', updateError);
+    }
+    // Show success regardless — the booking is saved; slot will be cleaned up by admin if needed
     setSubmitStatus('success');
   };
 
@@ -200,7 +207,11 @@ const BilanBienEtre = () => {
 
               {/* Calendrier + créneaux */}
               <div className="space-y-8">
-                {!fetchError && slots.length === 0 ? (
+                {slotsLoading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                  </div>
+                ) : !fetchError && slots.length === 0 ? (
                   <div className="p-10 text-center bg-accent-cream-light rounded-3xl border border-primary/5">
                     <Clock size={36} strokeWidth={1} className="mx-auto text-primary/30 mb-4" aria-hidden="true" />
                     <p className="text-primary/60 font-light">
