@@ -31,7 +31,8 @@ const INFO_OPTIONS = [
   { value: 'Non merci', label: 'Non merci' },
 ];
 
-const TYPE_LABELS: Record<string, string> = {
+// Fix 3 — typed against Event['type'] instead of string
+const TYPE_LABELS: Record<Event['type'], string> = {
   run_club: '🏃 Run Club',
   popup: '📍 Pop-up',
   atelier: '🌿 Atelier',
@@ -41,13 +42,14 @@ const TYPE_LABELS: Record<string, string> = {
 const inputClass =
   'w-full border-0 border-b border-primary/10 bg-transparent py-4 font-serif text-lg text-primary placeholder:text-primary/30 focus:outline-none focus:border-primary-forest';
 
+// Fix 5 — append T00:00:00 so JS parses as local time (Martinique UTC-4), not UTC midnight
 const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('fr-FR', {
+  new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
 
 const formatDateShort = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('fr-FR', {
+  new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long',
   });
 
@@ -61,6 +63,8 @@ const EvenementDetail = () => {
   const [event, setEvent] = useState<EventWithCount | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  // Fix 1 — separate network/fetch error from genuine 404
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'duplicate' | 'full' | 'error'>('idle');
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
@@ -74,20 +78,33 @@ const EvenementDetail = () => {
     },
   });
 
+  // Fix 7 — guard slug with early return instead of slug! assertion
   useEffect(() => {
+    if (!slug) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     const fetchEvent = async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
         .from('events')
         .select('*, event_registrations(count)')
-        .eq('slug', slug!)
+        .eq('slug', slug)
         .eq('active', true)
-        .single() as { data: (Event & { event_registrations: { count: number | string }[] }) | null; error: unknown };
+        .single() as { data: (Event & { event_registrations: { count: number | string }[] }) | null; error: { code?: string } | null };
 
       if (cancelled) return;
 
-      if (error || !data) {
+      // Fix 1 — split genuine 404 (PGRST116) from other network errors
+      if (error && !data) {
+        if (error.code === 'PGRST116') {
+          setNotFound(true);
+        } else {
+          setFetchError('Impossible de charger cet événement.');
+        }
+      } else if (!data) {
         setNotFound(true);
       } else {
         setEvent({
@@ -101,6 +118,7 @@ const EvenementDetail = () => {
     return () => { cancelled = true; };
   }, [slug]);
 
+  // Fix 2 — keepDirty so already-typed values are not wiped when auth resolves
   useEffect(() => {
     if (user) {
       reset({
@@ -109,7 +127,7 @@ const EvenementDetail = () => {
         telephone: user.phone ?? '',
         nb_personnes: 'Je viens seul',
         souhait_info: 'Non merci',
-      });
+      }, { keepDirty: true });
     }
   }, [user, reset]);
 
@@ -153,11 +171,26 @@ const EvenementDetail = () => {
     );
   }
 
+  // Fix 1 — genuine 404
   if (notFound || !event) {
     return (
       <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
         <div className="container-custom text-center py-32">
           <h1 className="text-4xl font-serif text-primary mb-4">Événement introuvable</h1>
+          <Link to="/evenements" className="text-primary-forest font-bold underline">
+            Voir tous les événements
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Fix 1 — network/fetch error (not a 404)
+  if (fetchError) {
+    return (
+      <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
+        <div className="container-custom text-center py-32">
+          <p className="text-primary/60 font-light mb-4">{fetchError}</p>
           <Link to="/evenements" className="text-primary-forest font-bold underline">
             Voir tous les événements
           </Link>
@@ -246,8 +279,9 @@ const EvenementDetail = () => {
               {submitStatus === 'success' ? 'Inscription confirmée !' : "Je m'inscris"}
             </h2>
 
+            {/* Fix 6 — aria-live for screen-reader announcement on success */}
             {submitStatus === 'success' && (
-              <div className="flex flex-col items-center text-center gap-4 py-8">
+              <div aria-live="polite" className="flex flex-col items-center text-center gap-4 py-8">
                 <CheckCircle size={56} strokeWidth={1} className="text-primary-forest" aria-hidden="true" />
                 <p className="text-primary/70 font-light text-lg">
                   Tu es inscrit(e) au <strong>{event.title}</strong>.
@@ -333,8 +367,10 @@ const EvenementDetail = () => {
                     <div className="space-y-2" role="radiogroup" aria-label="Souhait d'information">
                       {INFO_OPTIONS.map(o => (
                         <label key={o.value} className="flex items-center gap-3 cursor-pointer group">
+                          {/* Fix 4 — name attribute groups the radios properly */}
                           <input
                             type="radio"
+                            name="souhait_info"
                             value={o.value}
                             checked={field.value === o.value}
                             onChange={() => field.onChange(o.value)}
