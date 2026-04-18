@@ -10,7 +10,7 @@ const NAV_CATS = [
   { label: 'Événements', icon: Users, path: '/evenements' },
   { label: 'Bilan', icon: Heart, path: '/bilan-bien-etre' },
   { label: 'Run Club', icon: PersonStanding, path: '/evenements?type=run-club' },
-  { label: 'Réserver', icon: CalendarDays, path: '/bilan-bien-etre' },
+  { label: 'Réserver', icon: CalendarDays, path: '/bilan-bien-etre?tab=reservation' },
 ] as const;
 
 const Header = () => {
@@ -18,11 +18,13 @@ const Header = () => {
   const { isAuthenticated } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const activeCat = NAV_CATS.find(
-    (c) =>
-      location.pathname === c.path ||
-      location.pathname.startsWith(c.path.split('?')[0])
-  );
+  const activeCat = NAV_CATS.find((c) => {
+    const [basePath] = c.path.split('?');
+    if (c.path.includes('?')) {
+      return location.pathname + location.search === c.path;
+    }
+    return location.pathname === basePath || location.pathname.startsWith(basePath + '/');
+  });
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-black/10 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
@@ -75,7 +77,7 @@ const Header = () => {
             >
               <ShoppingBag size={16} strokeWidth={1.5} />
             </Button>
-            <Badge color="success" size="sm" placement="top-right">
+            <Badge className="bg-black text-white" size="sm" placement="top-right">
               0
             </Badge>
           </Badge.Anchor>
@@ -95,7 +97,7 @@ const Header = () => {
       </div>
 
       {/* Rangée 2 — desktop nav categories */}
-      <div className="hidden md:flex items-center justify-center border-t border-black/[0.07] h-[72px] px-12 gap-0">
+      <nav aria-label="Catégories principales" className="hidden md:flex items-center justify-center border-t border-black/[0.07] h-[72px] px-12 gap-0">
         {NAV_CATS.map((cat) => {
           const isActive = cat === activeCat;
           return (
@@ -121,7 +123,7 @@ const Header = () => {
             </Link>
           );
         })}
-      </div>
+      </nav>
 
       {/* Mobile nav */}
       {mobileOpen && (
