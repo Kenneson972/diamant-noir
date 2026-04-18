@@ -1,132 +1,99 @@
+// src/components/member/MemberLayout.tsx
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  CreditCard,
-  History,
-  LogOut,
-  Menu,
-  X,
-  Settings,
-  Shield,
-  MessageCircle,
-} from 'lucide-react';
-import { Button } from '@heroui/react';
+import { LayoutDashboard, Users, Heart, PersonStanding, User, Star, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useState } from 'react';
+
+const NAV = [
+  { label: 'Tableau de bord', icon: LayoutDashboard, path: '/mon-espace' },
+  { label: 'Mes événements', icon: Users, path: '/mon-espace/evenements' },
+  { label: 'Bilans bien-être', icon: Heart, path: '/mon-espace/historique' },
+  { label: 'Run Club', icon: PersonStanding, path: '/mon-espace/run-club' },
+  { label: 'Mon profil', icon: User, path: '/mon-espace/profil' },
+  { label: 'Abonnement', icon: Star, path: '/mon-espace/abonnement' },
+];
 
 const MemberLayout = ({ children }: { children: React.ReactNode }) => {
-  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  const isDemo = location.pathname.startsWith('/demo-espace');
-  const basePath = isDemo ? '/demo-espace' : '/mon-espace';
-
-  const activeColor = 'text-[#D9F99D]';
-
-  const menuItems = [
-    { label: 'Home', icon: LayoutDashboard, path: basePath },
-    { label: 'Pessobot', icon: MessageCircle, path: `${basePath}/pessobot` },
-    { label: 'Abonnement', icon: CreditCard, path: `${basePath}/abonnement` },
-    { label: 'Historique', icon: History, path: `${basePath}/historique` },
-  ];
-
-  const bottomItems = [
-    { label: 'Sécurité', icon: Shield, path: '#' },
-    { label: 'Settings', icon: Settings, path: `${basePath}/profil` },
-  ];
+  const displayName = user?.firstName || user?.email?.split('@')[0] || 'Membre';
+  const initials = displayName.slice(0, 1).toUpperCase();
 
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    navigate('/connexion');
   };
 
-  const isActive = (path: string) => location.pathname === path;
-
   return (
-    <div className="fixed inset-0 flex w-full overflow-hidden bg-[#EDE7DF] font-sans selection:bg-primary/20">
-      <div className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black p-6 text-white md:hidden">
-        <span className="text-xl font-bold text-[#D9F99D]">PessÓra</span>
-        <Button
-          type="button"
-          variant="ghost"
-          isIconOnly
-          className="text-white"
-          aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          onPress={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    <div className="flex min-h-screen bg-[#faf9f7]">
+      {/* Sidebar */}
+      <aside className="w-[240px] bg-white border-r border-black/[0.08] flex flex-col py-9 flex-shrink-0">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="px-7 mb-8 font-display font-light text-[20px] tracking-[0.28em] uppercase text-black block"
+          style={{ fontFamily: 'var(--font-display)' }}
         >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
-      </div>
+          Pessóra
+        </Link>
 
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-black py-12 pl-8 text-white transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="mb-16">
-          <h1 className={`text-3xl font-bold tracking-tight ${activeColor}`}>PessÓra</h1>
+        {/* User avatar */}
+        <div className="px-7 mb-8">
+          <div className="w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#1e3a1e] to-[#3d6b3e] flex items-center justify-center mb-3">
+            <span
+              className="text-white text-[22px] font-light"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {initials}
+            </span>
+          </div>
+          <p className="text-[14px] font-normal text-black capitalize">{displayName}</p>
+          <span className="inline-block text-[8px] tracking-[0.2em] uppercase bg-[#3d6b3e] text-white px-[7px] py-[2px] rounded-[3px] mt-1">
+            Premium
+          </span>
         </div>
 
-        <nav className="flex-1 space-y-8">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`group flex items-center gap-4 transition-colors duration-200 ${
-                isActive(item.path) ? activeColor : 'text-white hover:text-[#D9F99D]'
-              }`}
-            >
-              <item.icon
-                size={22}
-                strokeWidth={isActive(item.path) ? 2.5 : 2}
-                className={isActive(item.path) ? 'fill-current opacity-20' : ''}
-              />
-              <span className={`text-sm font-medium ${isActive(item.path) ? 'font-bold' : ''}`}>
-                {item.label}
-              </span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-auto space-y-8">
-          <div className="space-y-8 pt-8">
-            {bottomItems.map((item) => (
+        {/* Nav */}
+        <nav className="flex-1 px-4" aria-label="Navigation membre">
+          {NAV.map((item) => {
+            const active = location.pathname === item.path;
+            return (
               <Link
-                key={item.label}
+                key={item.path}
                 to={item.path}
-                className={`flex items-center gap-4 transition-colors duration-200 ${
-                  isActive(item.path) ? activeColor : 'text-white hover:text-[#D9F99D]'
+                className={`flex items-center gap-[11px] px-3 py-[10px] rounded-lg mb-1 text-[12px] transition-colors ${
+                  active
+                    ? 'bg-[#f0f0ee] text-black font-normal'
+                    : 'text-black/55 hover:bg-black/[0.04] hover:text-black font-light'
                 }`}
               >
-                {item.label === 'Sécurité' ? (
-                  <span className="text-sm font-medium">Security</span>
-                ) : (
-                  <>
-                    <item.icon size={22} strokeWidth={2} />
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </>
-                )}
+                <item.icon
+                  size={16}
+                  strokeWidth={1.5}
+                  className={active ? 'text-black' : 'text-black/60'}
+                />
+                {item.label}
               </Link>
-            ))}
-          </div>
+            );
+          })}
+        </nav>
 
-          <Button
-            type="button"
-            variant="ghost"
-            onPress={handleLogout}
-            className="flex w-full items-center justify-start gap-4 pt-4 text-white hover:text-red-400"
+        {/* Logout */}
+        <div className="px-4 mt-4">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-[11px] px-3 py-[10px] rounded-lg text-[12px] text-black/35 hover:text-black transition-colors w-full font-light"
           >
-            <LogOut size={22} strokeWidth={2} />
-            <span className="text-sm font-medium">Logout</span>
-          </Button>
+            <LogOut size={16} strokeWidth={1.5} />
+            Déconnexion
+          </button>
         </div>
       </aside>
 
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto rounded-l-[3rem] bg-[#F5F0E8] p-6 shadow-2xl md:my-4 md:mr-4 md:p-10 lg:p-12">
-        <div className="mx-auto flex min-h-full max-w-[1600px] flex-col">{children}</div>
+      {/* Main */}
+      <main className="flex-1 overflow-y-auto p-[40px]">
+        {children}
       </main>
     </div>
   );
