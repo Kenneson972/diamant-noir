@@ -213,8 +213,21 @@ Structure existante (déjà implémentée en Supabase). À restyler avec les nou
 4. Dashboard
 5. Restyler les pages existantes (détail événement, bilan, profil)
 
-### HeroUI v3
-Conserver HeroUI comme base. Les composants HeroUI (Button, Input, Card, Calendar) sont wrappés avec les classes Tailwind du nouveau design system. Ne pas surcharger les tokens HeroUI — utiliser les classes Tailwind directement.
+### HeroUI v3 — obligatoire
+**Tous les composants interactifs doivent utiliser HeroUI v3**, pas des éléments HTML natifs :
+- Navigation links → `HeroUI Link` ou `Navbar`
+- Boutons CTA → `HeroUI Button` (variant `solid` ou `ghost`, radius `full` pour pills)
+- Inputs recherche → `HeroUI Input`
+- Cards produits → `HeroUI Card` + `CardBody` + `CardFooter`
+- Tabs (filter tabs) → `HeroUI Tabs` + `Tab`
+- Chips filtres → `HeroUI Chip`
+- Badges → `HeroUI Badge`
+- Avatars dashboard → `HeroUI Avatar`
+- Modales / drawers → `HeroUI Modal`
+- Bilan Calendar → `HeroUI Calendar` (compound v3 déjà implémenté)
+- Formulaires → `HeroUI Input` + `HeroUI Select` + `HeroUI RadioGroup`
+
+Les classes Tailwind du design system s'appliquent via `className` sur les composants HeroUI. Les tokens `--color-*` définis dans `@theme` sont utilisables directement dans les `className` Tailwind.
 
 ### Suppression du vert dans les sections noires
 Règle à enforcer via revue de code : aucune classe `text-green`, `bg-green`, `border-green` ne doit apparaître dans un contexte `bg-black` ou `bg-[#0a0a0a]`.
