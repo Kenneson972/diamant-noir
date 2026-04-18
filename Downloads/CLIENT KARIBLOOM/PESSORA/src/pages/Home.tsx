@@ -51,7 +51,7 @@ const Home = () => {
       </section>
 
       {/* Découvrez nos shakes */}
-      <section className="bg-white px-[60px] pb-[72px]">
+      <section className="bg-white px-[60px] py-[72px]">
         <SectionTitle title="Découvrez nos shakes :" subtitle="Protéines haute qualité, fabriquées à Fort-de-France" linkLabel="Voir la carte" linkTo="/menu" />
         <div className="grid grid-cols-4 gap-3">
           {SHAKES.map((s) => (
