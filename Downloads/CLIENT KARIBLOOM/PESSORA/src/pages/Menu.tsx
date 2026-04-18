@@ -2,28 +2,93 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SectionTitle } from '../components/ui/SectionTitle';
 import { ProductCard } from '../components/ui/ProductCard';
+import {
+  menuItems,
+  wellnessItems,
+  energieItems,
+  shakesItems,
+  coffeeItems,
+  categoryNames,
+  type MenuItem,
+} from '../data/menuData';
 
-const FILTERS = ['Tout', 'Protéine ↑', 'Faible calories', 'Végétalien', 'Sans lactose', 'Énergie'];
+const TABS = ['Tout', 'Wellness', 'Énergie Drink', 'Shakes Protéinés', 'Coffee'];
+const FILTERS = ['Tout', 'Protéine ↑', 'Faible calories', 'Végétalien', 'Sans gluten', 'Énergie'];
 
-const SHAKES = [
-  { tag: 'Protéine', name: 'Vanilla Boost', description: 'Notes vanille douce', macros: '30g protéines · 220 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#2c4e2d] to-[#1a3a1b]' },
-  { tag: 'Énergie', name: 'Chocolat Power', description: 'Cacao intense, magnésium', macros: '28g protéines · 240 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#3d6b3e] to-[#2a4a2b]' },
-  { tag: 'Légèreté', name: 'Fraise Légèreté', description: 'Fruité & rafraîchissant', macros: '22g protéines · 180 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#1a2e1a] to-[#0f1f10]' },
-  { tag: 'Récup', name: 'Mangue Caraïbe', description: 'Tropical, post-effort', macros: '25g protéines · 200 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#4a7c35] to-[#3a6028]' },
-  { tag: 'Énergie', name: 'Café Matin', description: 'Caféine naturelle & protéines', macros: '26g protéines · 210 kcal', price: '7,50€', bgClass: 'bg-gradient-to-b from-[#1e3a1e] to-[#0a1a0a]' },
-];
+const CATEGORY_BG: Record<MenuItem['category'], string> = {
+  wellness: 'bg-gradient-to-b from-[#3d6b3e] to-[#2c4e2d]',
+  energie: 'bg-gradient-to-b from-[#4a7c35] to-[#3a6028]',
+  shakes: 'bg-gradient-to-b from-[#2c4e2d] to-[#1a3a1b]',
+  coffee: 'bg-gradient-to-b from-[#3d2b1f] to-[#1a120a]',
+};
 
-const GAUFFRES = [
-  { tag: 'Gauffre', name: 'Gauffre Nature', description: 'Sans sucre ajouté, croustillante', macros: '20g protéines · 190 kcal', price: '4,50€', bgClass: 'bg-gradient-to-b from-[#111] to-[#1a1a1a]' },
-  { tag: 'Gauffre', name: 'Gauffre Chocolat', description: 'Pépites cacao, moelleuse', macros: '18g protéines · 210 kcal', price: '4,90€', bgClass: 'bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a]' },
-  { tag: 'Gauffre', name: 'Gauffre Coco', description: "Noix de coco, éclats d'amande", macros: '17g protéines · 205 kcal', price: '4,90€', bgClass: 'bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a]' },
+const TAB_TO_CATEGORY: Record<string, MenuItem['category'] | null> = {
+  Tout: null,
+  Wellness: 'wellness',
+  'Énergie Drink': 'energie',
+  'Shakes Protéinés': 'shakes',
+  Coffee: 'coffee',
+};
+
+function applyFilter(items: MenuItem[], filter: string): MenuItem[] {
+  switch (filter) {
+    case 'Protéine ↑':
+      return items.filter((i) => i.protein && i.protein >= 18);
+    case 'Faible calories':
+      return items.filter((i) => i.calories !== undefined && i.calories <= 50);
+    case 'Végétalien':
+      return items.filter((i) => i.badges?.includes('vegan'));
+    case 'Sans gluten':
+      return items.filter((i) => i.badges?.includes('glutenfree'));
+    case 'Énergie':
+      return items.filter((i) => i.category === 'energie');
+    default:
+      return items;
+  }
+}
+
+function formatPrice(price: number): string {
+  return `${price.toLocaleString('fr-FR')}€`;
+}
+
+function formatMacros(item: MenuItem): string | undefined {
+  const parts: string[] = [];
+  if (item.protein) parts.push(`${item.protein}g protéines`);
+  if (item.calories) parts.push(`${item.calories} kcal`);
+  return parts.length ? parts.join(' · ') : undefined;
+}
+
+const CATEGORY_GROUPS = [
+  { label: 'Wellness', key: 'wellness' as const, base: wellnessItems, grid: 'grid-cols-3' },
+  { label: 'Énergie Drink', key: 'energie' as const, base: energieItems, grid: 'grid-cols-3' },
+  { label: 'Shakes Protéinés', key: 'shakes' as const, base: shakesItems, grid: 'grid-cols-3' },
+  { label: 'Coffee', key: 'coffee' as const, base: coffeeItems, grid: 'grid-cols-2' },
 ];
 
 const Menu = () => {
   const [activeFilter, setActiveFilter] = useState('Tout');
   const [activeTab, setActiveTab] = useState('Tout');
 
-  const tabs = ['Tout', 'Shakes protéinés', 'Gauffres', 'Compléments', 'Offres'];
+  const renderCard = (item: MenuItem) => (
+    <ProductCard
+      key={item.id}
+      tag={categoryNames[item.category]}
+      name={item.name}
+      description={item.description}
+      macros={formatMacros(item)}
+      price={formatPrice(item.price)}
+      bgClass={CATEGORY_BG[item.category]}
+      linkTo={`/menu/${item.id}`}
+    />
+  );
+
+  const activeCategory = TAB_TO_CATEGORY[activeTab];
+  const singleItems = activeCategory
+    ? applyFilter(
+        menuItems.filter((i) => i.category === activeCategory),
+        activeFilter
+      )
+    : [];
 
   return (
     <div className="min-h-screen">
@@ -39,14 +104,14 @@ const Menu = () => {
           La<br /><em className="italic text-white/60">carte</em>
         </h1>
         <p className="text-[10px] text-white/[0.28] tracking-[0.15em] uppercase mt-5">
-          Shakes · Gauffres · Compléments
+          Shakes · Wellness · Énergie · Coffee
         </p>
       </section>
 
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-black/[0.08] px-[60px]">
         <div className="flex gap-0 h-[60px]">
-          {tabs.map((tab) => (
+          {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -80,25 +145,36 @@ const Menu = () => {
         ))}
       </div>
 
-      {/* Shakes section */}
-      <section className="px-[60px] py-[32px] pb-[52px] bg-[#faf9f7]">
-        <SectionTitle title="Shakes protéinés" linkLabel="Tout voir" linkTo="/menu" />
-        <div className="grid grid-cols-5 gap-3">
-          {SHAKES.map((s) => (
-            <ProductCard key={s.name} {...s} />
-          ))}
-        </div>
-      </section>
-
-      {/* Gauffres section */}
-      <section className="px-[60px] pb-[52px] bg-[#faf9f7]">
-        <SectionTitle title="Gauffres maison" />
-        <div className="grid grid-cols-3 gap-3">
-          {GAUFFRES.map((g) => (
-            <ProductCard key={g.name} {...g} />
-          ))}
-        </div>
-      </section>
+      {/* Products */}
+      <div className="bg-[#faf9f7] px-[60px] pb-[52px]">
+        {activeTab === 'Tout' ? (
+          CATEGORY_GROUPS.map(({ label, key, base, grid }) => {
+            const items = applyFilter(base, activeFilter);
+            if (items.length === 0) return null;
+            return (
+              <section key={key} className="py-[32px]">
+                <SectionTitle title={label} />
+                <div className={`grid ${grid} gap-3`}>
+                  {items.map(renderCard)}
+                </div>
+              </section>
+            );
+          })
+        ) : (
+          <section className="py-[32px]">
+            <SectionTitle title={activeTab} />
+            {singleItems.length > 0 ? (
+              <div className="grid grid-cols-3 gap-3">
+                {singleItems.map(renderCard)}
+              </div>
+            ) : (
+              <p className="text-[12px] text-black/40 py-12 text-center">
+                Aucun produit pour ce filtre.
+              </p>
+            )}
+          </section>
+        )}
+      </div>
 
       {/* Bilan CTA banner */}
       <div className="mx-[60px] mb-16 rounded-[16px] overflow-hidden bg-[#0a0a0a] flex items-center px-[52px] py-10 gap-10">

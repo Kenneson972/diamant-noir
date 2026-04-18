@@ -31,7 +31,6 @@ const INFO_OPTIONS = [
   { value: 'Non merci', label: 'Non merci' },
 ];
 
-// Fix 3 — typed against Event['type'] instead of string
 const TYPE_LABELS: Record<Event['type'], string> = {
   run_club: '🏃 Run Club',
   popup: '📍 Pop-up',
@@ -41,9 +40,9 @@ const TYPE_LABELS: Record<Event['type'], string> = {
 };
 
 const inputClass =
-  'w-full border-0 border-b border-primary/10 bg-transparent py-4 font-serif text-lg text-primary placeholder:text-primary/30 focus:outline-none focus:border-primary-forest';
+  'w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] placeholder:text-black/30 focus:outline-none focus:border-[#3d6b3e] transition-colors';
 
-// Fix 5 — append T00:00:00 so JS parses as local time (Martinique UTC-4), not UTC midnight
+// Append T00:00:00 so JS parses as local time (Martinique UTC-4), not UTC midnight
 const formatDate = (dateStr: string) =>
   new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -64,7 +63,6 @@ const EvenementDetail = () => {
   const [event, setEvent] = useState<EventWithCount | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  // Fix 1 — separate network/fetch error from genuine 404
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'duplicate' | 'full' | 'error'>('idle');
 
@@ -79,7 +77,6 @@ const EvenementDetail = () => {
     },
   });
 
-  // Fix 7 — guard slug with early return instead of slug! assertion
   useEffect(() => {
     if (!slug) {
       setNotFound(true);
@@ -98,7 +95,6 @@ const EvenementDetail = () => {
 
       if (cancelled) return;
 
-      // Fix 1 — split genuine 404 (PGRST116) from other network errors
       if (error && !data) {
         if (error.code === 'PGRST116') {
           setNotFound(true);
@@ -119,7 +115,6 @@ const EvenementDetail = () => {
     return () => { cancelled = true; };
   }, [slug]);
 
-  // Fix 2 — keepDirty so already-typed values are not wiped when auth resolves
   useEffect(() => {
     if (user) {
       reset({
@@ -166,19 +161,23 @@ const EvenementDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-[10.25rem] bg-[#EDE7DF] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-black/20 border-t-[#111] rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Fix 1 — genuine 404
   if (notFound || !event) {
     return (
-      <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
-        <div className="container-custom text-center py-32">
-          <h1 className="text-4xl font-serif text-primary mb-4">Événement introuvable</h1>
-          <Link to="/evenements" className="text-primary-forest font-bold underline">
+      <div className="min-h-screen bg-[#faf9f7]">
+        <div className="max-w-6xl mx-auto px-[60px] text-center py-32">
+          <h1
+            className="font-display font-light text-[#111] mb-4"
+            style={{ fontFamily: 'var(--font-display)', fontSize: '40px' }}
+          >
+            Événement introuvable
+          </h1>
+          <Link to="/evenements" className="text-[#3d6b3e] text-[12px] underline">
             Voir tous les événements
           </Link>
         </div>
@@ -186,13 +185,12 @@ const EvenementDetail = () => {
     );
   }
 
-  // Fix 1 — network/fetch error (not a 404)
   if (fetchError) {
     return (
-      <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
-        <div className="container-custom text-center py-32">
-          <p className="text-primary/60 font-light mb-4">{fetchError}</p>
-          <Link to="/evenements" className="text-primary-forest font-bold underline">
+      <div className="min-h-screen bg-[#faf9f7]">
+        <div className="max-w-6xl mx-auto px-[60px] text-center py-32">
+          <p className="text-black/50 text-[14px] mb-4">{fetchError}</p>
+          <Link to="/evenements" className="text-[#3d6b3e] text-[12px] underline">
             Voir tous les événements
           </Link>
         </div>
@@ -204,61 +202,66 @@ const EvenementDetail = () => {
   const isFull = placesDispo !== null && placesDispo <= 0;
 
   return (
-    <div className="min-h-screen bg-[#EDE7DF]">
+    <div className="min-h-screen bg-[#faf9f7]">
 
       {/* Hero image */}
       <div className="relative h-[55vh] min-h-[380px] overflow-hidden">
         {event.image_url ? (
           <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-primary to-primary-forest" aria-hidden="true" />
+          <div className="w-full h-full bg-gradient-to-br from-[#2c4e2d] to-[#0a0a0a]" aria-hidden="true" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-          <div className="container-custom">
-            <Link
-              to="/evenements"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest mb-6 transition-colors"
-            >
-              <ArrowLeft size={14} aria-hidden="true" /> Tous les événements
-            </Link>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-white/20 text-white text-[10px] font-bold uppercase tracking-widest mb-4">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 px-[60px] pb-[48px]">
+          <Link
+            to="/evenements"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white text-[10px] font-normal uppercase tracking-[0.15em] mb-6 transition-colors"
+          >
+            <ArrowLeft size={12} aria-hidden="true" /> Tous les événements
+          </Link>
+          <div>
+            <span className="inline-block text-[8px] font-normal tracking-[0.2em] uppercase bg-[#3d6b3e] text-white px-[10px] py-[4px] rounded-[3px] mb-4">
               {TYPE_LABELS[event.type] ?? event.type}
             </span>
-            <h1 className="text-4xl md:text-6xl font-serif text-white tracking-tight">{event.title}</h1>
+            <h1
+              className="font-display font-light text-white leading-[1.0]"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '52px' }}
+            >
+              {event.title}
+            </h1>
           </div>
         </div>
       </div>
 
-      <div className="container-custom py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-6xl">
+      <div className="max-w-6xl mx-auto px-[60px] py-[64px]">
+        <div className="grid grid-cols-2 gap-16 items-start">
 
           {/* Infos événement */}
           <div className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-primary/70">
-                <Calendar size={18} strokeWidth={1.5} aria-hidden="true" />
-                <span className="capitalize font-medium">{formatDate(event.date)}</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 text-black/55">
+                <Calendar size={15} strokeWidth={1.5} aria-hidden="true" />
+                <span className="capitalize text-[13px]">{formatDate(event.date)}</span>
               </div>
               {event.heure && (
-                <div className="flex items-center gap-3 text-primary/70">
-                  <Clock size={18} strokeWidth={1.5} aria-hidden="true" />
-                  <span>{event.heure.slice(0, 5)}</span>
+                <div className="flex items-center gap-3 text-black/55">
+                  <Clock size={15} strokeWidth={1.5} aria-hidden="true" />
+                  <span className="text-[13px]">{event.heure.slice(0, 5)}</span>
                 </div>
               )}
               {event.location && (
-                <div className="flex items-center gap-3 text-primary/70">
-                  <MapPin size={18} strokeWidth={1.5} aria-hidden="true" />
-                  <span>{event.location}</span>
+                <div className="flex items-center gap-3 text-black/55">
+                  <MapPin size={15} strokeWidth={1.5} aria-hidden="true" />
+                  <span className="text-[13px]">{event.location}</span>
                 </div>
               )}
               {event.places_max && (
-                <div className="flex items-center gap-3 text-primary/70">
-                  <Users size={18} strokeWidth={1.5} aria-hidden="true" />
-                  <span>
+                <div className="flex items-center gap-3 text-black/55">
+                  <Users size={15} strokeWidth={1.5} aria-hidden="true" />
+                  <span className="text-[13px]">
                     {event.registrationCount} inscrit{event.registrationCount > 1 ? 's' : ''}
                     {placesDispo !== null && (
-                      <span className={`ml-2 ${placesDispo <= 5 ? 'text-orange-500 font-bold' : 'text-primary/40'}`}>
+                      <span className={`ml-2 ${placesDispo <= 5 ? 'text-orange-500' : 'text-black/35'}`}>
                         · {placesDispo} place{placesDispo > 1 ? 's' : ''} restante{placesDispo > 1 ? 's' : ''}
                       </span>
                     )}
@@ -268,50 +271,52 @@ const EvenementDetail = () => {
             </div>
 
             {event.description && (
-              <p className="text-primary/70 leading-relaxed text-lg font-light font-serif">
+              <p className="text-[14px] text-black/55 leading-[1.8]">
                 {event.description}
               </p>
             )}
           </div>
 
           {/* Formulaire d'inscription */}
-          <div className="bg-white rounded-3xl p-8 md:p-10 shadow-sm">
-            <h2 className="text-2xl font-serif text-primary mb-8 tracking-tight">
+          <div className="bg-white rounded-[16px] p-[40px] border border-black/[0.06]">
+            <h2
+              className="font-display font-light text-[#111] mb-8"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '26px' }}
+            >
               {submitStatus === 'success' ? 'Inscription confirmée !' : "Je m'inscris"}
             </h2>
 
-            {/* Fix 6 — aria-live for screen-reader announcement on success */}
             {submitStatus === 'success' && (
               <div aria-live="polite" className="flex flex-col items-center text-center gap-4 py-8">
-                <CheckCircle size={56} strokeWidth={1} className="text-primary-forest" aria-hidden="true" />
-                <p className="text-primary/70 font-light text-lg">
-                  Tu es inscrit(e) au <strong>{event.title}</strong>.
+                <CheckCircle size={48} strokeWidth={1} className="text-[#3d6b3e]" aria-hidden="true" />
+                <p className="text-[13px] text-black/60">
+                  Tu es inscrit(e) au <strong className="text-[#111]">{event.title}</strong>.
                 </p>
-                <p className="text-primary/50 text-sm">
+                <p className="text-[12px] text-black/40">
                   RDV le{' '}
-                  <span className="capitalize font-medium">{formatDateShort(event.date)}</span>
+                  <span className="capitalize">{formatDateShort(event.date)}</span>
                   {event.heure && <> à {event.heure.slice(0, 5)}</>}.
                 </p>
               </div>
             )}
 
             {submitStatus === 'duplicate' && (
-              <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-100 rounded-2xl mb-6 text-sm text-orange-700" role="alert">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-100 rounded-[10px] mb-6 text-[12px] text-orange-700" role="alert">
+                <AlertCircle size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
                 Ce numéro est déjà inscrit à cet événement. Tu es déjà dans la liste !
               </div>
             )}
 
             {submitStatus === 'full' && (
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl mb-6 text-sm text-red-700" role="alert">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-[10px] mb-6 text-[12px] text-red-700" role="alert">
+                <AlertCircle size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
                 Cet événement est complet. Suis-nous sur Instagram pour les prochaines dates.
               </div>
             )}
 
             {submitStatus === 'error' && (
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl mb-6 text-sm text-red-700" role="alert">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-[10px] mb-6 text-[12px] text-red-700" role="alert">
+                <AlertCircle size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
                 Une erreur est survenue. Réessaie ou contacte-nous sur Instagram.
               </div>
             )}
@@ -321,39 +326,39 @@ const EvenementDetail = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <Controller name="prenom" control={control} render={({ field }) => (
                     <div className="space-y-1">
-                      <label htmlFor="prenom" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">Prénom *</label>
+                      <label htmlFor="prenom" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">Prénom *</label>
                       <input id="prenom" {...field} placeholder="Jean" className={inputClass} />
-                      {errors.prenom?.message && <p className="text-xs text-red-600">{errors.prenom.message}</p>}
+                      {errors.prenom?.message && <p className="text-[11px] text-red-600">{errors.prenom.message}</p>}
                     </div>
                   )} />
                   <Controller name="nom" control={control} render={({ field }) => (
                     <div className="space-y-1">
-                      <label htmlFor="nom" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">Nom *</label>
+                      <label htmlFor="nom" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">Nom *</label>
                       <input id="nom" {...field} placeholder="Dupont" className={inputClass} />
-                      {errors.nom?.message && <p className="text-xs text-red-600">{errors.nom.message}</p>}
+                      {errors.nom?.message && <p className="text-[11px] text-red-600">{errors.nom.message}</p>}
                     </div>
                   )} />
                 </div>
 
                 <Controller name="telephone" control={control} render={({ field }) => (
                   <div className="space-y-1">
-                    <label htmlFor="telephone" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">
-                      Téléphone * <span className="normal-case font-normal text-primary/30">(WhatsApp de préférence)</span>
+                    <label htmlFor="telephone" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">
+                      Téléphone * <span className="normal-case text-black/25">(WhatsApp de préférence)</span>
                     </label>
                     <input id="telephone" {...field} type="tel" placeholder="0696 XX XX XX" className={inputClass} />
-                    {errors.telephone?.message && <p className="text-xs text-red-600">{errors.telephone.message}</p>}
+                    {errors.telephone?.message && <p className="text-[11px] text-red-600">{errors.telephone.message}</p>}
                   </div>
                 )} />
 
                 <Controller name="nb_personnes" control={control} render={({ field }) => (
                   <div className="space-y-1">
-                    <label htmlFor="nb_personnes" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">
+                    <label htmlFor="nb_personnes" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">
                       Combien de personnes ?
                     </label>
                     <select
                       id="nb_personnes"
                       {...field}
-                      className="w-full border-0 border-b border-primary/10 bg-transparent py-4 font-serif text-lg text-primary focus:outline-none focus:border-primary-forest"
+                      className="w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] focus:outline-none focus:border-[#3d6b3e] transition-colors"
                     >
                       {NB_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -361,23 +366,22 @@ const EvenementDetail = () => {
                 )} />
 
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40">
+                  <p className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40">
                     Souhaites-tu rester informé(e) des prochains événements ?
                   </p>
                   <Controller name="souhait_info" control={control} render={({ field }) => (
                     <div className="space-y-2" role="radiogroup" aria-label="Souhait d'information">
                       {INFO_OPTIONS.map(o => (
                         <label key={o.value} className="flex items-center gap-3 cursor-pointer group">
-                          {/* Fix 4 — name attribute groups the radios properly */}
                           <input
                             type="radio"
                             name="souhait_info"
                             value={o.value}
                             checked={field.value === o.value}
                             onChange={() => field.onChange(o.value)}
-                            className="accent-primary-forest"
+                            className="accent-[#3d6b3e]"
                           />
-                          <span className="text-sm text-primary/70 group-hover:text-primary transition-colors">{o.label}</span>
+                          <span className="text-[13px] text-black/60 group-hover:text-[#111] transition-colors">{o.label}</span>
                         </label>
                       ))}
                     </div>
@@ -387,9 +391,9 @@ const EvenementDetail = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-primary text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-primary-forest transition-colors disabled:opacity-50"
+                  className="w-full bg-[#0a0a0a] text-white py-4 rounded-full font-normal uppercase tracking-[0.1em] text-[11px] hover:bg-[#222] transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Inscription en cours...' : "Je m'inscris gratuitement"}
+                  {isSubmitting ? 'Inscription en cours…' : "Je m'inscris gratuitement"}
                 </button>
               </form>
             )}

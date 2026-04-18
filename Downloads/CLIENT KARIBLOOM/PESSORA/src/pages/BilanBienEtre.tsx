@@ -28,7 +28,7 @@ const PROGRAMME = [
 ];
 
 const inputClass =
-  'w-full border-0 border-b border-primary/10 bg-transparent py-4 font-serif text-lg text-primary placeholder:text-primary/30 focus:outline-none focus:border-primary-forest';
+  'w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] placeholder:text-black/30 focus:outline-none focus:border-[#3d6b3e] transition-colors';
 
 const BilanBienEtre = () => {
   const { user } = useAuth();
@@ -126,38 +126,45 @@ const BilanBienEtre = () => {
     if (updateError) {
       if (import.meta.env.DEV) console.error('[BilanBienEtre] slot update error:', updateError);
     }
-    // Show success regardless — the booking is saved; slot will be cleaned up by admin if needed
     setSubmitStatus('success');
   };
 
   const minDate = today(getLocalTimeZone());
 
   return (
-    <div className="min-h-screen pt-[10.25rem] pb-24 bg-[#EDE7DF]">
-      <div className="container-custom">
+    <div className="min-h-screen">
 
-        {/* Hero */}
-        <div className="mb-24 text-center">
-          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40 mb-6 block">
-            Gratuit · 30 minutes
-          </span>
-          <h1 className="text-6xl md:text-8xl font-serif text-primary tracking-tighter mb-6">
-            Bilan <span className="italic text-primary-forest">Bien-être</span>
-          </h1>
-          <p className="text-xl text-primary/60 font-light max-w-2xl mx-auto font-serif italic">
-            30 minutes pour comprendre ton corps, tes habitudes et définir un programme qui te ressemble vraiment.
-          </p>
-        </div>
+      {/* Hero noir */}
+      <section className="bg-[#0a0a0a] px-[60px] py-[56px]">
+        <p className="text-[9px] font-normal tracking-[0.42em] uppercase text-white/[0.28] mb-[14px]">
+          Gratuit · 30 minutes
+        </p>
+        <h1
+          className="font-display font-light text-white leading-[0.95] tracking-[-0.02em] mb-5"
+          style={{ fontFamily: 'var(--font-display)', fontSize: '64px' }}
+        >
+          Bilan<br /><em className="italic text-white/60">Bien-être</em>
+        </h1>
+        <p className="text-[12px] text-white/[0.38] max-w-md leading-[1.7]">
+          30 minutes pour comprendre ton corps, tes habitudes et définir un programme qui te ressemble vraiment.
+        </p>
+      </section>
 
-        {/* 4 blocs programme */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+      {/* Programme */}
+      <section className="bg-[#faf9f7] px-[60px] py-[56px]">
+        <div className="grid grid-cols-4 gap-4 mb-[64px]">
           {PROGRAMME.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="p-8 bg-accent-cream-light rounded-3xl border border-primary/5 hover:shadow-lg transition-shadow">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                <Icon size={22} strokeWidth={1.5} className="text-primary" aria-hidden="true" />
+            <div key={title} className="p-6 bg-white rounded-[16px] border border-black/[0.06]">
+              <div className="w-10 h-10 rounded-[10px] bg-black/[0.05] flex items-center justify-center mb-5">
+                <Icon size={18} strokeWidth={1.5} className="text-[#111]" aria-hidden="true" />
               </div>
-              <h3 className="text-lg font-serif text-primary mb-3 tracking-tight">{title}</h3>
-              <p className="text-sm text-primary/60 font-light leading-relaxed">{desc}</p>
+              <h3
+                className="font-display font-light text-[#111] mb-2"
+                style={{ fontFamily: 'var(--font-display)', fontSize: '18px' }}
+              >
+                {title}
+              </h3>
+              <p className="text-[11px] text-black/40 leading-[1.6]">{desc}</p>
             </div>
           ))}
         </div>
@@ -165,63 +172,70 @@ const BilanBienEtre = () => {
         {/* Réservation */}
         {submitStatus === 'success' ? (
           <div className="max-w-xl mx-auto text-center py-16" aria-live="polite">
-            <CheckCircle size={64} strokeWidth={1} className="text-primary-forest mx-auto mb-6" aria-hidden="true" />
-            <h2 className="text-3xl font-serif text-primary mb-4">Réservation reçue !</h2>
-            <p className="text-primary/60 font-light text-lg">
+            <CheckCircle size={52} strokeWidth={1} className="text-[#3d6b3e] mx-auto mb-6" aria-hidden="true" />
+            <h2
+              className="font-display font-light text-[#111] mb-4"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '36px' }}
+            >
+              Réservation reçue !
+            </h2>
+            <p className="text-[12px] text-black/50 leading-[1.7]">
               L'équipe PessÓra te confirme ton rendez-vous par WhatsApp sous 24h.
             </p>
             {selectedSlot && (
-              <p className="text-primary/40 text-sm mt-4 capitalize">
+              <p className="text-[11px] text-black/30 mt-3 capitalize">
                 {new Date(selectedSlot.date + 'T00:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                 {' '}à {selectedSlot.heure.slice(0, 5)}
               </p>
             )}
             <Link
               to="/evenements"
-              className="inline-flex items-center gap-2 mt-8 text-primary-forest font-bold text-sm uppercase tracking-widest hover:underline"
+              className="inline-flex items-center gap-2 mt-8 text-[#3d6b3e] text-[11px] font-normal uppercase tracking-[0.12em] hover:opacity-70 transition-opacity"
             >
-              Voir aussi nos événements <ArrowRight size={14} aria-hidden="true" />
+              Voir aussi nos événements <ArrowRight size={12} aria-hidden="true" />
             </Link>
           </div>
         ) : (
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-serif text-primary tracking-tight mb-12 text-center">
+            <h2
+              className="font-display font-light text-[#111] tracking-[-0.01em] mb-[48px] text-center"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '36px' }}
+            >
               Choisir mon créneau
             </h2>
 
             {submitStatus === 'error' && (
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl mb-8 text-sm text-red-700 max-w-lg mx-auto" role="alert">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-[12px] mb-8 text-[12px] text-red-700 max-w-lg mx-auto" role="alert">
+                <AlertCircle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
                 Une erreur est survenue. Réessaie ou contacte-nous sur Instagram.
               </div>
             )}
 
             {fetchError && (
-              <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-100 rounded-2xl mb-8 text-sm text-orange-700 max-w-lg mx-auto" role="alert">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-100 rounded-[12px] mb-8 text-[12px] text-orange-700 max-w-lg mx-auto" role="alert">
+                <AlertCircle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
                 {fetchError}
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div className="grid grid-cols-2 gap-12 items-start">
 
               {/* Calendrier + créneaux */}
               <div className="space-y-8">
                 {slotsLoading ? (
                   <div className="flex items-center justify-center py-16">
-                    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                    <div className="w-6 h-6 border-2 border-black/20 border-t-[#111] rounded-full animate-spin" />
                   </div>
                 ) : !fetchError && slots.length === 0 ? (
-                  <div className="p-10 text-center bg-accent-cream-light rounded-3xl border border-primary/5">
-                    <Clock size={36} strokeWidth={1} className="mx-auto text-primary/30 mb-4" aria-hidden="true" />
-                    <p className="text-primary/60 font-light">
+                  <div className="p-10 text-center bg-white rounded-[16px] border border-black/[0.06]">
+                    <Clock size={32} strokeWidth={1} className="mx-auto text-black/25 mb-4" aria-hidden="true" />
+                    <p className="text-[12px] text-black/40">
                       Aucun créneau disponible pour le moment. Contacte-nous sur Instagram.
                     </p>
                   </div>
                 ) : !fetchError ? (
                   <>
-                    {/* HeroUI v3 compound Calendar */}
-                    <div className="rounded-3xl shadow-sm border border-primary/5 overflow-hidden bg-white mx-auto">
+                    <div className="rounded-[16px] border border-black/[0.06] overflow-hidden bg-white mx-auto">
                       <Calendar.Root
                         value={selectedDate}
                         onChange={(date) => {
@@ -233,18 +247,18 @@ const BilanBienEtre = () => {
                         className="w-full p-4"
                       >
                         <Calendar.Header className="flex items-center justify-between mb-4 px-2">
-                          <Calendar.NavButton slot="previous" className="p-2 rounded-xl hover:bg-primary/5 transition-colors text-primary/60">
-                            <ChevronLeft size={18} />
+                          <Calendar.NavButton slot="previous" className="p-2 rounded-[8px] hover:bg-black/[0.05] transition-colors text-black/50">
+                            <ChevronLeft size={16} />
                           </Calendar.NavButton>
-                          <Calendar.Heading className="text-sm font-bold uppercase tracking-widest text-primary" />
-                          <Calendar.NavButton slot="next" className="p-2 rounded-xl hover:bg-primary/5 transition-colors text-primary/60">
-                            <ChevronRight size={18} />
+                          <Calendar.Heading className="text-[10px] font-normal uppercase tracking-[0.2em] text-[#111]" />
+                          <Calendar.NavButton slot="next" className="p-2 rounded-[8px] hover:bg-black/[0.05] transition-colors text-black/50">
+                            <ChevronRight size={16} />
                           </Calendar.NavButton>
                         </Calendar.Header>
                         <Calendar.Grid className="w-full">
                           <Calendar.GridHeader>
                             {(day) => (
-                              <Calendar.HeaderCell className="text-[10px] font-bold uppercase tracking-widest text-primary/30 pb-2 text-center">
+                              <Calendar.HeaderCell className="text-[9px] font-normal uppercase tracking-[0.15em] text-black/30 pb-2 text-center">
                                 {day}
                               </Calendar.HeaderCell>
                             )}
@@ -255,9 +269,9 @@ const BilanBienEtre = () => {
                                 date={date}
                                 className={({ isSelected, isDisabled, isUnavailable }) =>
                                   [
-                                    'w-9 h-9 rounded-xl text-sm font-medium flex items-center justify-center transition-all mx-auto',
-                                    isSelected ? 'bg-primary text-white shadow-sm' : '',
-                                    isDisabled || isUnavailable ? 'text-primary/20 cursor-not-allowed' : 'text-primary hover:bg-primary/10 cursor-pointer',
+                                    'w-9 h-9 rounded-[8px] text-[12px] font-normal flex items-center justify-center transition-all mx-auto',
+                                    isSelected ? 'bg-[#0a0a0a] text-white' : '',
+                                    isDisabled || isUnavailable ? 'text-black/20 cursor-not-allowed' : 'text-[#111] hover:bg-black/[0.05] cursor-pointer',
                                   ].filter(Boolean).join(' ')
                                 }
                               >
@@ -271,7 +285,7 @@ const BilanBienEtre = () => {
 
                     {selectedDate && timeSlotsForDate.length > 0 && (
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-primary/40 mb-4">
+                        <p className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/35 mb-4">
                           Créneaux disponibles
                         </p>
                         <div className="grid grid-cols-3 gap-2" role="group" aria-label="Créneaux horaires disponibles">
@@ -281,10 +295,10 @@ const BilanBienEtre = () => {
                               type="button"
                               onClick={() => setSelectedSlot(slot)}
                               aria-pressed={selectedSlot?.id === slot.id}
-                              className={`py-3 px-4 rounded-2xl text-sm font-bold tracking-wide transition-all ${
+                              className={`py-3 px-4 rounded-[10px] text-[12px] font-normal tracking-wide transition-all ${
                                 selectedSlot?.id === slot.id
-                                  ? 'bg-primary text-white shadow-md'
-                                  : 'bg-accent-cream-light border border-primary/10 text-primary hover:border-primary/30'
+                                  ? 'bg-[#0a0a0a] text-white'
+                                  : 'bg-white border border-black/10 text-[#111] hover:border-black/30'
                               }`}
                             >
                               {slot.heure.slice(0, 5)}
@@ -295,7 +309,7 @@ const BilanBienEtre = () => {
                     )}
 
                     {selectedDate && timeSlotsForDate.length === 0 && (
-                      <p className="text-sm text-primary/50 text-center">
+                      <p className="text-[12px] text-black/40 text-center">
                         Aucun créneau disponible ce jour-là.
                       </p>
                     )}
@@ -304,63 +318,68 @@ const BilanBienEtre = () => {
               </div>
 
               {/* Formulaire */}
-              <div className="bg-white rounded-3xl p-8 md:p-10 shadow-sm">
-                <h3 className="text-xl font-serif text-primary mb-6">Tes coordonnées</h3>
+              <div className="bg-white rounded-[16px] p-[40px] border border-black/[0.06]">
+                <h3
+                  className="font-display font-light text-[#111] mb-6"
+                  style={{ fontFamily: 'var(--font-display)', fontSize: '22px' }}
+                >
+                  Tes coordonnées
+                </h3>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                   <div className="grid grid-cols-2 gap-4">
                     <Controller name="prenom" control={control} render={({ field }) => (
                       <div className="space-y-1">
-                        <label htmlFor="prenom" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">Prénom *</label>
+                        <label htmlFor="prenom" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">Prénom *</label>
                         <input id="prenom" {...field} placeholder="Jean" className={inputClass} />
-                        {errors.prenom?.message && <p className="text-xs text-red-600">{errors.prenom.message}</p>}
+                        {errors.prenom?.message && <p className="text-[11px] text-red-600">{errors.prenom.message}</p>}
                       </div>
                     )} />
                     <Controller name="nom" control={control} render={({ field }) => (
                       <div className="space-y-1">
-                        <label htmlFor="nom" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">Nom *</label>
+                        <label htmlFor="nom" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">Nom *</label>
                         <input id="nom" {...field} placeholder="Dupont" className={inputClass} />
-                        {errors.nom?.message && <p className="text-xs text-red-600">{errors.nom.message}</p>}
+                        {errors.nom?.message && <p className="text-[11px] text-red-600">{errors.nom.message}</p>}
                       </div>
                     )} />
                   </div>
 
                   <Controller name="telephone" control={control} render={({ field }) => (
                     <div className="space-y-1">
-                      <label htmlFor="telephone" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">
-                        Téléphone * <span className="normal-case font-normal text-primary/30">(WhatsApp)</span>
+                      <label htmlFor="telephone" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">
+                        Téléphone * <span className="normal-case text-black/25">(WhatsApp)</span>
                       </label>
                       <input id="telephone" {...field} type="tel" placeholder="0696 XX XX XX" className={inputClass} />
-                      {errors.telephone?.message && <p className="text-xs text-red-600">{errors.telephone.message}</p>}
+                      {errors.telephone?.message && <p className="text-[11px] text-red-600">{errors.telephone.message}</p>}
                     </div>
                   )} />
 
                   <Controller name="email" control={control} render={({ field }) => (
                     <div className="space-y-1">
-                      <label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">
-                        Email <span className="normal-case font-normal text-primary/30">(optionnel)</span>
+                      <label htmlFor="email" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">
+                        Email <span className="normal-case text-black/25">(optionnel)</span>
                       </label>
                       <input id="email" {...field} type="email" placeholder="votre@email.com" className={inputClass} />
-                      {errors.email?.message && <p className="text-xs text-red-600">{errors.email.message}</p>}
+                      {errors.email?.message && <p className="text-[11px] text-red-600">{errors.email.message}</p>}
                     </div>
                   )} />
 
                   <Controller name="notes" control={control} render={({ field }) => (
                     <div className="space-y-1">
-                      <label htmlFor="notes" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block">
-                        Message <span className="normal-case font-normal text-primary/30">(optionnel)</span>
+                      <label htmlFor="notes" className="text-[9px] font-normal uppercase tracking-[0.2em] text-black/40 block">
+                        Message <span className="normal-case text-black/25">(optionnel)</span>
                       </label>
                       <textarea
                         id="notes"
                         {...field}
                         rows={3}
                         placeholder="Objectifs, questions, informations utiles..."
-                        className="w-full border-b border-primary/10 bg-transparent py-3 font-serif text-base text-primary placeholder:text-primary/30 focus:outline-none focus:border-primary-forest resize-none"
+                        className="w-full border-b border-black/10 bg-transparent py-3 text-[14px] text-[#111] placeholder:text-black/30 focus:outline-none focus:border-[#3d6b3e] transition-colors resize-none"
                       />
                     </div>
                   )} />
 
                   {!selectedSlot && (
-                    <p className="text-xs text-orange-600 font-medium" role="status">
+                    <p className="text-[11px] text-orange-600" role="status">
                       Sélectionne d'abord une date et un créneau dans le calendrier.
                     </p>
                   )}
@@ -368,17 +387,16 @@ const BilanBienEtre = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting || !selectedSlot}
-                    className="w-full bg-primary text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-primary-forest transition-colors disabled:opacity-40"
+                    className="w-full bg-[#0a0a0a] text-white py-4 rounded-full font-normal uppercase tracking-[0.1em] text-[11px] hover:bg-[#222] transition-colors disabled:opacity-40"
                   >
-                    {isSubmitting ? 'Réservation...' : 'Confirmer mon Bilan Bien-être'}
+                    {isSubmitting ? 'Réservation…' : 'Confirmer mon Bilan Bien-être'}
                   </button>
                 </form>
               </div>
             </div>
           </div>
         )}
-
-      </div>
+      </section>
     </div>
   );
 };

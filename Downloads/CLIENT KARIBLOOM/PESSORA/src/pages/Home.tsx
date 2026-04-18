@@ -1,16 +1,11 @@
-// src/pages/Home.tsx
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowBtn } from '../components/ui/ArrowBtn';
 import { ImageCard } from '../components/ui/ImageCard';
 import { SectionTitle } from '../components/ui/SectionTitle';
 import { ProductCard } from '../components/ui/ProductCard';
+import { shakesItems } from '../data/menuData';
 
-const SHAKES = [
-  { tag: 'Protéine', name: 'Vanilla Boost', description: 'Notes vanille douce', macros: '30g protéines · 220 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#2c4e2d] to-[#1a3a1b]' },
-  { tag: 'Énergie', name: 'Chocolat Power', description: 'Cacao intense, magnésium', macros: '28g protéines · 240 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#3d6b3e] to-[#2a4a2b]' },
-  { tag: 'Légèreté', name: 'Fraise Légèreté', description: 'Fruité & rafraîchissant', macros: '22g protéines · 180 kcal', price: '6,90€', bgClass: 'bg-gradient-to-b from-[#1a2e1a] to-[#0f1f10]' },
-  { tag: 'Gauffre', name: 'Gauffre Protéinée', description: 'Maison, sans sucre ajouté', macros: '20g protéines · 190 kcal', price: '4,50€', bgClass: 'bg-gradient-to-b from-[#4a7c35] to-[#3a6028]' },
-];
+const FEATURED_SHAKES = shakesItems.slice(0, 4);
 
 const Home = () => {
   const navigate = useNavigate();
@@ -54,8 +49,17 @@ const Home = () => {
       <section className="bg-white px-[60px] py-[72px]">
         <SectionTitle title="Découvrez nos shakes :" subtitle="Protéines haute qualité, fabriquées à Fort-de-France" linkLabel="Voir la carte" linkTo="/menu" />
         <div className="grid grid-cols-4 gap-3">
-          {SHAKES.map((s) => (
-            <ProductCard key={s.name} tag={s.tag} name={s.name} description={s.description} macros={s.macros} price={s.price} bgClass={s.bgClass} />
+          {FEATURED_SHAKES.map((s) => (
+            <ProductCard
+              key={s.id}
+              tag="Shakes Protéinés"
+              name={s.name}
+              description={s.description}
+              macros={[s.protein ? `${s.protein}g protéines` : '', s.calories ? `${s.calories} kcal` : ''].filter(Boolean).join(' · ') || undefined}
+              price={`${s.price}€`}
+              bgClass="bg-gradient-to-b from-[#2c4e2d] to-[#1a3a1b]"
+              linkTo={`/menu/${s.id}`}
+            />
           ))}
         </div>
       </section>
