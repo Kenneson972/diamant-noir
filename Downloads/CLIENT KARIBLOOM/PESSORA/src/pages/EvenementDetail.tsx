@@ -37,6 +37,7 @@ const TYPE_LABELS: Record<Event['type'], string> = {
   popup: '📍 Pop-up',
   atelier: '🌿 Atelier',
   event: '🎉 Événement',
+  partenariat: '🤝 Partenariat',
 };
 
 const inputClass =
