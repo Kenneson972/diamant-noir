@@ -101,6 +101,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSubscription(null);
         }
       }
+    }).catch(() => {
+      // Supabase unreachable on cold start
+    }).finally(() => {
       setIsLoading(false);
     });
 
@@ -111,13 +114,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const data = await fetchUserData(session.user);
             setUser(data.user);
             setSubscription(data.subscription);
-          } catch {
+          } catch (err) {
+            if (import.meta.env.DEV) console.error('[AuthContext] fetchUserData error:', err);
             setUser(null);
             setSubscription(null);
           }
+          setIsLoading(false);
         } else {
           setUser(null);
           setSubscription(null);
+          setIsLoading(false);
         }
       }
     );

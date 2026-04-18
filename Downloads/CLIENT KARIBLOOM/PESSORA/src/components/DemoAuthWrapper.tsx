@@ -10,7 +10,9 @@ const DemoAuthWrapper = ({ children }: DemoAuthWrapperProps) => {
 
   useEffect(() => {
     if (isAuthenticated) return;
-    login('demo@pessora.mq', 'demo123').catch(() => {});
+    login('demo@pessora.mq', 'demo123').catch((err) => {
+      if (import.meta.env.DEV) console.error('[DemoAuthWrapper] demo login failed:', err);
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
