@@ -16,6 +16,7 @@ const TYPE_LABELS: Record<Event['type'], string> = {
   atelier:     'Atelier',
   event:       'Événement',
   partenariat: 'Partenariat',
+  bilan:       'Bilan',
 };
 
 const TYPE_FILTER: Record<string, string> = {

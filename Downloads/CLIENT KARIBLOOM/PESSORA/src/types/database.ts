@@ -9,6 +9,7 @@ export interface Database {
           phone: string | null
           avatar_url: string | null
           role: 'member' | 'admin' | null
+          preferences: Record<string, boolean> | null
           created_at: string
           updated_at: string
         }
@@ -40,10 +41,14 @@ export interface Database {
           date: string
           heure: string | null
           location: string | null
-          type: 'run_club' | 'popup' | 'atelier' | 'event' | 'partenariat'
+          type: 'run_club' | 'popup' | 'atelier' | 'event' | 'partenariat' | 'bilan'
           description: string | null
           image_url: string | null
           places_max: number | null
+          meeting_point: string | null
+          price: number | null
+          is_free: boolean
+          registration_open: boolean
           active: boolean
           created_at: string
         }
@@ -117,6 +122,8 @@ export interface Database {
           user_id: string | null
           total: number
           status: 'pending' | 'completed' | 'cancelled'
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           created_at: string
         }
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at'>
