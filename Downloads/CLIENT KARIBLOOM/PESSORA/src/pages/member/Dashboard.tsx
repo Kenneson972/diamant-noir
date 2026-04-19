@@ -1,8 +1,12 @@
 // src/pages/member/Dashboard.tsx
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent } from '@heroui/react';
 import { TrendingUp } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDashboardStats } from '../../hooks/useDashboardStats';
+import { useUpcomingEvents } from '../../hooks/useUpcomingEvents';
+import { supabase } from '../../lib/supabaseClient';
+import type { Product } from '../../types/database';
 
 const KPI = ({
   label,
@@ -17,23 +21,21 @@ const KPI = ({
   green?: boolean;
   trend?: string;
 }) => (
-  <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
-    <CardContent className="p-[22px] gap-0">
-      <p className="text-[9px] tracking-[0.25em] uppercase text-black/35 mb-[10px]">{label}</p>
-      <p
-        className={`font-display font-normal text-[42px] leading-none mb-1.5 ${green ? 'text-[oklch(57%_0.065_68)]' : 'text-black'}`}
-        style={{ fontFamily: 'var(--font-display)' }}
-      >
-        {value}
+  <div className="bg-white rounded-[2px] border border-black/[0.06] p-[22px]">
+    <p className="text-[9px] tracking-[0.25em] uppercase text-black/35 mb-[10px]">{label}</p>
+    <p
+      className={`font-display font-normal text-[42px] leading-none mb-1.5 ${green ? 'text-[oklch(57%_0.065_68)]' : 'text-black'}`}
+      style={{ fontFamily: 'var(--font-display)' }}
+    >
+      {value}
+    </p>
+    <p className="text-[10px] text-black/30">{sub}</p>
+    {trend && (
+      <p className="flex items-center gap-1 text-[10px] text-[oklch(57%_0.065_68)] mt-1">
+        <TrendingUp size={12} /> {trend}
       </p>
-      <p className="text-[10px] text-black/30">{sub}</p>
-      {trend && (
-        <p className="flex items-center gap-1 text-[10px] text-[oklch(57%_0.065_68)] mt-1">
-          <TrendingUp size={12} /> {trend}
-        </p>
-      )}
-    </CardContent>
-  </Card>
+    )}
+  </div>
 );
 
 const EventRow = ({
@@ -41,15 +43,13 @@ const EventRow = ({
   month,
   name,
   meta,
-  status,
 }: {
   day: string;
   month: string;
   name: string;
   meta: string;
-  status: 'confirmed' | 'pending';
 }) => (
-  <div className="flex items-center gap-[14px] p-[14px] rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors cursor-pointer">
+  <div className="flex items-center gap-[14px] p-[14px] rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors">
     <div className="w-11 h-11 rounded-[2px] bg-[#0a0a0a] flex flex-col items-center justify-center flex-shrink-0">
       <span className="text-[16px] font-normal text-white leading-none">{day}</span>
       <span className="text-[8px] tracking-[0.12em] uppercase text-white/50">{month}</span>
@@ -58,21 +58,41 @@ const EventRow = ({
       <p className="text-[12px] font-normal text-black">{name}</p>
       <p className="text-[10px] text-black/38">{meta}</p>
     </div>
-    <span
-      className={`text-[8px] tracking-[0.15em] uppercase px-2 py-[3px] rounded-[3px] ${
-        status === 'confirmed'
-          ? 'bg-[oklch(75%_0.085_68)/10] text-[oklch(57%_0.065_68)]'
-          : 'bg-black/5 text-black/40'
-      }`}
-    >
-      {status === 'confirmed' ? 'Confirmé' : 'En attente'}
+    <span className="text-[8px] tracking-[0.15em] uppercase px-2 py-[3px] rounded-[3px] bg-[oklch(75%_0.085_68)/10] text-[oklch(57%_0.065_68)]">
+      Confirmé
     </span>
   </div>
 );
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, subscription } = useAuth();
+  const { stats, loading: statsLoading } = useDashboardStats();
+  const { registrations, loading: eventsLoading } = useUpcomingEvents(3);
+  const [products, setProducts] = useState<Product[]>([]);
+
   const firstName = user?.firstName || user?.email?.split('@')[0] || 'Membre';
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from('products')
+      .select('*')
+      .eq('active', true)
+      .in('category', ['shakes', 'wellness'])
+      .order('name', { ascending: true })
+      .limit(3)
+      .then(({ data }: { data: Product[] | null }) => {
+        setProducts(data ?? []);
+      });
+  }, []);
+
+  const planLabel = subscription?.plan
+    ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)
+    : '—';
+
+  const endDate = subscription?.endDate
+    ? new Date(subscription.endDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+    : '—';
 
   return (
     <div>
@@ -94,9 +114,22 @@ const Dashboard = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-9">
-        <KPI label="Événements" value="—" sub="ce trimestre" />
-        <KPI label="Bilans" value="—" sub="bilans réalisés" />
-        <KPI label="Abonnement" value="—" sub="—" />
+        <KPI
+          label="Événements"
+          value={statsLoading ? '…' : String(stats.eventsThisQuarter)}
+          sub="ce trimestre"
+        />
+        <KPI
+          label="Bilans"
+          value={statsLoading ? '…' : String(stats.bilansTotal)}
+          sub="bilans confirmés"
+          green={stats.bilansTotal > 0}
+        />
+        <KPI
+          label="Abonnement"
+          value={planLabel}
+          sub={subscription?.endDate ? `Renouvellement : ${endDate}` : 'Actif'}
+        />
       </div>
 
       {/* Row 2 */}
@@ -109,10 +142,10 @@ const Dashboard = () => {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Plan<br />
-              <em className="italic text-white/55">Premium</em>
+              <em className="italic text-white/55">{planLabel}</em>
             </h3>
             <span className="text-[8px] tracking-[0.2em] uppercase bg-[oklch(8%_0.005_55)] text-white px-[10px] py-1 rounded-[3px]">
-              Actif
+              {subscription?.status === 'active' ? 'Actif' : subscription?.status ?? '—'}
             </span>
           </div>
           {[
@@ -123,96 +156,91 @@ const Dashboard = () => {
           ].map((perk) => (
             <div
               key={perk.label}
-              className={`flex items-center gap-2.5 text-[11px] mb-2.5 ${
-                perk.on ? 'text-white/85' : 'text-white/25'
-              }`}
+              className={`flex items-center gap-2.5 text-[11px] mb-2.5 ${perk.on ? 'text-white/85' : 'text-white/25'}`}
             >
               <span className={perk.on ? 'text-[oklch(57%_0.065_68)]' : 'text-white/20'}>✓</span>
               {perk.label}
             </div>
           ))}
           <p className="text-[10px] text-white/22 mt-4">
-            Renouvellement automatique · 1 mai 2026
+            {subscription?.autoRenew ? 'Renouvellement automatique' : 'Sans renouvellement automatique'}
+            {subscription?.endDate ? ` · ${endDate}` : ''}
           </p>
         </div>
 
         {/* Prochains événements */}
-        <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
-          <CardContent className="p-6 gap-0">
-            <div className="flex justify-between items-center mb-5">
-              <p className="text-[12px] font-normal text-black">Mes prochains événements</p>
-              <Link
-                to="/mon-espace/historique"
-                className="text-[10px] text-black/40 border-b border-black/20 pb-px"
-              >
-                Tout voir
-              </Link>
-            </div>
-            <div className="flex flex-col gap-3">
-              <EventRow
-                day="23"
-                month="Avr"
-                name="Course matinale"
-                meta="6h00 · Départ Pessóra"
-                status="confirmed"
-              />
-              <EventRow
-                day="28"
-                month="Avr"
-                name="Bilan Bien-être"
-                meta="10h30 · Pessóra Bar"
-                status="confirmed"
-              />
-              <EventRow
-                day="3"
-                month="Mai"
-                name="Pop-up GigaFit"
-                meta="9h00 – 13h00 · Lamentin"
-                status="pending"
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Commande rapide */}
-      <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
-        <CardContent className="p-6 gap-0">
+        <div className="bg-white rounded-[2px] border border-black/[0.06] p-6">
           <div className="flex justify-between items-center mb-5">
-            <p className="text-[12px] font-normal text-black">Commander à nouveau</p>
+            <p className="text-[12px] font-normal text-black">Mes prochains événements</p>
             <Link
-              to="/menu"
+              to="/evenements"
               className="text-[10px] text-black/40 border-b border-black/20 pb-px"
             >
-              Voir la carte
+              Voir tout
             </Link>
           </div>
+          {eventsLoading ? (
+            <p className="text-[11px] text-black/30">Chargement…</p>
+          ) : registrations.length === 0 ? (
+            <p className="text-[11px] text-black/30 leading-relaxed">
+              Aucun événement à venir.{' '}
+              <Link to="/evenements" className="underline hover:text-black transition-colors">
+                Voir les événements
+              </Link>
+            </p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {registrations.map((reg) => {
+                const d = new Date(reg.events.date + 'T00:00:00');
+                return (
+                  <EventRow
+                    key={reg.id}
+                    day={String(d.getDate())}
+                    month={d.toLocaleDateString('fr-FR', { month: 'short' })}
+                    name={reg.events.title}
+                    meta={[
+                      reg.events.heure?.slice(0, 5),
+                      reg.events.location ?? reg.events.meeting_point,
+                    ].filter(Boolean).join(' · ')}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Commander à nouveau */}
+      <div className="bg-white rounded-[2px] border border-black/[0.06] p-6">
+        <div className="flex justify-between items-center mb-5">
+          <p className="text-[12px] font-normal text-black">Commander à nouveau</p>
+          <Link
+            to="/menu"
+            className="text-[10px] text-black/40 border-b border-black/20 pb-px"
+          >
+            Voir la carte
+          </Link>
+        </div>
+        {products.length === 0 ? (
+          <p className="text-[11px] text-black/30">Chargement des produits…</p>
+        ) : (
           <div className="flex flex-col gap-2.5">
-            {[
-              { name: 'Vanilla Boost', price: '6,21€', bg: 'from-[oklch(22%_0.005_55)] to-[oklch(11%_0.004_55)]' },
-              { name: 'Chocolat Power', price: '6,21€', bg: 'from-[oklch(30%_0.045_68)] to-[oklch(18%_0.03_68)]' },
-              { name: 'Gauffre Nature', price: '4,05€', bg: 'from-[#111] to-[#1a1a1a]' },
-            ].map((item) => (
-              <div
-                key={item.name}
-                className="flex items-center gap-3 p-3 rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors cursor-pointer"
+            {products.map((product) => (
+              <Link
+                key={product.id}
+                to="/menu"
+                className="flex items-center gap-3 p-3 rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors"
               >
-                <div
-                  className={`w-8 h-8 rounded-[2px] bg-gradient-to-b ${item.bg} flex-shrink-0`}
-                />
-                <p className="flex-1 text-[12px] font-normal text-black">{item.name}</p>
+                <div className="w-8 h-8 rounded-[2px] bg-gradient-to-b from-[oklch(22%_0.005_55)] to-[oklch(11%_0.004_55)] flex-shrink-0" />
+                <p className="flex-1 text-[12px] font-normal text-black">{product.name}</p>
                 <p className="text-[12px] text-black/40">
-                  {item.price}{' '}
-                  <span className="text-[9px] text-black/25">-10%</span>
+                  {product.price ? `${product.price.toFixed(2).replace('.', ',')}€` : '—'}
                 </p>
-                <button className="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center text-[18px] leading-none flex-shrink-0">
-                  +
-                </button>
-              </div>
+              </Link>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
     </div>
   );
 };
