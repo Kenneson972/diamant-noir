@@ -130,6 +130,11 @@ const EvenementDetail = () => {
   const onSubmit = async (data: FormData) => {
     if (!event) return;
 
+    if (event.registration_open === false) {
+      setSubmitStatus('error');
+      return;
+    }
+
     if (event.places_max && event.registrationCount >= event.places_max) {
       setSubmitStatus('full');
       return;
@@ -321,7 +326,14 @@ const EvenementDetail = () => {
               </div>
             )}
 
-            {submitStatus !== 'success' && !isFull && (
+            {event.registration_open === false ? (
+              <div className="text-center py-8">
+                <p className="text-[13px] font-normal text-black mb-2">Inscriptions fermées</p>
+                <p className="text-[11px] font-light text-black/40">
+                  Les inscriptions pour cet événement ne sont plus disponibles.
+                </p>
+              </div>
+            ) : submitStatus !== 'success' && !isFull && (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                 <div className="grid grid-cols-2 gap-4">
                   <Controller name="prenom" control={control} render={({ field }) => (
