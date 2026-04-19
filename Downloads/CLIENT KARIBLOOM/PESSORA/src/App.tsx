@@ -29,6 +29,7 @@ const Dashboard = lazy(() => import('./pages/member/Dashboard'));
 const Subscription = lazy(() => import('./pages/member/Subscription'));
 const Profile = lazy(() => import('./pages/member/Profile'));
 const History = lazy(() => import('./pages/member/History'));
+const MesEvenements = lazy(() => import('./pages/member/MesEvenements'));
 const PessobotPage = lazy(() => import('./pages/PessobotPage'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
@@ -143,6 +144,16 @@ function App() {
               }
             />
             <Route
+              path="/demo-espace/evenements"
+              element={
+                <DemoAuthWrapper>
+                  <MemberLayout>
+                    <MesEvenements />
+                  </MemberLayout>
+                </DemoAuthWrapper>
+              }
+            />
+            <Route
               path="/demo-espace/abonnement"
               element={
                 <DemoAuthWrapper>
@@ -192,6 +203,16 @@ function App() {
                 <ProtectedRoute>
                   <MemberLayout>
                     <Dashboard />
+                  </MemberLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mon-espace/evenements"
+              element={
+                <ProtectedRoute>
+                  <MemberLayout>
+                    <MesEvenements />
                   </MemberLayout>
                 </ProtectedRoute>
               }
