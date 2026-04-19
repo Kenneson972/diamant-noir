@@ -30,10 +30,15 @@ const Subscription = lazy(() => import('./pages/member/Subscription'));
 const Profile = lazy(() => import('./pages/member/Profile'));
 const History = lazy(() => import('./pages/member/History'));
 const PessobotPage = lazy(() => import('./pages/PessobotPage'));
-const Admin = lazy(() => import('./pages/Admin'));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
+const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
+const AdminMembers = lazy(() => import('./pages/admin/AdminMembers'));
+const AdminEvenements = lazy(() => import('./pages/admin/AdminEvenements'));
+const AdminProduits = lazy(() => import('./pages/admin/AdminProduits'));
 const OraPlus = lazy(() => import('./pages/OraPlus'));
 const EvenementDetail = lazy(() => import('./pages/EvenementDetail'));
 const BilanBienEtre = lazy(() => import('./pages/BilanBienEtre'));
+const LuxeMockup = lazy(() => import('./pages/LuxeMockup'));
 const Chatbot = lazy(() => import('./components/common/Chatbot'));
 
 // Layout wrapper pour gérer header/footer conditionnellement
@@ -41,6 +46,8 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isMemberArea = location.pathname.startsWith('/mon-espace') || location.pathname.startsWith('/demo-espace');
   const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription';
+  const isLuxeMockup = location.pathname === '/mockup-luxe';
+  const isAdminArea = location.pathname.startsWith('/admin');
 
   // Lazy loading auto pour images sans attributs
   useEffect(() => {
@@ -60,14 +67,14 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <ScrollToTop />
       <PageSEO />
       <div className="flex flex-col min-h-screen">
-        {!isMemberArea && !isAuthPage && <Header />}
-        <main className={isMemberArea || isAuthPage ? 'flex-grow min-h-0 flex flex-col' : 'flex-grow'}>
+        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && <Header />}
+        <main className={isMemberArea || isAuthPage || isAdminArea ? 'flex-grow min-h-0 flex flex-col' : 'flex-grow'}>
           <Suspense fallback={<PageLoadingFallback />}>
             {children}
           </Suspense>
         </main>
-        {!isMemberArea && !isAuthPage && <Footer />}
-        {!isMemberArea && !isAuthPage && (
+        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && <Footer />}
+        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && (
           <LazyWidget delay={1500} onIdle>
             <Chatbot />
           </LazyWidget>
@@ -91,7 +98,26 @@ function App() {
             <Route path="/nos-produits/:rangeId" element={<RangeDetail />} />
             <Route path="/pessobot" element={<PessobotPage />} />
             <Route path="/ora-plus" element={<OraPlus />} />
-            <Route path="/admin" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+            <Route path="/admin" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminOverview /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
+            <Route path="/admin/membres" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminMembers /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
+            <Route path="/admin/evenements" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminEvenements /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
+            <Route path="/admin/produits" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminProduits /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
             <Route path="/menu/:drinkId" element={<DrinkDetail />} />
             <Route path="/evenements" element={<Evenements />} />
             <Route path="/evenements/:slug" element={<EvenementDetail />} />
@@ -99,6 +125,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/cgv" element={<CGV />} />
+            <Route path="/mockup-luxe" element={<LuxeMockup />} />
 
             {/* Auth Routes */}
             <Route path="/connexion" element={<Login />} />
