@@ -8,7 +8,6 @@ const MENU_LINKS = [
 ];
 const ESPACE_LINKS = [
   { label: 'Événements', to: '/evenements' },
-  { label: 'Run Club', to: '/evenements?type=run-club' },
   { label: 'Bilan Bien-être', to: '/bilan-bien-etre' },
 ];
 const CONTACT_LINKS = [
@@ -19,14 +18,16 @@ const CONTACT_LINKS = [
 
 const FooterCol = ({ title, links }: { title: string; links: { label: string; to: string; external?: boolean }[] }) => (
   <div>
-    <p className="text-[9px] font-normal tracking-[0.28em] uppercase text-white/25 mb-[14px]">{title}</p>
+    <p className="mb-5 text-[8px] font-light uppercase tracking-[0.45em] text-white/35">{title}</p>
     {links.map((l) =>
       l.external ? (
-        <a key={l.label} href={l.to} target="_blank" rel="noopener noreferrer" className="block text-[12px] text-white/50 mb-[9px] hover:text-white/80 transition-colors tracking-[0.03em]">
+        <a key={l.label} href={l.to} target="_blank" rel="noopener noreferrer"
+          className="mb-[11px] block text-[11px] font-light tracking-[0.04em] text-white/52 transition-colors duration-200 hover:text-white/80">
           {l.label}
         </a>
       ) : (
-        <Link key={l.label} to={l.to} className="block text-[12px] text-white/50 mb-[9px] hover:text-white/80 transition-colors tracking-[0.03em]">
+        <Link key={l.label} to={l.to}
+          className="mb-[11px] block text-[11px] font-light tracking-[0.04em] text-white/52 transition-colors duration-200 hover:text-white/80">
           {l.label}
         </Link>
       )
@@ -36,23 +37,25 @@ const FooterCol = ({ title, links }: { title: string; links: { label: string; to
 
 const Footer = () => (
   <footer>
-    <div className="bg-[#0a0a0a] px-[60px] pt-[52px] pb-7 grid grid-cols-[1.6fr_1fr_1fr_1fr] gap-10">
+    <div className="grid grid-cols-1 gap-10 bg-[oklch(8%_0.005_55)] px-4 pb-8 pt-14 sm:grid-cols-2 md:px-10 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-12 lg:px-[72px] lg:pt-[64px]">
       <div>
         <p
-          className="font-display font-light text-[20px] tracking-[0.28em] uppercase text-white mb-[10px]"
+          className="mb-3 font-display text-[18px] font-normal uppercase tracking-[0.32em] text-white"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           Pessóra
         </p>
-        <p className="text-[11px] text-white/28 leading-[1.8]">
+        <p className="text-[10px] font-light leading-[2.1] tracking-[0.04em] text-white/40">
           Bar protéiné<br />Fort-de-France, Martinique
         </p>
-        <div className="flex gap-3 mt-5">
-          <a href="https://instagram.com/pessora.mq" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white/60 transition-colors">
-            <Instagram size={16} strokeWidth={1.5} />
+        <div className="mt-7 flex gap-4">
+          <a href="https://instagram.com/pessora.mq" target="_blank" rel="noopener noreferrer"
+            className="text-white/38 transition-colors duration-200 hover:text-white/65">
+            <Instagram size={15} strokeWidth={1.3} />
           </a>
-          <a href="https://wa.me/596696000000" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white/60 transition-colors">
-            <MessageCircle size={16} strokeWidth={1.5} />
+          <a href="https://wa.me/596696000000" target="_blank" rel="noopener noreferrer"
+            className="text-white/38 transition-colors duration-200 hover:text-white/65">
+            <MessageCircle size={15} strokeWidth={1.3} />
           </a>
         </div>
       </div>
@@ -60,11 +63,11 @@ const Footer = () => (
       <FooterCol title="Espace" links={ESPACE_LINKS} />
       <FooterCol title="Contact" links={CONTACT_LINKS} />
     </div>
-    <div className="bg-[#0a0a0a] border-t border-white/[0.07] px-[60px] py-4 flex justify-between">
-      <span className="text-[10px] text-white/18 tracking-[0.08em]">© {new Date().getFullYear()} Pessóra</span>
-      <div className="flex gap-6">
-        <Link to="/mentions-legales" className="text-[10px] text-white/18 hover:text-white/40 transition-colors tracking-[0.08em]">Mentions légales</Link>
-        <Link to="/cgv" className="text-[10px] text-white/18 hover:text-white/40 transition-colors tracking-[0.08em]">CGV</Link>
+    <div className="flex items-center justify-between border-t border-white/[0.06] bg-[oklch(8%_0.005_55)] px-4 py-5 md:px-10 lg:px-[72px]">
+      <span className="text-[9px] font-light tracking-[0.1em] text-white/28">© {new Date().getFullYear()} Pessóra · Fort-de-France</span>
+      <div className="flex gap-7">
+        <Link to="/mentions-legales" className="text-[9px] font-light tracking-[0.1em] text-white/28 transition-colors duration-200 hover:text-white/52">Mentions légales</Link>
+        <Link to="/cgv" className="text-[9px] font-light tracking-[0.1em] text-white/28 transition-colors duration-200 hover:text-white/52">CGV</Link>
       </div>
     </div>
   </footer>

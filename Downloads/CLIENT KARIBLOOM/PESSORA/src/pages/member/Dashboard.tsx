@@ -17,18 +17,18 @@ const KPI = ({
   green?: boolean;
   trend?: string;
 }) => (
-  <Card className="bg-white rounded-[14px] border border-black/[0.06] shadow-none">
+  <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
     <CardContent className="p-[22px] gap-0">
       <p className="text-[9px] tracking-[0.25em] uppercase text-black/35 mb-[10px]">{label}</p>
       <p
-        className={`font-display font-light text-[42px] leading-none mb-1.5 ${green ? 'text-[#3d6b3e]' : 'text-black'}`}
+        className={`font-display font-normal text-[42px] leading-none mb-1.5 ${green ? 'text-[oklch(57%_0.065_68)]' : 'text-black'}`}
         style={{ fontFamily: 'var(--font-display)' }}
       >
         {value}
       </p>
       <p className="text-[10px] text-black/30">{sub}</p>
       {trend && (
-        <p className="flex items-center gap-1 text-[10px] text-[#3d6b3e] mt-1">
+        <p className="flex items-center gap-1 text-[10px] text-[oklch(57%_0.065_68)] mt-1">
           <TrendingUp size={12} /> {trend}
         </p>
       )}
@@ -49,8 +49,8 @@ const EventRow = ({
   meta: string;
   status: 'confirmed' | 'pending';
 }) => (
-  <div className="flex items-center gap-[14px] p-[14px] rounded-[10px] bg-[#faf9f7] hover:bg-[#f0f0ee] transition-colors cursor-pointer">
-    <div className="w-11 h-11 rounded-[10px] bg-[#0a0a0a] flex flex-col items-center justify-center flex-shrink-0">
+  <div className="flex items-center gap-[14px] p-[14px] rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors cursor-pointer">
+    <div className="w-11 h-11 rounded-[2px] bg-[#0a0a0a] flex flex-col items-center justify-center flex-shrink-0">
       <span className="text-[16px] font-normal text-white leading-none">{day}</span>
       <span className="text-[8px] tracking-[0.12em] uppercase text-white/50">{month}</span>
     </div>
@@ -61,7 +61,7 @@ const EventRow = ({
     <span
       className={`text-[8px] tracking-[0.15em] uppercase px-2 py-[3px] rounded-[3px] ${
         status === 'confirmed'
-          ? 'bg-[rgba(61,107,62,0.1)] text-[#3d6b3e]'
+          ? 'bg-[oklch(75%_0.085_68)/10] text-[oklch(57%_0.065_68)]'
           : 'bg-black/5 text-black/40'
       }`}
     >
@@ -77,7 +77,7 @@ const Dashboard = () => {
   return (
     <div>
       <h1
-        className="font-display font-light text-[38px] text-black leading-none mb-1"
+        className="font-display font-normal text-[38px] text-black leading-none mb-1"
         style={{ fontFamily: 'var(--font-display)' }}
       >
         Bonjour,{' '}
@@ -93,34 +93,33 @@ const Dashboard = () => {
       </p>
 
       {/* KPIs */}
-      <div className="grid grid-cols-4 gap-3 mb-9">
-        <KPI label="Événements" value="7" sub="ce trimestre" trend="+2 vs dernier" />
-        <KPI label="Run Club" value="12" sub="sessions complétées" green trend="Régulière" />
-        <KPI label="Bilans" value="3" sub="bilans réalisés" />
-        <KPI label="Abonnement" value="Premium" sub="Renouvellement : 1 mai" />
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-9">
+        <KPI label="Événements" value="—" sub="ce trimestre" />
+        <KPI label="Bilans" value="—" sub="bilans réalisés" />
+        <KPI label="Abonnement" value="—" sub="—" />
       </div>
 
       {/* Row 2 */}
-      <div className="grid grid-cols-[1.4fr_1fr] gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 mb-4">
         {/* Abonnement card */}
-        <div className="bg-[#0a0a0a] rounded-[14px] p-6">
+        <div className="bg-[#0a0a0a] rounded-[2px] p-6">
           <div className="flex justify-between items-start mb-5">
             <h3
-              className="font-display font-light text-white text-[24px] leading-[1.0]"
+              className="font-display font-normal text-white text-[24px] leading-[1.0]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Plan<br />
               <em className="italic text-white/55">Premium</em>
             </h3>
-            <span className="text-[8px] tracking-[0.2em] uppercase bg-[#3d6b3e] text-white px-[10px] py-1 rounded-[3px]">
+            <span className="text-[8px] tracking-[0.2em] uppercase bg-[oklch(8%_0.005_55)] text-white px-[10px] py-1 rounded-[3px]">
               Actif
             </span>
           </div>
           {[
             { label: 'Shakes à -10%', on: true },
-            { label: 'Accès Run Club illimité', on: true },
             { label: '2 bilans/mois offerts', on: true },
-            { label: 'Accès ateliers prioritaire', on: false },
+            { label: 'Accès ateliers prioritaire', on: true },
+            { label: 'Programme de parrainage Óra+', on: false },
           ].map((perk) => (
             <div
               key={perk.label}
@@ -128,7 +127,7 @@ const Dashboard = () => {
                 perk.on ? 'text-white/85' : 'text-white/25'
               }`}
             >
-              <span className={perk.on ? 'text-[#3d6b3e]' : 'text-white/20'}>✓</span>
+              <span className={perk.on ? 'text-[oklch(57%_0.065_68)]' : 'text-white/20'}>✓</span>
               {perk.label}
             </div>
           ))}
@@ -138,7 +137,7 @@ const Dashboard = () => {
         </div>
 
         {/* Prochains événements */}
-        <Card className="bg-white rounded-[14px] border border-black/[0.06] shadow-none">
+        <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
           <CardContent className="p-6 gap-0">
             <div className="flex justify-between items-center mb-5">
               <p className="text-[12px] font-normal text-black">Mes prochains événements</p>
@@ -153,7 +152,7 @@ const Dashboard = () => {
               <EventRow
                 day="23"
                 month="Avr"
-                name="Run Club · Mercredi"
+                name="Course matinale"
                 meta="6h00 · Départ Pessóra"
                 status="confirmed"
               />
@@ -177,7 +176,7 @@ const Dashboard = () => {
       </div>
 
       {/* Commande rapide */}
-      <Card className="bg-white rounded-[14px] border border-black/[0.06] shadow-none">
+      <Card className="bg-white rounded-[2px] border border-black/[0.06] shadow-none">
         <CardContent className="p-6 gap-0">
           <div className="flex justify-between items-center mb-5">
             <p className="text-[12px] font-normal text-black">Commander à nouveau</p>
@@ -190,23 +189,23 @@ const Dashboard = () => {
           </div>
           <div className="flex flex-col gap-2.5">
             {[
-              { name: 'Vanilla Boost', price: '6,21€', bg: 'from-[#2c4e2d] to-[#1a3a1b]' },
-              { name: 'Chocolat Power', price: '6,21€', bg: 'from-[#3d6b3e] to-[#2a4a2b]' },
+              { name: 'Vanilla Boost', price: '6,21€', bg: 'from-[oklch(22%_0.005_55)] to-[oklch(11%_0.004_55)]' },
+              { name: 'Chocolat Power', price: '6,21€', bg: 'from-[oklch(30%_0.045_68)] to-[oklch(18%_0.03_68)]' },
               { name: 'Gauffre Nature', price: '4,05€', bg: 'from-[#111] to-[#1a1a1a]' },
             ].map((item) => (
               <div
                 key={item.name}
-                className="flex items-center gap-3 p-3 rounded-[10px] bg-[#faf9f7] hover:bg-[#f0f0ee] transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-[2px] bg-white hover:bg-black/[0.04] transition-colors cursor-pointer"
               >
                 <div
-                  className={`w-8 h-8 rounded-lg bg-gradient-to-b ${item.bg} flex-shrink-0`}
+                  className={`w-8 h-8 rounded-[2px] bg-gradient-to-b ${item.bg} flex-shrink-0`}
                 />
                 <p className="flex-1 text-[12px] font-normal text-black">{item.name}</p>
                 <p className="text-[12px] text-black/40">
                   {item.price}{' '}
                   <span className="text-[9px] text-black/25">-10%</span>
                 </p>
-                <button className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-[18px] leading-none flex-shrink-0">
+                <button className="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center text-[18px] leading-none flex-shrink-0">
                   +
                 </button>
               </div>

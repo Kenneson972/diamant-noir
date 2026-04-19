@@ -1,115 +1,263 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { cn } from '@heroui/react';
 import { ArrowBtn } from '../components/ui/ArrowBtn';
 import { ImageCard } from '../components/ui/ImageCard';
 import { SectionTitle } from '../components/ui/SectionTitle';
-import { ProductCard } from '../components/ui/ProductCard';
-import { shakesItems } from '../data/menuData';
+import {
+  homeDrinkShowcase,
+  homeDrinkShowcaseOrder,
+  type DrinkGamme,
+} from '../data/homeDrinkShowcase';
 
-const FEATURED_SHAKES = shakesItems.slice(0, 4);
+/** Cellule image frameless (coins larges type Nespresso) */
+function ShowcasePhoto({
+  src,
+  placeholderClass,
+  alt,
+  className,
+}: {
+  src: string | null;
+  placeholderClass: string;
+  alt: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn('relative overflow-hidden rounded-[28px]', className)}>
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.03]"
+          loading="lazy"
+        />
+      ) : (
+        <div className={cn('absolute inset-0', placeholderClass)} aria-hidden />
+      )}
+    </div>
+  );
+}
 
 const Home = () => {
   const navigate = useNavigate();
+  const [activeGamme, setActiveGamme] = useState<DrinkGamme>('wellness');
+  const entry = homeDrinkShowcase[activeGamme];
+  const { images, placeholderClass, href, label } = entry;
 
   return (
-    <div className="min-h-screen">
-      {/* Hero */}
+    <div className="min-h-screen bg-surface-page">
+
+      {/* ─── Hero — seul grand bloc sombre (anthracite chaud, pas noir pur) ─── */}
       <section
-        className="relative flex items-end overflow-hidden"
-        style={{ height: '86vh', minHeight: '520px', background: '#0a0a0a' }}
+        className="relative flex items-end overflow-hidden bg-surface-hero"
+        style={{
+          height: 'clamp(380px, 64vh, 680px)',
+        }}
       >
         <div
           className="absolute inset-0"
-          style={{ background: 'radial-gradient(ellipse at 65% 40%, rgba(30,58,30,0.45) 0%, transparent 60%), linear-gradient(155deg, #1a2e1a 0%, #0a0a0a 55%, #111 100%)' }}
+          style={{
+            background: [
+              'radial-gradient(ellipse at 72% 32%, oklch(22% 0.01 55 / 0.35) 0%, transparent 55%)',
+              'linear-gradient(162deg, oklch(14% 0.007 55) 0%, oklch(11% 0.006 55) 48%, oklch(13% 0.006 55) 100%)',
+            ].join(', '),
+          }}
         />
-        <div className="relative z-10 px-[60px] pb-20">
-          <p className="text-[9px] font-normal tracking-[0.45em] uppercase text-white/35 mb-[18px]">
+        <div className="absolute top-0 left-4 md:left-10 lg:left-[72px] right-4 md:right-10 lg:right-[72px] h-px bg-gradient-to-r from-transparent via-[oklch(75%_0.085_68)]/[0.15] to-transparent" />
+
+        <div className="relative z-10 w-full max-w-3xl px-4 pb-12 pt-8 md:px-10 md:pb-14 lg:px-[72px] lg:pb-16">
+          <p className="mb-5 text-[8px] font-light uppercase tracking-[0.55em] text-white/42">
             Bar Protéiné · Fort-de-France
           </p>
           <h1
-            className="font-display font-light text-white leading-[0.92] tracking-[-0.02em] mb-11"
-            style={{ fontFamily: 'var(--font-display)', fontSize: '80px' }}
+            className="mb-8 font-display font-normal leading-[0.9] tracking-[-0.02em] text-white"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(42px, 6.5vw, 76px)',
+            }}
           >
-            Nourris<br /><em className="italic text-white/65">l'essentiel</em>
+            Nourris<br /><em className="italic text-white/50">l'essentiel</em>
           </h1>
-          <ArrowBtn onDark size="lg" onPress={() => navigate('/menu')} />
+          <ArrowBtn onDark size="lg" onPress={() => navigate('/menu')} ariaLabel="Voir le menu" />
         </div>
       </section>
 
-      {/* Nos univers */}
-      <section className="bg-[#faf9f7] px-[60px] py-[72px]">
+      {/* ─── Nos univers — cartes claires ─── */}
+      <section className="bg-white px-4 md:px-10 lg:px-[72px] py-[88px]">
         <SectionTitle title="Nos univers" linkLabel="Tout explorer" linkTo="/menu" />
-        <div className="grid grid-cols-3 gap-[14px]">
-          <ImageCard eyebrow="Nutrition" title="Shakes &" titleEm="gauffres" bgClass="bg-gradient-to-b from-[#1e3a1e] to-[#0a0a0a]" onPress={() => navigate('/menu')} />
-          <ImageCard eyebrow="Communauté" title="Run" titleEm="Club" bgClass="bg-gradient-to-b from-[#111] to-[#1c2c1c]" onPress={() => navigate('/evenements')} />
-          <ImageCard eyebrow="Bien-être" title="Bilan" titleEm="30 min" bgClass="bg-gradient-to-b from-[#0a0a0a] to-[#1a1a1a]" onPress={() => navigate('/bilan-bien-etre')} />
+        <div className="grid grid-cols-1 gap-[2px] sm:grid-cols-3">
+          <ImageCard
+            eyebrow="Nutrition"
+            title="Shakes &"
+            titleEm="gauffres"
+            onPress={() => navigate('/menu')}
+          />
+          <ImageCard
+            eyebrow="Communauté"
+            title="Run"
+            titleEm="Club"
+            onPress={() => navigate('/evenements')}
+          />
+          <ImageCard
+            eyebrow="Bien-être"
+            title="Bilan"
+            titleEm="30 min"
+            onPress={() => navigate('/bilan-bien-etre')}
+          />
         </div>
       </section>
 
-      {/* Découvrez nos shakes */}
-      <section className="bg-white px-[60px] py-[72px]">
-        <SectionTitle title="Découvrez nos shakes :" subtitle="Protéines haute qualité, fabriquées à Fort-de-France" linkLabel="Voir la carte" linkTo="/menu" />
-        <div className="grid grid-cols-4 gap-3">
-          {FEATURED_SHAKES.map((s) => (
-            <ProductCard
-              key={s.id}
-              tag="Shakes Protéinés"
-              name={s.name}
-              description={s.description}
-              macros={[s.protein ? `${s.protein}g protéines` : '', s.calories ? `${s.calories} kcal` : ''].filter(Boolean).join(' · ') || undefined}
-              price={`${s.price}€`}
-              bgClass="bg-gradient-to-b from-[#2c4e2d] to-[#1a3a1b]"
-              linkTo={`/menu/${s.id}`}
-            />
-          ))}
-        </div>
-      </section>
+      {/* ─── Boissons — grille type Nespresso (onglets + 1 grand + 2 empilés) ─── */}
+      <section className="bg-[oklch(98.5%_0.004_55)] px-4 py-[88px] md:px-10 lg:px-[72px]">
+        <div className="mx-auto max-w-[1200px]">
+          <div className="mb-10 text-center md:mb-12">
+            <p className="mb-2 text-[9px] font-light uppercase tracking-[0.28em] text-black/38">La carte</p>
+            <h2
+              className="font-display font-normal tracking-[-0.02em] text-black"
+              style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 3.2vw, 38px)' }}
+            >
+              Nos boissons par univers
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-[12px] font-light leading-relaxed text-black/45">
+              Sélectionnez une gamme. Les photos se configurent dans le fichier de données dédié à cette section.
+            </p>
+          </div>
 
-      {/* Section vidéo Événements */}
-      <section
-        className="relative flex items-center justify-center overflow-hidden"
-        style={{ height: '72vh', minHeight: '420px' }}
-      >
-        {/* En production : remplacer par <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" /> */}
-        <div
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(ellipse at 60% 40%, rgba(30,60,30,0.4) 0%, transparent 65%), linear-gradient(160deg, #0f1f0f 0%, #0a0a0a 40%, #111 70%, #0d1a0d 100%)' }}
-        />
-        <div
-          className="relative z-10 mx-4 text-center rounded-[20px] px-16 py-[52px]"
-          style={{
-            background: 'rgba(255,255,255,0.07)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            maxWidth: '620px',
-          }}
-        >
-          <span className="inline-block text-[9px] font-normal tracking-[0.2em] uppercase bg-[#3d6b3e] text-white px-[14px] py-[5px] rounded-[4px] mb-6">
-            Événements · Run Club
-          </span>
-          <h2
-            className="font-display font-light text-white leading-[1.05] mb-7"
-            style={{ fontFamily: 'var(--font-display)', fontSize: '46px' }}
+          {/* Pills — style Nespresso */}
+          <div
+            className="mb-8 flex flex-wrap items-center justify-center gap-2 md:mb-10 md:gap-3"
+            role="tablist"
+            aria-label="Gammes de boissons"
           >
-            Rejoins la<br />communauté Pessóra
+            {homeDrinkShowcaseOrder.map((key) => {
+              const item = homeDrinkShowcase[key];
+              const selected = activeGamme === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setActiveGamme(key)}
+                  className={cn(
+                    'min-h-10 rounded-full px-5 py-2.5 text-[11px] font-light tracking-[0.06em] transition-colors duration-200 md:px-7',
+                    selected
+                      ? 'border border-black text-black'
+                      : 'border border-black/[0.12] text-black/55 hover:border-black/25 hover:text-black/80',
+                  )}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Grille asymétrique : grand à gauche, deux empilés à droite (type Nespresso) */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-stretch md:gap-5 lg:min-h-[min(70vh,620px)]">
+            <Link
+              to={href}
+              className="group relative block min-h-[300px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2 md:min-h-[480px] lg:min-h-[560px]"
+              aria-label={`Voir la gamme ${label}`}
+            >
+              <ShowcasePhoto
+                src={images.large}
+                placeholderClass={placeholderClass}
+                alt={`${label} — visuel principal`}
+                className="h-full min-h-[300px]"
+              />
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-28 rounded-b-[28px] bg-gradient-to-t from-black/35 to-transparent"
+                aria-hidden
+              />
+              <span className="pointer-events-none absolute bottom-5 left-5 text-[9px] font-light uppercase tracking-[0.2em] text-white md:bottom-7 md:left-7">
+                {label}
+              </span>
+            </Link>
+
+            <div className="flex min-h-[420px] flex-col gap-4 md:min-h-0 md:gap-5 lg:min-h-[560px]">
+              <Link
+                to={href}
+                className="group relative block min-h-[200px] flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2"
+                aria-label={`${label} — visuel 2`}
+              >
+                <ShowcasePhoto
+                  src={images.stackedTop}
+                  placeholderClass={placeholderClass}
+                  alt={`${label} — détail`}
+                  className="h-full min-h-[200px]"
+                />
+              </Link>
+              <Link
+                to={href}
+                className="group relative block min-h-[200px] flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2"
+                aria-label={`${label} — visuel 3`}
+              >
+                <ShowcasePhoto
+                  src={images.stackedBottom}
+                  placeholderClass={placeholderClass}
+                  alt={`${label} — ambiance`}
+                  className="h-full min-h-[200px]"
+                />
+              </Link>
+            </div>
+          </div>
+
+          <p className="mt-8 text-center">
+            <Link
+              to="/menu"
+              className="inline-block border-b border-black/30 pb-px text-[9px] font-light uppercase tracking-[0.22em] text-black/55 transition-colors hover:border-black hover:text-black"
+            >
+              Voir toute la carte
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* ─── Événements — section claire, respiration typographique ─── */}
+      <section className="bg-white px-4 py-20 md:px-10 md:py-24 lg:px-[72px]">
+        <div className="mx-auto max-w-[520px] text-center">
+          <p className="mb-6 text-[8px] font-light uppercase tracking-[0.55em] text-black/40">
+            Événements
+          </p>
+          <h2
+            className="mb-10 font-display font-normal leading-[0.93] text-black"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(36px, 4.5vw, 56px)',
+            }}
+          >
+            Rejoins la<br /><em className="italic text-black/45">communauté Pessóra</em>
           </h2>
           <Link
             to="/evenements"
-            className="inline-flex items-center justify-center rounded-full bg-white text-black text-[11px] font-normal tracking-[0.12em] uppercase px-8 h-11 hover:bg-white/90 transition-colors"
+            className="inline-block border-b border-black/30 pb-px text-[9px] font-light uppercase tracking-[0.28em] text-black/60 transition-colors duration-200 hover:border-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 rounded-[1px]"
           >
             Voir les événements
           </Link>
         </div>
       </section>
 
-      {/* Nos actualités */}
-      <section className="bg-[#faf9f7] px-[60px] py-[72px]">
+      {/* ─── Actualités — cartes claires ─── */}
+      <section className="bg-surface-muted px-4 md:px-10 lg:px-[72px] py-[88px]">
         <SectionTitle title="Nos actualités" />
-        <div className="grid grid-cols-2 gap-[14px]">
-          <ImageCard eyebrow="Bilan Bien-être" title="30 minutes" titleEm="offertes" bgClass="bg-gradient-to-b from-[#1e3a1e] to-[#0f1f0f]" aspectRatio="aspect-[16/9]" onPress={() => navigate('/bilan-bien-etre')} />
-          <ImageCard eyebrow="Pop-up · GigaFit" title="Nouveau" titleEm="point de vente" bgClass="bg-gradient-to-b from-[#0a0a0a] to-[#1a1a1a]" aspectRatio="aspect-[16/9]" onPress={() => navigate('/evenements')} />
+        <div className="grid grid-cols-1 gap-[2px] sm:grid-cols-2">
+          <ImageCard
+            eyebrow="Bilan Bien-être"
+            title="30 minutes"
+            titleEm="offertes"
+            aspectRatio="aspect-[16/9]"
+            onPress={() => navigate('/bilan-bien-etre')}
+          />
+          <ImageCard
+            eyebrow="Pop-up · GigaFit"
+            title="Nouveau"
+            titleEm="point de vente"
+            aspectRatio="aspect-[16/9]"
+            onPress={() => navigate('/evenements')}
+          />
         </div>
       </section>
+
     </div>
   );
 };

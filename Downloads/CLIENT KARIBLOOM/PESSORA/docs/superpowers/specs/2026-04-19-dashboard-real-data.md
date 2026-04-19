@@ -98,7 +98,7 @@ CREATE TABLE public.event_registrations (
   phone text NOT NULL,           -- WhatsApp de préférence
   group_size int NOT NULL DEFAULT 1, -- 1=seul, 2=+1, 3=+2, 4=+3 ou plus
   newsletter_consent text NOT NULL DEFAULT 'none'
-    CHECK (newsletter_consent IN ('all', 'run_club_only', 'none')),
+    CHECK (newsletter_consent IN ('all', 'none')),
   status text NOT NULL DEFAULT 'confirmed'
     CHECK (status IN ('confirmed', 'pending', 'cancelled')),
   registered_at timestamptz DEFAULT now(),
@@ -148,7 +148,6 @@ ALTER TABLE public.profiles
 
 ### `Dashboard.tsx`
 - **KPI Événements** → `count(event_registrations)` confirmed ce trimestre
-- **KPI Run Club** → count des registrations type `run-club` confirmed
 - **KPI Bilans** → count des registrations type `bilan` confirmed
 - **KPI Abonnement** → `subscription.plan` réel
 - **Prochains événements** → `useUpcomingEvents()`, 3 premières

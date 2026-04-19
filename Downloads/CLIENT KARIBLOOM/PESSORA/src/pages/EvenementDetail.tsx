@@ -27,12 +27,11 @@ const NB_OPTIONS = [
 
 const INFO_OPTIONS = [
   { value: 'Oui avec plaisir 🔥', label: 'Oui avec plaisir 🔥' },
-  { value: 'Oui, uniquement pour les Run Club', label: 'Oui, uniquement pour les Run Club' },
   { value: 'Non merci', label: 'Non merci' },
 ];
 
 const TYPE_LABELS: Record<Event['type'], string> = {
-  run_club: '🏃 Run Club',
+  run_club: '🏃 Course',
   popup: '📍 Pop-up',
   atelier: '🌿 Atelier',
   event: '🎉 Événement',
@@ -40,7 +39,7 @@ const TYPE_LABELS: Record<Event['type'], string> = {
 };
 
 const inputClass =
-  'w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] placeholder:text-black/30 focus:outline-none focus:border-[#3d6b3e] transition-colors';
+  'w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] placeholder:text-black/30 focus:outline-none focus:border-[oklch(8%_0.005_55)] transition-colors';
 
 // Append T00:00:00 so JS parses as local time (Martinique UTC-4), not UTC midnight
 const formatDate = (dateStr: string) =>
@@ -161,7 +160,7 @@ const EvenementDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-black/20 border-t-[#111] rounded-full animate-spin" />
       </div>
     );
@@ -169,15 +168,15 @@ const EvenementDetail = () => {
 
   if (notFound || !event) {
     return (
-      <div className="min-h-screen bg-[#faf9f7]">
-        <div className="max-w-6xl mx-auto px-[60px] text-center py-32">
+      <div className="min-h-screen bg-white">
+        <div className="max-w-6xl mx-auto px-[72px] text-center py-32">
           <h1
             className="font-display font-light text-[#111] mb-4"
             style={{ fontFamily: 'var(--font-display)', fontSize: '40px' }}
           >
             Événement introuvable
           </h1>
-          <Link to="/evenements" className="text-[#3d6b3e] text-[12px] underline">
+          <Link to="/evenements" className="text-[oklch(57%_0.065_68)] text-[12px] underline">
             Voir tous les événements
           </Link>
         </div>
@@ -187,10 +186,10 @@ const EvenementDetail = () => {
 
   if (fetchError) {
     return (
-      <div className="min-h-screen bg-[#faf9f7]">
-        <div className="max-w-6xl mx-auto px-[60px] text-center py-32">
+      <div className="min-h-screen bg-white">
+        <div className="max-w-6xl mx-auto px-[72px] text-center py-32">
           <p className="text-black/50 text-[14px] mb-4">{fetchError}</p>
-          <Link to="/evenements" className="text-[#3d6b3e] text-[12px] underline">
+          <Link to="/evenements" className="text-[oklch(57%_0.065_68)] text-[12px] underline">
             Voir tous les événements
           </Link>
         </div>
@@ -202,17 +201,17 @@ const EvenementDetail = () => {
   const isFull = placesDispo !== null && placesDispo <= 0;
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-white">
 
       {/* Hero image */}
       <div className="relative h-[55vh] min-h-[380px] overflow-hidden">
         {event.image_url ? (
           <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#2c4e2d] to-[#0a0a0a]" aria-hidden="true" />
+          <div className="w-full h-full bg-gradient-to-br from-[oklch(22%_0.005_55)] to-[#0a0a0a]" aria-hidden="true" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 px-[60px] pb-[48px]">
+        <div className="absolute bottom-0 left-0 right-0 px-[72px] pb-[48px]">
           <Link
             to="/evenements"
             className="inline-flex items-center gap-2 text-white/60 hover:text-white text-[10px] font-normal uppercase tracking-[0.15em] mb-6 transition-colors"
@@ -220,7 +219,7 @@ const EvenementDetail = () => {
             <ArrowLeft size={12} aria-hidden="true" /> Tous les événements
           </Link>
           <div>
-            <span className="inline-block text-[8px] font-normal tracking-[0.2em] uppercase bg-[#3d6b3e] text-white px-[10px] py-[4px] rounded-[3px] mb-4">
+            <span className="inline-block text-[8px] font-normal tracking-[0.2em] uppercase bg-[oklch(8%_0.005_55)] text-white px-[10px] py-[4px] rounded-[3px] mb-4">
               {TYPE_LABELS[event.type] ?? event.type}
             </span>
             <h1
@@ -233,7 +232,7 @@ const EvenementDetail = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-[60px] py-[64px]">
+      <div className="max-w-6xl mx-auto px-[72px] py-[64px]">
         <div className="grid grid-cols-2 gap-16 items-start">
 
           {/* Infos événement */}
@@ -288,7 +287,7 @@ const EvenementDetail = () => {
 
             {submitStatus === 'success' && (
               <div aria-live="polite" className="flex flex-col items-center text-center gap-4 py-8">
-                <CheckCircle size={48} strokeWidth={1} className="text-[#3d6b3e]" aria-hidden="true" />
+                <CheckCircle size={48} strokeWidth={1} className="text-[oklch(57%_0.065_68)]" aria-hidden="true" />
                 <p className="text-[13px] text-black/60">
                   Tu es inscrit(e) au <strong className="text-[#111]">{event.title}</strong>.
                 </p>
@@ -358,7 +357,7 @@ const EvenementDetail = () => {
                     <select
                       id="nb_personnes"
                       {...field}
-                      className="w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] focus:outline-none focus:border-[#3d6b3e] transition-colors"
+                      className="w-full border-0 border-b border-black/10 bg-transparent py-4 text-[14px] text-[#111] focus:outline-none focus:border-[oklch(8%_0.005_55)] transition-colors"
                     >
                       {NB_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -379,7 +378,7 @@ const EvenementDetail = () => {
                             value={o.value}
                             checked={field.value === o.value}
                             onChange={() => field.onChange(o.value)}
-                            className="accent-[#3d6b3e]"
+                            className="accent-[oklch(57%_0.065_68)]"
                           />
                           <span className="text-[13px] text-black/60 group-hover:text-[#111] transition-colors">{o.label}</span>
                         </label>

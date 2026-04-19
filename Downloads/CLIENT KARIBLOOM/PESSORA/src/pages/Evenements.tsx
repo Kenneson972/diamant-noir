@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardFooter } from '@heroui/react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Button, Card, CardContent, CardFooter } from '@heroui/react';
 import { supabase } from '../lib/supabaseClient';
 import { today, getLocalTimeZone } from '@internationalized/date';
 import { ArrowBtn } from '../components/ui/ArrowBtn';
@@ -11,34 +11,35 @@ interface EventWithCount extends Event {
 }
 
 const TYPE_LABELS: Record<Event['type'], string> = {
-  run_club: 'Run Club',
-  popup: 'Pop-up',
-  atelier: 'Atelier',
-  event: 'Événement',
+  run_club:    'Course',
+  popup:       'Pop-up',
+  atelier:     'Atelier',
+  event:       'Événement',
   partenariat: 'Partenariat',
+};
+
+const TYPE_FILTER: Record<string, string> = {
+  'Pop-up':      'popup',
+  'Atelier':     'atelier',
+  'Partenariats':'partenariat',
 };
 
 function formatDate(dateStr: string) {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+    day: 'numeric', month: 'long', year: 'numeric',
   });
 }
 
-const TYPE_FILTER: Record<string, string> = {
-  'Run Club': 'run_club',
-  'Pop-up': 'popup',
-  'Atelier': 'atelier',
-  'Partenariats': 'partenariat',
-};
-
 const Evenements = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState<EventWithCount[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeType, setActiveType] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [events, setEvents]       = useState<EventWithCount[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState<string | null>(null);
+
+  const typeFromUrl = searchParams.get('type');
+  const activeType =
+    typeFromUrl && Object.values(TYPE_FILTER).includes(typeFromUrl) ? typeFromUrl : null;
 
   useEffect(() => {
     let cancelled = false;
@@ -52,105 +53,102 @@ const Evenements = () => {
       .then(({ data, error: queryError }) => {
         if (!cancelled) {
           if (queryError) setError('Impossible de charger les événements.');
-          else if (data) setEvents(data as EventWithCount[]);
+          else if (data)  setEvents(data as EventWithCount[]);
           setLoading(false);
         }
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
-  const featured = events[0];
-  const rest = events.slice(1);
-  const filteredRest = activeType ? rest.filter((ev) => ev.type === activeType) : rest;
+  const featured      = events[0];
+  const rest          = events.slice(1);
+  const filteredRest  = activeType ? rest.filter((ev) => ev.type === activeType) : rest;
+
+  const setTypeFilter = (tab: string) => {
+    if (tab === 'Tous') {
+      setSearchParams({});
+      return;
+    }
+    const v = TYPE_FILTER[tab];
+    if (v) setSearchParams({ type: v });
+  };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero */}
-      <section
-        className="relative flex items-end overflow-hidden"
-        style={{ height: '56vh', minHeight: '320px', background: '#0a0a0a' }}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse at 55% 40%, rgba(30,60,30,0.45) 0%, transparent 65%), linear-gradient(155deg, #0f1f0f 0%, #0a0a0a 50%, #111 100%)',
-          }}
-        />
-        <div className="relative z-10 px-[60px] pb-[56px]">
-          <p className="text-[9px] tracking-[0.45em] uppercase text-white/35 mb-[16px]">
-            Communauté · Fort-de-France
-          </p>
-          <h1
-            className="font-display font-light text-white leading-[0.93] tracking-[-0.02em]"
-            style={{ fontFamily: 'var(--font-display)', fontSize: '68px' }}
-          >
-            Nos
-            <br />
-            <em className="italic text-white/60">événements</em>
-          </h1>
-        </div>
+    <div className="min-h-screen bg-white">
+      <section className="bg-white px-4 py-10 md:px-10 md:py-12 lg:px-[72px]">
+        <p className="mb-2 text-[10px] font-light uppercase tracking-[0.28em] text-black/35">
+          Communauté · Fort-de-France
+        </p>
+        <h1
+          className="font-display font-normal leading-tight tracking-[-0.02em] text-black"
+          style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4vw, 44px)' }}
+        >
+          Événements
+        </h1>
+        <p className="mt-2 max-w-xl text-[12px] font-light leading-relaxed text-black/45">
+          Ateliers, pop-ups, partenariats : filtrez par type depuis la barre sous le menu.
+        </p>
       </section>
 
-      {/* Filter Tabs */}
-      <div className="bg-white border-b border-black/[0.08] px-[60px] flex gap-0 h-[60px]">
-        {['Tous', 'Run Club', 'Pop-up', 'Atelier', 'Partenariats'].map((tab) => {
+      {/* Filtres locaux (doublent la sub-nav pour accessibilité mobile hors header) */}
+      <div className="flex gap-2 overflow-x-auto border-b border-black/[0.06] bg-white px-4 py-3 md:hidden md:px-10">
+        {['Tous', 'Pop-up', 'Atelier', 'Partenariats'].map((tab) => {
           const isActive = tab === 'Tous' ? activeType === null : activeType === TYPE_FILTER[tab];
           return (
-            <button
+            <Button
               key={tab}
-              onClick={() => setActiveType(tab === 'Tous' ? null : TYPE_FILTER[tab])}
-              className={`h-full px-[18px] text-[12px] font-normal transition-colors border-b-2 ${
-                isActive ? 'text-black border-black' : 'text-black/60 border-transparent hover:text-black hover:border-black/20'
+              type="button"
+              variant="ghost"
+              onPress={() => setTypeFilter(tab)}
+              className={`h-8 min-h-8 shrink-0 whitespace-nowrap rounded-full px-4 text-[10px] font-light tracking-[0.06em] transition-colors duration-200 ${
+                isActive
+                  ? 'bg-[oklch(8%_0.005_55)] font-normal text-white'
+                  : 'border border-black/15 text-black/50 hover:border-black/30 hover:text-black'
               }`}
             >
               {tab}
-            </button>
+            </Button>
           );
         })}
       </div>
 
-      {/* Prochain événement — grande card */}
+      {/* ─── Prochain événement — grande card ─── */}
       {featured && (
         <div
-          className="mx-[60px] mt-10 rounded-[20px] overflow-hidden grid grid-cols-2 bg-[#0a0a0a]"
+          className="mx-4 md:mx-10 lg:mx-[72px] mt-10 rounded-[2px] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-[oklch(8%_0.005_55)]"
           style={{ minHeight: '360px' }}
         >
-          <div className="bg-gradient-to-br from-[#1e3a1e] to-[#0f1f0f] flex items-center justify-center min-h-[280px]">
+          <div className="bg-gradient-to-br from-[oklch(18%_0.008_55)] to-[oklch(8%_0.005_55)] flex items-center justify-center min-h-[280px]">
             {featured.image_url ? (
-              <img
-                src={featured.image_url}
-                alt={featured.title}
-                className="w-full h-full object-cover"
-              />
+              <img src={featured.image_url} alt={featured.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-[72px] h-[72px] rounded-full border border-white/10 opacity-30" />
+              <div className="w-[64px] h-[64px] rounded-full border border-white/[0.08] opacity-25" />
             )}
           </div>
-          <div className="px-[52px] py-[52px] flex flex-col justify-between">
+          <div className="px-[56px] py-[52px] flex flex-col justify-between">
             <div>
-              <span className="inline-block text-[8px] tracking-[0.22em] uppercase bg-[#3d6b3e] text-white px-[10px] py-1 rounded-[3px] mb-5">
+              <span className="inline-block text-[8px] font-light tracking-[0.32em] uppercase text-[oklch(75%_0.085_68)] mb-5">
                 Prochain événement
               </span>
               <h2
-                className="font-display font-light text-white leading-[1.0] mb-5"
-                style={{ fontFamily: 'var(--font-display)', fontSize: '46px' }}
+                className="font-display font-normal text-white leading-[0.97] mb-5"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(36px, 3.8vw, 50px)',
+                }}
               >
-                {featured.title}
-                <br />
-                <em className="italic text-white/60">{TYPE_LABELS[featured.type]}</em>
+                {featured.title}<br />
+                <em className="italic text-white/48">{TYPE_LABELS[featured.type]}</em>
               </h2>
-              <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 leading-[2.0] mb-9">
+              <p className="text-[9px] font-light tracking-[0.22em] uppercase text-white/35 leading-[2.2] mb-9">
                 {formatDate(featured.date)}
-                {featured.heure ? ` · ${featured.heure.slice(0, 5)}` : ''}
+                {featured.heure    ? ` · ${featured.heure.slice(0, 5)}` : ''}
                 {featured.location ? ` · ${featured.location}` : ''}
               </p>
             </div>
             <Link
               to={`/evenements/${featured.slug}`}
-              className="inline-flex items-center justify-center rounded-full bg-white text-black text-[11px] font-normal tracking-[0.12em] uppercase px-7 h-11 self-start hover:bg-white/90 transition-colors"
+              className="inline-flex items-center justify-center rounded-full border border-white/22 text-white text-[10px] font-light tracking-[0.18em] uppercase px-8 h-[44px] self-start hover:bg-white hover:text-black transition-colors duration-300"
             >
               S'inscrire
             </Link>
@@ -158,83 +156,75 @@ const Evenements = () => {
         </div>
       )}
 
-      {/* Grille événements */}
-      <section className="px-[60px] py-[52px]">
-        {error && <p className="text-[12px] text-red-500 mb-4">{error}</p>}
+      {/* ─── Grille événements ─── */}
+      <section className="px-4 md:px-10 lg:px-[72px] py-[56px]">
+        {error && <p className="text-[11px] font-light text-red-500/80 mb-5">{error}</p>}
 
         {filteredRest.length > 0 && (
-          <h2 className="font-display font-light text-[36px] text-black mb-7" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2
+            className="font-display font-normal text-[38px] text-black mb-8 leading-none"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             Tous les événements
           </h2>
         )}
 
         {loading ? (
-          <p className="text-[12px] text-black/38">Chargement…</p>
+          <p className="text-[11px] font-light text-black/35 tracking-[0.04em]">Chargement…</p>
         ) : filteredRest.length === 0 && !featured ? (
-          <p className="text-[12px] text-black/38">Aucun événement à venir.</p>
+          <p className="text-[11px] font-light text-black/35 tracking-[0.04em]">Aucun événement à venir.</p>
         ) : (
-          <div className="grid grid-cols-3 gap-[14px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRest.map((ev) => {
               const regCount = Number(ev.event_registrations?.[0]?.count ?? 0);
-              const spots = ev.places_max ? ev.places_max - regCount : null;
-              const isFull = spots !== null && spots <= 0;
+              const spots    = ev.places_max ? ev.places_max - regCount : null;
+              const isFull   = spots !== null && spots <= 0;
               return (
                 <Card
                   key={ev.id}
-                  className={`bg-white rounded-[16px] border border-black/[0.06] shadow-none overflow-hidden cursor-pointer hover:shadow-lg transition-shadow ${isFull ? 'opacity-60' : ''}`}
+                  className={`bg-white rounded-[2px] border border-black/[0.06] shadow-none overflow-hidden cursor-pointer hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-colors duration-300 ${isFull ? 'opacity-55' : ''}`}
                   onClick={() => !isFull && navigate(`/evenements/${ev.slug}`)}
                 >
                   <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
                     {ev.image_url ? (
-                      <img
-                        src={ev.image_url}
-                        alt={ev.title}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                      <img src={ev.image_url} alt={ev.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a1e] to-[#0a0a0a]" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-[oklch(18%_0.008_55)] to-[oklch(8%_0.005_55)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <p className="absolute bottom-[14px] left-[14px] text-[8px] tracking-[0.25em] uppercase text-white/75">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+                    <p className="absolute bottom-[14px] left-[16px] text-[8px] font-light tracking-[0.28em] uppercase text-white/68">
                       {TYPE_LABELS[ev.type]} · {formatDate(ev.date)}
                     </p>
                     {isFull && (
-                      <span className="absolute top-[14px] right-[14px] text-[8px] tracking-[0.2em] uppercase bg-black/70 text-white/70 px-[10px] py-1 rounded-[4px]">
+                      <span className="absolute top-[14px] right-[14px] text-[8px] font-light tracking-[0.22em] uppercase bg-black/60 text-white/65 px-[10px] py-[5px] rounded-[2px]">
                         Complet
                       </span>
                     )}
                   </div>
                   <CardContent className="px-5 pt-5 pb-0 gap-0">
-                    <p className="text-[8px] tracking-[0.22em] uppercase text-[#3d6b3e] mb-2">
+                    <p className="text-[8px] font-light tracking-[0.28em] uppercase text-[oklch(57%_0.065_68)] mb-2.5">
                       {TYPE_LABELS[ev.type]}
                     </p>
                     <h3
-                      className="font-display font-light text-[22px] leading-[1.1] text-black mb-3"
+                      className="font-display font-normal text-[22px] leading-[1.05] text-black mb-3"
                       style={{ fontFamily: 'var(--font-display)' }}
                     >
                       {ev.title}
                     </h3>
-                    <p className="text-[10px] text-black/38 leading-[1.8]">
+                    <p className="text-[10px] font-light text-black/35 leading-[1.9]">
                       {formatDate(ev.date)}
                       {ev.heure ? ` · ${ev.heure.slice(0, 5)}` : ''}
-                      <br />
-                      {ev.location ?? 'Fort-de-France'}
+                      <br />{ev.location ?? 'Fort-de-France'}
                     </p>
                   </CardContent>
                   <CardFooter className="px-5 pb-[18px] pt-3 flex items-center justify-between">
-                    <p className="text-[10px] text-black/35">
+                    <p className="text-[10px] font-light text-black/32">
                       {spots !== null ? (
-                        isFull ? (
-                          'Complet'
-                        ) : (
-                          <>
-                            <span className="text-[#3d6b3e] font-normal">{spots} places</span>{' '}
-                            disponibles
-                          </>
+                        isFull ? 'Complet' : (
+                          <><span className="text-[oklch(57%_0.065_68)] font-normal">{spots} places</span>{' '}disponibles</>
                         )
                       ) : (
-                        <span className="text-[#3d6b3e] font-normal">Entrée libre</span>
+                        <span className="text-[oklch(57%_0.065_68)] font-normal">Entrée libre</span>
                       )}
                     </p>
                     <ArrowBtn size="sm" ariaLabel={`Voir ${ev.title}`} />
@@ -246,31 +236,7 @@ const Evenements = () => {
         )}
       </section>
 
-      {/* Run Club banner récurrent */}
-      <div className="mx-[60px] mb-16 rounded-[20px] overflow-hidden bg-[#0a0a0a] flex items-center px-[60px] py-[52px] gap-[60px]">
-        <div className="flex-1">
-          <p className="text-[9px] tracking-[0.42em] uppercase text-white/28 mb-[14px]">
-            Chaque semaine
-          </p>
-          <h3
-            className="font-display font-light text-white leading-[1.0] mb-4"
-            style={{ fontFamily: 'var(--font-display)', fontSize: '42px' }}
-          >
-            Run Club
-            <br />
-            <em className="italic text-white/55">Pessóra</em>
-          </h3>
-          <p className="text-[10px] text-white/40 tracking-[0.15em] uppercase">
-            Tous les mercredis · 6h00 · Fort-de-France
-          </p>
-        </div>
-        <Link
-          to="/evenements"
-          className="inline-flex items-center justify-center rounded-full bg-white text-black text-[11px] font-normal tracking-[0.12em] uppercase px-7 h-11 flex-shrink-0 hover:bg-white/90 transition-colors"
-        >
-          Rejoindre le club
-        </Link>
-      </div>
+
     </div>
   );
 };
