@@ -34,12 +34,16 @@ const PessobotPage = lazy(() => import('./pages/PessobotPage'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
 const AdminMembers = lazy(() => import('./pages/admin/AdminMembers'));
+const AdminMemberDetail = lazy(() => import('./pages/admin/AdminMemberDetail'));
 const AdminEvenements = lazy(() => import('./pages/admin/AdminEvenements'));
 const AdminProduits = lazy(() => import('./pages/admin/AdminProduits'));
+const AdminBilans = lazy(() => import('./pages/admin/AdminBilans'));
+const AdminCommunications = lazy(() => import('./pages/admin/AdminCommunications'));
 const OraPlus = lazy(() => import('./pages/OraPlus'));
 const EvenementDetail = lazy(() => import('./pages/EvenementDetail'));
 const BilanBienEtre = lazy(() => import('./pages/BilanBienEtre'));
 const LuxeMockup = lazy(() => import('./pages/LuxeMockup'));
+const ManagerSketchMockup = lazy(() => import('./pages/ManagerSketchMockup'));
 const Chatbot = lazy(() => import('./components/common/Chatbot'));
 
 // Layout wrapper pour gérer header/footer conditionnellement
@@ -47,10 +51,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isMemberArea = location.pathname.startsWith('/mon-espace') || location.pathname.startsWith('/demo-espace');
   const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription';
-  const isLuxeMockup = location.pathname === '/mockup-luxe';
+  const isInternalMockup =
+    location.pathname === '/mockup-luxe' || location.pathname === '/mockup-croquis-gerant';
   const isAdminArea = location.pathname.startsWith('/admin');
 
-  // Lazy loading auto pour images sans attributs
+  // Lazy loading pour les <img> rendus après coup (React) — 2 passes légères
   useEffect(() => {
     const applyLazy = () => {
       document.querySelectorAll('img:not([loading])').forEach((img) => {
@@ -59,23 +64,37 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       });
     };
     applyLazy();
-    const t = setTimeout(applyLazy, 300);
-    return () => clearTimeout(t);
+    const id = requestAnimationFrame(() => applyLazy());
+    return () => cancelAnimationFrame(id);
   }, [location.pathname]);
+
+  const showPublicChrome = !isMemberArea && !isAuthPage && !isInternalMockup && !isAdminArea;
 
   return (
     <>
       <ScrollToTop />
       <PageSEO />
-      <div className="flex flex-col min-h-screen">
-        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && <Header />}
-        <main className={isMemberArea || isAuthPage || isAdminArea ? 'flex-grow min-h-0 flex flex-col' : 'flex-grow'}>
+      <div className="flex min-h-screen flex-col">
+        {showPublicChrome && (
+          <a
+            href="#main-content"
+            className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-4 focus:py-3 focus:text-[11px] focus:font-normal focus:uppercase focus:tracking-[0.14em] focus:text-black focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+          >
+            Aller au contenu
+          </a>
+        )}
+        {showPublicChrome && <Header />}
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className={isMemberArea || isAuthPage || isAdminArea ? 'flex min-h-0 flex-grow flex-col outline-none' : 'flex-grow outline-none'}
+        >
           <Suspense fallback={<PageLoadingFallback />}>
             {children}
           </Suspense>
         </main>
-        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && <Footer />}
-        {!isMemberArea && !isAuthPage && !isLuxeMockup && !isAdminArea && (
+        {showPublicChrome && <Footer />}
+        {showPublicChrome && (
           <LazyWidget delay={1500} onIdle>
             <Chatbot />
           </LazyWidget>
@@ -109,6 +128,11 @@ function App() {
                 <AdminLayout><AdminMembers /></AdminLayout>
               </ProtectedAdminRoute>
             } />
+            <Route path="/admin/membres/:memberId" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminMemberDetail /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
             <Route path="/admin/evenements" element={
               <ProtectedAdminRoute>
                 <AdminLayout><AdminEvenements /></AdminLayout>
@@ -119,6 +143,16 @@ function App() {
                 <AdminLayout><AdminProduits /></AdminLayout>
               </ProtectedAdminRoute>
             } />
+            <Route path="/admin/bilans" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminBilans /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
+            <Route path="/admin/communication" element={
+              <ProtectedAdminRoute>
+                <AdminLayout><AdminCommunications /></AdminLayout>
+              </ProtectedAdminRoute>
+            } />
             <Route path="/menu/:drinkId" element={<DrinkDetail />} />
             <Route path="/evenements" element={<Evenements />} />
             <Route path="/evenements/:slug" element={<EvenementDetail />} />
@@ -127,6 +161,7 @@ function App() {
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/cgv" element={<CGV />} />
             <Route path="/mockup-luxe" element={<LuxeMockup />} />
+            <Route path="/mockup-croquis-gerant" element={<ManagerSketchMockup />} />
 
             {/* Auth Routes */}
             <Route path="/connexion" element={<Login />} />

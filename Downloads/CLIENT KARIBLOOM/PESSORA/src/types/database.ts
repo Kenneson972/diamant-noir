@@ -4,6 +4,7 @@ export interface Database {
       profiles: {
         Row: {
           id: string
+          email: string | null
           first_name: string | null
           last_name: string | null
           phone: string | null
@@ -111,6 +112,12 @@ export interface Database {
           benefits: string[] | null
           image_url: string | null
           active: boolean
+          slug: string | null
+          pitch: string | null
+          icon_emoji: string | null
+          badges: string[] | null
+          carousel_sort: number | null
+          carousel_badge: string | null
           created_at: string
         }
         Insert: Omit<Database['public']['Tables']['products']['Row'], 'id' | 'created_at'>
@@ -162,6 +169,69 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at'>
         Update: Partial<Pick<Database['public']['Tables']['notifications']['Row'], 'read'>>
       }
+      site_announcements: {
+        Row: {
+          id: string
+          type: 'featured' | 'promo' | 'event' | 'alert'
+          title: string
+          subtitle: string | null
+          message: string | null
+          image_url: string | null
+          cta_label: string | null
+          cta_url: string | null
+          price: number | null
+          expires_at: string | null
+          active: boolean
+          dismiss_mode: 'once_daily' | 'once_session'
+          priority: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          type?: 'featured' | 'promo' | 'event' | 'alert'
+          title: string
+          subtitle?: string | null
+          message?: string | null
+          image_url?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          price?: number | null
+          expires_at?: string | null
+          active?: boolean
+          dismiss_mode?: 'once_daily' | 'once_session'
+          priority?: number
+        }
+        Update: Partial<{
+          type: 'featured' | 'promo' | 'event' | 'alert'
+          title: string
+          subtitle: string | null
+          message: string | null
+          image_url: string | null
+          cta_label: string | null
+          cta_url: string | null
+          price: number | null
+          expires_at: string | null
+          active: boolean
+          dismiss_mode: 'once_daily' | 'once_session'
+          priority: number
+          updated_at: string
+        }>
+      }
+      newsletter_subscribers: {
+        Row: {
+          id: string
+          email: string
+          consent: boolean
+          source: string
+          created_at: string
+        }
+        Insert: {
+          email: string
+          consent?: boolean
+          source?: string
+        }
+        Update: never
+      }
     }
   }
 }
@@ -176,3 +246,5 @@ export type Product = Database['public']['Tables']['products']['Row']
 export type Order = Database['public']['Tables']['orders']['Row']
 export type OrderItem = Database['public']['Tables']['order_items']['Row']
 export type Notification = Database['public']['Tables']['notifications']['Row']
+export type SiteAnnouncement = Database['public']['Tables']['site_announcements']['Row']
+export type NewsletterSubscriber = Database['public']['Tables']['newsletter_subscribers']['Row']
