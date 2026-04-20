@@ -34,8 +34,14 @@ export function useAdminMembers() {
       .order('created_at', { ascending: false })
       .then(({ data, error: err }: { data: MemberWithSub[] | null; error: { message: string } | null }) => {
         if (cancelled) return;
-        if (err) setError('Impossible de charger les membres.');
-        else setMembers(data ?? []);
+        if (err) {
+          if (import.meta.env.DEV) console.error('[useAdminMembers]', err);
+          const rlsHint =
+            /permission denied|rls|policy/i.test(err.message)
+              ? ' Appliquez sur Supabase la migration `20260421131500_fix_rls_profiles_subscriptions_admin_read.sql` (SELECT profils + abonnements pour les admins).'
+              : '';
+          setError(`Impossible de charger les membres.${rlsHint}`);
+        } else setMembers(data ?? []);
         setLoading(false);
       });
     return () => { cancelled = true; };
