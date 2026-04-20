@@ -2,9 +2,13 @@
 -- pas de ligne dans public.profiles, ou email / prénom / nom vides car le trigger
 -- n’a pas tourné ou les métadonnées sont vides.
 -- Ce script :
+--  0) ajoute la colonne email si le schéma est plus ancien (sans email sur profiles) ;
 --  1) insère un profil pour chaque auth.users sans profil (déclenche aussi l’abonnement free si trigger OK) ;
 --  2) met à jour email et noms depuis auth.users + user_metadata ;
 --  3) crée un abonnement « free » manquant pour tout profil orphelin.
+
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS email text;
 
 -- 1) Profils manquants
 INSERT INTO public.profiles (id, email, first_name, last_name, phone, role)
