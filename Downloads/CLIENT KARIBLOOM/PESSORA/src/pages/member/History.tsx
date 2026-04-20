@@ -14,8 +14,11 @@ const History = () => {
           className="font-display font-normal text-[28px] text-black leading-none"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          Historique
+          Mes commandes
         </h1>
+        <p className="mt-2 max-w-lg text-[11px] font-light leading-relaxed text-black/40">
+          Seules les commandes réellement enregistrées s’affichent ici — le site n’en crée pas à la volée.
+        </p>
 
         {error && (
           <p className="text-[11px] text-red-500/80">{error}</p>
@@ -46,7 +49,7 @@ const History = () => {
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-[2px] flex items-center justify-center text-xl shrink-0 ${
-                    order.status === 'pending' ? 'bg-[oklch(57%_0.065_68)] text-white' : 'bg-black/[0.05]'
+                    order.status === 'pending' ? 'bg-gold-dim text-white' : 'bg-black/[0.05]'
                   }`}>
                     🥤
                   </div>
@@ -67,7 +70,7 @@ const History = () => {
 
                   <div className="flex items-center gap-4 shrink-0">
                     {order.status === 'pending' && (
-                      <span className="text-[8px] font-normal uppercase tracking-[0.15em] text-[oklch(57%_0.065_68)] border border-[oklch(57%_0.065_68)]/30 px-2.5 py-1 rounded-[2px]">
+                      <span className="text-[8px] font-normal uppercase tracking-[0.15em] text-gold-dim border border-gold-dim/30 px-2.5 py-1 rounded-[2px]">
                         En attente
                       </span>
                     )}
@@ -85,7 +88,7 @@ const History = () => {
 
       {/* Sidebar Stats */}
       <div className="lg:col-span-4 flex flex-col gap-4">
-        <div className="bg-[oklch(8%_0.005_55)] rounded-[2px] p-8 text-white">
+        <div className="bg-noir rounded-[2px] p-8 text-white">
           <p className="text-[9px] font-normal uppercase tracking-[0.25em] text-white/30 mb-3">
             Total ({monthLabel})
           </p>

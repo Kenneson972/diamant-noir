@@ -29,8 +29,16 @@ export function useOrders() {
       .order('created_at', { ascending: false })
       .then(({ data, error: err }: { data: OrderWithItems[] | null; error: { message: string } | null }) => {
         if (cancelled) return;
-        if (err) setError('Impossible de charger vos commandes.');
-        else setOrders(data ?? []);
+        if (err) {
+          if (import.meta.env.DEV) console.error('[useOrders]', err);
+          setError('Impossible de charger vos commandes.');
+        } else {
+          const rows = data ?? [];
+          if (import.meta.env.DEV) {
+            console.info('[useOrders] public.orders pour ce compte :', rows.length, 'ligne(s)');
+          }
+          setOrders(rows);
+        }
         setLoading(false);
       });
     return () => { cancelled = true; };
