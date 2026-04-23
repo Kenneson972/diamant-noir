@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════
--- Migration : iCal sync architecture — Diamant Noir
+-- Migration : iCal sync architecture — Naoriva
 -- ───────────────────────────────────────────────────────────────────
 -- 1. Colonne `platforms` (JSONB) sur villa_submissions
 --    → stocke les infos plateformes saisies dans le formulaire

@@ -1,4 +1,4 @@
--- Diamant Noir schema (multi-villas & ownership)
+-- Naoriva schema (multi-villas & ownership)
 
 create table if not exists public.villas (
   id uuid primary key default gen_random_uuid(),

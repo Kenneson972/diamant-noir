@@ -123,7 +123,7 @@ export function EspaceClientShell({
         {/* Brand */}
         <div className="px-6 pt-8 pb-0">
           <p className="text-[7px] font-medium tracking-[0.28em] uppercase text-[#D4AF37] opacity-80 mb-1">
-            Diamant Noir
+            Naoriva
           </p>
           <p className="font-display text-[15px] font-normal text-[#0D1B2A]">
             Espace Client

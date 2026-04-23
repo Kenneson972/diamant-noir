@@ -95,7 +95,7 @@ export function FinanceCopilotSection() {
               </Link>
             </div>
           </div>
-          <div className="border border-white/10 bg-black/40 backdrop-blur-sm">
+          <div className="border border-white/10 bg-navy/40 backdrop-blur-sm">
             <div className="flex items-center gap-2 border-b border-white/10 px-5 py-3">
               <span className="h-2 w-2 rounded-full bg-white/15" aria-hidden />
               <span className="h-2 w-2 rounded-full bg-white/15" aria-hidden />

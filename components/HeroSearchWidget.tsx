@@ -52,7 +52,7 @@ export function HeroSearchWidget() {
           className="bg-transparent text-white text-sm min-h-[44px] focus:outline-none border-b border-white/20 focus:border-white transition-colors pb-1 cursor-pointer"
         >
           {[1,2,3,4,5,6,7,8,9,10].map(n => (
-            <option key={n} value={n} className="bg-black text-white">{n} {n === 1 ? "voyageur" : "voyageurs"}</option>
+            <option key={n} value={n} className="bg-navy text-white">{n} {n === 1 ? "voyageur" : "voyageurs"}</option>
           ))}
         </select>
       </div>

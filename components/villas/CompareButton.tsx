@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CompareButton — Diamant Noir
+ * CompareButton — Naoriva
  * ─────────────────────────────
  * Bouton "Comparer" discret, apparaît sous la carte villa.
  * Change d'état quand la villa est dans la sélection.

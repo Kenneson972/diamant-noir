@@ -4,7 +4,7 @@ interface PageTopbarProps {
   badge?: string; // ex: "J — 12"
 }
 
-export function PageTopbar({ section = "Diamant Noir", title, badge }: PageTopbarProps) {
+export function PageTopbar({ section = "Naoriva", title, badge }: PageTopbarProps) {
   return (
     <div className="flex h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] items-center px-5 md:px-8 shrink-0">
       <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">

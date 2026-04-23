@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Page Conciergerie — Diamant Noir
+ * Page Conciergerie — Naoriva
  * Scroll-driven canvas animation (style Apple)
  * 561 frames @15fps | GSAP ScrollTrigger | Glassmorphism
  *
@@ -336,7 +336,7 @@ export default function ConciergeriePage() {
               Martinique
             </p>
             <p className="font-display text-3xl tracking-[0.08em] text-white">
-              Diamant Noir
+              Naoriva
             </p>
           </div>
 
@@ -377,7 +377,7 @@ export default function ConciergeriePage() {
           href="/"
           className="font-display text-[10px] tracking-[0.5em] text-gold/75 transition-colors hover:text-gold uppercase"
         >
-          Diamant Noir
+          Naoriva
         </Link>
 
         <div
@@ -531,7 +531,7 @@ export default function ConciergeriePage() {
             <p className="text-[8px] uppercase tracking-[0.4em]">Défiler pour découvrir</p>
             <ChevronDown
               size={18}
-              className="animate-bounce"
+              className="animate-pulse"
             />
           </div>
         </section>
@@ -567,7 +567,7 @@ export default function ConciergeriePage() {
               Confiez-nous votre bien
             </h2>
             <p className="mb-8 text-xs leading-relaxed text-white/45">
-              Rejoignez le portefeuille Diamant Noir. Profitez d&apos;une gestion premium,
+              Rejoignez le portefeuille Naoriva. Profitez d&apos;une gestion premium,
               d&apos;une transparence totale et d&apos;un accès exclusif à votre Copilot Proprio.
             </p>
 

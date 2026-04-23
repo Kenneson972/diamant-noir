@@ -26,14 +26,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const image = data.image_url || (Array.isArray(data.image_urls) && data.image_urls[0]) || null;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
     return {
-      title: `${data.name} — Diamant Noir`,
+      title: `${data.name} — Naoriva`,
       description: (data.description || "").slice(0, 160),
       openGraph: image && baseUrl
         ? { images: [{ url: image.startsWith("http") ? image : `${baseUrl}${image}` }] }
         : undefined,
     };
   } catch {
-    return { title: "Villa — Diamant Noir" };
+    return { title: "Villa — Naoriva" };
   }
 }
 
@@ -82,10 +82,10 @@ type RecommendedVilla = {
 
 const fallbackVilla: VillaDetails = {
   id: "fallback",
-  name: "Villa Diamant Noir",
+  name: "Villa Naoriva",
   location: "Le Diamant, Martinique",
   description:
-    "Sur les hauteurs du sud caraïbe, Diamant Noir mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l’océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
+    "Sur les hauteurs du sud caraïbe, Naoriva mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l’océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
   price: 1000,
   capacity: 8,
   image: "/villa-hero.jpg",
@@ -270,7 +270,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div>
                   <h3 className="font-display text-xl text-navy">Votre hôte</h3>
                   <p className="text-sm text-navy/70 mt-1">
-                    Conciergerie Diamant Noir
+                    Conciergerie Naoriva
                   </p>
                   <p className="text-sm text-navy/55 mt-2 leading-relaxed">
                     Équipe locale dédiée, disponible avant et pendant le séjour pour organiser votre expérience sur mesure.
@@ -563,7 +563,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
                   <ShieldCheck size={20} />
                 </div>
-                <h4 className="font-display text-lg text-navy">L'Excellence Diamant Noir</h4>
+                <h4 className="font-display text-lg text-navy">L'Excellence Naoriva</h4>
                 <p className="text-xs text-navy/60 leading-relaxed">
                   Cette maison fait partie de notre collection exclusive. Elle a été inspectée en personne par nos équipes pour garantir des standards hôteliers de très haut niveau.
                 </p>
@@ -635,7 +635,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── CTA bas de page ── */}
       <div className="bg-navy py-20 text-center px-6">
         <div className="mx-auto max-w-xl space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Diamant Noir</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Naoriva</p>
           <h3 className="font-display text-4xl text-white">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link

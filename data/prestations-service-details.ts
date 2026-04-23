@@ -27,7 +27,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Acquisition",
     tagline: "Votre villa visible partout, valorisée au bon prix",
     metaDescription:
-      "Estimation locative, photos pro, annonces multi-plateformes et prix dynamiques — Diamant Noir, conciergerie Martinique.",
+      "Estimation locative, photos pro, annonces multi-plateformes et prix dynamiques — Naoriva, conciergerie Martinique.",
     image: "/prestations-hero.png",
     imageAlt: "Intérieur de villa de luxe au coucher du soleil — Martinique",
     imagePosition: "center 20%",
@@ -58,7 +58,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Terrain",
     tagline: "Zéro contrainte — tout géré sur place",
     metaDescription:
-      "Check-in, contrôle qualité, coordination ménage et artisans sur votre villa en Martinique — Diamant Noir.",
+      "Check-in, contrôle qualité, coordination ménage et artisans sur votre villa en Martinique — Naoriva.",
     image: "/villa-hero.jpg",
     imageAlt: "Villa de luxe avec piscine — Martinique",
     imagePosition: "right 40%",
@@ -89,7 +89,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "7j/7",
     tagline: "Vos voyageurs entre de bonnes mains, 7j/7",
     metaDescription:
-      "Réservations, messages, avis : nous sommes le seul interlocuteur de vos voyageurs — conciergerie Diamant Noir Martinique.",
+      "Réservations, messages, avis : nous sommes le seul interlocuteur de vos voyageurs — conciergerie Naoriva Martinique.",
     image: "/prestations-hero.png",
     imageAlt: "Terrasse de villa face à la mer — Martinique",
     imagePosition: "center 75%",
@@ -120,7 +120,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Qualité séjour",
     tagline: "Facturé aux voyageurs — transparent pour vous",
     metaDescription:
-      "Ménage et linge facturés aux voyageurs, hors commission 20 % : détail du modèle Diamant Noir en Martinique.",
+      "Ménage et linge facturés aux voyageurs, hors commission 20 % : détail du modèle Naoriva en Martinique.",
     image: "/prestations-hero.png",
     imageAlt: "Intérieur villa premium — propreté hôtelière",
     imagePosition: "center 40%",
@@ -141,7 +141,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Réassort consommables de bienvenue — à nos frais",
-        desc: "Avant chaque arrivée, nous réapprovisionnons café, eau, savon, gel douche et produits d'accueil. Ces consommables courants sont pris en charge par Diamant Noir — aucun frais supplémentaire pour vous.",
+        desc: "Avant chaque arrivée, nous réapprovisionnons café, eau, savon, gel douche et produits d'accueil. Ces consommables courants sont pris en charge par Naoriva — aucun frais supplémentaire pour vous.",
       },
     ],
   },
@@ -151,7 +151,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Transparence",
     tagline: "Vos revenus reversés, vos comptes clairs",
     metaDescription:
-      "Encaissement, commission 20 % TTC sur nuitées, espace propriétaire et Copilot — Diamant Noir Martinique.",
+      "Encaissement, commission 20 % TTC sur nuitées, espace propriétaire et Copilot — Naoriva Martinique.",
     image: "/villa-hero.jpg",
     imageAlt: "Villa de prestige — Martinique",
     imagePosition: "left 60%",

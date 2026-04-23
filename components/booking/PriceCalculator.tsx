@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * PriceCalculator — Diamant Noir
+ * PriceCalculator — Naoriva
  * ────────────────────────────────
  * Widget de calcul de prix live. À placer sur la fiche villa.
  * Calcule automatiquement le total dès que les dates sont choisies.

@@ -1,4 +1,4 @@
-# Diamant Noir — Blueprint Workflow n8n V1
+# Naoriva — Blueprint Workflow n8n V1
 
 ## Vue d'ensemble
 
@@ -113,7 +113,7 @@ n8n orchestre la logique IA, le scoring, et les notifications.
 ### Nœud 1 : Webhook Trigger
 - Type : `Webhook`
 - Méthode : POST
-- Path : `/webhook/diamant-noir-chat`
+- Path : `/webhook/naoriva-chat`
 - Authentification : Header secret `X-Webhook-Secret` (optionnel V1, obligatoire V2)
 
 ### Nœud 2 : Validation & Normalisation
@@ -133,7 +133,7 @@ n8n orchestre la logique IA, le scoring, et les notifications.
 ### Nœud 4 : Construction du prompt système
 - Type : `Code`
 - Assembler le système prompt avec :
-  - Identité du bot (concierge Diamant Noir)
+  - Identité du bot (concierge Naoriva)
   - Règles de ton (vouvoiement, luxe, sans emojis)
   - Contexte villas formaté
   - Lead data connue
@@ -196,10 +196,10 @@ n8n orchestre la logique IA, le scoring, et les notifications.
 ## Système Prompt LLM (à injecter dans le nœud 5)
 
 ```
-Tu es le concierge IA de Diamant Noir, une plateforme de villas de luxe en Martinique.
+Tu es le concierge IA de Naoriva, une plateforme de villas de luxe en Martinique.
 
 IDENTITÉ
-- Nom : Concierge Diamant Noir
+- Nom : Concierge Naoriva
 - Ton : élégant, vouvoiement, concis, humain, professionnel
 - Jamais d'emojis dans tes réponses
 - Phrases courtes et précises
@@ -249,11 +249,11 @@ Réponds UNIQUEMENT avec un JSON valide dans ce format :
 
 ```bash
 # Next.js (.env.local)
-N8N_WEBHOOK_URL=https://votre-n8n.com/webhook/diamant-noir-chat
+N8N_WEBHOOK_URL=https://votre-n8n.com/webhook/naoriva-chat
 
 # n8n (variables d'environnement ou credentials)
 ANTHROPIC_API_KEY=sk-ant-...  # ou OPENAI_API_KEY
-CONCIERGE_NOTIFICATION_EMAIL=equipe@diamantnoir.com
+CONCIERGE_NOTIFICATION_EMAIL=equipe@naoriva.com
 ```
 
 ---

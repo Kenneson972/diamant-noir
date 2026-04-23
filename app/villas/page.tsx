@@ -34,7 +34,7 @@ function getCoordFallback(location: string | null): [number, number] {
 
 const FALLBACK_VILLAS: VillaMapItem[] = [
   {
-    id: "1", name: "Villa Diamant Noir", location: "Le Diamant, Martinique",
+    id: "1", name: "Villa Naoriva", location: "Le Diamant, Martinique",
     price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247],
     images: ["/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
   },

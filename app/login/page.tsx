@@ -154,7 +154,7 @@ function PasswordPanel({
         <Send size={20} strokeWidth={1.25} className="text-[rgba(13,27,42,0.30)]" aria-hidden />
         <div className="space-y-2">
           <h2 className="font-display text-2xl text-[#0D1B2A]">Confirmez votre email</h2>
-          <span className="block h-px w-10 bg-black/12" />
+          <span className="block h-px w-10 bg-navy/12" />
         </div>
         <p className="text-sm leading-relaxed text-[rgba(13,27,42,0.55)]">
           Nous avons envoyé un lien de confirmation à{" "}
@@ -401,7 +401,7 @@ function LoginSideVideo() {
   }, [])
 
   return (
-    <div className="relative z-0 h-[clamp(220px,42svh,420px)] w-full shrink-0 overflow-hidden bg-black lg:h-auto lg:min-h-0 lg:flex-[1.5]">
+    <div className="relative z-0 h-[clamp(220px,42svh,420px)] w-full shrink-0 overflow-hidden bg-navy lg:h-auto lg:min-h-0 lg:flex-[1.5]">
       {reduceMotion ? (
         <Image
           src="/villa-hero.jpg"
@@ -459,11 +459,11 @@ function LoginForm() {
 
       <div className="relative z-[1] flex w-full flex-col justify-center border-black/[0.06] bg-white px-6 py-10 lg:w-[min(100%,26rem)] lg:shrink-0 lg:border-l lg:px-10 lg:py-14">
         <div className="mx-auto w-full max-w-xs space-y-8">
-          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">Diamant Noir</p>
+          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">Naoriva</p>
 
           <div className="space-y-2">
             <h1 className="font-display text-[1.9rem] leading-tight text-[#0D1B2A]">{title}</h1>
-            <span className="block h-px w-8 bg-black/12" />
+            <span className="block h-px w-8 bg-navy/12" />
             <p className="text-sm text-[rgba(13,27,42,0.45)]">{tagline}</p>
           </div>
 
@@ -499,7 +499,7 @@ function LoginForm() {
             ) : null}
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">© 2026 Diamant Noir</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">© 2026 Naoriva</p>
         </div>
       </div>
     </main>

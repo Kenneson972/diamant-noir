@@ -9,7 +9,7 @@ import {
 
 export const metadata = {
   title: "Politique de confidentialité",
-  description: "Politique de confidentialité et protection des données personnelles, Diamant Noir.",
+  description: "Politique de confidentialité et protection des données personnelles, Naoriva.",
 };
 
 function ConfidentialiteSimple() {
@@ -18,7 +18,7 @@ function ConfidentialiteSimple() {
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Politique de confidentialité</h1>
         <p className="mb-6 text-navy/70">
-          Diamant Noir s&apos;engage à protéger vos données personnelles. Les informations collectées via les
+          Naoriva s&apos;engage à protéger vos données personnelles. Les informations collectées via les
           formulaires (réservation, contact, soumission villa) sont utilisées uniquement pour traiter vos
           demandes et améliorer nos services. Nous ne vendons pas vos données à des tiers.
         </p>
@@ -54,7 +54,7 @@ export default function ConfidentialitePage() {
       <LandingSectionNarrow bg="white">
         <LandingBlockTitle eyebrow="Engagement" title="Protection des données" />
         <p className="text-navy/80 leading-relaxed">
-          Diamant Noir s&apos;engage à protéger vos données personnelles. Les informations collectées via les
+          Naoriva s&apos;engage à protéger vos données personnelles. Les informations collectées via les
           formulaires (réservation, contact, soumission villa) sont utilisées uniquement pour traiter vos
           demandes et améliorer nos services. Nous ne vendons pas vos données à des tiers.
         </p>
@@ -70,7 +70,7 @@ export default function ConfidentialitePage() {
 
       <LandingSectionNarrow bg="white">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
-          <Link href="/contact" className="btn-luxury bg-black text-white">
+          <Link href="/contact" className="btn-luxury bg-navy text-white">
             Nous contacter
           </Link>
           <Link href="/" className="link-underline text-sm font-medium text-navy/70">

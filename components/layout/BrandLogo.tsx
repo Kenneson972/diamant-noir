@@ -61,8 +61,8 @@ export function BrandLogo({
       {showIcon ? (
         <span className={`relative block shrink-0 ${s.box}`}>
           <Image
-            src="/brand/diamant-noir-logo.png"
-            alt={showWordmark ? "" : "Diamant Noir"}
+            src="/brand/naoriva-logo.png"
+            alt={showWordmark ? "" : "Naoriva"}
             fill
             className={`object-contain object-center ${onDark ? "brightness-0 invert" : ""}`}
             sizes={imageSizes}
@@ -74,7 +74,7 @@ export function BrandLogo({
         <span
           className={`font-display ${s.wordmark} transition-colors duration-300 ${wordmarkColor}`}
         >
-          DIAMANT NOIR
+          NAORIVA
         </span>
       ) : null}
     </>
@@ -84,7 +84,7 @@ export function BrandLogo({
 
   if (linkToHome) {
     return (
-      <Link href="/" className={wrapClass} aria-label="Diamant Noir — Accueil" scroll>
+      <Link href="/" className={wrapClass} aria-label="Naoriva — Accueil" scroll>
         {inner}
       </Link>
     );

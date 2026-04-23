@@ -175,7 +175,7 @@ export const BookingForm = ({
             <span>{formatPrice(150)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="underline decoration-navy/20 underline-offset-4">Frais de service Diamant Noir</span>
+            <span className="underline decoration-navy/20 underline-offset-4">Frais de service Naoriva</span>
             <span>{formatPrice(Math.round(price.total * 0.05))}</span>
           </div>
           <div className="flex justify-between font-bold text-navy pt-4 border-t border-navy/10 text-lg">

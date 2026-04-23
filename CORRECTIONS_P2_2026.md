@@ -1,4 +1,4 @@
-# Rapport de Corrections P2 — Diamant Noir
+# Rapport de Corrections P2 — Naoriva
 
 **Date :** 2026-04-13  
 **Audit :** Lighthouse (Page Prestations `/prestations`)  
@@ -89,7 +89,7 @@
 **Modifications :**
 - Import `Metadata` type ajouté
 - 10 champs enrichis :
-  - `title` : "Nos Prestations | Diamant Noir — Conciergerie Privée Martinique"
+  - `title` : "Nos Prestations | Naoriva — Conciergerie Privée Martinique"
   - `description` : 150 chars, keywords (conciergerie, location villa, Martinique)
   - `keywords` array
   - `openGraph.title`, `description`, `images`
@@ -167,5 +167,5 @@ components/prestations/VideoScrollHero.tsx.backup_p2
 
 ---
 
-**Généré par :** Claude Agent — Audit P2 Diamant Noir  
+**Généré par :** Claude Agent — Audit P2 Naoriva  
 **Date :** 2026-04-13

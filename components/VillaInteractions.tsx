@@ -14,7 +14,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
   const path = `/villas/${villaId}`;
   const shareUrl = getShareUrl(path);
   const encodedUrl = encodeURIComponent(shareUrl);
-  const text = encodeURIComponent(`${villaName} — Diamant Noir`);
+  const text = encodeURIComponent(`${villaName} — Naoriva`);
   const whatsappUrl = `https://wa.me/?text=${text}%20${encodedUrl}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
 

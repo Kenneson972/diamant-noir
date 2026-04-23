@@ -24,7 +24,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-[1050] bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[1050] bg-navy/40 transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}

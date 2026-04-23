@@ -37,7 +37,7 @@ export function BookLandingMarketing({
   if (audience === "proprietaire") {
     return (
       <>
-        <section className="relative min-h-[220px] w-full overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
+        <section className="relative min-h-[220px] w-full overflow-hidden bg-navy xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
           <div
             className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
             aria-hidden
@@ -63,7 +63,7 @@ export function BookLandingMarketing({
               <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_20px_50px_rgba(0,0,0,0.18)] sm:flex-row sm:divide-x sm:divide-y-0">
                 <Link
                   href="/proprietaires"
-                  className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+                  className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
                 >
                   <Building2 className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
@@ -73,7 +73,7 @@ export function BookLandingMarketing({
                 </Link>
                 <Link
                   href="/soumettre-ma-villa"
-                  className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+                  className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
                 >
                   <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
@@ -122,8 +122,8 @@ export function BookLandingMarketing({
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">Une seule vitrine</p>
             <h2 className="font-display text-2xl text-navy md:text-3xl">Catalogue voyageurs &amp; exigence marque</h2>
             <p className="text-sm leading-relaxed text-navy/55">
-              La page <span className="font-medium text-navy">Nos villas</span> présente la collection louée par Diamant
-              Noir. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
+              La page <span className="font-medium text-navy">Nos villas</span> présente la collection louée par
+              Naoriva. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
             </p>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link
@@ -172,7 +172,7 @@ export function BookLandingMarketing({
 
   return (
     <>
-      <section className="relative min-h-[220px] w-full overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
+      <section className="relative min-h-[220px] w-full overflow-hidden bg-navy xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
         <div
           className="absolute inset-0 bg-[url('/villa-hero.jpg')] bg-cover bg-center opacity-40"
           aria-hidden
@@ -195,7 +195,7 @@ export function BookLandingMarketing({
             <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_20px_50px_rgba(0,0,0,0.18)] sm:flex-row sm:divide-x sm:divide-y-0">
               <Link
                 href={catalogueHref}
-                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
                 <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>
@@ -205,7 +205,7 @@ export function BookLandingMarketing({
               </Link>
               <Link
                 href={catalogueHref}
-                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-black/[0.03] sm:py-5"
+                className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
                 <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                 <div>

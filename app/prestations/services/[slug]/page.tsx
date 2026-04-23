@@ -36,10 +36,10 @@ export async function generateMetadata({
   if (!isServiceSlug(slug)) return {};
   const d = SERVICE_DETAILS[slug];
   return {
-    title: `${d.title} | Prestations — Diamant Noir`,
+    title: `${d.title} | Prestations — Naoriva`,
     description: d.metaDescription,
     openGraph: {
-      title: `${d.title} | Diamant Noir`,
+      title: `${d.title} | Naoriva`,
       description: d.metaDescription,
       images: [{ url: d.image, width: 1200, height: 630, alt: d.imageAlt }],
     },

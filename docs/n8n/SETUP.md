@@ -1,10 +1,10 @@
-# Diamant Noir — Setup Workflow n8n V1
+# Naoriva — Setup Workflow n8n V1
 
 ## Prérequis
 
 - Instance n8n active (`https://kenneson.app.n8n.cloud`)
 - Compte OpenAI avec accès API (`gpt-4o-mini` ou `gpt-4o`)
-- Projet Supabase Diamant Noir (`wsdawdxucyuyopkpgjij`)
+- Projet Supabase Naoriva (`wsdawdxucyuyopkpgjij`)
 - Application Next.js déployée (variable `N8N_WEBHOOK_URL` à configurer)
 
 ---
@@ -12,7 +12,7 @@
 ## Étape 1 — Importer le workflow
 
 1. Ouvrir n8n → **Workflows** → bouton **Import**
-2. Sélectionner le fichier `docs/n8n/diamant-noir-chatbot-v1.json`
+2. Sélectionner le fichier `docs/n8n/naoriva-chatbot-v1.json`
 3. Le workflow apparaît avec 11 nœuds
 
 ---
@@ -30,7 +30,7 @@
 ### Supabase
 
 1. **Settings** → **Credentials** → **Add Credential** → **Supabase**
-2. Nom : `Supabase Diamant Noir`
+2. Nom : `Supabase Naoriva`
 3. Host : `https://wsdawdxucyuyopkpgjij.supabase.co`
 4. Service Role Key : votre clé `service_role` (depuis Supabase → Project Settings → API)
 5. Sauvegarder
@@ -117,7 +117,7 @@ alter table public.pre_bookings enable row level security;
 1. Dans le workflow, cliquer sur le nœud **Webhook**
 2. Copier l'URL de production (onglet **Production URL**) :
    ```
-   https://kenneson.app.n8n.cloud/webhook/diamant-noir-chat
+   https://kenneson.app.n8n.cloud/webhook/naoriva-chat
    ```
 3. Activer le workflow (toggle en haut à droite)
 
@@ -129,7 +129,7 @@ Dans le fichier `.env.local` de l'application Next.js :
 
 ```bash
 # URL du webhook n8n — coller l'URL copiée à l'étape 4
-N8N_WEBHOOK_URL=https://kenneson.app.n8n.cloud/webhook/diamant-noir-chat
+N8N_WEBHOOK_URL=https://kenneson.app.n8n.cloud/webhook/naoriva-chat
 
 # Secret optionnel pour authentifier les requêtes (configurer aussi dans n8n si activé)
 # N8N_WEBHOOK_SECRET=votre-secret-aleatoire
@@ -201,7 +201,7 @@ Pour utiliser Claude (recommandé pour la qualité du français) :
 ### Test rapide (curl)
 
 ```bash
-curl -X POST https://kenneson.app.n8n.cloud/webhook/diamant-noir-chat \
+curl -X POST https://kenneson.app.n8n.cloud/webhook/naoriva-chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "Bonjour, je cherche une villa pour 6 personnes en août",
@@ -248,7 +248,7 @@ curl -X POST https://kenneson.app.n8n.cloud/webhook/diamant-noir-chat \
 
 | Variable | Où | Valeur |
 |---|---|---|
-| `N8N_WEBHOOK_URL` | `.env.local` Next.js | `https://kenneson.app.n8n.cloud/webhook/diamant-noir-chat` |
+| `N8N_WEBHOOK_URL` | `.env.local` Next.js | `https://kenneson.app.n8n.cloud/webhook/naoriva-chat` |
 | `N8N_WEBHOOK_SECRET` | `.env.local` + n8n | Optionnel — secret partagé pour authentifier |
 | `OPENAI_API_KEY` | n8n Credentials | Clé OpenAI (`sk-...`) |
 | `ANTHROPIC_API_KEY` | n8n Credentials | Clé Anthropic si Claude utilisé |

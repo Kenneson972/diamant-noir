@@ -1,5 +1,5 @@
 // ============================================================
-// Diamant Noir — Sanitisation des messages chatbot
+// Naoriva — Sanitisation des messages chatbot
 // Protection contre l'injection de prompt et les payloads malveillants
 // ============================================================
 

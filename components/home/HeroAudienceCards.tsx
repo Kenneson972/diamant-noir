@@ -56,13 +56,13 @@ export function HeroAudienceCards() {
         <button
           type="button"
           onClick={chooseProprio}
-          className="group flex min-h-[104px] flex-col items-start gap-2 border border-gold/30 bg-black/20 px-6 py-6 text-left backdrop-blur-sm transition-all duration-200 hover:border-gold/60 hover:bg-black/28 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 active:scale-[0.98]"
+          className="group flex min-h-[104px] flex-col items-start gap-2 border border-gold/30 bg-navy/20 px-6 py-6 text-left backdrop-blur-sm transition-all duration-200 hover:border-gold/60 hover:bg-navy/28 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 active:scale-[0.98]"
         >
           <span className="text-[9px] font-bold uppercase tracking-[0.38em] text-gold/80">
             Conciergerie Privée
           </span>
           <span className="font-display text-[1.1rem] leading-snug text-white">
-            Gérer ma villa avec Diamant Noir
+            Gérer ma villa avec Naoriva
           </span>
           <Building2
             className="mt-auto h-[15px] w-[15px] text-gold/55 transition-transform duration-200 group-hover:translate-x-0.5"
@@ -75,7 +75,7 @@ export function HeroAudienceCards() {
         <button
           type="button"
           onClick={chooseVoyageur}
-          className="group flex min-h-[104px] flex-col items-start gap-2 border border-white/15 bg-black/15 px-6 py-6 text-left backdrop-blur-sm transition-all duration-200 hover:border-white/28 hover:bg-black/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.98]"
+          className="group flex min-h-[104px] flex-col items-start gap-2 border border-white/15 bg-navy/15 px-6 py-6 text-left backdrop-blur-sm transition-all duration-200 hover:border-white/28 hover:bg-navy/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.98]"
         >
           <span className="text-[9px] font-bold uppercase tracking-[0.38em] text-white/45">
             Espace Voyageur

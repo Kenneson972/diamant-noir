@@ -1,4 +1,4 @@
-# Automatisation n8n — Copilot propriétaire Diamant Noir
+# Automatisation n8n — Copilot propriétaire Naoriva
 
 Ce document explique **comment le copilot fonctionne**, pourquoi n8n a été **optionnel** au MVP, et comment brancher une **automatisation réelle** (LLM) aujourd’hui.
 
@@ -101,12 +101,12 @@ Le fichier est versionné ici : [`owner-copilot-workflow-v2.json`](owner-copilot
 2. Sélectionner `docs/n8n/owner-copilot-workflow-v2.json` depuis le repo.
 3. Ouvrir le nœud **HTTP — Anthropic** : attacher une credential **HTTP Header Auth** avec la clé Anthropic (`x-api-key` ou selon votre config — le workflow utilise le modèle défini dans le nœud).
 4. Variables d’environnement **n8n** (Settings → Variables) : optionnellement `N8N_OWNER_WEBHOOK_SECRET` aligné sur Next.js.
-5. **Activer** le workflow, puis copier l’URL **Production** du Webhook (path `diamant-owner-copilot`) → la mettre dans **`N8N_OWNER_WEBHOOK_URL`** sur Vercel / `.env.local`.
+5. **Activer** le workflow, puis copier l’URL **Production** du Webhook (path `naoriva-owner-copilot`) → la mettre dans **`N8N_OWNER_WEBHOOK_URL`** sur Vercel / `.env.local`.
 
 ### Option B — Import via API (script)
 
 1. n8n → **Settings** → **n8n API** → créer une **API Key**.
-2. Depuis la racine `diamant-noir` :
+2. Depuis la racine `naoriva` :
 
 ```bash
 N8N_BASE_URL=https://VOTRE-SOUS-DOMAINE.app.n8n.cloud \
@@ -122,7 +122,7 @@ Le script affiche l’`id` du workflow créé. En cas d’erreur credential, imp
 
 ## 6. Montage n8n recommandé (minimal « vrai » copilot)
 
-1. **Webhook** — méthode `POST`, path ex. `/webhook/diamant-owner-copilot`, **Respond: Using Respond to Webhook Node**.
+1. **Webhook** — méthode `POST`, path ex. `/webhook/naoriva-owner-copilot`, **Respond: Using Respond to Webhook Node**.
 2. **IF** (optionnel) — si `N8N_OWNER_WEBHOOK_SECRET` est utilisé : comparer `{{ $json.headers["x-webhook-secret"] }}` ou le header normalisé selon ta version n8n.
 3. **OpenAI** (ou **OpenAI Chat Model** + **Agent**, ou **Anthropic**) —  
    - **System** : instructions strictes (voir section 7).  
@@ -137,7 +137,7 @@ Tester avec **Execute workflow** puis depuis l’app en configurant `N8N_OWNER_W
 ## 7. Prompt système (exemple FR — à adapter)
 
 ```
-Tu es l’assistant conciergerie Diamant Noir pour UN propriétaire de villas de luxe en Martinique.
+Tu es l’assistant conciergerie Naoriva pour UN propriétaire de villas de luxe en Martinique.
 
 Données FIABLES : uniquement l’objet JSON "context" fourni dans ce message. Tu n’as aucun autre accès à la base.
 - Ne invente pas de chiffres, de réservations ou de noms qui ne figurent pas dans context.

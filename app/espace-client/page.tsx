@@ -51,7 +51,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
         <h2 className="font-display text-[22px] font-normal text-[#0D1B2A] leading-snug mb-2">
-          {booking.villa?.name ?? "Villa Diamant Noir"}
+          {booking.villa?.name ?? "Villa Naoriva"}
         </h2>
         {booking.villa?.location && (
           <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">

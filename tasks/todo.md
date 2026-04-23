@@ -1,5 +1,5 @@
-# TODO — DIAMANT NOIR
-## 📌 Dernière session : 2026-03-16
+# TODO — NAORIVA
+## 📌 Dernière session : 2026-04-14
 
 ---
 
@@ -34,23 +34,27 @@
 - [x] **FAQ** : 5 questions dans page Contact
 - [x] **Page Services Propriétaires** : `/services-proprietaires` + lien Navbar
 - [x] **Import Airbnb côté public** : URL → pré-remplissage formulaire soumission
+- [x] **Page `/prestations`** : refonte complète "use client", animation canvas scroll GSAP 561 frames WebP, 5 sections glassmorphism, TypeScript clean
+- [x] **Copilot propriétaire — hardening** : types partagés (`OwnerAssistantAction`), cache contexte 30s, métriques rolling 30j, rate limit 20 req/min, validation input, timeout n8n 15s, fallback propre, hint d'aide UX
 
 ---
 
 ## ⚠️ Actions manuelles requises (Kenneson)
 
-- [ ] Exécuter `supabase-ota-migration.sql` dans Supabase SQL Editor (projet DIAMANT NOIR)
+- [ ] Exécuter `supabase-ota-migration.sql` dans Supabase SQL Editor (projet NAORIVA)
 - [ ] Vérifier RLS dans Supabase > Auth > Policies (chat_logs, admin_chat_logs, support_tickets)
 - [ ] Configurer webhook n8n : `email_confirmation`, `email_approved`, `email_rejected`
-- [ ] Vérifier `.env.local` → URL + clés du projet DIAMANT NOIR (pas KARIBLOOM)
+- [ ] Vérifier `.env.local` → URL + clés du projet NAORIVA (pas KARIBLOOM)
 - [ ] Clés Stripe réelles dans `.env.local`
 
 ---
 
 ## 🔄 En cours / Prochaine session
 
+- [ ] **n8n copilot proprio** : configurer `N8N_OWNER_WEBHOOK_URL` + `N8N_OWNER_WEBHOOK_SECRET`, workflow LLM avec payload structuré + `suggested_prompts`
+- [ ] **Digest lundi matin** : cron n8n 08h00 → `buildOwnerContextPackCached` → email résumé propriétaire
+- [ ] **Alerte gap calendrier** : trigger Supabase sur annulation → détection trou 3+ nuits → `owner_alerts`
 - [ ] 2.2 Branding : hero Rocher du Diamant (photo Martinique), slides présentation conciergerie, logo final
-- [ ] 3.2 Perf P0 : `Promise.all` routes séquentielles, `next/dynamic` Chatbot
 - [ ] 3.3 Modularité : découper `app/dashboard/proprio/[villaId]/page.tsx` en sous-composants
 - [ ] 3.4 Hydration sans flicker : langue/devise depuis cookie serveur dans layout
 

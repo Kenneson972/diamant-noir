@@ -34,7 +34,7 @@
 Coller tel quel (adapter la section « Ta mission » si le ticket est précis : bug, feature, refacto léger).
 
 ```
-Tu travailles sur le repo Next.js « diamant-noir » (Diamant Noir).
+Tu travailles sur le repo Next.js « naoriva » (Naoriva).
 
 ## Contexte déjà implémenté (lis avant de modifier)
 - Audit : `docs/audits/home-audience-gate.md`

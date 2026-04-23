@@ -11,6 +11,29 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
+## 2026-04-13T23:59:00Z | type: perf+ui+docs | Session — Parallax mobile, design audit, polish UI
+
+- **agent**: `cursor` (synthèse session mémoire)
+- **summary**: **Parallax / Prestations** : rappel fixes canvas (`setTransform`, `scrub: true` mobile, `alpha: false`, stagger **12ms**), **561** frames WebP portrait + détection responsive + **preload** avec **media** ; **Design Audit Impeccable** v2.1.7 + **17** skills, **38** anti-patterns détectés (**1** restant intentionnel), rapport **`docs/design-audit-2026-04-13.md`** ; **51** remplacements **`bg-black` → `bg-navy`** sur **20+** fichiers TSX ; **`animate-bounce` → `animate-pulse`** (conciergerie + `VideoScrollHero`) ; **typing dots** en CSS smooth (`dn-typing-fade`, ease-out cubic) ; **progress bar** GPU (**`transform: scaleX`** au lieu de `width`). **Pending** (identifiés, non appliqués) : touch **44px**, **`prefers-reduced-motion`** GSAP, max-width standardisée, hover zoom villas, Cormorant italic.
+- **files**: multiples `*.tsx` (fonds navy), `app/conciergerie/*`, `components/prestations/VideoScrollHero.tsx`, `docs/design-audit-2026-04-13.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`
+- **why**: Traçabilité audit design + alignement mémoire session sur le dépôt.
+- **verify**: revue des fichiers concernés ; items *pending* à traiter ultérieurement.
+- **session**: `docs/logs/2026-04-13.md`
+
+---
+
+## 2026-04-14T00:07:00Z | type: security+perf+api+ui | Claude — Copilot propriétaire : hardening complet
+
+- **agent**: `claude`
+- **summary**: Fix 3 erreurs TypeScript prestations. Audit critique du copilot propriétaire. Création `lib/owner-assistant-types.ts` (union type `OwnerAssistantAction`, contrat `OwnerAssistantResponse`). Refonte `lib/owner-assistant-context.ts` (cache 30s, métriques rolling 30j, `revenue_current_month`/`revenue_last_month`/`momChangePercent`). Sécurisation route API (rate limit 20 req/min, validation 2000 chars, timeout n8n 15s, `request_id`, fallback propre, contexte compact). UX page copilot (hint d'aide contextuel, `hasInteracted`).
+- **files**: `lib/owner-assistant-types.ts` *(nouveau)*, `lib/owner-assistant-context.ts`, `app/api/dashboard/owner-assistant/route.ts`, `app/dashboard/proprio/assistant/page.tsx`, `app/prestations/page.tsx`, `components/dashboard/assistant-views/FinancesView.tsx`
+- **why**: API sans rate limit ni validation, métriques occupancy/RevPAR incorrectes, types `action` non vérifiés à la compilation, contexte Supabase rebuildi à chaque message.
+- **impact**: Copilot production-ready : protégé, tracé, métriques fiables, cohérent TypeScript.
+- **verify**: `npx tsc --noEmit --skipLibCheck` → EXIT:0
+- **session**: docs/logs/2026-04-14.md
+
+---
+
 ## 2026-04-14T12:00:00Z | type: perf | Cursor — Prestations mobile : latence frame (scrub + preload)
 
 - **agent**: `cursor`
@@ -148,7 +171,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **agent**: `cursor`
 - **summary**: **`VideoScrollHero`** — cartes section scroll-driven : fond **`bg-navy` solide** (fin du glass / blur), **`border-gold/30`** + barre **`border-l-4` / `border-r-4`** selon côté, ombre renforcée ; typo **liste `text-sm` `text-white/90`**, scène **`text-white/50`**, tagline **`text-gold`**, CTA **`text-gold`** + hover underline.
 - **files**: [`components/prestations/VideoScrollHero.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-11.md`]
-- **why**: Textes illisibles sur verre flouté ; alignement identité noir/or Diamant Noir.
+- **why**: Textes illisibles sur verre flouté ; alignement identité noir/or Naoriva.
 - **impact**: Contraste stable sur toutes les frames ; meilleure accessibilité lecture.
 - **verify**: `npm run build` OK.
 
@@ -188,7 +211,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-04-09T14:30:00Z | type: sql | Cursor — Migration owner_alerts appliquée (Supabase MCP)
 
 - **agent**: `cursor`
-- **summary**: Migration **`owner_alerts_ai_action_logs`** appliquée sur le projet Supabase **DIAMANT NOIR** (`apply_migration` MCP) : tables `owner_alerts`, `ai_action_logs`, RLS + policies.
+- **summary**: Migration **`owner_alerts_ai_action_logs`** appliquée sur le projet Supabase **NAORIVA** (`apply_migration` MCP) : tables `owner_alerts`, `ai_action_logs`, RLS + policies.
 - **files**: [`supabase/migrations/20260408180000_owner_alerts_ai_action_logs.sql`, `docs/ACTIONS_LOG.md`]
 - **why**: Aligner la base distante sur le schéma attendu par le copilot propriétaire.
 - **verify**: MCP `apply_migration` success ; `list_migrations` inclut la nouvelle version.
@@ -293,7 +316,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **files**: home (`app/page.tsx`, `components/home/*`), `app/prestations/page.tsx`, navbar / hero selon commits ; docs spec/plan ; `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`
 - **why**: Brief gérant — marque perçue comme maison de conciergerie privée, pas plateforme de location.
 - **impact**: Parcours marketing et hiérarchie CTA orientés conciergerie ; catalogue villas relégué visuellement après.
-- **verify**: `npm run build` OK (warning ESLint existant `Chatbot.tsx` hooks) ; `npx vercel deploy --prod --yes` → **READY**, alias `https://diamant-noir.vercel.app` ; déploiement `dpl_7YjcUErBrKh68G6VBczQ8TPYrir4`.
+- **verify**: `npm run build` OK (warning ESLint existant `Chatbot.tsx` hooks) ; `npx vercel deploy --prod --yes` → **READY**, alias `https://naoriva.vercel.app` ; déploiement `dpl_7YjcUErBrKh68G6VBczQ8TPYrir4`.
 
 ---
 
@@ -373,10 +396,10 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ---
 
-## 2026-04-06T22:00:00Z | type: docs | Cursor — Sync règles Builder, skill mobile-responsive, audit mobile diamant-noir
+## 2026-04-06T22:00:00Z | type: docs | Cursor — Sync règles Builder, skill mobile-responsive, audit mobile naoriva
 
 - **agent**: `cursor`
-- **summary**: Synchronisation du pack `client-builder` (DIAMANTNOIR → `CLIENT BUILDER KARIBLOOM/client-builder-rules/`) ; `kb-mobile-responsive.mdc` du pack = redirecteur vers le skill ; création du skill `.cursor/skills/mobile-responsive/` (copie miroir `client-builder-rules/skills/mobile-responsive/`) ; `kb-action-documentation` alignée (fichier racine + `01-core` dans Builder) ; `_INDEX` mis à jour. Audit mobile statique du projet `diamant-noir` (viewport OK, gaps overflow-x / vh / largeurs fixes / backdrop).
+- **summary**: Synchronisation du pack `client-builder` (DIAMANTNOIR → `CLIENT BUILDER KARIBLOOM/client-builder-rules/`) ; `kb-mobile-responsive.mdc` du pack = redirecteur vers le skill ; création du skill `.cursor/skills/mobile-responsive/` (copie miroir `client-builder-rules/skills/mobile-responsive/`) ; `kb-action-documentation` alignée (fichier racine + `01-core` dans Builder) ; `_INDEX` mis à jour. Audit mobile statique du projet `naoriva` (viewport OK, gaps overflow-x / vh / largeurs fixes / backdrop).
 - **files**: [`.cursor/rules/client-builder/`, `.cursor/skills/mobile-responsive/`, `.cursor/rules/kb-action-documentation.mdc`, `CLIENT BUILDER KARIBLOOM/client-builder-rules/`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-06.md`]
 - **why**: Alignement agence après mise à jour des règles ; skill mobile réutilisable ; traçabilité audit.
 - **impact**: Builder et projet client partagent le même pack + skill ; checklist d’amélioration mobile documentée.
@@ -409,7 +432,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-04-07T02:00:00Z | type: api+sql | Cursor — Migration Supabase MCP + normalisation équipements import
 
 - **agent**: `cursor`
-- **summary**: Migration `amenities_import_labels` appliquée sur projet Supabase **DIAMANT NOIR** (MCP `apply_migration`). Nouveau module `lib/amenity-import-normalize.ts` : alias FR/EN, règles « contient », déduplication → pastilles catalogue cochées auto après import ; `POST /api/import-airbnb` passe `amenities` par `normalizeImportedAmenities`.
+- **summary**: Migration `amenities_import_labels` appliquée sur projet Supabase **NAORIVA** (MCP `apply_migration`). Nouveau module `lib/amenity-import-normalize.ts` : alias FR/EN, règles « contient », déduplication → pastilles catalogue cochées auto après import ; `POST /api/import-airbnb` passe `amenities` par `normalizeImportedAmenities`.
 - **files**: [`lib/amenity-import-normalize.ts`, `app/api/import-airbnb/route.ts`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-07.md`]
 - **why**: Aligner les libellés OTA sur le catalogue dashboard et activer les suggestions sans saisie manuelle.
 - **impact**: Import Airbnb remplit souvent directement les cases suggestion (Wi-Fi, Lave-linge, Piscine, etc.) ; le reste reste en personnalisés.
@@ -761,7 +784,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-31T23:55:00Z | type: ui | Cursor — Hero wordmark + baseline partagés ; `/proprietaires` aligné accueil
 
 - **agent**: `cursor`
-- **summary**: **`HeroWordmarkBaseline`** (`components/marketing/HeroWordmarkBaseline.tsx`) — mot **DIAMANT NOIR** + *Confiance · Réactivité · Excellence* ; **`app/page.tsx`** refactor pour l’utiliser. **`app/proprietaires/page.tsx`** : même hero (remplace pictogramme, filet or, paragraphe) ; **CTAs** Soumettre / Espace propriétaire conservés sous la baseline via `children`.
+- **summary**: **`HeroWordmarkBaseline`** (`components/marketing/HeroWordmarkBaseline.tsx`) — mot **NAORIVA** + *Confiance · Réactivité · Excellence* ; **`app/page.tsx`** refactor pour l’utiliser. **`app/proprietaires/page.tsx`** : même hero (remplace pictogramme, filet or, paragraphe) ; **CTAs** Soumettre / Espace propriétaire conservés sous la baseline via `children`.
 - **files**: [`components/marketing/HeroWordmarkBaseline.tsx`, `app/page.tsx`, `app/proprietaires/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
 - **why**: Cohérence visuelle accueil ↔ landing propriétaires.
 - **impact**: Première lecture identique ; conversion proprio inchangée sous le hero.
@@ -772,7 +795,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-31T23:45:00Z | type: ui | Cursor — Hero : échange header/logo + baseline Confiance / Réactivité / Excellence
 
 - **agent**: `cursor`
-- **summary**: **Navbar** : pictogramme seul (`showIcon`, `showWordmark={false}`) au centre. **Accueil hero** : mot **DIAMANT NOIR** (wordmark `BrandLogo`, taille fluide) + seul sous-texte visible *Confiance · Réactivité · Excellence* (tracking, filet discret). Suppression **`HomeHeroAudience`** du hero (CTA audience déjà couverts par sections suivantes + `HomeBottomCta`).
+- **summary**: **Navbar** : pictogramme seul (`showIcon`, `showWordmark={false}`) au centre. **Accueil hero** : mot **NAORIVA** (wordmark `BrandLogo`, taille fluide) + seul sous-texte visible *Confiance · Réactivité · Excellence* (tracking, filet discret). Suppression **`HomeHeroAudience`** du hero (CTA audience déjà couverts par sections suivantes + `HomeBottomCta`).
 - **files**: [`components/layout/Navbar.tsx`, `app/page.tsx`, `components/home/HomeHeroAudience.tsx` (supprimé), `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-31.md`]
 - **why**: Demande design — inverser logo header / titre hero et alléger le hero à une baseline élégante.
 - **impact**: Première lecture plus premium et moins chargée ; parcours proprio/voyageur passe par le contenu sous le hero.
@@ -827,8 +850,8 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-04-04T05:15:00Z | type: docs | Journal — travail Claude Code (terminal) consigné
 
 - **agent**: `claude` (session **Claude Code** CLI)
-- **summary**: Traçabilité dans `docs/logs/2026-04-04.md` : workflow n8n importable **Diamant Noir — Chatbot Concierge V1** (`docs/n8n/diamant-noir-chatbot-v1.json`) — webhook, contexte villas, agent OpenAI, parsing JSON, branches IF, Supabase (`continueOnFail`), notification équipe ; guide **`docs/n8n/SETUP.md`** (import, credentials, SQL `chatbot_leads` / `pre_bookings`, curl, prod) ; installation plugin officiel **frontend-design** (Anthropic) dans le cache `~/.claude/plugins/...` ; mémoire session : variable **`N8N_WEBHOOK_URL`**, intégration avec l’API **`/api/chat`** existante.
-- **files**: [`docs/n8n/diamant-noir-chatbot-v1.json`, `docs/n8n/SETUP.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
+- **summary**: Traçabilité dans `docs/logs/2026-04-04.md` : workflow n8n importable **Naoriva — Chatbot Concierge V1** (`docs/n8n/naoriva-chatbot-v1.json`) — webhook, contexte villas, agent OpenAI, parsing JSON, branches IF, Supabase (`continueOnFail`), notification équipe ; guide **`docs/n8n/SETUP.md`** (import, credentials, SQL `chatbot_leads` / `pre_bookings`, curl, prod) ; installation plugin officiel **frontend-design** (Anthropic) dans le cache `~/.claude/plugins/...` ; mémoire session : variable **`N8N_WEBHOOK_URL`**, intégration avec l’API **`/api/chat`** existante.
+- **files**: [`docs/n8n/naoriva-chatbot-v1.json`, `docs/n8n/SETUP.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-04.md`]
 - **why**: Demande utilisateur de documenter dans les logs ce que Claude Code a réalisé (audit / reprise d’équipe).
 - **impact**: Historique lisible côté projet ; pas de changement runtime applicatif.
 - **verify**: Fichiers relus.
@@ -1004,7 +1027,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 - **agent**: `claude`
 - **summary**: Page `app/proprietaires/page.tsx` (hero vidéo, sections marketing, CTA soumission / login proprio), extraction `lib/proprietaires-data.ts` (INCLUSIONS + témoignage), imports depuis `app/prestations/page.tsx`, liens home + navbar vers `/proprietaires`, `app/sitemap.ts` avec entrée `/proprietaires` et `NEXT_PUBLIC_BASE_URL`, correctifs build (imports login / `TenantMagicLinkFlow`, retrait prop `basePrice` sur `AvailabilityCalendar`). Refus des flags `ignoreBuildErrors` / `ignoreDuringBuilds` sur `next.config.mjs`.
-- **files**: (voir `git log` diamant-noir : commits ~7347692, 0c610f3, 6cbf7dc, fix imports + villa detail)
+- **files**: (voir `git log` naoriva : commits ~7347692, 0c610f3, 6cbf7dc, fix imports + villa detail)
 - **why**: Spec `2026-04-03-proprietaires-landing-design.md` + plan Superpowers.
 - **impact**: Parcours propriétaires dédié, SEO/sitemap, une seule source pour les inclusions prestations/landing.
 - **verify**: `npm run build` OK (rapport terminal session Claude).
@@ -1114,7 +1137,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ## 2026-03-31T19:15:00Z | type: ui | Cursor — Hero : titre visible retiré
 - **agent**: `cursor`
-- **summary**: Suppression du `h1` typographique « Diamant Noir » dans le hero ; conservation d’un seul `h1` en `sr-only` pour SEO / lecteurs d’écran ; lien `aria-labelledby` sur la section.
+- **summary**: Suppression du `h1` typographique « Naoriva » dans le hero ; conservation d’un seul `h1` en `sr-only` pour SEO / lecteurs d’écran ; lien `aria-labelledby` sur la section.
 - **files**: [`app/page.tsx`]
 - **why**: Demande client — hero visuel = logo + accroche uniquement.
 - **impact**: Outline page cohérente ; pas de double titre visible.
@@ -1125,7 +1148,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ## 2026-03-31T19:00:00Z | type: ui | Cursor — Hero : retrait baseline sous le titre
 - **agent**: `cursor`
-- **summary**: Suppression du sous-titre « Là où l’horizon devient votre seul voisin. » sous `h1` Diamant Noir sur l’accueil ; ajustement léger du `delay` sur le bloc barre de recherche.
+- **summary**: Suppression du sous-titre « Là où l’horizon devient votre seul voisin. » sous `h1` Naoriva sur l’accueil ; ajustement léger du `delay` sur le bloc barre de recherche.
 - **files**: [`app/page.tsx`]
 - **why**: Demande client — alléger le hero après logo + accroche Martinique + titre.
 - **impact**: Moins de texte above-the-fold.
@@ -1136,7 +1159,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ## 2026-03-31T18:45:00Z | type: ui | Cursor — Hero : logo XXL, header mot seul
 - **agent**: `cursor`
-- **summary**: `BrandLogo` : taille `hero` (grand pictogramme), prop `showIcon` (masquer le picto). Accueil : logo `size="hero"` seul, phrase « Martinique · Collection privée » conservée en dessous. `Navbar` : `showIcon={false}` — seul le mot « DIAMANT NOIR » reste centré.
+- **summary**: `BrandLogo` : taille `hero` (grand pictogramme), prop `showIcon` (masquer le picto). Accueil : logo `size="hero"` seul, phrase « Martinique · Collection privée » conservée en dessous. `Navbar` : `showIcon={false}` — seul le mot « NAORIVA » reste centré.
 - **files**: [`components/layout/BrandLogo.tsx`, `components/layout/Navbar.tsx`, `app/page.tsx`]
 - **why**: Demande client — gros logo dans le hero, pas d’icône à côté du nom dans la barre fixe.
 - **impact**: Footer / espace client / login inchangés (icône + mot si non surchargé).
@@ -1347,7 +1370,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 
 ## 2026-03-17T18:15:00Z | type: docs | Cursor — Journal + règle `kb-action-documentation`
 - **agent**: `cursor`
-- **summary**: Entrée ci-dessus consignée ; `docs/logs/2026-03-17.md` section Cursor complétée ; règle **`.cursor/rules/kb-action-documentation.mdc`** mise à jour (champ `agent`, chemins `diamant-noir/docs/…`, note verify si pas de build).
+- **summary**: Entrée ci-dessus consignée ; `docs/logs/2026-03-17.md` section Cursor complétée ; règle **`.cursor/rules/kb-action-documentation.mdc`** mise à jour (champ `agent`, chemins `naoriva/docs/…`, note verify si pas de build).
 - **files**: [`docs/ACTIONS_LOG.md`, `docs/logs/2026-03-17.md`, `.cursor/rules/kb-action-documentation.mdc`]
 - **why**: Rappel utilisateur : chaque action doit suivre la règle de documentation projet.
 - **impact**: Traçabilité ; prochaines sessions Cursor alignées sur les chemins réels du repo.
@@ -1460,8 +1483,8 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **summary**:
   1. Synchronisation du répertoire `CLIENT BUILDER KARIBLOOM/client-builder-rules/` vers `DIAMANTNOIR/.cursor/rules/client-builder/` (structure `01-core/` … `07-optional/`, `_INDEX.mdc`, `docs/`).
   2. Mise à jour du point d’entrée `.cursor/rules/karibloom-client-builder.mdc` : section « Pack Client Builder », ligne de tableau vers l’index et `02-stack/`, règle de priorité racine vs pack.
-- **files**: [`.cursor/rules/client-builder/` (arborescence complète), `.cursor/rules/karibloom-client-builder.mdc`, `diamant-noir/docs/ACTIONS_LOG.md`, `diamant-noir/docs/logs/2026-03-27.md`]
-- **why**: Demande utilisateur d’intégrer les règles du Client Builder dans le projet Diamant Noir pour une gouvernance stack/UI et une carte des règles alignées sur l’agence.
+- **files**: [`.cursor/rules/client-builder/` (arborescence complète), `.cursor/rules/karibloom-client-builder.mdc`, `naoriva/docs/ACTIONS_LOG.md`, `naoriva/docs/logs/2026-03-27.md`]
+- **why**: Demande utilisateur d’intégrer les règles du Client Builder dans le projet Naoriva pour une gouvernance stack/UI et une carte des règles alignées sur l’agence.
 - **impact**: Cursor charge le pack numéroté en complément des règles à la racine ; les choix déjà figés dans ce repo restent explicitement prioritaires via la règle racine.
 - **verify**: Arborescence `client-builder/` présente ; relecture du markdown du point d’entrée.
 - **session**: docs/logs/2026-03-27.md
@@ -1471,7 +1494,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-27T14:30:00Z | type: config | Cursor — Skills « Impeccable » (pbakaus/impeccable)
 - **agent**: `cursor`
 - **summary**: Copie du dossier `.cursor/skills` du dépôt [impeccable](https://github.com/pbakaus/impeccable/tree/main/.cursor/skills) vers `DIAMANTNOIR/.cursor/skills/` (21 skills : `adapt`, `animate`, `arrange`, `audit`, `bolder`, `clarify`, `colorize`, `critique`, `delight`, `distill`, `extract`, `frontend-design`, `harden`, `normalize`, `onboard`, `optimize`, `overdrive`, `polish`, `quieter`, `teach-impeccable`, `typeset` + fichiers `reference/` où présents).
-- **files**: [`.cursor/skills/**`, `diamant-noir/docs/ACTIONS_LOG.md`, `diamant-noir/docs/logs/2026-03-27.md`]
+- **files**: [`.cursor/skills/**`, `naoriva/docs/ACTIONS_LOG.md`, `naoriva/docs/logs/2026-03-27.md`]
 - **why**: Demande utilisateur d’ajouter ces skills au projet pour les agents Cursor.
 - **impact**: Les skills Impeccable sont disponibles localement sous `.cursor/skills/` (même convention qu’upstream : un dossier par skill, `SKILL.md` + références).
 - **verify**: `rsync` OK ; 21 `SKILL.md` listés sous `.cursor/skills/`.
@@ -1482,7 +1505,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-27T16:00:00Z | type: fix | Cursor — Runtime `next/dynamic` + Chatbot (factory undefined)
 - **agent**: `cursor`
 - **summary**: Correction du chargement dynamique du `Chatbot` dans `app/layout.tsx` : le loader renvoie désormais `{ default: mod.Chatbot }` au lieu de `mod.Chatbot` seul, conforme à ce qu’attend `React.lazy` / le bundler Next.
-- **files**: [`app/layout.tsx`, `diamant-noir/docs/ACTIONS_LOG.md`]
+- **files**: [`app/layout.tsx`, `naoriva/docs/ACTIONS_LOG.md`]
 - **why**: Erreur runtime `TypeError: Cannot read properties of undefined (reading 'call')` dans `webpack.js` / `mountLazyComponent` au chargement client.
 - **impact**: Le layout hydrate correctement le widget chatbot chargé en différé (`ssr: false`).
 - **verify**: `rm -rf .next && npm run build` OK.
@@ -1492,7 +1515,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-27T18:00:00Z | type: docs | Cursor — Mise à jour `RECAP_PROJET_COMPLET.md` (design + terminal)
 - **agent**: `cursor`
 - **summary**: Réalignement du récap projet sur le terminal Claude Code (plan luxe éditorial, implémentations Tailwind/globals/page/Navbar/Footer, retour utilisateur fonds blanc/noir, hero épuré). Section **Design system** réécrite (principes, tokens, utilitaires CSS, détail accueil `/`, tableau fichiers). Mise à jour date, stack styling, route `/`, historique §10.
-- **files**: [`RECAP_PROJET_COMPLET.md`, `diamant-noir/docs/ACTIONS_LOG.md`]
+- **files**: [`RECAP_PROJET_COMPLET.md`, `naoriva/docs/ACTIONS_LOG.md`]
 - **why**: Demande utilisateur de synchroniser la documentation avec l’état réel du design après les sessions terminal.
 - **impact**: Source de vérité projet à jour pour l’équipe et les agents.
 - **verify**: Relecture markdown.
@@ -1506,7 +1529,7 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
   2. Refonte **qui-sommes-nous**, **prestations**, **contact** : sections alternées, grilles asymétriques, rythme vertical, hiérarchie typographique, boutons `btn-luxury` / bordures fines.
   3. Pages **confidentialité**, **terms**, **cookies** : même langage visuel + **`NEXT_PUBLIC_MARKETING_SIMPLE_LEGAL=1`** pour réafficher l’ancienne version compacte (fallback).
   4. `lib/marketing-layout.ts` — lecture du flag.
-- **files**: [`components/marketing/landing-sections.tsx`, `lib/marketing-layout.ts`, `app/qui-sommes-nous/page.tsx`, `app/prestations/page.tsx`, `app/contact/page.tsx`, `app/confidentialite/page.tsx`, `app/terms/page.tsx`, `app/cookies/page.tsx`, `.env.local.example`, `diamant-noir/docs/ACTIONS_LOG.md`]
+- **files**: [`components/marketing/landing-sections.tsx`, `lib/marketing-layout.ts`, `app/qui-sommes-nous/page.tsx`, `app/prestations/page.tsx`, `app/contact/page.tsx`, `app/confidentialite/page.tsx`, `app/terms/page.tsx`, `app/cookies/page.tsx`, `.env.local.example`, `naoriva/docs/ACTIONS_LOG.md`]
 - **why**: Demande utilisateur — pages « landing » cohérentes avec le luxe éditorial, sans bloc titre + mur de texte ; fallback si le rendu ne convient pas.
 - **impact**: Parcours marketing plus lisible et premium ; pages légales structurées.
 - **verify**: `npm run build` OK.
@@ -1518,8 +1541,8 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 - **summary**:
   1. Nouveau module `components/marketing/editorial-blocks.tsx` : hero immersif pleine hauteur (image + dégradé, titre display), intro éditoriale centrée, grille services « best-sellers », split image/texte, bandeau chiffre, témoignages sur fond sombre.
   2. Refonte **`/prestations`** et **`/qui-sommes-nous`** pour se rapprocher du rythme [Le Collectionist — Conciergerie](https://www.lecollectionist.com/fr/notre-conciergerie-de-luxe) (sections successives, hiérarchie magazine, pas uniquement titre + bloc).
-  3. Contenus témoignages / sous-titres adaptés Diamant Noir / Martinique ; image `/public/villa-hero.jpg` (LCP prioritaire sur hero).
-- **files**: [`components/marketing/editorial-blocks.tsx`, `app/prestations/page.tsx`, `app/qui-sommes-nous/page.tsx`, `diamant-noir/docs/ACTIONS_LOG.md`]
+  3. Contenus témoignages / sous-titres adaptés Naoriva / Martinique ; image `/public/villa-hero.jpg` (LCP prioritaire sur hero).
+- **files**: [`components/marketing/editorial-blocks.tsx`, `app/prestations/page.tsx`, `app/qui-sommes-nous/page.tsx`, `naoriva/docs/ACTIONS_LOG.md`]
 - **why**: Demande utilisateur — rendu plus « landing » premium aligné sur la référence Le Collectionist.
 - **impact**: Parcours conciergerie / marque plus narratif et visuel.
 - **verify**: `npm run build` OK.
@@ -1529,16 +1552,16 @@ Journal des changements notables (qui / quoi / pourquoi). Les entrées peuvent p
 ## 2026-03-28T14:00:00Z | type: ui | Cursor — Catalogue `/villas` : angles droits
 - **agent**: `cursor`
 - **summary**: Cartes liste + image sans `rounded-3xl` ; lien carte avec bordure fine au survol ; bouton « Masquer la carte » en `rounded-none` ; badge tier rectangulaire ; popups Leaflet sans arrondi (`border-radius: 0`) + bordure légère dans `globals.css`.
-- **files**: [`components/VillasMapView.tsx`, `app/globals.css`, `diamant-noir/docs/ACTIONS_LOG.md`]
+- **files**: [`components/VillasMapView.tsx`, `app/globals.css`, `naoriva/docs/ACTIONS_LOG.md`]
 - **why**: Demande utilisateur — alignement luxe éditorial (UI/UX Pro Max : cohérence visuelle, pas de « cartes app » arrondies).
 - **impact**: `/villas` et mini-cartes carte aux bords nets.
 - **verify**: `npm run build` OK.
 
 ---
 
-## 2026-03-28T16:30:00Z | type: ui | Cursor — Réintégration logo marque (`/public/brand/diamant-noir-logo.png`)
+## 2026-03-28T16:30:00Z | type: ui | Cursor — Réintégration logo marque (`/public/brand/naoriva-logo.png`)
 - **agent**: `cursor`
-- **summary**: Composant `BrandLogo` (Image Next + wordmark « DIAMANT NOIR », variantes `onDark` / `onLight` pour fonds sombres/clairs). Remplacement des pictos SVG placeholder dans `Navbar`, `Footer`, `espace-client/layout`, panneaux login, et ajout du pictogramme sur le hero d’accueil.
+- **summary**: Composant `BrandLogo` (Image Next + wordmark « NAORIVA », variantes `onDark` / `onLight` pour fonds sombres/clairs). Remplacement des pictos SVG placeholder dans `Navbar`, `Footer`, `espace-client/layout`, panneaux login, et ajout du pictogramme sur le hero d’accueil.
 - **files**: [`components/layout/BrandLogo.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `app/espace-client/layout.tsx`, `app/login/page.tsx`, `app/page.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-03-27.md`]
 - **why**: Refonte UX — le logo image avait été retiré au profit d’icônes génériques ; rétablissement de l’identité visuelle avec l’asset déjà présent dans `public/brand/`.
 - **impact**: Logo visible header, footer, connexion, espace locataire et hero.
@@ -1642,3 +1665,35 @@ Nouveau composant `HomeAudienceGate` : écran de choix d'audience (voyageur / pr
 - **impact**: Propriétaires utilisent uniquement l’API dédiée ; appliquer la migration Supabase pour alertes/logs persistants.
 - **verify**: `npm run build` OK.
 
+---
+
+## 2026-04-13T18:00:00Z | type: ui+perf | Cursor — Prestations : pas de parallaxe immersive sur mobile
+
+- **agent**: `cursor`
+- **summary**: Sur `/prestations`, viewport **&lt; 768px** : retrait du parcours scroll-driven (canvas WebP, zone haute ~500vh, popups fixes, points de progression, préchargement séquence). Hero **statique** avec `next/image` (`/prestations-hero.png`), même accroche et CTA scroll vers `#piliers`. **≥768px** : comportement immersif inchangé. État `desktopParallax` via `matchMedia('(min-width: 768px)')` ; effet GSAP court-circuité hors desktop ; cleanup sans `ScrollTrigger.refresh` au démontage.
+- **files**: [`app/prestations/PrestationsPageClient.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-13.md`]
+- **why**: Réduire charge CPU/mémoire et friction scroll sur téléphone tout en gardant l’expérience premium sur desktop.
+- **impact**: Mobile charge une image hero au lieu de centaines de frames ; pas de scrub long sur petit écran.
+- **verify**: `npm run build` OK ; `read_lints` sur `PrestationsPageClient.tsx` OK.
+
+---
+
+## 2026-04-14T12:00:00Z | type: ui+config+docs | Cursor — Rebranding Diamant Noir → Naoriva
+
+- **agent**: `cursor`
+- **summary**: Remplacement global des occurrences marque **Diamant Noir** / `diamant-noir` / `diamantnoir` par **Naoriva** / `naoriva` dans l’app Next (`metadata`, pages, composants, données, APIs chat, footer, package `name`), duplication du logo **`public/brand/naoriva-logo.png`** (copie de l’asset existant), clés session audience **`nr_home_audience`** / événement **`nr-home-audience`**, webhooks doc copilot **`naoriva-owner-copilot`**, URLs canoniques / fallbacks **`naoriva.com`** / **`naoriva.fr`**, correctifs texte résiduels (paragraphe « Nos villas », « Qui sommes-nous », contact). Conservation des toponymes **Le Diamant** / **Rocher du Diamant** et des clés géo carte **`diamant`** / **`le diamant`**. Dossier repo d’app inchangé : **`diamant-noir/`** (chemins techniques).
+- **files**: [nombreux fichiers sous `diamant-noir/`, `public/brand/naoriva-logo.png`, `extract-frames.sh`, `RECAP_PROJET_COMPLET.md`, `dispatch/*`, `.cursor/rules/client-builder/AUDIT_REPORT.md`, `.cursor/rules/client-builder/04-features/kb-notifications.mdc`, `.impeccable.md`, `docs/n8n/owner-copilot-workflow.json`, `docs/n8n/owner-copilot-workflow-v2.json`, `docs/n8n/OWNER_COPILOT_AUTOMATION.md`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-04-14.md`]
+- **why**: Alignement sur le nouveau nom de marque demandé par le client.
+- **impact**: UI et SEO affichent Naoriva ; à mettre à jour côté prod : domaine réel, comptes sociaux, webhooks n8n déjà publiés sous l’ancien path, favicon/wordmark graphique si besoin.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-04-23T21:45:00Z | type: config | Cursor — Vercel prod OK ; push GitHub refusé (auth HTTPS)
+
+- **agent**: `cursor`
+- **summary**: Commit local **`939d6c6`** sur `main`. **`git push origin main`** → échec authentification (`Invalid username or token` sur `https://github.com/Kenneson972/diamant-noir.git`). **`npx vercel deploy --prod --yes`** : build Vercel OK, **`readyState: READY`**, alias **`https://diamant-noir.vercel.app`**, déploiement **`dpl_3Q7TZ7W1KAzZ7tDW2nADWfagqVwz`**.
+- **files**: [`docs/ACTIONS_LOG.md`]
+- **why**: Livraison production ; GitHub nécessite PAT, `gh auth login`, ou remote SSH.
+- **impact**: Prod Vercel alignée sur le working tree local ; dépôt GitHub `origin` pas encore à jour tant que le push n’est pas refait.
+- **verify**: CLI Vercel exit 0 ; `git push` exit 128.

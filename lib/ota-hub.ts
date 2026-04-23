@@ -1,5 +1,5 @@
 /**
- * OTA Hub — Diamant Noir
+ * OTA Hub — Naoriva
  * Synchronisation multi-sources : Airbnb, Expedia, Trivago, Vrbo, Booking.com
  *
  * Tous les grands OTA exportent un flux iCal standard.

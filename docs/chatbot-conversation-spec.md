@@ -1,4 +1,4 @@
-# Diamant Noir — Spécification Conversationnelle du Chatbot
+# Naoriva — Spécification Conversationnelle du Chatbot
 ## Document système pour intégration n8n — Version 1.0
 
 ---
@@ -16,7 +16,7 @@
 | `pricing_question` | Question sur les tarifs | "Combien ça coûte ?" | `clarify` → `qualify` |
 | `concierge_request` | Services additionnels | "Vous proposez un chef privé ?" | `recommend` → `qualify` |
 | `human_handoff` | Demande explicite d'un humain | "Je voudrais parler à quelqu'un" | `handoff` |
-| `general_discovery` | Navigation générale | "Qu'est-ce que Diamant Noir ?" | `greet` → `discover` |
+| `general_discovery` | Navigation générale | "Qu'est-ce que Naoriva ?" | `greet` → `discover` |
 | `unsupported_request` | Hors périmètre | Questions sans rapport | `fallback` |
 
 ### Règles de détection d'ambiguïté
@@ -213,7 +213,7 @@ recommend ------> qualify
 
 > **Client :** Bonjour, je cherche quelque chose pour les vacances cet été.
 
-> **Bot :** Bonjour. Diamant Noir propose des villas privées en location exclusive. Pour quel type de séjour cherchez-vous — famille, groupe d'amis, occasion particulière ?
+> **Bot :** Bonjour. Naoriva propose des villas privées en location exclusive. Pour quel type de séjour cherchez-vous — famille, groupe d'amis, occasion particulière ?
 
 > **Client :** Plutôt famille, on sera 8 en août.
 

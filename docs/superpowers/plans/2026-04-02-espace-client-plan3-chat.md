@@ -75,7 +75,7 @@ Et dans le bloc `@media (prefers-reduced-motion: reduce)` existant, ajouter `.dn
 - [ ] **Step 1.2 : Vérifier le build TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npx tsc --noEmit 2>&1 | head -5
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -5
 ```
 
 Résultat attendu : pas d'erreur (globals.css n'est pas TypeScript-checked).
@@ -83,7 +83,7 @@ Résultat attendu : pas d'erreur (globals.css n'est pas TypeScript-checked).
 - [ ] **Step 1.3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && git add app/globals.css && git commit -m "feat(chat): add dn-typing-dot keyframe animation for chat loading indicator"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/globals.css && git commit -m "feat(chat): add dn-typing-dot keyframe animation for chat loading indicator"
 ```
 
 ---
@@ -159,7 +159,7 @@ function formatTime(d: Date): string {
 function makeWelcomeMessage(guestName?: string): Message {
   return {
     role: "assistant",
-    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Diamant Noir. Comment puis-je vous aider pendant votre séjour ?`,
+    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Naoriva. Comment puis-je vous aider pendant votre séjour ?`,
     timestamp: new Date(),
   };
 }
@@ -425,7 +425,7 @@ export function TenantChatbot({
 - [ ] **Step 2.2 : Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npx tsc --noEmit 2>&1 | head -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -20
 ```
 
 Résultat attendu : 0 erreurs.
@@ -433,7 +433,7 @@ Résultat attendu : 0 erreurs.
 - [ ] **Step 2.3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && git add components/espace-client/TenantChatbot.tsx && git commit -m "feat(chat): rewrite TenantChatbot v2 — white design, localStorage sessionId, Supabase persistence, accessibility"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/espace-client/TenantChatbot.tsx && git commit -m "feat(chat): rewrite TenantChatbot v2 — white design, localStorage sessionId, Supabase persistence, accessibility"
 ```
 
 ---
@@ -606,7 +606,7 @@ export default function MessageriePage() {
           </svg>
           <div>
             <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.5)]">
-              {booking.villa?.name ?? "Villa Diamant Noir"}
+              {booking.villa?.name ?? "Villa Naoriva"}
             </p>
             <p className="font-cormorant italic text-[12px] font-light text-[rgba(13,27,42,0.4)]">
               {fmt(booking.start_date)} → {fmt(booking.end_date)}
@@ -635,7 +635,7 @@ export default function MessageriePage() {
 - [ ] **Step 3.2 : Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npx tsc --noEmit 2>&1 | head -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -20
 ```
 
 Résultat attendu : 0 erreurs.
@@ -643,7 +643,7 @@ Résultat attendu : 0 erreurs.
 - [ ] **Step 3.3 : Build prod**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npm run build 2>&1 | tail -15
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -15
 ```
 
 Résultat attendu : `✓ Compiled successfully`.
@@ -651,7 +651,7 @@ Résultat attendu : `✓ Compiled successfully`.
 - [ ] **Step 3.4 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && git add app/espace-client/messagerie/page.tsx && git commit -m "feat(messagerie): redesign — PageTopbar, context banner, remove En ligne badge, lazy load TenantChatbot"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/espace-client/messagerie/page.tsx && git commit -m "feat(messagerie): redesign — PageTopbar, context banner, remove En ligne badge, lazy load TenantChatbot"
 ```
 
 ---
@@ -705,7 +705,7 @@ test.describe("Espace Client — Chat & Messagerie", () => {
       data: {
         message: "Bonjour",
         sessionId: "test-session-playwright",
-        guestEmail: "playwright@diamantnoir.test",
+        guestEmail: "playwright@naoriva.test",
       },
     });
     // Either 200 (demo mode) or 429 (rate limit already hit)
@@ -722,7 +722,7 @@ test.describe("Espace Client — Chat & Messagerie", () => {
 - [ ] **Step 4.2 : Vérifier TypeScript (tests)**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npx tsc --noEmit 2>&1 | head -10
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -10
 ```
 
 Résultat attendu : 0 erreurs.
@@ -730,7 +730,7 @@ Résultat attendu : 0 erreurs.
 - [ ] **Step 4.3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && git add tests/espace-client/chat.spec.ts && git commit -m "test(chat): add Playwright tests for messagerie page and chat API"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add tests/espace-client/chat.spec.ts && git commit -m "test(chat): add Playwright tests for messagerie page and chat API"
 ```
 
 ---
@@ -740,7 +740,7 @@ cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-
 - [ ] **Build prod propre**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
 ```
 
 Résultat attendu : route `/espace-client/messagerie` listée sans erreur TypeScript.

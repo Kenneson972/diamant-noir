@@ -9,10 +9,10 @@ export function HomeBottomCta() {
           <div className="space-y-8">
             <h2 className="font-display text-4xl text-navy md:text-6xl">Prêt pour l&apos;exception ?</h2>
             <p className="leading-relaxed text-navy/60">
-              Diamant Noir orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
+              Naoriva orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-2">
-              <Link href="/prestations" className="btn-luxury bg-black text-white">
+              <Link href="/prestations" className="btn-luxury bg-navy text-white">
                 Découvrir la conciergerie
               </Link>
               <Link

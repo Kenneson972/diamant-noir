@@ -293,14 +293,15 @@ body { font-size: 16px; line-height: 1.6; }
 /* Entrée modale / lightbox */
 .modal-enter { animation: scale-in 0.25s ease-out forwards; }
 
-/* Chat — Typing indicator dots */
-@keyframes dn-typing-bounce {
-  0%, 60%, 100% { opacity: 0.2; transform: translateY(0); }
-  30% { opacity: 0.9; transform: translateY(-3px); }
+/* Chat — Typing indicator dots (ease-out-cubic pour un feel luxe, pas de bounce) */
+@keyframes dn-typing-fade {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 0.85; transform: translateY(-2px); }
+  60% { opacity: 0.85; transform: translateY(-2px); }
 }
 .dn-typing-dot {
   display: inline-block;
-  animation: dn-typing-bounce 1.2s ease-in-out infinite;
+  animation: dn-typing-fade 1.4s cubic-bezier(0.33, 1, 0.68, 1) infinite;
 }
 
 /* Désactiver toutes les nouvelles animations si reduced-motion */

@@ -1,5 +1,5 @@
 -- ============================================================
--- Migration : Hub OTA multi-sources — Diamant Noir
+-- Migration : Hub OTA multi-sources — Naoriva
 -- À exécuter dans Supabase SQL Editor
 -- ============================================================
 

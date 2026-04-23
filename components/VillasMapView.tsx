@@ -155,7 +155,7 @@ export default function VillasMapView({ villas }: Props) {
                     {/* Tier badge */}
                     {villa.tier && (
                       <div className="absolute top-4 left-4">
-                        <span className="rounded-none border border-gold/40 bg-black/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
+                        <span className="rounded-none border border-gold/40 bg-navy/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
                           {villa.tier}
                         </span>
                       </div>

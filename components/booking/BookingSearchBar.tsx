@@ -110,7 +110,7 @@ export function BookingSearchBar({
         <button
           type="button"
           onClick={() => (checkinRef.current as any)?.showPicker?.()}
-          className="relative flex-1 cursor-pointer text-left transition-colors hover:bg-black/[0.03]"
+          className="relative flex-1 cursor-pointer text-left transition-colors hover:bg-navy/[0.03]"
           aria-label="Choisir la date d'arrivée"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
@@ -141,7 +141,7 @@ export function BookingSearchBar({
         <button
           type="button"
           onClick={() => (checkoutRef.current as any)?.showPicker?.()}
-          className="relative flex-1 cursor-pointer text-left transition-colors hover:bg-black/[0.03]"
+          className="relative flex-1 cursor-pointer text-left transition-colors hover:bg-navy/[0.03]"
           aria-label="Choisir la date de départ"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
@@ -174,7 +174,7 @@ export function BookingSearchBar({
             ref={guestBtnRef}
             type="button"
             onClick={openGuestDropdown}
-            className="flex min-h-[60px] w-full items-center gap-4 px-5 py-3.5 text-left transition-colors hover:bg-black/[0.03]"
+            className="flex min-h-[60px] w-full items-center gap-4 px-5 py-3.5 text-left transition-colors hover:bg-navy/[0.03]"
             aria-expanded={guestOpen}
             aria-haspopup="true"
           >

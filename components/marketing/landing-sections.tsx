@@ -20,7 +20,7 @@ export function LandingHero({
   variant?: HeroVariant;
   align?: "center" | "split";
 }) {
-  const bg = variant === "black" ? "bg-black" : "bg-navy";
+  const bg = "bg-navy";
   /** Aligné accueil / propriétaires : pt-24 sous navbar fixe, colonne max-w-4xl, px-5 sm:px-6 */
   const inner =
     align === "center"
@@ -57,7 +57,7 @@ export function LandingHeroCompact({
   subtitle?: string;
   variant?: HeroVariant;
 }) {
-  const bg = variant === "black" ? "bg-black" : "bg-navy";
+  const bg = "bg-navy";
   return (
     <section
       className={`relative flex min-h-[200px] w-full flex-col justify-center overflow-hidden ${bg} pt-24 pb-12 xs:min-h-[240px] md:min-h-[min(48vh,520px)] md:pb-16 md:pt-24`}

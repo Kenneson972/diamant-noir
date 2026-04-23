@@ -21,7 +21,7 @@ export function EditorialHeroImmersive({
   actions?: ReactNode;
 }) {
   return (
-    <section className="relative flex min-h-[220px] w-full flex-col justify-end overflow-hidden bg-black xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
+    <section className="relative flex min-h-[220px] w-full flex-col justify-end overflow-hidden bg-navy xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
       <Image
         src={imageSrc}
         alt={imageAlt || "Ambiance villa de luxe"}

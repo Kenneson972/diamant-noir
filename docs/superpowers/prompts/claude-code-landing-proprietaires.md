@@ -1,4 +1,4 @@
-  # Prompt Claude Code — Landing propriétaires « Diamant Noir »
+  # Prompt Claude Code — Landing propriétaires « Naoriva »
 
   > **Usage** : coller le bloc **« PROMPT À COPIER »** dans Claude Code (workflow Superpowers). Adapter les chemins si ton clone du repo diffère.
 
@@ -6,7 +6,7 @@
 
   ## Contexte produit (à lire avant d’exécuter)
 
-  - **Marque** : Diamant Noir — conciergerie / location haut de gamme en Martinique.
+  - **Marque** : Naoriva — conciergerie / location haut de gamme en Martinique.
   - **Objectif** : une **page dédiée propriétaires** (pas seulement une ancre sur l’accueil) pour les visiteurs qui cliquent sur **« Confier ma villa »**. La conversion prioritaire est la **soumission de bien** (lead proprio), pas la réservation voyageur.
   - **URL cible recommandée** : `app/proprietaires/page.tsx` → route publique **`/proprietaires`** (SEO clair, partageable).
   - **Pages déjà en place** (ne pas les casser) :
@@ -19,7 +19,7 @@
   ## PROMPT À COPIER (Claude Code)
 
   ```
-  Tu travailles sur le projet Next.js 15 (App Router) « diamant-noir » (Diamant Noir).
+  Tu travailles sur le projet Next.js 15 (App Router) « naoriva » (Naoriva).
 
   ## Mission
   Créer une landing page **100 % orientée propriétaires** à l’URL `/proprietaires` qui sert d’« index » marketing quand un utilisateur choisit « Confier ma villa ». La **soumission de villa** doit être l’action la plus visible (above the fold + répétée avec discernement).
@@ -42,7 +42,7 @@
   - Mobile-first, touches ≥ 44px sur les CTA.
   - Sections suggérées (ajuste si tu as déjà du contenu réutilisable) :
     - Hero propriétaires + double CTA (soumission prioritaire)
-    - « Pourquoi Diamant Noir » (3–4 arguments : visibilité, conciergerie, sérénité, calibrage revenue)
+    - « Pourquoi Naoriva » (3–4 arguments : visibilité, conciergerie, sérénité, calibrage revenue)
     - Déroulé simple « Comment ça marche » (3–4 étapes jusqu’à la collaboration)
     - Réassurance (discrétion, standards, accompagnement local)
     - Bandeau CTA final vers `/soumettre-ma-villa`

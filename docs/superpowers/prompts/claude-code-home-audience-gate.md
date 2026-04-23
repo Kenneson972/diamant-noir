@@ -6,7 +6,7 @@
 
 ## Contexte produit
 
-- **Marque** : Diamant Noir — conciergerie luxe Martinique.
+- **Marque** : Naoriva — conciergerie luxe Martinique.
 - **Problème** : retours utilisateurs — **trop d’information** sur l’accueil ; la barre de recherche + les deux gros blocs voyageurs / propriétaires chargent la hero.
 - **Direction retenue (B)** : au **premier chargement** de la page d’accueil `https://…/`, proposer un **écran de choix** élégant :
   - **« Je réserve un séjour »** (voyageur) → fermer le volet avec **animation** ; enchaîner sur l’expérience **voyageur** (hero allégée ou scroll vers réservation selon implémentation propre).
@@ -23,7 +23,7 @@
 ## PROMPT À COPIER (Claude Code)
 
 ```
-Tu travailles sur le repo Next.js 15 « diamant-noir » (Diamant Noir).
+Tu travailles sur le repo Next.js 15 « naoriva » (Naoriva).
 
 ## 0) Design — UI/UX Pro Max (obligatoire)
 - **Invoque et applique le skill `ui-ux-pro-max`** pour toute décision visuelle : accessibilité (contraste, focus, reduced-motion), tailles tactiles 44px+, hiérarchie typo, espacement, feedback au clic.

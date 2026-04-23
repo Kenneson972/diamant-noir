@@ -33,9 +33,9 @@ import {
 } from "@/lib/proprietaires-data";
 
 export const metadata: Metadata = {
-  title: "Programme propriétaires — Confiez votre villa | Diamant Noir",
+  title: "Programme propriétaires — Confiez votre villa | Naoriva",
   description:
-    "Confiez votre villa en Martinique à Diamant Noir : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
+    "Confiez votre villa en Martinique à Naoriva : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
 };
 
 const PILIER_ICONS = [TrendingUp, Headphones, Building2] as const;
@@ -45,7 +45,7 @@ export default function ProprietairesPage() {
     <main className="min-h-dvh bg-offwhite animate-fade-up [animation-duration:500ms]">
       {/* ─── Hero vidéo ─── */}
       <section
-        className="relative flex min-h-[370px] w-full flex-col justify-center overflow-hidden bg-black pb-10 pt-24 xs:min-h-[400px] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
+        className="relative flex min-h-[370px] w-full flex-col justify-center overflow-hidden bg-navy pb-10 pt-24 xs:min-h-[400px] md:min-h-[min(68vh,680px)] md:py-20 md:pt-24"
         aria-labelledby="proprio-hero-title"
       >
         <video
@@ -63,7 +63,7 @@ export default function ProprietairesPage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="proprio-hero-title"
-            titleLabel="Diamant Noir — Programme propriétaires — Conciergerie privée"
+            titleLabel="Naoriva — Programme propriétaires — Conciergerie privée"
           >
             <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
               <Link
@@ -105,7 +105,7 @@ export default function ProprietairesPage() {
 
       {/* ─── Intro + piliers : un seul bloc image | texte ─── */}
       <EditorialImageSplit
-        title="Pourquoi confier votre villa à Diamant Noir ?"
+        title="Pourquoi confier votre villa à Naoriva ?"
         imagePosition="left"
         imageSrc={PROPRIO_LANDING_IMAGES.splitPourquoi}
         imageAlt={PROPRIO_LANDING_IMAGE_ALTS.splitPourquoi}
@@ -256,7 +256,7 @@ export default function ProprietairesPage() {
 
       <LandingSection bg="offwhite">
         <LandingCtaBand title="Prêt à confier votre villa ?">
-          <Link href="/soumettre-ma-villa" className="btn-luxury bg-black text-white">
+          <Link href="/soumettre-ma-villa" className="btn-luxury bg-navy text-white">
             Soumettre ma villa
             <ArrowRight size={16} strokeWidth={1} aria-hidden />
           </Link>

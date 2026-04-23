@@ -1,7 +1,7 @@
 # Spec — Repositionnement Conciergerie en priorité (Home + Navbar)
 
 **Date :** 2026-04-07
-**Contexte :** Le gérant souhaite que Diamant Noir soit perçu comme une maison de conciergerie privée qui propose des villas, et non comme une plateforme de location qui offre de la conciergerie. Direction artistique inchangée.
+**Contexte :** Le gérant souhaite que Naoriva soit perçu comme une maison de conciergerie privée qui propose des villas, et non comme une plateforme de location qui offre de la conciergerie. Direction artistique inchangée.
 
 ---
 
@@ -37,7 +37,7 @@ Remonter la conciergerie propriétaire comme proposition principale sur la home 
 
 Carte gauche (anciennement voyageur) devient **Conciergerie Privée** :
 - Eyebrow : `"Conciergerie Privée"` (gold/75, remplace "Espace Voyageur")
-- Titre : `"Gérer ma villa avec Diamant Noir"`
+- Titre : `"Gérer ma villa avec Naoriva"`
 - Icône : `Building2` avec `text-gold/55`
 - Border/hover : gold (cohérent avec la priorité)
 - Clic : `router.push('/prestations')` (plus de scroll `#offre-proprietaire`)
@@ -121,8 +121,8 @@ Inverser la hiérarchie des deux CTAs :
 | Secondaire border → "Confier ma villa" | Secondaire border → "Parcourir les villas" (`/villas`) |
 
 Texte intro :
-- Avant : "Rejoignez le cercle Diamant Noir — séjournez dans nos villas d'exception ou confiez-nous votre bien..."
-- Après : "Diamant Noir orchestre des séjours d'exception et accompagne les propriétaires exigeants de Martinique."
+- Avant : "Rejoignez le cercle Naoriva — séjournez dans nos villas d'exception ou confiez-nous votre bien..."
+- Après : "Naoriva orchestre des séjours d'exception et accompagne les propriétaires exigeants de Martinique."
 
 ---
 

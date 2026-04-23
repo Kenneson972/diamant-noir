@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * NotificationBell — Diamant Noir Dashboard
+ * NotificationBell — Naoriva Dashboard
  * ──────────────────────────────────────────
  * Cloche dans la Sidebar avec badge de compteur.
  * S'abonne à Supabase Realtime sur la table `notifications` :

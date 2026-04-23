@@ -9,7 +9,7 @@
  * Usage :
  *   N8N_BASE_URL=https://votre-n8n.com N8N_API_KEY=n8n_api_xxx node scripts/import-owner-copilot-n8n.mjs
  *
- * Depuis la racine diamant-noir :
+ * Depuis la racine naoriva :
  *   node scripts/import-owner-copilot-n8n.mjs
  */
 

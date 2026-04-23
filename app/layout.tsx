@@ -43,13 +43,13 @@ export const viewport = {
 };
 
 export const metadata = {
-  title: { default: "Diamant Noir | Conciergerie de luxe Martinique", template: "%s | Diamant Noir" },
+  title: { default: "Naoriva | Conciergerie de luxe Martinique", template: "%s | Naoriva" },
   description: "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.",
-  keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Diamant Noir"],
+  keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Naoriva"],
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    siteName: "Diamant Noir",
+    siteName: "Naoriva",
   },
 };
 

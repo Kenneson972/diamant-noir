@@ -16,9 +16,9 @@ import {
 } from "@/components/marketing/editorial-blocks";
 
 export const metadata = {
-  title: "Qui sommes-nous | Diamant Noir",
+  title: "Qui sommes-nous | Naoriva",
   description:
-    "La mission de Diamant Noir : conciergerie de luxe, entretien et gestion de villas d'exception en Martinique.",
+    "La mission de Naoriva : conciergerie de luxe, entretien et gestion de villas d'exception en Martinique.",
 };
 
 const ADN = [
@@ -56,14 +56,14 @@ export default function QuiSommesNousPage() {
     <LandingShell>
       <EditorialHeroImmersive
         eyebrow="Martinique — collection privée"
-        title="Diamant Noir"
+        title="Naoriva"
         subtitle="Une conciergerie de luxe née du désir de révéler les plus belles adresses de l’île — avec la même rigueur qu’une maison de voyage internationale."
         imageAlt="Villa et horizon martiniquais"
       />
 
       <EditorialIntro title="Une maison, une vision">
         <p>
-          Diamant Noir accompagne les propriétaires exigeants qui souhaitent confier leur bien à une équipe
+          Naoriva accompagne les propriétaires exigeants qui souhaitent confier leur bien à une équipe
           capable d’aligner rentabilité, entretien impeccable et expérience voyageur haut de gamme.
         </p>
         <p>
@@ -105,7 +105,7 @@ export default function QuiSommesNousPage() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="space-y-6 text-base leading-relaxed text-navy/80 lg:col-span-7">
             <p>
-              Symbole de rareté et d’élégance, le diamant noir évoque la force du Rocher du Diamant et la
+              Symbole de rareté et d’élégance, Naoriva évoque la force du Rocher du Diamant et la
               douceur des plages ensoleillées. C’est cette alliance que nous cultivons dans chaque détail.
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function QuiSommesNousPage() {
             Projet de mise en location, exigences spécifiques, ou simple envie d’échanger : nous vous répondons
             avec la même attention qu’à nos voyages.
           </p>
-          <Link href="/contact" className="btn-luxury bg-black text-white">
+          <Link href="/contact" className="btn-luxury bg-navy text-white">
             Nous contacter
             <ArrowRight size={16} strokeWidth={1} aria-hidden />
           </Link>

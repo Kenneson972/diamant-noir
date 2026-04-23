@@ -42,7 +42,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
     return (
       <div className="relative h-[60vh] w-full overflow-hidden bg-navy/5 flex items-center justify-center">
         <Image src="/villa-hero.jpg" alt="Villa" fill className="object-cover opacity-30" />
-        <p className="relative z-10 text-navy/30 font-display text-2xl tracking-widest">Diamant Noir</p>
+        <p className="relative z-10 text-navy/30 font-display text-2xl tracking-widest">Naoriva</p>
       </div>
     );
   }
@@ -75,7 +75,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
             className="col-span-2 row-span-2 relative overflow-hidden group focus:outline-none"
           >
             <Image src={galleryImages[0]} alt={`${title} 1`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:hover:scale-100" priority />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/10 transition-colors duration-300" />
           </button>
 
           {/* 4 images secondaires */}
@@ -93,7 +93,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
                 {img ? (
                   <>
                     <Image src={img} alt={`${title} ${i + 2}`} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:hover:scale-100" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/15 transition-colors duration-300" />
                     {isLast && (
                       <div className="absolute inset-0 bg-navy/60 flex items-center justify-center">
                         <span className="font-display text-3xl text-white">+{extras}</span>
@@ -124,7 +124,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
           role="dialog"
           aria-modal="true"
           aria-label={`Galerie photos — ${title}`}
-          className="fixed inset-0 z-[1100] bg-black/95 backdrop-blur-xl flex flex-col modal-enter"
+          className="fixed inset-0 z-[1100] bg-navy/95 backdrop-blur-xl flex flex-col modal-enter"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 shrink-0">

@@ -1,4 +1,4 @@
--- Script d'insertion de villas de test pour Diamant Noir
+-- Script d'insertion de villas de test pour Naoriva
 -- À exécuter dans le SQL Editor de Supabase
 
 -- IMPORTANT : Remplacez 'VOTRE_USER_ID' par l'UUID d'un utilisateur authentifié
@@ -11,7 +11,7 @@
 -- INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
 -- VALUES (
 --   gen_random_uuid(),
---   'admin@diamantnoir.com',
+--   'admin@naoriva.com',
 --   crypt('votre_mot_de_passe', gen_salt('bf')),
 --   now(),
 --   now(),
@@ -24,7 +24,7 @@
 -- INSERTION DES VILLAS DE TEST
 -- ============================================
 
--- Villa 1 : Diamant Noir (la principale)
+-- Villa 1 : Naoriva (la principale)
 INSERT INTO public.villas (
   owner_id,
   name,
@@ -36,8 +36,8 @@ INSERT INTO public.villas (
   created_at
 ) VALUES (
   'VOTRE_USER_ID'::uuid, -- ⚠️ REMPLACEZ PAR VOTRE UUID
-  'Villa Diamant Noir',
-  'Nichée sur les falaises de la côte méditerranéenne, Diamant Noir offre un mélange inégalé de minimalisme moderne et de beauté côtière brute. Ce chef-d''œuvre architectural dispose de parois de verre du sol au plafond, d''une piscine à débordement chauffée de 25 mètres et d''un chemin privé menant directement à une crique isolée.',
+  'Villa Naoriva',
+  'Nichée sur les falaises de la côte méditerranéenne, Naoriva offre un mélange inégalé de minimalisme moderne et de beauté côtière brute. Ce chef-d''œuvre architectural dispose de parois de verre du sol au plafond, d''une piscine à débordement chauffée de 25 mètres et d''un chemin privé menant directement à une crique isolée.',
   1000,
   8,
   '/villa-hero.jpg',

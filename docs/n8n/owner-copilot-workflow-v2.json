@@ -1,19 +1,19 @@
 {
-  "name": "Diamant Noir — Copilot Propriétaire v2 (Tool Use + Mémoire Supabase)",
+  "name": "Naoriva — Copilot Propriétaire v2 (Tool Use + Mémoire Supabase)",
   "nodes": [
     {
       "id": "webhook-trigger",
-      "name": "Webhook — POST /diamant-owner-copilot",
+      "name": "Webhook — POST /naoriva-owner-copilot",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [0, 300],
       "parameters": {
         "httpMethod": "POST",
-        "path": "diamant-owner-copilot",
+        "path": "naoriva-owner-copilot",
         "responseMode": "responseNode",
         "options": {}
       },
-      "webhookId": "diamant-owner-copilot"
+      "webhookId": "naoriva-owner-copilot"
     },
 
     {
@@ -77,8 +77,8 @@
       },
       "credentials": {
         "postgres": {
-          "id": "diamant-noir-supabase-db",
-          "name": "Diamant Noir — Supabase DB"
+          "id": "naoriva-supabase-db",
+          "name": "Naoriva — Supabase DB"
         }
       }
     },
@@ -101,7 +101,7 @@
       "typeVersion": 2,
       "position": [1200, 180],
       "parameters": {
-        "jsCode": "// ── Historique : DB Supabase (persistant) > payload UI (session) ─────\nlet dbHistory = [];\ntry {\n  const dbRows = $('Postgres — Lire historique Supabase').all();\n  dbHistory = dbRows\n    .map(item => item.json)\n    .filter(row => row.role && row.content)\n    .map(row => ({ role: String(row.role), content: String(row.content) }));\n} catch(e) { /* Postgres indisponible, utilise payload */ }\n\nconst payloadHistory = $json.messages_history || [];\nconst history        = dbHistory.length > 0 ? dbHistory : payloadHistory;\n\nconst contextText = $json._contextText;\nconst currentMsg  = String($json.message || '').trim();\n\n// ── Prompt système DIAMANT ────────────────────────────────────────\nconst SYSTEM = `Tu es DIAMANT, l'assistant privé et confidentiel de Diamant Noir Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES :\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE PROPRIÉTAIRE fourni — jamais d'invention.\\n2. Si une information est absente du contexte, dis-le clairement.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si explicitement demandé.\\n5. Si des alertes HIGH ou MEDIUM existent, commence TOUJOURS par les mentionner.\\n6. Assure la continuité de la conversation (tu te souviens des échanges précédents).\\n7. Tu parles à UN SEUL propriétaire identifié.\\n\\nTu DOIS utiliser l'outil \\"respond_to_owner\\" pour CHAQUE réponse.`;\n\n// ── Définition de l'outil (Tool Use) ─────────────────────────────\nconst TOOL = {\n  name: 'respond_to_owner',\n  description: 'Répond au propriétaire et sélectionne la vue optimale du tableau de bord à afficher.',\n  input_schema: {\n    type: 'object',\n    properties: {\n      response: {\n        type: 'string',\n        description: 'Réponse en français. Concise (2-4 phrases) sauf si détail demandé. Professionnelle et chaleureuse.'\n      },\n      action: {\n        type: 'string',\n        enum: ['SHOW_STATS', 'SHOW_BOOKINGS', 'SHOW_VILLAS', 'SHOW_TASKS'],\n        description: 'Vue : SHOW_STATS=résumé/revenus/KPIs, SHOW_BOOKINGS=réservations/calendrier, SHOW_VILLAS=villas/annonces, SHOW_TASKS=maintenance/tâches'\n      },\n      strategic_alert: {\n        type: ['object', 'null'],\n        description: 'Alerte critique à mettre en avant. Null si aucune urgence.',\n        properties: {\n          severity: { type: 'string', enum: ['high', 'medium', 'low'] },\n          description: { type: 'string' }\n        }\n      }\n    },\n    required: ['response', 'action']\n  }\n};\n\n// ── Construction des messages multi-tour ─────────────────────────\nlet claudeMessages = [];\n\nif (history.length > 0) {\n  for (let i = 0; i < history.length; i++) {\n    const m = history[i];\n    if (i === 0 && m.role === 'user') {\n      claudeMessages.push({\n        role: 'user',\n        content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${m.content}`\n      });\n    } else {\n      claudeMessages.push({ role: m.role, content: String(m.content) });\n    }\n  }\n  const last = history[history.length - 1];\n  if (!(last.role === 'user' && last.content === currentMsg)) {\n    claudeMessages.push({ role: 'user', content: currentMsg });\n  }\n} else {\n  claudeMessages = [{\n    role: 'user',\n    content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${currentMsg}`\n  }];\n}\n\nconst anthropicBody = {\n  model: 'claude-opus-4-6',\n  max_tokens: 2048,\n  system: SYSTEM,\n  tools: [TOOL],\n  tool_choice: { type: 'any' },\n  messages: claudeMessages\n};\n\nreturn [{ json: { ...$json, _anthropicBody: anthropicBody } }];"
+        "jsCode": "// ── Historique : DB Supabase (persistant) > payload UI (session) ─────\nlet dbHistory = [];\ntry {\n  const dbRows = $('Postgres — Lire historique Supabase').all();\n  dbHistory = dbRows\n    .map(item => item.json)\n    .filter(row => row.role && row.content)\n    .map(row => ({ role: String(row.role), content: String(row.content) }));\n} catch(e) { /* Postgres indisponible, utilise payload */ }\n\nconst payloadHistory = $json.messages_history || [];\nconst history        = dbHistory.length > 0 ? dbHistory : payloadHistory;\n\nconst contextText = $json._contextText;\nconst currentMsg  = String($json.message || '').trim();\n\n// ── Prompt système DIAMANT ────────────────────────────────────────\nconst SYSTEM = `Tu es DIAMANT, l'assistant privé et confidentiel de Naoriva Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES :\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE PROPRIÉTAIRE fourni — jamais d'invention.\\n2. Si une information est absente du contexte, dis-le clairement.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si explicitement demandé.\\n5. Si des alertes HIGH ou MEDIUM existent, commence TOUJOURS par les mentionner.\\n6. Assure la continuité de la conversation (tu te souviens des échanges précédents).\\n7. Tu parles à UN SEUL propriétaire identifié.\\n\\nTu DOIS utiliser l'outil \\"respond_to_owner\\" pour CHAQUE réponse.`;\n\n// ── Définition de l'outil (Tool Use) ─────────────────────────────\nconst TOOL = {\n  name: 'respond_to_owner',\n  description: 'Répond au propriétaire et sélectionne la vue optimale du tableau de bord à afficher.',\n  input_schema: {\n    type: 'object',\n    properties: {\n      response: {\n        type: 'string',\n        description: 'Réponse en français. Concise (2-4 phrases) sauf si détail demandé. Professionnelle et chaleureuse.'\n      },\n      action: {\n        type: 'string',\n        enum: ['SHOW_STATS', 'SHOW_BOOKINGS', 'SHOW_VILLAS', 'SHOW_TASKS'],\n        description: 'Vue : SHOW_STATS=résumé/revenus/KPIs, SHOW_BOOKINGS=réservations/calendrier, SHOW_VILLAS=villas/annonces, SHOW_TASKS=maintenance/tâches'\n      },\n      strategic_alert: {\n        type: ['object', 'null'],\n        description: 'Alerte critique à mettre en avant. Null si aucune urgence.',\n        properties: {\n          severity: { type: 'string', enum: ['high', 'medium', 'low'] },\n          description: { type: 'string' }\n        }\n      }\n    },\n    required: ['response', 'action']\n  }\n};\n\n// ── Construction des messages multi-tour ─────────────────────────\nlet claudeMessages = [];\n\nif (history.length > 0) {\n  for (let i = 0; i < history.length; i++) {\n    const m = history[i];\n    if (i === 0 && m.role === 'user') {\n      claudeMessages.push({\n        role: 'user',\n        content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${m.content}`\n      });\n    } else {\n      claudeMessages.push({ role: m.role, content: String(m.content) });\n    }\n  }\n  const last = history[history.length - 1];\n  if (!(last.role === 'user' && last.content === currentMsg)) {\n    claudeMessages.push({ role: 'user', content: currentMsg });\n  }\n} else {\n  claudeMessages = [{\n    role: 'user',\n    content: `CONTEXTE PROPRIÉTAIRE (données temps réel) :\\n${contextText}\\n\\n---\\n${currentMsg}`\n  }];\n}\n\nconst anthropicBody = {\n  model: 'claude-opus-4-6',\n  max_tokens: 2048,\n  system: SYSTEM,\n  tools: [TOOL],\n  tool_choice: { type: 'any' },\n  messages: claudeMessages\n};\n\nreturn [{ json: { ...$json, _anthropicBody: anthropicBody } }];"
       }
     },
 
@@ -206,8 +206,8 @@
       },
       "credentials": {
         "postgres": {
-          "id": "diamant-noir-supabase-db",
-          "name": "Diamant Noir — Supabase DB"
+          "id": "naoriva-supabase-db",
+          "name": "Naoriva — Supabase DB"
         }
       }
     },
@@ -238,7 +238,7 @@
   ],
 
   "connections": {
-    "Webhook — POST /diamant-owner-copilot": {
+    "Webhook — POST /naoriva-owner-copilot": {
       "main": [[{ "node": "Code — Sécurité & Extraction", "type": "main", "index": 0 }]]
     },
     "Code — Sécurité & Extraction": {
@@ -287,14 +287,14 @@
     "saveDataSuccessExecution": "last"
   },
   "tags": [
-    { "name": "diamant-noir" },
+    { "name": "naoriva" },
     { "name": "owner-copilot" },
     { "name": "v2" },
     { "name": "supabase-memory" }
   ],
   "meta": {
-    "instanceId": "diamant-noir-owner-copilot-v2"
+    "instanceId": "naoriva-owner-copilot-v2"
   },
-  "id": "diamant-owner-copilot-v2",
+  "id": "naoriva-owner-copilot-v2",
   "versionId": "2.1.0"
 }

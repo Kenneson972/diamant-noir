@@ -1,13 +1,14 @@
 "use client";
 
 /**
- * Page Prestations — Diamant Noir
+ * Page Prestations — Naoriva
  *
  * "use client" — metadata géré dans layout.tsx (App Router).
  *
  * Structure :
  *   1. Scroll-driven canvas animation (style Apple, GSAP + 561 frames)
- *      → Hero 100vh + scroll driver 500vh + transition 55vh
+ *      → Hero + scroll driver 500vh + transition 55vh (viewport **≥ md / 768px** uniquement)
+ *      → Sous 768px : hero statique (image), pas de canvas / GSAP / chargement des frames
  *   2. Hub sous le scroll (strip CTA, chiffres, grille #piliers → /prestations/services/[slug], FAQ)
  *      → Les sections à fond plein recouvrent le canvas fixe.
  */
@@ -17,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Check,
@@ -32,6 +34,7 @@ import {
   LandingSection,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+
 // ─── Video scroll config ──────────────────────────────────────────────────────
 
 const TOTAL_FRAMES = 561; // 37.4s × 15fps, extraits de LANDINGPAGE.mp4
@@ -39,7 +42,7 @@ const TOTAL_FRAMES = 561; // 37.4s × 15fps, extraits de LANDINGPAGE.mp4
 /**
  * Calibrage frame ↔ plan (si la séquence WebP ne colle plus à la vidéo source) :
  * 1. Faire défiler /prestations en dev.
- * 2. Dans ScrollTrigger onUpdate, relever l’index `fi` au moment où chaque plan devient dominant.
+ * 2. Dans ScrollTrigger onUpdate, relever l'index `fi` au moment où chaque plan devient dominant.
  * 3. Ajuster startFrame / endFrame pour chaque entrée (bornes incluses, sans trou entre segments).
  * Option : dans la console navigateur, `window.__PVSH_LOG_FRAMES = true` pour logger chaque `fi`.
  */
@@ -113,6 +116,17 @@ export default function PrestationsPageClient() {
 
   // ── State ───────────────────────────────────────────────────────────────
   const [isReady, setIsReady] = useState(false);
+  /** Parallax scroll + canvas : desktop uniquement (Tailwind `md` = 768px). */
+  const [desktopParallax, setDesktopParallax] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : true
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setDesktopParallax(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // ── DPR (client-only) ───────────────────────────────────────────────────
   const dpr = useRef(1);
@@ -166,12 +180,17 @@ export default function PrestationsPageClient() {
     renderFrame(currentFrameRef.current);
   }, [renderFrame]);
 
-  // ── Preload frames ──────────────────────────────────────────────────────
+  // ── Preload frames (desktop parallax uniquement) ─────────────────────────
   useEffect(() => {
+    if (!desktopParallax) {
+      setIsReady(true);
+      return;
+    }
+
+    setIsReady(false);
     let loaded = 0;
     let errors = 0;
-    const isMobileLoad = window.matchMedia("(max-width: 767px)").matches;
-    const framesBase = isMobileLoad ? "/frames-mobile" : "/frames";
+    const framesBase = "/frames";
     const loadOne = (i: number) => {
       const img = new window.Image();
       img.decoding = "async";
@@ -199,36 +218,31 @@ export default function PrestationsPageClient() {
     const eagerCount = 150;
     for (let i = 0; i < Math.min(eagerCount, TOTAL_FRAMES); i++) loadOne(i);
 
-    // Stagger le reste — mobile un peu plus dense qu’avant (12ms) pour rattraper vite la fin de séquence
+    // Stagger le reste (desktop)
     let idx = eagerCount;
     let cancelled = false;
-    const mobileStaggerMs = 12;
     const next = () => {
       if (cancelled || idx >= TOTAL_FRAMES) return;
       loadOne(idx++);
-      if (isMobileLoad) {
-        setTimeout(next, mobileStaggerMs);
-      } else {
-        requestAnimationFrame(next);
-      }
+      requestAnimationFrame(next);
     };
     if (idx < TOTAL_FRAMES) {
-      if (isMobileLoad) {
-        setTimeout(next, mobileStaggerMs);
-      } else {
-        requestAnimationFrame(next);
-      }
+      requestAnimationFrame(next);
     }
 
     return () => {
       cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      // [FIX P2] Libérer les bitmaps décodés pour éviter la fuite mémoire lors des navigations SPA
+      framesRef.current.forEach((img, i) => {
+        if (img) { img.src = ""; framesRef.current[i] = null; }
+      });
     };
-  }, [renderFrame]);
+  }, [desktopParallax, renderFrame]);
 
-  // ── GSAP scroll ─────────────────────────────────────────────────────────
+  // ── GSAP scroll (desktop parallax uniquement) ───────────────────────────
   useEffect(() => {
-    if (!isReady) return;
+    if (!desktopParallax || !isReady) return;
 
     // Enregistrement ici — jamais au niveau module (crash SSR)
     gsap.registerPlugin(ScrollTrigger);
@@ -240,7 +254,7 @@ export default function PrestationsPageClient() {
     const transition = transitionRef.current;
     if (!driver) return;
 
-    // Initial states — opacité sur le panneau, `y` sur l’enfant `.pvsh-motion` pour ne pas
+    // Initial states — opacité sur le panneau, `y` sur l'enfant `.pvsh-motion` pour ne pas
     // écraser le translate-y Tailwind du conteneur (sinon les cartes « flottent » mal).
     SCROLL_SECTIONS.forEach((s) => {
       const el = document.getElementById(`pvsh-${s.id}`);
@@ -286,17 +300,14 @@ export default function PrestationsPageClient() {
       });
     };
 
-    /** Tant que le scrub n’a pas commencé (haut de page / hero), aucune carte — évite le1er popup collé + disparition en remontant. */
+    /** Tant que le scrub n'a pas commencé (haut de page / hero), aucune carte — évite le1er popup collé + disparition en remontant. */
     const POPUP_MIN_PROGRESS = 0.0001;
-
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
     const mainTrigger = ScrollTrigger.create({
       trigger: driver,
       start: "top top",
       end: "bottom bottom",
-      // Mobile : `true` = pas de lissage temporel (0.5s de scrub = forte sensation de latence)
-      scrub: isMobile ? true : 1.2,
+      scrub: 1.2,
       onUpdate: (self) => {
         const progress = self.progress;
         const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
@@ -360,212 +371,231 @@ export default function PrestationsPageClient() {
       setVideoStackVisible(true);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [isReady, renderFrame, resizeCanvas]);
+  }, [desktopParallax, isReady, renderFrame, resizeCanvas]);
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
     <>
-      {/* ── Preload frame 0 pour LCP — améliore le Core Web Vital ─────── */}
-      <link rel="preload" as="image" href="/frames/frame_0001.webp" media="(min-width: 768px)" />
-      <link rel="preload" as="image" href="/frames-mobile/frame_0001.webp" media="(max-width: 767px)" />
+      {/* Preload : desktop = frame 0 séquence ; mobile = hero statique */}
+      {desktopParallax ? (
+        <link rel="preload" as="image" href="/frames/frame_0001.webp" media="(min-width: 768px)" />
+      ) : (
+        <link rel="preload" as="image" href="/prestations-hero.png" media="(max-width: 767.98px)" />
+      )}
 
-      {/* ── Canvas fixe — fond de la section vidéo ─────────────────── */}
-      <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
+      {desktopParallax ? (
+        <>
+          <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
 
-      {/* ── Vignette sombre ───────────────────────────────────────────── */}
-      <div
-        ref={vignetteRef}
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-[1]"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.6) 100%)",
-        }}
-      />
-
-      {/* ── Overlays sections — position fixe ─────────────────────────── */}
-      {SCROLL_SECTIONS.map((section) => {
-        const left = section.position === "left";
-        const vCls = scrollSectionVerticalClasses(section.vertical);
-        return (
           <div
-            key={section.id}
-            id={`pvsh-${section.id}`}
-            suppressHydrationWarning
-            className={`pointer-events-none fixed z-20 w-[min(390px,calc(100vw-2rem))] will-change-[opacity,transform] max-md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] max-md:top-auto max-md:max-h-[min(48vh,400px)] max-md:translate-y-0 max-md:overflow-y-auto ${vCls} ${
-              left
-                ? "left-4 sm:left-8 md:left-12 lg:left-16"
-                : "right-4 sm:right-8 md:right-12 lg:right-16"
-            }`}
-            style={{ opacity: 0, minHeight: "280px", contain: "layout style" }}
-          >
-            <div className="pvsh-motion relative">
-            {/* Numéro décoratif */}
-            <div
-              aria-hidden
-              className={`pointer-events-none absolute select-none font-display text-[6rem] font-bold leading-none text-white md:text-[8rem] ${
-                left ? "-left-1 -top-10" : "-right-1 -top-10"
-              }`}
-              style={{ opacity: 0.03 }}
-            >
-              {section.label}
-            </div>
-
-            {/* Glass blanc lisible : carte claire + blur maîtrisé */}
-            <div
-              className={`relative rounded-2xl border border-white/65 bg-[rgba(255,255,255,0.72)] p-5 shadow-[0_18px_45px_rgba(0,0,0,0.2)] max-md:bg-[rgba(255,255,255,0.9)] md:rounded-3xl md:p-7 md:backdrop-blur-xl ${
-                left ? "border-l-[3px] border-l-white/95" : "border-r-[3px] border-r-white/95"
-              } [box-shadow:0_18px_45px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.55)]`}
-            >
-              <div className="mb-4 h-px w-10 rounded-full bg-navy/35" />
-              <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.35em] text-navy/70">
-                {section.tagline}
-              </p>
-              <h2 className="mb-1 font-display text-xl font-bold leading-tight text-navy md:text-2xl">
-                {section.title}
-              </h2>
-              <ul className="space-y-2.5">
-                {section.items.map((item, j) => (
-                  <li
-                    key={j}
-                    className="flex items-start gap-3 text-sm leading-relaxed text-navy/90"
-                  >
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-navy/70 shadow-sm" aria-hidden />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                onClick={() => router.push(`/prestations/services/${section.id}`)}
-                className="pointer-events-auto mt-5 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/75 underline-offset-4 transition-colors hover:text-navy hover:underline"
-              >
-                Voir le détail <ArrowRight size={11} strokeWidth={1.75} aria-hidden />
-              </button>
-            </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* ── Progress dots ──────────────────────────────────────────────── */}
-      <div
-        ref={dotsRef}
-        className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 md:flex"
-      >
-        {SCROLL_SECTIONS.map((s) => (
-          <div
-            key={s.id}
-            id={`pvsh-dot-${s.id}`}
-            role="tab"
-            aria-label={`Section ${s.label} : ${s.title}`}
-            aria-selected={currentSectionRef.current === s.id}
-            className="h-1.5 w-1.5 rounded-full cursor-pointer transition-all"
-            style={{ backgroundColor: "rgba(255,255,255,0.32)" }}
-            title={s.title}
-          />
-        ))}
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════
-          CONTENU SCROLLABLE — z-10 (au-dessus canvas/vignette)
-          Les sections avec bg plein (bg-black, bg-offwhite…)
-          recouvrent naturellement le canvas fixe.
-      ══════════════════════════════════════════════════════════════ */}
-      <div className="relative z-10">
-
-        {/* ── SECTION VIDÉO — wrapper = fin de zone scroll (masque canvas fixed sous le hub) ── */}
-        <div ref={videoScrollZoneRef}>
-        {/* Hero — Nos Prestations (épuré, cohérent avec index) */}
-        <section
-          className="relative flex min-h-[45vh] w-full flex-col items-center justify-center overflow-hidden bg-black px-4 text-center"
-          aria-labelledby="prestations-title"
-        >
-          {/* Fond noir pur */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "#0A0A0A",
-              backgroundImage:
-                "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)",
-            }}
+            ref={vignetteRef}
             aria-hidden
-          />
-
-          {/* Contenu centralisé */}
-          <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-0">
-            {/* Ligne décorative fine */}
-            <div className="mx-auto mb-6 h-px w-12 bg-gold/40" aria-hidden />
-
-            {/* Titre principal — même style que index, mais "NOS PRESTATIONS" */}
-            <h1
-              id="prestations-title"
-              className="animate-in fade-in m-0 font-display font-normal leading-[1.06] text-white uppercase"
-              style={{
-                fontSize: "clamp(1.75rem, 5.5vw, 4rem)",
-                letterSpacing: "0.26em",
-              }}
-            >
-              Nos Prestations
-            </h1>
-
-            {/* Sous-titre court — blanc cassé, subtle */}
-            <p
-              className="animate-in fade-in slide-in-from-bottom-1 mt-4 m-0 font-display font-normal text-[9px] uppercase tracking-[0.3em] text-white/50 delay-75 duration-700 md:text-[10px] md:tracking-[0.35em]"
-              aria-hidden={false}
-            >
-              Gestion complète · Clé en main · Équipe locale
-            </p>
-
-            {/* CTA texte uniquement — pas de bouton doré criard */}
-            <button
-              type="button"
-              onClick={() =>
-                document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex items-center text-[9px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
-              aria-hidden={false}
-            >
-              Explorer les cinq piliers ↓
-            </button>
-          </div>
-
-          {/* Chevron scroll discret en bas */}
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/20">
-            <p className="text-[7px] uppercase tracking-[0.4em]">Défiler</p>
-            <ChevronDown size={16} className="animate-pulse" aria-hidden />
-          </div>
-        </section>
-
-        {/* Scroll driver 500vh */}
-        <div ref={scrollDriverRef} style={{ height: "500vh" }} aria-hidden />
-
-        {/* Zone de transition : fond transparent + dégradé pour fondu vidéo → noir */}
-        <div
-          ref={transitionRef}
-          className="relative flex h-[55vh] flex-col items-center justify-end pb-10"
-          aria-hidden
-        >
-          <div
-            className="pointer-events-none absolute inset-0"
+            className="pointer-events-none fixed inset-0 z-[1]"
             style={{
               background:
-                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.22) 22%, rgba(0,0,0,0.55) 48%, rgba(0,0,0,0.88) 78%, #000 100%)",
+                "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.6) 100%)",
             }}
           />
-          <div className="relative flex flex-col items-center gap-2 text-white/30">
-            <p className="text-[8px] uppercase tracking-[0.4em]">Les cinq piliers de la gestion</p>
-            <ChevronDown size={18} />
+
+          {SCROLL_SECTIONS.map((section) => {
+            const left = section.position === "left";
+            const vCls = scrollSectionVerticalClasses(section.vertical);
+            return (
+              <div
+                key={section.id}
+                id={`pvsh-${section.id}`}
+                suppressHydrationWarning
+                className={`pointer-events-none fixed z-20 w-[min(390px,calc(100vw-2rem))] will-change-[opacity,transform] max-md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] max-md:top-auto max-md:max-h-[min(48vh,400px)] max-md:translate-y-0 max-md:overflow-y-auto ${vCls} ${
+                  left
+                    ? "left-4 sm:left-8 md:left-12 lg:left-16"
+                    : "right-4 sm:right-8 md:right-12 lg:right-16"
+                }`}
+                style={{ opacity: 0, minHeight: "280px", contain: "layout style" }}
+              >
+                <div className="pvsh-motion relative">
+                  <div
+                    aria-hidden
+                    className={`pointer-events-none absolute select-none font-display text-[6rem] font-bold leading-none text-white md:text-[8rem] ${
+                      left ? "-left-1 -top-10" : "-right-1 -top-10"
+                    }`}
+                    style={{ opacity: 0.03 }}
+                  >
+                    {section.label}
+                  </div>
+
+                  <div className="relative rounded-2xl border border-white/60 bg-[rgba(255,255,255,0.76)] p-5 max-md:bg-[rgba(255,255,255,0.92)] md:rounded-3xl md:p-7 md:backdrop-blur-md [box-shadow:0_18px_45px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.55)]">
+                    <div className="mb-4 h-px w-10 rounded-full bg-navy/35" />
+                    <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.35em] text-navy/70">
+                      {section.tagline}
+                    </p>
+                    <h2 className="mb-1 font-display text-xl font-bold leading-tight text-navy md:text-2xl">
+                      {section.title}
+                    </h2>
+                    <ul className="space-y-2.5">
+                      {section.items.map((item, j) => (
+                        <li
+                          key={j}
+                          className="flex items-start gap-3 text-sm leading-relaxed text-navy/90"
+                        >
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-navy/70 shadow-sm" aria-hidden />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/prestations/services/${section.id}`)}
+                      className="pointer-events-auto mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/75 underline-offset-4 transition-colors hover:text-navy hover:underline"
+                    >
+                      Voir le détail <ArrowRight size={11} strokeWidth={1.75} aria-hidden />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <div
+            ref={dotsRef}
+            aria-hidden="true"
+            className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 md:flex"
+          >
+            {SCROLL_SECTIONS.map((s) => (
+              <div
+                key={s.id}
+                id={`pvsh-dot-${s.id}`}
+                className="h-1.5 w-1.5 rounded-full transition-all"
+                style={{ backgroundColor: "rgba(255,255,255,0.32)" }}
+              />
+            ))}
           </div>
-        </div>
-        </div>
+        </>
+      ) : null}
+
+      <div className="relative z-10">
+        {desktopParallax ? (
+          <div ref={videoScrollZoneRef}>
+            <section
+              className="relative flex min-h-[45dvh] w-full flex-col items-center justify-center overflow-hidden bg-navy px-4 text-center"
+              aria-labelledby="prestations-title"
+            >
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)",
+                }}
+                aria-hidden
+              />
+
+              <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-0">
+                <div className="mx-auto mb-6 h-px w-12 bg-gold/40" aria-hidden />
+
+                <h1
+                  id="prestations-title"
+                  className="animate-in fade-in m-0 font-display font-normal leading-[1.06] text-white uppercase"
+                  style={{
+                    fontSize: "clamp(1.75rem, 5.5vw, 4rem)",
+                    letterSpacing: "0.26em",
+                  }}
+                >
+                  Nos Prestations
+                </h1>
+
+                <p className="animate-in fade-in slide-in-from-bottom-1 mt-4 m-0 font-display font-normal text-[10px] uppercase tracking-[0.3em] text-white/60 delay-75 duration-700 md:tracking-[0.35em]">
+                  Gestion complète · Clé en main · Équipe locale
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
+                >
+                  Explorer les cinq piliers<span aria-hidden="true"> ↓</span>
+                </button>
+              </div>
+
+              <div aria-hidden className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/20">
+                <p className="text-[7px] uppercase tracking-[0.4em]">Défiler</p>
+                <ChevronDown size={16} />
+              </div>
+            </section>
+
+            <div ref={scrollDriverRef} style={{ height: "500vh" }} aria-hidden />
+
+            <div
+              ref={transitionRef}
+              className="relative flex h-[55vh] flex-col items-center justify-end pb-10"
+              aria-hidden
+            >
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.22) 22%, rgba(0,0,0,0.55) 48%, rgba(0,0,0,0.88) 78%, #000 100%)",
+                }}
+              />
+              <div className="relative flex flex-col items-center gap-2 text-white/30">
+                <p className="text-[8px] uppercase tracking-[0.4em]">Gestion clé en main</p>
+                <ChevronDown size={18} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <section
+            className="relative w-full overflow-hidden bg-navy"
+            aria-labelledby="prestations-title"
+          >
+            <div className="relative aspect-[4/5] max-h-[min(72vh,640px)] w-full sm:aspect-[16/10] sm:max-h-[min(56vh,520px)]">
+              <Image
+                src="/prestations-hero.png"
+                alt=""
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="100vw"
+              />
+              <div
+                className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/40 to-navy"
+                aria-hidden
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-8 pt-16 text-center">
+                <div className="mx-auto mb-5 h-px w-12 bg-gold/50" aria-hidden />
+                <h1
+                  id="prestations-title"
+                  className="m-0 max-w-3xl font-display font-normal leading-[1.08] text-white uppercase"
+                  style={{
+                    fontSize: "clamp(1.5rem, 6vw, 2.75rem)",
+                    letterSpacing: "0.2em",
+                  }}
+                >
+                  Nos Prestations
+                </h1>
+                <p className="mt-4 max-w-md font-display text-[10px] uppercase tracking-[0.28em] text-white/65">
+                  Gestion complète · Clé en main · Équipe locale
+                </p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="mt-8 inline-flex min-h-[44px] items-center rounded-full border border-white/25 bg-white/10 px-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                >
+                  Explorer les cinq piliers<span aria-hidden="true"> ↓</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── CONTENU DÉTAILLÉ (fond plein — cache le canvas) ───────── */}
 
         <LandingShell>
 
           {/* ── 2. Strip CTA ── */}
-          <section className="bg-black px-5 py-4 sm:px-6 md:py-5">
+          <section className="bg-navy px-5 py-4 sm:px-6 md:py-5">
             <div className="mx-auto max-w-4xl text-center">
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 md:gap-x-5">
                 <Link
@@ -574,6 +604,7 @@ export default function PrestationsPageClient() {
                 >
                   Soumettre ma villa
                 </Link>
+                {/* [FIX P2] "Découvrir" au lieu de répéter "Les cinq piliers" + aria-hidden sur ↓ */}
                 <button
                   type="button"
                   onClick={() =>
@@ -581,7 +612,7 @@ export default function PrestationsPageClient() {
                   }
                   className="inline-flex min-h-[44px] items-center text-[10px] font-semibold uppercase tracking-[0.28em] text-white/50 underline-offset-8 transition-colors hover:text-white hover:underline"
                 >
-                  Les cinq piliers ↓
+                  Découvrir les piliers<span aria-hidden="true"> ↓</span>
                 </button>
               </div>
               <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/30 md:mt-3">
@@ -607,7 +638,7 @@ export default function PrestationsPageClient() {
                     </span>
                   </div>
                   {i < arr.length - 1 && (
-                    <span className="hidden h-6 w-px bg-black/10 sm:block" aria-hidden />
+                    <span className="hidden h-6 w-px bg-navy/10 sm:block" aria-hidden />
                   )}
                 </div>
               ))}
@@ -650,7 +681,7 @@ export default function PrestationsPageClient() {
             <div className="grid gap-14 md:grid-cols-2 md:gap-20">
               <div className="space-y-10">
                 <p className="text-[15px] leading-relaxed text-navy/65">
-                  Rejoignez les propriétaires qui font confiance à Diamant Noir pour gérer leur bien
+                  Rejoignez les propriétaires qui font confiance à Naoriva pour gérer leur bien
                   avec exigence — et transformez votre villa en une expérience mémorable.
                 </p>
                 <ul className="space-y-4">

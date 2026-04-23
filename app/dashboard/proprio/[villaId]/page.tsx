@@ -1474,7 +1474,7 @@ export default function VillaDashboard() {
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Nom de la villa</label>
-                      <Input value={form.name} onChange={handleChange("name")} placeholder="Villa Diamant Noir" />
+                      <Input value={form.name} onChange={handleChange("name")} placeholder="Villa Naoriva" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Localisation</label>

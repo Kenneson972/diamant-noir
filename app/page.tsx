@@ -50,7 +50,7 @@ export default async function HomePage() {
     <main className="min-h-dvh bg-offwhite">
       {/* Hero — vidéo fond + cartes audience inline */}
       <section
-        className="relative flex min-h-[420px] w-full flex-col justify-center overflow-hidden bg-black pt-24 xs:min-h-[480px] md:min-h-[min(80vh,760px)] md:py-20 md:pt-24"
+        className="relative flex min-h-[420px] w-full flex-col justify-center overflow-hidden bg-navy pt-24 xs:min-h-[480px] md:min-h-[min(80vh,760px)] md:py-20 md:pt-24"
         aria-labelledby="hero-title"
       >
         <video
@@ -68,7 +68,7 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="hero-title"
-            titleLabel="Diamant Noir — Conciergerie privée"
+            titleLabel="Naoriva — Conciergerie privée"
             showValuesTriplet={false}
           />
           <HeroAudienceCards />

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Refondre la page `/login` avec un layout 60/40 split-screen, panneau blanc sans tabs, champs underline-only, identité visuelle cohérente avec le logo Diamant Noir.
+**Goal:** Refondre la page `/login` avec un layout 60/40 split-screen, panneau blanc sans tabs, champs underline-only, identité visuelle cohérente avec le logo Naoriva.
 
 **Architecture:** Deux fichiers modifiés uniquement — `app/login/page.tsx` (layout, LoginForm, PasswordPanel) et `components/auth/TenantMagicLinkFlow.tsx` (flow OTP locataire). Toute la logique auth Supabase est conservée à 100%.
 
@@ -81,7 +81,7 @@ function LoginSideVideo() {
 - [ ] **Step 2 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/diamant-noir"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
 npm run build 2>&1 | tail -20
 ```
 Expected : aucune erreur TypeScript ni Tailwind.
@@ -95,7 +95,7 @@ git commit -m "feat(login): 60/40 split layout + Martinique badge on video panel
 
 ---
 
-## Task 2 : LoginForm — panel + header DIAMANT NOIR + footer
+## Task 2 : LoginForm — panel + header NAORIVA + footer
 
 **Files:**
 - Modify: `app/login/page.tsx:487-558`
@@ -125,7 +125,7 @@ function LoginForm() {
         <div className="mx-auto w-full max-w-xs space-y-8">
           {/* Logo texte */}
           <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">
-            Diamant Noir
+            Naoriva
           </p>
 
           {/* Titre + tagline */}
@@ -172,7 +172,7 @@ function LoginForm() {
           </div>
 
           <p className="text-[9px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">
-            © 2026 Diamant Noir
+            © 2026 Naoriva
           </p>
         </div>
       </div>
@@ -199,7 +199,7 @@ Expected : aucune erreur.
 
 ```bash
 git add app/login/page.tsx
-git commit -m "feat(login): DIAMANT NOIR text header, 26rem panel, footer links redesign"
+git commit -m "feat(login): NAORIVA text header, 26rem panel, footer links redesign"
 ```
 
 ---
@@ -822,7 +822,7 @@ npm run build
 # Vérifier visuellement à http://localhost:3000/login?redirect=/dashboard/proprio
 # Sur les deux :
 # ✓ Vidéo/image à gauche, badge "Martinique" visible en bas
-# ✓ Panneau blanc à droite, "DIAMANT NOIR" en petites capitales
+# ✓ Panneau blanc à droite, "NAORIVA" en petites capitales
 # ✓ Titre Playfair Display
 # ✓ Champs email/password : soulignement uniquement (pas de border box)
 # ✓ CTA navy plein

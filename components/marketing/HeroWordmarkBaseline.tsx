@@ -11,7 +11,7 @@ type Props = {
 };
 
 /**
- * Hero vidéo : « DIAMANT NOIR » + *Conciergerie privée* + optionnellement les trois mots *Confiance · Réactivité · Excellence* (micro-typo).
+ * Hero vidéo : « NAORIVA » + *Conciergerie privée* + optionnellement les trois mots *Confiance · Réactivité · Excellence* (micro-typo).
  * Optionnel : CTAs via `children`.
  */
 export function HeroWordmarkBaseline({
@@ -38,7 +38,7 @@ export function HeroWordmarkBaseline({
         />
       </h1>
 
-      {/* Même « voix » typographique que le wordmark DIAMANT NOIR : font-display, leading 1.06, tracking identique — taille plus basse */}
+      {/* Même « voix » typographique que le wordmark NAORIVA : font-display, leading 1.06, tracking identique — taille plus basse */}
       <p
         className="animate-in fade-in slide-in-from-bottom-1 m-0 duration-700 delay-75 motion-reduce:delay-0"
         aria-hidden={false}

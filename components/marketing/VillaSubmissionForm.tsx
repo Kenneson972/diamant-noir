@@ -285,7 +285,7 @@ export function VillaSubmissionForm() {
                       type="button"
                       onClick={(e) => { e.stopPropagation(); removePhoto(p.id); }}
                       aria-label="Supprimer cette photo"
-                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-navy/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
                     >
                       <X size={12} aria-hidden />
                     </button>
@@ -322,7 +322,7 @@ export function VillaSubmissionForm() {
           />
           <span className="flex items-center gap-2 text-sm text-navy/80">
             <ImageOff size={16} aria-hidden />
-            Je n&apos;ai pas de photos — Diamant Noir s&apos;en charge (état des lieux + photos
+            Je n&apos;ai pas de photos — Naoriva s&apos;en charge (état des lieux + photos
             professionnelles)
           </span>
         </label>

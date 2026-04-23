@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * WishlistContext — Diamant Noir
+ * WishlistContext — Naoriva
  * ──────────────────────────────
  * Persiste les villas favorites en localStorage (anonyme)
  * et sync vers Supabase si l'utilisateur est connecté.

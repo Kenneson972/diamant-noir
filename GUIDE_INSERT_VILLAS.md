@@ -7,7 +7,7 @@
 1. **Dans Supabase Dashboard** :
    - Allez dans **Authentication** > **Users**
    - Cliquez sur **"Add user"** ou **"Invite user"**
-   - Créez un utilisateur avec un email (ex: `admin@diamantnoir.com`)
+   - Créez un utilisateur avec un email (ex: `admin@naoriva.com`)
    - **Copiez l'UUID** de cet utilisateur (il ressemble à : `123e4567-e89b-12d3-a456-426614174000`)
 
 ### Étape 2 : Insérer les Villas de Test
@@ -33,7 +33,7 @@ ORDER BY created_at DESC;
 ```
 
 Vous devriez voir 3 villas :
-- Villa Diamant Noir
+- Villa Naoriva
 - Villa Horizon
 - Villa Émeraude
 

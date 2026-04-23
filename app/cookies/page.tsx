@@ -9,7 +9,7 @@ import {
 
 export const metadata = {
   title: "Gestion des cookies",
-  description: "Information sur les cookies utilisés sur le site Diamant Noir.",
+  description: "Information sur les cookies utilisés sur le site Naoriva.",
 };
 
 function CookiesSimple() {

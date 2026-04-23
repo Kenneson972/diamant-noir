@@ -155,7 +155,7 @@ export const Navbar = () => {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-[1030] bg-black/50 backdrop-blur-none md:backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-[1030] bg-navy/50 backdrop-blur-none md:backdrop-blur-sm transition-opacity duration-300"
           onClick={closeMenu}
         />
       ) : null}
@@ -175,7 +175,7 @@ export const Navbar = () => {
           <button
             type="button"
             onClick={closeMenu}
-            className="tap-target flex h-11 w-11 items-center justify-center text-navy transition-colors hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            className="tap-target flex h-11 w-11 items-center justify-center text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
             aria-label="Fermer le menu"
           >
             <X size={22} strokeWidth={1.25} />
@@ -192,7 +192,7 @@ export const Navbar = () => {
                     href={href}
                     onClick={closeMenu}
                     className={`flex min-h-[44px] items-center px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
-                      active ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
+                      active ? "bg-navy/[0.06]" : "hover:bg-navy/[0.04]"
                     }`}
                   >
                     {label}
@@ -206,7 +206,7 @@ export const Navbar = () => {
                   href="/espace-client"
                   onClick={closeMenu}
                   className={`flex min-h-[44px] items-center px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-navy transition-colors ${
-                    routeActive("/espace-client") ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
+                    routeActive("/espace-client") ? "bg-navy/[0.06]" : "hover:bg-navy/[0.04]"
                   }`}
                 >
                   Espace client

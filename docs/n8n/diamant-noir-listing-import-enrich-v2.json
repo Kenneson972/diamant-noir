@@ -1,10 +1,10 @@
 {
-  "name": "DIAMANT NOIR — Listing Import Enrich",
+  "name": "NAORIVA — Listing Import Enrich",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "diamant-noir-listing-import",
+        "path": "naoriva-listing-import",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -13,7 +13,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [0, 0],
-      "webhookId": "diamant-noir-listing-import"
+      "webhookId": "naoriva-listing-import"
     },
     {
       "parameters": {
@@ -296,10 +296,10 @@
   },
   "staticData": null,
   "tags": [
-    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-diamant-noir", "name": "diamant-noir" },
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-naoriva", "name": "naoriva" },
     { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-listing-import", "name": "listing-import" }
   ],
   "triggerCount": 0,
   "updatedAt": "2026-04-06T00:00:00.000Z",
-  "versionId": "diamant-noir-listing-import-enrich-v2"
+  "versionId": "naoriva-listing-import-enrich-v2"
 }

@@ -11,18 +11,18 @@ export function HomeTrustBand() {
           <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
             Conciergerie 24/7
           </span>
-          <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
+          <span className="hidden h-3 w-px bg-navy/10 sm:block" aria-hidden />
           <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
             Équipe locale 7j/7
           </span>
-          <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
+          <span className="hidden h-3 w-px bg-navy/10 sm:block" aria-hidden />
           <div className="flex items-center gap-2">
             <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
             <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
               4,9 / 5
             </span>
           </div>
-          <span className="hidden h-3 w-px bg-black/10 sm:block" aria-hidden />
+          <span className="hidden h-3 w-px bg-navy/10 sm:block" aria-hidden />
           <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/45">
             100+ séjours
           </span>

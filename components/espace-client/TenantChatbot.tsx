@@ -42,7 +42,7 @@ function formatTime(d: Date): string {
 function makeWelcomeMessage(guestName?: string): Message {
   return {
     role: "assistant",
-    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Diamant Noir. Comment puis-je vous aider pendant votre séjour ?`,
+    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Naoriva. Comment puis-je vous aider pendant votre séjour ?`,
     timestamp: new Date(),
   };
 }

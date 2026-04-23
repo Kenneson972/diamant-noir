@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * AvailabilityAlert — Diamant Noir
+ * AvailabilityAlert — Naoriva
  * ─────────────────────────────────
  * Widget "Être alerté de la disponibilité".
  * L'utilisateur entre son email + ses dates souhaitées.

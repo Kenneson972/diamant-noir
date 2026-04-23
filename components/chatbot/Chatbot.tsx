@@ -58,10 +58,10 @@ export const Chatbot = () => {
   // Gestion de la session ID
   const getOrCreateSessionId = () => {
     if (typeof window === "undefined") return "";
-    let sessionId = localStorage.getItem("diamant_noir_session_id");
+    let sessionId = localStorage.getItem("naoriva_session_id");
     if (!sessionId) {
       sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      localStorage.setItem("diamant_noir_session_id", sessionId);
+      localStorage.setItem("naoriva_session_id", sessionId);
     }
     return sessionId;
   };
@@ -72,7 +72,7 @@ export const Chatbot = () => {
       const welcomeMessage = {
         role: "assistant" as const,
         content:
-          "Bonjour ! Je suis l'assistante Diamant Noir 💎\n\n" +
+          "Bonjour ! Je suis l'assistante Naoriva 💎\n\n" +
           "Je suis là pour vous aider à découvrir nos villas d'exception et répondre à toutes vos questions sur les réservations.\n\n" +
           "Comment puis-je vous aider aujourd'hui ?",
       };
@@ -262,7 +262,7 @@ export const Chatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group fixed z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-black/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
+          className="group fixed z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-navy/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
           aria-label="Ouvrir le chat"
         >
           <Sparkles className="relative z-10 animate-pulse" size={28} />
@@ -282,7 +282,7 @@ export const Chatbot = () => {
           }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 bg-black p-5 text-white">
+          <div className="flex items-center justify-between border-b border-white/10 bg-navy p-5 text-white">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
@@ -293,14 +293,14 @@ export const Chatbot = () => {
               <div>
                 <h3 className="font-display text-lg tracking-wide">Conciergerie IA</h3>
                 <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/50">
-                  <span>Diamant Noir</span>
+                  <span>Naoriva</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
-                  localStorage.removeItem("diamant_noir_session_id");
+                  localStorage.removeItem("naoriva_session_id");
                   setMessages([{
                     role: "assistant",
                     content: "Chat réinitialisé. Comment puis-je vous aider ?"
@@ -338,7 +338,7 @@ export const Chatbot = () => {
                 className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.role === "assistant" && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black font-display text-sm font-bold text-white">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white">
                     D
                   </div>
                 )}
@@ -357,13 +357,13 @@ export const Chatbot = () => {
             ))}
             {isLoading && (
               <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black font-display text-sm font-bold text-white">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white">
                   D
                 </div>
                 <div className="flex items-center gap-1 rounded-2xl border border-black/10 bg-white px-4 py-3">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30"></span>
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30" style={{ animationDelay: "0.2s" }}></span>
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-black/30" style={{ animationDelay: "0.4s" }}></span>
+                  <span className="dn-typing-dot h-2 w-2 rounded-full bg-navy/30"></span>
+                  <span className="dn-typing-dot h-2 w-2 rounded-full bg-navy/30" style={{ animationDelay: "0.3s" }}></span>
+                  <span className="dn-typing-dot h-2 w-2 rounded-full bg-navy/30" style={{ animationDelay: "0.6s" }}></span>
                 </div>
               </div>
             )}
@@ -376,7 +376,7 @@ export const Chatbot = () => {
                   <button
                     key={index}
                     onClick={() => sendMessage(suggestion)}
-                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black hover:bg-black hover:text-white"
+                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black hover:bg-navy hover:text-white"
                     disabled={isLoading}
                   >
                     {suggestion}
@@ -398,7 +398,7 @@ export const Chatbot = () => {
                     <button
                       key={index}
                       onClick={() => insertEmoji(emoji)}
-                      className="rounded-lg p-2 text-xl transition-colors hover:bg-black/5"
+                      className="rounded-lg p-2 text-xl transition-colors hover:bg-navy/5"
                     >
                       {emoji}
                     </button>
@@ -409,7 +409,7 @@ export const Chatbot = () => {
             <div className="flex items-end gap-2">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="rounded-full p-2 text-black/50 transition-colors hover:bg-black/5 hover:text-black"
+                className="rounded-full p-2 text-black/50 transition-colors hover:bg-navy/5 hover:text-black"
                 aria-label="Émojis"
               >
                 <Smile size={20} />
@@ -427,7 +427,7 @@ export const Chatbot = () => {
               <button
                 onClick={() => sendMessage()}
                 disabled={!inputMessage.trim() || isLoading}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-all hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-white transition-all hover:bg-navy/85 disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Envoyer"
               >
                 <Send size={18} />

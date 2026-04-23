@@ -1,21 +1,21 @@
 {
-  "name": "Diamant Noir — Copilot Propriétaire",
+  "name": "Naoriva — Copilot Propriétaire",
   "nodes": [
     {
       "id": "webhook-trigger",
-      "name": "Webhook — POST /diamant-owner-copilot",
+      "name": "Webhook — POST /naoriva-owner-copilot",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [240, 300],
       "parameters": {
         "httpMethod": "POST",
-        "path": "diamant-owner-copilot",
+        "path": "naoriva-owner-copilot",
         "responseMode": "responseNode",
         "options": {
           "rawBody": false
         }
       },
-      "webhookId": "diamant-owner-copilot"
+      "webhookId": "naoriva-owner-copilot"
     },
 
     {
@@ -107,7 +107,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-opus-4-6\",\n  \"max_tokens\": 1024,\n  \"system\": \"Tu es DIAMANT, l'assistant privé de Diamant Noir Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE fourni — jamais d'invention.\\n2. Si une information est absente, dis-le clairement sans improviser.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si le propriétaire demande du détail.\\n5. Commence TOUJOURS par la priorité maximale : alertes critiques > événements du jour > tâches urgentes > vue générale.\\n6. Ne mentionne jamais d'autres propriétaires ou leurs données.\\n\\nFORMAT DE RÉPONSE — JSON strict, sans markdown autour :\\n{\\\"response\\\":\\\"Texte principal pour le propriétaire.\\\",\\\"action\\\":\\\"SHOW_STATS\\\",\\\"action_data\\\":{\\\"strategic_alert\\\":null}}\\n\\nRÈGLES D'ACTION (utilise l'action déjà détectée si cohérente) :\\n- SHOW_STATS     : vue d'ensemble, résumé, chiffres, performance\\n- SHOW_BOOKINGS  : réservations, arrivées, départs, voyageurs\\n- SHOW_VILLAS    : villas, annonces, propriétés\\n- SHOW_TASKS     : tâches, maintenance, problèmes, réparations\\n\\nSi des alertes HIGH existent, mentionne-les EN PREMIER dans la réponse, puis réponds à la question.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"CONTEXTE PROPRIÉTAIRE:\\n{{ $json._contextText }}\\n\\nACTION SUGGÉRÉE: {{ $json._detectedAction }}\\n\\nQUESTION: {{ $json.message }}\"\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-6\",\n  \"max_tokens\": 1024,\n  \"system\": \"Tu es DIAMANT, l'assistant privé de Naoriva Conciergerie, dédié EXCLUSIVEMENT aux propriétaires de villas de luxe en Martinique.\\n\\nRÈGLES FONDAMENTALES\\n1. Tu utilises UNIQUEMENT les données du bloc CONTEXTE fourni — jamais d'invention.\\n2. Si une information est absente, dis-le clairement sans improviser.\\n3. Réponds en français, ton professionnel, chaleureux et rassurant — comme un directeur de conciergerie 5 étoiles.\\n4. Sois concis par défaut (2-4 phrases). Développe uniquement si le propriétaire demande du détail.\\n5. Commence TOUJOURS par la priorité maximale : alertes critiques > événements du jour > tâches urgentes > vue générale.\\n6. Ne mentionne jamais d'autres propriétaires ou leurs données.\\n\\nFORMAT DE RÉPONSE — JSON strict, sans markdown autour :\\n{\\\"response\\\":\\\"Texte principal pour le propriétaire.\\\",\\\"action\\\":\\\"SHOW_STATS\\\",\\\"action_data\\\":{\\\"strategic_alert\\\":null}}\\n\\nRÈGLES D'ACTION (utilise l'action déjà détectée si cohérente) :\\n- SHOW_STATS     : vue d'ensemble, résumé, chiffres, performance\\n- SHOW_BOOKINGS  : réservations, arrivées, départs, voyageurs\\n- SHOW_VILLAS    : villas, annonces, propriétés\\n- SHOW_TASKS     : tâches, maintenance, problèmes, réparations\\n\\nSi des alertes HIGH existent, mentionne-les EN PREMIER dans la réponse, puis réponds à la question.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"CONTEXTE PROPRIÉTAIRE:\\n{{ $json._contextText }}\\n\\nACTION SUGGÉRÉE: {{ $json._detectedAction }}\\n\\nQUESTION: {{ $json.message }}\"\n    }\n  ]\n}",
         "options": {
           "response": { "response": { "fullResponse": false } },
           "timeout": 30000
@@ -172,7 +172,7 @@
   ],
 
   "connections": {
-    "Webhook — POST /diamant-owner-copilot": {
+    "Webhook — POST /naoriva-owner-copilot": {
       "main": [
         [{ "node": "Code — Sécurité & Extraction", "type": "main", "index": 0 }]
       ]
@@ -225,14 +225,14 @@
     "errorWorkflow": ""
   },
   "tags": [
-    { "name": "diamant-noir" },
+    { "name": "naoriva" },
     { "name": "owner-copilot" },
     { "name": "production" }
   ],
   "meta": {
     "templateCredsSetupCompleted": false,
-    "instanceId": "diamant-noir-owner-copilot-v1"
+    "instanceId": "naoriva-owner-copilot-v1"
   },
-  "id": "diamant-owner-copilot-v1",
+  "id": "naoriva-owner-copilot-v1",
   "versionId": "1.0.0"
 }

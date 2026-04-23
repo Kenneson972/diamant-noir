@@ -123,10 +123,10 @@ export const Footer = () => {
             <h4 className="mb-4 text-xs uppercase tracking-[0.2em] text-black/40">Suivez-nous</h4>
             <div className="mb-4 flex items-center gap-3">
               <a
-                href="https://instagram.com/diamantnoir_villas"
+                href="https://instagram.com/naoriva_villas"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram Diamant Noir"
+                aria-label="Instagram Naoriva"
                 className="tap-target border border-black/10 text-navy/50 transition-colors hover:border-black hover:text-black"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -139,7 +139,7 @@ export const Footer = () => {
                 href="https://wa.me/33600000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="WhatsApp Diamant Noir"
+                aria-label="WhatsApp Naoriva"
                 className="tap-target border border-black/10 text-navy/50 transition-colors hover:border-black hover:text-black"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -191,7 +191,7 @@ export const Footer = () => {
         )}
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-8 text-xs uppercase tracking-[0.1em] text-navy/40 md:flex-row">
-          <p>© 2026 Diamant Noir. Tous droits réservés.</p>
+          <p>© 2026 Naoriva. Tous droits réservés.</p>
           <div className="flex gap-6">
             <Link href="/confidentialite" className="transition-colors hover:text-black">
               Politique de confidentialité

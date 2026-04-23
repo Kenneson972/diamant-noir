@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { VillaWizard } from "@/components/marketing/VillaWizard";
 
 export const metadata: Metadata = {
-  title: "Soumettre ma villa — Diamant Noir Conciergerie",
+  title: "Soumettre ma villa — Naoriva Conciergerie",
   description:
-    "Confiez votre villa à Diamant Noir. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
+    "Confiez votre villa à Naoriva. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
 };
 
 export default function SoumettreMaVillaPage() {

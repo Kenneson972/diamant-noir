@@ -43,7 +43,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
   }, [initialVillas, guestFilter, sort, guests]);
 
   const chip =
-    "tap-target shrink-0 inline-flex items-center gap-2 border border-black/10 bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/70 transition-colors hover:border-navy/25 hover:bg-black/[0.02] whitespace-nowrap";
+    "tap-target shrink-0 inline-flex items-center gap-2 border border-black/10 bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/70 transition-colors hover:border-navy/25 hover:bg-navy/[0.02] whitespace-nowrap";
   const chipActive =
     "border-navy bg-navy text-white hover:bg-navy hover:border-navy hover:text-white";
 
@@ -110,7 +110,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
             </div>
             <Link
               href="/villas"
-              className="tap-target flex h-10 w-10 items-center justify-center border border-black/10 text-navy transition-colors hover:bg-black/[0.04]"
+              className="tap-target flex h-10 w-10 items-center justify-center border border-black/10 text-navy transition-colors hover:bg-navy/[0.04]"
               aria-label="Voir la carte des villas"
             >
               <MapIcon size={16} strokeWidth={1.25} />

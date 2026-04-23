@@ -1,6 +1,6 @@
 /**
  * types/chatbot.ts
- * Diamant Noir — Contrats TypeScript stricts du chatbot public V1
+ * Naoriva — Contrats TypeScript stricts du chatbot public V1
  *
  * Chaîne de données : Chatbot.tsx → /api/chat → n8n webhook → /api/chat → Chatbot.tsx
  *

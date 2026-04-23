@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * VideoScrollHero — Page Prestations · Diamant Noir
+ * VideoScrollHero — Page Prestations · Naoriva
  *
  * Scroll-driven canvas animation (style Apple) pour la page /prestations.
  * S'intègre dans LandingShell — pas de header propre.
  * Le canvas (position:fixed) est recouvert naturellement par les sections
- * à fond plein (bg-offwhite, bg-black) qui suivent dans la page.
+ * à fond plein (bg-offwhite, bg-navy) qui suivent dans la page.
  *
  * Mapping vidéo LANDINGPAGE.mp4 extraite à 15fps → 561 frames WebP
  *   0–111   → Extérieur · Piscine    → Marketing & Visibilité
@@ -478,8 +478,8 @@ export function VideoScrollHero() {
             {/* Logo Brand */}
             <div className="preloader-logo">
               <Image
-                src="/brand/diamant-noir-logo.png"
-                alt="Diamant Noir"
+                src="/brand/naoriva-logo.png"
+                alt="Naoriva"
                 width={40}
                 height={40}
                 className="brightness-0 invert"
@@ -498,7 +498,7 @@ export function VideoScrollHero() {
                 className="preloader-title font-display font-normal uppercase text-white tracking-[0.38em] md:tracking-[0.4em]"
                 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)" }}
               >
-                DIAMANT NOIR
+                NAORIVA
               </h1>
             </div>
 
@@ -513,8 +513,10 @@ export function VideoScrollHero() {
                 className="absolute inset-y-0 left-0 rounded-full"
                 style={{
                   background: "rgba(212, 175, 55, 0.6)",
-                  width: `${loadProgress}%`,
-                  transition: "width 0.3s ease-out",
+                  width: "100%",
+                  transformOrigin: "left center",
+                  transform: `scaleX(${loadProgress / 100})`,
+                  transition: "transform 0.3s ease-out",
                 }}
               />
             </div>
@@ -730,7 +732,7 @@ export function VideoScrollHero() {
           {/* Scroll indicator */}
           <div className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/25">
             <p className="text-[7px] uppercase tracking-[0.45em]">Défiler</p>
-            <ChevronDown size={16} className="animate-bounce" />
+            <ChevronDown size={16} className="animate-pulse" />
           </div>
         </section>
 
