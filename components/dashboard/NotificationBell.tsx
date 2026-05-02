@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * NotificationBell — Naoriva Dashboard
+ * NotificationBell — Kayvila Dashboard
  * ──────────────────────────────────────────
  * Cloche dans la Sidebar avec badge de compteur.
  * S'abonne à Supabase Realtime sur la table `notifications` :
@@ -106,7 +106,7 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
+        (payload: any) => {
           const newNotif = payload.new as Notification;
 
           // Animation de la cloche
@@ -120,7 +120,7 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "notifications" },
-        (payload) => {
+        (payload: any) => {
           const updated = payload.new as Notification;
           setNotifications((prev) =>
             prev.map((n) => (n.id === updated.id ? updated : n))

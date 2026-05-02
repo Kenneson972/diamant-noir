@@ -88,8 +88,7 @@ const NAV_ITEMS = [
   },
 ] as const;
 
-// Bottom bar mobile: 4 main tabs (Conciergerie accessible via desktop sidebar or future "Plus" menu)
-const BOTTOM_NAV = NAV_ITEMS.slice(0, 4);
+const BOTTOM_NAV = NAV_ITEMS;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -120,11 +119,8 @@ export function EspaceClientShell({
         className="hidden md:flex w-[188px] flex-col bg-white border-r border-[rgba(13,27,42,0.07)] shrink-0"
         aria-label="Navigation espace client"
       >
-        {/* Brand */}
+        {/* Brand — pas de ligne marque sous le titre (évite doublon avec la barre site) */}
         <div className="px-6 pt-8 pb-0">
-          <p className="text-[7px] font-medium tracking-[0.28em] uppercase text-[#D4AF37] opacity-80 mb-1">
-            Naoriva
-          </p>
           <p className="font-display text-[15px] font-normal text-[#0D1B2A]">
             Espace Client
           </p>

@@ -1,11 +1,11 @@
-# 💬 Chatbot Naoriva - Configuration
+# 💬 Chatbot Kayvila - Configuration
 
-Le chatbot Naoriva est maintenant intégré dans l'application. Il suit la même logique que le chatbot Karibloom (Élise).
+Le chatbot Kayvila est maintenant intégré dans l'application. Il suit la même logique que le chatbot Karibloom (Élise).
 
 ## 🚀 Fonctionnalités
 
 - **FAB (Floating Action Button)** : Bouton flottant en bas à droite pour ouvrir le chat
-- **Interface de chat moderne** : Design premium adapté au style Naoriva
+- **Interface de chat moderne** : Design premium adapté au style Kayvila
 - **Suggestions rapides** : Boutons contextuels pour accélérer les interactions
 - **Sélecteur d'émojis** : Pour enrichir les messages
 - **Gestion de session** : Persistance via localStorage
@@ -28,7 +28,7 @@ Ajoutez dans votre `.env.local` :
 
 ```bash
 # Option 1 : Webhook n8n (recommandé)
-N8N_WEBHOOK_URL=https://votre-n8n.com/webhook/naoriva
+N8N_WEBHOOK_URL=https://votre-n8n.com/webhook/kayvila
 
 # Option 2 : Autre service IA
 CHAT_WEBHOOK_URL=https://votre-service-ia.com/api/chat
@@ -81,7 +81,7 @@ Modifiez le message de bienvenue dans le `useEffect` initial du composant.
 
 ### Style
 
-Le chatbot utilise les classes Tailwind du design system Naoriva :
+Le chatbot utilise les classes Tailwind du design system Kayvila :
 - `bg-navy` : Fond sombre
 - `bg-gold` : Accents dorés
 - `bg-offwhite` : Fond clair
@@ -122,5 +122,5 @@ Les logs sont disponibles dans la console du navigateur :
 ## 📝 Notes
 
 - Le chatbot fonctionne en mode démo par défaut (pas besoin de webhook pour tester)
-- Les sessions sont stockées dans `localStorage` avec la clé `naoriva_session_id`
+- Les sessions sont stockées dans `localStorage` avec la clé `kayvila_session_id`
 - Le rate limiting est basique (en production, utiliser Redis/Upstash)

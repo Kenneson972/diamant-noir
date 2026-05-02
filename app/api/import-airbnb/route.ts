@@ -7,10 +7,16 @@ import {
 } from "@/lib/listing-import";
 import type { ListingFieldSource, ListingImportApiResponse } from "@/lib/listing-import-types";
 import { normalizeImportedAmenities } from "@/lib/amenity-import-normalize";
+import { checkRateLimit, ipFromRequest } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  // Rate limiting : 5 req / 60s par IP
+  if (!checkRateLimit(`import:${ipFromRequest(req)}`, 5, 60_000)) {
+    return NextResponse.json({ error: "Trop de requêtes. Réessayez plus tard." }, { status: 429 });
+  }
+
   try {
     const body = (await req.json()) as { url?: string; useAi?: boolean };
     const url = typeof body.url === "string" ? body.url.trim() : "";

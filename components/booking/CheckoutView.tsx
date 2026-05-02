@@ -279,7 +279,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                     <span>€{cleaningFee}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="underline decoration-navy/10 underline-offset-4 cursor-help">Frais de service Naoriva</span>
+                    <span className="underline decoration-navy/10 underline-offset-4 cursor-help">Frais de service Kayvila</span>
                     <span>€{serviceFee.toLocaleString()}</span>
                   </div>
                 </div>

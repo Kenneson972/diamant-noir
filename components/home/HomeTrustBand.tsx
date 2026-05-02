@@ -17,7 +17,7 @@ export function HomeTrustBand() {
           </span>
           <span className="hidden h-3 w-px bg-navy/10 sm:block" aria-hidden />
           <div className="flex items-center gap-2">
-            <Star size={14} className="fill-navy text-navy" strokeWidth={0} />
+            <Star size={14} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
             <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">
               4,9 / 5
             </span>

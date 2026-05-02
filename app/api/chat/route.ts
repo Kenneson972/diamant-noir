@@ -41,7 +41,7 @@ function buildFallbackResponse(
 ): ChatbotResponse {
   const messages: Record<typeof reason, string> = {
     no_webhook:
-      `Bonjour, bienvenue chez Naoriva.\n\nNous proposons ${villaCount} villa${villaCount > 1 ? "s" : ""} d'exception en Martinique. Je suis votre concierge privé — comment puis-je vous aider ?\n\n_(Mode démonstration — configurez N8N_WEBHOOK_URL pour activer l'assistant IA)_`,
+      `Bonjour, bienvenue chez Kayvila.\n\nNous proposons ${villaCount} villa${villaCount > 1 ? "s" : ""} d'exception en Martinique. Je suis votre concierge privé — comment puis-je vous aider ?\n\n_(Mode démonstration — configurez N8N_WEBHOOK_URL pour activer l'assistant IA)_`,
     timeout:
       "Notre service de conciergerie est momentanément surchargé. Nous vous invitons à réessayer dans quelques instants ou à nous contacter directement.",
     error:

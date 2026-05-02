@@ -75,7 +75,7 @@ const resizeCanvas = useCallback(() => {
 - [ ] **Step 2: Vérifier que TypeScript compile sans erreur**
 
 ```bash
-cd /Users/kennesonbasel-somnier/Downloads/CLIENT\ KARIBLOOM/DIAMANTNOIR/naoriva
+cd /Users/kennesonbasel-somnier/Downloads/CLIENT\ KARIBLOOM/DIAMANTNOIR/kayvila
 npx tsc --noEmit 2>&1 | head -20
 ```
 

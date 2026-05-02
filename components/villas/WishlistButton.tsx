@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * WishlistButton — Naoriva
+ * WishlistButton — Kayvila
  * ─────────────────────────────
  * Bouton cœur à superposer sur n'importe quelle carte villa.
  * Apparaît au hover de la carte, animé sur le clic.

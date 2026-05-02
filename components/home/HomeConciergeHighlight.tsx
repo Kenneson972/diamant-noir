@@ -13,11 +13,11 @@ const SERVICES = [
 
 export function HomeConciergeHighlight() {
   return (
-    <section className="border-b border-black/[0.07] bg-offwhite py-20 px-6 md:py-28">
+    <section className="border-b border-black/[0.07] bg-white py-20 px-6 md:py-28">
       <div className="mx-auto max-w-5xl space-y-14">
         <ScrollReveal delay={0}>
           <div className="space-y-5 max-w-2xl">
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
               Nos services
             </span>
             <h2 className="font-display text-4xl font-normal text-navy md:text-5xl">
@@ -51,7 +51,7 @@ export function HomeConciergeHighlight() {
             href="/prestations"
             className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55 underline-offset-8 transition-colors hover:text-navy hover:underline"
           >
-            Découvrir la conciergerie complète
+            DÉCOUVRIR LA CONCIERGERIE COMPLÈTE
             <ArrowRight
               size={12}
               strokeWidth={1.5}

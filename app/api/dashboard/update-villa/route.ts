@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get("authorization") || "";
-    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const supabase = await getSupabaseServer();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Non connecté" }, { status: 401 });
     }
 
     const { villaId, payload } = await request.json();
@@ -17,11 +21,8 @@ export async function POST(request: Request) {
     }
 
     const admin = supabaseAdmin();
-    const { data: userData, error: userError } = await admin.auth.getUser(token);
-    if (userError || !userData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
+    // Verify villa exists and check ownership
     const { data: villa, error: villaError } = await admin
       .from("villas")
       .select("id, owner_id")
@@ -32,10 +33,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Villa not found" }, { status: 404 });
     }
 
-    if (villa.owner_id && villa.owner_id !== userData.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (villa.owner_id && villa.owner_id !== user.id) {
+      return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }
 
+    // Update via supabaseAdmin (bypass RLS, but we already checked ownership)
     const { data, error } = await admin
       .from("villas")
       .update(payload)
@@ -46,14 +48,6 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    await admin.from("admin_chat_logs").insert({
-      message: `Mise à jour villa ${villaId}`,
-      intent: "dashboard_update_villa",
-      action: "UPDATE",
-      response: "Villa mise à jour",
-      success: true,
-    });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

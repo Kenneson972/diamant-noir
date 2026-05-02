@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CompareContext — Naoriva
+ * CompareContext — Kayvila
  * ──────────────────────────────
  * Permet de sélectionner jusqu'à 3 villas à comparer.
  * Affiche une barre flottante en bas de page dès qu'une villa est ajoutée.

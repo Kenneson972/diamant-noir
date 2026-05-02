@@ -42,7 +42,7 @@ function formatTime(d: Date): string {
 function makeWelcomeMessage(guestName?: string): Message {
   return {
     role: "assistant",
-    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Naoriva. Comment puis-je vous aider pendant votre séjour ?`,
+    content: `Bonjour${guestName ? ` ${guestName}` : ""}\n\nJe suis votre assistante Kayvila. Comment puis-je vous aider pendant votre séjour ?`,
     timestamp: new Date(),
   };
 }
@@ -181,12 +181,12 @@ export function TenantChatbot({
   // ── Loading skeleton (history loading) ─────────────────────────────────────
   if (!historyLoaded) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#FAFAF8]">
+      <div className="flex h-full items-center justify-center bg-offwhite">
         <div className="flex gap-1.5">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="dn-typing-dot w-2 h-2 rounded-full bg-[rgba(13,27,42,0.15)]"
+              className="dn-typing-dot w-2 h-2 rounded-full bg-navy/15"
               style={{ animationDelay: `${i * 160}ms` }}
             />
           ))}
@@ -197,7 +197,7 @@ export function TenantChatbot({
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full bg-[#FAFAF8]">
+    <div className="flex h-full flex-col bg-offwhite">
       <div
         className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-4"
         role="log"
@@ -212,8 +212,8 @@ export function TenantChatbot({
             <div
               className={
                 msg.role === "user"
-                  ? "max-w-[78%] bg-[#0D1B2A] text-white px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line"
-                  : "max-w-[78%] bg-white border border-[rgba(13,27,42,0.08)] px-4 py-3 font-cormorant text-[14px] font-light leading-relaxed whitespace-pre-line text-[#0D1B2A]"
+                  ? "max-w-[78%] bg-navy px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-white"
+                  : "max-w-[78%] border border-navy/8 bg-white px-4 py-3 font-cormorant text-[14px] font-light leading-relaxed whitespace-pre-line text-navy"
               }
               style={{
                 borderRadius: msg.role === "user" ? "8px 0 8px 8px" : "0 8px 8px 8px",
@@ -221,7 +221,7 @@ export function TenantChatbot({
             >
               {msg.content}
             </div>
-            <span className="text-[6.5px] tracking-[0.12em] uppercase text-[rgba(13,27,42,0.22)] px-1">
+            <span className="px-1 text-[6.5px] uppercase tracking-[0.12em] text-navy/25">
               {formatTime(msg.timestamp)}
             </span>
           </div>
@@ -230,13 +230,13 @@ export function TenantChatbot({
         {loading && (
           <div className="flex items-start">
             <div
-              className="bg-white border border-[rgba(13,27,42,0.08)] px-4 py-3 flex items-center gap-1.5"
+              className="flex items-center gap-1.5 border border-navy/8 bg-white px-4 py-3"
               style={{ borderRadius: "0 8px 8px 8px" }}
             >
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}
-                  className="dn-typing-dot w-1.5 h-1.5 rounded-full bg-[rgba(13,27,42,0.3)]"
+                  className="dn-typing-dot size-1.5 rounded-full bg-navy/30"
                   style={{ animationDelay: `${i * 160}ms` }}
                 />
               ))}
@@ -254,7 +254,7 @@ export function TenantChatbot({
               key={action}
               type="button"
               onClick={() => sendMessage(action)}
-              className="border border-[rgba(13,27,42,0.10)] bg-white px-4 py-2 text-[8px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.5)] hover:border-[rgba(212,175,55,0.4)] hover:text-[#D4AF37] transition-colors"
+              className="border border-navy/10 bg-white px-4 py-2 text-[8px] uppercase tracking-[0.14em] text-navy/50 transition-colors hover:border-gold/40 hover:text-gold"
             >
               {action}
             </button>
@@ -262,7 +262,7 @@ export function TenantChatbot({
         </div>
       )}
 
-      <div className="border-t border-[rgba(13,27,42,0.07)] bg-white px-4 pb-4 pt-3 shrink-0">
+      <div className="shrink-0 border-t border-navy/10 bg-white px-4 pb-4 pt-3">
         <form onSubmit={handleSubmit} className="flex items-end gap-3">
           <textarea
             value={input}
@@ -270,14 +270,14 @@ export function TenantChatbot({
             onKeyDown={handleKeyDown}
             placeholder="Écrivez votre message…"
             rows={1}
-            className="flex-1 bg-[#FAFAF8] border border-[rgba(13,27,42,0.10)] px-4 py-3 font-cormorant italic text-[14px] text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.3)] focus:outline-none focus:border-[rgba(212,175,55,0.5)] resize-none"
+            className="flex-1 resize-none border border-navy/10 bg-offwhite px-4 py-3 font-cormorant text-[14px] italic text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none"
             style={{ minHeight: 44, maxHeight: 120 }}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             aria-label="Envoyer le message"
-            className="shrink-0 h-[44px] w-[44px] flex items-center justify-center bg-[#0D1B2A] text-white hover:bg-[#D4AF37] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex h-[44px] w-[44px] shrink-0 items-center justify-center bg-navy text-white transition-colors hover:bg-gold hover:text-navy disabled:cursor-not-allowed disabled:opacity-40"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
               <path
@@ -290,10 +290,10 @@ export function TenantChatbot({
           </button>
         </form>
         <div className="flex items-center justify-between mt-2 px-0.5">
-          <p className="text-[6.5px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.2)]">
+          <p className="text-[6.5px] uppercase tracking-[0.14em] text-navy/20">
             Échanges conservés pour la qualité du service
           </p>
-          <p className="text-[6.5px] tracking-[0.14em] uppercase text-[rgba(13,27,42,0.2)]">
+          <p className="text-[6.5px] uppercase tracking-[0.14em] text-navy/20">
             Conversation sauvegardée
           </p>
         </div>

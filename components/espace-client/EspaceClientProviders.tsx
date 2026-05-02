@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { I18nProvider } from "@heroui/react/rac";
 
+/** Ancien enveloppe `@heroui/react/rac` I18nProvider — retirée avec HeroUI ; les dates restent formatées en `fr-FR` côté composants. */
 export function EspaceClientProviders({ children }: { children: ReactNode }) {
-  return <I18nProvider locale="fr-FR">{children}</I18nProvider>;
+  return <>{children}</>;
 }

@@ -1,11 +1,11 @@
-# SESSION RECAP - Naoriva | Page Prestations - 2026-04-13
+# SESSION RECAP - Kayvila | Page Prestations - 2026-04-13
 
 ## CONTEXTE PROJET
 
-**Client :** Karibloom · **Nom du site :** Naoriva (Conciergerie de luxe Martinique)  
+**Client :** Karibloom · **Nom du site :** Kayvila (Conciergerie de luxe Martinique)  
 **Type :** Plateforme SaaS/marketing — location de villas haut de gamme + gestion propriétaire + espace client  
 **Stack technique :** Next.js 15 (App Router) · TypeScript · Tailwind CSS 3.4 · GSAP + ScrollTrigger · Supabase · Vercel  
-**Localisation projet :** `/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva/`
+**Localisation projet :** `/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila/`
 
 ### Page travaillée
 - **Route principale :** `/prestations` (fichier : `app/prestations/PrestationsPageClient.tsx`, 1268 lignes)
@@ -30,7 +30,7 @@
   - Coin arrondi : `rounded-xl` → `rounded-2xl` sur desktop
 - **Timing d'activation :** Offset passé de défaut à **15% de la longueur du segment** (`Math.round(segmentLength * 0.15)`) — apparition plus douce et progressive
 
-**Raison :** Alignement marque NAORIVA (luxe sobre, minimalisme, lisibilité sur animations)
+**Raison :** Alignement marque KAYVILA (luxe sobre, minimalisme, lisibilité sur animations)
 
 ---
 
@@ -48,16 +48,16 @@
 
 ---
 
-### 3. LOADER — NOUVEAU SUBTITLE + STYLE NAORIVA
+### 3. LOADER — NOUVEAU SUBTITLE + STYLE KAYVILA
 
 **Fichier :** `components/prestations/VideoScrollHero.tsx` (lignes 393-516)
 
 **Modifications :**
-- **Ancien :** Juste logo + « NAORIVA » + barre progress
+- **Ancien :** Juste logo + « KAYVILA » + barre progress
 - **Nouveau :** 
   - Logo (40×40, inverted)
   - Ligne décorative fine or (`rgba(212, 175, 55, 0.4)`)
-  - Titre « **NAORIVA** » (font-display, light, `tracking-[0.38em]`)
+  - Titre « **KAYVILA** » (font-display, light, `tracking-[0.38em]`)
   - **Nouveau subtitle :** « **Conciergerie privée** » (`text-white/40`, `text-[10px]`, `tracking-[0.35em]`)
   - Barre de progression fine (`h-px`, `w-32`, fond `white/8`, fill `rgba(212, 175, 55, 0.6)`)
   - Pourcentage discret (`font-mono`, `text-[9px]`, `text-white/25`)
@@ -65,7 +65,7 @@
 
 **Animation :** Keyframes smooth blur-fade-in (0.8s) sur logo/titre, staggered fade-in-slide-up sur subtitle/progress (0.7s avec delays)
 
-**Raison :** Chargement plus rapide perçu + cohérence branding luxe Naoriva
+**Raison :** Chargement plus rapide perçu + cohérence branding luxe Kayvila
 
 ---
 
@@ -112,7 +112,7 @@
   - Hauteur viewport : `45vh` (mobile), full screen maintenu
   - **Suppression du gradient or sur le titre** — unicolor white pour clarté
 
-**Raison :** Cohérence avec branding Naoriva ultra-minimaliste. Lisibilité sur animations scroll-hero
+**Raison :** Cohérence avec branding Kayvila ultra-minimaliste. Lisibilité sur animations scroll-hero
 
 ---
 
@@ -169,11 +169,11 @@ const EditorialFigureBand = dynamic(
 
 #### 7c. Métadonnées SEO complètes
 - `app/prestations/layout.tsx` lignes 4-36 :
-  - `title` : "Nos Prestations | Naoriva — Conciergerie Privée Martinique"
+  - `title` : "Nos Prestations | Kayvila — Conciergerie Privée Martinique"
   - `description` : 150 chars, keywords contextuels
   - `keywords[]` : ["conciergerie", "location villa", "Martinique", "gestion propriété", "location saisonnière"]
   - `openGraph` : title, description, image (`/prestations-hero.png` 1200×630)
-  - `canonical` : "https://naoriva.com/prestations"
+  - `canonical` : "https://kayvila.com/prestations"
   - `robots` : `{ index: true, follow: true }`
 - **Gain :** SEO 85+ (visé 95+), CTR réseaux sociaux
 
@@ -240,7 +240,7 @@ if (loaded + errors >= Math.ceil(TOTAL_FRAMES * 0.6)) setIsReady(true);
    │  │  └─ drawImage() RAF-batched, 561 frames WebP (0-111 prio, rest background)
    │  │
    │  ├─ Loader (z-200, fixed)
-   │  │  └─ Branding: NAORIVA + "Conciergerie privée" + progress bar
+   │  │  └─ Branding: KAYVILA + "Conciergerie privée" + progress bar
    │  │
    │  ├─ Preview image frame_0001.webp (z-0, blur+brightness)
    │  │
@@ -385,7 +385,7 @@ npm run build
 ### Démarrer le serveur de dev
 
 ```bash
-cd /Users/kennesonbasel-somnier/Downloads/CLIENT\ KARIBLOOM/DIAMANTNOIR/naoriva
+cd /Users/kennesonbasel-somnier/Downloads/CLIENT\ KARIBLOOM/DIAMANTNOIR/kayvila
 npm run dev
 # Accès : http://localhost:3000/prestations
 ```
@@ -491,7 +491,7 @@ npm run lint
 
 ### Hosting & CI/CD
 - Déploiement : **Vercel** (push → auto-deploy)
-- Domaine : `naoriva.com` (ou preview `naoriva.vercel.app`)
+- Domaine : `kayvila.com` (ou preview `kayvila.vercel.app`)
 - CDN : Vercel Edge Network + frames servies depuis `/public` (cache headers optimisés)
 
 ---
@@ -555,7 +555,7 @@ npm run lint
 
 ## CONTACT / ESCALADE
 
-- **Client :** Karibloom · Conciergerie Naoriva
+- **Client :** Karibloom · Conciergerie Kayvila
 - **Maintainers code :** Voir `.git/config` (remote origin URL)
 - **Audit responsable :** Claude Agent (2026-04-13)
 - **Documentation centralisée :** `/docs/`, `/docs/logs/`, `/docs/audits/`

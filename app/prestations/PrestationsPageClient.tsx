@@ -1,19 +1,19 @@
 "use client";
 
 /**
- * Page Prestations — Naoriva
+ * Page Prestations — Kayvila
  *
  * "use client" — metadata géré dans layout.tsx (App Router).
  *
  * Structure :
  *   1. Scroll-driven canvas animation (style Apple, GSAP + 561 frames)
- *      → Hero + scroll driver 500vh + transition 55vh (viewport **≥ md / 768px** uniquement)
- *      → Sous 768px : hero statique (image), pas de canvas / GSAP / chargement des frames
+ *      → Hero + scroll driver 500vh + transition 55vh si viewport **≥ md / 768px** et **pas** de prefers-reduced-motion
+ *      → Sinon : hero statique (image), pas de canvas / GSAP / chargement des frames
  *   2. Hub sous le scroll (strip CTA, chiffres, grille #piliers → /prestations/services/[slug], FAQ)
  *      → Les sections à fond plein recouvrent le canvas fixe.
  */
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -94,6 +94,20 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
 ];
 
+function subscribeReducedMotion(cb: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
+function reducedMotionServerSnapshot() {
+  return false;
+}
+
+function reducedMotionClientSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function PrestationsPageClient() {
@@ -127,6 +141,14 @@ export default function PrestationsPageClient() {
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
+
+  const prefersReducedMotionUser = useSyncExternalStore(
+    subscribeReducedMotion,
+    reducedMotionClientSnapshot,
+    reducedMotionServerSnapshot,
+  );
+  /** Scroll immersif + frames : grand écran uniquement, sans « reduced motion » système. */
+  const immersiveParallax = desktopParallax && !prefersReducedMotionUser;
 
   // ── DPR (client-only) ───────────────────────────────────────────────────
   const dpr = useRef(1);
@@ -182,7 +204,7 @@ export default function PrestationsPageClient() {
 
   // ── Preload frames (desktop parallax uniquement) ─────────────────────────
   useEffect(() => {
-    if (!desktopParallax) {
+    if (!immersiveParallax) {
       setIsReady(true);
       return;
     }
@@ -238,11 +260,11 @@ export default function PrestationsPageClient() {
         if (img) { img.src = ""; framesRef.current[i] = null; }
       });
     };
-  }, [desktopParallax, renderFrame]);
+  }, [immersiveParallax, renderFrame]);
 
   // ── GSAP scroll (desktop parallax uniquement) ───────────────────────────
   useEffect(() => {
-    if (!desktopParallax || !isReady) return;
+    if (!immersiveParallax || !isReady) return;
 
     // Enregistrement ici — jamais au niveau module (crash SSR)
     gsap.registerPlugin(ScrollTrigger);
@@ -371,19 +393,19 @@ export default function PrestationsPageClient() {
       setVideoStackVisible(true);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [desktopParallax, isReady, renderFrame, resizeCanvas]);
+  }, [immersiveParallax, isReady, renderFrame, resizeCanvas]);
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Preload : desktop = frame 0 séquence ; mobile = hero statique */}
-      {desktopParallax ? (
+      {/* Preload : desktop immersif = frame 0 ; sinon hero statique */}
+      {immersiveParallax ? (
         <link rel="preload" as="image" href="/frames/frame_0001.webp" media="(min-width: 768px)" />
       ) : (
-        <link rel="preload" as="image" href="/prestations-hero.png" media="(max-width: 767.98px)" />
+        <link rel="preload" as="image" href="/prestations-hero.png" />
       )}
 
-      {desktopParallax ? (
+      {immersiveParallax ? (
         <>
           <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
 
@@ -473,7 +495,7 @@ export default function PrestationsPageClient() {
       ) : null}
 
       <div className="relative z-10">
-        {desktopParallax ? (
+        {immersiveParallax ? (
           <div ref={videoScrollZoneRef}>
             <section
               className="relative flex min-h-[45dvh] w-full flex-col items-center justify-center overflow-hidden bg-navy px-4 text-center"
@@ -513,13 +535,31 @@ export default function PrestationsPageClient() {
                   }
                   className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
                 >
-                  Explorer les cinq piliers<span aria-hidden="true"> ↓</span>
+                  Explorer les cinq piliers
                 </button>
               </div>
 
-              <div aria-hidden className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/20">
-                <p className="text-[7px] uppercase tracking-[0.4em]">Défiler</p>
-                <ChevronDown size={16} />
+              {/* Flèche de scroll animée — style Apple */}
+              <div
+                aria-hidden
+                className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 motion-safe:animate-[scrollFloat_3s_ease-in-out_infinite]"
+              >
+                <svg
+                  width="32"
+                  height="20"
+                  viewBox="0 0 32 20"
+                  fill="none"
+                >
+                  <path
+                    d="M4 4L16 16L28 4"
+                    stroke="white"
+                    strokeOpacity="0.35"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="motion-safe:animate-[arrowBounce_2s_ease-in-out_infinite]"
+                  />
+                </svg>
               </div>
             </section>
 
@@ -681,7 +721,7 @@ export default function PrestationsPageClient() {
             <div className="grid gap-14 md:grid-cols-2 md:gap-20">
               <div className="space-y-10">
                 <p className="text-[15px] leading-relaxed text-navy/65">
-                  Rejoignez les propriétaires qui font confiance à Naoriva pour gérer leur bien
+                  Rejoignez les propriétaires qui font confiance à Kayvila pour gérer leur bien
                   avec exigence — et transformez votre villa en une expérience mémorable.
                 </p>
                 <ul className="space-y-4">
@@ -735,6 +775,20 @@ export default function PrestationsPageClient() {
                   </Link>
                 </p>
               </div>
+            </div>
+          </LandingSection>
+
+          {/* ── Lien vers la FAQ dédiée ── */}
+          <LandingSection bg="offwhite">
+            <div className="mx-auto max-w-2xl text-center">
+              <div className="mx-auto mb-5 h-px w-8 bg-gold/40" aria-hidden />
+              <p className="text-sm text-navy/60">
+                Consultez notre{" "}
+                <Link href="/faq" className="font-medium text-navy underline-offset-4 hover:underline">
+                  FAQ dédiée
+                </Link>{" "}
+                pour toutes les questions sur la commission, les services inclus, les prix, le pack de démarrage et le contrat.
+              </p>
             </div>
           </LandingSection>
 

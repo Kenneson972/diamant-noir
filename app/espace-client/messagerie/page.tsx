@@ -136,7 +136,7 @@ export default function MessageriePage() {
           </svg>
           <div>
             <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.5)]">
-              {booking.villa?.name ?? "Villa Naoriva"}
+              {booking.villa?.name ?? "Villa Kayvila"}
             </p>
             <p className="font-cormorant italic text-[12px] font-light text-[rgba(13,27,42,0.4)]">
               {fmt(booking.start_date)} → {fmt(booking.end_date)}

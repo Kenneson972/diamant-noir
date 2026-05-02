@@ -5,7 +5,7 @@
 ### Étape 1 : Accéder aux Settings API
 
 1. **Connecte-toi** à [supabase.com](https://supabase.com)
-2. **Sélectionne ton projet** "Naoriva" (ou le nom que tu as donné)
+2. **Sélectionne ton projet** "Kayvila" (ou le nom que tu as donné)
 3. Dans le menu de gauche, clique sur **"Settings"** (⚙️)
 4. Puis clique sur **"API"** dans le sous-menu
 
@@ -38,7 +38,7 @@ Tu vas voir plusieurs sections :
 
 ### Étape 1 : Créer le Fichier
 
-1. **Dans ton éditeur** (Cursor), va à la racine du projet `naoriva/`
+1. **Dans ton éditeur** (Cursor), va à la racine du projet `kayvila/`
 2. **Crée un nouveau fichier** nommé `.env.local`
 3. **⚠️ Important** : Le fichier doit commencer par un point (`.env.local`)
 
@@ -105,7 +105,7 @@ Quand tu es dans **Settings > API**, tu devrais voir quelque chose comme ça :
 
 ### Erreur : "Cannot find module"
 - Vérifie que le fichier s'appelle bien `.env.local` (avec le point au début)
-- Vérifie qu'il est à la racine de `naoriva/` (pas dans un sous-dossier)
+- Vérifie qu'il est à la racine de `kayvila/` (pas dans un sous-dossier)
 
 ### Erreur : "Supabase is not configured"
 - Vérifie que tu as bien redémarré le serveur après avoir créé `.env.local`

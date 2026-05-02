@@ -222,7 +222,7 @@ export default function OwnerAssistantPage() {
         {/* Header */}
         <div className="flex items-center justify-between px-7 py-5">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-gold/35">Naoriva</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-gold/35">Kayvila</p>
             <h1 className="mt-0.5 font-display text-[15px] font-normal text-white/85">
               Assistant propriétaire
             </h1>

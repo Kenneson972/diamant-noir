@@ -226,16 +226,16 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         <button
           type="button"
           onClick={resetToEmail}
-          className="tap-target -ml-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.45)] transition-colors hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target -ml-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/45 transition-colors hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           <ArrowLeft size={16} strokeWidth={1.25} aria-hidden />
           Retour
         </button>
 
         <div className="space-y-1">
-          <h2 className="font-display text-xl text-[#0D1B2A] sm:text-2xl">Code</h2>
-          <p className="text-sm text-[rgba(13,27,42,0.55)]">
-            <span className="font-medium text-[#0D1B2A]">{email}</span>
+          <h2 className="font-display text-xl text-navy sm:text-2xl">Code</h2>
+          <p className="text-sm text-navy/55">
+            <span className="font-medium text-navy">{email}</span>
           </p>
         </div>
 
@@ -269,7 +269,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           type="button"
           disabled={loading || digits.join("").length !== OTP_LEN}
           onClick={() => verifyCode(digits.join(""))}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[rgba(13,27,42,0.90)] disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -286,7 +286,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
             type="button"
             disabled={resendSec > 0 || loading}
             onClick={handleResend}
-            className="text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)] transition-colors hover:text-[#0D1B2A] disabled:opacity-40"
+            className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40 transition-colors hover:text-navy disabled:opacity-40"
           >
             {resendSec > 0 ? `Renvoyer (${resendSec}s)` : "Renvoyer"}
           </button>
@@ -305,17 +305,17 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
             setStep("otp")
             setError(null)
           }}
-          className="tap-target -ml-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.45)] transition-colors hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target -ml-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/45 transition-colors hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           <ArrowLeft size={16} strokeWidth={1.25} aria-hidden />
           Retour
         </button>
 
         <div className="space-y-1">
-          <h2 className="font-display text-xl uppercase tracking-[0.12em] text-[#0D1B2A] sm:text-2xl">
+          <h2 className="font-display text-xl uppercase tracking-[0.12em] text-navy sm:text-2xl">
             Créer le compte
           </h2>
-          <p className="text-sm text-[rgba(13,27,42,0.50)]">{email}</p>
+          <p className="text-sm text-navy/50">{email}</p>
         </div>
 
         {error && (
@@ -326,7 +326,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
         <form onSubmit={handleProfileSubmit} className="space-y-6">
           <fieldset className="space-y-3 border-0 p-0">
-            <legend className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+            <legend className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
               Civilité <span className="text-red-600">*</span>
             </legend>
             <div className="flex flex-wrap gap-4">
@@ -339,14 +339,14 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               ).map(({ v, label }) => (
                 <label
                   key={v}
-                  className="flex cursor-pointer items-center gap-2 text-sm text-[#0D1B2A] touch-manipulation"
+                  className="flex cursor-pointer items-center gap-2 text-sm text-navy touch-manipulation"
                 >
                   <input
                     type="radio"
                     name="salutation"
                     checked={salutation === v}
                     onChange={() => setSalutation(v)}
-                    className="h-4 w-4 border-[rgba(13,27,42,0.30)] text-[#0D1B2A] focus:ring-[#0D1B2A]"
+                    className="h-4 w-4 border-navy/30 text-navy focus:ring-navy"
                   />
                   {label}
                 </label>
@@ -356,7 +356,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <label htmlFor="tenant-fn" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+              <label htmlFor="tenant-fn" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
                 Prénom <span className="text-red-600">*</span>
               </label>
               <input
@@ -366,11 +366,11 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-navy focus:border-navy focus:outline-none focus:ring-0"
               />
             </div>
             <div className="space-y-1">
-              <label htmlFor="tenant-ln" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+              <label htmlFor="tenant-ln" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
                 Nom <span className="text-red-600">*</span>
               </label>
               <input
@@ -380,13 +380,13 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-navy focus:border-navy focus:outline-none focus:ring-0"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="tenant-phone" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]">
+            <label htmlFor="tenant-phone" className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
               Téléphone mobile <span className="text-red-600">*</span>
             </label>
             <input
@@ -398,35 +398,35 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
-              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
             />
           </div>
 
-          <label className="flex cursor-pointer items-start gap-3 text-sm leading-snug text-[rgba(13,27,42,0.65)] touch-manipulation">
+          <label className="flex cursor-pointer items-start gap-3 text-sm leading-snug text-navy/65 touch-manipulation">
             <input
               type="checkbox"
               checked={marketingOptIn}
               onChange={(e) => setMarketingOptIn(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 border-[rgba(13,27,42,0.30)] text-[#0D1B2A] focus:ring-[#0D1B2A]"
+              className="mt-1 h-4 w-4 shrink-0 border-navy/30 text-navy focus:ring-navy"
             />
             <span>
               Offres & actualités (optionnel).{" "}
-              <Link href="/confidentialite" className="text-[#0D1B2A] underline-offset-4 hover:underline">
+              <Link href="/confidentialite" className="text-navy underline-offset-4 hover:underline">
                 Confidentialité
               </Link>
             </span>
           </label>
 
-          <label className="flex cursor-pointer items-start gap-3 text-sm leading-snug text-[rgba(13,27,42,0.65)] touch-manipulation">
+          <label className="flex cursor-pointer items-start gap-3 text-sm leading-snug text-navy/65 touch-manipulation">
             <input
               type="checkbox"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 border-[rgba(13,27,42,0.30)] text-[#0D1B2A] focus:ring-[#0D1B2A]"
+              className="mt-1 h-4 w-4 shrink-0 border-navy/30 text-navy focus:ring-navy"
             />
             <span>
               J’accepte les{" "}
-              <Link href="/terms" className="text-[#0D1B2A] underline-offset-4 hover:underline">
+              <Link href="/terms" className="text-navy underline-offset-4 hover:underline">
                 CGU
               </Link>
               . <span className="text-red-600">*</span>
@@ -436,7 +436,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           <button
             type="submit"
             disabled={loading}
-            className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[rgba(13,27,42,0.90)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+            className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
           >
             {loading ? (
               <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -462,13 +462,13 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         <div className="space-y-1">
           <label
             htmlFor="email-auth"
-            className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+            className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
           >
             Adresse email <span className="text-red-600">*</span>
           </label>
           <div className="relative">
             <Mail
-              className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+              className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
               size={15}
               strokeWidth={1.25}
               aria-hidden
@@ -481,7 +481,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+              className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
             />
           </div>
         </div>
@@ -490,7 +490,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           type="submit"
           disabled={loading}
           aria-busy={loading}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B2A]/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -509,23 +509,23 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
           Pas encore de compte ?{" "}
           <button
             type="button"
             onClick={() => switchMode("signup")}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+            className="text-navy underline-offset-4 hover:underline"
           >
             S&apos;inscrire
           </button>
         </p>
       ) : (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
           Déjà un compte ?{" "}
           <button
             type="button"
             onClick={() => switchMode("login")}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+            className="text-navy underline-offset-4 hover:underline"
           >
             Se connecter
           </button>

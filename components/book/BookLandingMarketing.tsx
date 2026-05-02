@@ -123,7 +123,7 @@ export function BookLandingMarketing({
             <h2 className="font-display text-2xl text-navy md:text-3xl">Catalogue voyageurs &amp; exigence marque</h2>
             <p className="text-sm leading-relaxed text-navy/55">
               La page <span className="font-medium text-navy">Nos villas</span> présente la collection louée par
-              Naoriva. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
+              Kayvila. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
             </p>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link

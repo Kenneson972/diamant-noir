@@ -35,7 +35,7 @@ test.describe("Espace Client — Chat & Messagerie", () => {
       data: {
         message: "Bonjour",
         sessionId: "test-session-playwright",
-        guestEmail: "playwright@naoriva.test",
+        guestEmail: "playwright@kayvila.test",
       },
     });
     // Either 200 (demo mode) or 429 (rate limit already hit)

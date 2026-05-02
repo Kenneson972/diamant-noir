@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CompareBar — Naoriva
+ * CompareBar — Kayvila
  * ──────────────────────────
  * Barre flottante en bas de page, apparaît dès qu'une villa
  * est ajoutée à la comparaison. Max 3 villas.

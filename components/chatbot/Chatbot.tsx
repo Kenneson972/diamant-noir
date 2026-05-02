@@ -58,29 +58,32 @@ export const Chatbot = () => {
   // Gestion de la session ID
   const getOrCreateSessionId = () => {
     if (typeof window === "undefined") return "";
-    let sessionId = localStorage.getItem("naoriva_session_id");
+    let sessionId = localStorage.getItem("kayvila_session_id");
     if (!sessionId) {
       sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      localStorage.setItem("naoriva_session_id", sessionId);
+      localStorage.setItem("kayvila_session_id", sessionId);
     }
     return sessionId;
   };
 
-  // Message de bienvenue
+  // Message de bienvenue (setState fonctionnel pour deps [] correctes sans lecture de `messages`)
   useEffect(() => {
-    if (messages.length === 0) {
-      const welcomeMessage = {
-        role: "assistant" as const,
-        content:
-          "Bonjour ! Je suis l'assistante Naoriva 💎\n\n" +
-          "Je suis là pour vous aider à découvrir nos villas d'exception et répondre à toutes vos questions sur les réservations.\n\n" +
-          "Comment puis-je vous aider aujourd'hui ?",
-      };
-      setMessages([welcomeMessage]);
-      setTimeout(() => {
-        setQuickSuggestions(QUICK_SUGGESTIONS.default);
-      }, 300);
-    }
+    setMessages((prev) => {
+      if (prev.length > 0) return prev;
+      return [
+        {
+          role: "assistant" as const,
+          content:
+            "Bonjour ! Je suis l'assistante Kayvila 💎\n\n" +
+            "Je suis là pour vous aider à découvrir nos villas d'exception et répondre à toutes vos questions sur les réservations.\n\n" +
+            "Comment puis-je vous aider aujourd'hui ?",
+        },
+      ];
+    });
+    const t = window.setTimeout(() => {
+      setQuickSuggestions(QUICK_SUGGESTIONS.default);
+    }, 300);
+    return () => window.clearTimeout(t);
   }, []);
 
   // Écouter les événements pour ouvrir le chatbot
@@ -293,14 +296,14 @@ export const Chatbot = () => {
               <div>
                 <h3 className="font-display text-lg tracking-wide">Conciergerie IA</h3>
                 <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/50">
-                  <span>Naoriva</span>
+                  <span>En ligne</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
-                  localStorage.removeItem("naoriva_session_id");
+                  localStorage.removeItem("kayvila_session_id");
                   setMessages([{
                     role: "assistant",
                     content: "Chat réinitialisé. Comment puis-je vous aider ?"

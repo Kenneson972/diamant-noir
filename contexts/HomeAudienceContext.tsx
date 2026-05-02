@@ -11,11 +11,11 @@ import {
   type ReactNode,
 } from "react";
 
-export const HOME_AUDIENCE_STORAGE_KEY = "nr_home_audience";
+export const HOME_AUDIENCE_STORAGE_KEY = "kv_home_audience";
 
 export type HomeAudience = "voyageur" | "proprietaire" | null;
 
-export const HOME_AUDIENCE_EVENT = "nr-home-audience";
+export const HOME_AUDIENCE_EVENT = "kv-home-audience";
 
 function readAudience(): HomeAudience {
   if (typeof window === "undefined") return null;

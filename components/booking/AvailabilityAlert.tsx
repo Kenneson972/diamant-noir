@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * AvailabilityAlert — Naoriva
+ * AvailabilityAlert — Kayvila
  * ─────────────────────────────────
  * Widget "Être alerté de la disponibilité".
  * L'utilisateur entre son email + ses dates souhaitées.

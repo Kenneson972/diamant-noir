@@ -42,7 +42,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
     return (
       <div className="relative h-[60vh] w-full overflow-hidden bg-navy/5 flex items-center justify-center">
         <Image src="/villa-hero.jpg" alt="Villa" fill className="object-cover opacity-30" />
-        <p className="relative z-10 text-navy/30 font-display text-2xl tracking-widest">Naoriva</p>
+        <p className="relative z-10 text-navy/30 font-display text-2xl tracking-widest">Kayvila</p>
       </div>
     );
   }

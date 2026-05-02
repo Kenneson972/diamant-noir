@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         response:
-          "Bonjour ! Je suis l'assistante SAV Naoriva 💎\n\nJe suis là pour vous aider pendant votre séjour. (Mode Démo: configurez N8N_TENANT_WEBHOOK_URL)",
+          "Bonjour ! Je suis l'assistante SAV Kayvila 💎\n\nJe suis là pour vous aider pendant votre séjour. (Mode Démo: configurez N8N_TENANT_WEBHOOK_URL)",
         sessionId: sid,
       });
     }

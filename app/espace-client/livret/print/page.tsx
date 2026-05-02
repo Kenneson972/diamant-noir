@@ -89,7 +89,7 @@ export default function LivretPrintPage() {
         {/* Header */}
         <div className="mb-8 pb-6 border-b border-[rgba(13,27,42,0.12)]">
           <p className="text-[10px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">
-            Naoriva · Conciergerie
+            Kayvila · Conciergerie
           </p>
           <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
             {villa?.name ?? "Livret d'accueil"}
@@ -169,7 +169,7 @@ export default function LivretPrintPage() {
 
         <div className="pt-6 border-t border-[rgba(13,27,42,0.08)]">
           <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
-            Naoriva · Conciergerie de luxe, Martinique
+            Kayvila · Conciergerie de luxe, Martinique
           </p>
         </div>
       </div>

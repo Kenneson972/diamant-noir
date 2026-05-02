@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { extractToken } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 const BOOKING_CONFIRMATION_WEBHOOK = process.env.BOOKING_CONFIRMATION_WEBHOOK || process.env.N8N_WEBHOOK_URL;
 
 export async function POST(request: Request) {
+  // Protection par API key interne
+  const apiKey = process.env.API_SECRET_KEY;
+  const token = extractToken(request);
+  if (apiKey && (!token || token !== apiKey)) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   try {
     const { bookingId } = await request.json();
     if (!bookingId) {

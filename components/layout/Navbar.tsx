@@ -13,8 +13,9 @@ import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } f
 
 const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/", label: "Accueil" },
-  { href: "/villas", label: "Nos villas" },
   { href: "/prestations", label: "Conciergerie" },
+  { href: "/villas", label: "Nos villas" },
+  { href: "/faq", label: "FAQ" },
   { href: "/qui-sommes-nous", label: "À propos" },
   { href: "/contact", label: "Contact" },
 ];
@@ -22,7 +23,11 @@ const NAV_ITEMS: { href: string; label: string }[] = [
 const CONCIERGE_TEL = "+596 96 00 00 00";
 const CONCIERGE_TEL_HREF = "tel:+59696000000";
 
-export const Navbar = () => {
+/** Aligné avec `BrandLogo` (`wrapClass` + `className` nav). */
+const NAVBAR_BRAND_HOME_LINK_CLASSES =
+  "inline-flex items-center gap-2 md:gap-3 shrink-0 justify-center";
+
+export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,18 +40,18 @@ export const Navbar = () => {
 
   const loginHref = "/login?redirect=/espace-client";
 
-  const primaryCtaHref = "/prestations";
-  const primaryCtaLabel = "Conciergerie";
-  const primaryCtaAria = "Découvrir la conciergerie";
+  const primaryCtaHref = "/soumettre-ma-villa";
+  const primaryCtaLabel = "Soumettre ma villa";
+  const primaryCtaAria = "Soumettre ma villa — Estimation gratuite";
 
   useEffect(() => {
     if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
         setSession(session);
       });
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
+      } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
         setSession(session);
       });
       return () => subscription.unsubscribe();
@@ -287,11 +292,6 @@ export const Navbar = () => {
       <header
         className={`fixed top-0 z-[1020] w-full transition-[background,box-shadow,padding,border-color] duration-300 ${headerSurfaceClass}`}
       >
-        {/*
-          Deux demi-ranges flexibles (1fr / 1fr) + colonne centrale auto : le logo reste
-          au centre *de l’écran*, même si la rangée droite est plus chargée que le menu.
-          L’ancien auto–1fr–auto poussait le wordmark sous le hamburger (traits sur le « D »).
-        */}
         <div className="mx-auto grid min-h-10 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
           <div className="flex min-w-0 items-center justify-start">
             <button
@@ -315,15 +315,12 @@ export const Navbar = () => {
               size="nav"
               showIcon
               showWordmark={false}
+              linkAriaLabel="Accueil"
               priority={pathname === "/"}
               className="shrink-0 justify-center"
             />
           </div>
 
-          {/*
-            Barre : jamais de numéro en texte ici (largeur fixe → wrap / chevauchement logo sur tablette).
-            Appel : icône seule (sm+) + numéro lisible dans le menu / footer. Touch 44px (kb-mobile-responsive).
-          */}
           <div className="flex min-w-0 items-center justify-end gap-0.5 overflow-x-clip min-[400px]:gap-1 sm:gap-2 md:gap-4">
             <a
               href={CONCIERGE_TEL_HREF}
@@ -360,7 +357,7 @@ export const Navbar = () => {
 
             <Link
               href={loginHref}
-              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center transition-opacity min-[400px]:h-10 min-[400px]:w-10 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center transition-opacity min-[400px]:h-11 min-[400px]:w-11 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
               aria-label="Connexion / Inscription"
             >
               <User size={20} strokeWidth={1.25} aria-hidden />
@@ -369,7 +366,7 @@ export const Navbar = () => {
             <Link
               href={primaryCtaHref}
               aria-label={primaryCtaAria}
-              className={`tap-target flex h-9 w-9 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:max-w-none md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:max-w-none md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
               <Sparkles size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
               <span className="hidden md:inline">{primaryCtaLabel}</span>
@@ -379,4 +376,4 @@ export const Navbar = () => {
       </header>
     </>
   );
-};
+}

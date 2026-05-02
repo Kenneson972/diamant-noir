@@ -322,7 +322,7 @@ export function VillaSubmissionForm() {
           />
           <span className="flex items-center gap-2 text-sm text-navy/80">
             <ImageOff size={16} aria-hidden />
-            Je n&apos;ai pas de photos — Naoriva s&apos;en charge (état des lieux + photos
+            Je n&apos;ai pas de photos — Kayvila s&apos;en charge (état des lieux + photos
             professionnelles)
           </span>
         </label>

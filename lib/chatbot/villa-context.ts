@@ -1,5 +1,5 @@
 // ============================================================
-// Naoriva — Récupération et normalisation du contexte villas
+// Kayvila — Récupération et normalisation du contexte villas
 // Seules les données publiées et sûres sont exposées au chatbot
 // ============================================================
 

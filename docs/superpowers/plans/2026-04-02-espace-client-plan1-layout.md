@@ -81,7 +81,7 @@ Dans `app/globals.css`, trouver le bloc `.font-display { ... }`. Après ce bloc,
 - [ ] **Step 1.5 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Résultat attendu : `✓ Compiled successfully` (ou `Route (app)` sans erreur TypeScript).
 
@@ -230,7 +230,7 @@ export function EspaceClientShell({
         {/* Brand */}
         <div className="px-6 pt-8 pb-0">
           <p className="text-[7px] font-medium tracking-[0.28em] uppercase text-[#D4AF37] opacity-80 mb-1">
-            Naoriva
+            Kayvila
           </p>
           <p className="font-display text-[15px] font-normal text-[#0D1B2A]">
             Espace Client
@@ -362,7 +362,7 @@ export function EspaceClientShell({
 - [ ] **Step 2.2 : Vérifier le build TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -30
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx tsc --noEmit 2>&1 | head -30
 ```
 Résultat attendu : aucune erreur.
 
@@ -478,7 +478,7 @@ export default function EspaceClientLayout({ children }: { children: ReactNode }
 - [ ] **Step 3.2 : Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx tsc --noEmit 2>&1 | head -20
 ```
 Résultat attendu : aucune erreur.
 
@@ -561,7 +561,7 @@ Remplacer le guard `if (!session?.user?.email) { setLoading(false); return; }` p
 - [ ] **Step 4.4 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Résultat attendu : `✓ Compiled successfully`.
 
@@ -646,7 +646,7 @@ export default function ConciergeriePage() {
 - [ ] **Step 5.4 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Résultat attendu : `✓ Compiled successfully` avec les 3 nouvelles routes listées.
 
@@ -675,7 +675,7 @@ interface PageTopbarProps {
   badge?: string; // ex: "J — 12"
 }
 
-export function PageTopbar({ section = "Naoriva", title, badge }: PageTopbarProps) {
+export function PageTopbar({ section = "Kayvila", title, badge }: PageTopbarProps) {
   return (
     <div className="h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] flex items-center px-8 gap-0 shrink-0">
       <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">
@@ -734,7 +734,7 @@ Pour le dashboard principal (remplacer le `<div className="space-y-10">` existan
 - [ ] **Step 6.3 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -10
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -10
 ```
 Résultat attendu : `✓ Compiled successfully`.
 
@@ -805,12 +805,12 @@ test.describe("Espace Client — Layout", () => {
 
 Dans un terminal, démarrer le dev server :
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run dev &
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run dev &
 ```
 
 Dans un autre terminal, lancer les tests :
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx playwright test tests/espace-client/layout.spec.ts --reporter=line 2>&1
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx playwright test tests/espace-client/layout.spec.ts --reporter=line 2>&1
 ```
 Résultat attendu : tous les tests passent (les redirections vers `/login` sont correctes).
 
@@ -829,7 +829,7 @@ git commit -m "test(espace-client): add Playwright tests for layout auth redirec
 - [ ] **Build prod propre**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Résultat attendu : `✓ Compiled successfully`, les routes `/espace-client/*` listées sans erreur.
 
@@ -844,7 +844,7 @@ Ouvrir http://localhost:3000/espace-client sans être connecté :
 
 Se connecter avec un compte test puis retourner sur `/espace-client` :
 - ✅ Sidebar blanche visible sur desktop (≥768px), largeur 188px
-- ✅ "Naoriva / Espace Client" en haut de sidebar
+- ✅ "Kayvila / Espace Client" en haut de sidebar
 - ✅ Indicateur actif : trait gold 2px à gauche de "Séjour"
 - ✅ 5 items nav : Séjour, Livret, Messages, Documents, Conciergerie
 - ✅ Avatar initiale en bas de sidebar

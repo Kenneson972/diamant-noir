@@ -1,4 +1,4 @@
--- Naoriva V1 — migrations à exécuter dans Supabase (SQL Editor)
+-- Kayvila V1 — migrations à exécuter dans Supabase (SQL Editor)
 -- Tables et colonnes pour soumissions villa, contact, et extensions villas/bookings.
 
 -- 1. Table des soumissions de villas (propriétaires)

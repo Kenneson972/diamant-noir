@@ -1,7 +1,7 @@
-# 💎 NAORIVA - Luxury Villa Concierge Platform
+# 💎 KAYVILA - Luxury Villa Concierge Platform
 
 ## 📋 Présentation
-**Naoriva** est une solution logicielle haut de gamme destinée aux conciergeries de luxe. Elle combine une expérience client immersive inspirée d'Airbnb avec un centre de commandement assisté par Intelligence Artificielle.
+**Kayvila** est une solution logicielle haut de gamme destinée aux conciergeries de luxe. Elle combine une expérience client immersive inspirée d'Airbnb avec un centre de commandement assisté par Intelligence Artificielle.
 
 ## 🚀 Fonctionnalités Clés
 - **Expérience Client Immersive** : Galeries plein écran, moteur de prix dynamique, et calendrier de disponibilité réel.
@@ -21,4 +21,4 @@
 Consultez le fichier [RECAP.md](./RECAP.md) pour le détail complet de l'avancement et des dernières mises à jour (24 Janvier 2026).
 
 ---
-*Naoriva - Excellence, Performance, Prestige.*
+*Kayvila - Excellence, Performance, Prestige.*

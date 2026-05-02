@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const supabase = getSupabaseServer();
+    const supabase = await getSupabaseServer();
     const { data } = await supabase
       .from("villas")
       .select("name, description, image_url, image_urls, is_published")
@@ -26,14 +26,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const image = data.image_url || (Array.isArray(data.image_urls) && data.image_urls[0]) || null;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
     return {
-      title: `${data.name} — Naoriva`,
+      title: `${data.name} — Kayvila`,
       description: (data.description || "").slice(0, 160),
       openGraph: image && baseUrl
         ? { images: [{ url: image.startsWith("http") ? image : `${baseUrl}${image}` }] }
         : undefined,
     };
   } catch {
-    return { title: "Villa — Naoriva" };
+    return { title: "Villa — Kayvila" };
   }
 }
 
@@ -82,10 +82,10 @@ type RecommendedVilla = {
 
 const fallbackVilla: VillaDetails = {
   id: "fallback",
-  name: "Villa Naoriva",
+  name: "Villa Kayvila",
   location: "Le Diamant, Martinique",
   description:
-    "Sur les hauteurs du sud caraïbe, Naoriva mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l’océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
+    "Sur les hauteurs du sud caraïbe, Kayvila mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l’océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
   price: 1000,
   capacity: 8,
   image: "/villa-hero.jpg",
@@ -137,7 +137,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   let recommendedVillas: RecommendedVilla[] = [];
 
   try {
-    const supabase = getSupabaseServer();
+    const supabase = await getSupabaseServer();
     const [villaResult, recommendationsResult] = await Promise.all([
       supabase
         .from("villas")
@@ -261,20 +261,53 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
             </section>
 
-            {/* Hôte */}
+            {/* L'expérience Kayvila — Conciergerie */}
             <section className="pt-10 border-t border-navy/10">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold">
-                  <User size={20} />
+              <h2 className="font-display font-normal text-2xl text-navy mb-8">L&apos;expérience Kayvila</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
+                    <User size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-navy">Concierge dédié</h4>
+                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
+                      Une interlocutrice unique avant et pendant votre séjour pour organiser chaque détail.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-display text-xl text-navy">Votre hôte</h3>
-                  <p className="text-sm text-navy/70 mt-1">
-                    Conciergerie Naoriva
-                  </p>
-                  <p className="text-sm text-navy/55 mt-2 leading-relaxed">
-                    Équipe locale dédiée, disponible avant et pendant le séjour pour organiser votre expérience sur mesure.
-                  </p>
+                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-navy">Accueil personnalisé</h4>
+                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
+                      Remise des clés, visite guidée de la villa et conseils locaux par notre équipe.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-navy">Services à la carte</h4>
+                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
+                      Chef à domicile, location bateau, massages, transfert — composez votre séjour.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-navy">Disponibilité 7j/7</h4>
+                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
+                      Une équipe locale réactive, joignable avant et pendant tout votre séjour.
+                    </p>
+                  </div>
                 </div>
               </div>
             </section>
@@ -540,7 +573,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   href="/contact"
                   className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
                 >
-                  Planifier un appel
+                  Vivre l&apos;expérience Kayvila
                 </Link>
               </div>
             </section>
@@ -563,7 +596,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
                   <ShieldCheck size={20} />
                 </div>
-                <h4 className="font-display text-lg text-navy">L'Excellence Naoriva</h4>
+                <h4 className="font-display text-lg text-navy">L'Excellence Kayvila</h4>
                 <p className="text-xs text-navy/60 leading-relaxed">
                   Cette maison fait partie de notre collection exclusive. Elle a été inspectée en personne par nos équipes pour garantir des standards hôteliers de très haut niveau.
                 </p>
@@ -635,7 +668,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── CTA bas de page ── */}
       <div className="bg-navy py-20 text-center px-6">
         <div className="mx-auto max-w-xl space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Naoriva</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Kayvila</p>
           <h3 className="font-display text-4xl text-white">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link

@@ -1,15 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
 import { FileText, Download } from "lucide-react";
 import Link from "next/link";
-import { Spinner, Card, Chip, Button } from "@heroui/react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Chip,
+  linkAsButtonClasses,
+  Spinner,
+} from "@/components/espace-client/tenant-ui";
 
 export default function ProfilPage() {
-  const router = useRouter();
   const supabase = getSupabaseBrowser();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +38,7 @@ export default function ProfilPage() {
       setUser(session.user);
       setLoading(false);
     })();
-  }, [supabase, router]);
+  }, [supabase]);
 
   if (loading) {
     return (
@@ -44,32 +50,28 @@ export default function ProfilPage() {
 
   if (!user) {
     return (
-      <Card className="border border-navy/10 bg-white shadow-none rounded-none max-w-lg">
-        <Card.Content className="px-8 py-14 text-center space-y-5">
+      <Card className="max-w-lg rounded-none border border-navy/10 bg-white shadow-none">
+        <CardContent className="space-y-5 px-8 py-14 text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">Profil</p>
           <p className="font-display text-xl text-navy">Connexion requise</p>
-          <p className="text-sm text-navy/50 max-w-md mx-auto">
+          <p className="mx-auto max-w-md text-sm text-navy/50">
             Connectez-vous pour accéder à vos informations personnelles.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/login?redirect=/espace-client/profil" className="no-underline">
-              <Button
-                variant="primary"
-                className="rounded-none uppercase text-[10px] font-bold tracking-[0.25em] px-6"
-              >
-                Se connecter
-              </Button>
+            <Link
+              href="/login?redirect=/espace-client/profil"
+              className={linkAsButtonClasses("primary", "md", "rounded-none uppercase no-underline")}
+            >
+              Se connecter
             </Link>
-            <Link href="/villas" className="no-underline">
-              <Button
-                variant="outline"
-                className="rounded-none border-navy/25 text-navy uppercase text-[10px] font-bold tracking-[0.25em] px-6"
-              >
-                Voir les villas
-              </Button>
+            <Link
+              href="/villas"
+              className={linkAsButtonClasses("outline", "md", "rounded-none border-navy/25 uppercase no-underline")}
+            >
+              Voir les villas
             </Link>
           </div>
-        </Card.Content>
+        </CardContent>
       </Card>
     );
   }
@@ -83,50 +85,50 @@ export default function ProfilPage() {
         <p className="text-sm text-navy/50 mt-1">Gérez vos informations personnelles</p>
       </div>
 
-      <Card className="border border-navy/10 bg-white shadow-none rounded-none">
-        <Card.Header className="px-6 pt-6 pb-0">
-          <Card.Title className="font-display text-base text-navy font-normal">
+      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
+        <CardHeader className="px-6 pb-0 pt-6">
+          <CardTitle className="font-display text-base font-normal text-navy">
             Informations personnelles
-          </Card.Title>
-        </Card.Header>
-        <Card.Content className="p-6">
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
           <ProfileForm
             email={user.email ?? ""}
             initialName={metadata.full_name ?? ""}
             initialPhone={metadata.phone ?? ""}
-          userId={user.id}
+            userId={user.id}
             currentAvatar={metadata.avatar_url}
-          demoMode={false}
+            demoMode={false}
           />
-        </Card.Content>
+        </CardContent>
       </Card>
 
-      <Card className="border border-navy/10 bg-white shadow-none rounded-none">
-        <Card.Header className="px-6 pt-6 pb-0">
+      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
+        <CardHeader className="px-6 pb-0 pt-6">
           <div className="flex items-center justify-between">
-            <Card.Title className="font-display text-base text-navy font-normal flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 font-display text-base font-normal text-navy">
               <FileText size={16} className="text-gold" />
               Mes documents
-            </Card.Title>
-            <Chip size="sm" variant="soft" color="default" className="text-[10px] uppercase tracking-[0.2em]">
+            </CardTitle>
+            <Chip color="default" className="text-[10px] uppercase tracking-[0.2em]">
               Bientôt disponible
             </Chip>
           </div>
-        </Card.Header>
-        <Card.Content className="p-6">
-          <div className="flex flex-col items-center py-6 gap-3 text-center">
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col items-center gap-3 py-6 text-center">
             <Download size={32} className="text-navy/20" />
             <p className="text-sm text-navy/40">
               Vos contrats et factures apparaîtront ici dès qu&apos;ils seront disponibles.
             </p>
             <a
               href="/contact"
-              className="text-[11px] font-bold uppercase tracking-widest text-gold hover:text-navy transition-colors"
+              className="text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:text-navy"
             >
               Demander un document →
             </a>
           </div>
-        </Card.Content>
+        </CardContent>
       </Card>
     </div>
   );

@@ -37,7 +37,7 @@
 ## PROMPT À COPIER (Claude Code)
 
 ```
-Tu travailles sur le repo Next.js « naoriva » (Naoriva).
+Tu travailles sur le repo Next.js « kayvila » (Kayvila).
 
 ## Bug P0 — Refresh obligatoire après « Changer de parcours »
 Malgré `replaceHomeAndRequestGateReopen`, `requestGateReopen`, `bodyScrollLock` et le reset dans `SiteFrame`, l’utilisateur doit encore faire F5 pour que tout soit correct. Tu dois trouver la **cause racine** (ne pas empiler des timeouts au hasard) et livrer un **correctif minimal** avec scénarios de test.

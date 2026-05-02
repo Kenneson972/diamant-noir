@@ -35,7 +35,7 @@ Remplacer le composant `UpcomingStayHero` sombre (fond navy avec image en overla
 - [ ] **Step 1.1 : Lire le fichier actuel**
 
 ```bash
-head -160 "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva/app/espace-client/page.tsx"
+head -160 "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila/app/espace-client/page.tsx"
 ```
 
 Identifier :
@@ -69,7 +69,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
         <h2 className="font-display text-2xl font-normal text-[#0D1B2A] mb-2">
-          {booking.villa?.name ?? "Villa Naoriva"}
+          {booking.villa?.name ?? "Villa Kayvila"}
         </h2>
         {booking.villa?.location && (
           <p className="font-cormorant italic text-[14px] font-light text-[rgba(13,27,42,0.35)] mb-1">
@@ -196,14 +196,14 @@ Supprimer uniquement si non utilisés ailleurs : `import { ..., BookOpen, ... }`
 - [ ] **Step 1.5 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -15
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -15
 ```
 Résultat attendu : `✓ Compiled successfully`.
 
 - [ ] **Step 1.6 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/espace-client/page.tsx && git commit -m "feat(séjour): white hero card + accès rapide 4 colonnes"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add app/espace-client/page.tsx && git commit -m "feat(séjour): white hero card + accès rapide 4 colonnes"
 ```
 
 ---
@@ -502,7 +502,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
 function EmptySection() {
   return (
     <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.3)]">
-      Cette section sera complétée avant votre arrivée par l&apos;équipe Naoriva.
+      Cette section sera complétée avant votre arrivée par l&apos;équipe Kayvila.
     </p>
   );
 }
@@ -603,7 +603,7 @@ export default function LivretPage() {
         {isEmptyBook ? (
           <div className="py-12 text-center">
             <p className="font-cormorant italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
-              Le livret sera complété avant votre arrivée par l&apos;équipe Naoriva.
+              Le livret sera complété avant votre arrivée par l&apos;équipe Kayvila.
             </p>
           </div>
         ) : (
@@ -699,14 +699,14 @@ export default function LivretPage() {
 - [ ] **Step 2.2 : Vérifier le build TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -30
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx tsc --noEmit 2>&1 | head -30
 ```
 Résultat attendu : aucune erreur.
 
 - [ ] **Step 2.3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/espace-client/livret/page.tsx && git commit -m "feat(livret): implement two-column livret page with WiFi copy/hide and urgences"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add app/espace-client/livret/page.tsx && git commit -m "feat(livret): implement two-column livret page with WiFi copy/hide and urgences"
 ```
 
 ---
@@ -720,7 +720,7 @@ La page `/espace-client/reservations/[id]` utilise encore `WelcomeBook.tsx` (acc
 
 - [ ] **Step 3.1 : Lire le composant actuel**
 
-Read `/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva/components/espace-client/WelcomeBook.tsx`.
+Read `/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila/components/espace-client/WelcomeBook.tsx`.
 
 Identifier la section WiFi (vers les lignes 37–53) qui affiche le mot de passe dans un `<code>`.
 
@@ -804,13 +804,13 @@ content: (
 - [ ] **Step 3.4 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -10
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -10
 ```
 
 - [ ] **Step 3.5 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/espace-client/WelcomeBook.tsx && git commit -m "feat(welcomebook): add WiFi password copy/hide toggle"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/espace-client/WelcomeBook.tsx && git commit -m "feat(welcomebook): add WiFi password copy/hide toggle"
 ```
 
 ---
@@ -914,7 +914,7 @@ export default function LivretPrintPage() {
       <div className="max-w-2xl mx-auto px-8 py-10 print:px-0 print:py-0">
         {/* Header */}
         <div className="mb-8 pb-6 border-b border-[rgba(13,27,42,0.12)]">
-          <p className="text-[8px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">Naoriva · Conciergerie</p>
+          <p className="text-[8px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">Kayvila · Conciergerie</p>
           <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
             {villa?.name ?? "Livret d'accueil"}
           </h1>
@@ -988,7 +988,7 @@ export default function LivretPrintPage() {
 
         <div className="pt-6 border-t border-[rgba(13,27,42,0.08)]">
           <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
-            Naoriva · Conciergerie de luxe, Martinique
+            Kayvila · Conciergerie de luxe, Martinique
           </p>
         </div>
       </div>
@@ -1000,13 +1000,13 @@ export default function LivretPrintPage() {
 - [ ] **Step 4.2 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -10
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -10
 ```
 
 - [ ] **Step 4.3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/espace-client/livret/print/page.tsx && git commit -m "feat(livret): add print/PDF page with auto-print trigger"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add app/espace-client/livret/print/page.tsx && git commit -m "feat(livret): add print/PDF page with auto-print trigger"
 ```
 
 ---
@@ -1081,12 +1081,12 @@ function formatDateICS(dateStr: string): string {
 function generateICS(booking: Booking): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const summary = `Séjour ${booking.villa?.name ?? "Villa Naoriva"}`;
+  const summary = `Séjour ${booking.villa?.name ?? "Villa Kayvila"}`;
   const location = booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique";
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Naoriva//FR",
+    "PRODID:-//Kayvila//FR",
     "BEGIN:VEVENT",
     `DTSTART;VALUE=DATE:${dtstart}`,
     `DTEND;VALUE=DATE:${dtend}`,
@@ -1100,7 +1100,7 @@ function generateICS(booking: Booking): string {
 function googleCalendarUrl(booking: Booking): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Naoriva"}`);
+  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
@@ -1108,7 +1108,7 @@ function googleCalendarUrl(booking: Booking): string {
 }
 
 function outlookCalendarUrl(booking: Booking): string {
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Naoriva"}`);
+  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
@@ -1121,7 +1121,7 @@ function downloadICS(booking: Booking) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `sejour-naoriva-${booking.start_date}.ics`;
+  a.download = `sejour-kayvila-${booking.start_date}.ics`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1420,14 +1420,14 @@ export default function ChecklistPage() {
 - [ ] **Step 5.3 : Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx tsc --noEmit 2>&1 | head -30
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx tsc --noEmit 2>&1 | head -30
 ```
 Résultat attendu : aucune erreur.
 
 - [ ] **Step 5.4 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/espace-client/checklist/page.tsx && git commit -m "feat(checklist): add avant-arrivée page with iCal, Google/Outlook calendar, Supabase JSONB persistence"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add app/espace-client/checklist/page.tsx && git commit -m "feat(checklist): add avant-arrivée page with iCal, Google/Outlook calendar, Supabase JSONB persistence"
 ```
 
 ---
@@ -1482,14 +1482,14 @@ test.describe("Espace Client — UX Features", () => {
 
 Démarrer le dev server :
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run dev > /tmp/naoriva-dev2.log 2>&1 &
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run dev > /tmp/kayvila-dev2.log 2>&1 &
 DEV_PID=$!
 sleep 6
 ```
 
 Lancer les tests :
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npx playwright test tests/espace-client/ux-features.spec.ts --reporter=line 2>&1 | head -40
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npx playwright test tests/espace-client/ux-features.spec.ts --reporter=line 2>&1 | head -40
 ```
 
 Résultat attendu : 5/5 tests passent.
@@ -1498,11 +1498,11 @@ Résultat attendu : 5/5 tests passent.
 
 ```bash
 kill $DEV_PID 2>/dev/null || pkill -f "next dev" 2>/dev/null
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -15
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -15
 ```
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add tests/espace-client/ux-features.spec.ts && git commit -m "test(espace-client): add Playwright tests for UX features pages"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add tests/espace-client/ux-features.spec.ts && git commit -m "test(espace-client): add Playwright tests for UX features pages"
 ```
 
 ---
@@ -1512,7 +1512,7 @@ cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
 - [ ] **Build prod propre**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Résultat attendu : routes `/espace-client/livret`, `/espace-client/livret/print`, `/espace-client/checklist` listées sans erreur.
 

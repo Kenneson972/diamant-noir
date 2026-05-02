@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════
--- Migration : iCal sync architecture — Naoriva
+-- Migration : iCal sync architecture — Kayvila
 -- ───────────────────────────────────────────────────────────────────
 -- 1. Colonne `platforms` (JSONB) sur villa_submissions
 --    → stocke les infos plateformes saisies dans le formulaire

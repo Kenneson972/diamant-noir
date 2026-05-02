@@ -33,9 +33,9 @@ import {
 } from "@/lib/proprietaires-data";
 
 export const metadata: Metadata = {
-  title: "Programme propriétaires — Confiez votre villa | Naoriva",
+  title: "Programme propriétaires — Confiez votre villa | Kayvila",
   description:
-    "Confiez votre villa en Martinique à Naoriva : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
+    "Confiez votre villa en Martinique à Kayvila : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
 };
 
 const PILIER_ICONS = [TrendingUp, Headphones, Building2] as const;
@@ -63,9 +63,9 @@ export default function ProprietairesPage() {
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
           <HeroWordmarkBaseline
             headingId="proprio-hero-title"
-            titleLabel="Naoriva — Programme propriétaires — Conciergerie privée"
+            titleLabel="Kayvila — Programme propriétaires — Conciergerie privée"
           >
-            <div className="mx-auto grid w-full max-w-xl animate-in gap-3 fade-in duration-700 delay-300 sm:grid-cols-2 sm:gap-4">
+            <div className="mx-auto grid w-full min-w-0 max-w-xl grid-cols-2 gap-2 animate-in fade-in duration-700 delay-300 sm:gap-4">
               <Link
                 href="/soumettre-ma-villa"
                 className="group flex min-h-[48px] flex-col items-start gap-0.5 rounded-none border border-gold/55 bg-gold/[0.12] px-4 py-3.5 text-left backdrop-blur-sm transition-colors hover:bg-gold/[0.20] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
@@ -105,7 +105,7 @@ export default function ProprietairesPage() {
 
       {/* ─── Intro + piliers : un seul bloc image | texte ─── */}
       <EditorialImageSplit
-        title="Pourquoi confier votre villa à Naoriva ?"
+        title="Pourquoi confier votre villa à Kayvila ?"
         imagePosition="left"
         imageSrc={PROPRIO_LANDING_IMAGES.splitPourquoi}
         imageAlt={PROPRIO_LANDING_IMAGE_ALTS.splitPourquoi}

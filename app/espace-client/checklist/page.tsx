@@ -39,12 +39,12 @@ function formatDateICS(dateStr: string): string {
 function generateICS(booking: Booking): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const summary = `Séjour ${booking.villa?.name ?? "Villa Naoriva"}`;
+  const summary = `Séjour ${booking.villa?.name ?? "Villa Kayvila"}`;
   const location = booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique";
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Naoriva//FR",
+    "PRODID:-//Kayvila//FR",
     "BEGIN:VEVENT",
     `DTSTART;VALUE=DATE:${dtstart}`,
     `DTEND;VALUE=DATE:${dtend}`,
@@ -58,7 +58,7 @@ function generateICS(booking: Booking): string {
 function googleCalendarUrl(booking: Booking): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Naoriva"}`);
+  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
@@ -66,7 +66,7 @@ function googleCalendarUrl(booking: Booking): string {
 }
 
 function outlookCalendarUrl(booking: Booking): string {
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Naoriva"}`);
+  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
@@ -79,7 +79,7 @@ function downloadICS(booking: Booking) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `sejour-naoriva-${booking.start_date}.ics`;
+  a.download = `sejour-kayvila-${booking.start_date}.ics`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

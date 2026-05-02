@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * WishlistContext — Naoriva
+ * WishlistContext — Kayvila
  * ──────────────────────────────
  * Persiste les villas favorites en localStorage (anonyme)
  * et sync vers Supabase si l'utilisateur est connecté.
@@ -52,15 +52,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   // Sync Supabase → localStorage si utilisateur connecté
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }: { data: { session: any } }) => {
       if (!session) return;
       const { data } = await supabase
         .from("wishlist")
         .select("villa_id")
         .eq("user_id", session.user.id);
       if (data && data.length > 0) {
-        const remoteIds = new Set(data.map((r: { villa_id: string }) => r.villa_id));
-        setIds((prev) => {
+        const remoteIds = new Set<string>(data.map((r: { villa_id: string }) => r.villa_id));
+        setIds((prev: Set<string>) => {
           const merged = new Set([...prev, ...remoteIds]);
           localStorage.setItem(LS_KEY, JSON.stringify([...merged]));
           return merged;

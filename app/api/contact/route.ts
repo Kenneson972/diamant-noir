@@ -1,22 +1,42 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { z } from "zod";
+import { checkRateLimit, ipFromRequest } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 const CONTACT_WEBHOOK_URL = process.env.CONTACT_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
 
+/* ─── Schéma de validation Zod ─────────────────────── */
+
+const contactSchema = z.object({
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
+  email: z.string().email("Email invalide"),
+  subject: z.string().max(200).optional().default(""),
+  message: z.string().min(10, "Le message doit contenir au moins 10 caractères").max(5000),
+});
+
+/* ─── Route ─────────────────────────────────────────── */
+
 export async function POST(request: Request) {
+  // Rate limiting : 5 req / 60s par IP
+  if (!checkRateLimit(`contact:${ipFromRequest(request)}`, 5, 60_000)) {
+    return NextResponse.json({ error: "Trop de requêtes. Réessayez plus tard." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
-    const { name, email, subject, message } = body;
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: "Nom, email et message sont requis." },
-        { status: 400 }
-      );
+
+    // Validation Zod
+    const result = contactSchema.safeParse(body);
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+      const firstError = Object.values(errors).flat()[0] || "Données invalides";
+      return NextResponse.json({ error: firstError, details: errors }, { status: 400 });
     }
 
-    const payload = { name, email, subject: subject || "", message, type: "contact_form" };
+    const { name, email, subject, message } = result.data;
+    const payload = { name, email, subject, message, type: "contact_form" };
 
     if (CONTACT_WEBHOOK_URL) {
       const res = await fetch(CONTACT_WEBHOOK_URL, {

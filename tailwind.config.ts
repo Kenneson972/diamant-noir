@@ -18,10 +18,18 @@ const config: Config = {
          * Les classes `text-navy`, `bg-navy`, etc. restent valides.
          */
         navy: "#0A0A0A",
+        "navy-900": "#0B1D2E",
+        "navy-800": "#132A41",
         offwhite: "#FAFAFA",
         cream: "#F5F0E8",
         champagne: "#F0E6CE",
         sand: "#DDD5C4",
+        muted: "#8B8B8B",
+        "border-subtle": "#E5E3DB",
+      },
+      fontFamily: {
+        display: ["var(--font-sora)", "system-ui", "sans-serif"],
+        body: ["var(--font-instrument-sans)", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-up": {

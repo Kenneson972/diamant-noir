@@ -1,16 +1,19 @@
 interface PageTopbarProps {
+  /** Fil d’Ariane optionnel (`Espace client`, …) ; sinon seul le titre est affiché. */
   section?: string;
   title: string;
   badge?: string; // ex: "J — 12"
 }
 
-export function PageTopbar({ section = "Naoriva", title, badge }: PageTopbarProps) {
+export function PageTopbar({ section, title, badge }: PageTopbarProps) {
   return (
     <div className="flex h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] items-center px-5 md:px-8 shrink-0">
-      <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">
-        {section}
-      </span>
-      <div className="w-[14px] h-px bg-[rgba(13,27,42,0.1)] mx-3" />
+      {section ? (
+        <>
+          <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">{section}</span>
+          <div className="w-[14px] h-px bg-[rgba(13,27,42,0.1)] mx-3" />
+        </>
+      ) : null}
       <span className="font-display text-[15px] font-normal text-[#0D1B2A]">{title}</span>
       {badge && (
         <>

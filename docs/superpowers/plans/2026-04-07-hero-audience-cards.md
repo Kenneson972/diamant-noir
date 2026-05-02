@@ -254,7 +254,7 @@ import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
   </Suspense>
   <HeroWordmarkBaseline
     headingId="hero-title"
-    titleLabel="Naoriva — Confiance, réactivité, excellence"
+    titleLabel="Kayvila — Confiance, réactivité, excellence"
   />
   <HeroAudienceCards />
 </div>

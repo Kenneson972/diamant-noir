@@ -74,14 +74,14 @@ Aucune modification nécessaire — déjà correct.
 - [ ] **Step 4 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Expected: `✓ Compiled successfully` sans erreur TypeScript.
 
 - [ ] **Step 5 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/layout/Navbar.tsx && git commit -m "feat: navbar CTA changed to Conciergerie → /prestations"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/layout/Navbar.tsx && git commit -m "feat: navbar CTA changed to Conciergerie → /prestations"
 ```
 
 ---
@@ -129,7 +129,7 @@ return (
           Conciergerie Privée
         </span>
         <span className="font-display text-[1.1rem] leading-snug text-white">
-          Gérer ma villa avec Naoriva
+          Gérer ma villa avec Kayvila
         </span>
         <Building2
           className="mt-auto h-[15px] w-[15px] text-gold/55 transition-transform duration-200 group-hover:translate-x-0.5"
@@ -172,14 +172,14 @@ Aucune modification nécessaire — déjà importés ligne 6.
 - [ ] **Step 5 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Expected: `✓ Compiled successfully`
 
 - [ ] **Step 6 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/home/HeroAudienceCards.tsx && git commit -m "feat: hero cards reordered — conciergerie first, navigate to /prestations"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/home/HeroAudienceCards.tsx && git commit -m "feat: hero cards reordered — conciergerie first, navigate to /prestations"
 ```
 
 ---
@@ -218,13 +218,13 @@ Remplacer le contenu du `<div className="mx-auto flex...">` :
 - [ ] **Step 2 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 
 - [ ] **Step 3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/home/HomeTrustBand.tsx && git commit -m "feat: trustband reordered — conciergerie 24/7 as first signal"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/home/HomeTrustBand.tsx && git commit -m "feat: trustband reordered — conciergerie 24/7 as first signal"
 ```
 
 ---
@@ -308,14 +308,14 @@ export function HomeConciergeHighlight() {
 - [ ] **Step 2 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Expected: `✓ Compiled successfully` (le composant n'est pas encore importé dans page.tsx, mais doit compiler sans erreur)
 
 - [ ] **Step 3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/home/HomeConciergeHighlight.tsx && git commit -m "feat: add HomeConciergeHighlight — 6 services grid with CTA to /prestations"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/home/HomeConciergeHighlight.tsx && git commit -m "feat: add HomeConciergeHighlight — 6 services grid with CTA to /prestations"
 ```
 
 ---
@@ -353,13 +353,13 @@ par :
 - [ ] **Step 2 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 
 - [ ] **Step 3 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/home/HomeLifestyleAudience.tsx && git commit -m "feat: lifestyle section CTA now points to /prestations"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/home/HomeLifestyleAudience.tsx && git commit -m "feat: lifestyle section CTA now points to /prestations"
 ```
 
 ---
@@ -417,14 +417,14 @@ HomeBottomCta
 - [ ] **Step 3 : Vérifier le build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -20
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -20
 ```
 Expected: `✓ Compiled successfully`
 
 - [ ] **Step 4 : Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add app/page.tsx && git commit -m "feat: home page sections reordered — conciergerie highlight before villas"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add app/page.tsx && git commit -m "feat: home page sections reordered — conciergerie highlight before villas"
 ```
 
 ---
@@ -439,13 +439,13 @@ cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
 Ligne 12-14, remplacer :
 ```tsx
 <p className="leading-relaxed text-navy/60">
-  Rejoignez le cercle Naoriva — séjournez dans nos villas d&apos;exception ou confiez-nous votre bien pour en maximiser le potentiel.
+  Rejoignez le cercle Kayvila — séjournez dans nos villas d&apos;exception ou confiez-nous votre bien pour en maximiser le potentiel.
 </p>
 ```
 par :
 ```tsx
 <p className="leading-relaxed text-navy/60">
-  Naoriva orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
+  Kayvila orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
 </p>
 ```
 
@@ -478,14 +478,14 @@ import { ProprietairesTransitionLink } from "@/components/home/ProprietairesTran
 - [ ] **Step 4 : Vérifier le build final**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && npm run build 2>&1 | tail -30
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && npm run build 2>&1 | tail -30
 ```
 Expected: `✓ Compiled successfully` sans warning TypeScript ni import inutilisé.
 
 - [ ] **Step 5 : Commit final**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva" && git add components/home/HomeBottomCta.tsx && git commit -m "feat: bottom CTA — conciergerie as primary action, villas secondary"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila" && git add components/home/HomeBottomCta.tsx && git commit -m "feat: bottom CTA — conciergerie as primary action, villas secondary"
 ```
 
 ---
@@ -493,7 +493,7 @@ cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
 ## Checklist de vérification manuelle (après toutes les tâches)
 
 - [ ] Navbar CTA "Conciergerie" → `/prestations`, icône Sparkles sur mobile
-- [ ] Carte gauche hero "Gérer ma villa avec Naoriva" → `/prestations`
+- [ ] Carte gauche hero "Gérer ma villa avec Kayvila" → `/prestations`
 - [ ] Carte droite hero "Réserver un séjour" → révèle la barre de recherche
 - [ ] TrustBand : "Conciergerie 24/7" apparaît en 1er signal
 - [ ] `HomeConciergeHighlight` visible entre TrustBand et section lifestyle

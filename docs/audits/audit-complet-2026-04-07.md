@@ -1,7 +1,7 @@
-# Audit technique complet — Naoriva
+# Audit technique complet — Kayvila
 
 **Date :** 2026-04-07  
-**Périmètre :** codebase `naoriva/` (Next.js 15 App Router)  
+**Périmètre :** codebase `kayvila/` (Next.js 15 App Router)  
 **Référentiel de règles :** pack Karibloom Client Builder (`.cursor/rules/client-builder/`), règles racine projet (architecture, SEO, forms, perf, mobile, sécurité, async/bundle, workflow), skills projet (dont `mobile-responsive`).
 
 **Méthode :** revue statique du code + `npm run build` (OK au moment de l’audit). Pas de Lighthouse automatisé ni d’audit réseau dans ce document.

@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
-import { TextField, Label, Input, Description, Button, Alert } from "@heroui/react";
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Field,
+  FieldInput,
+} from "@/components/espace-client/tenant-ui";
 import { Loader2, Check } from "lucide-react";
 
 interface ProfileFormProps {
@@ -127,19 +133,20 @@ export function ProfileForm({
     <form onSubmit={handleSave} className="space-y-5">
       {demoMode && (
         <Alert status="warning" className="rounded-none border-amber-200">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Description className="text-xs">Mode démo — les modifications ne sont pas sauvegardées.</Alert.Description>
-          </Alert.Content>
+          <AlertDescription className="text-xs">
+            Mode démo — les modifications ne sont pas sauvegardées.
+          </AlertDescription>
         </Alert>
       )}
 
-      <div className="flex items-center gap-5 pb-6 mb-6 border-b border-navy/8">
-        <TenantAvatar name={name} url={displayAvatar} size="lg" className="border border-navy/10 shrink-0" />
+      <div className="mb-6 flex items-center gap-5 border-b border-navy/8 pb-6">
+        <TenantAvatar name={name} url={displayAvatar} size="lg" className="shrink-0 border border-navy/10" />
         {!demoMode && userId ? (
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40 mb-2">Photo de profil</p>
-            <label className="cursor-pointer inline-flex items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/50 hover:border-navy hover:text-navy transition-colors">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+              Photo de profil
+            </p>
+            <label className="inline-flex cursor-pointer items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/50 transition-colors hover:border-navy hover:text-navy">
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
@@ -155,42 +162,53 @@ export function ProfileForm({
                 "Changer la photo"
               )}
             </label>
-            <p className="text-[10px] text-navy/25 mt-1.5">JPG, PNG ou WebP · max 2 Mo</p>
+            <p className="mt-1.5 text-[10px] text-navy/25">JPG, PNG ou WebP · max 2 Mo</p>
           </div>
         ) : null}
       </div>
 
-      <TextField value={email} isReadOnly isDisabled className="w-full">
-        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Adresse e-mail</Label>
-        <Input type="email" className="rounded-xl bg-navy/5 text-navy/50 border-navy/10" />
-        <Description className="text-[10px] text-navy/30">L&apos;email ne peut pas être modifié.</Description>
-      </TextField>
+      <Field id="profile-email" label="Adresse e-mail" hint="L'email ne peut pas être modifié.">
+        <FieldInput
+          id="profile-email"
+          type="email"
+          value={email}
+          readOnly
+          disabled
+          className="border-navy/10 bg-navy/5 text-navy/50"
+          aria-describedby="profile-email-hint"
+        />
+      </Field>
 
-      <TextField value={name} onChange={setName} isDisabled={demoMode} className="w-full">
-        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Nom complet</Label>
-        <Input placeholder="Votre nom" className="rounded-xl border-navy/20" />
-      </TextField>
+      <Field id="profile-name" label="Nom complet">
+        <FieldInput
+          id="profile-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={demoMode}
+          placeholder="Votre nom"
+        />
+      </Field>
 
-      <TextField value={phone} onChange={setPhone} isDisabled={demoMode} className="w-full">
-        <Label className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Téléphone</Label>
-        <Input type="tel" placeholder="+596 696 00 00 00" className="rounded-xl border-navy/20" />
-      </TextField>
+      <Field id="profile-phone" label="Téléphone">
+        <FieldInput
+          id="profile-phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          disabled={demoMode}
+          placeholder="+596 696 00 00 00"
+        />
+      </Field>
 
       {error && (
         <Alert status="danger" className="rounded-none border-red-200">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Description className="text-xs">{error}</Alert.Description>
-          </Alert.Content>
+          <AlertDescription className="text-xs">{error}</AlertDescription>
         </Alert>
       )}
 
       {saved && (
         <Alert status="success" className="rounded-none border-emerald-200">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Description className="text-xs">Modifications sauvegardées.</Alert.Description>
-          </Alert.Content>
+          <AlertDescription className="text-xs">Modifications sauvegardées.</AlertDescription>
         </Alert>
       )}
 
@@ -198,15 +216,15 @@ export function ProfileForm({
         type="submit"
         variant="primary"
         fullWidth
-        isDisabled={loading || demoMode}
-        className="h-12 rounded-xl bg-navy text-white font-bold uppercase tracking-widest text-[10px] hover:bg-gold hover:text-navy border-0"
+        disabled={loading || demoMode}
+        className="h-12 rounded-xl border-0 bg-navy text-[10px] font-bold uppercase tracking-widest text-white hover:bg-gold hover:text-navy"
       >
         {loading ? (
-          <span className="flex items-center gap-2 justify-center">
+          <span className="flex items-center justify-center gap-2">
             <Loader2 size={16} className="animate-spin" /> Enregistrement…
           </span>
         ) : saved ? (
-          <span className="flex items-center gap-2 justify-center">
+          <span className="flex items-center justify-center gap-2">
             <Check size={16} /> Sauvegardé
           </span>
         ) : (

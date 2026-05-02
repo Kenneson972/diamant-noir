@@ -1,6 +1,6 @@
 # Login Page Redesign — Spec
 
-**Goal:** Refondre la page `/login` avec un layout 60/40 split-screen, un panneau formulaire blanc épuré sans tabs, des champs underline-only, et une identité visuelle cohérente avec le logo Naoriva.
+**Goal:** Refondre la page `/login` avec un layout 60/40 split-screen, un panneau formulaire blanc épuré sans tabs, des champs underline-only, et une identité visuelle cohérente avec le logo Kayvila.
 
 **Logique conservée :** Détection locataire/propriétaire via `?redirect=` URL param. Flow OTP pour locataires (via `TenantMagicLinkFlow`). Flow mot de passe pour propriétaires (via `PasswordPanel`). Toutes les étapes existantes (OTP, profil inscription, confirmation email) sont conservées fonctionnellement.
 
@@ -22,7 +22,7 @@
 
 ### En-tête
 ```
-NAORIVA               ← text-[8px] tracking-[0.38em] uppercase font-bold text-navy
+KAYVILA               ← text-[8px] tracking-[0.38em] uppercase font-bold text-navy
 Votre espace               ← font-display text-[1.9rem] text-navy  (ou "Espace propriétaire")
 ─────────────              ← h-px w-8 bg-black/12
 Réservations, livret…      ← text-sm text-navy/45 (tagline contextuelle)
@@ -54,7 +54,7 @@ Clic "Connexion" ou "Inscription" → bascule le mode (même logique que l'ancie
 ← Retour au site          (lien /)
 Accès propriétaire →      (lien /login?redirect=/dashboard/proprio)  ← si isTenant
 Espace locataire →        (lien /login?redirect=/espace-client)       ← si !isTenant
-© 2026 Naoriva
+© 2026 Kayvila
 ```
 Tous en `text-[9px] uppercase tracking-[0.18em] text-navy/30 hover:text-navy`
 

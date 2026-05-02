@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const BASE =
-  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "https://naoriva.fr";
+  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "https://kayvila.fr";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

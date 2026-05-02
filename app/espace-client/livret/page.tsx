@@ -92,7 +92,7 @@ function LivretSkeleton() {
 function EmptySection() {
   return (
     <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.3)]">
-      Cette section sera complétée avant votre arrivée par l&apos;équipe Naoriva.
+      Cette section sera complétée avant votre arrivée par l&apos;équipe Kayvila.
     </p>
   );
 }
@@ -347,7 +347,7 @@ export default function LivretPage() {
         {isEmptyBook ? (
           <div className="py-12 text-center">
             <p className="font-cormorant italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
-              Le livret sera complété avant votre arrivée par l&apos;équipe Naoriva.
+              Le livret sera complété avant votre arrivée par l&apos;équipe Kayvila.
             </p>
           </div>
         ) : (

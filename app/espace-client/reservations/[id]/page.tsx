@@ -6,7 +6,20 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
-import { Skeleton, Alert, Breadcrumbs, Card, Chip, Button, Separator } from "@heroui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  BreadcrumbsRow,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Chip,
+  Separator,
+  Skeleton,
+  linkAsButtonClasses,
+} from "@/components/espace-client/tenant-ui";
 
 function getNights(start: string, end: string) {
   return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86400000);
@@ -17,7 +30,7 @@ function DetailSkeleton() {
     <div className="space-y-6">
       <Skeleton className="h-4 w-48 rounded-md" />
       <Skeleton className="h-px w-10 rounded-none" />
-      <div className="border border-navy/8 bg-white p-6 space-y-5">
+      <div className="space-y-5 border border-navy/8 bg-white p-6">
         <Skeleton className="h-7 w-56 rounded-md" />
         <div className="grid gap-4 sm:grid-cols-3">
           {[1, 2, 3].map((i) => (
@@ -36,10 +49,14 @@ function DetailSkeleton() {
 
 function statusChipProps(status: string): { color: "success" | "warning" | "danger" | "default"; label: string } {
   switch (status) {
-    case "confirmed": return { color: "success", label: "Confirmée" };
-    case "pending": return { color: "warning", label: "En attente" };
-    case "cancelled": return { color: "danger", label: "Annulée" };
-    default: return { color: "default", label: status };
+    case "confirmed":
+      return { color: "success", label: "Confirmée" };
+    case "pending":
+      return { color: "warning", label: "En attente" };
+    case "cancelled":
+      return { color: "danger", label: "Annulée" };
+    default:
+      return { color: "default", label: status };
   }
 }
 
@@ -101,18 +118,15 @@ export default function ReservationDetailPage() {
 
   if (error || !data) {
     return (
-      <div className="py-10 space-y-6 max-w-lg mx-auto">
+      <div className="mx-auto max-w-lg space-y-6 py-10">
         <Alert status="danger" className="rounded-none border-red-200">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title className="font-display text-sm">Impossible d&apos;afficher la réservation</Alert.Title>
-            <Alert.Description>{error ?? "Erreur inattendue."}</Alert.Description>
-          </Alert.Content>
+          <AlertTitle>Impossible d&apos;afficher la réservation</AlertTitle>
+          <AlertDescription>{error ?? "Erreur inattendue."}</AlertDescription>
         </Alert>
         <div className="text-center">
           <Link
             href="/espace-client"
-            className="text-[10px] font-bold uppercase tracking-widest text-gold hover:text-navy transition-colors"
+            className="text-[10px] font-bold uppercase tracking-widest text-gold transition-colors hover:text-navy"
           >
             ← Retour aux réservations
           </Link>
@@ -128,55 +142,57 @@ export default function ReservationDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumbs className="text-[10px] uppercase tracking-[0.2em] text-navy/40">
-        <Breadcrumbs.Item href="/espace-client">Espace client</Breadcrumbs.Item>
-        <Breadcrumbs.Item href={`/espace-client/reservations/${booking.id}`}>
-          Livret séjour
-        </Breadcrumbs.Item>
-      </Breadcrumbs>
+      <BreadcrumbsRow
+        className="text-[10px] uppercase tracking-[0.2em] text-navy/40"
+        items={[
+          { href: "/espace-client", label: "Espace client" },
+          { label: "Livret séjour" },
+        ]}
+      />
 
-      <Link href="/espace-client" className="inline-block no-underline">
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-none border-navy/20 text-navy/50 hover:border-navy hover:text-navy gap-2 text-[10px] font-bold uppercase tracking-[0.2em]"
-        >
-          <ArrowLeft size={13} strokeWidth={1.5} />
-          Mes réservations
-        </Button>
+      <Link
+        href="/espace-client"
+        className={linkAsButtonClasses(
+          "outline",
+          "sm",
+          "rounded-none border-navy/20 text-navy/50 no-underline hover:border-navy hover:text-navy gap-2"
+        )}
+      >
+        <ArrowLeft size={13} strokeWidth={1.5} />
+        Mes réservations
       </Link>
 
       <span className="block h-px w-10 bg-gold/50" />
 
       {/* Booking summary */}
-      <Card className="border border-navy/8 bg-white shadow-none rounded-none">
-        <Card.Header className="px-6 pt-6 pb-4">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <Card.Title className="font-display text-xl text-navy font-normal">
+      <Card className="rounded-none border border-navy/8 bg-white shadow-none">
+        <CardHeader className="px-6 pb-4 pt-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <CardTitle className="font-display text-xl font-normal text-navy">
               {villa?.name ?? "Votre séjour"}
-            </Card.Title>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Chip size="sm" variant="soft" color={chipStatus.color} className="uppercase text-[10px] font-bold tracking-[0.2em]">
+            </CardTitle>
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip color={chipStatus.color} className="uppercase">
                 {chipStatus.label}
               </Chip>
-              {booking.price && (
-                <Chip size="sm" variant="secondary" color="default" className="uppercase text-[10px] font-bold tracking-[0.2em]">
+              {booking.price ? (
+                <Chip color="secondary" className="uppercase">
                   {Number(booking.price).toLocaleString("fr-FR")} €
                 </Chip>
-              )}
+              ) : null}
             </div>
           </div>
-        </Card.Header>
+        </CardHeader>
 
         <Separator />
 
-        <Card.Content className="px-6 py-5">
-          <div className="grid gap-6 sm:grid-cols-3 text-sm">
+        <CardContent className="px-6 py-5">
+          <div className="grid gap-6 text-sm sm:grid-cols-3">
             {/* Dates */}
             <div className="flex items-start gap-3">
-              <Calendar size={14} strokeWidth={1.25} className="text-gold mt-0.5 shrink-0" />
+              <Calendar size={14} strokeWidth={1.25} className="mt-0.5 shrink-0 text-gold" />
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Dates</p>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Dates</p>
                 <p className="text-navy">
                   {new Date(booking.start_date).toLocaleDateString("fr-FR", {
                     day: "numeric",
@@ -185,13 +201,14 @@ export default function ReservationDetailPage() {
                   })}
                 </p>
                 <p className="text-navy/50">
-                  → {new Date(booking.end_date).toLocaleDateString("fr-FR", {
+                  →{" "}
+                  {new Date(booking.end_date).toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </p>
-                <p className="text-navy/30 text-xs mt-0.5">
+                <p className="mt-0.5 text-xs text-navy/30">
                   {nights} nuit{nights > 1 ? "s" : ""}
                 </p>
               </div>
@@ -200,42 +217,40 @@ export default function ReservationDetailPage() {
             {/* Location */}
             {villa?.location && (
               <div className="flex items-start gap-3">
-                <MapPin size={14} strokeWidth={1.25} className="text-gold mt-0.5 shrink-0" />
+                <MapPin size={14} strokeWidth={1.25} className="mt-0.5 shrink-0 text-gold" />
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1.5">Lieu</p>
+                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
                   <p className="text-navy">{villa.location}</p>
-                  <p className="text-navy/40 text-xs">Martinique</p>
+                  <p className="text-xs text-navy/40">Martinique</p>
                 </div>
               </div>
             )}
           </div>
-        </Card.Content>
+        </CardContent>
       </Card>
 
-      {/* Livret d'accueil */}
       {isConfirmed && villa ? (
         <WelcomeBook villa={villa} />
       ) : (
-        <Card className="border border-navy/8 bg-white shadow-none rounded-none">
-          <Card.Content className="p-6 text-center">
+        <Card className="rounded-none border border-navy/8 bg-white shadow-none">
+          <CardContent className="p-6 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/25">
               Livret d&apos;accueil disponible une fois la réservation confirmée
             </p>
-          </Card.Content>
+          </CardContent>
         </Card>
       )}
 
-      {/* Lien messagerie */}
-      <Card className="border border-gold/15 bg-gold/[0.03] shadow-none rounded-none">
-        <Card.Content className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
+        <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-navy/55">Un problème ou une question sur votre séjour ?</p>
           <Link
             href="/espace-client/messagerie"
-            className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-gold hover:text-navy transition-colors no-underline"
+            className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-gold no-underline transition-colors hover:text-navy"
           >
             Contacter le SAV →
           </Link>
-        </Card.Content>
+        </CardContent>
       </Card>
     </div>
   );

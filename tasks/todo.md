@@ -1,4 +1,4 @@
-# TODO — NAORIVA
+# TODO — KAYVILA
 ## 📌 Dernière session : 2026-04-14
 
 ---
@@ -41,10 +41,10 @@
 
 ## ⚠️ Actions manuelles requises (Kenneson)
 
-- [ ] Exécuter `supabase-ota-migration.sql` dans Supabase SQL Editor (projet NAORIVA)
+- [ ] Exécuter `supabase-ota-migration.sql` dans Supabase SQL Editor (projet KAYVILA)
 - [ ] Vérifier RLS dans Supabase > Auth > Policies (chat_logs, admin_chat_logs, support_tickets)
 - [ ] Configurer webhook n8n : `email_confirmation`, `email_approved`, `email_rejected`
-- [ ] Vérifier `.env.local` → URL + clés du projet NAORIVA (pas KARIBLOOM)
+- [ ] Vérifier `.env.local` → URL + clés du projet KAYVILA (pas KARIBLOOM)
 - [ ] Clés Stripe réelles dans `.env.local`
 
 ---

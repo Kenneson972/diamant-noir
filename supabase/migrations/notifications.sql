@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════
--- Migration : table notifications — Naoriva
+-- Migration : table notifications — Kayvila
 -- ───────────────────────────────────────────────────────────────────
 -- Centralize toutes les notifs du dashboard gérant.
 -- n8n insère ici après chaque traitement IA.

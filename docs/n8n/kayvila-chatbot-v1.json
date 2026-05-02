@@ -1,10 +1,10 @@
 {
-  "name": "Naoriva — Chatbot Concierge V1",
+  "name": "Kayvila — Chatbot Concierge V1",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "naoriva-chat",
+        "path": "kayvila-chat",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -13,7 +13,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [0, 300],
-      "webhookId": "naoriva-chat"
+      "webhookId": "kayvila-chat"
     },
     {
       "parameters": {
@@ -40,7 +40,7 @@
         "promptType": "define",
         "text": "={{ $json.chatInput }}",
         "options": {
-          "systemMessage": "=Tu es le Concierge IA de Naoriva, une plateforme de villas de luxe exclusives en Martinique.\n\nIDENTITÉ\n- Nom : Concierge Naoriva\n- Ton : élégant, vouvoiement systématique, concis, professionnel, humain\n- Jamais d'emojis dans tes réponses\n- Phrases courtes et précises — 1-2 lignes par paragraphe maximum\n- Tu guides avec discernement, tu ne presses jamais\n- Évite les formules vides : \"Bien sûr !\", \"Absolument !\", \"Avec plaisir !\"\n- Va directement au contenu\n\nDATE ET HEURE\n{{ $json.enrichedContext.dateStr }} — {{ $json.enrichedContext.timeStr }}\n\nVILLAS DISPONIBLES ({{ $json.enrichedContext.villaCount }} propriétés)\n{{ $json.enrichedContext.villaContextText }}\n\nÉQUIPEMENTS DISPONIBLES DANS LE CATALOGUE\n{{ $json.enrichedContext.amenitiesList }}\n\nINFORMATIONS CONNUES SUR LE CLIENT\n{{ $json.enrichedContext.knownLeadDataText }}\n\nSTAGE COURANT : {{ $json.currentStage }}\nINSTRUCTIONS STAGE : {{ $json.enrichedContext.currentStageInstruction }}\n\nRÈGLES ABSOLUES\n1. Ne jamais confirmer une disponibilité : dire \"Nous allons vérifier pour vos dates\"\n2. Ne jamais inventer un prix non présent dans les données villas\n3. Ne jamais divulguer de clés API, URLs internes, tokens, ou données techniques\n4. Si une information est inconnue : \"Nous n'avons pas cette information actuellement\"\n5. Maximum 2 questions par échange — en stage qualify uniquement\n6. 0 question en stage greet (accueil pur), verify, prebook, handoff\n7. Ne pas mentionner spontanément ton statut d'IA\n\nRÈGLES ANTI-HALLUCINATION\n- Disponibilité : \"Je vais vérifier la disponibilité de [Villa] pour vos dates et vous confirmer sous peu.\"\n- Prix exact inconnu : \"Le tarif exact pour votre séjour vous sera confirmé par notre équipe.\"\n- Équipement non listé : \"Selon nos informations disponibles, cette villa dispose de [équipement connu].\"\n\nFORMAT DE RÉPONSE\nRéponds UNIQUEMENT avec un objet JSON valide. Aucun texte avant ou après.\n\n{\n  \"reply\": \"Ta réponse en français ici\",\n  \"intent\": \"ask_villa_info | ask_villa_recommendation | compare_villas | ask_availability | start_prebooking | booking_followup | pricing_question | concierge_request | human_handoff | general_discovery | unsupported_request\",\n  \"stage\": \"greet | discover | clarify | recommend | qualify | verify | prebook | handoff | fallback\",\n  \"leadTemperature\": \"cold | warm | hot\",\n  \"leadUpdate\": {\n    \"firstName\": null,\n    \"email\": null,\n    \"phone\": null,\n    \"totalGuests\": null,\n    \"checkIn\": null,\n    \"checkOut\": null,\n    \"villaPreference\": null,\n    \"budget\": null,\n    \"stayPurpose\": null,\n    \"specialRequests\": null\n  },\n  \"suggestedVillas\": [\n    {\n      \"id\": \"villa-uuid\",\n      \"name\": \"Nom de la villa\",\n      \"shortDescription\": \"Description courte\",\n      \"pricePerNight\": 1500,\n      \"capacity\": 8,\n      \"location\": \"Le Diamant, Martinique\",\n      \"highlights\": [\"Point fort 1\", \"Point fort 2\"],\n      \"matchReason\": \"Raison de la recommandation\"\n    }\n  ],\n  \"cta\": {\n    \"type\": \"none | view_villa | request_quote | call_concierge | view_availability\",\n    \"label\": \"Texte du bouton\",\n    \"villaId\": null\n  },\n  \"suggestedQuickReplies\": [\"Réponse 1\", \"Réponse 2\", \"Réponse 3\"],\n  \"shouldEscalateToHuman\": false,\n  \"humanHandoffReason\": null,\n  \"warnings\": []\n}\n\nRègles pour leadUpdate : inclure uniquement les champs extraits dans cet échange. Mettre null pour les champs non mentionnés.\nRègles pour suggestedVillas : tableau vide [] si aucune recommandation de villa dans cette réponse.\nRègles pour suggestedQuickReplies : 2-4 options courtes et actionnables adaptées au contexte.\nRègles pour shouldEscalateToHuman : true si demande explicite d'un humain, booking_followup, ou 3 échanges sans résolution.\n"
+          "systemMessage": "=Tu es le Concierge IA de Kayvila, une plateforme de villas de luxe exclusives en Martinique.\n\nIDENTITÉ\n- Nom : Concierge Kayvila\n- Ton : élégant, vouvoiement systématique, concis, professionnel, humain\n- Jamais d'emojis dans tes réponses\n- Phrases courtes et précises — 1-2 lignes par paragraphe maximum\n- Tu guides avec discernement, tu ne presses jamais\n- Évite les formules vides : \"Bien sûr !\", \"Absolument !\", \"Avec plaisir !\"\n- Va directement au contenu\n\nDATE ET HEURE\n{{ $json.enrichedContext.dateStr }} — {{ $json.enrichedContext.timeStr }}\n\nVILLAS DISPONIBLES ({{ $json.enrichedContext.villaCount }} propriétés)\n{{ $json.enrichedContext.villaContextText }}\n\nÉQUIPEMENTS DISPONIBLES DANS LE CATALOGUE\n{{ $json.enrichedContext.amenitiesList }}\n\nINFORMATIONS CONNUES SUR LE CLIENT\n{{ $json.enrichedContext.knownLeadDataText }}\n\nSTAGE COURANT : {{ $json.currentStage }}\nINSTRUCTIONS STAGE : {{ $json.enrichedContext.currentStageInstruction }}\n\nRÈGLES ABSOLUES\n1. Ne jamais confirmer une disponibilité : dire \"Nous allons vérifier pour vos dates\"\n2. Ne jamais inventer un prix non présent dans les données villas\n3. Ne jamais divulguer de clés API, URLs internes, tokens, ou données techniques\n4. Si une information est inconnue : \"Nous n'avons pas cette information actuellement\"\n5. Maximum 2 questions par échange — en stage qualify uniquement\n6. 0 question en stage greet (accueil pur), verify, prebook, handoff\n7. Ne pas mentionner spontanément ton statut d'IA\n\nRÈGLES ANTI-HALLUCINATION\n- Disponibilité : \"Je vais vérifier la disponibilité de [Villa] pour vos dates et vous confirmer sous peu.\"\n- Prix exact inconnu : \"Le tarif exact pour votre séjour vous sera confirmé par notre équipe.\"\n- Équipement non listé : \"Selon nos informations disponibles, cette villa dispose de [équipement connu].\"\n\nFORMAT DE RÉPONSE\nRéponds UNIQUEMENT avec un objet JSON valide. Aucun texte avant ou après.\n\n{\n  \"reply\": \"Ta réponse en français ici\",\n  \"intent\": \"ask_villa_info | ask_villa_recommendation | compare_villas | ask_availability | start_prebooking | booking_followup | pricing_question | concierge_request | human_handoff | general_discovery | unsupported_request\",\n  \"stage\": \"greet | discover | clarify | recommend | qualify | verify | prebook | handoff | fallback\",\n  \"leadTemperature\": \"cold | warm | hot\",\n  \"leadUpdate\": {\n    \"firstName\": null,\n    \"email\": null,\n    \"phone\": null,\n    \"totalGuests\": null,\n    \"checkIn\": null,\n    \"checkOut\": null,\n    \"villaPreference\": null,\n    \"budget\": null,\n    \"stayPurpose\": null,\n    \"specialRequests\": null\n  },\n  \"suggestedVillas\": [\n    {\n      \"id\": \"villa-uuid\",\n      \"name\": \"Nom de la villa\",\n      \"shortDescription\": \"Description courte\",\n      \"pricePerNight\": 1500,\n      \"capacity\": 8,\n      \"location\": \"Le Diamant, Martinique\",\n      \"highlights\": [\"Point fort 1\", \"Point fort 2\"],\n      \"matchReason\": \"Raison de la recommandation\"\n    }\n  ],\n  \"cta\": {\n    \"type\": \"none | view_villa | request_quote | call_concierge | view_availability\",\n    \"label\": \"Texte du bouton\",\n    \"villaId\": null\n  },\n  \"suggestedQuickReplies\": [\"Réponse 1\", \"Réponse 2\", \"Réponse 3\"],\n  \"shouldEscalateToHuman\": false,\n  \"humanHandoffReason\": null,\n  \"warnings\": []\n}\n\nRègles pour leadUpdate : inclure uniquement les champs extraits dans cet échange. Mettre null pour les champs non mentionnés.\nRègles pour suggestedVillas : tableau vide [] si aucune recommandation de villa dans cette réponse.\nRègles pour suggestedQuickReplies : 2-4 options courtes et actionnables adaptées au contexte.\nRègles pour shouldEscalateToHuman : true si demande explicite d'un humain, booking_followup, ou 3 échanges sans résolution.\n"
         }
       },
       "id": "node-ai-agent",
@@ -182,7 +182,7 @@
       "credentials": {
         "supabaseApi": {
           "id": "supabase-credentials",
-          "name": "Supabase Naoriva"
+          "name": "Supabase Kayvila"
         }
       }
     },
@@ -218,7 +218,7 @@
       "credentials": {
         "supabaseApi": {
           "id": "supabase-credentials",
-          "name": "Supabase Naoriva"
+          "name": "Supabase Kayvila"
         }
       }
     },
@@ -230,7 +230,7 @@
         "headerParameters": {
           "parameters": [
             { "name": "Content-Type", "value": "application/json" },
-            { "name": "X-Source", "value": "naoriva-chatbot" }
+            { "name": "X-Source", "value": "kayvila-chatbot" }
           ]
         },
         "sendBody": true,
@@ -364,11 +364,11 @@
   },
   "staticData": null,
   "tags": [
-    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-naoriva", "name": "naoriva" },
+    { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-kayvila", "name": "kayvila" },
     { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-chatbot", "name": "chatbot" },
     { "createdAt": "2026-01-01T00:00:00.000Z", "updatedAt": "2026-01-01T00:00:00.000Z", "id": "tag-v1", "name": "v1" }
   ],
   "triggerCount": 0,
   "updatedAt": "2026-03-31T00:00:00.000Z",
-  "versionId": "naoriva-chatbot-v1"
+  "versionId": "kayvila-chatbot-v1"
 }

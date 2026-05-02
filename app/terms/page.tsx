@@ -9,7 +9,7 @@ import {
 
 export const metadata = {
   title: "Conditions d'utilisation",
-  description: "Conditions d'utilisation du site Naoriva.",
+  description: "Conditions d'utilisation du site Kayvila.",
 };
 
 function TermsSimple() {
@@ -18,7 +18,7 @@ function TermsSimple() {
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Conditions d&apos;utilisation</h1>
         <p className="mb-6 text-navy/70">
-          Les présentes conditions régissent l&apos;utilisation du site Naoriva et des services de
+          Les présentes conditions régissent l&apos;utilisation du site Kayvila et des services de
           réservation et de conciergerie associés. En utilisant ce site, vous acceptez ces conditions. Pour toute
           question, contactez-nous via la page{" "}
           <Link href="/contact" className="text-gold hover:underline">
@@ -26,7 +26,7 @@ function TermsSimple() {
           </Link>
           .
         </p>
-        <p className="text-sm text-navy/60">Dernière mise à jour : 2026. Naoriva — Conciergerie de luxe, Martinique.</p>
+        <p className="text-sm text-navy/60">Dernière mise à jour : 2026. Kayvila — Conciergerie de luxe, Martinique.</p>
         <Link href="/" className="mt-8 inline-block font-medium text-gold hover:underline">
           Retour à l&apos;accueil
         </Link>
@@ -45,13 +45,13 @@ export default function TermsPage() {
       <LandingHeroCompact
         eyebrow="Cadre légal"
         title={"Conditions d'utilisation"}
-        subtitle="Modalités d&apos;usage du site et des services Naoriva."
+        subtitle="Modalités d&apos;usage du site et des services Kayvila."
       />
 
       <LandingSectionNarrow bg="white">
         <LandingBlockTitle eyebrow="Acceptation" title="Utilisation du site" />
         <p className="text-navy/80 leading-relaxed">
-          Les présentes conditions régissent l&apos;utilisation du site Naoriva et des services de
+          Les présentes conditions régissent l&apos;utilisation du site Kayvila et des services de
           réservation et de conciergerie associés. En utilisant ce site, vous acceptez ces conditions.
         </p>
         <p className="mt-6 text-navy/80 leading-relaxed">
@@ -66,7 +66,7 @@ export default function TermsPage() {
       <LandingSectionNarrow bg="offwhite">
         <LandingBlockTitle eyebrow="Mise à jour" title="Mentions" />
         <p className="text-sm text-navy/65">
-          Dernière mise à jour : 2026. Naoriva — Conciergerie de luxe, Martinique.
+          Dernière mise à jour : 2026. Kayvila — Conciergerie de luxe, Martinique.
         </p>
       </LandingSectionNarrow>
 

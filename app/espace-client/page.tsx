@@ -6,7 +6,7 @@ import { BookingCard } from "@/components/espace-client/BookingCard";
 import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
 import { CalendarX, ArrowRight, MessageCircle, BookOpen } from "lucide-react";
 import Link from "next/link";
-import { Skeleton, Card, Button } from "@heroui/react";
+import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
@@ -51,7 +51,7 @@ function UpcomingStayHero({ booking }: { booking: any }) {
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
         <h2 className="font-display text-[22px] font-normal text-[#0D1B2A] leading-snug mb-2">
-          {booking.villa?.name ?? "Villa Naoriva"}
+          {booking.villa?.name ?? "Villa Kayvila"}
         </h2>
         {booking.villa?.location && (
           <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">
@@ -139,10 +139,13 @@ export default function EspaceClientPage() {
     })();
   }, [supabase]);
 
+  const pendingBookings = bookings.filter((b) => b.status === "pending");
   const upcomingBooking = bookings.find(
     (b) => b.status === "confirmed" && new Date(b.end_date) > new Date()
   );
-  const otherBookings = bookings.filter((b) => b.id !== upcomingBooking?.id);
+  const otherBookings = bookings.filter(
+    (b) => b.id !== upcomingBooking?.id && b.status !== "pending"
+  );
 
   const totalNights = bookings.reduce((acc, b) => {
     const nights = Math.round((new Date(b.end_date).getTime() - new Date(b.start_date).getTime()) / 86400000);
@@ -198,32 +201,27 @@ export default function EspaceClientPage() {
           <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0 mt-1" />
         </div>
 
-        <Card className="border border-navy/8 bg-white shadow-none rounded-none">
-          <Card.Content className="px-8 py-16 flex flex-col items-center text-center gap-5">
+        <Card className="rounded-none border border-navy/8 bg-white shadow-none">
+          <CardContent className="flex flex-col items-center gap-5 px-8 py-16 text-center">
             <CalendarX size={40} className="text-navy/15" strokeWidth={1} />
             <div>
-              <p className="font-display text-lg text-navy mb-1">Aucune réservation</p>
-              <p className="text-sm text-navy/45 max-w-xs">
+              <p className="mb-1 font-display text-lg text-navy">Aucune réservation</p>
+              <p className="max-w-xs text-sm text-navy/45">
                 Vous n&apos;avez pas encore de séjour enregistré à cette adresse.
               </p>
             </div>
             <Link
               href="/villas"
-              className="no-underline"
+              className={linkAsButtonClasses("outline", "md", "rounded-none border-navy gap-2 no-underline hover:bg-navy hover:text-white")}
             >
-              <Button
-                variant="outline"
-                className="rounded-none border-navy text-navy hover:bg-navy hover:text-white gap-2 text-[10px] font-bold uppercase tracking-[0.25em] px-6 py-3 h-auto"
-              >
-                Découvrir nos villas
-                <ArrowRight size={12} strokeWidth={1.5} />
-              </Button>
+              Découvrir nos villas
+              <ArrowRight size={12} strokeWidth={1.5} />
             </Link>
-          </Card.Content>
+          </CardContent>
         </Card>
 
-        <Card className="border border-gold/15 bg-gold/[0.03] shadow-none rounded-none">
-          <Card.Content className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
+          <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30 mb-1">
                 Conciergerie
@@ -234,12 +232,12 @@ export default function EspaceClientPage() {
             </div>
             <Link
               href="/espace-client/messagerie"
-              className="shrink-0 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-gold hover:text-navy transition-colors no-underline"
+              className="inline-flex shrink-0 items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-gold no-underline transition-colors hover:text-navy"
             >
               <MessageCircle size={13} strokeWidth={1.25} />
               Contacter le SAV
             </Link>
-          </Card.Content>
+          </CardContent>
         </Card>
       </div>
       </>
@@ -289,6 +287,46 @@ export default function EspaceClientPage() {
           )}
         </div>
       </div>
+
+      {/* Réservations en attente de confirmation */}
+      {pendingBookings.length > 0 && (
+        <div className="space-y-3">
+          {pendingBookings.map((b) => (
+            <div
+              key={b.id}
+              className="border border-[rgba(212,175,55,0.25)] bg-[rgba(212,175,55,0.04)] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-[#D4AF37] mb-1">
+                  En attente de confirmation
+                </p>
+                <p className="font-display text-[16px] font-normal text-[#0D1B2A] leading-snug">
+                  {b.villa?.name ?? "Villa Kayvila"}
+                </p>
+                {b.start_date && b.end_date && (
+                  <p className="font-cormorant italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
+                    {new Date(b.start_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                    {" – "}
+                    {new Date(b.end_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  </p>
+                )}
+                <p className="text-[11px] text-[rgba(13,27,42,0.45)] mt-2">
+                  Notre équipe traite votre demande et vous recontacte sous 24h.
+                </p>
+              </div>
+              <Link
+                href="/espace-client/messagerie"
+                className="shrink-0 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.5)] no-underline hover:text-[#0D1B2A] transition-colors"
+              >
+                Contacter l&apos;équipe
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
+                  <path d="M1.5 5.5h8M6.5 2.5l3 3-3 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Hero — prochain séjour */}
       {upcomingBooking && <UpcomingStayHero booking={upcomingBooking} />}

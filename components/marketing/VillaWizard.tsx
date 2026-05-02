@@ -400,7 +400,7 @@ function Step2({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
 // ── Step 3 — Vos attentes ─────────────────────────────────────────────────────
 
 const MANAGEMENT_TYPES = [
-  { value: "full", label: "Gestion complète", desc: "Naoriva gère tout — tranquillité absolue" },
+  { value: "full", label: "Gestion complète", desc: "Kayvila gère tout — tranquillité absolue" },
   { value: "partial", label: "Gestion partielle", desc: "Je garde la main sur certaines tâches" },
   { value: "decouverte", label: "Je veux en savoir plus", desc: "Pas encore décidé — discutons-en" },
 ];
@@ -663,7 +663,7 @@ function Step4({
         />
         <span className="flex items-center gap-2 text-[13px] text-navy/60">
           <ImageOff size={13} aria-hidden />
-          Pas de photos — Naoriva s&apos;en charge (état des lieux + photos professionnelles)
+          Pas de photos — Kayvila s&apos;en charge (état des lieux + photos professionnelles)
         </span>
       </label>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VideoScrollHero — Page Prestations · Naoriva
+ * VideoScrollHero — Page Prestations · Kayvila
  *
  * Scroll-driven canvas animation (style Apple) pour la page /prestations.
  * S'intègre dans LandingShell — pas de header propre.
@@ -478,8 +478,8 @@ export function VideoScrollHero() {
             {/* Logo Brand */}
             <div className="preloader-logo">
               <Image
-                src="/brand/naoriva-logo.png"
-                alt="Naoriva"
+                src="/brand/kayvila-logo.png"
+                alt="Kayvila"
                 width={40}
                 height={40}
                 className="brightness-0 invert"
@@ -498,7 +498,7 @@ export function VideoScrollHero() {
                 className="preloader-title font-display font-normal uppercase text-white tracking-[0.38em] md:tracking-[0.4em]"
                 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)" }}
               >
-                NAORIVA
+                KAYVILA
               </h1>
             </div>
 
@@ -531,13 +531,17 @@ export function VideoScrollHero() {
 
       {/* ── Preview image derrière le canvas pendant le preload ── */}
       {!isReady && (
-        <img
-          src="/frames/frame_0001.webp"
-          alt=""
-          aria-hidden
-          className="fixed left-0 top-0 z-0 w-full h-full object-cover opacity-60"
-          style={{ filter: 'brightness(0.7)' }}
-        />
+        <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
+          <Image
+            src="/frames/frame_0001.webp"
+            alt=""
+            fill
+            priority
+            className="object-cover opacity-60"
+            style={{ filter: "brightness(0.7)" }}
+            sizes="100vw"
+          />
+        </div>
       )}
 
       {/* ── Canvas fixe — fond de toute la section ─────────────────── */}

@@ -1,5 +1,5 @@
 /**
- * Types partagés — Copilot propriétaire Naoriva
+ * Types partagés — Copilot propriétaire Kayvila
  *
  * Importés par :
  *   - app/api/dashboard/owner-assistant/route.ts

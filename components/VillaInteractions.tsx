@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Share, Heart, ChevronDown, ChevronUp, DoorOpen, CalendarDays, Award } from "lucide-react";
+import { Share, Heart, ChevronDown, ChevronUp, DoorOpen, Award, CalendarDays } from "lucide-react";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 const getShareUrl = (path: string) => {
   if (typeof window !== "undefined") return window.location.origin + path;
@@ -9,12 +10,13 @@ const getShareUrl = (path: string) => {
 };
 
 export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; villaId: string }) => {
-  const [isSaved, setIsSaved] = useState(false);
+  const { isFav, toggle } = useWishlist();
+  const saved = isFav(villaId);
   const [shareOpen, setShareOpen] = useState(false);
   const path = `/villas/${villaId}`;
   const shareUrl = getShareUrl(path);
   const encodedUrl = encodeURIComponent(shareUrl);
-  const text = encodeURIComponent(`${villaName} — Naoriva`);
+  const text = encodeURIComponent(`${villaName} — Kayvila`);
   const whatsappUrl = `https://wa.me/?text=${text}%20${encodedUrl}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
 
@@ -50,11 +52,12 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
         )}
       </div>
       <button
-        onClick={() => setIsSaved(!isSaved)}
+        onClick={() => toggle(villaId)}
         className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-navy hover:bg-navy/5 transition-colors underline"
+        aria-label={saved ? "Retirer des favoris" : "Ajouter aux favoris"}
       >
-        <Heart size={16} className={isSaved ? "fill-red-500 text-red-500" : ""} />
-        {isSaved ? "Enregistré" : "Enregistrer"}
+        <Heart size={16} className={saved ? "fill-red-500 text-red-500" : ""} />
+        {saved ? "Enregistré" : "Enregistrer"}
       </button>
     </div>
   );

@@ -20,8 +20,12 @@ export function ActionMenu({ items, trigger }: ActionMenuProps) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-navy/5 outline-none transition-colors">
-          {trigger || <MoreVertical size={16} className="text-navy/40" />}
+        <button
+          type="button"
+          aria-label="Menu d’actions"
+          className="tap-target flex h-11 w-11 items-center justify-center rounded-full outline-none transition-colors hover:bg-navy/5 focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+        >
+          {trigger || <MoreVertical size={18} className="text-navy/40" aria-hidden />}
         </button>
       </DropdownMenu.Trigger>
 

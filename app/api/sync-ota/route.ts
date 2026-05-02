@@ -1,22 +1,20 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { syncAllOTAChannels, detectOTASource, type OTAChannel } from "@/lib/ota-hub";
+import { checkRateLimit, ipFromRequest } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 /**
  * POST /api/sync-ota
  * Sync manuelle d'une villa spécifique depuis le dashboard.
- * Permet aussi d'ajouter un nouveau canal OTA à la volée.
- *
- * Body :
- * {
- *   villaId: string,
- *   channels?: OTAChannel[]       // Si fourni, remplace les canaux existants
- *   addUrl?: string               // Ajoute un seul URL (auto-détection de la source)
- * }
  */
 export async function POST(req: Request) {
+  // Rate limiting : 10 req / 60s par IP
+  if (!checkRateLimit(`sync-ota:${ipFromRequest(req)}`, 10, 60_000)) {
+    return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+  }
+
   try {
     const { villaId, channels, addUrl } = await req.json();
 
@@ -35,7 +33,6 @@ export async function POST(req: Request) {
         label: source.charAt(0).toUpperCase() + source.slice(1),
       };
 
-      // Récupérer les canaux existants
       const { data: villa } = await supabase
         .from("villas")
         .select("ota_channels")
@@ -46,7 +43,6 @@ export async function POST(req: Request) {
         ? villa.ota_channels
         : [];
 
-      // Éviter les doublons (même source + même URL)
       const isDuplicate = existing.some(
         (c) => c.source === source && c.ical_url === addUrl
       );
@@ -59,14 +55,12 @@ export async function POST(req: Request) {
           .eq("id", villaId);
       }
 
-      // Sync immédiate du nouveau canal
       const result = await syncAllOTAChannels(villaId, [newChannel], supabase);
       return NextResponse.json({ added: !isDuplicate, ...result });
     }
 
     // Cas 2 : sync de canaux fournis explicitement
     if (channels && Array.isArray(channels)) {
-      // Sauvegarder dans Supabase
       await supabase
         .from("villas")
         .update({ ota_channels: channels })

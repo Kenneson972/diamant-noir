@@ -1,19 +1,18 @@
 import "./globals.css";
-import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
-import { cookies } from "next/headers";
+import type { Metadata } from "next";
+import {
+  Inter,
+  Playfair_Display,
+  Cormorant_Garamond,
+  Sora,
+  Instrument_Sans,
+} from "next/font/google";
 import { SiteFrame } from "@/components/layout/SiteFrame";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { CompareBar } from "@/components/villas/CompareBar";
-import {
-  DEFAULT_CURRENCY,
-  DEFAULT_LOCALE,
-  SUPPORTED_CURRENCIES,
-  SUPPORTED_LOCALES,
-  type Currency,
-  type Locale,
-} from "@/lib/i18n";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { ChatbotDynamic } from "@/components/chatbot/ChatbotDynamic";
 
 const inter = Inter({
@@ -36,52 +35,65 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+});
+
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument-sans",
+  display: "swap",
+});
+
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover" as const,
 };
 
-export const metadata = {
-  title: { default: "Naoriva | Conciergerie de luxe Martinique", template: "%s | Naoriva" },
-  description: "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.",
-  keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Naoriva"],
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "http://localhost:3000";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: "Kayvila | Conciergerie de luxe Martinique", template: "%s | Kayvila" },
+  description:
+    "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.",
+  keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Kayvila"],
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    siteName: "Naoriva",
+    siteName: "Kayvila",
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const rawLocale = cookieStore.get("dn_locale")?.value ?? DEFAULT_LOCALE;
-  const rawCurrency = cookieStore.get("dn_currency")?.value ?? DEFAULT_CURRENCY;
-  const initialLocale: Locale = SUPPORTED_LOCALES.includes(rawLocale as Locale)
-    ? (rawLocale as Locale)
-    : DEFAULT_LOCALE;
-  const initialCurrency: Currency = SUPPORTED_CURRENCIES.includes(rawCurrency as Currency)
-    ? (rawCurrency as Currency)
-    : DEFAULT_CURRENCY;
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   return (
     <html lang="fr" className="scroll-smooth">
-      <head>
-        <link rel="stylesheet" href="/heroui.min.css" />
-      </head>
-      <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} bg-offwhite`}>
-        <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
+      <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${sora.variable} ${instrumentSans.variable} bg-offwhite`}>
+        <LocaleProvider>
+          <AuthProvider>
           <WishlistProvider>
             <CompareProvider>
-              <SiteFrame>{children}</SiteFrame>
+              <SiteFrame isDevelopment={isDevelopment}>
+                {children}
+              </SiteFrame>
               <ChatbotDynamic />
               <CompareBar />
             </CompareProvider>
           </WishlistProvider>
+          </AuthProvider>
         </LocaleProvider>
       </body>
 

@@ -39,9 +39,9 @@ import type { Metadata } from "next";
 import { VillaWizard } from "@/components/marketing/VillaWizard";
 
 export const metadata: Metadata = {
-  title: "Soumettre ma villa — Naoriva Conciergerie",
+  title: "Soumettre ma villa — Kayvila Conciergerie",
   description:
-    "Confiez votre villa à Naoriva. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
+    "Confiez votre villa à Kayvila. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
 };
 
 export default function SoumettreMaVillaPage() {
@@ -469,7 +469,7 @@ function Step2({ data, onChange }: { data: FormData; onChange: (d: Partial<FormD
 // ── Step 3 — Vos attentes ─────────────────────────────────────────────────────
 
 const MANAGEMENT_TYPES = [
-  { value: "full", label: "Gestion complète", desc: "Naoriva gère tout" },
+  { value: "full", label: "Gestion complète", desc: "Kayvila gère tout" },
   { value: "partial", label: "Gestion partielle", desc: "Je garde la main sur certaines tâches" },
   { value: "decouverte", label: "Je veux en savoir plus", desc: "Pas encore décidé" },
 ];
@@ -723,7 +723,7 @@ function Step4({
         />
         <span className="flex items-center gap-2 text-sm text-navy/70">
           <ImageOff size={14} aria-hidden />
-          Pas de photos — Naoriva s&apos;en charge (état des lieux + photos pro)
+          Pas de photos — Kayvila s&apos;en charge (état des lieux + photos pro)
         </span>
       </label>
     </div>
@@ -1042,7 +1042,7 @@ git commit -m "feat: replace inline villa form in prestations with CTA → /soum
 - [ ] **Step 1: Run build**
 
 ```bash
-cd naoriva && npm run build
+cd kayvila && npm run build
 ```
 
 Expected: No TypeScript errors, no missing imports.

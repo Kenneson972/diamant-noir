@@ -1,4 +1,4 @@
-# n8n — Listing import enrich (Naoriva)
+# n8n — Listing import enrich (Kayvila)
 
 Webhook dédié (**pas** le chatbot) : le body attendu par Next est décrit dans `lib/listing-import-ai.ts` :
 
@@ -16,6 +16,6 @@ Garde-fous typiques dans n8n :
 3. (Optionnel) Calcul `missingKeys` sur `parsed` pour guider le LLM  
 4. LLM JSON → parse → 200 / erreur 500  
 
-Workflow cloud de référence (session 2026-Q1) : id `c8TfAwgSVSsy7iH0`, chemin `POST …/webhook/naoriva-listing-import`.
+Workflow cloud de référence (session 2026-Q1) : id `c8TfAwgSVSsy7iH0`, chemin `POST …/webhook/kayvila-listing-import`.
 
 Pour régénérer un prompt détaillé pour Claude Code / n8n MCP, coller ce contexte + la structure `ListingImportResult` dans `lib/listing-import-types.ts`.

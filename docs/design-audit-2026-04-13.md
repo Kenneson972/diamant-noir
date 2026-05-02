@@ -1,4 +1,4 @@
-# Design Audit — Naoriva
+# Design Audit — Kayvila
 **Date :** 2026-04-13
 **Outils :** Revue manuelle UI/UX Pro Max + Impeccable detect CLI v2.1.7
 **Scope :** `app/` + `components/` (TSX, CSS)
@@ -82,7 +82,7 @@ Exceptions conservées : `hover:bg-black`, `from-black`, `to-black`, `via-black`
 > Impeccable considère ça comme décoration pure ("AI tell").
 
 **Décision :** Conservé intentionnellement.
-Le shimmer or est une signature brand Naoriva (utilisé seulement sur les wordmarks, pas les titres courants). L'animation respecte `prefers-reduced-motion` (fallback `color: #D4AF37`). Pas de changement.
+Le shimmer or est une signature brand Kayvila (utilisé seulement sur les wordmarks, pas les titres courants). L'animation respecte `prefers-reduced-motion` (fallback `color: #D4AF37`). Pas de changement.
 
 ---
 

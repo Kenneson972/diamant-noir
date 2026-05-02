@@ -151,17 +151,17 @@ function PasswordPanel({
   if (signupSuccess === "confirm_email") {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <Send size={20} strokeWidth={1.25} className="text-[rgba(13,27,42,0.30)]" aria-hidden />
+        <Send size={20} strokeWidth={1.25} className="text-navy/30" aria-hidden />
         <div className="space-y-2">
-          <h2 className="font-display text-2xl text-[#0D1B2A]">Confirmez votre email</h2>
+          <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-navy/12" />
         </div>
-        <p className="text-sm leading-relaxed text-[rgba(13,27,42,0.55)]">
+        <p className="text-sm leading-relaxed text-navy/55">
           Nous avons envoyé un lien de confirmation à{" "}
-          <span className="font-medium text-[#0D1B2A]">{email}</span>. Cliquez sur le lien pour
+          <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour
           activer votre compte, puis vous pourrez vous connecter.
         </p>
-        <p className="text-xs leading-relaxed text-[rgba(13,27,42,0.40)]">
+        <p className="text-xs leading-relaxed text-navy/40">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -174,7 +174,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.35)] transition-colors hover:text-[#0D1B2A]"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -195,13 +195,13 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
               >
-                Nom <span className="font-normal normal-case tracking-normal text-[rgba(13,27,42,0.30)]">(optionnel)</span>
+                Nom <span className="font-normal normal-case tracking-normal text-navy/30">(optionnel)</span>
               </label>
               <div className="relative">
                 <User
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
                   size={15}
                   strokeWidth={1.25}
                   aria-hidden
@@ -213,7 +213,7 @@ function PasswordPanel({
                   placeholder="Prénom Nom"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -221,13 +221,13 @@ function PasswordPanel({
           <div className="space-y-1">
             <label
               htmlFor="email-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Mail
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
                 size={15}
                 strokeWidth={1.25}
                 aria-hidden
@@ -240,20 +240,20 @@ function PasswordPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
               />
             </div>
           </div>
           <div className="space-y-1">
             <label
               htmlFor="password-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
             >
               Mot de passe <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Lock
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
                 size={15}
                 strokeWidth={1.25}
                 aria-hidden
@@ -268,19 +268,19 @@ function PasswordPanel({
                 required
                 minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
                 aria-describedby={mode === "signup" ? "password-hint" : undefined}
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
-                className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
+                className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
                 {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
               </button>
             </div>
             {mode === "signup" && (
-              <p id="password-hint" className="text-xs text-[rgba(13,27,42,0.40)]">
+              <p id="password-hint" className="text-xs text-navy/40">
                 Au moins {MIN_PASSWORD_LEN} caractères.
               </p>
             )}
@@ -289,13 +289,13 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-confirm"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-[rgba(13,27,42,0.40)]"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
               <div className="relative">
                 <Lock
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[rgba(13,27,42,0.25)]"
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
                   size={15}
                   strokeWidth={1.25}
                   aria-hidden
@@ -313,12 +313,12 @@ function PasswordPanel({
                   required
                   aria-invalid={Boolean(fieldErrors.confirm)}
                   aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-[#0D1B2A] placeholder:text-[rgba(13,27,42,0.25)] focus:border-[#0D1B2A] focus:outline-none focus:ring-0"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A]"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
                   {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
@@ -336,7 +336,7 @@ function PasswordPanel({
           type="submit"
           disabled={loading}
           aria-busy={loading}
-          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-[#0D1B2A] bg-[#0D1B2A] px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B2A]/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B2A] focus-visible:ring-offset-2"
+          className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
@@ -355,7 +355,7 @@ function PasswordPanel({
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
           Pas encore de compte ?{" "}
           <button
             type="button"
@@ -364,13 +364,13 @@ function PasswordPanel({
               setError(null)
               setFieldErrors({})
             }}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+            className="text-navy underline-offset-4 hover:underline"
           >
             S&apos;inscrire
           </button>
         </p>
       ) : (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.35)]">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
           Déjà un compte ?{" "}
           <button
             type="button"
@@ -379,7 +379,7 @@ function PasswordPanel({
               setError(null)
               setFieldErrors({})
             }}
-            className="text-[#0D1B2A] underline-offset-4 hover:underline"
+            className="text-navy underline-offset-4 hover:underline"
           >
             Se connecter
           </button>
@@ -433,8 +433,8 @@ function LoginSideVideo() {
         aria-hidden
       />
       <div className="pointer-events-none absolute bottom-5 left-6 z-10" aria-hidden>
-        <p className="mb-1 text-[8px] tracking-[0.28em] uppercase text-[#D4AF37]">Martinique</p>
-        <div className="h-px w-5 bg-[#D4AF37] opacity-60" />
+        <p className="mb-1 text-[8px] tracking-[0.28em] uppercase text-gold">Martinique</p>
+        <div className="h-px w-5 bg-gold opacity-60" />
       </div>
     </div>
   )
@@ -443,7 +443,7 @@ function LoginSideVideo() {
 function LoginForm() {
   const searchParams = useSearchParams()
   const { audience } = useHomeAudience()
-  const redirectTo = searchParams.get("redirect") || "/dashboard/proprio"
+  const redirectTo = searchParams.get("redirect") || "/dashboard"
   const isTenant = redirectTo.startsWith("/espace-client")
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
   const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
@@ -459,12 +459,12 @@ function LoginForm() {
 
       <div className="relative z-[1] flex w-full flex-col justify-center border-black/[0.06] bg-white px-6 py-10 lg:w-[min(100%,26rem)] lg:shrink-0 lg:border-l lg:px-10 lg:py-14">
         <div className="mx-auto w-full max-w-xs space-y-8">
-          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-[#0D1B2A]">Naoriva</p>
+          <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-navy">Kayvila</p>
 
           <div className="space-y-2">
-            <h1 className="font-display text-[1.9rem] leading-tight text-[#0D1B2A]">{title}</h1>
+            <h1 className="font-display text-[1.9rem] leading-tight text-navy">{title}</h1>
             <span className="block h-px w-8 bg-navy/12" />
-            <p className="text-sm text-[rgba(13,27,42,0.45)]">{tagline}</p>
+            <p className="text-sm text-navy/45">{tagline}</p>
           </div>
 
           {urlAuthError && (
@@ -479,27 +479,27 @@ function LoginForm() {
             <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-[rgba(13,27,42,0.30)]">
-            <Link href="/" className="transition-colors hover:text-[#0D1B2A]">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-navy/30">
+            <Link href="/" className="transition-colors hover:text-navy">
               ← Retour au site
             </Link>
             {isTenant ? (
               audience !== "voyageur" ? (
                 <Link
-                  href="/login?redirect=/dashboard/proprio"
-                  className="transition-colors hover:text-[#0D1B2A]"
+                  href="/login?redirect=/dashboard"
+                  className="transition-colors hover:text-navy"
                 >
                   Accès propriétaire →
                 </Link>
               ) : null
             ) : audience !== "proprietaire" ? (
-              <Link href="/login?redirect=/espace-client" className="transition-colors hover:text-[#0D1B2A]">
+              <Link href="/login?redirect=/espace-client" className="transition-colors hover:text-navy">
                 Espace locataire →
               </Link>
             ) : null}
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.25em] text-[rgba(13,27,42,0.20)]">© 2026 Naoriva</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-navy/20">© 2026 Kayvila</p>
         </div>
       </div>
     </main>
@@ -511,7 +511,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <main className="flex min-h-[100dvh] items-center justify-center bg-white">
-          <Loader2 className="animate-spin text-[rgba(13,27,42,0.40)]" size={22} strokeWidth={1.25} aria-hidden />
+          <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
         </main>
       }
     >

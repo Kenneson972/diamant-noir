@@ -89,6 +89,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
       "Blanchisserie incluse hors commission 20%",
       "Coordination complète des équipes",
       "Réassort consommables à nos frais",
+      "Entretien piscine & jardin (abonnement non inclus)",
     ],
   },
   // gap 421-423 : escalier → cuisine (menage fade-out)

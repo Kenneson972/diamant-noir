@@ -93,7 +93,7 @@ Dans le JSX de `app/prestations/page.tsx`, remplacer `COL_A` → `INCLUSIONS_COL
 - [ ] **Step 3 — Vérifier types TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npx tsc --noEmit 2>&1 | head -30
 ```
 
@@ -108,7 +108,7 @@ export type EditorialQuote = { quote: string; author: string; place: string };
 - [ ] **Step 4 — Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 git add lib/proprietaires-data.ts app/prestations/page.tsx
 git commit -m "refactor: extract INCLUSIONS to lib/proprietaires-data for sharing"
 ```
@@ -149,9 +149,9 @@ import {
 } from "@/lib/proprietaires-data";
 
 export const metadata: Metadata = {
-  title: "Programme propriétaires — Confiez votre villa | Naoriva",
+  title: "Programme propriétaires — Confiez votre villa | Kayvila",
   description:
-    "Confiez votre villa en Martinique à Naoriva : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
+    "Confiez votre villa en Martinique à Kayvila : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
 };
 
 export default function ProprietairesPage() {
@@ -163,7 +163,7 @@ export default function ProprietairesPage() {
         aria-labelledby="proprio-hero-title"
       >
         <h1 id="proprio-hero-title" className="sr-only">
-          Naoriva — Programme propriétaires, Martinique
+          Kayvila — Programme propriétaires, Martinique
         </h1>
         <video
           autoPlay
@@ -233,11 +233,11 @@ export default function ProprietairesPage() {
         </div>
       </section>
 
-      {/* ─── Section 2 : Pourquoi Naoriva ─── */}
+      {/* ─── Section 2 : Pourquoi Kayvila ─── */}
       <LandingSection bg="offwhite">
         <LandingBlockTitle
           eyebrow="Programme propriétaires"
-          title="Pourquoi confier votre villa à Naoriva ?"
+          title="Pourquoi confier votre villa à Kayvila ?"
         />
         <p className="-mt-4 mb-14 max-w-2xl text-sm leading-relaxed text-navy/65 md:text-[15px]">
           Mise en avant premium, conciergerie exigeante et gestion complète pour protéger votre bien
@@ -367,7 +367,7 @@ export default function ProprietairesPage() {
 - [ ] **Step 2 — Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npx tsc --noEmit 2>&1 | head -30
 ```
 
@@ -378,7 +378,7 @@ Expected: aucune erreur. Erreurs courantes :
 - [ ] **Step 3 — Test manuel rapide**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npm run dev
 ```
 
@@ -391,7 +391,7 @@ Ouvrir http://localhost:3000/proprietaires. Vérifier :
 - [ ] **Step 4 — Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 git add app/proprietaires/page.tsx
 git commit -m "feat: add /proprietaires landing page (hero + 5 sections)"
 ```
@@ -443,7 +443,7 @@ href="/proprietaires"
 - [ ] **Step 3 — Vérifier TypeScript**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npx tsc --noEmit 2>&1 | head -20
 ```
 
@@ -463,7 +463,7 @@ Vérifier :
 - [ ] **Step 5 — Commit**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 git add components/layout/Navbar.tsx app/page.tsx
 git commit -m "feat: update proprietaire links to point to /proprietaires page"
 ```
@@ -481,7 +481,7 @@ git commit -m "feat: update proprietaire links to point to /proprietaires page"
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "https://naoriva.fr";
+const BASE = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "https://kayvila.fr";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -499,7 +499,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 - [ ] **Step 2 — Vérifier TypeScript + build**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npx tsc --noEmit 2>&1 | head -20
 ```
 
@@ -516,7 +516,7 @@ Ouvrir http://localhost:3000/sitemap.xml. Vérifier que `/proprietaires` est lis
 - [ ] **Step 4 — Commit final**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 git add app/sitemap.ts
 git commit -m "feat: add sitemap with /proprietaires"
 ```
@@ -530,7 +530,7 @@ git commit -m "feat: add sitemap with /proprietaires"
 - [ ] **Step 1 — Build de production**
 
 ```bash
-cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/naoriva"
+cd "/Users/kennesonbasel-somnier/Downloads/CLIENT KARIBLOOM/DIAMANTNOIR/kayvila"
 npm run build 2>&1 | tail -30
 ```
 

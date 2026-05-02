@@ -11,7 +11,13 @@ import { resetBodyScrollLock } from "@/lib/bodyScrollLock";
  * Reset scroll lock avant les effets des enfants (ordre React : parent → enfant au montage).
  * + BFCache : pageshow `persisted` peut restaurer un body.overflow « collé ».
  */
-export function SiteFrame({ children }: { children: React.ReactNode }) {
+export function SiteFrame({
+  children,
+  isDevelopment,
+}: {
+  children: React.ReactNode;
+  isDevelopment: boolean;
+}) {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
@@ -28,7 +34,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
   return (
     <HomeAudienceProvider>
-      <Navbar />
+      <Navbar isDevelopment={isDevelopment} />
       {children}
       <Footer />
     </HomeAudienceProvider>

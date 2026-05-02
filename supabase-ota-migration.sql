@@ -1,5 +1,5 @@
 -- ============================================================
--- Migration : Hub OTA multi-sources — Naoriva
+-- Migration : Hub OTA multi-sources — Kayvila
 -- À exécuter dans Supabase SQL Editor
 -- ============================================================
 

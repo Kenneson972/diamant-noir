@@ -1,6 +1,6 @@
 # Prompt Claude Code — n8n MCP : workflow « Listing Import Enrich » (vraie automatisation LLM)
 
-> **Usage** : coller le bloc **« PROMPT À COPIER »** dans Claude Code (session avec **MCP n8n** activé). Objectif : **modifier le workflow** `NAORIVA — Listing Import Enrich` pour que le LLM **enrichisse et corrige** réellement les annonces, pas seulement combler les champs vides.
+> **Usage** : coller le bloc **« PROMPT À COPIER »** dans Claude Code (session avec **MCP n8n** activé). Objectif : **modifier le workflow** `KAYVILA — Listing Import Enrich` pour que le LLM **enrichisse et corrige** réellement les annonces, pas seulement combler les champs vides.
 
 ---
 
@@ -9,7 +9,7 @@
 | Élément | Détail |
 |--------|--------|
 | **Route** | `POST /api/import-airbnb` → `lib/listing-import-ai.ts` → `callN8nEnrich()` |
-| **URL webhook attendue** | Variable serveur `LISTING_IMPORT_N8N_WEBHOOK_URL` (ex. `…/webhook/naoriva-listing-import`) |
+| **URL webhook attendue** | Variable serveur `LISTING_IMPORT_N8N_WEBHOOK_URL` (ex. `…/webhook/kayvila-listing-import`) |
 | **Secret** | Header `X-Webhook-Secret` si `LISTING_IMPORT_N8N_WEBHOOK_SECRET` est défini côté Next — **aligner** la vérif n8n sur la même valeur (idéalement via **variable d’environnement n8n**, pas secret en dur dans le JSON exporté). |
 | **Body POST** | `source: "listing_import_enrich"`, `pageUrl`, `pageText` (snippet HTML stripé, max ~28k chars), `extractionInstructions` (texte strict Next), `parsed` (objet pré-extrait par parser HTML). |
 | **Réponse HTTP 200** | JSON **objet plat** de champs villa, ou enveloppes acceptées par `unwrapN8nListingBody` : `listing`, `data`, `body`, `json`, `result`, ou clés texte `output`, `text`, `response`, `content`, `message` contenant du JSON. **Interdit** dans le JSON renvoyé : `image_url`, `image_urls` (supprimés côté n8n ou ignorés côté Next). |
@@ -31,7 +31,7 @@ Réf. doc projet : `docs/n8n/PROMPT_CLAUDE_CODE_LISTING_IMPORT_N8N.md`.
 
 ## Objectifs d’implémentation (checklist pour Claude Code + MCP n8n)
 
-- [ ] Ouvrir le workflow **« NAORIVA — Listing Import Enrich »** (id connu du projet : `c8TfAwgSVSsy7iH0`, path webhook : `naoriva-listing-import`).
+- [ ] Ouvrir le workflow **« KAYVILA — Listing Import Enrich »** (id connu du projet : `c8TfAwgSVSsy7iH0`, path webhook : `kayvila-listing-import`).
 - [ ] **System prompt** (ou équivalent n8n) : fusionner les règles de `extractionInstructions` + règles métier ci-dessous.
 - [ ] **User prompt** : `pageUrl`, `parsed` (JSON stringifié), `missingKeys` **et** liste optionnelle `suspectKeys` (voir nœud Code ci-dessous).
 - [ ] Ajouter un nœud **Code** avant le LLM qui calcule :
@@ -59,10 +59,10 @@ Réf. doc projet : `docs/n8n/PROMPT_CLAUDE_CODE_LISTING_IMPORT_N8N.md`.
 ## PROMPT À COPIER (Claude Code)
 
 ```
-Tu as accès au MCP **n8n**. Tu travailles pour le projet **Naoriva** (repo Next.js `naoriva`).
+Tu as accès au MCP **n8n**. Tu travailles pour le projet **Kayvila** (repo Next.js `kayvila`).
 
 ## Mission
-Améliorer le workflow n8n **« NAORIVA — Listing Import Enrich »** (webhook path `naoriva-listing-import`, workflow id de référence `c8TfAwgSVSsy7iH0`) pour que l’automatisation d’import d’annonce soit **réellement utile** : le LLM doit compléter les champs vides **et** corriger / enrichir les champs déjà remplis par le parser quand le texte de page le permet — pas seulement remplir `missingKeys`.
+Améliorer le workflow n8n **« KAYVILA — Listing Import Enrich »** (webhook path `kayvila-listing-import`, workflow id de référence `c8TfAwgSVSsy7iH0`) pour que l’automatisation d’import d’annonce soit **réellement utile** : le LLM doit compléter les champs vides **et** corriger / enrichir les champs déjà remplis par le parser quand le texte de page le permet — pas seulement remplir `missingKeys`.
 
 ## Contrat technique (NE PAS CASSER)
 - Le body entrant est celui envoyé par Next : `source`, `pageUrl`, `pageText`, `extractionInstructions`, `parsed`.

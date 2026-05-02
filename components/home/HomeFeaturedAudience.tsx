@@ -1,15 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ScrollReveal } from "@/components/ScrollReveal";
 
 export type HomeFeaturedVilla = {
   id: string;
   name: string;
   price: number;
-  rating: number;
   loc: string;
-  tags: string[];
   image: string | null;
 };
 
@@ -24,7 +21,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
     <section
       id="nos-villas"
       tabIndex={-1}
-      className="scroll-mt-24 bg-white py-14 px-6 md:py-20"
+      className="scroll-mt-24 bg-white py-10 px-6 md:py-14"
     >
       <div className="mx-auto max-w-6xl space-y-10 md:space-y-14">
         <div className="flex items-center justify-between border-b border-navy/8 pb-6">
@@ -55,36 +52,36 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
             {featuredVillas.slice(0, 3).map((villa, index) => (
-              <ScrollReveal key={villa.id} delay={index * 100}>
-                <Link
-                  href={`/villas/${villa.id}`}
-                  aria-label={`Voir ${villa.name}`}
-                  className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-4"
-                >
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-navy/5">
-                    <Image
-                      src={villa.image || "/villa-hero.jpg"}
-                      alt={villa.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pb-5 pt-16 px-5">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">
-                        {villa.loc}
+              <Link
+                key={villa.id}
+                href={`/villas/${villa.id}`}
+                aria-label={`Voir ${villa.name}`}
+                className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-4"
+              >
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-navy/5">
+                  <Image
+                    src={villa.image || "/villa-hero.jpg"}
+                    alt={villa.name}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/30 via-black/8 to-transparent pb-4 pt-12 px-4">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/55">
+                      {villa.loc}
+                    </p>
+                    <p className="font-display text-base text-white/92 leading-snug mt-0.5">
+                      {villa.name}
+                    </p>
+                    {villa.price > 0 && (
+                      <p className="mt-1.5 text-[9px] font-medium uppercase tracking-[0.15em] text-white/70">
+                        {villa.price.toLocaleString("fr-FR")} € / nuit
                       </p>
-                      <p className="font-display text-lg text-white leading-snug mt-1">
-                        {villa.name}
-                      </p>
-                      {villa.price > 0 && (
-                        <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
-                          {villa.price.toLocaleString("fr-FR")} € / nuit
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
-                </Link>
-              </ScrollReveal>
+                </div>
+              </Link>
             ))}
           </div>
         )}

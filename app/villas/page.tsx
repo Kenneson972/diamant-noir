@@ -34,7 +34,7 @@ function getCoordFallback(location: string | null): [number, number] {
 
 const FALLBACK_VILLAS: VillaMapItem[] = [
   {
-    id: "1", name: "Villa Naoriva", location: "Le Diamant, Martinique",
+    id: "1", name: "Villa Kayvila", location: "Le Diamant, Martinique",
     price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247],
     images: ["/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
   },
@@ -75,7 +75,7 @@ export default async function VillasListingPage({
   let villas: VillaMapItem[] = FALLBACK_VILLAS;
 
   try {
-    const supabase = getSupabaseServer();
+    const supabase = await getSupabaseServer();
     const { data, error } = await supabase
       .from("villas")
       .select("id,name,location,price_per_night,image_url,image_urls,latitude,longitude,capacity,surface_m2,amenities,collection_tier")

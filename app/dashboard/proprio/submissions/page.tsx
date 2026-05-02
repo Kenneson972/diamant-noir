@@ -172,7 +172,7 @@ export default function SubmissionsPage() {
                       </a>
                     )}
                     {s.no_photos && (
-                      <p className="text-xs text-navy/60">Sans photos — Naoriva s&apos;en charge</p>
+                      <p className="text-xs text-navy/60">Sans photos — Kayvila s&apos;en charge</p>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">

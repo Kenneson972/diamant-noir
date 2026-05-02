@@ -1,5 +1,5 @@
 // ============================================================
-// Naoriva — Sanitisation des messages chatbot
+// Kayvila — Sanitisation des messages chatbot
 // Protection contre l'injection de prompt et les payloads malveillants
 // ============================================================
 

@@ -12,20 +12,29 @@ import {
   t as tUtil,
 } from "@/lib/i18n";
 
-const COOKIE_LOCALE = "dn_locale";
-const COOKIE_CURRENCY = "dn_currency";
+const STORAGE_PREFIX = "dn_";
 
-function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? match[2] : null;
+function getPersisted(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(STORAGE_PREFIX + key) ?? null;
+  } catch {
+    return null;
+  }
 }
 
-function setCookie(name: string, value: string, days = 365) {
+function setPersisted(key: string, value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_PREFIX + key, value);
+  } catch {
+    // localStorage peut être bloqué (navigation privée)
+  }
+}
+
+function setCookie(name: string, value: string) {
   if (typeof document === "undefined") return;
-  const d = new Date();
-  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};path=/;max-age=${days * 24 * 60 * 60};SameSite=Lax`;
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
 }
 
 type LocaleContextType = {
@@ -62,20 +71,22 @@ export function LocaleProvider({
   const [currency, setCurrencyState] = useState<Currency>(initialCurrency);
 
   useEffect(() => {
-    const l = getCookie(COOKIE_LOCALE);
-    const c = getCookie(COOKIE_CURRENCY);
+    const l = getPersisted("locale");
+    const c = getPersisted("currency");
     if (isLocale(l) && l !== locale) setLocaleState(l);
     if (isCurrency(c) && c !== currency) setCurrencyState(c);
   }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
-    setCookie(COOKIE_LOCALE, l);
+    setPersisted("locale", l);
+    setCookie("dn_locale", l);
   }, []);
 
   const setCurrency = useCallback((c: Currency) => {
     setCurrencyState(c);
-    setCookie(COOKIE_CURRENCY, c);
+    setPersisted("currency", c);
+    setCookie("dn_currency", c);
   }, []);
 
   const t = useCallback((key: string) => tUtil(locale, key), [locale]);

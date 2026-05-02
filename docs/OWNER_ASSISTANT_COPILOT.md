@@ -179,7 +179,7 @@ Si aucune URL n’est configurée, l’API renvoie une **réponse locale déterm
 ## 12. Référence rapide des chemins
 
 ```
-naoriva/
+kayvila/
 ├── app/api/dashboard/owner-assistant/route.ts
 ├── app/dashboard/proprio/assistant/page.tsx
 ├── lib/owner-assistant-context.ts

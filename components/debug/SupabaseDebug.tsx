@@ -24,7 +24,7 @@ export const SupabaseDebug = () => {
       supabase
         .from("villas")
         .select("count")
-        .then(({ count, error }) => {
+        .then(({ count, error }: { count: number | null; error: any }) => {
           setDebug((prev: any) => ({
             ...prev,
             connectionTest: error ? `Erreur: ${error.message}` : "✅ Connecté",

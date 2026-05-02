@@ -4,7 +4,7 @@
 
 ### Étape 1 : Vérifier les Variables d'Environnement
 
-1. **Créez un fichier `.env.local`** à la racine du projet `naoriva/`
+1. **Créez un fichier `.env.local`** à la racine du projet `kayvila/`
 2. **Ajoutez ces variables** (récupérées depuis Supabase Dashboard > Settings > API) :
 
 ```bash
@@ -53,7 +53,7 @@ Dans la console du navigateur, vous devriez voir :
 **Cause** : Les variables d'environnement ne sont pas chargées.
 
 **Solution** :
-1. Vérifiez que `.env.local` existe à la racine de `naoriva/`
+1. Vérifiez que `.env.local` existe à la racine de `kayvila/`
 2. Vérifiez que les noms des variables sont exacts (copiez-collez depuis `.env.local.example`)
 3. **Redémarrez le serveur** après avoir modifié `.env.local`
 

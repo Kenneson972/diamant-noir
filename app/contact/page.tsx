@@ -64,7 +64,7 @@ export default function ContactPage() {
       <LandingHero
         eyebrow="Échange & support"
         title="Contact & FAQ"
-        subtitle="Une question, une demande spéciale ? Notre équipe et le chatbot Naoriva sont à votre écoute."
+        subtitle="Une question, une demande spéciale ? Notre équipe et le chatbot Kayvila sont à votre écoute."
         variant="navy"
         align="split"
       />
@@ -186,7 +186,7 @@ export default function ContactPage() {
             </div>
             <p className="mt-8 flex items-start gap-2 text-sm text-navy/55">
               <Mail size={18} strokeWidth={1} className="mt-0.5 shrink-0 text-gold" aria-hidden />
-              Le chatbot Naoriva répond aussi 24/7 depuis le coin inférieur droit.
+              Le chatbot Kayvila répond aussi 24/7 depuis le coin inférieur droit.
             </p>
           </div>
         </div>

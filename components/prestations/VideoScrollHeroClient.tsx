@@ -15,7 +15,6 @@ const VideoScrollHero = dynamic(
         <p className="mb-6 font-display text-[9px] tracking-[0.55em] text-gold/40 uppercase">
           Martinique
         </p>
-        <p className="font-display text-2xl tracking-widest text-white">Naoriva</p>
         <div className="mt-8 h-px w-52 bg-white/10">
           <div className="h-full w-0 animate-pulse bg-gold" />
         </div>

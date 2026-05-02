@@ -6,8 +6,8 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 export function HomeLifestyleAudience() {
   return (
     <section className="relative overflow-hidden bg-navy py-32 text-white lg:py-48">
-      <div className="absolute right-0 top-0 h-full w-1/2 opacity-20">
-        <Image src="/villa-hero.jpg" alt="Lifestyle" fill className="object-cover" />
+      <div className="absolute right-0 top-0 h-full w-1/2 opacity-20" aria-hidden>
+        <Image src="/villa-hero.jpg" alt="" fill className="object-cover" />
       </div>
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-xl space-y-12">

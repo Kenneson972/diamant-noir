@@ -7,19 +7,33 @@ type Props = {
   titleLabel: string;
   /** Les trois mots micro *Confiance · Réactivité · Excellence* (masqués sur l’accueil : `false`) */
   showValuesTriplet?: boolean;
+  /** `light` = hero blanc (accueil minimal) ; `dark` = fond sombre (propriétaires, etc.) */
+  tone?: "light" | "dark";
   children?: ReactNode;
 };
 
 /**
- * Hero vidéo : « NAORIVA » + *Conciergerie privée* + optionnellement les trois mots *Confiance · Réactivité · Excellence* (micro-typo).
+ * Hero : « KAYVILA » + *Conciergerie privée* + optionnellement les trois mots *Confiance · Réactivité · Excellence* (micro-typo). `tone="light"` pour fond blanc minimal.
  * Optionnel : CTAs via `children`.
  */
 export function HeroWordmarkBaseline({
   headingId,
   titleLabel,
   showValuesTriplet = true,
+  tone = "dark",
   children,
 }: Props) {
+  const light = tone === "light";
+  const logoVariant = light ? "onLight" : "onDark";
+  const subtitleClass = light
+    ? "font-display font-normal uppercase leading-[1.06] tracking-[0.26em] text-navy/70 sm:tracking-[0.32em] md:tracking-[0.38em] text-[clamp(0.62rem,1.35vw+0.28rem,1.05rem)] sm:text-[clamp(0.68rem,1.45vw+0.3rem,1.12rem)]"
+    : "font-display font-normal uppercase leading-[1.06] tracking-[0.26em] text-white/[0.88] sm:tracking-[0.32em] md:tracking-[0.38em] text-[clamp(0.62rem,1.35vw+0.28rem,1.05rem)] sm:text-[clamp(0.68rem,1.45vw+0.3rem,1.12rem)]";
+  const tripletWrap = light
+    ? "flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-navy/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-navy/45 sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]"
+    : "flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]";
+  const tripletWord = light ? "text-navy/60" : "text-white/[0.55]";
+  const tripletSep = light ? "select-none font-extralight text-navy/25" : "select-none font-extralight text-white/20";
+
   return (
     <div className="flex w-full flex-col items-center gap-5 md:gap-6">
       <h1
@@ -28,7 +42,7 @@ export function HeroWordmarkBaseline({
         aria-label={titleLabel}
       >
         <BrandLogo
-          variant="onDark"
+          variant={logoVariant}
           size="hero"
           showIcon={false}
           showWordmark
@@ -38,14 +52,12 @@ export function HeroWordmarkBaseline({
         />
       </h1>
 
-      {/* Même « voix » typographique que le wordmark NAORIVA : font-display, leading 1.06, tracking identique — taille plus basse */}
+      {/* Même « voix » typographique que le wordmark KAYVILA : font-display, leading 1.06, tracking identique — taille plus basse */}
       <p
         className="animate-in fade-in slide-in-from-bottom-1 m-0 duration-700 delay-75 motion-reduce:delay-0"
         aria-hidden={false}
       >
-        <span className="font-display font-normal uppercase leading-[1.06] tracking-[0.26em] text-white/[0.88] sm:tracking-[0.32em] md:tracking-[0.38em] text-[clamp(0.62rem,1.35vw+0.28rem,1.05rem)] sm:text-[clamp(0.68rem,1.45vw+0.3rem,1.12rem)]">
-          Conciergerie privée
-        </span>
+        <span className={subtitleClass}>Conciergerie privée</span>
       </p>
 
       {showValuesTriplet ? (
@@ -53,16 +65,16 @@ export function HeroWordmarkBaseline({
           className="animate-in fade-in slide-in-from-bottom-2 m-0 max-w-2xl duration-1000 delay-150 motion-reduce:delay-0"
           aria-hidden={false}
         >
-          <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]">
-            <span className="text-white/[0.55]">Confiance</span>
-            <span className="select-none font-extralight text-white/20" aria-hidden>
+          <span className={tripletWrap}>
+            <span className={tripletWord}>Confiance</span>
+            <span className={tripletSep} aria-hidden>
               ·
             </span>
-            <span className="text-white/[0.55]">Réactivité</span>
-            <span className="select-none font-extralight text-white/20" aria-hidden>
+            <span className={tripletWord}>Réactivité</span>
+            <span className={tripletSep} aria-hidden>
               ·
             </span>
-            <span className="text-white/[0.55]">Excellence</span>
+            <span className={tripletWord}>Excellence</span>
           </span>
         </p>
       ) : null}

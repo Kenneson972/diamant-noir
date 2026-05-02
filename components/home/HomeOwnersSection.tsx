@@ -6,117 +6,81 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 /**
  * Section propriétaires — toujours visible sur la home.
  * Ancre `#offre-proprietaire` pour le scroll depuis HeroAudienceCards.
+ * Fond clair ; cartes légères (bords fins, icônes navy, peu d’or).
  */
 export function HomeOwnersSection() {
   return (
     <>
-      {/* ── Valeur proprio — fond sombre ── */}
       <section
         id="offre-proprietaire"
         tabIndex={-1}
-        className="relative scroll-mt-20 overflow-hidden bg-navy py-32 text-white lg:py-44"
+        className="relative scroll-mt-20 overflow-hidden border-y border-navy/[0.06] bg-white py-14 text-navy md:py-20"
       >
-        <div className="absolute left-0 top-0 h-full w-2/5 opacity-15">
-          <Image src="/villa-hero.jpg" alt="" fill className="object-cover" aria-hidden loading="lazy" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-6">
-          <div className="ml-auto max-w-xl space-y-12">
-            <div className="space-y-6">
-              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/45">
-                Pour les propriétaires
-              </span>
-              <h2 className="font-display text-5xl md:text-7xl">Sérénité &amp;<br />performance.</h2>
-              <p className="text-lg font-light leading-relaxed text-white/60">
-                Nous structurons l&apos;exploitation locative de votre bien : calendrier, ménage, relation voyageurs
-                et reporting — pour que vous gardiez la visibilité sans la charge opérationnelle.
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-navy/10 shadow-[0_12px_40px_rgba(0,0,0,0.06)] lg:col-span-5 lg:aspect-[4/5] lg:max-h-[min(560px,72vh)]">
+              <Image
+                src="/villa-hero.jpg"
+                alt=""
+                fill
+                className="object-cover object-[center_35%]"
+                sizes="(max-width: 1024px) 100vw, 38vw"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="space-y-10 lg:col-span-7">
+              <div className="space-y-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+                  Pour les propriétaires
+                </span>
+                <h2 className="font-display text-4xl font-normal leading-[1.08] md:text-6xl lg:text-7xl">
+                  Sérénité &amp;
+                  <br />
+                  performance.
+                </h2>
+                <p className="max-w-xl text-lg font-light leading-relaxed text-navy/65">
+                  Nous structurons l&apos;exploitation locative de votre bien : calendrier, ménage,
+                  relation voyageurs et reporting — pour que vous gardiez la visibilité sans la charge
+                  opérationnelle.
+                </p>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ScrollReveal delay={0}>
+                  <div className="flex h-full flex-col rounded-xl border border-navy/[0.06] bg-offwhite/60 p-6 md:p-8">
+                    <KeyRound className="mb-5 text-navy/25" size={18} strokeWidth={1.25} aria-hidden />
+                    <h3 className="font-semibold text-navy">Clé en main</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-navy/50">
+                      Mise en ligne, shooting, tarification et optimisation continue selon la
+                      saisonnalité.
+                    </p>
+                  </div>
+                </ScrollReveal>
+                <ScrollReveal delay={120}>
+                  <div className="flex h-full flex-col rounded-xl border border-navy/[0.06] bg-offwhite/60 p-6 md:p-8">
+                    <ShieldCheck className="mb-5 text-navy/25" size={18} strokeWidth={1.25} aria-hidden />
+                    <h3 className="font-semibold text-navy">Transparence</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-navy/50">
+                      Suivi des revenus et des interventions — une équipe locale réactive.
+                    </p>
+                  </div>
+                </ScrollReveal>
+              </div>
+
+              <p className="pt-2">
+                <Link
+                  href="/prestations"
+                  className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55 underline-offset-8 transition-colors hover:text-navy hover:underline"
+                >
+                  Découvrir notre conciergerie
+                </Link>
               </p>
             </div>
-
-            <div className="grid gap-12 sm:grid-cols-2">
-              <ScrollReveal delay={0}>
-                <div className="space-y-4">
-                  <KeyRound className="text-white opacity-40" size={24} strokeWidth={1} aria-hidden />
-                  <h3 className="font-bold">Clé en main</h3>
-                  <p className="text-sm text-white/40">
-                    Mise en ligne, shooting, tarification et optimisation continue selon la saisonnalité.
-                  </p>
-                </div>
-              </ScrollReveal>
-              <ScrollReveal delay={150}>
-                <div className="space-y-4">
-                  <ShieldCheck className="text-white opacity-40" size={24} strokeWidth={1} aria-hidden />
-                  <h3 className="font-bold">Transparence</h3>
-                  <p className="text-sm text-white/40">
-                    Suivi des revenus et des interventions — une équipe locale réactive.
-                  </p>
-                </div>
-              </ScrollReveal>
-            </div>
-
-            <p className="pt-2">
-              <Link
-                href="/prestations"
-                className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/55 underline-offset-8 transition-colors hover:text-white hover:underline"
-              >
-                Découvrir notre conciergerie
-              </Link>
-            </p>
           </div>
         </div>
       </section>
 
-      {/* ── Par où commencer — fond blanc ── */}
-      <section className="bg-white py-14 px-6 md:py-20">
-        <div className="mx-auto max-w-6xl space-y-8 md:space-y-12">
-          <div className="flex items-center justify-between border-b border-navy/8 pb-6">
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/40">
-              Propriétaires
-            </span>
-            <Link
-              href="/prestations"
-              className="group flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
-            >
-              En savoir plus
-              <ArrowRight size={12} strokeWidth={1.5} className="transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-
-          <div className="grid gap-6 border border-navy/10 bg-offwhite p-8 md:grid-cols-2 md:p-12">
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/45">Par où commencer</p>
-              <ul className="space-y-3 text-sm text-navy/70">
-                <li className="flex gap-2">
-                  <span className="font-medium text-navy">1.</span>
-                  Découvrir notre modèle et nos engagements sur la page dédiée.
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-medium text-navy">2.</span>
-                  Soumettre votre bien pour une étude personnalisée.
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-medium text-navy">3.</span>
-                  Parcourir le catalogue pour voir le niveau d&apos;exigence affiché aux voyageurs.
-                </li>
-              </ul>
-            </div>
-            <div className="flex flex-col justify-center gap-4 border-t border-navy/10 pt-8 md:border-t-0 md:border-l md:pl-12 md:pt-0">
-              <Link
-                href="/prestations"
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 border border-navy bg-navy px-6 py-3 text-center text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
-              >
-                Notre conciergerie
-                <ArrowRight className="h-4 w-4" strokeWidth={1.25} aria-hidden />
-              </Link>
-              <Link
-                href="/soumettre-ma-villa"
-                className="inline-flex min-h-[48px] items-center justify-center border border-navy/25 bg-white px-6 py-3 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
-              >
-                Soumettre ma villa
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

@@ -16,6 +16,10 @@ import { PlanningIcalSyncCard } from "@/components/dashboard/villa-editor/Planni
 import { VillaBookingsRegistry } from "@/components/dashboard/villa-editor/VillaBookingsRegistry"
 import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist"
 import { IcalConnectivityStatus } from "@/components/dashboard/villa-editor/IcalConnectivityStatus"
+import { VillaFormFields } from "@/components/dashboard/villa-editor/VillaFormFields"
+import { VillaAmenitiesEditor, AmenityImportTag } from "@/components/dashboard/villa-editor/VillaAmenitiesEditor"
+import { VillaImageManager } from "@/components/dashboard/villa-editor/VillaImageManager"
+import type { Villa, Booking, Task } from "@/types"
 
 // DND Kit
 import {
@@ -35,16 +39,58 @@ import {
 import { SortableImage } from "@/components/dashboard/SortableImage";
 import { SUGGESTED_AMENITY_LABELS, SUGGESTED_AMENITY_SET } from "@/lib/villa-amenities-suggested";
 
-function AmenityImportTag({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-0.5 rounded-md bg-emerald-600/12 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-800 ${className}`}
-    >
-      <Sparkles className="h-2.5 w-2.5 shrink-0" aria-hidden />
-      Import
-    </span>
-  );
-}
+/* ─── Types du formulaire ───────────────────────────── */
+
+type VillaFormData = {
+  name: string;
+  location: string;
+  description: string;
+  price_per_night: string;
+  capacity: string;
+  image_url: string;
+  image_urls: string[];
+  airbnb_url: string;
+  ical_url: string;
+  access_token: string;
+  is_published: boolean;
+  amenities: string[];
+  amenities_import_labels: string[];
+  rooms_details: { title: string; description: string }[];
+  seasonal_prices: { name: string; start_date: string; end_date: string; price: string }[];
+  cancellation_policy: string;
+  house_rules: string;
+  safety_info: string;
+  bathrooms_count: string;
+  surface_m2: string;
+  check_in_time: string;
+  check_out_time: string;
+  environment: string;
+  nearby_points_text: string;
+  equipment_interior_text: string;
+  equipment_exterior_text: string;
+  included_services_home_text: string;
+  included_services_collection_text: string;
+  a_la_carte_services_text: string;
+  booking_terms_text: string;
+  collection_tier: string;
+  latitude: string;
+  longitude: string;
+  map_embed_url: string;
+};
+
+const EMPTY_FORM: VillaFormData = {
+  name: "", location: "", description: "", price_per_night: "", capacity: "",
+  image_url: "", image_urls: [], airbnb_url: "", ical_url: "", access_token: "",
+  is_published: false, amenities: [], amenities_import_labels: [],
+  rooms_details: [], seasonal_prices: [],
+  cancellation_policy: "", house_rules: "", safety_info: "",
+  bathrooms_count: "", surface_m2: "", check_in_time: "", check_out_time: "",
+  environment: "", nearby_points_text: "", equipment_interior_text: "",
+  equipment_exterior_text: "", included_services_home_text: "",
+  included_services_collection_text: "", a_la_carte_services_text: "",
+  booking_terms_text: "", collection_tier: "signature", latitude: "",
+  longitude: "", map_embed_url: "",
+};
 
 export default function VillaDashboard() {
   const params = useParams()
@@ -77,42 +123,7 @@ export default function VillaDashboard() {
   const villaDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const maintenanceTaskInputRef = useRef<HTMLInputElement>(null)
   const isNew = villaId === "new"
-  const [form, setForm] = useState({
-    name: "",
-    location: "",
-    description: "",
-    price_per_night: "",
-    capacity: "",
-    image_url: "",
-    image_urls: [] as string[],
-    airbnb_url: "",
-    ical_url: "",
-    access_token: "",
-    is_published: false,
-    amenities: [] as string[],
-    amenities_import_labels: [] as string[],
-    rooms_details: [] as { title: string; description: string }[],
-    seasonal_prices: [] as { name: string; start_date: string; end_date: string; price: string }[],
-    cancellation_policy: "",
-    house_rules: "",
-    safety_info: "",
-    bathrooms_count: "",
-    surface_m2: "",
-    check_in_time: "",
-    check_out_time: "",
-    environment: "",
-    nearby_points_text: "",
-    equipment_interior_text: "",
-    equipment_exterior_text: "",
-    included_services_home_text: "",
-    included_services_collection_text: "",
-    a_la_carte_services_text: "",
-    booking_terms_text: "",
-    collection_tier: "signature",
-    latitude: "",
-    longitude: "",
-    map_embed_url: "",
-  })
+  const [form, setForm] = useState<VillaFormData>({ ...EMPTY_FORM })
 
   const customAmenityItems = useMemo(
     () => form.amenities.filter((a) => !SUGGESTED_AMENITY_SET.has(a)),
@@ -1474,7 +1485,7 @@ export default function VillaDashboard() {
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Nom de la villa</label>
-                      <Input value={form.name} onChange={handleChange("name")} placeholder="Villa Naoriva" />
+                      <Input value={form.name} onChange={handleChange("name")} placeholder="Villa Kayvila" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40">Localisation</label>

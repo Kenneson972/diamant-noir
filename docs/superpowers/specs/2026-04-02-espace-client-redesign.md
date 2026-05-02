@@ -1,7 +1,7 @@
 # Espace Client — Refonte Design & UX (V1)
 
 **Date** : 2026-04-02
-**Projet** : Naoriva — Conciergerie de luxe, Martinique
+**Projet** : Kayvila — Conciergerie de luxe, Martinique
 **Scope** : Refonte complète de l'espace client locataire (design + UX features)
 **Approche** : Nouveau layout shell, migration progressive des pages
 
@@ -12,7 +12,7 @@
 L'espace client existant ressemble à un dashboard générique. L'objectif est de le rendre cohérent avec l'identité éditoriale du site marketing (offwhite/navy/gold, Playfair Display), en y ajoutant les features UX manquantes pour une expérience conciergerie premium.
 
 **Problèmes actuels :**
-- Design "dashboard générique" — ne ressemble pas à Naoriva
+- Design "dashboard générique" — ne ressemble pas à Kayvila
 - Double pattern auth invité (bandeau + cards "connexion requise")
 - Messagerie sans persistance (refresh efface tout)
 - Livret sans empty state ni export PDF
@@ -157,7 +157,7 @@ Chaque item : icône SVG + label uppercase + flèche. Actif : flèche gold.
 **Bouton PDF** : "Télécharger le livret complet" en haut à droite (topbar) ET en bas de chaque section.
 
 **Empty state** : si `welcomeBook` a tous les champs vides → afficher :
-> *"Le livret sera complété avant votre arrivée par l'équipe Naoriva."*
+> *"Le livret sera complété avant votre arrivée par l'équipe Kayvila."*
 
 (Cormorant italic, centré, pas de sections vides visibles)
 

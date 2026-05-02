@@ -89,15 +89,15 @@ href    : "/login?redirect=/dashboard/proprio"
 
 Pas de `BookingSearchBar`. Pas de `HomeAudienceScroll`. Pas de `id="reserver-un-sejour"`.
 
-`<h1 className="sr-only">` = `"Naoriva — Programme propriétaires, Martinique"`
+`<h1 className="sr-only">` = `"Kayvila — Programme propriétaires, Martinique"`
 
-### Section 2 — Pourquoi Naoriva
+### Section 2 — Pourquoi Kayvila
 
 Fond : `offwhite`. Composants : `LandingSection bg="offwhite"` + `LandingBlockTitle`.
 
 ```
 eyebrow    : "Programme propriétaires"
-title      : "Pourquoi confier votre villa à Naoriva ?"
+title      : "Pourquoi confier votre villa à Kayvila ?"
 sous-titre : "Mise en avant premium, conciergerie exigeante et gestion complète pour protéger votre bien tout en maximisant ses performances."
 ```
 
@@ -147,11 +147,11 @@ Lien discret    : "Une question ? Contactez-nous" → /contact
 
 ```tsx
 export const metadata: Metadata = {
-  title: "Programme propriétaires — Confiez votre villa | Naoriva",
+  title: "Programme propriétaires — Confiez votre villa | Kayvila",
   description:
-    "Confiez votre villa en Martinique à Naoriva : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
+    "Confiez votre villa en Martinique à Kayvila : commission 20 % TTC, gestion complète clé en main, conciergerie 24/7. Soumettre votre bien pour rejoindre notre collection.",
   openGraph: {
-    title: "Programme propriétaires — Naoriva",
+    title: "Programme propriétaires — Kayvila",
     description:
       "Confiez votre villa en Martinique. Commission 20 % TTC, gestion complète, conciergerie d'exception.",
     // Pas d'url en dur — hérite de metadataBase défini dans app/layout.tsx
@@ -159,7 +159,7 @@ export const metadata: Metadata = {
 };
 ```
 
-> **Pattern `metadataBase` :** ne pas coder l'URL en dur. Vérifier que `app/layout.tsx` définit `metadataBase` (ex. `new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://naoriva.fr')`). Si absent, l'ajouter dans le layout racine plutôt que dans cette page.
+> **Pattern `metadataBase` :** ne pas coder l'URL en dur. Vérifier que `app/layout.tsx` définit `metadataBase` (ex. `new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://kayvila.fr')`). Si absent, l'ajouter dans le layout racine plutôt que dans cette page.
 
 ---
 

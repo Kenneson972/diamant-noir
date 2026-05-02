@@ -1,8 +1,8 @@
-# NAORIVA — Récapitulatif complet du projet
+# KAYVILA — Récapitulatif complet du projet
 
 ## 1. Présentation
 
-**Naoriva** est une plateforme logicielle de **conciergerie de luxe** « all-in-one » en Martinique. Elle permet de gérer un portefeuille de villas d’exception avec une expérience client immersive (recherche, réservation, livret), une synchronisation intelligente (iCal, import OTA / Airbnb), un **dashboard propriétaire** complet et un **assistant IA** côté admin.
+**Kayvila** est une plateforme logicielle de **conciergerie de luxe** « all-in-one » en Martinique. Elle permet de gérer un portefeuille de villas d’exception avec une expérience client immersive (recherche, réservation, livret), une synchronisation intelligente (iCal, import OTA / Airbnb), un **dashboard propriétaire** complet et un **assistant IA** côté admin.
 
 **Positionnement produit (2026-04)** : la marque est volontairement perçue comme une **maison de conciergerie privée** qui propose des villas — et non comme une plateforme de location avec de la conciergerie en option. La home, la navbar (CTA principal vers `/prestations`) et l’ordre des sections marketing reflètent cette hiérarchie.
 
@@ -21,7 +21,7 @@
 | **Calendrier** | FullCalendar 6.x (React, DayGrid, Interaction), `node-ical` |
 | **Cartes** | Leaflet + `react-leaflet` (catalogue `/villas`) |
 | **Utilitaires** | `clsx`, `tailwind-merge`, `date-fns` |
-| **Déploiement** | **Vercel** (crons pour `/api/sync`) — prod typique : `https://naoriva.vercel.app` |
+| **Déploiement** | **Vercel** (crons pour `/api/sync`) — prod typique : `https://kayvila.vercel.app` |
 
 ### Scripts
 
@@ -44,7 +44,7 @@
 ## 4. Structure du projet (vue synthétique)
 
 ```
-naoriva/
+kayvila/
 ├── app/                      # App Router — pages + API
 │   ├── api/                  # Routes REST (booking, chat, dashboard CRUD, sync, webhooks…)
 │   ├── book/                 # Tunnel réservation
@@ -159,7 +159,7 @@ naoriva/
 ### Marketing & marque
 
 - **Conciergerie first** : hero accueil avec cartes (conciergerie → `/prestations`, voyageur → recherche), TrustBand avec conciergerie 24/7 en tête, bloc `HomeConciergeHighlight`, propriétaires avant catalogue villas, CTA bas de page priorisant la conciergerie
-- **Hero wordmark** : `NAORIVA` + « Conciergerie privée » ; sur l’**accueil** les trois mots micro *Confiance · Réactivité · Excellence* sont **désactivés** (`showValuesTriplet={false}`) ; conservés sur `/proprietaires` si besoin
+- **Hero wordmark** : `KAYVILA` + « Conciergerie privée » ; sur l’**accueil** les trois mots micro *Confiance · Réactivité · Excellence* sont **désactivés** (`showValuesTriplet={false}`) ; conservés sur `/proprietaires` si besoin
 - **Navbar** : CTA principal **Conciergerie** → `/prestations` ; logo cliquable vers `/` (correction `pointer-events` + `z-index` colonne logo) ; barre **z-index > Leaflet** pour ne pas être recouverte par la carte sur `/villas`
 - **Fiches villa** : chrome header adapté fond clair (pas texte blanc sur galerie claire) ; lightbox galerie et aperçu catalogue au-dessus des couches carte
 
