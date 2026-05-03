@@ -97,6 +97,7 @@ const AdminMemberDetail = () => {
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [cancellingStripe, setCancellingStripe] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
 
   const loadStripeDataForCustomer = useCallback(async (customerId: string) => {
     setStripeLoading(true);
@@ -210,6 +211,7 @@ const AdminMemberDetail = () => {
     });
     setCancellingStripe(false);
     if (fnErr) {
+      setConfirmCancel(false);
       showToast("Erreur lors de l'annulation Stripe.");
       return;
     }
@@ -219,11 +221,13 @@ const AdminMemberDetail = () => {
   };
 
   const openStripePortal = async () => {
-    if (!profile?.stripe_customer_id) return;
+    if (!profile?.stripe_customer_id || openingPortal) return;
+    setOpeningPortal(true);
     const returnUrl = `${window.location.origin}/admin/membres/${memberId}`;
     const { data, error: fnErr } = await supabase.functions.invoke('admin-portal-session', {
       body: { stripe_customer_id: profile.stripe_customer_id, return_url: returnUrl },
     });
+    setOpeningPortal(false);
     if (fnErr || !data?.url) {
       showToast("Impossible d'ouvrir le portail Stripe.");
       return;
@@ -615,9 +619,10 @@ const AdminMemberDetail = () => {
                 <button
                   type="button"
                   onClick={openStripePortal}
-                  className="flex-1 h-9 rounded-[2px] border border-noir/10 px-4 text-[10px] uppercase tracking-[0.1em] text-black/55 transition-colors hover:border-noir/25 hover:text-black"
+                  disabled={openingPortal}
+                  className="flex-1 h-9 rounded-[2px] border border-noir/10 px-4 text-[10px] uppercase tracking-[0.1em] text-black/55 transition-colors hover:border-noir/25 hover:text-black disabled:opacity-45"
                 >
-                  Portail Stripe ↗
+                  {openingPortal ? 'Ouverture…' : 'Portail Stripe ↗'}
                 </button>
                 {!stripeData.cancel_at_period_end && subscription?.stripe_subscription_id && (
                   confirmCancel ? (
