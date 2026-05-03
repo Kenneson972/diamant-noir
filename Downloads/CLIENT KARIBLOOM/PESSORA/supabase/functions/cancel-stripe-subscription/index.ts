@@ -57,10 +57,11 @@ serve(async (req) => {
       cancel_at_period_end: true,
     })
 
-    await supabaseAdmin
+    const { error: dbErr } = await supabaseAdmin
       .from('subscriptions')
       .update({ cancel_at_period_end: true })
       .eq('stripe_subscription_id', parsed.data.stripe_subscription_id)
+    if (dbErr) console.error('[cancel-stripe-subscription] DB sync failed:', dbErr.message)
 
     return new Response(JSON.stringify({ success: true, cancel_at: updated.cancel_at }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
