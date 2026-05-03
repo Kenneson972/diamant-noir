@@ -147,6 +147,25 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 
 ---
 
+### Logs détaillés (2026-05-03) — Refonte Gammes + correctifs + Mes bilans membre
+
+**Contexte** : session multi-chantiers du 2026-05-03. Refonte complète de NosProduits (layout éditorial alterné image/texte), migration HeaderSubNav vers Segment HeroUI Pro, création des pages détail produit (GammeProductDetail), sélecteur tailles boissons, correctif Stripe double slash, déplacement CTA Óra+, correctif AdminOverview, et nouvelle page Mes bilans dans l'espace membre.
+
+| Chantier | Livré | Fichiers clés |
+|----------|-------|---------------|
+| **Refonte Gammes** | NosProduits réécrit en layout éditorial alterné (comme Concept/Événements), badges thématiques, compteur produits, ancres collection, shimmer loading | `src/pages/NosProduits.tsx`, `src/components/layout/HeaderSubNav.tsx`, `src/pages/RangeDetail.tsx`, `src/data/headerNav.ts` |
+| **Pages détail produit** | Nouvelle page GammeProductDetail avec hero split, sélecteur quantité, add-to-cart, cross-sell | `src/pages/GammeProductDetail.tsx`, `src/lib/toSlug.ts`, `src/lib/getGammeProduct.ts`, `src/App.tsx` |
+| **Tailles boissons** | Sélecteur small/medium/large dans DrinkDetail avec prix dynamique | `src/pages/DrinkDetail.tsx`, `src/lib/cartLine.ts` |
+| **Correctif Stripe** | Strip trailing slash dans siteUrl Edge Function + correcteur d'URLs frontend | `supabase/functions/create-checkout-session/index.ts`, `src/pages/CommandeAnnulee.tsx`, `src/pages/CommandeSucces.tsx`, `src/components/cart/CartDrawer.tsx` |
+| **CTA Óra+** | Déplacement du bouton "Rejoindre" du Hero vers section Privilèges | `src/pages/OraPlus.tsx` |
+| **Correctif AdminOverview** | Colonne `capacity` → `places_max` (inexistante) | `src/pages/admin/AdminOverview.tsx` |
+| **Mes bilans membre** | Nouvelle page avec statistiques, historique (date tile + statut + annulation) et réservation simplifiée (calendrier + créneaux + formulaire allégé pré-rempli) | `src/pages/member/MesBilans.tsx`, `src/App.tsx`, `src/components/member/MemberLayout.tsx`, `src/pages/member/Dashboard.tsx` |
+
+**Design doc** : `docs/superpowers/specs/2026-05-03-member-bilans-design.md`
+**Plan** : `docs/superpowers/plans/2026-05-03-member-bilans.md`
+
+**État final** : 0 erreur TS. Build ✅.
+
 ### Logs détaillés (2026-05-03) — Óra+ Stripe Cycle 1 (12 tâches)
 
 **Contexte** : les membres Óra+ existaient uniquement en DB sans lien Stripe réel. Objectif : checkout abonnement sans auth préalable, webhooks pour synchroniser le statut Stripe → DB, gating des prix réduits (-50% boissons) sur le vrai statut actif. Exécuté via subagent-driven development (12 tâches, reviewers spec + qualité). Branche : `feat/supabase-events-bilan`.
@@ -167,6 +186,21 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 | **T12 — Déploiement** | 3 Edge Functions déployées (ACTIVE) sur Supabase `tulhiipucrnyejheuitv` via MCP | Supabase Dashboard |
 
 **État final** : code complet et déployé. Fonctionnel dès que les 3 secrets Stripe sont configurés et le webhook Stripe enregistré. `tsc --noEmit` : 0 erreurs. Docs : `docs/superpowers/specs/2026-05-03-ora-plus-stripe-cycle1-design.md` + `docs/superpowers/plans/2026-05-03-ora-plus-stripe-cycle1.md`.
+
+---
+
+### Logs détaillés (2026-05-03) — Óra+ Stripe Cycle 2 (4 tâches)
+
+**Contexte** : corrections de bugs Cycle 1 + enrichissement admin (MRR réel, paiements échoués) + affichage date renouvellement membre. Pas de nouvelle Edge Function. Exécuté via subagent-driven development (4 tâches). Branche : `feat/supabase-events-bilan`.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **T1 — Bug planLabel** | Remplacement de la capitalisation naïve par un mapping explicite `{ free: 'Gratuit', ora_plus: 'Óra+' }` dans Dashboard.tsx (3 occurrences : lignes 175, 233, 300) + Subscription.tsx (1 occurrence — plan brut affiché) | `src/pages/member/Dashboard.tsx`, `src/pages/member/Subscription.tsx` |
+| **T2 — MRR KPI admin** | Nouvelle carte KPI indigo dans la grille AdminOverview : `activeSubscriptions × 24,90 €` — dérivé sans requête supplémentaire (réutilise le compteur existant) | `src/pages/admin/AdminOverview.tsx` |
+| **T3 — Paiements échoués admin** | Section rouge en bas d'AdminOverview : requête `subscriptions WHERE status='expired'` + join `profiles!inner(first_name, last_name, email)` ; liste compacte nom/email/ancienneté, masquée si vide, lien vers `/admin/membres/:id` par ligne | `src/pages/admin/AdminOverview.tsx` |
+| **T4 — Date renouvellement membre** | Ligne discrète `"Renouvellement le [date]"` juste au-dessus du bouton "Gérer mon abonnement" dans Subscription.tsx ; masquée si `currentPeriodEnd` absent ; format `fr-FR` (ex. "3 juin 2026") | `src/pages/member/Subscription.tsx` |
+
+**État final** : 3 commits sur `feat/supabase-events-bilan`. `tsc --noEmit` : 0 erreurs.
 
 ---
 
@@ -230,6 +264,8 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 | Date | Lot | Fichiers / sujets principaux |
 |------|-----|------------------------------|
 | **2026-05-02** | **Gamme produit détail + Stripe Checkout (13 tâches)** | Migration slug, `toSlug`, `CartLine.source`, Zod schemas, `useGammeProduct`, `GammeProductDetail`, `RangeDetail` liens, `AdminGammes` slug, route App, Edge Function Stripe, `useCheckout`, `CartDrawer` badges+Commander, pages `/commande/succes` + `/commande/annulee`. Voir **§ Logs détaillés (2026-05-02)**. |
+| **2026-05-03** | **Óra+ Stripe Cycle 2 (4 tâches)** | Bug planLabel (`ora_plus` → "Óra+") dans Dashboard + Subscription ; MRR KPI réel dans AdminOverview ; section paiements échoués (expired) avec join profiles ; date renouvellement membre. Voir **§ Logs détaillés (2026-05-03) — Cycle 2**. |
+| **2026-05-03** | **Refonte page Gammes + Mes bilans membre + correctifs** | Refonte NosProduits (layout éditorial alterné), HeaderSubNav Segment HeroUI Pro, pages détail produit (GammeProductDetail), sélecteur tailles DrinkDetail, correctif Stripe double slash, déplacement CTA Óra+, correctif AdminOverview, nouvelle page Mes bilans membre (historique + réservation). Voir **§ Logs détaillés (2026-05-03)**. |
 | **2026-04-25** | **PessoBot v3 — fixes finaux (3 itérations n8n)** | `docs/n8n/pessobot-workflow-v3.json` + `docs/ACTIONS_LOG.md`. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)** §7 pour les 3 pièges n8n résolus (template `undefined`, scope `$json`, `alwaysOutputData`). |
 | **2026-04-24** | **PessoBot S3 — Rate limit + Tool calling** | RPC `fn_pessobot_rate_check`, tools `get_menu` / `get_upcoming_events`, persona ÷2, liens cliquables. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**. |
 | **2026-04-24** | **PessoBot S2 — Personnalisation + Óra+** | RPC `fn_pessobot_profile_snapshot`, rôle `pessobot` read-only, `bar_settings.subscription_info` éditable, pitch Óra+ adaptatif. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**. |
@@ -325,6 +361,8 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 | `superpowers/specs/2026-04-21-panier-editorial-design.md` | **Spec** — panier client v1 (tiroir, persistance, sans paiement) + archive phase commande (B) |
 | `superpowers/specs/2026-05-02-gamme-product-detail-stripe-design.md` | **Spec** — page détail produit gamme, panier unifié bar+boutique, Stripe Checkout, Zod |
 | `superpowers/plans/2026-05-02-gamme-product-detail-stripe.md` | **Plan** — 13 tâches : slug, types, CartLine, Zod, hooks, pages, Edge Function Stripe |
+| `superpowers/specs/2026-05-03-member-bilans-design.md` | **Spec** — Mes bilans membre (historique + réservation simplifiée) |
+| `superpowers/plans/2026-05-03-member-bilans.md` | **Plan** — Mes bilans membre (route, sidebar, page, perks) |
 | `LOG_TRAVAIL_2026-04-18.md` | **Log** chronologique session 2026-04-18 (admin produits/membres, fiche, migration, commits) |
 | `superpowers/plans/*.md` | Plans associés aux specs ci-dessus |
 
