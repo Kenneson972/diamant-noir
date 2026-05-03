@@ -24,6 +24,14 @@ const Subscription = () => {
       ? `${subscription.price.toFixed(2).replace('.', ',')}€`
       : '24,90€';
 
+  const renewalDate = subscription?.currentPeriodEnd
+    ? new Date(subscription.currentPeriodEnd).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null;
+
   const handleManageSubscription = async () => {
     setPortalError(null);
     if (!subscription?.stripeSubscriptionId) {
@@ -122,6 +130,12 @@ const Subscription = () => {
             <div className="border border-black/[0.06] rounded-[2px] px-5 py-4 mb-8">
               <p className="text-[11px] font-normal text-black/50 uppercase tracking-[0.1em]">Jusqu&apos;à -50% sur nos boissons</p>
             </div>
+
+            {renewalDate && (
+              <p className="mb-3 text-center text-[11px] text-black/35">
+                Renouvellement le <span className="text-black/55">{renewalDate}</span>
+              </p>
+            )}
 
             <button
               type="button"
