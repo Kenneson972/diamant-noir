@@ -1,222 +1,230 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { cn } from '@heroui/react';
-import { ArrowBtn } from '../components/ui/ArrowBtn';
+import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button, Tabs } from '@heroui/react';
+import { useFadeUpWhenVisible } from '../lib/motionReveal';
 import { ImageCard } from '../components/ui/ImageCard';
 import { SectionTitle } from '../components/ui/SectionTitle';
-import {
-  homeDrinkShowcase,
-  homeDrinkShowcaseOrder,
-  type DrinkGamme,
-} from '../data/homeDrinkShowcase';
+import { HomeProductCarousel } from '../components/home/HomeProductCarousel';
+import { HomeGoogleReviews } from '../components/home/HomeGoogleReviews';
+import { OraPlusTeaserStrip } from '../components/common/OraPlusTeaserStrip';
+import { publicAssetWithCache } from '../lib/publicAsset';
 
-/** Cellule image frameless (coins larges type Nespresso) */
-function ShowcasePhoto({
-  src,
-  placeholderClass,
-  alt,
-  className,
-}: {
-  src: string | null;
-  placeholderClass: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div className={cn('relative overflow-hidden rounded-[28px]', className)}>
-      {src ? (
-        <img
-          src={src}
-          alt={alt}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.03]"
-          loading="lazy"
-        />
-      ) : (
-        <div className={cn('absolute inset-0', placeholderClass)} aria-hidden />
-      )}
-    </div>
-  );
-}
+const UNIVERS = [
+  {
+    id: 'nutrition',
+    eyebrow: 'Nutrition',
+    title: 'Shakes',
+    titleEm: '& gauffres',
+    bgClass: 'bg-surface-product-well',
+    variant: 'light' as const,
+    path: '/menu',
+  },
+  {
+    id: 'communaute',
+    eyebrow: 'Communauté',
+    title: 'Événements',
+    titleEm: '',
+    bgClass: 'bg-surface-hero',
+    variant: 'dark' as const,
+    path: '/evenements',
+  },
+  {
+    id: 'bien-etre',
+    eyebrow: 'Bien-être',
+    title: 'Bilan',
+    titleEm: '30 min',
+    bgClass: 'bg-surface-muted',
+    variant: 'light' as const,
+    path: '/bilan-bien-etre',
+  },
+] as const;
 
 const Home = () => {
   const navigate = useNavigate();
-  const [activeGamme, setActiveGamme] = useState<DrinkGamme>('wellness');
-  const entry = homeDrinkShowcase[activeGamme];
-  const { images, placeholderClass, href, label } = entry;
+  const fadeUpEvents = useFadeUpWhenVisible();
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    document.title = 'PessÓra — Bar Protéiné & Bien-Être, Martinique';
+  }, []);
+
+  const goPrev = useCallback(() => {
+    setActiveIdx((i) => (i - 1 + UNIVERS.length) % UNIVERS.length);
+  }, []);
+  const goNext = useCallback(() => {
+    setActiveIdx((i) => (i + 1) % UNIVERS.length);
+  }, []);
+
+  const active = UNIVERS[activeIdx];
 
   return (
     <div className="min-h-screen bg-surface-page">
-
-      {/* ─── Hero — seul grand bloc sombre (anthracite chaud, pas noir pur) ─── */}
+      {/* ─── Hero — fond vidéo ─── */}
       <section
-        className="relative flex items-end overflow-hidden bg-surface-hero"
-        style={{
-          height: 'clamp(380px, 64vh, 680px)',
-        }}
+        className="relative flex items-end overflow-hidden bg-noir"
+        style={{ height: 'clamp(380px, 64svh, 680px)' }}
       >
+        {/* Vidéo background */}
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/hero-video.webm"
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
+        />
+        {/* Overlay gradient */}
         <div
           className="absolute inset-0"
           style={{
             background: [
-              'radial-gradient(ellipse at 72% 32%, oklch(22% 0.01 55 / 0.35) 0%, transparent 55%)',
-              'linear-gradient(162deg, oklch(14% 0.007 55) 0%, oklch(11% 0.006 55) 48%, oklch(13% 0.006 55) 100%)',
+              'radial-gradient(ellipse at 72% 32%, color-mix(in oklch, var(--color-noir) 45%, transparent) 0%, transparent 60%)',
+              'linear-gradient(162deg, color-mix(in oklch, var(--color-noir) 70%, transparent) 0%, color-mix(in oklch, var(--color-noir) 30%, transparent) 50%, transparent 100%)',
             ].join(', '),
           }}
         />
-        <div className="absolute top-0 left-4 md:left-10 lg:left-[72px] right-4 md:right-10 lg:right-[72px] h-px bg-gradient-to-r from-transparent via-[oklch(75%_0.085_68)]/[0.15] to-transparent" />
+        <div className="absolute top-0 left-4 md:left-10 lg:left-[72px] right-4 md:right-10 lg:right-[72px] h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
-        <div className="relative z-10 w-full max-w-3xl px-4 pb-12 pt-8 md:px-10 md:pb-14 lg:px-[72px] lg:pb-16">
-          <p className="mb-5 text-[8px] font-light uppercase tracking-[0.55em] text-white/42">
-            Bar Protéiné · Fort-de-France
-          </p>
-          <h1
-            className="mb-8 font-display font-normal leading-[0.9] tracking-[-0.02em] text-white"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(42px, 6.5vw, 76px)',
-            }}
+        <div className="relative z-10 w-full max-w-lg px-4 pb-12 pt-8 md:px-10 md:pb-14 lg:px-[72px] lg:pb-16">
+          <p
+            className="mb-5 max-w-[24rem] font-light leading-[1.45] tracking-[0.02em] text-white/88 sm:max-w-md"
+            style={{ fontSize: 'clamp(14px, 2.6vw, 18px)' }}
           >
-            Nourris<br /><em className="italic text-white/50">l'essentiel</em>
-          </h1>
-          <ArrowBtn onDark size="lg" onPress={() => navigate('/menu')} ariaLabel="Voir le menu" />
-        </div>
-      </section>
-
-      {/* ─── Nos univers — cartes claires ─── */}
-      <section className="bg-white px-4 md:px-10 lg:px-[72px] py-[88px]">
-        <SectionTitle title="Nos univers" linkLabel="Tout explorer" linkTo="/menu" />
-        <div className="grid grid-cols-1 gap-[2px] sm:grid-cols-3">
-          <ImageCard
-            eyebrow="Nutrition"
-            title="Shakes &"
-            titleEm="gauffres"
+            <span className="block">Plus qu&apos;une boisson</span>
+            <span className="mt-1.5 block">un style de vie</span>
+          </p>
+          <p className="mb-8 max-w-md text-[8px] font-light uppercase leading-relaxed tracking-[0.22em] text-white/50 [text-wrap:balance] sm:text-[9px] sm:tracking-[0.28em]">
+            Performance{' '}
+            <span className="text-white/35" aria-hidden>
+              |
+            </span>{' '}
+            Protein bar{' '}
+            <span className="text-white/35" aria-hidden>
+              |
+            </span>{' '}
+            Nutricosmetics
+          </p>
+          <Button
+            variant="ghost"
+            size="lg"
             onPress={() => navigate('/menu')}
-          />
-          <ImageCard
-            eyebrow="Communauté"
-            title="Run"
-            titleEm="Club"
-            onPress={() => navigate('/evenements')}
-          />
-          <ImageCard
-            eyebrow="Bien-être"
-            title="Bilan"
-            titleEm="30 min"
-            onPress={() => navigate('/bilan-bien-etre')}
-          />
-        </div>
-      </section>
-
-      {/* ─── Boissons — grille type Nespresso (onglets + 1 grand + 2 empilés) ─── */}
-      <section className="bg-[oklch(98.5%_0.004_55)] px-4 py-[88px] md:px-10 lg:px-[72px]">
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-10 text-center md:mb-12">
-            <p className="mb-2 text-[9px] font-light uppercase tracking-[0.28em] text-black/38">La carte</p>
-            <h2
-              className="font-display font-normal tracking-[-0.02em] text-black"
-              style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 3.2vw, 38px)' }}
-            >
-              Nos boissons par univers
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-[12px] font-light leading-relaxed text-black/45">
-              Sélectionnez une gamme. Les photos se configurent dans le fichier de données dédié à cette section.
-            </p>
-          </div>
-
-          {/* Pills — style Nespresso */}
-          <div
-            className="mb-8 flex flex-wrap items-center justify-center gap-2 md:mb-10 md:gap-3"
-            role="tablist"
-            aria-label="Gammes de boissons"
+            aria-label="Voir le menu"
+            className="inline-flex items-center gap-2 !border-0 !bg-transparent !shadow-none text-white hover:!bg-white/[0.08] active:!bg-white/[0.12]"
           >
-            {homeDrinkShowcaseOrder.map((key) => {
-              const item = homeDrinkShowcase[key];
-              const selected = activeGamme === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onClick={() => setActiveGamme(key)}
-                  className={cn(
-                    'min-h-10 rounded-full px-5 py-2.5 text-[11px] font-light tracking-[0.06em] transition-colors duration-200 md:px-7',
-                    selected
-                      ? 'border border-black text-black'
-                      : 'border border-black/[0.12] text-black/55 hover:border-black/25 hover:text-black/80',
-                  )}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Grille asymétrique : grand à gauche, deux empilés à droite (type Nespresso) */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-stretch md:gap-5 lg:min-h-[min(70vh,620px)]">
-            <Link
-              to={href}
-              className="group relative block min-h-[300px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2 md:min-h-[480px] lg:min-h-[560px]"
-              aria-label={`Voir la gamme ${label}`}
-            >
-              <ShowcasePhoto
-                src={images.large}
-                placeholderClass={placeholderClass}
-                alt={`${label} — visuel principal`}
-                className="h-full min-h-[300px]"
-              />
-              <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-28 rounded-b-[28px] bg-gradient-to-t from-black/35 to-transparent"
-                aria-hidden
-              />
-              <span className="pointer-events-none absolute bottom-5 left-5 text-[9px] font-light uppercase tracking-[0.2em] text-white md:bottom-7 md:left-7">
-                {label}
-              </span>
-            </Link>
-
-            <div className="flex min-h-[420px] flex-col gap-4 md:min-h-0 md:gap-5 lg:min-h-[560px]">
-              <Link
-                to={href}
-                className="group relative block min-h-[200px] flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2"
-                aria-label={`${label} — visuel 2`}
-              >
-                <ShowcasePhoto
-                  src={images.stackedTop}
-                  placeholderClass={placeholderClass}
-                  alt={`${label} — détail`}
-                  className="h-full min-h-[200px]"
-                />
-              </Link>
-              <Link
-                to={href}
-                className="group relative block min-h-[200px] flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2"
-                aria-label={`${label} — visuel 3`}
-              >
-                <ShowcasePhoto
-                  src={images.stackedBottom}
-                  placeholderClass={placeholderClass}
-                  alt={`${label} — ambiance`}
-                  className="h-full min-h-[200px]"
-                />
-              </Link>
-            </div>
-          </div>
-
-          <p className="mt-8 text-center">
-            <Link
-              to="/menu"
-              className="inline-block border-b border-black/30 pb-px text-[9px] font-light uppercase tracking-[0.22em] text-black/55 transition-colors hover:border-black hover:text-black"
-            >
-              Voir toute la carte
-            </Link>
-          </p>
+            <span className="text-[9px] font-normal uppercase tracking-[0.22em]">Menu</span>
+            <ChevronRight size={18} strokeWidth={1.3} aria-hidden />
+          </Button>
         </div>
       </section>
 
-      {/* ─── Événements — section claire, respiration typographique ─── */}
-      <section className="bg-white px-4 py-20 md:px-10 md:py-24 lg:px-[72px]">
-        <div className="mx-auto max-w-[520px] text-center">
-          <p className="mb-6 text-[8px] font-light uppercase tracking-[0.55em] text-black/40">
+      {/* ─── Boissons — carrousel coups de cœur ─── */}
+      <HomeProductCarousel />
+
+      <div className="bg-white px-4 pb-14 md:px-10 md:pb-16 lg:px-[72px]">
+        <div className="mx-auto max-w-[1400px]">
+          <OraPlusTeaserStrip variant="muted" />
+        </div>
+      </div>
+
+      {/* ─── Nos univers — navigation manuelle (flèches) ─── */}
+      <section className="bg-white px-4 py-20 md:px-10 md:py-[88px] lg:px-[72px]">
+        <SectionTitle title="Nos univers" linkLabel="Tout explorer" linkTo="/menu" />
+
+        <div
+          className="relative rounded-[2px] outline-none focus-visible:ring-2 focus-visible:ring-noir/15 focus-visible:ring-offset-2"
+          role="region"
+          aria-roledescription="carrousel"
+          aria-label="Nos univers"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              goPrev();
+            } else if (e.key === 'ArrowRight') {
+              e.preventDefault();
+              goNext();
+            }
+          }}
+        >
+          <Button
+            isIconOnly
+            type="button"
+            variant="ghost"
+            onPress={goPrev}
+            aria-label="Univers précédent"
+            className="absolute left-0 top-[42%] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-noir/[0.12] bg-white/90 text-black/55 shadow-sm backdrop-blur-sm transition-colors hover:border-noir/25 hover:text-black md:left-2 lg:left-4"
+          >
+            <ChevronLeft size={22} strokeWidth={1.25} aria-hidden />
+          </Button>
+          <Button
+            isIconOnly
+            type="button"
+            variant="ghost"
+            onPress={goNext}
+            aria-label="Univers suivant"
+            className="absolute right-0 top-[42%] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-noir/[0.12] bg-white/90 text-black/55 shadow-sm backdrop-blur-sm transition-colors hover:border-noir/25 hover:text-black md:right-2 lg:right-4"
+          >
+            <ChevronRight size={22} strokeWidth={1.25} aria-hidden />
+          </Button>
+
+          {/* Pas de fondu opacity sur le parent : WebKit assombrit ou masque la &lt;video&gt;. */}
+          <div key={activeIdx}>
+            <ImageCard
+              eyebrow={active.eyebrow}
+              title={active.title}
+              titleEm={active.titleEm}
+              bgClass={active.bgClass}
+              variant={active.variant}
+              bgVideoSrc={
+                active.eyebrow === 'Communauté'
+                  ? publicAssetWithCache('videos/evenements-communaute.mp4')
+                  : undefined
+              }
+              bgVideoSrcWebm={
+                active.eyebrow === 'Communauté'
+                  ? publicAssetWithCache('videos/evenements-communaute.webm')
+                  : undefined
+              }
+              bgVideoPosterSrc={
+                active.eyebrow === 'Communauté'
+                  ? publicAssetWithCache('videos/evenements-communaute-poster.jpg')
+                  : undefined
+              }
+              aspectRatio="aspect-[3/2] md:aspect-[21/8]"
+              onPress={() => navigate(active.path)}
+            />
+          </div>
+
+          <div className="mt-5">
+            <Tabs
+              selectedKey={active.id}
+              onSelectionChange={(key) => {
+                const idx = UNIVERS.findIndex((u) => u.id === String(key));
+                if (idx >= 0) setActiveIdx(idx);
+              }}
+              className="w-full"
+            >
+              <Tabs.List aria-label="Sélection univers">
+                {UNIVERS.map((u) => (
+                  <Tabs.Tab key={u.id} id={u.id}>
+                    {u.eyebrow}
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+            </Tabs>
+          </div>
+        </div>
+      </section>
+
+      <HomeGoogleReviews />
+
+      {/* ─── Événements — respiration typographique ─── */}
+      <section className="bg-white px-4 py-[104px] md:px-10 md:py-[132px] lg:px-[72px]">
+        <motion.div className="mx-auto max-w-[520px] text-center" {...fadeUpEvents}>
+          <p className="mb-6 text-[9px] font-light uppercase tracking-[0.5em] text-black/45">
             Événements
           </p>
           <h2
@@ -230,32 +238,11 @@ const Home = () => {
           </h2>
           <Link
             to="/evenements"
-            className="inline-block border-b border-black/30 pb-px text-[9px] font-light uppercase tracking-[0.28em] text-black/60 transition-colors duration-200 hover:border-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 rounded-[1px]"
+            className="inline-flex min-h-[44px] items-center border-b border-noir/30 pb-px text-[10px] font-light uppercase tracking-[0.26em] text-black/65 transition-colors duration-200 hover:border-noir hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-noir/20 rounded-[1px]"
           >
             Voir les événements
           </Link>
-        </div>
-      </section>
-
-      {/* ─── Actualités — cartes claires ─── */}
-      <section className="bg-surface-muted px-4 md:px-10 lg:px-[72px] py-[88px]">
-        <SectionTitle title="Nos actualités" />
-        <div className="grid grid-cols-1 gap-[2px] sm:grid-cols-2">
-          <ImageCard
-            eyebrow="Bilan Bien-être"
-            title="30 minutes"
-            titleEm="offertes"
-            aspectRatio="aspect-[16/9]"
-            onPress={() => navigate('/bilan-bien-etre')}
-          />
-          <ImageCard
-            eyebrow="Pop-up · GigaFit"
-            title="Nouveau"
-            titleEm="point de vente"
-            aspectRatio="aspect-[16/9]"
-            onPress={() => navigate('/evenements')}
-          />
-        </div>
+        </motion.div>
       </section>
 
     </div>
