@@ -101,6 +101,7 @@ const AdminMemberDetail = () => {
   const loadStripeDataForCustomer = useCallback(async (customerId: string) => {
     setStripeLoading(true);
     setStripeError(null);
+    setStripeData(null);
     const { data, error: fnErr } = await supabase.functions.invoke('get-stripe-member', {
       body: { stripe_customer_id: customerId },
     });
@@ -232,6 +233,7 @@ const AdminMemberDetail = () => {
 
   const saveProfile = async () => {
     if (!memberId) return;
+    setConfirmCancel(false);
     setSavingProfile(true);
     setError(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
