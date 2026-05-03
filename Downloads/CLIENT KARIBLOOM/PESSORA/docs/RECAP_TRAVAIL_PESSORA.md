@@ -189,6 +189,23 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 
 ---
 
+### Logs détaillés (2026-05-03) — Óra+ Stripe Cycle 3 (6 tâches)
+
+**Contexte** : gestion Stripe admin depuis la fiche membre — afficher les données Stripe en temps réel, annuler un abonnement à la fin de la période, ouvrir le portail Stripe du membre. Section C (Menu/DrinkDetail depuis Supabase) déjà implémentée (useMenuCatalog). Exécuté via subagent-driven development. Branche : `feat/supabase-events-bilan`.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **T1 — Migration + type** | Colonne `cancel_at_period_end boolean NOT NULL DEFAULT false` sur `subscriptions` ; type TS mis à jour | `supabase/migrations/20260503200000_subscriptions_cancel_at_period_end.sql`, `src/types/database.ts` |
+| **T2 — Edge Function `get-stripe-member`** | POST `{ stripe_customer_id }` → vérifie JWT admin → `stripe.customers.retrieve(id, { expand: ['subscriptions'] })` → retourne `{ status, current_period_end, cancel_at_period_end, plan_name, amount, currency, payment_method }` ; 503 si `STRIPE_SECRET_KEY` absent ; `supabaseAdmin` à scope module | `supabase/functions/get-stripe-member/index.ts` |
+| **T3 — Edge Function `cancel-stripe-subscription`** | POST `{ stripe_subscription_id }` → vérifie JWT admin → `stripe.subscriptions.update(id, { cancel_at_period_end: true })` → sync DB `subscriptions.cancel_at_period_end = true` avec log d'erreur si DB fail → retourne `{ success, cancel_at }` | `supabase/functions/cancel-stripe-subscription/index.ts` |
+| **T4 — Edge Function `admin-portal-session`** | POST `{ stripe_customer_id, return_url }` → vérifie JWT admin → `stripe.billingPortal.sessions.create(...)` → retourne `{ url }` → `window.open(url, '_blank')` côté client | `supabase/functions/admin-portal-session/index.ts` |
+| **T5 — AdminMemberDetail section Stripe** | Section "Abonnement Stripe" entre Abonnement et Commandes, visible si `profile.stripe_customer_id` défini ; 4 états : skeleton 3 colonnes / erreur discrète / actif (3 KPI + ID + portail + annuler) / annulation programmée (badge orange + bannière) ; `loadStripeDataForCustomer` lancé au chargement de la fiche ; `confirmCancel` double confirmation ; `openingPortal` loading state | `src/pages/admin/AdminMemberDetail.tsx` |
+| **T6 — Déploiement** | 3 Edge Functions déployées sur Supabase projet `tulhiipucrnyejheuitv` (`verify_jwt: false` — auth custom via `verifyAdmin`) | Supabase cloud (ACTIVE) |
+
+**État final** : 8 commits sur `feat/supabase-events-bilan`. `tsc --noEmit` : 0 erreurs. 3 fonctions ACTIVE sur Supabase.
+
+---
+
 ### Logs détaillés (2026-05-03) — Óra+ Stripe Cycle 2 (4 tâches)
 
 **Contexte** : corrections de bugs Cycle 1 + enrichissement admin (MRR réel, paiements échoués) + affichage date renouvellement membre. Pas de nouvelle Edge Function. Exécuté via subagent-driven development (4 tâches). Branche : `feat/supabase-events-bilan`.
@@ -264,6 +281,7 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 | Date | Lot | Fichiers / sujets principaux |
 |------|-----|------------------------------|
 | **2026-05-02** | **Gamme produit détail + Stripe Checkout (13 tâches)** | Migration slug, `toSlug`, `CartLine.source`, Zod schemas, `useGammeProduct`, `GammeProductDetail`, `RangeDetail` liens, `AdminGammes` slug, route App, Edge Function Stripe, `useCheckout`, `CartDrawer` badges+Commander, pages `/commande/succes` + `/commande/annulee`. Voir **§ Logs détaillés (2026-05-02)**. |
+| **2026-05-03** | **Óra+ Stripe Cycle 3 (6 tâches)** | Migration `cancel_at_period_end` ; 3 Edge Functions admin Stripe (`get-stripe-member`, `cancel-stripe-subscription`, `admin-portal-session`) ; section "Abonnement Stripe" dans `AdminMemberDetail` (4 états : chargement / erreur / actif / annulation programmée). Voir **§ Logs détaillés (2026-05-03) — Cycle 3**. |
 | **2026-05-03** | **Óra+ Stripe Cycle 2 (4 tâches)** | Bug planLabel (`ora_plus` → "Óra+") dans Dashboard + Subscription ; MRR KPI réel dans AdminOverview ; section paiements échoués (expired) avec join profiles ; date renouvellement membre. Voir **§ Logs détaillés (2026-05-03) — Cycle 2**. |
 | **2026-05-03** | **Refonte page Gammes + Mes bilans membre + correctifs** | Refonte NosProduits (layout éditorial alterné), HeaderSubNav Segment HeroUI Pro, pages détail produit (GammeProductDetail), sélecteur tailles DrinkDetail, correctif Stripe double slash, déplacement CTA Óra+, correctif AdminOverview, nouvelle page Mes bilans membre (historique + réservation). Voir **§ Logs détaillés (2026-05-03)**. |
 | **2026-04-25** | **PessoBot v3 — fixes finaux (3 itérations n8n)** | `docs/n8n/pessobot-workflow-v3.json` + `docs/ACTIONS_LOG.md`. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)** §7 pour les 3 pièges n8n résolus (template `undefined`, scope `$json`, `alwaysOutputData`). |
