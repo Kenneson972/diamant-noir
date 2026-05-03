@@ -1,23 +1,26 @@
 // src/pages/admin/AdminMembers.tsx
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone } from 'lucide-react';
+import { Download, Mail, Phone } from 'lucide-react';
+import { Card, Skeleton } from '@heroui/react';
+import { EmptyState, Segment } from '@heroui-pro/react';
 import { useAdminMembers, type MemberWithSub } from '../../hooks/useAdminMembers';
+import { usePersistentAdminState } from '../../hooks/usePersistentAdminState';
+import { downloadCsv } from '../../lib/csvExport';
+import { AdminErrorAlert } from '../../components/dashboard/AdminErrorAlert';
+import { DashEyebrow, DashPageHeader } from '../../components/dashboard/primitives';
+import { DASH_MAIN_PAD } from '../../components/dashboard/layoutClasses';
 
-const PLANS = ['all', 'free', 'starter', 'premium', 'vip'] as const;
+const PLANS = ['all', 'free', 'ora_plus'] as const;
 
 const PLAN_LABEL: Record<string, string> = {
   free: 'Gratuit',
-  starter: 'Starter',
-  premium: 'Premium',
-  vip: 'VIP',
+  ora_plus: 'Óra+',
 };
 
 const PLAN_BADGE_CLASS: Record<string, string> = {
-  free: 'border-black/10 bg-black/[0.03] text-black/45',
-  starter: 'border-amber-200/80 bg-amber-50/80 text-amber-900/80',
-  premium: 'border-black/12 bg-black/[0.06] text-black/70',
-  vip: 'border-black/20 bg-black text-white',
+  free: 'border-noir/10 bg-noir/[0.03] text-black/45',
+  ora_plus: 'border-indigo-200/80 bg-indigo-50/80 text-indigo-900/80',
 };
 
 function memberInitials(m: MemberWithSub): string {
@@ -58,10 +61,10 @@ function MemberCard({ m }: { m: MemberWithSub }) {
   const active = sub?.status === 'active';
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[2px] border border-black/[0.06] bg-white transition-shadow hover:border-black/12 hover:shadow-[0_1px_0_rgba(0,0,0,0.06)]">
-      <div className="flex items-start gap-3 border-b border-black/[0.05] p-4">
+    <article className="flex h-full flex-col overflow-hidden rounded-[2px] border border-noir/[0.06] bg-white transition-shadow hover:border-noir/12 hover:shadow-[0_1px_0_rgba(0,0,0,0.06)]">
+      <div className="flex items-start gap-3 border-b border-noir/[0.05] p-4">
         <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-gradient-to-br from-black/[0.04] to-black/[0.02] font-display text-[14px] font-normal tabular-nums text-black/80"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-noir/[0.08] bg-gradient-to-br from-noir/[0.04] to-noir/[0.02] font-display text-[14px] font-normal tabular-nums text-black/80"
           style={{ fontFamily: 'var(--font-display)' }}
           aria-hidden
         >
@@ -73,7 +76,7 @@ function MemberCard({ m }: { m: MemberWithSub }) {
               {displayName(m)}
             </h2>
             {m.role === 'admin' && (
-              <span className="rounded-[2px] bg-black/[0.07] px-1.5 py-0.5 text-[8px] font-normal uppercase tracking-[0.12em] text-black/55">
+              <span className="rounded-[2px] bg-noir/[0.07] px-1.5 py-0.5 text-[8px] font-normal uppercase tracking-[0.12em] text-black/55">
                 Admin
               </span>
             )}
@@ -99,7 +102,7 @@ function MemberCard({ m }: { m: MemberWithSub }) {
           </span>
           <span
             className={`rounded-[2px] px-2 py-0.5 text-[9px] font-normal uppercase tracking-[0.1em] ${
-              active ? 'bg-gold-dim/12 text-gold-dim' : 'bg-black/[0.05] text-black/40'
+              active ? 'bg-gold-dim/12 text-gold-dim' : 'bg-noir/[0.05] text-black/40'
             }`}
           >
             {statusLabel(sub?.status)}
@@ -122,119 +125,187 @@ function MemberGridSkeleton() {
     <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <li key={i}>
-          <div className="overflow-hidden rounded-[2px] border border-black/[0.06] bg-white">
-            <div className="flex gap-3 border-b border-black/[0.05] p-4">
-              <div className="h-12 w-12 shrink-0 animate-pulse rounded-full bg-black/[0.06]" />
+          <Card className="overflow-hidden rounded-[2px] border border-noir/[0.06] bg-white">
+            <Card.Content className="flex gap-3 border-b border-noir/[0.05] p-4">
+              <Skeleton className="h-12 w-12 shrink-0 rounded-full bg-noir/[0.06]" />
               <div className="flex-1 space-y-2 pt-0.5">
-                <div className="h-4 w-[55%] max-w-[160px] animate-pulse rounded bg-black/[0.06]" />
-                <div className="h-3 w-[85%] animate-pulse rounded bg-black/[0.05]" />
+                <Skeleton className="h-4 w-[55%] max-w-[160px] rounded bg-noir/[0.06]" />
+                <Skeleton className="h-3 w-[85%] rounded bg-noir/[0.05]" />
               </div>
-            </div>
-            <div className="flex justify-between gap-3 p-4 pt-3">
-              <div className="h-6 w-20 animate-pulse rounded-full bg-black/[0.05]" />
-              <div className="h-3 w-16 animate-pulse rounded bg-black/[0.05]" />
-            </div>
-          </div>
+            </Card.Content>
+            <Card.Footer className="flex justify-between gap-3 p-4 pt-3">
+              <Skeleton className="h-6 w-20 rounded-full bg-noir/[0.05]" />
+              <Skeleton className="h-3 w-16 rounded bg-noir/[0.05]" />
+            </Card.Footer>
+          </Card>
         </li>
       ))}
     </ul>
   );
 }
 
-const AdminMembers = () => {
-  const { members, loading, error } = useAdminMembers();
-  const [search, setSearch] = useState('');
-  const [filterPlan, setFilterPlan] = useState<(typeof PLANS)[number]>('all');
-  const [filterRole, setFilterRole] = useState<'all' | 'member' | 'admin'>('all');
+const DEFAULT_FILTERS = {
+  search: '',
+  filterPlan: 'all' as (typeof PLANS)[number],
+  filterRole: 'all' as 'all' | 'member' | 'admin',
+};
 
-  const filtered = members.filter((m) => {
-    const q = search.toLowerCase().trim();
-    const matchSearch =
-      !q ||
-      `${m.first_name ?? ''} ${m.last_name ?? ''} ${m.email ?? ''} ${m.phone ?? ''}`.toLowerCase().includes(q);
-    const sub = m.subscriptions?.[0];
-    const matchPlan = filterPlan === 'all' || sub?.plan === filterPlan;
-    const matchRole =
-      filterRole === 'all' ||
-      (filterRole === 'admin' && m.role === 'admin') ||
-      (filterRole === 'member' && m.role !== 'admin');
-    return matchSearch && matchPlan && matchRole;
-  });
+const AdminMembers = () => {
+  const { members, loading, error, refetch } = useAdminMembers();
+  const [filters, setFilters] = usePersistentAdminState('members_filters_v1', DEFAULT_FILTERS);
+  const { search, filterPlan, filterRole } = filters;
+
+  const filtered = useMemo(() => {
+    return members.filter((m) => {
+      const q = search.toLowerCase().trim();
+      const matchSearch =
+        !q ||
+        `${m.first_name ?? ''} ${m.last_name ?? ''} ${m.email ?? ''} ${m.phone ?? ''}`.toLowerCase().includes(q);
+      const sub = m.subscriptions?.[0];
+      const matchPlan = filterPlan === 'all' || sub?.plan === filterPlan;
+      const matchRole =
+        filterRole === 'all' ||
+        (filterRole === 'admin' && m.role === 'admin') ||
+        (filterRole === 'member' && m.role !== 'admin');
+      return matchSearch && matchPlan && matchRole;
+    });
+  }, [members, search, filterPlan, filterRole]);
+
+  const exportCsv = () => {
+    downloadCsv(
+      `pessora-membres-${new Date().toISOString().slice(0, 10)}.csv`,
+      ['Nom', 'Prénom', 'Email', 'Téléphone', 'Rôle', 'Plan', 'Statut abonnement', 'Créé le'],
+      filtered.map((m) => {
+        const sub = m.subscriptions?.[0];
+        return [
+          m.last_name ?? '',
+          m.first_name ?? '',
+          m.email ?? '',
+          m.phone ?? '',
+          m.role ?? '',
+          sub?.plan ?? '',
+          sub?.status ?? '',
+          m.created_at ? new Date(m.created_at).toLocaleDateString('fr-FR') : '',
+        ];
+      }),
+    );
+  };
 
   return (
-    <div className="max-w-[1400px]">
-      <div className="mb-8 space-y-2">
-        <h1 className="font-display text-[32px] font-normal leading-none text-black" style={{ fontFamily: 'var(--font-display)' }}>
-          Membres
-        </h1>
-        <p className="max-w-md text-[12px] font-light leading-relaxed text-black/45">
-          Vue en cartes : plan, statut d’abonnement et contact en un coup d’œil.
-        </p>
-      </div>
+    <div>
+      <DashPageHeader
+        breadcrumb="Administration"
+        title="Membres"
+        subtitle="Plan, statut d’abonnement et contact en un coup d’œil."
+      />
+      <div className={DASH_MAIN_PAD}>
+      <div className="mb-8 rounded-[2px] border border-noir/[0.06] bg-white p-5 sm:p-6">
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <DashEyebrow className="mb-2">Recherche & filtres</DashEyebrow>
+            <p className="text-[11px] text-black/40">Les filtres sont mémorisés sur cet appareil.</p>
+          </div>
+          {!loading && filtered.length > 0 && (
+            <button
+              type="button"
+              onClick={exportCsv}
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full border border-noir/15 px-4 text-[10px] font-normal uppercase tracking-[0.1em] text-black/60 transition-colors hover:border-noir/30 hover:text-noir"
+            >
+              <Download size={14} strokeWidth={1.5} aria-hidden />
+              Exporter CSV ({filtered.length})
+            </button>
+          )}
+        </div>
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <input
+            type="search"
+            placeholder="Rechercher (nom, e-mail, téléphone)…"
+            value={search}
+            onChange={(e) => setFilters({ search: e.target.value })}
+            className="h-10 min-w-0 flex-1 max-w-md rounded-[2px] border border-noir/[0.08] bg-white px-4 text-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-noir/20"
+          />
+        </div>
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <input
-          type="search"
-          placeholder="Rechercher (nom, e-mail, téléphone)…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-10 min-w-0 flex-1 max-w-md rounded-[2px] border border-black/[0.08] bg-white px-4 text-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-        />
-      </div>
-
-      <div className="mb-3 flex flex-wrap gap-2">
-        <span className="mr-1 self-center text-[9px] font-normal uppercase tracking-[0.18em] text-black/30">Plan</span>
-        {PLANS.map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => setFilterPlan(p)}
-            className={`h-9 rounded-full px-4 text-[10px] font-light tracking-[0.06em] transition-colors ${
-              filterPlan === p ? 'bg-black text-white' : 'border border-black/15 text-black/50 hover:border-black/30 hover:text-black'
-            }`}
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <span className="text-[9px] font-normal uppercase tracking-[0.18em] text-black/30">
+            Plan
+          </span>
+          <Segment
+            size="sm"
+            selectedKey={filterPlan}
+            onSelectionChange={(k) =>
+              setFilters({ filterPlan: ((k as typeof filterPlan) ?? 'all') })
+            }
+            aria-label="Filtrer par plan"
           >
-            {p === 'all' ? 'Tous les plans' : PLAN_LABEL[p] ?? p}
-          </button>
-        ))}
-      </div>
+            {PLANS.map((p) => (
+              <Segment.Item key={p} id={p}>
+                <Segment.Separator />
+                {p === 'all' ? 'Tous les plans' : PLAN_LABEL[p] ?? p}
+              </Segment.Item>
+            ))}
+          </Segment>
+        </div>
 
-      <div className="mb-6 flex flex-wrap gap-2">
-        <span className="mr-1 self-center text-[9px] font-normal uppercase tracking-[0.18em] text-black/30">Rôle</span>
-        {(
-          [
-            ['all', 'Tous'],
-            ['member', 'Membres'],
-            ['admin', 'Admins'],
-          ] as const
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setFilterRole(key)}
-            className={`h-9 rounded-full px-4 text-[10px] font-light tracking-[0.06em] transition-colors ${
-              filterRole === key ? 'bg-black text-white' : 'border border-black/15 text-black/50 hover:border-black/30 hover:text-black'
-            }`}
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-[9px] font-normal uppercase tracking-[0.18em] text-black/30">
+            Rôle
+          </span>
+          <Segment
+            size="sm"
+            selectedKey={filterRole}
+            onSelectionChange={(k) =>
+              setFilters({ filterRole: ((k as typeof filterRole) ?? 'all') })
+            }
+            aria-label="Filtrer par rôle"
           >
-            {label}
-          </button>
-        ))}
+            <Segment.Item id="all">
+              <Segment.Separator />
+              Tous
+            </Segment.Item>
+            <Segment.Item id="member">
+              <Segment.Separator />
+              Membres
+            </Segment.Item>
+            <Segment.Item id="admin">
+              <Segment.Separator />
+              Admins
+            </Segment.Item>
+          </Segment>
+        </div>
       </div>
 
-      {error && <p className="mb-4 text-[11px] text-red-500/80">{error}</p>}
+      {error && <AdminErrorAlert message={error} onRetry={refetch} />}
 
       {loading ? (
         <MemberGridSkeleton />
       ) : filtered.length === 0 ? (
-        <div className="rounded-[2px] border border-dashed border-black/15 bg-white px-8 py-16 text-center">
-          <p className="text-[13px] font-light text-black/40">Aucun membre ne correspond à ces filtres.</p>
-        </div>
+        <EmptyState className="rounded-[2px] border border-dashed border-noir/15 bg-white">
+          <EmptyState.Header>
+            <EmptyState.Title className="font-display text-[16px] font-normal text-black/75">
+              Aucun membre ne correspond
+            </EmptyState.Title>
+            <EmptyState.Description className="text-[12px] font-light text-black/45">
+              Ajuste la recherche ou réinitialise les filtres pour voir tous les membres.
+            </EmptyState.Description>
+          </EmptyState.Header>
+          <EmptyState.Content>
+            <button
+              type="button"
+              onClick={() => setFilters(DEFAULT_FILTERS)}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-noir/15 px-4 text-[10px] font-normal uppercase tracking-[0.1em] text-black/60 transition-colors hover:border-noir/30 hover:text-noir"
+            >
+              Réinitialiser les filtres
+            </button>
+          </EmptyState.Content>
+        </EmptyState>
       ) : (
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((m) => (
             <li key={m.id}>
               <Link
                 to={`/admin/membres/${m.id}`}
-                className="block h-full rounded-[2px] outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-black/25"
+                className="block h-full rounded-[2px] outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-noir/25"
               >
                 <MemberCard m={m} />
               </Link>
@@ -246,6 +317,7 @@ const AdminMembers = () => {
       <p className="mt-6 text-[10px] font-light text-black/35">
         {loading ? '…' : `${filtered.length} membre${filtered.length !== 1 ? 's' : ''}`}
       </p>
+      </div>
     </div>
   );
 };
