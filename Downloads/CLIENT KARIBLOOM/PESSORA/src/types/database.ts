@@ -48,6 +48,7 @@ export interface Database {
           stripe_subscription_id: string | null
           stripe_price_id: string | null
           current_period_end: string | null
+          cancel_at_period_end: boolean
           created_at: string
           updated_at: string
         }
@@ -162,7 +163,9 @@ export interface Database {
           id: string
           user_id: string | null
           total: number
-          status: 'pending' | 'completed' | 'cancelled'
+          status: 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled'
+          pickup_time: string | null
+          picked_up_at: string | null
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
           created_at: string
