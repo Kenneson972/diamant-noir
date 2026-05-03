@@ -1,6 +1,6 @@
 # Récapitulatif de travail — PessÓra
 
-Journal de synthèse (design, stack, auth, données). Dernière mise à jour : **2026-04-18**.
+Journal de synthèse (design, stack, auth, données). Dernière mise à jour : **2026-05-03**.
 
 ---
 
@@ -82,7 +82,7 @@ Chemin type : `~/Downloads/KARIBLOOM/.cursor/rules/` (adapter si autre clone du 
 
 | Couche | Détail |
 |--------|--------|
-| Front | React 19 + Vite, React Router 7, Tailwind v4, HeroUI, Framer Motion |
+| Front | React 19 + Vite, React Router 7, Tailwind v4, HeroUI, Framer Motion, **Zustand** (panier persistant `localStorage`) |
 | Auth / données live | Supabase (`AuthContext`, tables profil / events / etc.), `VITE_SUPABASE_*` |
 | Règles Cursor locales | `.cursor/rules/pessora-project.mdc` + `karibloom-client-builder.mdc` |
 | Règles étendues | `~/Downloads/KARIBLOOM/.cursor/rules/kb-*.mdc` + skill `karibloom-client-builder` |
@@ -92,6 +92,123 @@ Chemin type : `~/Downloads/KARIBLOOM/.cursor/rules/` (adapter si autre clone du 
 ## Journal des actions (changelog)
 
 Convention : **ajouter une entrée datée en tête de liste** à chaque lot de travail significatif (design, auth, données, déploiement).
+
+### Logs détaillés (2026-05-02) — Gamme produit détail + Stripe Checkout (13 tâches)
+
+**Contexte** : les produits gamme (Sport, Skin, Wellness) étaient en DB via `gamme_products` mais sans pages dédiées. Objectif : page détail par produit (`/nos-produits/:gamme/:slug`), sélecteur quantité, intégration au panier Zustand existant, et Stripe Checkout via Supabase Edge Function + Zod. Exécuté via subagent-driven development (13 tâches, chacune avec review spec + qualité). Branche : `feat/gamme-product-detail-stripe`.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **T1 — Migration slug** | Colonne `slug TEXT UNIQUE` sur `gamme_products` + 36 UPDATE statements (slugs des produits existants) appliqués en prod | `supabase/migrations/20260502130000_add_slug_gamme_products.sql` |
+| **T2 — Types + util** | `slug: string \| null` dans `GammeProduct.Row` ; utilitaire `toSlug(name)` : NFD + diacritiques + lowercase + tirets | `src/types/database.ts`, `src/lib/toSlug.ts` |
+| **T3 — CartLine source** | Champ `source: 'bar' \| 'gamme'` requis dans `CartLine` ; tous les appels `addLine` existants passent `source: 'bar'` | `src/store/cartStore.ts`, `src/pages/DrinkDetail.tsx`, `src/components/home/HomeProductCarousel.tsx` |
+| **T4 — Zod schemas** | `CartLineSchema` + `CheckoutRequestSchema` + types inférés `CartLinePayload` / `CheckoutRequest` | `src/lib/checkoutSchema.ts` |
+| **T5 — useGammeProduct** | Hook : fetch Supabase par `gamme` + `slug` + `active=true` ; retourne `{ product, loading, notFound }` ; flag `cancelled` pour éviter setState après démontage | `src/hooks/useGammeProduct.ts` |
+| **T6 — GammeProductDetail** | Page split éditorial : image gauche sticky, infos droite ; breadcrumb, prix simple / double format, sélecteur `−/+` (min 1 max 10), CTA avec prix dynamique, `justAdded` 2 s, skeleton chargement | `src/pages/GammeProductDetail.tsx` |
+| **T7 — RangeDetail liens** | Bouton « Renseignements » → `<Link to="/nos-produits/:gamme/:slug">` avec fallback sur `product.id` si slug null | `src/pages/RangeDetail.tsx` |
+| **T8 — AdminGammes slug** | Champ slug auto-généré via `toSlug` à la frappe du nom (si slug vide), éditable manuellement ; ajouté à `EMPTY_FORM`, `productToGammeForm`, `buildPayload` | `src/pages/admin/AdminGammes.tsx` |
+| **T9 — Route App.tsx** | Lazy import + route `/nos-produits/:gamme/:slug` (3 segments, pas de conflit avec `:rangeId` 2 segments) | `src/App.tsx` |
+| **T10 — Edge Function** | Deno Edge Function `create-checkout-session` : auth JWT → Zod → order DB → order_items → Stripe Session → retourne `{ url }` ; 503 si `STRIPE_SECRET_KEY` absent ; déployée en prod | `supabase/functions/create-checkout-session/index.ts` |
+| **T11 — useCheckout** | Hook : si non authentifié → `/connexion` ; sinon GET session token → POST Edge Function → `window.location.href = url` ; expose `{ startCheckout, loading, error }` | `src/hooks/useCheckout.ts` |
+| **T12 — CartDrawer** | Badge « Bar » / « Boutique » par ligne ; footer conditionnel : bouton « Commander — Payer en ligne » (Stripe) si `hasGammeItems`, sinon `<Link>` « Préparer ma venue » ; `checkoutError` affiché | `src/components/cart/CartDrawer.tsx` |
+| **T13 — Pages commande** | `CommandeSucces` : vide panier au mount, affiche réf session, lien historique + boutique. `CommandeAnnulee` : rouvre panier. Routes `/commande/succes` et `/commande/annulee` | `src/pages/commande/CommandeSucces.tsx`, `src/pages/commande/CommandeAnnulee.tsx`, `src/App.tsx` |
+
+**État final** : 13 commits sur `feat/gamme-product-detail-stripe`. Stripe inactive tant que `STRIPE_SECRET_KEY` n'est pas configurée en secret Supabase — la fonction retourne 503 proprement d'ici là. Docs : `docs/superpowers/specs/2026-05-02-gamme-product-detail-stripe-design.md` + `docs/superpowers/plans/2026-05-02-gamme-product-detail-stripe.md`.
+
+---
+
+### Logs détaillés (2026-05-03) — Refonte page Gammes + HeaderSubNav Segment HeroUI Pro
+
+**Contexte** : redesign éditorial complet de `/nos-produits`. Passage de l'ancienne grille de produits à un layout alterné image/texte (comme Concept/Événements). Migration de la sous-nav header scrollable vers un Segment HeroUI Pro centré.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **Layout éditorial** | Sections alternées flex-row/flex-row-reverse avec badges thématiques, compteur produits, CTA hover lift, shimmer loading | `src/pages/NosProduits.tsx` |
+| **HeaderSubNav → Segment** | Remplacement de la sous-nav scrollable (chevrons, overflow-x-auto) par un Segment HeroUI Pro centré | `src/components/layout/HeaderSubNav.tsx` |
+| **Navigation + ancres** | Navigation vers pages collection + scroll vers section via `scrollIntoView` depuis la page d'ensemble | `HeaderSubNav.tsx` |
+| **headerNav** | Labels SUBNAV_PRODUITS : "Vue d'ensemble", "Wellness", "Sport", "Skin" | `src/data/headerNav.ts` |
+| **Corrections post-critique** | Retrait numéros de collection, `bg-black` → `from-noir`, section finale renforcée, shimmer, ancres | `NosProduits.tsx` |
+
+**État final** : page Gammes cohérente avec le reste du site (Consept, Événements), navigation header unifiée via Segment HeroUI Pro. Build ✅.
+
+### Logs détaillés (2026-05-03) — Pages détail produit gamme (GammeProductDetail)
+
+**Contexte** : création des pages détail produit individuelles pour les gammes Wellness/Sport/Skin, accessibles via `/nos-produits/:rangeId/:slug`. Design inspiré de DrinkDetail mais simplifié.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **toSlug util** | Utilitaire de slugification (NFD, diacritiques, lowercase, tirets) | `src/lib/toSlug.ts` (nouveau) |
+| **getGammeProduct** | Helper de lookup produit par rangeId + slug dans productsData.ts | `src/lib/getGammeProduct.ts` (nouveau) |
+| **Page détail** | Breadcrumb, hero split image/info, sélecteur quantité, CTA add-to-cart, caractéristiques (bénéfices + ingrédients), cross-sell "Vous aimerez aussi", CTA final fond noir | `src/pages/GammeProductDetail.tsx` (nouveau) |
+| **RangeDetail → lien** | Bouton "Renseignements" devient un Link vers `/nos-produits/:rangeId/:slug` (slug généré via `toSlug(product.name)`) | `src/pages/RangeDetail.tsx` |
+| **Routing** | Lazy load GammeProductDetail + route `/nos-produits/:rangeId/:slug` avant `/:rangeId` | `src/App.tsx` |
+
+**État final** : pages détail produit fonctionnelles avec panier, cross-sell, et navigation fluide. Build ✅.
+
+---
+
+### Logs détaillés (2026-05-03) — Óra+ Stripe Cycle 1 (12 tâches)
+
+**Contexte** : les membres Óra+ existaient uniquement en DB sans lien Stripe réel. Objectif : checkout abonnement sans auth préalable, webhooks pour synchroniser le statut Stripe → DB, gating des prix réduits (-50% boissons) sur le vrai statut actif. Exécuté via subagent-driven development (12 tâches, reviewers spec + qualité). Branche : `feat/supabase-events-bilan`.
+
+| Tâche | Livré | Fichiers clés |
+|-------|-------|---------------|
+| **T1 — Migration DB** | `stripe_customer_id` sur `profiles` ; `stripe_price_id` + `current_period_end` sur `subscriptions` ; contrainte CHECK `plan IN ('free', 'ora_plus')` ; index partiel sur `stripe_subscription_id` ; migration one-shot abonnés actifs → `ora_plus` | `supabase/migrations/20260503150000_ora_plus_stripe.sql` |
+| **T2 — Types + AuthContext** | `ProfilesTableRow.stripe_customer_id` ; `subscriptions.Row.plan: 'free' \| 'ora_plus'` + `stripe_price_id` + `current_period_end` ; `SubscriptionData.stripeCustomerId` + `currentPeriodEnd` ; `login()` retourne `Promise<User \| null>` (utilisé par Login.tsx pour redirection admin/membre) ; plan enum épuré (starter/premium/vip) dans AdminMembers + AdminMemberDetail | `src/types/database.ts`, `src/contexts/AuthContext.tsx`, `src/pages/admin/AdminMembers.tsx`, `src/pages/admin/AdminMemberDetail.tsx` |
+| **T3 — useIsOraPlus** | Hook : `isOraPlus` (plan === 'ora_plus' && status === 'active') + `effectiveUnitPrice(pub)` → prix réduit si Óra+, sinon prix public | `src/hooks/useIsOraPlus.ts` |
+| **T4 — activateOraPlus** | Deno helper partagé : email → cherche profil → invite si nouveau (`inviteUserByEmail`) → update `stripe_customer_id` → upsert subscription `plan: ora_plus, status: active` avec `stripe_price_id` + `current_period_end` | `supabase/functions/_shared/activateOraPlus.ts` |
+| **T5 — create-subscription-session** | Edge Function : `mode: 'subscription'`, locale fr, phone collection, `success_url` → `/abonnement/succes?session_id=…`, `cancel_url` → `/commande/annulee` ; Zod validation body ; 503 si `STRIPE_SECRET_KEY` absente | `supabase/functions/create-subscription-session/index.ts` |
+| **T6 — stripe-webhook** | Edge Function : vérifie signature `Stripe-Signature` (401 si invalide) ; 4 events : `checkout.session.completed` → `activateOraPlus` ; `invoice.paid` → status active + period_end ; `invoice.payment_failed` → status expired ; `customer.subscription.deleted` → status cancelled | `supabase/functions/stripe-webhook/index.ts` |
+| **T7 — verify-subscription-session** | Edge Function : vérifie si webhook déjà traité via `stripe_subscription_id` ; sinon exécute `activateOraPlus` en fallback ; retourne `{ status: 'processed' \| 'pending' }` | `supabase/functions/verify-subscription-session/index.ts` |
+| **T8 — OraPlus CTA** | 3 boutons "S'abonner" (hero + 2 final CTA) → `handleSubscribe()` via `supabase.functions.invoke('create-subscription-session')` ; `subLoading` + `subError` ; `useNavigate` conservé pour le bouton secondaire | `src/pages/OraPlus.tsx` |
+| **T9 — /abonnement/succes** | Page succès : appelle `verify-subscription-session` au mount ; état `loading` → `processed` (welcome Óra+) → `pending/error` (fallback "Merci, activation en cours") | `src/pages/AbonnementSucces.tsx`, `src/App.tsx` |
+| **T10 — DrinkOptionsModal** | `useIsOraPlus` + `effectiveUnitPrice(basePrice)` pour `unitPrice` ; size buttons : prix barré + prix réduit si Óra+ | `src/components/cart/DrinkOptionsModal.tsx` |
+| **T11 — Menu + Carousel** | Remplacement `oraMemberUnitPrice` direct par `effectiveUnitPrice` du hook dans Menu (oraMemberHint) et HomeProductCarousel (label "Óra+ dès …") | `src/pages/Menu.tsx`, `src/components/home/HomeProductCarousel.tsx` |
+| **T12 — Déploiement** | 3 Edge Functions déployées (ACTIVE) sur Supabase `tulhiipucrnyejheuitv` via MCP | Supabase Dashboard |
+
+**État final** : code complet et déployé. Fonctionnel dès que les 3 secrets Stripe sont configurés et le webhook Stripe enregistré. `tsc --noEmit` : 0 erreurs. Docs : `docs/superpowers/specs/2026-05-03-ora-plus-stripe-cycle1-design.md` + `docs/superpowers/plans/2026-05-03-ora-plus-stripe-cycle1.md`.
+
+---
+
+### Logs détaillés (2026-04-23 → 2026-04-25) — PessoBot S1 → S3 (production)
+
+**Contexte** : refonte complète de l'assistant PessoBot, passage d'un prompt hardcodé de 2 800 tokens à une architecture dynamique (rate limit Postgres + tool calling + personnalisation + Óra+ éditable). Voir récap dédié : **[`docs/RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**.
+
+| Sprint | Livré | Fichiers clés |
+|--------|-------|---------------|
+| **S1 — Base dynamique** (2026-04-23) | Table `bar_settings` + vue `v_pessobot_menu`, header `X-Pessobot-Signature`, CORS prod, `/admin/infos` pour éditer adresse/horaires/contact | `supabase/migrations/20260424120000_pessobot_bar_settings.sql`, `docs/n8n/pessobot-workflow-v1.json`, `src/components/common/Chatbot.tsx`, `src/pages/admin/AdminInfos.tsx` |
+| **S2 — Personnalisation + Óra+** (2026-04-24) | RPC `fn_pessobot_profile_snapshot(uuid)` `SECURITY DEFINER`, rôle Postgres `pessobot` read-only, `bar_settings.subscription_info` (jsonb) éditable, workflow v2.1, pitch Óra+ adaptatif (visiteur / free / VIP) | `supabase/migrations/20260424140000_pessobot_s2_profile_snapshot.sql`, `docs/n8n/pessobot-workflow-v2.json`, `docs/n8n/pessobot-workflow-v2.1.json`, `src/pages/admin/AdminInfos.tsx` (bloc Óra+), `src/types/database.ts` |
+| **S3 — Rate limit + Tool calling** (2026-04-24 soir) | Rate limit Postgres (30/10 min IP + 5/10 s session) via `fn_pessobot_rate_check`, 2 tools Langchain (`get_menu`, `get_upcoming_events`) en sub-workflows, persona divisée par 2 (~900 → ~400 tokens), liens cliquables dans le chatbot | `supabase/migrations/20260424220000_pessobot_s3_ratelimit_tools.sql`, `docs/n8n/pessobot-workflow-v3.json`, `docs/n8n/pessobot-tool-get-menu.json`, `docs/n8n/pessobot-tool-get-upcoming-events.json`, `src/components/common/Chatbot.tsx` (autolinker) |
+| **Fixes v3 (3 itérations)** (2026-04-24 T23:50 → 2026-04-25 T00:30) | Résolution "invalid uuid: undefined" pour visiteur anonyme. 3 pièges n8n documentés : (1) template `{{undefined}}` → `queryReplacement` + `$1`, (2) `$json` change par node → référencer `$('Webhook').first().json`, (3) node à 0 item coupe le flow → `alwaysOutputData: true` | `docs/n8n/pessobot-workflow-v3.json`, `docs/ACTIONS_LOG.md` (3 entrées détaillées) |
+
+**État final** : v3 en production, stable, 0 bug résiduel. Documentation complète dans [`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md) (architecture, flow, DB, sécurité, monitoring, backlog S4).
+
+### Logs détaillés (2026-04-22) — préférences UI admin côté serveur
+
+**Contexte** : les filtres / recherche sur les listes admin (membres, événements, produits) étaient déjà persistés en `localStorage` via `usePersistentAdminState` ; demande de **synchroniser ces préférences sur le profil Supabase** pour retrouver le même état sur un autre navigateur ou post-reconnexion.
+
+| Étape | Contenu |
+|-------|---------|
+| **Migration** | `supabase/migrations/20260422120000_profiles_admin_ui_prefs.sql` : colonne **`profiles.admin_ui_prefs`** (`jsonb`, défaut `{}`), une entrée par clé logique (`members_filters_v1`, `admin_events_filters_v1`, `admin_products_filters_v1`, etc.). |
+| **Types** | `src/types/database.ts` : type **`ProfilesTableRow`** (évite la référence circulaire `Database → profiles.Row` qui cassait l’inférence client) + champ `admin_ui_prefs` sur le profil. |
+| **Hook** | `usePersistentAdminState` : lecture **locale immédiate** ; si admin et session prête (`isLoading` false), **hydratation** depuis `admin_ui_prefs[key]` ; **écriture** locale + **debounce ~650 ms** vers Supabase (read-merge-write sur l’objet JSON). Appels via `(supabase as any)` alignés sur `useAdminMembers` (schéma TS incomplet vs `GenericSchema` postgrest-js v2). |
+| **Déploiement BDD** | Appliquer la migration sur le projet Supabase (CLI `db push` ou SQL manuel) avant de compter sur la sync en prod. |
+
+### Logs détaillés (2026-04-21) — compte header, panier v1, accueil « + »
+
+**Contexte** : UX compte dans la navbar ; panier client **sans paiement en ligne** (spec Dal Cielo–like, DA éditoriale PessÓra) ; ajout rapide depuis l’accueil.
+
+| Étape | Contenu |
+|-------|---------|
+| **Design** | Spec **`docs/superpowers/specs/2026-04-21-panier-editorial-design.md`** : v1 = tiroir + persistance locale + CTA bar/contact ; **phase B** (commande complète / backend) documentée pour présentation gérant, hors implémentation immédiate. |
+| **Navbar compte** | `Header.tsx` : suppression du libellé « Mon espace » ; icône **User** conservée ; **prénom** (fallback e-mail / « Compte ») à côté ; lien **`/admin`** si `isAdmin`, sinon `/mon-espace`, invité → `/connexion`. |
+| **État panier** | **`zustand` + `persist`** (`package.json`) — `src/store/cartStore.ts` : lignes `CartLine` (`productId` string, `unitPrice`, `quantity`, `optionsKey`, `optionLabels`, `image` emoji…), fusion par produit + options ; `openCart` à l’ajout ; `isOpen` **non** persisté. |
+| **Helpers** | `src/lib/cartLine.ts` : `buildDrinkCartOptions` (lait + boosters → clé + prix unitaire + libellés), aligné fiche boisson. |
+| **UI panier** | `src/components/cart/CartDrawer.tsx` : tiroir latéral (Framer Motion, `createPortal`, overlay, scroll lock, Échap), liste éditoriale, total `formatEurFr`, mentions règlement sur place, CTA **Préparer ma venue** → `/contact`, **Appeler le bar**, vider le panier. |
+| **Intégration** | `App.tsx` : `<CartDrawer />` avec le chrome public. `Header.tsx` : clic sac → `toggleCart`, badge quantité si > 0, micro-animation si le nombre augmente (respect `prefers-reduced-motion`). `DrinkDetail.tsx` : « Ajouter au panier » branché sur le store + feedback **« Ajouté au panier »** ~2 s. |
+| **Accueil — coups de cœur** | `HomeProductCarousel.tsx` : bouton **+** sur chaque vignette (HTML valide : lien overlay sur l’image + bouton au-dessus, texte en second lien) ; ajout **1×** avec **lait par défaut** (`milkOptions[0]`) et **sans boosters** ; style **discret** (fond blanc léger, flou fin, filet léger, `Plus` trait fin — pas de pastille noire pleine). |
+| **Build** | `npm run build` validé après ces lots. |
+| **Audit global** | **`docs/AUDIT_GLOBAL_KARIBLOOM_PESSORA.md`** — revue selon skill Karibloom (transposition Vite / HeroUI / Supabase) : synthèse + axes formulaires, SEO, déploiement, checklist actions. |
 
 ### Logs détaillés (2026-04-18) — admin membres & fiche
 
@@ -112,6 +229,12 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 
 | Date | Lot | Fichiers / sujets principaux |
 |------|-----|------------------------------|
+| **2026-05-02** | **Gamme produit détail + Stripe Checkout (13 tâches)** | Migration slug, `toSlug`, `CartLine.source`, Zod schemas, `useGammeProduct`, `GammeProductDetail`, `RangeDetail` liens, `AdminGammes` slug, route App, Edge Function Stripe, `useCheckout`, `CartDrawer` badges+Commander, pages `/commande/succes` + `/commande/annulee`. Voir **§ Logs détaillés (2026-05-02)**. |
+| **2026-04-25** | **PessoBot v3 — fixes finaux (3 itérations n8n)** | `docs/n8n/pessobot-workflow-v3.json` + `docs/ACTIONS_LOG.md`. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)** §7 pour les 3 pièges n8n résolus (template `undefined`, scope `$json`, `alwaysOutputData`). |
+| **2026-04-24** | **PessoBot S3 — Rate limit + Tool calling** | RPC `fn_pessobot_rate_check`, tools `get_menu` / `get_upcoming_events`, persona ÷2, liens cliquables. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**. |
+| **2026-04-24** | **PessoBot S2 — Personnalisation + Óra+** | RPC `fn_pessobot_profile_snapshot`, rôle `pessobot` read-only, `bar_settings.subscription_info` éditable, pitch Óra+ adaptatif. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**. |
+| **2026-04-23** | **PessoBot S1 — Base dynamique** | `bar_settings`, vue `v_pessobot_menu`, signature webhook, CORS prod, `/admin/infos`. Voir **[`RECAP_PESSOBOT.md`](./RECAP_PESSOBOT.md)**. |
+| **2026-04-21** | **Panier v1 + header compte + accueil « + » + audit Karibloom** | Voir **§ Logs détaillés (2026-04-21)** : panier (`cartStore`, `CartDrawer`, etc.), spec panier, `zustand` ; **audit global** `AUDIT_GLOBAL_KARIBLOOM_PESSORA.md` (grille Client Builder). |
 | **2026-04-18** | **Admin — fiche membre + RLS + spec** | Voir **§ Logs détaillés (2026-04-18)** ci-dessous : page `/admin/membres/:id`, édition profil/abonnement, historiques commandes / bilans / événements, migration SQL, spec design, liste membres en cartes cliquables. |
 | **2026-04-19** | **Accueil « Nespresso » + données** | `src/data/homeDrinkShowcase.ts` (3 visuels × 4 gammes), `Home.tsx` : onglets Wellness / Énergie / Shakes / Coffee + grille 1+2 frameless, coins ~28px. Remplace l’ancienne section `ProductCard` shakes. |
 | **2026-04-19** | **Spec dashboard** | `docs/superpowers/specs/2026-04-19-dashboard-real-data.md` — branchement dashboard / admin sur Supabase (événements, commandes, KPIs). |
@@ -130,8 +253,10 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 ### Fichiers souvent concernés
 
 - Layout : `Header.tsx`, `HeaderSubNav.tsx`, `headerNav.ts`
+- Panier : `store/cartStore.ts`, `lib/cartLine.ts`, `components/cart/CartDrawer.tsx`
 - Global : `index.css`
 - Pages : `Home.tsx`, `Menu.tsx`, `Concept.tsx`, `Contact.tsx`, `DrinkDetail.tsx`, `LuxeMockup.tsx`, `App.tsx`, `seoConfig.ts`
+- Accueil : `components/home/HomeProductCarousel.tsx`, `data/homeProductCarousel.ts`
 - Données : `productsData.ts`, `menuData.ts`, `infoData.ts`, `homeDrinkShowcase.ts`, `CGV.tsx`
 - Auth : `contexts/AuthContext.tsx`, `lib/supabaseClient.ts`
 
@@ -160,7 +285,7 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 4. Auth, espace membre, admin  
 5. Chatbot + a11y / perf / routes  
 
-**Suite possible** : implémenter la spec dashboard réelles données (`2026-04-19-dashboard-real-data.md`).
+**Suite possible** : implémenter la spec dashboard réelles données (`2026-04-19-dashboard-real-data.md`) ; **webhook Stripe** (mise à jour statut order post-paiement, phase suivante du checkout) ; configurer `STRIPE_SECRET_KEY` en secret Supabase pour activer le paiement gamme.
 
 ---
 
@@ -169,6 +294,7 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 - Vidéo hero Home (placeholder commenté).
 - Aligner la spec luxe éditoriale avec l’état actuel (Bodoni / Jost, frameless).
 - Erreurs HMR ponctuelles sur `Home.tsx` — surveiller.
+- Panier : ajout rapide depuis la **grille menu** (hors fiche seule) ; micro-feedback « Ajouté » sur l’accueil ; numéro `tel:` réel dans `infoData` quand le bar le fournit.
 
 ---
 
@@ -176,7 +302,17 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 
 | Chemin | Rôle |
 |--------|------|
+| `RECAP_PAGE_MENU.md` | Récap design/layout/couleurs/contenu de la page `Menu` |
+| `RECAP_PAGE_ORA_PLUS.md` | Récap design/layout/couleurs/contenu de la page `Ora+` |
+| **`RECAP_PESSOBOT.md`** | **Récap complet PessoBot** (S1→S3, architecture, flow, DB, sécurité, 3 fixes v3, backlog S4) |
+| `PESSOBOT_BACKLOG.md` | État du backlog PessoBot (livré / en attente / S4 candidat) |
+| `PESSOBOT_GUIDE.md` | Guide admin pour former un utilisateur à `/admin/infos` et au suivi bot |
+| `n8n/README.md` | Déploiement des 4 workflows n8n + changelog v1→v3 |
+| `n8n/pessobot-workflow-v3.json` | Workflow principal PessoBot (prod) |
+| `n8n/pessobot-tool-get-menu.json` | Sub-workflow tool `get_menu` |
+| `n8n/pessobot-tool-get-upcoming-events.json` | Sub-workflow tool `get_upcoming_events` |
 | `AUDIT_SECURITE_PESSORA.md` | Audit sécurité — obligations dev |
+| `AUDIT_GLOBAL_KARIBLOOM_PESSORA.md` | **Audit global** — grille Karibloom Client Builder (stack, archi, SEO, forms, perf, déploiement) |
 | `ETAPES_APRES_BDD.md` | Étapes post-BDD |
 | `SUPABASE_SCHEMA.sql` | Schéma Supabase (référence) |
 | `supabase_migration_dashboard.sql` | Migration liée dashboard (si utilisée) |
@@ -186,6 +322,9 @@ Convention : **ajouter une entrée datée en tête de liste** à chaque lot de t
 | `superpowers/specs/2026-04-18-supabase-run-club-espace-client-design.md` | Espace client / Run Club |
 | `superpowers/specs/2026-04-19-dashboard-real-data.md` | Dashboard & admin — vraies données |
 | `superpowers/specs/2026-04-18-admin-membre-fiche-design.md` | **Spec** — fiche admin membre (édition, historiques, RLS) |
+| `superpowers/specs/2026-04-21-panier-editorial-design.md` | **Spec** — panier client v1 (tiroir, persistance, sans paiement) + archive phase commande (B) |
+| `superpowers/specs/2026-05-02-gamme-product-detail-stripe-design.md` | **Spec** — page détail produit gamme, panier unifié bar+boutique, Stripe Checkout, Zod |
+| `superpowers/plans/2026-05-02-gamme-product-detail-stripe.md` | **Plan** — 13 tâches : slug, types, CartLine, Zod, hooks, pages, Edge Function Stripe |
 | `LOG_TRAVAIL_2026-04-18.md` | **Log** chronologique session 2026-04-18 (admin produits/membres, fiche, migration, commits) |
 | `superpowers/plans/*.md` | Plans associés aux specs ci-dessus |
 
