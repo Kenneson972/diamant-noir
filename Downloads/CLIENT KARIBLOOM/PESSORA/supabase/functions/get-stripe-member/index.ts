@@ -13,15 +13,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const supabaseAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
+
 async function verifyAdmin(req: Request): Promise<{ ok: true } | { ok: false; response: Response }> {
   const token = req.headers.get('Authorization')?.replace('Bearer ', '')
   if (!token) {
     return { ok: false, response: new Response(JSON.stringify({ error: 'Non autorisé' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }) }
   }
-  const supabaseAdmin = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-  )
   const { data: { user }, error: authErr } = await supabaseAdmin.auth.getUser(token)
   if (authErr || !user) {
     return { ok: false, response: new Response(JSON.stringify({ error: 'Non autorisé' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }) }
@@ -52,13 +53,15 @@ serve(async (req) => {
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2024-04-10' })
-    const customer = await stripe.customers.retrieve(parsed.data.stripe_customer_id, {
+    const customerOrDeleted = await stripe.customers.retrieve(parsed.data.stripe_customer_id, {
       expand: ['subscriptions'],
-    }) as Stripe.Customer
+    })
 
-    if (customer.deleted) {
+    if (customerOrDeleted.deleted) {
       return new Response(JSON.stringify({ error: 'Client Stripe supprimé' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
+
+    const customer = customerOrDeleted as Stripe.Customer
 
     const sub = customer.subscriptions?.data[0]
     if (!sub) {
