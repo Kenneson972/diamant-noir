@@ -46,6 +46,16 @@ type EventRegRow = {
   events: { id: string; title: string; date: string | null; type: string | null } | null;
 };
 
+type StripeData = {
+  status: string;
+  current_period_end: number;
+  cancel_at_period_end: boolean;
+  plan_name: string;
+  amount: number;
+  currency: string;
+  payment_method: { brand: string; last4: string; exp_month: number; exp_year: number } | null;
+};
+
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="mb-4 font-display text-[18px] font-normal text-black" style={{ fontFamily: 'var(--font-display)' }}>
@@ -82,6 +92,25 @@ const AdminMemberDetail = () => {
   const [savingSub, setSavingSub] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [stripeData, setStripeData] = useState<StripeData | null>(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+  const [cancellingStripe, setCancellingStripe] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+
+  const loadStripeDataForCustomer = useCallback(async (customerId: string) => {
+    setStripeLoading(true);
+    setStripeError(null);
+    const { data, error: fnErr } = await supabase.functions.invoke('get-stripe-member', {
+      body: { stripe_customer_id: customerId },
+    });
+    setStripeLoading(false);
+    if (fnErr || !data) {
+      setStripeError('Données Stripe indisponibles');
+      return;
+    }
+    setStripeData(data as StripeData);
+  }, []);
 
   const load = useCallback(async () => {
     if (!memberId) return;
@@ -109,6 +138,9 @@ const AdminMemberDetail = () => {
     const subs = Array.isArray(p.subscriptions) ? p.subscriptions[0] : p.subscriptions;
     setProfile(p);
     setSubscription(subs ?? null);
+    if (p.stripe_customer_id) {
+      void loadStripeDataForCustomer(p.stripe_customer_id);
+    }
     setProfileForm({
       first_name: p.first_name ?? '',
       last_name: p.last_name ?? '',
@@ -158,7 +190,7 @@ const AdminMemberDetail = () => {
     else setEventRegs((eRes.data as EventRegRow[]) ?? []);
 
     setLoading(false);
-  }, [memberId]);
+  }, [memberId, loadStripeDataForCustomer]);
 
   useEffect(() => {
     load();
@@ -167,6 +199,35 @@ const AdminMemberDetail = () => {
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3200);
+  };
+
+  const cancelStripeSubscription = async () => {
+    if (!subscription?.stripe_subscription_id) return;
+    setCancellingStripe(true);
+    const { error: fnErr } = await supabase.functions.invoke('cancel-stripe-subscription', {
+      body: { stripe_subscription_id: subscription.stripe_subscription_id },
+    });
+    setCancellingStripe(false);
+    if (fnErr) {
+      showToast("Erreur lors de l'annulation Stripe.");
+      return;
+    }
+    setConfirmCancel(false);
+    showToast('Annulation programmée au prochain renouvellement.');
+    if (profile?.stripe_customer_id) void loadStripeDataForCustomer(profile.stripe_customer_id);
+  };
+
+  const openStripePortal = async () => {
+    if (!profile?.stripe_customer_id) return;
+    const returnUrl = `${window.location.origin}/admin/membres/${memberId}`;
+    const { data, error: fnErr } = await supabase.functions.invoke('admin-portal-session', {
+      body: { stripe_customer_id: profile.stripe_customer_id, return_url: returnUrl },
+    });
+    if (fnErr || !data?.url) {
+      showToast("Impossible d'ouvrir le portail Stripe.");
+      return;
+    }
+    window.open(data.url, '_blank', 'noopener');
   };
 
   const saveProfile = async () => {
@@ -314,7 +375,7 @@ const AdminMemberDetail = () => {
               <span>{profile?.email ?? '—'}</span>
             </div>
             <p className="mt-1.5 text-[10px] font-light leading-relaxed text-black/35">
-              L’e-mail de connexion ne se modifie pas ici. Changement = procédure manuelle (Auth / support).
+              L'e-mail de connexion ne se modifie pas ici. Changement = procédure manuelle (Auth / support).
             </p>
           </div>
           <div>
@@ -463,9 +524,137 @@ const AdminMemberDetail = () => {
           onClick={saveSubscription}
           className="mt-6 h-10 rounded-[2px] bg-noir px-6 text-[10px] font-normal uppercase tracking-[0.12em] text-white transition-colors hover:bg-anthracite disabled:opacity-45"
         >
-          {savingSub ? 'Enregistrement…' : 'Enregistrer l’abonnement'}
+          {savingSub ? 'Enregistrement…' : "Enregistrer l'abonnement"}
         </button>
       </section>
+
+      {profile?.stripe_customer_id && (
+        <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-display text-[18px] font-normal text-black" style={{ fontFamily: 'var(--font-display)' }}>
+              Abonnement Stripe
+            </h2>
+            {stripeData && (
+              <span
+                className={`rounded-[20px] border px-2.5 py-0.5 text-[9px] font-normal uppercase tracking-[0.1em] ${
+                  stripeData.cancel_at_period_end
+                    ? 'border-orange-200 bg-orange-50 text-orange-700'
+                    : stripeData.status === 'active'
+                      ? 'border-green-200 bg-green-50 text-green-700'
+                      : 'border-noir/10 bg-noir/[0.03] text-black/45'
+                }`}
+              >
+                {stripeData.cancel_at_period_end
+                  ? `Annulation le ${new Date(stripeData.current_period_end * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`
+                  : stripeData.status === 'active'
+                    ? 'Actif'
+                    : stripeData.status}
+              </span>
+            )}
+          </div>
+
+          {stripeLoading && (
+            <div className="grid grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 animate-pulse rounded-[2px] bg-noir/[0.05]" />
+              ))}
+            </div>
+          )}
+
+          {stripeError && !stripeLoading && (
+            <p className="text-[11px] font-light text-black/40">{stripeError}</p>
+          )}
+
+          {stripeData && !stripeLoading && (
+            <>
+              {stripeData.cancel_at_period_end && (
+                <div className="mb-4 rounded-[2px] border border-orange-200 bg-orange-50 px-3 py-2 text-[11px] text-orange-800">
+                  ⚠ Annulation programmée — accès Óra+ jusqu'au{' '}
+                  {new Date(stripeData.current_period_end * 1000).toLocaleDateString('fr-FR', { dateStyle: 'long' })}
+                </div>
+              )}
+
+              <div className="mb-4 grid grid-cols-3 gap-3">
+                <div className="rounded-[2px] border border-noir/[0.07] bg-surface-muted p-3">
+                  <p className="mb-1 text-[9px] uppercase tracking-[0.08em] text-black/35">Plan</p>
+                  <p className="text-[13px] font-normal text-black">{stripeData.plan_name}</p>
+                  <p className="text-[9px] text-black/40">
+                    {(stripeData.amount / 100).toFixed(2).replace('.', ',')} € / mois
+                  </p>
+                </div>
+                <div className="rounded-[2px] border border-noir/[0.07] bg-surface-muted p-3">
+                  <p className="mb-1 text-[9px] uppercase tracking-[0.08em] text-black/35">Prochain prélèvement</p>
+                  <p className="text-[13px] font-normal text-black">
+                    {new Date(stripeData.current_period_end * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                  </p>
+                </div>
+                <div className="rounded-[2px] border border-noir/[0.07] bg-surface-muted p-3">
+                  <p className="mb-1 text-[9px] uppercase tracking-[0.08em] text-black/35">Paiement</p>
+                  {stripeData.payment_method ? (
+                    <>
+                      <p className="text-[13px] font-normal capitalize text-black">
+                        {stripeData.payment_method.brand} ···· {stripeData.payment_method.last4}
+                      </p>
+                      <p className="text-[9px] text-black/40">
+                        exp. {stripeData.payment_method.exp_month}/{String(stripeData.payment_method.exp_year).slice(-2)}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-[12px] font-light text-black/35">—</p>
+                  )}
+                </div>
+              </div>
+
+              <p className="mb-4 font-mono text-[10px] text-black/40">
+                {subscription?.stripe_subscription_id ?? '—'}
+              </p>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={openStripePortal}
+                  className="flex-1 h-9 rounded-[2px] border border-noir/10 px-4 text-[10px] uppercase tracking-[0.1em] text-black/55 transition-colors hover:border-noir/25 hover:text-black"
+                >
+                  Portail Stripe ↗
+                </button>
+                {!stripeData.cancel_at_period_end && subscription?.stripe_subscription_id && (
+                  confirmCancel ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-black/50">Confirmer l'annulation ?</span>
+                      <button
+                        type="button"
+                        disabled={cancellingStripe}
+                        onClick={cancelStripeSubscription}
+                        className="h-9 rounded-[2px] border border-red-200 bg-red-50 px-4 text-[10px] uppercase tracking-[0.1em] text-red-700 hover:bg-red-100 disabled:opacity-45"
+                      >
+                        {cancellingStripe ? 'Annulation…' : 'Oui, annuler'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmCancel(false)}
+                        className="h-9 rounded-[2px] border border-noir/10 px-3 text-[10px] text-black/45 hover:border-noir/25"
+                      >
+                        Non
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmCancel(true)}
+                      className="h-9 rounded-[2px] border border-red-200 px-4 text-[10px] uppercase tracking-[0.1em] text-red-600 transition-colors hover:bg-red-50"
+                    >
+                      Annuler abonnement
+                    </button>
+                  )
+                )}
+              </div>
+              <p className="mt-2 text-right text-[9px] font-light text-black/30">
+                L'annulation prend effet à la fin de la période en cours
+              </p>
+            </>
+          )}
+        </section>
+      )}
 
       <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Commandes</SectionTitle>
