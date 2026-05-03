@@ -3,19 +3,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Copy, Mail } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { DASH_MAIN_PAD } from '../../components/dashboard/layoutClasses';
 import type { Order, OrderItem, Profile, Subscription } from '../../types/database';
 
 const inputClass =
-  'w-full h-10 bg-surface-muted rounded-[2px] border border-black/[0.08] px-3 text-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20';
+  'w-full h-10 bg-surface-muted rounded-[2px] border border-noir/[0.08] px-3 text-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-noir/20';
 
-const PLAN_OPTIONS: Subscription['plan'][] = ['free', 'starter', 'premium', 'vip'];
+const PLAN_OPTIONS: Subscription['plan'][] = ['free', 'ora_plus'];
 const STATUS_OPTIONS: Subscription['status'][] = ['active', 'expired', 'cancelled'];
 
 const PLAN_LABEL: Record<string, string> = {
   free: 'Gratuit',
-  starter: 'Starter',
-  premium: 'Premium',
-  vip: 'VIP',
+  ora_plus: 'Óra+',
 };
 
 const ORDER_STATUS_LABEL: Record<string, string> = {
@@ -241,7 +240,7 @@ const AdminMemberDetail = () => {
 
   if (!memberId) {
     return (
-      <div className="max-w-[1400px]">
+      <div className={`${DASH_MAIN_PAD} mx-auto w-full max-w-[1400px]`}>
         <p className="text-[13px] text-black/40">Identifiant manquant.</p>
       </div>
     );
@@ -249,17 +248,17 @@ const AdminMemberDetail = () => {
 
   if (loading) {
     return (
-      <div className="max-w-[900px] space-y-6">
-        <div className="h-8 w-48 animate-pulse rounded bg-black/[0.06]" />
-        <div className="h-40 animate-pulse rounded-[2px] bg-black/[0.04]" />
-        <div className="h-40 animate-pulse rounded-[2px] bg-black/[0.04]" />
+      <div className={`${DASH_MAIN_PAD} mx-auto w-full max-w-[900px] space-y-6`}>
+        <div className="h-8 w-48 animate-pulse rounded bg-noir/[0.06]" />
+        <div className="h-40 animate-pulse rounded-[2px] bg-noir/[0.04]" />
+        <div className="h-40 animate-pulse rounded-[2px] bg-noir/[0.04]" />
       </div>
     );
   }
 
   if (error && !profile) {
     return (
-      <div className="max-w-[900px]">
+      <div className={`${DASH_MAIN_PAD} mx-auto w-full max-w-[900px]`}>
         <Link
           to="/admin/membres"
           className="mb-6 inline-flex items-center gap-2 text-[11px] font-light text-black/45 transition-colors hover:text-black"
@@ -275,7 +274,7 @@ const AdminMemberDetail = () => {
     `${profile?.first_name ?? ''} ${profile?.last_name ?? ''}`.trim() || profile?.email || 'Membre';
 
   return (
-    <div className="max-w-[900px]">
+    <div className={`${DASH_MAIN_PAD} mx-auto w-full max-w-[900px]`}>
       <Link
         to="/admin/membres"
         className="mb-6 inline-flex items-center gap-2 text-[11px] font-light text-black/45 transition-colors hover:text-black"
@@ -284,12 +283,12 @@ const AdminMemberDetail = () => {
       </Link>
 
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-[2px] border border-black/10 bg-white px-4 py-2 text-[11px] text-black shadow-lg">
+        <div className="fixed bottom-24 right-4 z-50 rounded-[2px] border border-noir/10 bg-white px-4 py-2 text-[11px] text-black shadow-lg md:bottom-6 md:right-6">
           {toast}
         </div>
       )}
 
-      <header className="mb-10 border-b border-black/[0.06] pb-8">
+      <header className="mb-10 border-b border-noir/[0.06] pb-8">
         <h1
           className="font-display text-[32px] font-normal leading-none text-black"
           style={{ fontFamily: 'var(--font-display)' }}
@@ -297,7 +296,7 @@ const AdminMemberDetail = () => {
           {displayName}
         </h1>
         {profile?.role === 'admin' && (
-          <span className="mt-3 inline-block rounded-[2px] bg-black/[0.07] px-2 py-1 text-[8px] font-normal uppercase tracking-[0.12em] text-black/55">
+          <span className="mt-3 inline-block rounded-[2px] bg-noir/[0.07] px-2 py-1 text-[8px] font-normal uppercase tracking-[0.12em] text-black/55">
             Admin
           </span>
         )}
@@ -305,7 +304,7 @@ const AdminMemberDetail = () => {
 
       {error && <p className="mb-4 text-[11px] text-red-500/90">{error}</p>}
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Identité</SectionTitle>
         <div className="space-y-4">
           <div>
@@ -325,7 +324,7 @@ const AdminMemberDetail = () => {
               <button
                 type="button"
                 onClick={copyId}
-                className="inline-flex items-center gap-1 rounded-[2px] border border-black/12 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-black/45 hover:border-black/25 hover:text-black"
+                className="inline-flex items-center gap-1 rounded-[2px] border border-noir/12 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-black/45 hover:border-noir/25 hover:text-black"
               >
                 <Copy size={12} strokeWidth={1.5} /> Copier
               </button>
@@ -340,7 +339,7 @@ const AdminMemberDetail = () => {
         </div>
       </section>
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Profil</SectionTitle>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -372,13 +371,13 @@ const AdminMemberDetail = () => {
           type="button"
           disabled={savingProfile}
           onClick={saveProfile}
-          className="mt-6 h-10 rounded-[2px] bg-black px-6 text-[10px] font-normal uppercase tracking-[0.12em] text-white transition-colors hover:bg-black/85 disabled:opacity-45"
+          className="mt-6 h-10 rounded-[2px] bg-noir px-6 text-[10px] font-normal uppercase tracking-[0.12em] text-white transition-colors hover:bg-anthracite disabled:opacity-45"
         >
           {savingProfile ? 'Enregistrement…' : 'Enregistrer le profil'}
         </button>
       </section>
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Abonnement</SectionTitle>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -443,7 +442,7 @@ const AdminMemberDetail = () => {
               type="checkbox"
               checked={subForm.auto_renew}
               onChange={(e) => setSubForm((s) => ({ ...s, auto_renew: e.target.checked }))}
-              className="h-4 w-4 rounded border-black/20"
+              className="h-4 w-4 rounded border-noir/20"
             />
             <label htmlFor="auto_renew" className="text-[12px] text-black/60">
               Renouvellement automatique
@@ -451,7 +450,7 @@ const AdminMemberDetail = () => {
           </div>
         </div>
         {subscription && (
-          <div className="mt-4 border-t border-black/[0.06] pt-4 text-[10px] font-light text-black/40">
+          <div className="mt-4 border-t border-noir/[0.06] pt-4 text-[10px] font-light text-black/40">
             <p>
               Stripe subscription ID :{' '}
               <span className="font-mono text-[10px] text-black/55">{subscription.stripe_subscription_id ?? '—'}</span>
@@ -462,13 +461,13 @@ const AdminMemberDetail = () => {
           type="button"
           disabled={savingSub}
           onClick={saveSubscription}
-          className="mt-6 h-10 rounded-[2px] bg-black px-6 text-[10px] font-normal uppercase tracking-[0.12em] text-white transition-colors hover:bg-black/85 disabled:opacity-45"
+          className="mt-6 h-10 rounded-[2px] bg-noir px-6 text-[10px] font-normal uppercase tracking-[0.12em] text-white transition-colors hover:bg-anthracite disabled:opacity-45"
         >
           {savingSub ? 'Enregistrement…' : 'Enregistrer l’abonnement'}
         </button>
       </section>
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Commandes</SectionTitle>
         {sectionErrors.orders ? (
           <p className="text-[12px] text-amber-800/90">{sectionErrors.orders}</p>
@@ -477,7 +476,7 @@ const AdminMemberDetail = () => {
         ) : (
           <ul className="space-y-4">
             {orders.map((o) => (
-              <li key={o.id} className="border-b border-black/[0.05] pb-4 last:border-0 last:pb-0">
+              <li key={o.id} className="border-b border-noir/[0.05] pb-4 last:border-0 last:pb-0">
                 <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
                   <span className="text-[12px] font-normal text-black">
                     {new Date(o.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -499,7 +498,7 @@ const AdminMemberDetail = () => {
         )}
       </section>
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Bilans</SectionTitle>
         {sectionErrors.bilans ? (
           <p className="text-[12px] text-amber-800/90">{sectionErrors.bilans}</p>
@@ -508,7 +507,7 @@ const AdminMemberDetail = () => {
         ) : (
           <ul className="space-y-3">
             {bilans.map((b) => (
-              <li key={b.id} className="flex flex-wrap items-start justify-between gap-2 border-b border-black/[0.05] pb-3 last:border-0">
+              <li key={b.id} className="flex flex-wrap items-start justify-between gap-2 border-b border-noir/[0.05] pb-3 last:border-0">
                 <div>
                   <p className="text-[12px] text-black">
                     {b.date_rdv}{' '}
@@ -516,7 +515,7 @@ const AdminMemberDetail = () => {
                   </p>
                   {b.notes && <p className="mt-1 max-w-md text-[11px] font-light text-black/45">{b.notes}</p>}
                 </div>
-                <span className="rounded-[2px] bg-black/[0.05] px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-black/50">
+                <span className="rounded-[2px] bg-noir/[0.05] px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-black/50">
                   {BILAN_STATUT_LABEL[b.statut] ?? b.statut}
                 </span>
               </li>
@@ -525,7 +524,7 @@ const AdminMemberDetail = () => {
         )}
       </section>
 
-      <section className="mb-10 rounded-[2px] border border-black/[0.06] bg-white p-6">
+      <section className="mb-10 rounded-[2px] border border-noir/[0.06] bg-white p-6">
         <SectionTitle>Événements</SectionTitle>
         {sectionErrors.events ? (
           <p className="text-[12px] text-amber-800/90">{sectionErrors.events}</p>
@@ -534,7 +533,7 @@ const AdminMemberDetail = () => {
         ) : (
           <ul className="space-y-3">
             {eventRegs.map((r) => (
-              <li key={r.id} className="border-b border-black/[0.05] pb-3 last:border-0">
+              <li key={r.id} className="border-b border-noir/[0.05] pb-3 last:border-0">
                 <p className="text-[13px] font-normal text-black">{r.events?.title ?? 'Événement'}</p>
                 <p className="text-[11px] text-black/45">
                   {r.events?.date && <span>{r.events.date} · </span>}
