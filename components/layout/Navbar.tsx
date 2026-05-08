@@ -102,6 +102,10 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
     if (p === "/soumettre-ma-villa") return true;
     if (p === "/prestations" || p.startsWith("/prestations/")) return true;
     if (p === "/qui-sommes-nous") return true;
+    if (p === "/faq") return true;
+    if (p === "/confidentialite") return true;
+    if (p === "/terms") return true;
+    if (p === "/cookies") return true;
     return false;
   }, [pathname]);
 
@@ -112,7 +116,12 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
     setIsScrolled(typeof window !== "undefined" && window.scrollY > 24);
   }, [pathname]);
 
-  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
+  if (
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/espace-client")
+  ) {
     return null;
   }
 

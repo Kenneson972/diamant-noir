@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
@@ -15,14 +14,10 @@ export default async function ProprioVillasPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/dashboard");
-  }
-
   const { data: villas } = await supabase
     .from("villas")
     .select("*")
-    .eq("owner_id", user.id);
+    .eq("owner_id", user!.id);
 
   if (!villas || villas.length === 0) {
     return (

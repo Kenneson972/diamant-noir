@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Camera } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
@@ -18,13 +18,6 @@ export default async function VillaEditPage({ params }: Props) {
   const { villaId } = await params;
 
   const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?redirect=/dashboard");
-  }
 
   const { data: villa } = await supabase
     .from("villas")

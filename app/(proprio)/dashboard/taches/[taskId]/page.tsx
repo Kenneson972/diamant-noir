@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Calendar, ClipboardList, Home } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -15,14 +15,6 @@ export default async function TaskDetailPage({ params }: PageProps) {
   const { taskId } = await params;
 
   const supabase = await getSupabaseServer();
-
-  // Auth check
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/login?redirect=/dashboard/taches");
-  }
 
   // Fetch task
   const { data: task } = await supabase

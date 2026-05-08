@@ -1,19 +1,16 @@
 import Link from "next/link";
 import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 
 type BookingRow = Pick<
   Booking,
-  "id" | "start_date" | "end_date" | "guest_name" | "status" | "price"
+  "id" | "start_date" | "end_date" | "guest_name" | "status" | "price" | "total_price_cents"
 >;
 
 interface BookingListProps {
   bookings: BookingRow[];
   villaId: string;
-}
-
-function formatPrice(cents: number): string {
-  return (cents / 100).toFixed(2) + "€";
 }
 
 function formatDate(dateStr: string): string {
@@ -64,7 +61,7 @@ export function BookingList({ bookings, villaId }: BookingListProps) {
                     {formatDate(booking.end_date)}
                   </span>
                   <span className="w-1/6 font-medium text-navy">
-                    {formatPrice(booking.price)}
+                    {formatCurrency(getBookingPriceCents(booking))}
                   </span>
                   <span className="w-1/6">
                     <BookingStatusBadge status={booking.status} />

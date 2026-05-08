@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isAdminChatAllowedUser } from "@/lib/admin-chat-allowlist";
+import { getBookingPriceCents } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
@@ -99,7 +100,7 @@ export async function POST(request: Request) {
             b.payment_status === "paid" &&
             (b.created_at as string)?.startsWith(m.key)
         )
-        .reduce((s: number, b) => s + (Number(b.price) || 0), 0),
+        .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
     }));
 
     // ─── CONTEXTE COMPLET ────────────────────────────────────────────────────
@@ -136,14 +137,14 @@ export async function POST(request: Request) {
       finances: {
         revenue_total: bookings
           .filter((b) => b.payment_status === "paid")
-          .reduce((s: number, b) => s + (Number(b.price) || 0), 0),
+          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
         revenue_this_month: bookings
           .filter(
             (b) =>
               b.payment_status === "paid" &&
               new Date(b.created_at) >= startOfMonth
           )
-          .reduce((s: number, b) => s + (Number(b.price) || 0), 0),
+          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
         revenue_last_month: bookings
           .filter(
             (b) =>
@@ -151,7 +152,7 @@ export async function POST(request: Request) {
               new Date(b.created_at) >= startOfLastMonth &&
               new Date(b.created_at) <= endOfLastMonth
           )
-          .reduce((s: number, b) => s + (Number(b.price) || 0), 0),
+          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
         pending_payments: bookings.filter(
           (b) => b.payment_status !== "paid" && b.status === "confirmed"
         ).length,
@@ -159,7 +160,7 @@ export async function POST(request: Request) {
           villa_name: v.name,
           revenue: bookings
             .filter((b) => b.villa_id === v.id && b.payment_status === "paid")
-            .reduce((s: number, b) => s + (Number(b.price) || 0), 0),
+            .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
           bookings_count: bookings.filter((b) => b.villa_id === v.id).length,
         })),
         monthly_revenue: monthlyRevenue,

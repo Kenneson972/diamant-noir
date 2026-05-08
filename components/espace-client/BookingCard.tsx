@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent, Chip, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 
 interface Booking {
   id: string;
@@ -12,6 +13,7 @@ interface Booking {
   end_date: string;
   status: string;
   price?: number;
+  total_price_cents?: number | null;
   guest_name?: string;
   villa?: { name: string; location?: string; image_url?: string | null; image_urls?: string[] | null };
 }
@@ -110,9 +112,9 @@ export function BookingCard({ booking }: { booking: Booking }) {
         </div>
 
         <div className="mt-auto flex items-center justify-between border-t border-navy/5 pt-2">
-          {booking.price ? (
+          {booking.price != null || booking.total_price_cents != null ? (
             <span className="text-sm font-medium text-navy">
-              {Number(booking.price).toLocaleString("fr-FR")} €
+              {formatCurrency(getBookingPriceCents(booking as any))}
             </span>
           ) : (
             <span />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft, Mail, Home, Check, X, MessageCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -22,6 +22,8 @@ type Submission = {
 
 export default function SubmissionsPage() {
   const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const backHref = pathname.startsWith("/admin") ? "/admin" : "/dashboard/proprio";
   const supabase = getSupabaseBrowser();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,7 @@ export default function SubmissionsPage() {
       <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-none md:backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link
-            href="/dashboard/proprio"
+            href={backHref}
             className="flex items-center gap-2 text-navy/70 hover:text-navy"
           >
             <ArrowLeft size={20} />

@@ -55,7 +55,7 @@ export default async function HomePage() {
     <main className="min-h-dvh bg-offwhite">
       {/* Hero — vidéo / poster + cartes audience (rétabli après essai hero blanc) */}
       <section
-        className="relative flex min-h-[420px] w-full flex-col justify-center overflow-hidden bg-navy pt-24 xs:min-h-[480px] md:min-h-[min(80vh,760px)] md:py-20 md:pt-24"
+        className="relative flex min-h-[340px] w-full flex-col justify-center overflow-hidden bg-navy pt-24 xs:min-h-[380px] md:min-h-[min(65vh,580px)] md:py-16 md:pt-24"
         aria-labelledby="hero-title"
       >
         <HeroBackgroundMedia />

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, ArrowRight, Loader2, Mail } from "lucide-react"
 import { getSupabaseBrowser } from "@/lib/supabase"
+import { postLoginDestination } from "@/lib/auth/admin-access"
 
 const OTP_LEN = 6
 const RESEND_COOLDOWN_SEC = 60
@@ -22,6 +23,32 @@ type TenantMagicLinkFlowProps = {
 export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
   const router = useRouter()
   const supabase = getSupabaseBrowser()
+
+  const navigateAfterSession = useCallback(
+    async (path: string) => {
+      if (!supabase) return
+      const { data: userData } = await supabase.auth.getUser()
+      const u = userData.user
+      let profileRole: string | null = null
+      if (u) {
+        const { data: p } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", u.id)
+          .maybeSingle()
+        profileRole = p?.role ?? null
+      }
+      const dest = postLoginDestination({
+        requestedRedirect: path,
+        profileRole,
+        metadataRole: u?.user_metadata?.role as string | undefined,
+        email: u?.email,
+      })
+      router.push(dest)
+      router.refresh()
+    },
+    [supabase, router]
+  )
 
   const [mode, setMode] = useState<AuthMode>("login")
   const [step, setStep] = useState<Step>("email")
@@ -106,8 +133,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
           if (mode === "signup") {
             setStep("profile")
           } else {
-            router.push(redirectTo)
-            router.refresh()
+            await navigateAfterSession(redirectTo)
           }
           return
         }
@@ -122,7 +148,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       setDigits(Array(OTP_LEN).fill(""))
       otpInputRefs.current[0]?.focus()
     },
-    [supabase, email, mode, redirectTo, router]
+    [supabase, email, mode, redirectTo, navigateAfterSession]
   )
 
   useEffect(() => {
@@ -202,8 +228,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
       setError("Enregistrement impossible.")
       return
     }
-    router.push(redirectTo)
-    router.refresh()
+    await navigateAfterSession(redirectTo)
   }
 
   const switchMode = (m: AuthMode) => {

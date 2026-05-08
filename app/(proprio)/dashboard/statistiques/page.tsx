@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -14,14 +13,10 @@ export default async function ProprioStatistiquesIndexPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/dashboard/statistiques");
-  }
-
   const { data: villas } = await supabase
     .from("villas")
     .select("id, name, slug")
-    .eq("owner_id", user.id)
+    .eq("owner_id", user!.id)
     .order("name");
 
   if (!villas || villas.length === 0) {

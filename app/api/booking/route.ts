@@ -98,6 +98,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Create the booking in DB first
+    const priceCents = Math.round(price.total * 100);
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
       .insert({
@@ -108,6 +109,7 @@ export async function POST(request: Request) {
         payment_status: "unpaid",
         source: "direct",
         price: price.total,
+        total_price_cents: priceCents,
         guest_name: guestName || "Client Site Web"
       })
       .select()

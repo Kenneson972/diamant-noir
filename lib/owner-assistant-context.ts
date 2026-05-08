@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getBookingPriceCents } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -204,7 +205,7 @@ export async function buildOwnerContextPack(
   const paidBookings = bookings.filter((b) => b.payment_status === "paid");
 
   const totalRevenuePaid = paidBookings.reduce(
-    (sum, b) => sum + (Number(b.price) || 0),
+    (sum, b) => sum + (getBookingPriceCents(b) / 100),
     0
   );
 
@@ -214,7 +215,7 @@ export async function buildOwnerContextPack(
       const d = String(b.start_date ?? "");
       return d >= curMonthStart && d < nextMonthStart;
     })
-    .reduce((sum, b) => sum + (Number(b.price) || 0), 0);
+    .reduce((sum, b) => sum + (getBookingPriceCents(b) / 100), 0);
 
   // Revenus mois précédent
   const revenueLastMonth = paidBookings
@@ -222,7 +223,7 @@ export async function buildOwnerContextPack(
       const d = String(b.start_date ?? "");
       return d >= prevMonthStart && d < curMonthStart;
     })
-    .reduce((sum, b) => sum + (Number(b.price) || 0), 0);
+    .reduce((sum, b) => sum + (getBookingPriceCents(b) / 100), 0);
 
   // ── Upcoming (à partir d'aujourd'hui) ──
   const upcoming = bookings.filter(

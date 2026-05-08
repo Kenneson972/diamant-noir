@@ -1,9 +1,10 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import type { BookingStatus } from "@/types/domain";
 import { Calendar } from "lucide-react";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export const metadata: Metadata = {
   title: "Réservations — Administration Kayvila",
@@ -16,7 +17,7 @@ interface BookingRow {
   villa_id: string | null;
   start_date: string;
   end_date: string;
-  price: number;
+  total_price_cents: number | null;
   status: BookingStatus;
   villa_name?: string | null;
 }
@@ -26,7 +27,7 @@ async function getBookings(): Promise<BookingRow[]> {
 
   const { data: bookings } = await supabase
     .from("bookings")
-    .select("id, guest_name, guest_email, villa_id, start_date, end_date, price, status")
+    .select("id, guest_name, guest_email, villa_id, start_date, end_date, total_price_cents, status")
     .order("start_date", { ascending: false })
     .limit(50);
 
@@ -49,7 +50,7 @@ async function getBookings(): Promise<BookingRow[]> {
     }
   }
 
-  return bookings.map((b: { id: string; guest_name: string | null; guest_email: string | null; villa_id: string | null; start_date: string; end_date: string; price: number; status: string }) => ({
+  return bookings.map((b: { id: string; guest_name: string | null; guest_email: string | null; villa_id: string | null; start_date: string; end_date: string; total_price_cents: number | null; status: string }) => ({
     ...b,
     status: b.status as BookingStatus,
     villa_name: b.villa_id ? villaMap[b.villa_id] ?? null : null,
@@ -65,25 +66,20 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function formatPrice(price: number): string {
-  return `${price.toLocaleString("fr-FR")} €`;
+function formatPriceCents(cents: number | null): string {
+  if (cents === null || cents === undefined) return "—";
+  return `${(cents / 100).toLocaleString("fr-FR")} €`;
 }
 
 export default async function AdminReservationsPage() {
-  const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login?redirect=/admin/reservations");
-
   const bookings = await getBookings();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-navy">Réservations</h1>
-      </div>
+    <div className="space-y-8">
+      <AdminPageIntro
+        title="Réservations"
+        description="Les 50 derniers séjours enregistrés (montants en centimes confirmés)."
+      />
 
       {bookings.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
@@ -131,8 +127,8 @@ export default async function AdminReservationsPage() {
                   <td className="px-4 py-3 text-gray-600">
                     {formatDate(booking.end_date)}
                   </td>
-                  <td className="px-4 py-3 text-gray-900 font-medium">
-                    {formatPrice(booking.price)}
+                    <td className="px-4 py-3 text-gray-900 font-medium">
+                    {formatPriceCents(booking.total_price_cents)}
                   </td>
                   <td className="px-4 py-3">
                     <BookingStatusBadge status={booking.status} />

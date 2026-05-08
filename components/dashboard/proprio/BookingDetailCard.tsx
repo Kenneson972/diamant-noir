@@ -1,5 +1,6 @@
 import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 
 interface BookingDetailCardProps {
   booking: Booking;
@@ -12,10 +13,6 @@ function formatDate(dateStr: string): string {
     month: "long",
     day: "numeric",
   });
-}
-
-function formatPrice(cents: number): string {
-  return (cents / 100).toFixed(2) + "€";
 }
 
 export function BookingDetailCard({ booking }: BookingDetailCardProps) {
@@ -63,7 +60,7 @@ export function BookingDetailCard({ booking }: BookingDetailCardProps) {
             Total
           </span>
           <p className="mt-1.5 font-display text-2xl font-bold text-navy">
-            {formatPrice(booking.price)}
+            {formatCurrency(getBookingPriceCents(booking))}
           </p>
         </div>
       </div>

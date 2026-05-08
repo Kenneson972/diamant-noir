@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { Users } from "lucide-react";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export const metadata: Metadata = {
   title: "Propriétaires — Administration Kayvila",
@@ -51,20 +51,14 @@ async function getOwners(): Promise<OwnerRow[]> {
 }
 
 export default async function AdminProprietairesPage() {
-  const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login?redirect=/admin/proprietaires");
-
   const owners = await getOwners();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-navy">Propriétaires</h1>
-      </div>
+    <div className="space-y-8">
+      <AdminPageIntro
+        title="Propriétaires"
+        description="Comptes propriétaires et nombre de villas associées."
+      />
 
       {owners.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
@@ -103,7 +97,7 @@ export default async function AdminProprietairesPage() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/membres/${owner.id}`}
-                      className="text-sm text-[#C9A84C] hover:text-[#B8952E] font-medium"
+                      className="text-sm text-gold hover:text-gold/80 font-medium"
                     >
                       Voir
                     </Link>

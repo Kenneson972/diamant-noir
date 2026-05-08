@@ -3,6 +3,7 @@
 import { Filter, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils"
 import type { ReactNode } from "react"
 import { CreditCard } from "lucide-react"
 
@@ -13,6 +14,7 @@ export type VillaBookingRow = {
   end_date: string
   source?: string | null
   price: number | string
+  total_price_cents?: number | null
   payment_status?: string | null
   status?: string | null
 }
@@ -147,7 +149,7 @@ export function VillaBookingsRegistry({
                     </span>
                   </td>
                   <td className="py-5">
-                    <p className="font-bold text-navy">€{Number(booking.price).toLocaleString()}</p>
+                    <p className="font-bold text-navy">{formatCurrency(getBookingPriceCents({ total_price_cents: booking.total_price_cents, price: Number(booking.price) || 0 }))}</p>
                   </td>
                   <td className="py-5">
                     <span

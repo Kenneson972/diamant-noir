@@ -42,8 +42,8 @@ export function PerformanceMetrics(props: PerformanceMetricsProps) {
             key={metric.label}
             className="rounded-lg border border-navy/5 bg-white p-5 shadow-sm"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#C9A84C]/10">
-              <Icon className="h-5 w-5 text-[#C9A84C]" aria-hidden />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
+              <Icon className="h-5 w-5 text-gold" aria-hidden />
             </div>
             <span className="mt-3 block text-sm font-medium text-navy/60">
               {metric.label}

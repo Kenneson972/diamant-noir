@@ -6,6 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import {
   Alert,
   AlertDescription,
@@ -177,7 +178,7 @@ export default function ReservationDetailPage() {
               </Chip>
               {booking.price ? (
                 <Chip color="secondary" className="uppercase">
-                  {Number(booking.price).toLocaleString("fr-FR")} €
+                  {formatCurrency(getBookingPriceCents(booking))}
                 </Chip>
               ) : null}
             </div>

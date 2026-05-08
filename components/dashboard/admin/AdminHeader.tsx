@@ -1,0 +1,72 @@
+"use client";
+
+import { useMemo } from "react";
+import { Bell, Menu } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface AdminHeaderProps {
+  onToggleSidebar: () => void;
+}
+
+export function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
+  const { user } = useAuth();
+
+  const displayName =
+    user?.user_metadata?.full_name ?? user?.email ?? "Administrateur";
+
+  const today = useMemo(() => {
+    return new Date().toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, []);
+
+  const isoDate = useMemo(() => new Date().toISOString().split("T")[0] ?? "", []);
+
+  return (
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-navy/[0.08] bg-white/95 px-4 backdrop-blur-md md:h-[4.25rem] md:px-8">
+      <div className="flex min-w-0 items-center gap-3">
+        <button
+          type="button"
+          onClick={onToggleSidebar}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-navy/65 transition-colors hover:bg-navy/[0.06] hover:text-navy md:hidden"
+          aria-label="Ouvrir le menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="min-w-0">
+          <p className="font-display-dashboard text-[10px] font-bold uppercase tracking-[0.35em] text-gold">
+            Administration
+          </p>
+          <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">
+            Kayvila
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 md:gap-5">
+        <time
+          dateTime={isoDate}
+          className="hidden max-w-[14rem] text-right text-sm leading-snug text-navy/50 lg:block"
+        >
+          {today}
+        </time>
+        <button
+          type="button"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full text-navy/45 transition-colors hover:bg-navy/[0.06] hover:text-navy"
+          aria-label="Notifications (bientôt disponible)"
+        >
+          <Bell className="h-5 w-5" />
+        </button>
+        <div
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-xs font-bold text-white shadow-sm ring-2 ring-white md:h-10 md:w-10"
+          title={displayName}
+        >
+          <span aria-hidden>{displayName.charAt(0).toUpperCase()}</span>
+          <span className="sr-only">{displayName}</span>
+        </div>
+      </div>
+    </header>
+  );
+}

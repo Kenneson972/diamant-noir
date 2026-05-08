@@ -18,14 +18,6 @@ export default async function VillaReservationsPage({ params }: PageProps) {
 
   const supabase = await getSupabaseServer();
 
-  // Auth check
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return null;
-  }
-
   // Fetch villa
   const { data: villa, error: villaError } = await supabase
     .from("villas")
@@ -41,7 +33,7 @@ export default async function VillaReservationsPage({ params }: PageProps) {
   const { data: bookings } = await supabase
     .from("bookings")
     .select(
-      "id, start_date, end_date, guest_name, status, price"
+      "id, start_date, end_date, guest_name, status, price, total_price_cents"
     )
     .eq("villa_id", villaId)
     .order("start_date", { ascending: false });

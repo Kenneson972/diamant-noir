@@ -17,6 +17,7 @@ import {
 import Link from "next/link"
 import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
 import { useHomeAudience } from "@/contexts/HomeAudienceContext"
+import { postLoginDestination } from "@/lib/auth/admin-access"
 
 /**
  * Layout 60/40 (vidéo / panneau) — asset : /public/login-side.webm
@@ -97,7 +98,24 @@ function PasswordPanel({
           : formatSupabaseAuthMessage(signError.message)
       )
     } else {
-      router.push(redirectTo)
+      const { data: userData } = await supabase.auth.getUser()
+      const u = userData.user
+      let profileRole: string | null = null
+      if (u) {
+        const { data: p } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", u.id)
+          .maybeSingle()
+        profileRole = p?.role ?? null
+      }
+      const dest = postLoginDestination({
+        requestedRedirect: redirectTo,
+        profileRole,
+        metadataRole: u?.user_metadata?.role as string | undefined,
+        email: u?.email,
+      })
+      router.push(dest)
       router.refresh()
     }
     setLoading(false)
@@ -139,7 +157,23 @@ function PasswordPanel({
       return
     }
     if (data.session) {
-      router.push(redirectTo)
+      const u = data.session.user
+      let profileRole: string | null = null
+      if (u) {
+        const { data: p } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", u.id)
+          .maybeSingle()
+        profileRole = p?.role ?? null
+      }
+      const dest = postLoginDestination({
+        requestedRedirect: redirectTo,
+        profileRole,
+        metadataRole: u?.user_metadata?.role as string | undefined,
+        email: u?.email,
+      })
+      router.push(dest)
       router.refresh()
       return
     }

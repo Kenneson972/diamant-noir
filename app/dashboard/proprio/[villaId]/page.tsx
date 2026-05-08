@@ -8,6 +8,7 @@ import { ArrowLeft, LogOut, Settings, Calendar, FileText, ExternalLink, Plus, X,
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils"
 import { getSupabaseBrowser } from "@/lib/supabase"
 import { AdminCalendar } from "@/components/AdminCalendar"
 import { revalidateVillas } from "@/lib/actions"
@@ -731,7 +732,7 @@ export default function VillaDashboard() {
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
     
     const recentBookings = bookings.filter(b => new Date(b.created_at) >= thirtyDaysAgo)
-    const revenue = recentBookings.reduce((sum, b) => sum + (Number(b.price) || 0), 0)
+    const revenue = recentBookings.reduce((sum, b) => sum + (getBookingPriceCents(b) / 100), 0)
     
     const futureBookings = bookings.filter(b => new Date(b.end_date) >= now)
     const occupiedDays = futureBookings.reduce((sum, b) => {
@@ -1354,7 +1355,7 @@ export default function VillaDashboard() {
                               {new Date(b.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - {new Date(b.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                             </p>
                           </div>
-                          <div className="text-[10px] font-bold text-gold">€{b.price}</div>
+                          <div className="text-[10px] font-bold text-gold">{formatCurrency(getBookingPriceCents(b))}</div>
                         </div>
                       ))
                     )}

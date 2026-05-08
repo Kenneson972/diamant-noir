@@ -14,14 +14,6 @@ export default async function BookingDetailPage({ params }: PageProps) {
 
   const supabase = await getSupabaseServer();
 
-  // Auth check
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return null;
-  }
-
   // Fetch booking
   const { data: booking, error } = await supabase
     .from("bookings")

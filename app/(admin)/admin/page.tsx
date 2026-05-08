@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import {
@@ -8,6 +7,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export const metadata: Metadata = {
   title: "Administration — Kayvila",
@@ -15,58 +15,46 @@ export const metadata: Metadata = {
 
 export default async function AdminPage() {
   const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/admin");
-  }
-
-  const [villasResult, bookingsResult, ownersResult, clientsResult] =
-    await Promise.all([
-      supabase.from("villas").select("*", { count: "exact", head: true }),
-      supabase.from("bookings").select("*", { count: "exact", head: true }),
-      supabase.from("villas").select("owner_id", { count: "exact", head: true }),
-      supabase.from("bookings").select("guest_email", { count: "exact", head: true }),
-    ]);
-
-  // Distinct owners from villas
-  const { data: ownerIds } = await supabase
-    .from("villas")
-    .select("owner_id");
+  // Toutes les requêtes en parallèle
+  const [
+    { count: villaCount },
+    { count: bookingCount },
+    { data: ownerIds },
+    { data: guestEmails },
+  ] = await Promise.all([
+    supabase.from("villas").select("*", { count: "exact", head: true }),
+    supabase.from("bookings").select("*", { count: "exact", head: true }),
+    supabase.from("villas").select("owner_id"),
+    supabase.from("bookings").select("guest_email"),
+  ]);
 
   const uniqueOwners = ownerIds
     ? new Set(ownerIds.map((o) => o.owner_id).filter(Boolean)).size
     : 0;
 
-  // Distinct clients from booking guest emails
-  const { data: guestEmails } = await supabase
-    .from("bookings")
-    .select("guest_email");
-
   const uniqueClients = guestEmails
     ? new Set(guestEmails.map((b) => b.guest_email).filter(Boolean)).size
     : 0;
 
-  const villaCount = villasResult.count ?? 0;
-  const bookingCount = bookingsResult.count ?? 0;
-
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-navy">Administration</h1>
+      <AdminPageIntro
+        title="Tableau de bord"
+        description="Vue d’ensemble de l’activité Kayvila : villas, réservations et acteurs."
+      />
 
       <KpiRow
         items={[
           {
             icon: Building2,
             label: "Villas",
-            value: villaCount,
+            value: villaCount ?? 0,
           },
           {
             icon: CalendarDays,
             label: "Réservations",
-            value: bookingCount,
+            value: bookingCount ?? 0,
           },
           {
             icon: Users,

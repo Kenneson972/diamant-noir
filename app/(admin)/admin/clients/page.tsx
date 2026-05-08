@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { User } from "lucide-react";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export const metadata: Metadata = {
   title: "Clients — Administration Kayvila",
@@ -38,20 +38,14 @@ function formatDate(dateStr: string): string {
 }
 
 export default async function AdminClientsPage() {
-  const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login?redirect=/admin/clients");
-
   const tenants = await getTenants();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-navy">Clients</h1>
-      </div>
+    <div className="space-y-8">
+      <AdminPageIntro
+        title="Clients"
+        description="Profils avec le rôle locataire (espace client)."
+      />
 
       {tenants.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
@@ -88,7 +82,7 @@ export default async function AdminClientsPage() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/membres/${tenant.id}`}
-                      className="text-sm text-[#C9A84C] hover:text-[#B8952E] font-medium"
+                      className="text-sm text-gold hover:text-gold/80 font-medium"
                     >
                       Voir
                     </Link>

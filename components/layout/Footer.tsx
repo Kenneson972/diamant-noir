@@ -13,7 +13,12 @@ export const Footer = () => {
   const { locale, setLocale, currency, setCurrency, t } = useLocale();
   const { audience, clearAudience } = useHomeAudience();
 
-  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")) {
+  if (
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/espace-client")
+  ) {
     return null;
   }
 

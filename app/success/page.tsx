@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import { Check, Calendar, MapPin, ArrowRight } from "lucide-react";
 
 function SuccessContent() {
@@ -88,7 +89,7 @@ function SuccessContent() {
             )}
             {booking?.price != null && (
               <p className="text-navy/80 pt-2 border-t border-navy/10">
-                Montant : <strong>{Number(booking.price).toLocaleString("fr-FR")} €</strong>
+                Montant : <strong>{formatCurrency(getBookingPriceCents(booking))}</strong>
               </p>
             )}
           </div>

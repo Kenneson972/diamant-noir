@@ -1,6 +1,5 @@
-/* ─── Types Supabase générés manuellement depuis le schéma ───── */
-/* TODO: Régénérer avec supabase gen types quand le project_id sera disponible */
-
+/* ─── Types Supabase générés manuellement depuis le schéma réel (2026-05-07) ─── */
+/* Schéma vérifié via script d'audit — manque project_id pour auto-génération */
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
@@ -26,6 +25,12 @@ export interface Database {
           amenities_import_labels: Json | null;
           rooms_details: Json | null;
           seasonal_prices: Json | null;
+          commission_rate: number;
+          wifi_name: string | null;
+          wifi_password: string | null;
+          emergency_contacts: Json | null;
+          local_recommendations: Json | null;
+          checkout_instructions: string | null;
           cancellation_policy: string | null;
           house_rules: string | null;
           safety_info: string | null;
@@ -34,13 +39,13 @@ export interface Database {
           check_in_time: string | null;
           check_out_time: string | null;
           environment: string | null;
-          nearby_points_text: string | null;
-          equipment_interior_text: string | null;
-          equipment_exterior_text: string | null;
-          included_services_home_text: string | null;
-          included_services_collection_text: string | null;
-          a_la_carte_services_text: string | null;
-          booking_terms_text: string | null;
+          nearby_points: Json | null;
+          equipment_interior: Json | null;
+          equipment_exterior: Json | null;
+          included_services_home: Json | null;
+          included_services_collection: Json | null;
+          a_la_carte_services: Json | null;
+          booking_terms: Json | null;
           collection_tier: string | null;
           latitude: number | null;
           longitude: number | null;
@@ -62,7 +67,10 @@ export interface Database {
           guest_name: string | null;
           guest_email: string | null;
           price: number;
+          total_price_cents: number | null;
           stripe_session_id: string | null;
+          check_in: string | null;
+          check_out: string | null;
           checklist_state: Json | null;
           created_at: string;
         };
@@ -129,23 +137,14 @@ export interface Database {
         Insert: Record<string, Json>;
         Update: Record<string, Json>;
       };
-      villa_events: {
+      profiles: {
         Row: {
           id: string;
-          villa_id: string;
-          event_type: string;
-          created_at: string;
-        };
-        Insert: Record<string, Json>;
-        Update: Record<string, Json>;
-      };
-      contact_requests: {
-        Row: {
-          id: string;
-          name: string;
-          email: string;
-          subject: string | null;
-          message: string;
+          email: string | null;
+          full_name: string | null;
+          phone: string | null;
+          role: string;
+          avatar_url: string | null;
           created_at: string;
         };
         Insert: Record<string, Json>;
@@ -218,40 +217,6 @@ export interface Database {
         Insert: Record<string, Json>;
         Update: Record<string, Json>;
       };
-      wishlist: {
-        Row: {
-          id: string;
-          user_id: string;
-          villa_id: string;
-          created_at: string;
-        };
-        Insert: Record<string, Json>;
-        Update: Record<string, Json>;
-      };
-      availability_alerts: {
-        Row: {
-          id: string;
-          email: string;
-          villa_id: string | null;
-          checkin: string | null;
-          checkout: string | null;
-          is_active: boolean;
-          created_at: string;
-        };
-        Insert: Record<string, Json>;
-        Update: Record<string, Json>;
-      };
-      booking_calendar_slots: {
-        Row: {
-          id: string;
-          villa_id: string;
-          date: string;
-          is_available: boolean;
-          created_at: string;
-        };
-        Insert: Record<string, Json>;
-        Update: Record<string, Json>;
-      };
       support_tickets: {
         Row: {
           id: string;
@@ -263,6 +228,28 @@ export interface Database {
           status: string;
           created_at: string;
           resolved_at: string | null;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      order_status_history: {
+        Row: {
+          id: string;
+          booking_id: string;
+          from_status: string | null;
+          to_status: string;
+          changed_by: string;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      stripe_events_processed: {
+        Row: {
+          event_id: string;
+          event_type: string;
+          processed_at: string;
         };
         Insert: Record<string, Json>;
         Update: Record<string, Json>;

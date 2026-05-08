@@ -52,7 +52,10 @@ export const Chatbot = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const hidden = Boolean(
-    pathname?.startsWith("/dashboard") || pathname?.startsWith("/login")
+    pathname?.startsWith("/dashboard") ||
+      pathname?.startsWith("/login") ||
+      pathname?.startsWith("/admin") ||
+      pathname?.startsWith("/espace-client")
   );
 
   // Gestion de la session ID

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Task } from "@/types/domain";
@@ -10,20 +9,15 @@ export const metadata: Metadata = {
 
 export default async function TasksPage() {
   const supabase = await getSupabaseServer();
-
-  // Auth check
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/login?redirect=/dashboard/taches");
-  }
 
   // Fetch villas owned by user
   const { data: villas } = await supabase
     .from("villas")
     .select("id, name")
-    .eq("owner_id", user.id);
+    .eq("owner_id", user!.id);
 
   if (!villas || villas.length === 0) {
     return (

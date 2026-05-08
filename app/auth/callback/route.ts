@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { postLoginDestination } from "@/lib/auth/admin-access";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -39,6 +40,34 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       `${origin}/login?error=${encodeURIComponent(error.message)}&redirect=${next}`
     );
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let destination = next;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    destination = postLoginDestination({
+      requestedRedirect: next,
+      profileRole: profile?.role ?? null,
+      metadataRole: user.user_metadata?.role as string | undefined,
+      email: user.email,
+    });
+  }
+
+  if (destination !== next) {
+    const res = NextResponse.redirect(`${origin}${destination}`);
+    response.cookies.getAll().forEach(({ name, value }) => {
+      res.cookies.set(name, value);
+    });
+    return res;
   }
 
   return response;

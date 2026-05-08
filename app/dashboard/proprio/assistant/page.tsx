@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   TrendingUp,
   Send,
@@ -49,6 +49,10 @@ type Snapshot = {
 
 export default function OwnerAssistantPage() {
   const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const dashboardHomeHref = pathname.startsWith("/admin")
+    ? "/admin"
+    : "/dashboard/proprio";
   const supabase = getSupabaseBrowser();
   const [messages, setMessages] = useState<{ role: string; content: string; action?: OwnerAssistantAction; suggested_prompts?: string[]; isWelcome?: boolean }[]>([]);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -224,12 +228,14 @@ export default function OwnerAssistantPage() {
           <div>
             <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-gold/35">Kayvila</p>
             <h1 className="mt-0.5 font-display text-[15px] font-normal text-white/85">
-              Assistant propriétaire
+              {pathname.startsWith("/admin")
+                ? "Assistant administration"
+                : "Assistant propriétaire"}
             </h1>
           </div>
           <button
             type="button"
-            onClick={() => router.push("/dashboard/proprio")}
+            onClick={() => router.push(dashboardHomeHref)}
             className="rounded-full p-2 text-white/20 transition-colors hover:text-white/55"
             aria-label="Retour au tableau de bord"
           >

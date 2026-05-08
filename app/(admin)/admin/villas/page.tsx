@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { Home, Plus } from "lucide-react";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export const metadata: Metadata = {
   title: "Villas — Administration Kayvila",
@@ -19,22 +19,21 @@ async function getVillas() {
 }
 
 export default async function AdminVillasPage() {
-  const supabase = await getSupabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login?redirect=/admin/villas");
-
   const villas = await getVillas();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-navy">Toutes les villas</h1>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-6 border-b border-navy/[0.06] pb-8 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <AdminPageIntro
+            title="Villas"
+            description="Catalogue complet des propriétés. Modifiez une fiche ou ajoutez une villa."
+            showDivider={false}
+          />
+        </div>
         <Link
           href="/admin/villas/ajouter"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#C9A84C] px-4 py-2 text-sm font-medium text-white hover:bg-[#B8952E] transition-colors"
+          className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-gold px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gold/90"
         >
           <Plus className="h-4 w-4" />
           Ajouter une villa
@@ -97,7 +96,7 @@ export default async function AdminVillasPage() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/villas/${villa.id}`}
-                      className="text-sm text-[#C9A84C] hover:text-[#B8952E] font-medium"
+                      className="text-sm text-gold hover:text-gold/80 font-medium"
                     >
                       Modifier
                     </Link>

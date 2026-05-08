@@ -12,26 +12,34 @@ export type IssueType = "technical" | "cleaning" | "appliance" | "other";
 export type TicketStatus = "open" | "in_progress" | "resolved";
 export type EventType = "view" | "click" | "booking";
 
-/* ─── Villa ─────────────────────────────────────────── */
+/* ─── Villa (schéma réel Supabase) ──────────────────── */
 
 export interface Villa {
   id: string;
   owner_id: string | null;
   name: string;
-  location: string | null;
+  slug?: string | null;
   description: string | null;
   price_per_night: number;
   capacity: number;
   image_url: string | null;
   image_urls: string[];
+  location: string | null;
   airbnb_url: string | null;
   ical_url: string | null;
+  access_token: string | null;
   ota_channels: OTAChannel[] | null;
   is_published: boolean;
   amenities: string[];
   amenities_import_labels: string[] | null;
   rooms_details: RoomDetail[] | null;
   seasonal_prices: SeasonalPrice[] | null;
+  commission_rate: number;
+  wifi_name: string | null;
+  wifi_password: string | null;
+  emergency_contacts: EmergencyContact[] | null;
+  local_recommendations: LocalRecommendation[] | null;
+  checkout_instructions: string | null;
   cancellation_policy: string | null;
   house_rules: string | null;
   safety_info: string | null;
@@ -40,15 +48,14 @@ export interface Villa {
   check_in_time: string | null;
   check_out_time: string | null;
   environment: string | null;
-  nearby_points_text: string | null;
-  equipment_interior_text: string | null;
-  equipment_exterior_text: string | null;
-  included_services_home_text: string | null;
-  included_services_collection_text: string | null;
-  a_la_carte_services_text: string | null;
-  booking_terms_text: string | null;
+  nearby_points: string[] | null;
+  equipment_interior: string[] | null;
+  equipment_exterior: string[] | null;
+  included_services_home: string[] | null;
+  included_services_collection: string[] | null;
+  a_la_carte_services: string[] | null;
+  booking_terms: string[] | null;
   collection_tier: VillaTier | null;
-  access_token: string | null;
   latitude: number | null;
   longitude: number | null;
   map_embed_url: string | null;
@@ -73,7 +80,17 @@ export interface OTAChannel {
   label?: string;
 }
 
-/* ─── Booking ───────────────────────────────────────── */
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+}
+
+export interface LocalRecommendation {
+  name: string;
+  description: string;
+}
+
+/* ─── Booking (schéma réel Supabase) ────────────────── */
 
 export interface Booking {
   id: string;
@@ -85,8 +102,13 @@ export interface Booking {
   source: BookingSource;
   guest_name: string | null;
   guest_email: string | null;
+  /** Prix en euros (legacy, remplacé par total_price_cents) */
   price: number;
+  /** Prix en centimes (source de vérité) */
+  total_price_cents: number | null;
   stripe_session_id: string | null;
+  check_in?: string | null;
+  check_out?: string | null;
   checklist_state: Record<string, boolean> | null;
   created_at: string;
 }
@@ -98,6 +120,7 @@ export interface BookingPriceInput {
 }
 
 export interface BookingPriceResult {
+  /** Prix total en euros */
   total: number;
   nights: number;
   breakdown: string;
@@ -165,26 +188,6 @@ export interface ChatMessage {
   created_at: string;
 }
 
-/* ─── Villa Events (analytics) ──────────────────────── */
-
-export interface VillaEvent {
-  id: string;
-  villa_id: string;
-  event_type: EventType;
-  created_at: string;
-}
-
-/* ─── Contact Requests ──────────────────────────────── */
-
-export interface ContactRequest {
-  id: string;
-  name: string;
-  email: string;
-  subject: string | null;
-  message: string;
-  created_at: string;
-}
-
 /* ─── OTA Sync ──────────────────────────────────────── */
 
 export interface OTASyncLog {
@@ -245,34 +248,15 @@ export interface OwnerAlert {
   created_at: string;
 }
 
-/* ─── Wishlist ──────────────────────────────────────── */
+/* ─── Order Status History ──────────────────────────── */
 
-export interface WishlistItem {
+export interface OrderStatusHistory {
   id: string;
-  user_id: string;
-  villa_id: string;
-  created_at: string;
-}
-
-/* ─── Availability Alerts ───────────────────────────── */
-
-export interface AvailabilityAlert {
-  id: string;
-  email: string;
-  villa_id: string | null;
-  checkin: string | null;
-  checkout: string | null;
-  is_active: boolean;
-  created_at: string;
-}
-
-/* ─── Booking Calendar Slots ────────────────────────── */
-
-export interface BookingCalendarSlot {
-  id: string;
-  villa_id: string;
-  date: string;
-  is_available: boolean;
+  booking_id: string;
+  from_status: BookingStatus | null;
+  to_status: BookingStatus;
+  changed_by: string;
+  reason: string | null;
   created_at: string;
 }
 
@@ -288,24 +272,4 @@ export interface SupportTicket {
   status: TicketStatus;
   created_at: string;
   resolved_at: string | null;
-}
-
-/* ─── Stripe Events (idempotence) ───────────────────── */
-
-export interface StripeProcessedEvent {
-  event_id: string;
-  event_type: string;
-  processed_at: string;
-}
-
-/* ─── Order Status History ──────────────────────────── */
-
-export interface OrderStatusHistory {
-  id: string;
-  booking_id: string;
-  from_status: BookingStatus | null;
-  to_status: BookingStatus;
-  changed_by: string;
-  reason: string | null;
-  created_at: string;
 }

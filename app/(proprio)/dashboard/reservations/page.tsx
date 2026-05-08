@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa, Booking } from "@/types/domain";
@@ -16,15 +15,11 @@ export default async function ProprioReservationsIndexPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/dashboard/reservations");
-  }
-
   // Fetch villas with bookings for this owner
   const { data: villas } = await supabase
     .from("villas")
     .select("id, name, slug, bookings(id, guest_name, check_in, check_out, status, total_price_cents)")
-    .eq("owner_id", user.id)
+    .eq("owner_id", user!.id)
     .order("name");
 
   if (!villas || villas.length === 0) {
