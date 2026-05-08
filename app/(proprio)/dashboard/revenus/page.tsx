@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
@@ -14,25 +13,21 @@ export default async function RevenusPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/dashboard/revenus");
-  }
-
   // Fetch villas owned by this user to get villaIds
   const { data: villas } = await supabase
     .from("villas")
     .select("id")
-    .eq("owner_id", user.id);
+    .eq("owner_id", user!.id);
 
   const villaIds = villas?.map((v) => v.id) ?? [];
 
   // Static demo data — actual payment data will be connected later
   const monthlyData = [
-    { month: "Jan", revenue: 4200 },
-    { month: "Fév", revenue: 3800 },
-    { month: "Mar", revenue: 5100 },
-    { month: "Avr", revenue: 4900 },
-    { month: "Mai", revenue: 6200 },
+    { month: "Jan", revenue: 4200, isCurrent: false },
+    { month: "Fév", revenue: 3800, isCurrent: false },
+    { month: "Mar", revenue: 5100, isCurrent: false },
+    { month: "Avr", revenue: 4900, isCurrent: false },
+    { month: "Mai", revenue: 6200, isCurrent: true },
   ];
 
   const totalMonth = 6200;
@@ -58,7 +53,7 @@ export default async function RevenusPage() {
             comparisonMonth={comparisonMonth}
           />
 
-          <RevenueChart data={monthlyData} />
+          <RevenueChart data={monthlyData} hasEnoughHistory={true} />
         </div>
       </div>
     </main>

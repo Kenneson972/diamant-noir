@@ -2,13 +2,24 @@
 
 import dynamic from "next/dynamic";
 
-const RechartsComponents = dynamic(
+interface RevenueDataPoint {
+  month: string;
+  revenue: number;
+  isCurrent: boolean;
+}
+
+interface RevenueChartProps {
+  data: RevenueDataPoint[];
+  hasEnoughHistory: boolean;
+}
+
+const RechartsInner = dynamic(
   () =>
     import("recharts").then((m) => ({
       default: ({
         data,
       }: {
-        data: { month: string; revenue: number }[];
+        data: RevenueDataPoint[];
       }) => {
         const {
           BarChart,
@@ -17,15 +28,18 @@ const RechartsComponents = dynamic(
           YAxis,
           Tooltip,
           ResponsiveContainer,
+          LabelList,
+          Cell,
         } = m;
 
-        if (data.length === 0) {
-          return (
-            <div className="flex h-80 items-center justify-center text-sm text-muted">
-              Aucune donnée de revenus pour le moment
-            </div>
-          );
-        }
+        const tickFormatter = (monthStr: string) => {
+          const point = data.find((d) => d.month === monthStr);
+          if (!point) return monthStr;
+          if (point.isCurrent && point.revenue === 0) return `${monthStr} · en cours`;
+          if (point.isCurrent && point.revenue > 0)
+            return `${monthStr} · ${point.revenue.toLocaleString("fr-FR")} €`;
+          return monthStr;
+        };
 
         return (
           <ResponsiveContainer width="100%" height="100%">
@@ -36,9 +50,10 @@ const RechartsComponents = dynamic(
               <XAxis
                 dataKey="month"
                 stroke="#8B8B8B"
-                fontSize={12}
+                fontSize={11}
                 tickLine={false}
                 axisLine={{ stroke: "#E5E3DB", strokeOpacity: 1 }}
+                tickFormatter={tickFormatter}
               />
               <YAxis
                 stroke="#8B8B8B"
@@ -62,10 +77,35 @@ const RechartsComponents = dynamic(
               />
               <Bar
                 dataKey="revenue"
-                fill="#0B1D2E"
                 radius={[4, 4, 0, 0]}
                 maxBarSize={32}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.isCurrent ? "#0B1D2E66" : "#0B1D2E"}
+                  />
+                ))}
+                <LabelList
+                  dataKey="revenue"
+                  content={(props: any) => {
+                    const { x, y, width, value, index } = props;
+                    const point = data[index as number];
+                    if (!point || point.isCurrent || (value as number) !== 0) return null;
+                    return (
+                      <text
+                        x={(x as number) + (width as number) / 2}
+                        y={(y as number) + 16}
+                        textAnchor="middle"
+                        fill="#8B8B8B"
+                        fontSize={10}
+                      >
+                        Aucun revenu
+                      </text>
+                    );
+                  }}
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         );
@@ -74,16 +114,25 @@ const RechartsComponents = dynamic(
   { ssr: false }
 );
 
-interface RevenueChartProps {
-  data: { month: string; revenue: number }[];
-}
+export function RevenueChart({ data, hasEnoughHistory }: RevenueChartProps) {
+  if (!hasEnoughHistory) {
+    return (
+      <div className="dashboard-card">
+        <span className="dashboard-eyebrow">REVENUS MENSUELS</span>
+        <div className="mt-4 flex h-80 items-center justify-center rounded-lg bg-[#FAF9F6]">
+          <p className="text-sm text-muted text-center px-6">
+            Historique disponible après 3 mois d&apos;activité
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <div className="dashboard-card">
       <span className="dashboard-eyebrow">REVENUS MENSUELS</span>
       <div className="mt-4 h-80 w-full">
-        <RechartsComponents data={data} />
+        <RechartsInner data={data} />
       </div>
     </div>
   );

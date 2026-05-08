@@ -138,51 +138,44 @@ export default async function ProprioDashboardPage() {
     maximumFractionDigits: 0,
   }).format(revenueThisMonth / 100);
 
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
   // Aggregate revenue by month over last 6 months from actual booking data
   const monthlyChartData = (() => {
-    // Query all confirmed bookings for the past 6 months
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    sixMonthsAgo.setDate(1);
-    const startRange = sixMonthsAgo.toISOString().split("T")[0];
-    const endRange = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      0
-    )
-      .toISOString()
-      .split("T")[0];
-
-    // We'll aggregate in the component by fetching all data
-    // and grouping by month
-    const allRevenue = revenueDataRaw.filter(
-      (b) => b.total_price_cents && b.total_price_cents > 0
-    );
-
     const monthNames = [
       "Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
       "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc",
     ];
     const now = new Date();
-    const result: { month: string; revenue: number }[] = [];
+    const result: { month: string; revenue: number; isCurrent: boolean }[] = [];
 
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const m = d.getMonth();
       const y = d.getFullYear();
-      const total = allRevenue
+      const isCurrent = m === currentMonth && y === currentYear;
+      const total = revenueDataRaw
         .filter((b) => {
           const bd = new Date(b.start_date);
-          return bd.getMonth() === m && bd.getFullYear() === y;
+          return (
+            bd.getMonth() === m &&
+            bd.getFullYear() === y &&
+            (b.total_price_cents ?? 0) > 0
+          );
         })
         .reduce((sum, b) => sum + (b.total_price_cents ?? 0), 0);
       result.push({
         month: monthNames[m],
         revenue: Math.round(total / 100),
+        isCurrent,
       });
     }
     return result;
   })();
+
+  const completedMonths = monthlyChartData.filter((d) => !d.isCurrent);
+  const hasEnoughHistory = completedMonths.length >= 3;
 
   const kpiItems = [
     {
@@ -224,7 +217,7 @@ export default async function ProprioDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <RevenueChart data={monthlyChartData} />
+        <RevenueChart data={monthlyChartData} hasEnoughHistory={hasEnoughHistory} />
         <UpcomingBookings bookings={upcomingBookings} />
       </div>
     </div>
