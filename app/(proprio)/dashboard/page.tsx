@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { CalendarCheck, DollarSign, BarChart3 } from "lucide-react";
+import { CalendarCheck, DollarSign } from "lucide-react";
 import type { Villa } from "@/types/domain";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
 import { EmptyDashboard } from "@/components/dashboard/proprio/EmptyDashboard";
@@ -26,15 +25,11 @@ export default async function ProprioDashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/dashboard");
-  }
-
   // Fetch villas owned by the current user
   const { data: villas } = await supabase
     .from("villas")
     .select("*")
-    .eq("owner_id", user.id);
+    .eq("owner_id", user!.id);
 
   if (!villas || villas.length === 0) {
     return (
@@ -52,7 +47,7 @@ export default async function ProprioDashboardPage() {
   const { start: monthStart, end: monthEnd } = getMonthBounds();
 
   // Fetch all data in parallel
-  const [upcomingBookings, monthBookingCount, pendingTasks, todayEvents, revenueDataRaw] =
+  const [upcomingBookings, , pendingTasks, todayEvents, revenueDataRaw] =
     await Promise.all([
       // Upcoming bookings
       supabase
@@ -143,9 +138,6 @@ export default async function ProprioDashboardPage() {
     maximumFractionDigits: 0,
   }).format(revenueThisMonth / 100);
 
-  // First villa for stats link
-  const firstVillaId = villas[0]?.id;
-
   // Aggregate revenue by month over last 6 months from actual booking data
   const monthlyChartData = (() => {
     // Query all confirmed bookings for the past 6 months
@@ -196,7 +188,7 @@ export default async function ProprioDashboardPage() {
     {
       icon: DollarSign,
       label: "Revenus du mois",
-      value: revenueThisMonth > 0 ? revenueFormatted : "—",
+      value: revenueThisMonth > 0 ? revenueFormatted : "Aucun revenu ce mois",
       href: "/dashboard/revenus" as const,
       trend: revenueThisMonth > 0
         ? { value: 12, positive: true }
@@ -205,18 +197,10 @@ export default async function ProprioDashboardPage() {
     {
       icon: CalendarCheck,
       label: "Réservations à venir",
-      value: upcomingBookings.length,
+      value: upcomingBookings.length > 0 ? upcomingBookings.length : "Aucune réservation à venir",
       href: "/dashboard/reservations" as const,
       trend: upcomingBookings.length > 0
         ? { value: upcomingBookings.length, positive: true }
-        : undefined,
-    },
-    {
-      icon: BarChart3,
-      label: "Taux d'occupation",
-      value: "—",
-      href: firstVillaId
-        ? (`/dashboard/statistiques/${firstVillaId}` as const)
         : undefined,
     },
   ];
@@ -232,7 +216,7 @@ export default async function ProprioDashboardPage() {
         </p>
       </div>
 
-      <KpiRow items={kpiItems} />
+      <KpiRow items={kpiItems} cols={2} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <TodayTimeline events={todayEventsList} />
