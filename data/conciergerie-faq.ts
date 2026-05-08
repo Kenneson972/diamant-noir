@@ -8,8 +8,8 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
     title: "Commission & frais de ménage",
     items: [
       {
-        q: "Sur quel montant s'applique la commission de 20 % ?",
-        a: "La commission s'applique sur le montant des nuitées uniquement, hors frais de ménage et blanchisserie. Lorsque la plateforme ne distingue pas ces éléments, le forfait ménage contractuel est déduit du total avant calcul. Tout est détaillé dans votre rapport mensuel.",
+        q: "Que signifie exactement le montant sur lequel s'applique la commission ?",
+        a: "La commission de 20 % de Kayvila Conciergerie s'applique sur le montant brut du séjour, tel qu'affiché sur la plateforme de réservation, frais de ménage et blanchisserie inclus. Ce mode de calcul garantit une transparence totale : aucune déduction ni retraitement n'est effectué avant application de la commission. Les frais de ménage et blanchisserie sont inclus dans le montant total de la réservation et n'engendrent aucune facturation supplémentaire pour le propriétaire. Le montant par séjour est défini dans l'Annexe Tarifaire.",
       },
       {
         q: "Qui fixe le prix des frais de ménage ?",
