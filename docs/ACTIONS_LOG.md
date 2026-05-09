@@ -97,3 +97,18 @@
 - **files**: [`app/globals.css`, `components/home/HomeFeaturedAudience.tsx`, `components/home/HomeOwnersSection.tsx`, `components/marketing/PageHero.tsx`, `components/layout/Footer.tsx`, `components/marketing/ScrollRevealWrapper.tsx`, `app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `components/prestations/FinanceCopilotSection.tsx`, `app/page.tsx`, `next.config.mjs`]
 - **why**: Amélioration continue de l'UI/UX, résolution des bugs bloquants, alignement avec les standards premium Kayvila.
 - **impact**: Animations subtiles cohérentes ; page /prestations mieux structurée ; section Copilot plus élégante ; villas visibles en local (sandbox DNS contourné).
+
+---
+
+## 2026-05-09 (16:00) — Navbar centrage, rename labels, RECAP mise à jour
+
+- **type**: `ui | docs`
+- **summary**:
+  1. **Navbar** : passage en `grid grid-cols-[1fr_auto_1fr]` pour centrage parfait du logo.
+  2. **Rename labels** : "Soumettre ma villa" → "Confier ma villa" dans 10 fichiers.
+  3. **RECAP.md** : mise à jour complète (features mai : route groups admin/proprio, dashboard KPIs, animations, Prestations redesign, Copilot Finance, bug DNS, page proprios supprimée).
+  4. **Logs** : session 2026-05-09 complétée.
+- **files**: [`components/layout/Navbar.tsx`, `lib/i18n.ts`, `app/prestations/PrestationsPageClient.tsx`, `app/prestations/services/[slug]/page.tsx`, `components/home/HomeOwnersSection.tsx`, `components/book/BookLandingMarketing.tsx`, `components/prestations/VideoScrollHero.tsx`, `app/contact/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-05-09.md`, `RECAP.md`]
+- **why**: Logo décentré, CTA "Soumettre" moins engageant, documentation très en retard (RECAP.md stale depuis avril).
+- **impact**: Navigation équilibrée, CTA propriétaire plus clair, documentation projet à jour.
+- **verify**: `npx tsc --noEmit` OK ; push git sur `feat/langue-devise-localstorage`.

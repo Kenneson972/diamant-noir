@@ -2,42 +2,39 @@
 
 ## 1. Présentation
 
-**Kayvila** est une plateforme logicielle de **conciergerie de luxe** « all-in-one » en Martinique. Elle permet de gérer un portefeuille de villas d’exception avec une expérience client immersive (recherche, réservation, livret), une synchronisation intelligente (iCal, import OTA / Airbnb), un **dashboard propriétaire** complet et un **assistant IA** côté admin.
+**Kayvila** est une plateforme logicielle de **conciergerie de luxe** « all-in-one » en Martinique. Elle permet de gérer un portefeuille de villas d'exception avec une expérience client immersive (recherche, réservation, livret), une synchronisation intelligente (iCal, import OTA / Airbnb), un **dashboard propriétaire** complet, un **back-office admin** et un **assistant IA**.
 
-**Positionnement produit (2026-04)** : la marque est volontairement perçue comme une **maison de conciergerie privée** qui propose des villas — et non comme une plateforme de location avec de la conciergerie en option. La home, la navbar (CTA principal vers `/prestations`) et l’ordre des sections marketing reflètent cette hiérarchie.
+**Positionnement produit** : la marque est perçue comme une **maison de conciergerie privée** qui propose des villas — et non comme une plateforme de location avec de la conciergerie en option.
 
 ---
 
 ## 2. Stack technique
 
 | Couche | Technologies |
-|--------|---------------|
+|--------|--------------|
 | **Framework** | Next.js 15.x (App Router) |
-| **Langage** | TypeScript |
-| **UI / styling** | Tailwind CSS 3.4, **Radix UI** (Dropdown, Tabs, Popover, Themes), **Lucide React**, composants `components/ui` (pattern type shadcn) |
-| **Autres libs UI** | Chakra / HeroUI / `@dnd-kit` présents au `package.json` pour écrans ou modules spécifiques ; **doctrine marketing** : privilégier Radix + Tailwind sur les pages publiques |
-| **Base de données & auth** | Supabase (PostgreSQL + Auth) — `@supabase/supabase-js` |
-| **Paiements** | Stripe (`stripe`) |
-| **Calendrier** | FullCalendar 6.x (React, DayGrid, Interaction), `node-ical` |
-| **Cartes** | Leaflet + `react-leaflet` (catalogue `/villas`) |
-| **Utilitaires** | `clsx`, `tailwind-merge`, `date-fns` |
-| **Déploiement** | **Vercel** (crons pour `/api/sync`) — prod typique : `https://kayvila.vercel.app` |
-
-### Scripts
-
-- **Dev** : `npm run dev` (port **3000** par défaut ; libérer le port si occupé)
-- **Build** : `npm run build` — à lancer avant livraison / après changements structurants
-- **Lint** : `npm run lint`
+| **Langage** | TypeScript strict |
+| **Styling** | Tailwind CSS 3.4 + Chakra UI 3 + Radix Themes 3.3 |
+| **Icônes** | lucide-react |
+| **DB / Auth / Storage** | Supabase (PostgreSQL + Auth SSR) |
+| **Paiements** | Stripe 14.25 (Checkout + Webhooks) |
+| **Calendrier** | FullCalendar 6.x, iCal sync |
+| **Cartes** | Leaflet + react-leaflet |
+| **Animations** | GSAP 3.14, Framer Motion, ScrollReveal |
+| **Data viz** | Recharts 3.8 |
+| **Dates** | date-fns 4.x |
+| **Utilitaires** | clsx, tailwind-merge, zod, react-hook-form |
+| **Déploiement** | **Vercel** (crons pour `/api/sync`) |
 
 ---
 
 ## 3. Design system
 
-- **Couleurs** : `gold` (#D4AF37), `navy` (#0A0A0A), `offwhite` (#FAFAFA) + neutres
-- **Typographie** : Inter + Playfair Display + Cormorant Garamond (voir `app/layout.tsx`)
-- **Images** : Next.js `Image` — domaines autorisés dans `next.config.mjs` (Supabase, Airbnb/muscache, etc.)
-- **Ambiance** : prestige, minimalisme, lisibilité mobile (breakpoints, safe area, `dvh` sur écrans critiques — passes 2026-04)
-- **Fichier CSS global** : `public/heroui.min.css` chargé dans `layout.tsx` — à garder ou retirer selon audit produit (charge globale)
+- **Couleurs** : `gold` (#D4AF37), `navy` (#0A0A0A), `offwhite` (#FAFAFA), `cream` (#F5F0E8), `champagne` (#F0E6CE), `sand` (#DDD5C4)
+- **Typographie** : Sora (display), Instrument Sans (body)
+- **Images** : `next/image`, AVIF/WebP, domaines autorisés (Supabase, Airbnb, Cloudinary, Unsplash)
+- **Ambiance** : prestige, minimalisme, animations subtiles au scroll, responsive mobile-first
+- **10+ keyframes custom** : fade-up, stagger-fade, shimmer, gold-shimmer, scale-in, slide-in, blur-fade, line-draw
 
 ---
 
@@ -45,39 +42,61 @@
 
 ```
 kayvila/
-├── app/                      # App Router — pages + API
-│   ├── api/                  # Routes REST (booking, chat, dashboard CRUD, sync, webhooks…)
-│   ├── book/                 # Tunnel réservation
-│   ├── contact/, cookies/, terms/, confidentialite/
-│   ├── dashboard/proprio/    # Espace propriétaire (liste, [villaId], analytics, assistant…)
-│   ├── espace-client/        # Locataire (séjour, livret, messagerie, profil…)
-│   ├── login/, register/
-│   ├── prestations/          # Page conciergerie (hero immersif + contenu éditorial)
-│   ├── proprietaires/        # Landing programme propriétaires
-│   ├── qui-sommes-nous/, tarifs/, experience/
-│   ├── soumettre-ma-villa/
-│   ├── villas/               # Catalogue + fiche [id]
-│   ├── layout.tsx, globals.css
+├── app/
+│   ├── (admin)/admin/        # Back-office staff (villas, clients, résas, revenus, sync, membres, submissions, assistant)
+│   ├── (proprio)/dashboard/  # Espace propriétaire (villas, réservations, stats, revenus, tâches)
+│   ├── api/                  # 23 routes REST (booking, chat, dashboard CRUD, sync, webhooks…)
+│   ├── book/, success/       # Tunnel réservation
+│   ├── villas/, villas/[id]  # Catalogue + fiche villa
+│   ├── prestations/          # Page conciergerie (hero vidéo scroll + hub éditorial 5 piliers)
+│   ├── espace-client/        # Locataire (dashboard, réservations, livret, messagerie, conciergerie, documents)
+│   ├── login/, register/     # Auth Supabase
+│   ├── contact/, faq/, cookies/, terms/, confidentialite/
+│   ├── qui-sommes-nous/, experience/, tarifs/
+│   ├── soumettre-ma-villa/   # Wizard soumission propriétaire
+│   ├── dashboard/proprio/    # Complément espace proprio (submissions, assistant, analytics, team)
+│   ├── layout.tsx            # Layout racine (fonts, providers, SiteFrame, Chatbot, CompareBar)
+│   ├── globals.css            # Styles globaux + keyframes
+│   └── sitemap.ts, robots.ts
 ├── components/
-│   ├── booking/, chatbot/, dashboard/, espace-client/, layout/ (Navbar, Footer, BrandLogo)
-│   ├── home/                 # Blocs home : HeroAudienceCards, HomeConciergeHighlight, TrustBand…
-│   ├── marketing/            # HeroWordmarkBaseline, landing-sections, editorial-blocks
-│   ├── villas/, VillaLeafletMap, VillasMapView, VillaGallery…
-│   └── ui/                   # Primitives réutilisables
-├── lib/                      # Supabase clients, import Airbnb/listing, iCal, prix, i18n…
-├── supabase/migrations/      # SQL versionné (RLS, colonnes villa, etc.)
-├── public/                   # Assets statiques (brand, hero, prestations-hero.png…)
+│   ├── home/                 # 12 sections (Hero, ValueProps, Services, Inspirations, Trust, CTA, Owners…)
+│   ├── layout/               # Navbar, Footer, BrandLogo, SiteFrame
+│   ├── marketing/            # PageHero, ScrollReveal, editorial-blocks, landing-sections
+│   ├── book/                 # BookLandingMarketing
+│   ├── booking/              # PriceCalculator, CheckoutView, SearchResults, AvailabilityAlert
+│   ├── prestations/          # VideoScrollHero, FinanceCopilotSection
+│   ├── villas/               # CompareButton/Bar, WishlistButton
+│   ├── auth/                 # TenantMagicLinkFlow, PasswordLoginForm
+│   ├── chatbot/              # Chatbot + ChatbotDynamic (lazy)
+│   ├── conciergerie/         # ConciergerieFaq
+│   ├── dashboard/
+│   │   ├── admin/            # Sidebar, Header, Layout, VillaForm, SyncOta, PageIntro
+│   │   └── proprio/          # ~20 composants (KpiRow, RevenueChart, OccupancyChart, CopilotPanel, TaskList…)
+│   ├── espace-client/        # Shell, BookingCard, ProfileForm, WelcomeBook, messaging
+│   ├── search/               # HeroDatePicker, HeroGuestPicker
+│   ├── ui/                   # Primitives réutilisables (index.ts contrôlé)
+│   ├── VillaFilterBar, VillaLeafletMap, VillaGallery, VillaQuickView, HeroSearchWidget…
+│   └── ScrollReveal          # Composant d'animation au scroll réutilisable
+├── lib/                      # Supabase clients, price-engine, iCal, OTA hub, i18n, schemas, security
+├── contexts/                 # Auth, Compare, HomeAudience, Locale, Wishlist
+├── hooks/                    # useCopilot
+├── types/                    # domain.ts, supabase.ts (types générés), chatbot, copilot
+├── data/                     # seasons.ts, conciergerie-faq.ts, prestations-service-details.ts
+├── supabase/migrations/      # SQL versionné (RLS, colonnes villa, seasons)
+├── public/                   # Images piliers, hero, brand
 ├── docs/
-│   ├── ACTIONS_LOG.md        # Journal global append-only (cursor / claude)
-│   ├── RECAP_COPILOT_PROPRIETAIRE.md  # Récap séparé — copilot propriétaire (vue d’ensemble)
-│   ├── OWNER_ASSISTANT_COPILOT.md     # Spec technique (API, DB, flux)
-│   ├── n8n/OWNER_COPILOT_AUTOMATION.md # n8n + LLM : webhook, payload, prompt, réponse JSON
-│   ├── audits/               # Ex. audit-complet-2026-04-07.md
+│   ├── ACTIONS_LOG.md        # Journal global append-only
 │   ├── logs/YYYY-MM-DD.md    # Journaux de session
-│   └── superpowers/          # Specs, plans, prompts Claude Code
+│   ├── RECAP_COPILOT_PROPRIETAIRE.md
+│   ├── OWNER_ASSISTANT_COPILOT.md
+│   ├── n8n/OWNER_COPILOT_AUTOMATION.md
+│   ├── audits/               # Ex. audit-complet-2026-04-07.md
+│   └── superpowers/          # Specs, plans, prompts
+├── middleware.ts             # Auth guard + RBAC (admin/proprio/tenant)
+├── next.config.mjs           # CSP, images, cache, webpack
+├── tailwind.config.ts        # Tokens custom, keyframes, fonts
 ├── vercel.json               # Crons
-├── RECAP.md                  # Ce fichier
-└── README.md
+└── RECAP.md                  # Ce fichier
 ```
 
 ---
@@ -88,23 +107,25 @@ kayvila/
 
 | Route | Description |
 |-------|-------------|
-| `/` | Accueil — hero vidéo, cartes audience (conciergerie / voyageur), confiance, **HomeConciergeHighlight**, lifestyle, propriétaires, villas mises en avant, CTA fin de page |
-| `/prestations` | **Conciergerie** — hero immersif (image `public/prestations-hero.png`), bandeau CTA noir compact et centré, stats, services, inclusions par catégories, FAQ |
-| `/prestations/nos-formules` | Formules (stub ou contenu selon version) |
-| `/proprietaires` | Landing programme propriétaires (même famille hero que l’accueil si configuré) |
+| `/` | Accueil — hero vidéo, audience cards, villas mises en avant, 5 piliers, confiance, lifestyle, propriétaires |
+| `/prestations` | Conciergerie — hero vidéo scroll parallaxe (6 sections), hub éditorial 5 piliers, FAQ, CTA confier |
+| `/prestations/services/[slug]` | Détail d'un pilier (marketing, terrain, relation, ménage, finance) |
+| `/prestations/nos-formules` | Formules |
+| `/villas` | Catalogue — carte + liste Leaflet, filtres, wishlist, comparateur |
+| `/villas/[id]` | Fiche villa — galerie, booking, détails, équipements, carte |
 | `/qui-sommes-nous` | À propos |
 | `/contact` | Contact |
-| `/soumettre-ma-villa` | Lead propriétaire |
-| `/villas` | Catalogue carte + liste (Leaflet), filtres |
-| `/villas/[id]` | Fiche villa — galerie, réservation, détails |
+| `/faq` | FAQ complète (conciergerie, villa, admin) |
+| `/experience` | Expérience |
+| `/tarifs` | Tarifs |
+| `/soumettre-ma-villa` | Wizard propriétaire (4 étapes : villa, coordonnées, plateformes, finalisation) |
 
 ### Réservation & légal
 
 | Route | Description |
 |-------|-------------|
-| `/book` | Recherche / checkout |
-| `/success` | Confirmation |
-| `/tarifs`, `/experience` | Pages satellite |
+| `/book` | Checkout Stripe |
+| `/success` | Confirmation réservation |
 | `/terms`, `/confidentialite`, `/cookies` | Légal / cookies |
 
 ### Espace client (locataire)
@@ -112,156 +133,205 @@ kayvila/
 | Route | Description |
 |-------|-------------|
 | `/espace-client` | Tableau de bord séjour |
-| `/espace-client/reservations/[id]` | Détail réservation / livret |
-| `/espace-client/livret`, `/livret/print` | Livret & impression |
-| `/espace-client/messagerie` | Messages |
+| `/espace-client/reservations/[id]` | Détail réservation |
+| `/espace-client/livret` | Livret d'accueil |
+| `/espace-client/livret/print` | Version imprimable |
+| `/espace-client/messagerie` | Messagerie avec l'équipe |
 | `/espace-client/profil` | Profil |
-| `/espace-client/checklist` | Checklist |
-| `/espace-client/conciergerie`, `/documents` | Contacts / docs (évolution) |
+| `/espace-client/checklist` | Checklist séjour |
+| `/espace-client/conciergerie` | Demandes conciergerie |
+| `/espace-client/documents` | Documents |
 
-### Authentification & dashboard propriétaire
+### Dashboard propriétaire
 
 | Route | Description |
 |-------|-------------|
-| `/login`, `/register` | Auth Supabase |
-| `/dashboard/proprio` | Liste des villas, chrome propriétaire |
-| `/dashboard/proprio/[villaId]` | Éditeur villa (planning, contenu, réglages, réservations, sync iCal…) |
-| `/dashboard/proprio/analytics` | Analytics multi-villas |
-| `/dashboard/proprio/submissions` | Soumissions « soumettre ma villa » |
-| `/dashboard/proprio/assistant` | **Copilot propriétaire** — récap : [`docs/RECAP_COPILOT_PROPRIETAIRE.md`](docs/RECAP_COPILOT_PROPRIETAIRE.md) · spec technique : [`docs/OWNER_ASSISTANT_COPILOT.md`](docs/OWNER_ASSISTANT_COPILOT.md) |
-| `/dashboard/team/[secret]` | Accès équipe par secret URL |
+| `/dashboard` | Vue d'ensemble (KPIs, réservations à venir, tâches, revenus, calendrier) |
+| `/dashboard/villas` | Liste des villas du propriétaire |
+| `/dashboard/villas/[villaId]` | Éditeur villa (planning, contenu, réglages, réservations, sync iCal) |
+| `/dashboard/villas/[villaId]/photos` | Gestion photos |
+| `/dashboard/reservations` | Toutes les réservations |
+| `/dashboard/reservations/[villaId]` | Résas par villa |
+| `/dashboard/reservations/[villaId]/[bookingId]` | Détail réservation |
+| `/dashboard/statistiques` | Stats multi-villas |
+| `/dashboard/statistiques/[villaId]` | Stats détaillées (occupancy chart avec saisons, revenue chart) |
+| `/dashboard/revenus` | Revenus |
+| `/dashboard/taches` | Liste des tâches ménage/régie |
+| `/dashboard/taches/[taskId]` | Détail tâche |
+| `/dashboard/proprio/assistant` | Copilot IA propriétaire |
+| `/dashboard/proprio/analytics` | Analytics avancées |
+| `/dashboard/proprio/submissions` | Soumissions villa |
+| `/dashboard/team/[secret]` | Accès équipe par lien secret |
+
+### Admin back-office
+
+| Route | Description |
+|-------|-------------|
+| `/admin` | Dashboard KPIs |
+| `/admin/villas` | Liste villas (CRUD) |
+| `/admin/villas/ajouter` | Ajouter une villa |
+| `/admin/villas/[id]` | Fiche villa (synthèse + liens éditeur/hub/sync) |
+| `/admin/clients` | Gestion clients |
+| `/admin/proprietaires` | Gestion propriétaires |
+| `/admin/reservations` | Réservations |
+| `/admin/revenus` | Revenus |
+| `/admin/parametres` | Paramètres (saisons Martinique, etc.) |
+| `/admin/sync-ota` | Hub synchronisation OTA |
+| `/admin/membres/[id]` | Détail membre |
+| `/admin/submissions` | Soumissions villa |
+| `/admin/assistant` | Assistant IA admin |
+| `/admin/hub-classique` | Hub classique |
+
+### API Routes (23)
+
+Booking, Stripe webhooks, analytics, contact, notifications, photos, villa submissions, iCal sync, chatbot, dashboard CRUD (create/update/delete villa, delete booking), admin chat, owner assistant context
 
 ---
 
-## 6. API Routes (aperçu)
-
-| Route | Rôle principal |
-|-------|------------------|
-| `POST /api/booking` | Création réservation (+ Stripe si configuré) |
-| `POST /api/booking-session` | Session de booking |
-| `POST /api/chat`, `POST /api/chat/tenant` | Chatbot public / locataire |
-| `POST /api/contact` | Formulaire contact |
-| `POST /api/import-airbnb` | Import listing Airbnb |
-| `GET/POST /api/sync`, `POST /api/sync-ota` | Synchro calendriers / OTA |
-| `POST /api/villa-photo-upload` | Upload photos |
-| `POST /api/villa-submissions` | Soumissions villa |
-| `POST /api/webhooks/stripe` | Webhooks paiement |
-| `POST /api/notify-admin-booking`, `POST /api/send-booking-confirmation` | Notifications |
-| `POST /api/admin/chat` | Assistant **gérant / admin** → n8n — **Bearer + allowlist** (`ADMIN_CHAT_ALLOWED_EMAILS` / `ADMIN_CHAT_ALLOWED_USER_IDS`) |
-| `GET` / `POST /api/dashboard/owner-assistant` | **Copilot propriétaire** — [`docs/RECAP_COPILOT_PROPRIETAIRE.md`](docs/RECAP_COPILOT_PROPRIETAIRE.md) · [`docs/OWNER_ASSISTANT_COPILOT.md`](docs/OWNER_ASSISTANT_COPILOT.md) |
-| `POST /api/dashboard/*` | create-villa, update-villa, delete-villa, delete-booking |
-| `GET /api/dashboard/analytics-villas`, `GET /api/analytics/villa` | Métriques |
-
----
-
-## 7. Fonctionnalités majeures (état actuel)
+## 6. Fonctionnalités majeures (état actuel)
 
 ### Marketing & marque
 
-- **Conciergerie first** : hero accueil avec cartes (conciergerie → `/prestations`, voyageur → recherche), TrustBand avec conciergerie 24/7 en tête, bloc `HomeConciergeHighlight`, propriétaires avant catalogue villas, CTA bas de page priorisant la conciergerie
-- **Hero wordmark** : `KAYVILA` + « Conciergerie privée » ; sur l’**accueil** les trois mots micro *Confiance · Réactivité · Excellence* sont **désactivés** (`showValuesTriplet={false}`) ; conservés sur `/proprietaires` si besoin
-- **Navbar** : CTA principal **Conciergerie** → `/prestations` ; logo cliquable vers `/` (correction `pointer-events` + `z-index` colonne logo) ; barre **z-index > Leaflet** pour ne pas être recouverte par la carte sur `/villas`
-- **Fiches villa** : chrome header adapté fond clair (pas texte blanc sur galerie claire) ; lightbox galerie et aperçu catalogue au-dessus des couches carte
+- **Conciergerie first** : hero accueil avec cartes audience, TrustBand, HomeConciergeHighlight, 5 piliers sur l'index, CTA prioritaire vers confier
+- **Page /prestations** : hero vidéo scroll (canvas WebP, 6 sections avec popups contextuels, timeout 3s fallback), hub éditorial alterné avec images réelles des 5 piliers, FAQ dédiée
+- **5 piliers** : marketing digital, terrain & relation, relation voyageurs, ménage & linge, finance & compta — avec pages dédiées, images réelles
+- **Page services** : hub éditorial prestations + FAQ + CTA
+- **Animations** : ScrollReveal sur toutes les sections marketing (home, prestations, footer), stagger-fade sur les grilles, blur-fade sur les héros
 
 ### Produit & données
 
-- **Supabase** : villas, bookings, tâches, logs assistant, soumissions, champs premium villa (équipements, règles, iCal feeds…), **RLS** multi-tenant propriétaires
-- **Import Airbnb / enrichissement** : parsing HTML, prix, équipements, normalisation labels, persistance `amenities_import_labels`
-- **Sync iCal** : cron Vercel sur `/api/sync`
+- **Supabase** : villas, bookings, tâches, logs assistant, soumissions, seasons (saisonnalité), RLS multi-tenant
+- **Import Airbnb** : parsing HTML, prix, équipements, normalisation labels
+- **Sync iCal** : cron Vercel
+- **Saisons Martinique** : table `seasons` en DB, fallback sur `data/seasons.ts` (haute/moyenne/basse), bandeau couleur sur OccupancyChart
 
-### Dashboard & IA
+### Dashboard propriétaire
 
-- **Éditeur villa** : onglets réorganisés (Planning, Contenu, Réglages), registre réservations avec filtres / export, feedback sync iCal
-- **Assistant propriétaire** : copilot scoped (`owner_id`), snapshot « Aujourd’hui » + alertes + chat via `owner-assistant` ; tables `owner_alerts` / `ai_action_logs` ; n8n optionnel — **récap** [`docs/RECAP_COPILOT_PROPRIETAIRE.md`](docs/RECAP_COPILOT_PROPRIETAIRE.md) · **spec** [`docs/OWNER_ASSISTANT_COPILOT.md`](docs/OWNER_ASSISTANT_COPILOT.md)
+- **KPIs** : réservations à venir, revenus du mois, taux d'occupation, nouvelles réservations — zéro-états explicites
+- **RevenueChart** : barres mensuelles, mois en cours distingué ("Mai · en cours"), guard 3 mois d'activité
+- **OccupancyChart** : courbe avec saisons (bandeau couleur sous l'axe X), guard 3 mois, mois sans résa = pas de point
+- **Tâches** : liste, détails, statuts, badges
+- **Copilot** : assistant IA contextuel (snapshot du jour, alertes, chat)
+- **Navbar/Footer public** : masqués sur les pages dashboard
+
+### Admin back-office
+
+- **Shell admin** : AdminLayout, Sidebar, Header, PageIntro — cohérent sur toutes les pages
+- **CRUD villas** : liste, ajout (formulaire complet), édition, fiche synthèse
+- **Sync OTA** : gestion des synchronisations Airbnb/Booking
+- **Gestion** : clients, propriétaires, réservations, revenus, membres, paramètres
+- **Navbar/Footer public** : masqués
 
 ### Espace client & réservation
 
-- Checkout multi-étapes, calendrier disponibilités, livret et messagerie (évolution continue)
+- Checkout Stripe multi-étapes, calendrier disponibilités
+- Livret d'accueil, checklist, messagerie, demandes conciergerie, documents
+- Chatbot locataire
+
+### Auth & RBAC
+
+- **3 rôles** : admin (staff), proprio (propriétaire), tenant (voyageur/client)
+- **Middleware** : guard par route groups — `/admin` → admin only, `/dashboard` → proprio only (staff redirigé vers admin), `/espace-client` → tenant only
+- **Login** : dual-tab (password pour proprio/admin, magic link pour tenants)
+- **Fallback STAFF_ADMIN_EMAILS** : variable d'environnement pour secours admin
+
+### Animations & micro-interactions
+
+- `ScrollReveal` : wrapper réutilisable pour apparitions au scroll (fade-in, slide-up)
+- `stagger-item` : animation séquentielle des listes/grilles (villas, services)
+- `blur-fade-in` : hero PageHero (eyebrow → titre → ligne → subtitle)
+- Keyframes custom : shimmer doré, scale-in, slide-in, line-draw
 
 ---
 
-## 8. Variables d’environnement
+## 7. Variables d'environnement
 
 Modèle : `.env.local.example` → copier en `.env.local`.
 
 | Variable | Usage |
-|----------|--------|
+|----------|-------|
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client public |
 | `SUPABASE_SERVICE_ROLE_KEY` | API serveur / admin |
-| `STRIPE_*` | Paiements (optionnel en dev) |
-| `N8N_WEBHOOK_URL` | Webhook chat (admin / repli) |
-| `N8N_OWNER_WEBHOOK_URL` | Webhook optionnel **copilot propriétaire** (prioritaire sur `N8N_WEBHOOK_URL` pour cette route) — voir [`docs/n8n/OWNER_COPILOT_AUTOMATION.md`](docs/n8n/OWNER_COPILOT_AUTOMATION.md) |
-| `N8N_OWNER_WEBHOOK_SECRET` | (Optionnel) Envoyé en `X-Webhook-Secret` vers n8n pour sécuriser le webhook |
-| `ADMIN_CHAT_ALLOWED_EMAILS` | Emails autorisés sur `POST /api/admin/chat` (CSV, insensible à la casse) |
-| `ADMIN_CHAT_ALLOWED_USER_IDS` | UUID Supabase autorisés sur `POST /api/admin/chat` (CSV) — au moins une des deux listes requise pour accès |
+| `STRIPE_*` | Paiements |
+| `N8N_WEBHOOK_URL` | Webhook chat admin |
+| `N8N_OWNER_WEBHOOK_URL` | Webhook copilot propriétaire |
+| `ADMIN_CHAT_ALLOWED_EMAILS` | Emails autorisés admin chat |
+| `ADMIN_CHAT_ALLOWED_USER_IDS` | UUID autorisés admin chat |
+| `STAFF_ADMIN_EMAILS` | Fallback admin pour middleware |
 | `NEXT_PUBLIC_BASE_URL` | URLs absolues (OG, emails) |
 
-Ne **jamais** committer `.env.local` ni de secrets.
+---
+
+## 8. Déploiement
+
+- **Vercel** : projet lié au repo GitHub
+- **`vercel.json`** : cron sur `/api/sync`
+- **Build** : `npm run build` avant livraison
+- **Dev** : `npm run dev` (port 3003)
+- Attention sandbox Cursor : utiliser `full_network` si DNS Supabase ne résout pas en local
 
 ---
 
-## 9. Déploiement
+## 9. Pistes & dette connue
 
-- **Vercel** : `vercel deploy --prod` (CLI connectée au compte projet)
-- **`vercel.json`** : cron sur `/api/sync` (planning type `0 3 * * *` ou équivalent selon fichier)
-- Après un **build** de vérification, relancer le **serveur de dev** pour prévisualiser localement (`npm run dev` sur le port 3000)
-
----
-
-## 10. Pistes & dette connue
-
-- Stripe production + webhooks validés de bout en bout
-- CSP / rate limit ciblés sur `/api/contact` et `/api/chat` si besoin
-- Baseline Lighthouse + `MESURES_BASELINE.md` (règle perf Karibloom)
-- Nettoyage optionnel : dépendances UI non utilisées, `heroui.min.css` si migration terminée
-- Warning ESLint connu : `Chatbot.tsx` — `useEffect` / dépendance `messages.length`
+- Stripe production + webhooks à valider de bout en bout
+- CSP / rate limit ciblés sur `/api/contact` et `/api/chat`
+- Warning ESLint : `Chatbot.tsx` — useEffect dépendance `messages.length`
+- Pas de `not-found.tsx` global (page 404)
+- `error.tsx` et `loading.tsx` seulement présents dans `(admin)/admin/`
+- Tests Playwright à implémenter pour flows critiques (login, booking, checkout)
+- ScrollRevealWrapper.tsx créé mais pas encore utilisé partout (certains ScrollReveal sont encore des Client Components inline)
 
 ---
 
-## 11. État d’avancement (indicatif)
+## 10. État d'avancement
 
-| Domaine | État indicatif |
-|---------|----------------|
+| Domaine | État |
+|---------|------|
 | Marketing public & conciergerie | Très avancé |
+| Page /prestations (vidéo scroll + hub éditorial) | Très avancé |
 | Catalogue & fiche villa | Très avancé |
-| Dashboard propriétaire & import | Très avancé |
-| Espace client & paiement | Avancé (itérations possibles) |
-| Perf / sécurité durcie prod | À cadrer avec audit continu |
+| Dashboard propriétaire (KPIs, graphiques, saisons, tâches) | Très avancé |
+| Dashboard admin (CRUD, sync, gestion) | Avancé |
+| Espace client & paiement | Avancé |
+| Animations & micro-interactions | Avancé |
+| Auth & RBAC | Avancé |
+| Perf / sécurité durcie prod | À cadrer |
 
 ---
 
-## 12. Audit & conformité Karibloom
+## 11. Audit & conformité Karibloom
 
-- **Audit multi-domaines** : [`docs/audits/audit-complet-2026-04-07.md`](docs/audits/audit-complet-2026-04-07.md) (stack, mobile, SEO, sécurité, a11y, données)
-- **Règles projet** : `.cursor/rules/` + pack `client-builder/` (workflow, stack, UI, perf)
+- **Stack** : Next.js 15 App Router + Supabase + Stripe + Tailwind/Chakra/Radix ✓
+- **TypeScript strict** ✓
+- **SEO** : metadata, sitemap.ts, robots.ts, JSON-LD
+- **Responsive** : mobile-first, 44px touch targets, safe areas, dvh
+- **Sécurité** : CSP headers, webhook signatures, RLS, middleware auth
+- **Documentation** : ACTIONS_LOG.md, logs de session, RECAP.md
 
 ---
 
-## 13. Traçabilité
+## 12. Traçabilité
 
 | Emplacement | Rôle |
 |-------------|------|
-| `docs/ACTIONS_LOG.md` | Journal **global** append-only (`agent: cursor` ou `agent: claude`) |
+| `docs/ACTIONS_LOG.md` | Journal global append-only |
 | `docs/logs/YYYY-MM-DD.md` | Détail des sessions par jour |
-| `docs/superpowers/specs/`, `plans/`, `prompts/` | Specs et prompts Claude Code |
-
-Les **sorties brutes de terminal** ne sont pas versionnées ; l’historique exploitable est dans ces fichiers.
+| `docs/superpowers/specs/`, `plans/`, `prompts/` | Specs et prompts |
 
 ---
 
-## 14. Chronologie récente (synthèse)
+## 13. Chronologie récente
 
 | Période | Thèmes |
 |---------|--------|
-| **2026-04-05** | Mobile heroes, `text-[10px]`, captures Playwright |
-| **2026-04-06** | Éditeur villa (onglets, TOC, résas, iCal), mobile (`dvh`, navbar, safe area), sync rules Builder |
-| **2026-04-07** | Import prix & équipements, migrations SQL, audit complet documenté |
-| **2026-04-07 (Claude)** | **Repositionnement conciergerie first** : home, TrustBand, `HomeConciergeHighlight`, ordre sections, CTAs, page `/prestations` enrichie — spec `docs/superpowers/specs/2026-04-07-conciergerie-first-design.md` |
-| **2026-04-08** | Hero `/prestations` image dédiée, bande noire CTA compacte et centrée, **fix logo → accueil** (Navbar / BrandLogo), déploiements Vercel ; hero accueil sans les trois mots micro |
-
-*Le détail fichier par fichier est dans `ACTIONS_LOG.md` et les `docs/logs/` correspondants.*
+| **2026-04** | Conciergerie-first, hero /prestations, fix logo, éditeur villa (onglets TOC), import prix/équipements, audit complet |
+| **2026-05-01** | Correction routage admin (RBAC + middleware), fallback STAFF_ADMIN_EMAILS |
+| **2026-05-07** | Gold tokens unifiés, migration total_price_cents, auth guards dupliqués supprimés |
+| **2026-05-08 (matin)** | Dashboard admin shell (layout, sidebar, page intro), villa admin CRUD, sync OTA, navbar/footer masqués |
+| **2026-05-08 (après-midi)** | Dashboard proprio (KPIs, RevenueChart, OccupancyChart + saisons), FAQ commission, auth defense-in-depth |
+| **2026-05-09** | Animations P1 (ScrollReveal, stagger-fade), page /prestations redesign (mobile hero + hub éditorial), critique design P1 fixes, Copilot Finance redesign, bug villas DNS sandbox, page proprios supprimée, images 5 piliers, Navbar centrage, rename labels |
 
 ---
 
-**Dernière mise à jour du récap :** 2026-04-08  
-**Version package :** `0.1.0` (`package.json`)
+**Dernière mise à jour du récap :** 2026-05-09
