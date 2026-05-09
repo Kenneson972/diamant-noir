@@ -3,51 +3,6 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-/** Hero plein impact — aligné accueil : min-h index, colonne max-w-4xl, px-5 sm:px-6, ligne or */
-export function EditorialHeroImmersive({
-  eyebrow,
-  title,
-  subtitle,
-  imageSrc = "/villa-hero.jpg",
-  imageAlt = "",
-  actions,
-}: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  imageSrc?: string;
-  imageAlt?: string;
-  /** Boutons / liens CTA affichés sous le sous-titre, dans le hero */
-  actions?: ReactNode;
-}) {
-  return (
-    <section className="relative flex min-h-[220px] w-full flex-col justify-end overflow-hidden bg-navy xs:min-h-[260px] md:min-h-[min(68vh,680px)]">
-      <Image
-        src={imageSrc}
-        alt={imageAlt || "Ambiance villa de luxe"}
-        fill
-        priority
-        fetchPriority="high"
-        className="object-cover opacity-[0.42]"
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25" aria-hidden />
-      <div className="relative z-10 w-full px-5 pb-12 pt-24 sm:px-6 md:pb-20 md:pt-24">
-        <div className="mx-auto w-full max-w-4xl">
-          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-gold md:text-[11px]">{eyebrow}</p>
-          <h1 className="font-display text-[clamp(2.25rem,6vw,4.75rem)] font-normal uppercase leading-[1.05] tracking-[0.08em] text-white">
-            {title}
-          </h1>
-          <span className="mt-6 block h-px w-10 bg-gold/90 md:mt-8" aria-hidden />
-          <p className="mt-8 max-w-2xl text-base font-light leading-relaxed text-white/85 md:text-lg md:leading-relaxed">
-            {subtitle}
-          </p>
-          {actions ? <div className="mt-10">{actions}</div> : null}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /** Bloc éditorial centré — gros intertitre + textes (section « La conciergerie autrement ») */
 export function EditorialIntro({
@@ -66,7 +21,7 @@ export function EditorialIntro({
     <section className="bg-white px-5 py-20 sm:px-6 md:py-28 lg:py-36">
       <div className={`mx-auto max-w-5xl ${head}`}>
         <h2 className="font-display text-[clamp(1.75rem,4vw,3rem)] leading-[1.15] text-navy">{title}</h2>
-        <span className={`mt-6 block h-px w-14 bg-gold ${line}`} aria-hidden />
+        <span className={`mt-6 block h-px w-12 bg-gold ${line}`} aria-hidden />
         <div
           className={`mt-12 space-y-8 text-base leading-[1.85] text-navy/78 md:text-[17px] md:leading-[1.9] ${body}`}
         >
@@ -91,9 +46,8 @@ export function EditorialServiceGrid({
 }) {
   return (
     <section className="bg-offwhite px-5 py-20 sm:px-6 md:py-28 lg:py-32">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{eyebrow}</p>
-        <h2 className="mt-4 font-display text-3xl text-navy md:text-4xl lg:text-[2.75rem]">{title}</h2>
+      <div className="mx-auto max-w-5xl">
+        <h2 className="font-display text-3xl text-navy md:text-4xl">{title}</h2>
         {subtitle ? (
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-navy/65 md:text-[17px]">{subtitle}</p>
         ) : null}
@@ -161,10 +115,10 @@ export function EditorialImageSplit({
       className={`flex flex-col justify-center px-5 py-14 sm:px-6 md:px-10 md:py-16 lg:px-12 lg:py-20 ${textColClassName}`.trim()}
     >
       {eyebrow ? (
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{eyebrow}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">{eyebrow}</p>
       ) : null}
       <h2
-        className={`max-w-prose font-display text-2xl leading-snug text-navy md:text-3xl lg:text-[2.25rem] ${eyebrow ? "mt-4" : ""}`}
+        className={`max-w-prose font-display text-3xl leading-snug text-navy md:text-4xl ${eyebrow ? "mt-4" : ""}`}
       >
         {title}
       </h2>
@@ -174,7 +128,7 @@ export function EditorialImageSplit({
   );
   return (
     <section className={`py-0 ${sectionClassName}`.trim()}>
-      <div className="mx-auto grid max-w-7xl md:grid-cols-2 md:items-stretch">
+      <div className="mx-auto grid max-w-5xl md:grid-cols-2 md:items-stretch">
         {imagePosition === "left" ? (
           <>
             {imgBlock}
@@ -209,8 +163,7 @@ export function EditorialQuotes({
 }) {
   return (
     <section className="bg-navy px-5 py-20 text-white sm:px-6 md:py-28 lg:py-32">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-gold/90">{eyebrow}</p>
+      <div className="mx-auto max-w-5xl">
         <h2 className="mt-4 max-w-3xl font-display text-3xl leading-tight md:text-4xl">{title}</h2>
         <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
         <div className="mt-16 grid gap-12 md:grid-cols-3 md:gap-10">
@@ -249,9 +202,9 @@ export function EditorialFigureBand({
   detailsSummaryLabel?: string;
 }) {
   return (
-    <section className="border-y border-navy/10 bg-offwhite px-5 py-16 sm:px-6 md:py-20">
-      <div className="mx-auto max-w-6xl text-center md:text-left">
-        <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-navy/55">{label}</p>
+    <section className="border-y border-navy/10 bg-offwhite px-5 py-20 sm:px-6 md:py-28">
+      <div className="mx-auto max-w-5xl text-center md:text-left">
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">{label}</p>
         <p className="mt-4 font-display text-6xl text-navy md:text-7xl lg:text-8xl">{figure}</p>
         <p className="mt-4 max-w-xl text-sm uppercase tracking-[0.18em] text-navy/55 md:mx-0">{caption}</p>
         {detailsCaption ? (

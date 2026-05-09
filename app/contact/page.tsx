@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Mail, MessageCircle, ChevronDown } from "lucide-react";
 import {
   LandingShell,
-  LandingHero,
   LandingSection,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 
 const faqItems = [
   {
@@ -61,12 +61,10 @@ export default function ContactPage() {
 
   return (
     <LandingShell>
-      <LandingHero
+      <PageHero
         eyebrow="Échange & support"
         title="Contact & FAQ"
         subtitle="Une question, une demande spéciale ? Notre équipe et le chatbot Kayvila sont à votre écoute."
-        variant="navy"
-        align="split"
       />
 
       <LandingSection bg="white">

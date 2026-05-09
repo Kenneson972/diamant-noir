@@ -1,12 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import {
-  Inter,
-  Playfair_Display,
-  Cormorant_Garamond,
-  Sora,
-  Instrument_Sans,
-} from "next/font/google";
+import { Sora, Instrument_Sans } from "next/font/google";
+import { cookies } from "next/headers";
 import { SiteFrame } from "@/components/layout/SiteFrame";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
@@ -14,26 +9,7 @@ import { CompareProvider } from "@/contexts/CompareContext";
 import { CompareBar } from "@/components/villas/CompareBar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ChatbotDynamic } from "@/components/chatbot/ChatbotDynamic";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
-  display: "swap",
-});
+import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, DEFAULT_LOCALE, DEFAULT_CURRENCY, type Locale, type Currency } from "@/lib/i18n";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -72,17 +48,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const isDevelopment = process.env.NODE_ENV === "development";
 
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("dn_locale")?.value ?? "";
+  const currencyCookie = cookieStore.get("dn_currency")?.value ?? "";
+  const initialLocale: Locale = (SUPPORTED_LOCALES as readonly string[]).includes(localeCookie)
+    ? (localeCookie as Locale)
+    : DEFAULT_LOCALE;
+  const initialCurrency: Currency = (SUPPORTED_CURRENCIES as readonly string[]).includes(currencyCookie)
+    ? (currencyCookie as Currency)
+    : DEFAULT_CURRENCY;
+
   return (
-    <html lang="fr" className="scroll-smooth">
-      <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${sora.variable} ${instrumentSans.variable} bg-offwhite`}>
-        <LocaleProvider>
+    <html lang={initialLocale} className="scroll-smooth">
+      <body className={`${sora.variable} ${instrumentSans.variable} bg-offwhite`}>
+        <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <AuthProvider>
           <WishlistProvider>
             <CompareProvider>

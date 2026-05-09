@@ -62,16 +62,6 @@ export function BookLandingMarketing({
             <div className="mx-auto mt-10 w-full max-w-4xl animate-in fade-in duration-700">
               <div className="flex flex-col divide-y divide-black/10 border border-white/20 bg-white/[0.97] text-navy shadow-[0_20px_50px_rgba(0,0,0,0.18)] sm:flex-row sm:divide-x sm:divide-y-0">
                 <Link
-                  href="/proprietaires"
-                  className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
-                >
-                  <Building2 className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
-                    <p className="mt-1 text-sm font-medium text-navy">L&apos;offre propriétaires</p>
-                  </div>
-                </Link>
-                <Link
                   href="/soumettre-ma-villa"
                   className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
                 >

@@ -49,11 +49,6 @@ export const Footer = () => {
               {audience === "proprietaire" ? (
                 <>
                   <li>
-                    <Link href="/proprietaires" className="block py-2 transition-colors hover:text-black">
-                      Propriétaires
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/soumettre-ma-villa" className="block py-2 transition-colors hover:text-black">
                       {t("footer.submit_villa")}
                     </Link>

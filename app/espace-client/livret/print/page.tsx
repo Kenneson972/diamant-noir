@@ -95,12 +95,12 @@ export default function LivretPrintPage() {
             {villa?.name ?? "Livret d'accueil"}
           </h1>
           {villa?.location && (
-            <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.5)] mt-1">
+            <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.5)] mt-1">
               {villa.location}, Martinique
             </p>
           )}
           {dates && (
-            <p className="font-cormorant italic text-[14px] text-[rgba(13,27,42,0.4)] mt-1">
+            <p className="font-display italic text-[14px] text-[rgba(13,27,42,0.4)] mt-1">
               {fmt(dates.start)} → {fmt(dates.end)}
             </p>
           )}
@@ -110,12 +110,12 @@ export default function LivretPrintPage() {
           <section className="mb-8">
             <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Wi-Fi & accès</h2>
             {villa.wifi_name && (
-              <p className="font-cormorant text-[16px] text-[#0D1B2A]">
+              <p className="font-display text-[16px] text-[#0D1B2A]">
                 Réseau : <strong>{villa.wifi_name}</strong>
               </p>
             )}
             {villa.wifi_password && (
-              <p className="font-cormorant text-[16px] text-[#0D1B2A]">
+              <p className="font-display text-[16px] text-[#0D1B2A]">
                 Mot de passe :{" "}
                 <code className="bg-[#FAFAF8] border border-[rgba(13,27,42,0.08)] px-2 py-0.5 text-sm">
                   {villa.wifi_password}
@@ -127,10 +127,10 @@ export default function LivretPrintPage() {
 
         <section className="mb-8">
           <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Check-in / Check-out</h2>
-          <p className="font-cormorant text-[16px] text-[#0D1B2A]">Check-in : À partir de 16h00</p>
-          <p className="font-cormorant text-[16px] text-[#0D1B2A]">Check-out : Avant 11h00</p>
+          <p className="font-display text-[16px] text-[#0D1B2A]">Check-in : À partir de 16h00</p>
+          <p className="font-display text-[16px] text-[#0D1B2A]">Check-out : Avant 11h00</p>
           {villa?.checkout_instructions && (
-            <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed mt-3">
+            <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed mt-3">
               {villa.checkout_instructions}
             </p>
           )}
@@ -139,7 +139,7 @@ export default function LivretPrintPage() {
         {villa?.local_recommendations && (
           <section className="mb-8">
             <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">À proximité</h2>
-            <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed">
+            <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed">
               {villa.local_recommendations}
             </p>
           </section>
@@ -154,14 +154,14 @@ export default function LivretPrintPage() {
               { name: "Pompiers", number: "18" },
               { name: "Urgences Europe", number: "112" },
             ].map(({ name, number }) => (
-              <p key={name} className="font-cormorant text-[15px] text-[#0D1B2A]">
+              <p key={name} className="font-display text-[15px] text-[#0D1B2A]">
                 <span className="text-[rgba(13,27,42,0.45)]">{name} — </span>
                 <strong>{number}</strong>
               </p>
             ))}
           </div>
           {villa?.emergency_contacts && (
-            <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] mt-3 whitespace-pre-line">
+            <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] mt-3 whitespace-pre-line">
               {villa.emergency_contacts}
             </p>
           )}

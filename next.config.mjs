@@ -16,6 +16,11 @@ const nextConfig = {
       "@radix-ui/react-tabs",
     ],
   },
+  // Désactiver le watching webpack en mode dev pour éviter EMFILE
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 2,
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -67,7 +72,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://js.stripe.com https://maps.googleapis.com",
               "style-src 'self' 'unsafe-inline' https://*.supabase.co https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://*.supabase.co https://a0.muscache.com https://*.muscache.com https://res.cloudinary.com https://images.unsplash.com https://i.ibb.co https://www.airbnb.com",
+              "img-src 'self' data: blob: https://*.supabase.co https://a0.muscache.com https://*.muscache.com https://res.cloudinary.com https://images.unsplash.com https://i.ibb.co https://www.airbnb.com https://*.basemaps.cartocdn.com",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://maps.googleapis.com https://*.googleapis.com",
               "frame-src 'self' https://js.stripe.com https://maps.googleapis.com",
@@ -78,6 +83,19 @@ const nextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+        ],
+      },
+      {
+        // Désactiver le cache navigateur en développement (évite les refreshes manuels)
+        source: "/:path((?!_next/static|favicon|brand/).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              process.env.NODE_ENV === "development"
+                ? "no-cache, no-store, must-revalidate"
+                : undefined,
           },
         ],
       },

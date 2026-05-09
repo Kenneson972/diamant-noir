@@ -166,13 +166,13 @@ export function EspaceClientShell({
         <div className="mx-6 mt-auto pt-5 pb-7 border-t border-[rgba(13,27,42,0.07)] flex items-center gap-[10px]">
           <div
             className="w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] shrink-0"
-            style={{ background: "linear-gradient(135deg, #D4AF37, #9A7B24)", color: "#0D1B2A", fontFamily: "var(--font-playfair)" }}
+            style={{ background: "linear-gradient(135deg, #D4AF37, #9A7B24)", color: "#0D1B2A", fontFamily: "var(--font-sora)" }}
           >
             {userInitial ?? "?"}
           </div>
           <div className="min-w-0 flex-1">
             {userName && (
-              <p className="font-cormorant text-[13px] font-light text-[#0D1B2A] truncate leading-tight">
+              <p className="font-display text-[13px] font-light text-[#0D1B2A] truncate leading-tight">
                 {userName}
               </p>
             )}
@@ -197,7 +197,7 @@ export function EspaceClientShell({
           <button
             type="button"
             className="w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] shrink-0 cursor-pointer"
-            style={{ background: "linear-gradient(135deg, #D4AF37, #9A7B24)", color: "#0D1B2A", fontFamily: "var(--font-playfair)", display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ background: "linear-gradient(135deg, #D4AF37, #9A7B24)", color: "#0D1B2A", fontFamily: "var(--font-sora)", display: "flex", alignItems: "center", justifyContent: "center" }}
             onClick={onSignOut}
             aria-label="Déconnexion"
           >

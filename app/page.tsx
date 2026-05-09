@@ -4,10 +4,10 @@ import { HomeBottomCta } from "@/components/home/HomeBottomCta";
 import { HomeFeaturedAudience, type HomeFeaturedVilla } from "@/components/home/HomeFeaturedAudience";
 import { HomeOwnersSection } from "@/components/home/HomeOwnersSection";
 import { HomeServicesSection } from "@/components/home/HomeServicesSection";
+import { HomeTrustBand } from "@/components/home/HomeTrustBand";
 import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 import { HeroBackgroundMedia } from "@/components/home/HeroBackgroundMedia";
 
-// ISR: revalidate every 60s, or immediately when revalidateVillas() is called from dashboard
 export const revalidate = 60;
 
 export default async function HomePage() {
@@ -53,15 +53,14 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-dvh bg-offwhite">
-      {/* Hero — vidéo / poster + cartes audience (rétabli après essai hero blanc) */}
+      {/* ① Hero — sombre, conciergerie-first */}
       <section
-        className="relative flex min-h-[340px] w-full flex-col justify-center overflow-hidden bg-navy pt-24 xs:min-h-[380px] md:min-h-[min(65vh,580px)] md:py-16 md:pt-24"
+        className="relative flex min-h-[60dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-24 md:min-h-[70dvh] md:py-16 md:pt-24 lg:min-h-[min(75vh,640px)]"
         aria-labelledby="hero-title"
       >
         <HeroBackgroundMedia />
         <div className="absolute inset-0 bg-gradient-to-b from-black/14 via-black/8 to-black/48" />
-
-        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 text-center sm:px-6">
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center sm:px-8">
           <HeroWordmarkBaseline
             headingId="hero-title"
             titleLabel="Kayvila — Conciergerie privée"
@@ -71,23 +70,36 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Nos services — 5 piliers */}
-      <HomeServicesSection />
+      {/* ② Les 5 piliers conciergerie */}
+      <section className="cv-auto">
+        <HomeServicesSection />
+      </section>
 
-      {/* Offre propriétaires */}
-      <HomeOwnersSection />
+      {/* ④ Propriétaires — texte gauche, photo droite bord à bord */}
+      <section className="cv-auto">
+        <HomeOwnersSection />
+      </section>
 
-      {/* Villas — masquées si aucune villa publiée */}
-      {featuredVillas.length > 0 && (
-        <HomeFeaturedAudience
-          featuredVillas={featuredVillas}
-          featuredError={featuredError}
-          featuredCount={featuredCount}
-        />
-      )}
+      {/* ⑤ Villas — grille plein bord, zéro gap */}
+      <section className="cv-auto">
+        {featuredVillas.length > 0 && (
+          <HomeFeaturedAudience
+            featuredVillas={featuredVillas}
+            featuredError={featuredError}
+            featuredCount={featuredCount}
+          />
+        )}
+      </section>
 
-      {/* CTA final */}
-      <HomeBottomCta />
+      {/* ⑥ Trust — stats + témoignage */}
+      <section className="cv-auto">
+        <HomeTrustBand />
+      </section>
+
+      {/* ⑦ CTA final */}
+      <section className="cv-auto">
+        <HomeBottomCta />
+      </section>
     </main>
   );
 }

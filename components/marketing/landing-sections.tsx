@@ -1,48 +1,10 @@
 import type { ReactNode } from "react";
 
+type HeroVariant = "navy" | "black";
+
 /** Conteneur page marketing — fond global offwhite */
 export function LandingShell({ children }: { children: ReactNode }) {
   return <main className="min-h-dvh bg-offwhite">{children}</main>;
-}
-
-type HeroVariant = "navy" | "black";
-
-export function LandingHero({
-  eyebrow,
-  title,
-  subtitle,
-  variant = "navy",
-  align = "split",
-}: {
-  eyebrow: string;
-  title: string;
-  subtitle?: string;
-  variant?: HeroVariant;
-  align?: "center" | "split";
-}) {
-  const bg = "bg-navy";
-  /** Aligné accueil / propriétaires : pt-24 sous navbar fixe, colonne max-w-4xl, px-5 sm:px-6 */
-  const inner =
-    align === "center"
-      ? "mx-auto w-full max-w-4xl text-center"
-      : "mx-auto w-full max-w-4xl text-center md:mx-0 md:max-w-3xl md:text-left";
-  const goldRule = align === "center" ? "mx-auto" : "mx-auto md:mx-0";
-  return (
-    <section
-      className={`relative flex min-h-[220px] w-full flex-col justify-center overflow-hidden ${bg} pt-24 pb-14 xs:min-h-[260px] xs:pb-16 md:min-h-[min(68vh,680px)] md:pb-20 md:pt-24`}
-    >
-      <div className={`${inner} px-5 sm:px-6`}>
-        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-gold">{eyebrow}</p>
-        <h1 className="font-display text-4xl text-balance text-white md:text-5xl lg:text-6xl">{title}</h1>
-        <span className={`mt-6 block h-px w-10 bg-gold/90 md:mt-8 ${goldRule}`} aria-hidden />
-        {subtitle ? (
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:mx-0 md:mt-8">
-            {subtitle}
-          </p>
-        ) : null}
-      </div>
-    </section>
-  );
 }
 
 /** Hero plus bas — pages légales / secondaires */
@@ -60,12 +22,12 @@ export function LandingHeroCompact({
   const bg = "bg-navy";
   return (
     <section
-      className={`relative flex min-h-[200px] w-full flex-col justify-center overflow-hidden ${bg} pt-24 pb-12 xs:min-h-[240px] md:min-h-[min(48vh,520px)] md:pb-16 md:pt-24`}
+      className={`relative flex min-h-[160px] w-full flex-col justify-center overflow-hidden ${bg} pt-24 pb-10 xs:min-h-[200px] md:min-h-[min(42vh,420px)] md:pb-14 md:pt-24`}
     >
-      <div className="mx-auto w-full max-w-4xl px-5 text-center sm:px-6 md:text-left">
-        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-gold">{eyebrow}</p>
-        <h1 className="font-display text-3xl text-white md:text-4xl lg:text-5xl">{title}</h1>
-        <span className="mx-auto mt-6 block h-px w-10 bg-gold/90 md:mx-0 md:mt-7" aria-hidden />
+      <div className="mx-auto w-full max-w-3xl px-5 text-center sm:px-6 md:text-left">
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.4em] text-gold">{eyebrow}</p>
+        <h1 className="font-display text-2xl text-white md:text-3xl lg:text-4xl">{title}</h1>
+        <span className="mx-auto mt-6 block h-px w-12 bg-gold/85 md:mx-0 md:mt-7" aria-hidden />
         {subtitle ? (
           <p className="mx-auto mt-6 max-w-2xl text-white/65 md:mx-0 md:mt-8">{subtitle}</p>
         ) : null}
@@ -81,7 +43,7 @@ export function LandingSection({
   children,
   className = "",
   id,
-  innerClassName = "max-w-6xl",
+  innerClassName = "max-w-5xl",
 }: {
   bg?: SectionBg;
   children: ReactNode;
@@ -96,7 +58,7 @@ export function LandingSection({
     navy: "bg-navy text-white",
   };
   return (
-    <section id={id} className={`${map[bg]} px-5 py-16 sm:px-6 md:py-24 lg:py-28 ${className}`}>
+    <section id={id} className={`${map[bg]} px-5 py-20 sm:px-6 md:py-28 lg:py-32 ${className}`}>
       <div className={`mx-auto ${innerClassName}`}>{children}</div>
     </section>
   );

@@ -220,7 +220,7 @@ export default function ChecklistPage() {
             Avant votre arrivée
           </h1>
           {booking && (
-            <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.4)]">
+            <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)]">
               {booking.villa?.name} · {fmt(booking.start_date)}
             </p>
           )}
@@ -262,7 +262,7 @@ export default function ChecklistPage() {
         {/* Checklist items */}
         {!booking ? (
           <div className="py-12 text-center">
-            <p className="font-cormorant italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
+            <p className="font-display italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
               Aucune réservation à venir.{" "}
               <Link href="/villas" className="text-[#D4AF37] underline underline-offset-4">
                 Découvrir nos villas →
@@ -312,7 +312,7 @@ export default function ChecklistPage() {
                     </p>
                     <p
                       className={[
-                        "font-cormorant italic text-[13px] font-light transition-colors",
+                        "font-display italic text-[13px] font-light transition-colors",
                         isChecked ? "text-[rgba(13,27,42,0.25)]" : "text-[rgba(13,27,42,0.45)]",
                       ].join(" ")}
                     >

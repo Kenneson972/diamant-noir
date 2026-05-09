@@ -14,7 +14,7 @@ body {
 }
 
 body {
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
   background-color: #fafafa;
   color: #0a0a0a;
 }
@@ -27,11 +27,7 @@ button,
   touch-action: manipulation;
 }
 
-.font-display {
-  font-family: var(--font-playfair), "Times New Roman", serif;
-}
-
-/* Polices dashboard (Sora display, Instrument Sans body) */
+/* Dashboard : classes spécifiques pour la sidebar etc. */
 .font-display-dashboard {
   font-family: var(--font-sora), system-ui, sans-serif;
 }
@@ -64,9 +60,6 @@ button,
   color: #8B8B8B;
 }
 
-.font-cormorant {
-  font-family: var(--font-cormorant), "Georgia", serif;
-}
 
 .text-balance {
   text-wrap: balance;
@@ -154,10 +147,11 @@ body { font-size: 16px; line-height: 1.6; }
   padding: 0;
   border-radius: 0;
   overflow: hidden;
-  border: 1px solid rgba(10, 10, 10, 0.08);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  background: #0a0a0a;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
-/* Flèche blanche qui pointe vers le marker */
+/* Flèche noire assortie au fond de la popup */
 .dn-leaflet-popup .leaflet-popup-tip-container {
   width: 24px;
   height: 14px;
@@ -166,7 +160,7 @@ body { font-size: 16px; line-height: 1.6; }
 .dn-leaflet-popup .leaflet-popup-tip {
   width: 14px;
   height: 14px;
-  background: #fff;
+  background: #0a0a0a;
   box-shadow: none;
   border: none;
   margin: -7px auto 0;
@@ -177,7 +171,7 @@ body { font-size: 16px; line-height: 1.6; }
 }
 .dn-popup {
   width: 220px;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
 }
 .dn-popup__img {
   width: 100%;
@@ -192,7 +186,7 @@ body { font-size: 16px; line-height: 1.6; }
   margin: 0 0 2px;
   font-size: 13px;
   font-weight: 700;
-  color: #0a0a0a;
+  color: #ffffff;
   line-height: 1.3;
 }
 .dn-popup__loc {
@@ -201,18 +195,19 @@ body { font-size: 16px; line-height: 1.6; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #0a0a0a;
-  opacity: 0.35;
+  color: #ffffff;
+  opacity: 0.4;
 }
 .dn-popup__price {
   margin: 0;
   font-size: 14px;
   font-weight: 700;
-  color: #0a0a0a;
+  color: #D4AF37;
 }
 .dn-popup__price span {
   font-size: 10px;
   font-weight: 400;
+  color: #ffffff;
   opacity: 0.4;
 }
 
@@ -372,7 +367,7 @@ body { font-size: 16px; line-height: 1.6; }
   }
 }
 
-/* View Transitions API — navigation douce vers /proprietaires (navigateurs compatibles) */
+/* View Transitions API — navigation douce (navigateurs compatibles) */
 @supports (view-transition-name: none) {
   @media (prefers-reduced-motion: no-preference) {
     ::view-transition-old(root),

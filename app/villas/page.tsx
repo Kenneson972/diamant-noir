@@ -1,6 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import VillasMapView from "@/components/VillasMapView";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
+import { PageHero } from "@/components/marketing/PageHero";
 
 export const dynamic = "force-dynamic";
 
@@ -121,43 +122,21 @@ export default async function VillasListingPage({
 
   return (
     <main className="min-h-dvh bg-offwhite">
-      {/* ── Hero Header ── */}
-      <section className="relative bg-navy overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-
-        <div className="relative mx-auto max-w-7xl px-5 pb-12 pt-24 sm:px-6 xs:pb-14 md:pb-16 md:pt-24">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-            <div className="space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-10 bg-gold" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">
-                  La Sélection
-                </span>
-              </div>
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-white leading-[1.06]">
-                Nos Villas
-                <br />
-                de Légende.
-              </h1>
-            </div>
-            <div className="flex items-end gap-3 md:pb-2 animate-in fade-in duration-700 delay-300">
-              <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
-                {String(villas.length).padStart(2, "0")}
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/45 mb-4">
-                propriétés
-              </span>
-            </div>
-          </div>
+      {/* ── Hero ── */}
+      <PageHero
+        eyebrow="La Sélection"
+        title="Nos Villas de Légende"
+        subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune avec son âme, sa vue, son histoire.`}
+      >
+        <div className="flex items-end justify-center gap-3">
+          <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">
+            {String(villas.length).padStart(2, "0")}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/45 mb-4">
+            propriétés
+          </span>
         </div>
-      </section>
+      </PageHero>
 
       {dateIntent && (
         <div className="border-b border-navy/10 bg-white px-6 py-4">

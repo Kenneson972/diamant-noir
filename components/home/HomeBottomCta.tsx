@@ -2,10 +2,10 @@ import Link from "next/link";
 
 export function HomeBottomCta() {
   return (
-    <section className="py-20 text-center bg-offwhite px-6 md:py-28">
+    <section className="py-20 text-center bg-offwhite px-6 md:py-28 lg:py-32">
       <div className="mx-auto max-w-3xl space-y-10">
         <div className="space-y-8">
-          <h2 className="font-display text-4xl text-navy md:text-6xl">Prêt pour l&apos;exception ?</h2>
+          <h2 className="font-display text-4xl font-light text-navy md:text-6xl">Prêt pour l&apos;exception ?</h2>
           <p className="leading-relaxed text-navy/60">
             Kayvila orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
           </p>

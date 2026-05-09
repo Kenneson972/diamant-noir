@@ -28,8 +28,8 @@ const config: Config = {
         "border-subtle": "#E5E3DB",
       },
       fontFamily: {
+        sans: ["var(--font-instrument-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-sora)", "system-ui", "sans-serif"],
-        body: ["var(--font-instrument-sans)", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-up": {

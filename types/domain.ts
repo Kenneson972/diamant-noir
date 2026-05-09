@@ -163,6 +163,7 @@ export interface VillaSubmission {
   villa_description: string | null;
   airbnb_url: string | null;
   no_photos: boolean;
+  has_photos: boolean;
   photo_urls: string[] | null;
   platforms: VillaSubmissionPlatform[] | null;
   message: string | null;

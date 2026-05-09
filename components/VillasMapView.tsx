@@ -14,6 +14,7 @@ import VillaFilterBar, {
 } from "./VillaFilterBar";
 import type { FilterState } from "./VillaFilterBar";
 import VillaQuickView from "./VillaQuickView";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const VillaLeafletMap = dynamic(() => import("./VillaLeafletMap"), {
   ssr: false,
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export default function VillasMapView({ villas }: Props) {
+  const { t } = useLocale();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mapVisible, setMapVisible] = useState(true);
   const [activeFilters, setActiveFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -74,7 +76,7 @@ export default function VillasMapView({ villas }: Props) {
           </p>
           {viewportCount !== null && viewportCount < villas.length && (
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold/80">
-              · {viewportCount} dans la vue
+              · {viewportCount} {t("villas.in_view")}
             </p>
           )}
         </div>
@@ -85,12 +87,12 @@ export default function VillasMapView({ villas }: Props) {
           {mapVisible ? (
             <>
               <LayoutGrid size={13} />
-              Masquer la carte
+              {t("villas.hide_map")}
             </>
           ) : (
             <>
               <Map size={13} />
-              Afficher la carte
+              {t("villas.show_map")}
             </>
           )}
         </button>
@@ -197,7 +199,7 @@ export default function VillasMapView({ villas }: Props) {
                       aria-label={`Aperçu rapide — ${villa.name}`}
                       className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 border border-navy/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 hover:border-gold hover:text-gold min-h-[44px] flex items-center"
                     >
-                      Aperçu
+                      {t("common.preview")}
                     </button>
                   </div>
                 </div>
@@ -206,7 +208,7 @@ export default function VillasMapView({ villas }: Props) {
           </div>
         </div>
 
-        {/* ── Map panel ── */}
+        {/* ── Map panel desktop ── */}
         {mapVisible && (
           <div className="hidden md:block md:w-[42%] lg:w-[38%] shrink-0 sticky top-[120px] h-[calc(100dvh-120px)] min-h-[280px]">
             <VillaLeafletMap
@@ -219,6 +221,19 @@ export default function VillasMapView({ villas }: Props) {
           </div>
         )}
       </div>
+
+      {/* ── Map panel mobile (sous la liste) ── */}
+      {mapVisible && (
+        <div className="md:hidden w-full h-[60dvh] min-h-[320px] border-t border-navy/10">
+          <VillaLeafletMap
+            villas={villas}
+            hoveredId={hoveredId}
+            onHover={setHoveredId}
+            onSelect={handleSelect}
+            onBoundsChange={handleBoundsChange}
+          />
+        </div>
+      )}
 
       {/* ── Quick View drawer ── */}
       <VillaQuickView

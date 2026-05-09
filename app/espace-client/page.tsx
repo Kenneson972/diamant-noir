@@ -54,11 +54,11 @@ function UpcomingStayHero({ booking }: { booking: any }) {
           {booking.villa?.name ?? "Villa Kayvila"}
         </h2>
         {booking.villa?.location && (
-          <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">
+          <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">
             {booking.villa.location}, Martinique
           </p>
         )}
-        <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mb-7">
+        <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mb-7">
           {fmt(startDate)} – {fmt(endDate)} · {nights} nuit{nights > 1 ? "s" : ""}
         </p>
         <Link
@@ -304,7 +304,7 @@ export default function EspaceClientPage() {
                   {b.villa?.name ?? "Villa Kayvila"}
                 </p>
                 {b.start_date && b.end_date && (
-                  <p className="font-cormorant italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
+                  <p className="font-display italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
                     {new Date(b.start_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     {" – "}
                     {new Date(b.end_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
@@ -397,7 +397,7 @@ export default function EspaceClientPage() {
                   <span className="block text-[10px] tracking-[0.22em] uppercase text-[#0D1B2A] font-medium mb-1">
                     {label}
                   </span>
-                  <span className="font-cormorant italic text-[13px] font-light text-[rgba(13,27,42,0.35)]">
+                  <span className="font-display italic text-[13px] font-light text-[rgba(13,27,42,0.35)]">
                     {sub}
                   </span>
                 </span>
@@ -434,7 +434,7 @@ export default function EspaceClientPage() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
                   Messagerie
                 </p>
-                <p className="font-cormorant italic text-[13px] font-light text-navy/35 mt-0.5">Contacter la conciergerie</p>
+                <p className="font-display italic text-[13px] font-light text-navy/35 mt-0.5">Contacter la conciergerie</p>
               </div>
               <ArrowRight size={13} strokeWidth={1} className="text-navy/15 group-hover:text-navy/30 shrink-0 transition-colors duration-200" />
             </div>
@@ -447,7 +447,7 @@ export default function EspaceClientPage() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
                   Mon profil
                 </p>
-                <p className="font-cormorant italic text-[13px] font-light text-navy/35 mt-0.5">Informations personnelles</p>
+                <p className="font-display italic text-[13px] font-light text-navy/35 mt-0.5">Informations personnelles</p>
               </div>
               <ArrowRight size={13} strokeWidth={1} className="text-navy/15 group-hover:text-navy/30 shrink-0 transition-colors duration-200" />
             </div>

@@ -91,7 +91,7 @@ function LivretSkeleton() {
 
 function EmptySection() {
   return (
-    <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.3)]">
+    <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.3)]">
       Cette section sera complétée avant votre arrivée par l&apos;équipe Kayvila.
     </p>
   );
@@ -122,7 +122,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
           {villa.wifi_name && (
             <div>
               <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Réseau</p>
-              <p className="font-cormorant text-[17px] text-[#0D1B2A]">{villa.wifi_name}</p>
+              <p className="font-display text-[17px] text-[#0D1B2A]">{villa.wifi_name}</p>
             </div>
           )}
           {villa.wifi_password && (
@@ -172,16 +172,16 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
         <div className="space-y-5">
           <div>
             <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-in</p>
-            <p className="font-cormorant text-[16px] text-[#0D1B2A]">À partir de 16h00</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">À partir de 16h00</p>
           </div>
           <div>
             <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-out</p>
-            <p className="font-cormorant text-[16px] text-[#0D1B2A]">Avant 11h00</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">Avant 11h00</p>
           </div>
           {villa.checkout_instructions && (
             <div>
               <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Instructions</p>
-              <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
+              <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
                 {villa.checkout_instructions}
               </p>
             </div>
@@ -207,7 +207,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
     case "contacts":
       if (!villa.emergency_contacts) return <EmptySection />;
       return (
-        <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
+        <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
           {villa.emergency_contacts}
         </p>
       );
@@ -215,7 +215,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
     case "proximite":
       if (!villa.local_recommendations) return <EmptySection />;
       return (
-        <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
+        <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
           {villa.local_recommendations}
         </p>
       );
@@ -232,7 +232,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
             <div key={name} className="flex items-center gap-4">
               <div className="flex-1">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)]">{desc}</p>
-                <p className="font-cormorant text-[17px] text-[#0D1B2A] font-light">{name}</p>
+                <p className="font-display text-[17px] text-[#0D1B2A] font-light">{name}</p>
               </div>
               <a
                 href={`tel:${number}`}
@@ -247,7 +247,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
           {villa.emergency_contacts && (
             <div className="pt-4 border-t border-[rgba(13,27,42,0.07)]">
               <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)] mb-2">Contact villa</p>
-              <p className="font-cormorant text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line">
+              <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line">
                 {villa.emergency_contacts}
               </p>
             </div>
@@ -326,7 +326,7 @@ export default function LivretPage() {
               {villa?.name ?? "Livret d'accueil"}
             </h1>
             {villa?.location && (
-              <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mt-1">
+              <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mt-1">
                 {villa.location}, Martinique
               </p>
             )}
@@ -346,7 +346,7 @@ export default function LivretPage() {
 
         {isEmptyBook ? (
           <div className="py-12 text-center">
-            <p className="font-cormorant italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
+            <p className="font-display italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
               Le livret sera complété avant votre arrivée par l&apos;équipe Kayvila.
             </p>
           </div>

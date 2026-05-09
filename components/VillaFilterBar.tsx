@@ -1,6 +1,7 @@
 "use client";
 
 import type { VillaMapItem } from "./VillaLeafletMap";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export type FilterState = {
   piscine: boolean;
@@ -64,6 +65,8 @@ type BudgetVal = "<800" | "800-1200" | ">1200";
 type TierVal = "Signature" | "Prestige" | "Exclusive";
 
 export default function VillaFilterBar({ filters, onChange, passCount, total }: Props) {
+  const { t } = useLocale();
+
   const toggle = (key: keyof Pick<FilterState, "piscine" | "viewMer" | "plage" | "chambres">) => {
     onChange({ ...filters, [key]: !filters[key] });
   };
@@ -83,16 +86,16 @@ export default function VillaFilterBar({ filters, onChange, passCount, total }: 
       <div className="flex items-center gap-2 overflow-x-auto px-6 py-3 scrollbar-none">
         {/* Boolean chips */}
         <button type="button" className={filters.piscine ? CHIP_ON : CHIP_OFF} onClick={() => toggle("piscine")}>
-          Piscine
+          {t("villas.filter.pool")}
         </button>
         <button type="button" className={filters.viewMer ? CHIP_ON : CHIP_OFF} onClick={() => toggle("viewMer")}>
-          Vue mer
+          {t("villas.filter.sea_view")}
         </button>
         <button type="button" className={filters.plage ? CHIP_ON : CHIP_OFF} onClick={() => toggle("plage")}>
-          Plage directe
+          {t("villas.filter.beach")}
         </button>
         <button type="button" className={filters.chambres ? CHIP_ON : CHIP_OFF} onClick={() => toggle("chambres")}>
-          4+ chambres
+          {t("villas.filter.rooms_4plus")}
         </button>
 
         {/* Separator */}
@@ -130,14 +133,14 @@ export default function VillaFilterBar({ filters, onChange, passCount, total }: 
       {active && (
         <div className="flex items-center justify-between px-6 pb-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/50">
-            {passCount} résultat{passCount !== 1 ? "s" : ""} sur {total}
+            {passCount} {passCount !== 1 ? t("villas.filter.results_plural") : t("villas.filter.results")} {t("villas.filter.on")} {total}
           </p>
           <button
             type="button"
             onClick={() => onChange(DEFAULT_FILTERS)}
             className="text-[10px] font-bold uppercase tracking-[0.28em] text-gold hover:text-gold/80 transition-colors"
           >
-            Tout effacer
+            {t("villas.filter.reset")}
           </button>
         </div>
       )}

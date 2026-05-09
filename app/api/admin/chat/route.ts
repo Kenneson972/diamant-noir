@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         supabase
           .from("ota_sync_logs")
           .select("*")
-          .order("synced_at", { ascending: false })
+          .order("created_at", { ascending: false })
           .limit(50),
       ]);
 
@@ -195,7 +195,7 @@ export async function POST(request: Request) {
 
       // Santé OTA
       ota_health: {
-        last_sync: otaLogs[0]?.synced_at || null,
+        last_sync: otaLogs[0]?.created_at || null,
         recent_errors: otaLogs
           .filter((l) => l.error)
           .slice(0, 5)
@@ -203,7 +203,7 @@ export async function POST(request: Request) {
             villa_id: l.villa_id,
             source: l.source,
             error: l.error,
-            synced_at: l.synced_at,
+            synced_at: l.created_at,
           })),
         total_imported_last_sync: otaLogs
           .filter((l) => !l.error)

@@ -213,7 +213,7 @@ export function TenantChatbot({
               className={
                 msg.role === "user"
                   ? "max-w-[78%] bg-navy px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-white"
-                  : "max-w-[78%] border border-navy/8 bg-white px-4 py-3 font-cormorant text-[14px] font-light leading-relaxed whitespace-pre-line text-navy"
+                  : "max-w-[78%] border border-navy/8 bg-white px-4 py-3 font-display text-[14px] font-light leading-relaxed whitespace-pre-line text-navy"
               }
               style={{
                 borderRadius: msg.role === "user" ? "8px 0 8px 8px" : "0 8px 8px 8px",
@@ -270,7 +270,7 @@ export function TenantChatbot({
             onKeyDown={handleKeyDown}
             placeholder="Écrivez votre message…"
             rows={1}
-            className="flex-1 resize-none border border-navy/10 bg-offwhite px-4 py-3 font-cormorant text-[14px] italic text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none"
+            className="flex-1 resize-none border border-navy/10 bg-offwhite px-4 py-3 font-display text-[14px] italic text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none"
             style={{ minHeight: 44, maxHeight: 120 }}
           />
           <button

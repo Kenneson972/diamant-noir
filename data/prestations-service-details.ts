@@ -18,6 +18,14 @@ export type ServiceDetail = {
   overlay: string;
   imageAlign: "left" | "right";
   items: { title: string; desc: string }[];
+  images: {
+    sectionIntro: string;
+    sectionDetails: string;
+    sectionMarket: string;
+    sectionIntroAlt: string;
+    sectionDetailsAlt: string;
+    sectionMarketAlt: string;
+  };
 };
 
 export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
@@ -27,10 +35,10 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Acquisition",
     tagline: "Votre villa visible partout, valorisée au bon prix",
     metaDescription:
-      "Estimation locative, photos pro, annonces multi-plateformes et prix dynamiques — Kayvila, conciergerie Martinique.",
-    image: "/prestations-hero.png",
-    imageAlt: "Intérieur de villa de luxe au coucher du soleil — Martinique",
-    imagePosition: "center 20%",
+      "Estimation locative, photos professionnelles, annonces optimisées et gestion dynamique des prix pour maximiser le revenu de votre villa en Martinique — Kayvila conciergerie.",
+    image: "/marketing.png",
+    imageAlt: "Piscine de villa de luxe au coucher du soleil avec appareil photo — Marketing locatif Kayvila Martinique",
+    imagePosition: "center 40%",
     overlay: "bg-gradient-to-r from-black/70 via-black/40 to-black/10",
     imageAlign: "left",
     items: [
@@ -51,6 +59,14 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Tarifs ajustés en temps réel selon saisonnalité, concurrence et taux d'occupation. Ni vide ni bradé.",
       },
     ],
+    images: {
+      sectionIntro: "/marketing.png",
+      sectionDetails: "/marketing.png",
+      sectionMarket: "/marketing.png",
+      sectionIntroAlt: "Piscine villa luxe au coucher du soleil — stratégie marketing locatif",
+      sectionDetailsAlt: "Annonce premium optimisée pour villa martiniquaise",
+      sectionMarketAlt: "Analyse du marché locatif martiniquais — pricing dynamique",
+    },
   },
   operations: {
     slug: "operations",
@@ -58,10 +74,10 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Terrain",
     tagline: "Zéro contrainte — tout géré sur place",
     metaDescription:
-      "Check-in, contrôle qualité, coordination ménage et artisans sur votre villa en Martinique — Kayvila.",
-    image: "/villa-hero.jpg",
-    imageAlt: "Villa de luxe avec piscine — Martinique",
-    imagePosition: "right 40%",
+      "Check-in et check-out pris en charge, contrôles qualité entre chaque séjour, coordination ménage et artisans sur votre villa en Martinique — Kayvila conciergerie.",
+    image: "/terrain.png",
+    imageAlt: "Accueil personnalisé à l'entrée d'une villa avec boîte à clés sécurisée — Opérations terrain Kayvila Martinique",
+    imagePosition: "center 35%",
     overlay: "bg-gradient-to-l from-black/65 via-black/35 to-black/10",
     imageAlign: "right",
     items: [
@@ -82,6 +98,14 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Nous coordonnons les équipes de ménage, réparations et prestataires locaux. Un seul interlocuteur pour tous — zéro coordination de votre côté.",
       },
     ],
+    images: {
+      sectionIntro: "/terrain.png",
+      sectionDetails: "/terrain.png",
+      sectionMarket: "/terrain.png",
+      sectionIntroAlt: "Entrée villa avec boîte à clés sécurisée — accueil check-in",
+      sectionDetailsAlt: "Équipe terrain inspectant une villa avant un séjour",
+      sectionMarketAlt: "Carte de la Martinique avec zones d'intervention conciergerie",
+    },
   },
   voyageurs: {
     slug: "voyageurs",
@@ -89,10 +113,10 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "7j/7",
     tagline: "Vos voyageurs entre de bonnes mains, 7j/7",
     metaDescription:
-      "Réservations, messages, avis : nous sommes le seul interlocuteur de vos voyageurs — conciergerie Kayvila Martinique.",
-    image: "/prestations-hero.png",
-    imageAlt: "Terrasse de villa face à la mer — Martinique",
-    imagePosition: "center 75%",
+      "Gestion complète des réservations, interlocuteur unique pour les voyageurs, suivi des avis et zéro sollicitation pour le propriétaire — Kayvila Martinique.",
+    image: "/relation.png",
+    imageAlt: "Couple en terrasse face à l'océan, verre de coco à la main — Relation voyageurs Kayvila Martinique",
+    imagePosition: "center 50%",
     overlay: "bg-gradient-to-r from-black/75 via-black/45 to-black/15",
     imageAlign: "left",
     items: [
@@ -113,6 +137,14 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Nous répondons à chaque commentaire — remerciements, retours négatifs traités avec soin, valorisation des avis positifs. Votre note moyenne grimpe, vos réservations aussi.",
       },
     ],
+    images: {
+      sectionIntro: "/relation.png",
+      sectionDetails: "/relation.png",
+      sectionMarket: "/relation.png",
+      sectionIntroAlt: "Couple en terrasse face à l'océan — accueil voyageurs Kayvila",
+      sectionDetailsAlt: "Communication avec les voyageurs — service réactif 7j/7",
+      sectionMarketAlt: "Voyageurs internationaux en Martinique — clientèle premium",
+    },
   },
   menage: {
     slug: "menage",
@@ -120,10 +152,10 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Qualité séjour",
     tagline: "Facturé aux voyageurs — transparent pour vous",
     metaDescription:
-      "Ménage et linge facturés aux voyageurs, hors commission 20 % : détail du modèle Kayvila en Martinique.",
-    image: "/prestations-hero.png",
-    imageAlt: "Intérieur villa premium — propreté hôtelière",
-    imagePosition: "center 40%",
+      "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 20 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
+    image: "/menage.png",
+    imageAlt: "Lit impeccable avec drap blanc et fleur de frangipanier — Ménage blanchisserie Kayvila Martinique",
+    imagePosition: "center 45%",
     overlay: "bg-gradient-to-r from-black/72 via-black/42 to-black/12",
     imageAlign: "right",
     items: [
@@ -148,6 +180,14 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Un prestataire agréé assure l'entretien régulier de votre piscine (traitement de l'eau, nettoyage, contrôle PH) et de vos espaces verts (tonte, taille, désherbage). Service facturé en sus, sur abonnement — nous coordonnons et supervisons pour vous.",
       },
     ],
+    images: {
+      sectionIntro: "/menage.png",
+      sectionDetails: "/menage.png",
+      sectionMarket: "/menage.png",
+      sectionIntroAlt: "Lit impeccable avec drap blanc et fleur — ménage blanchisserie haut standing",
+      sectionDetailsAlt: "Linge de maison préparé aux standards hôteliers",
+      sectionMarketAlt: "Piscine et jardin entretenus en climat tropical martiniquais",
+    },
   },
   finance: {
     slug: "finance",
@@ -155,20 +195,20 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Transparence",
     tagline: "Vos revenus reversés, vos comptes clairs",
     metaDescription:
-      "Encaissement, commission 20 % TTC sur nuitées, espace propriétaire et Copilot — Kayvila Martinique.",
-    image: "/villa-hero.jpg",
-    imageAlt: "Villa de prestige — Martinique",
-    imagePosition: "left 60%",
+      "Encaissement des loyers, commission 20 % TTC sur nuitées nettes, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
+    image: "/finance.png",
+    imageAlt: "Bureau en terrasse avec MacBook, café et orchidée — Gestion financière Kayvila Martinique",
+    imagePosition: "center 40%",
     overlay: "bg-gradient-to-l from-black/70 via-black/40 to-black/15",
     imageAlign: "right",
     items: [
       {
-        title: "Encaissement et reversement mensuel",
-        desc: "Nous collectons les paiements voyageurs et vous reversons chaque mois. Zéro gestion bancaire de votre côté.",
+        title: "Vous encaissez directement via les plateformes",
+        desc: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via Airbnb, Booking ou toute autre plateforme. En fin de mois, Kayvila vous adresse une facture de commission — réglable sous 8 jours. Un mandat de prélèvement SEPA peut simplifier ce règlement.",
       },
       {
-        title: "Commission 20 % TTC sur nuitées nettes",
-        desc: "Ménage et blanchisserie facturés aux voyageurs — hors commission. Vous conservez 100 % de ces montants.",
+        title: "Commission 20 % TTC sur les nuitées réalisées",
+        desc: "La commission de 20 % s'applique sur le montant brut du séjour, frais de ménage et blanchisserie inclus (selon l'affichage de la plateforme). Sur les plateformes qui intègrent le ménage dans le prix affiché, l'assiette est recalculée : base commission = prix total encaissé − forfait ménage contractuel. Ménage et blanchisserie facturés aux voyageurs — hors commission. Vous conservez 100 % de ces montants.",
       },
       {
         title: "Espace propriétaire en ligne",
@@ -179,5 +219,13 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Pour votre première mise en location, un pack d'installation est facturé une seule fois : sucre, café, eau, poivre, huile, épices, papier toilettes, savon, boîte à clefs et inventaire complet. Dès la 2ème location, le réassort courant est à nos frais.",
       },
     ],
+    images: {
+      sectionIntro: "/finance.png",
+      sectionDetails: "/finance.png",
+      sectionMarket: "/finance.png",
+      sectionIntroAlt: "Bureau terrasse avec MacBook et café — gestion financière sereine",
+      sectionDetailsAlt: "Tableau de bord propriétaire — reversements et commissions",
+      sectionMarketAlt: "Graphique d'évolution des revenus locatifs — marché martiniquais",
+    },
   },
 };

@@ -48,7 +48,7 @@ export default function ConciergeriePage() {
             Contacts &amp; urgences
           </h1>
           <span className="mt-3 block h-px w-8 bg-[rgba(212,175,55,0.5)]" />
-          <p className="font-cormorant italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mt-3">
+          <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mt-3">
             Notre équipe est à votre disposition avant, pendant et après votre séjour.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function ConciergeriePage() {
                 <p className={`text-[14px] font-medium ${gold ? "text-[#0D1B2A]" : "text-[#0D1B2A]"}`}>
                   {value}
                 </p>
-                <p className="font-cormorant italic text-[13px] font-light text-[rgba(13,27,42,0.35)] mt-0.5">
+                <p className="font-display italic text-[13px] font-light text-[rgba(13,27,42,0.35)] mt-0.5">
                   {sub}
                 </p>
               </div>

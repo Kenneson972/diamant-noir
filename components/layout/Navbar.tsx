@@ -3,21 +3,21 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, Phone, Mail, Heart, User, Sparkles } from "lucide-react";
+import { Menu, X, Phone, Mail, User, Sparkles } from "lucide-react";
+import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useWishlist } from "@/contexts/WishlistContext";
 import { acquireBodyScrollLock } from "@/lib/bodyScrollLock";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
 
-const NAV_ITEMS: { href: string; label: string }[] = [
-  { href: "/", label: "Accueil" },
-  { href: "/prestations", label: "Conciergerie" },
-  { href: "/villas", label: "Nos villas" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/qui-sommes-nous", label: "À propos" },
-  { href: "/contact", label: "Contact" },
+const NAV_KEYS: { href: string; key: string }[] = [
+  { href: "/", key: "nav.home" },
+  { href: "/prestations", key: "nav.prestations" },
+  { href: "/villas", key: "nav.villas" },
+  { href: "/faq", key: "nav.faq" },
+  { href: "/qui-sommes-nous", key: "nav.about" },
+  { href: "/contact", key: "nav.contact" },
 ];
 
 const CONCIERGE_TEL = "+596 96 00 00 00";
@@ -31,27 +31,29 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const supabase = getSupabaseBrowser();
-  const { locale, setLocale, currency, setCurrency } = useLocale();
-  const { count: wishlistCount } = useWishlist();
+  const { locale, setLocale, currency, setCurrency, t } = useLocale();
 
-  const navItems = NAV_ITEMS;
+  const navItems = NAV_KEYS.map(({ href, key }) => ({ href, label: t(key) }));
+  const navItemsNoHome = navItems.filter(({ href }) => href !== "/");
+  const navLeft = navItemsNoHome.slice(0, 3);
+  const navRight = navItemsNoHome.slice(3);
 
   const loginHref = "/login?redirect=/espace-client";
 
   const primaryCtaHref = "/soumettre-ma-villa";
-  const primaryCtaLabel = "Soumettre ma villa";
-  const primaryCtaAria = "Soumettre ma villa — Estimation gratuite";
+  const primaryCtaLabel = t("nav.submit_villa");
+  const primaryCtaAria = t("nav.submit_villa");
 
   useEffect(() => {
     if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
+      supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
         setSession(session);
       });
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
+      } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
         setSession(session);
       });
       return () => subscription.unsubscribe();
@@ -60,15 +62,13 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  useEffect(() => {
-    closeMenu();
-  }, [pathname, closeMenu]);
-
+  // Scroll lock quand le drawer est ouvert
   useEffect(() => {
     if (!menuOpen) return;
     return acquireBodyScrollLock();
   }, [menuOpen]);
 
+  // Escape key ferme le drawer
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -94,7 +94,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
    */
   const isDarkHeroRoute = useMemo(() => {
     const p = pathname ?? "";
-    if (p === "/" || p === "/proprietaires") return true;
+    if (p === "/") return true;
     if (p === "/book" || p.startsWith("/book/")) return true;
     if (p === "/contact") return true;
     if (p === "/villas") return true;
@@ -129,6 +129,10 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const isSolid = isScrolled && !prestationsHubTransparentNav;
   /** En haut de page transparente : chrome « sombre » (texte blanc) uniquement sur hero noir ; sinon chrome lisible sur fond clair. */
   const useLightTransparentChrome = !isSolid && !isDarkHeroRoute;
+  const navLinkActiveColor = isSolid || useLightTransparentChrome ? "text-navy" : "text-white";
+  const navLinkInactiveColor = isSolid || useLightTransparentChrome
+    ? "text-navy/55 hover:text-navy"
+    : "text-white/60 hover:text-white";
 
   const routeActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -180,8 +184,8 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
         role="dialog"
         aria-modal="true"
         aria-label="Menu de navigation"
-        inert={!menuOpen ? true : undefined}
-        className={`fixed inset-y-0 left-0 z-[1040] flex w-full max-w-[min(100vw,26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        hidden={!menuOpen}
+        className={`fixed inset-y-0 left-0 z-[1040] flex w-full max-w-[min(calc(100vw-env(safe-area-inset-left,0px)),26rem)] flex-col bg-white shadow-[4px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
@@ -239,18 +243,18 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
           </ul>
         </nav>
 
-        <div className="border-t border-black/8 bg-[#f4f4f4] px-5 pt-6 text-[13px] leading-relaxed text-navy/75" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="border-t border-black/8 bg-navy/[0.03] px-5 pt-6 text-[13px] leading-relaxed text-navy/75" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex gap-3">
             <Phone size={18} strokeWidth={1.25} className="mt-0.5 shrink-0 text-navy/45" aria-hidden />
             <div>
               <p>
-                Nos conseillers vous répondent au{" "}
+                {t("nav.advisors")}{" "}
                 <a href={CONCIERGE_TEL_HREF} className="text-navy underline-offset-4 hover:underline">
                   {CONCIERGE_TEL}
                 </a>
               </p>
               <p className="mt-1 text-[12px] text-navy/50">
-                Lun. au sam. · 9h30 – 18h30 (heure de Paris)
+                {t("nav.hours")}
               </p>
             </div>
           </div>
@@ -260,7 +264,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             className="mt-5 inline-flex items-center gap-2 text-[12px] font-medium text-navy underline-offset-4 hover:underline"
           >
             <Mail size={16} strokeWidth={1.25} className="text-navy/45" aria-hidden />
-            Contactez-nous
+            {t("nav.contact_us")}
           </Link>
           <div className="mt-5 flex flex-wrap gap-2 border-t border-black/8 pt-5">
             <label className="sr-only" htmlFor="drawer-locale">
@@ -299,23 +303,34 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
       {/* Barre supérieure — logo centré, menu à gauche, CTA à droite */}
       <header
-        className={`fixed top-0 z-[1020] w-full transition-[background,box-shadow,padding,border-color] duration-300 ${headerSurfaceClass}`}
+        className={`fixed top-0 z-[1020] w-full transition-[background,box-shadow,border-color] duration-300 ${headerSurfaceClass}`}
       >
         <div className="mx-auto grid min-h-10 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
           <div className="flex min-w-0 items-center justify-start">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md sm:min-w-0 sm:justify-start sm:gap-2 ${barText} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`md:hidden flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md sm:min-w-0 sm:justify-start sm:gap-2 ${barText} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
               aria-expanded={menuOpen}
               aria-controls="site-nav-drawer"
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             >
               <Menu size={22} strokeWidth={1.25} aria-hidden className="shrink-0" />
-              <span className="hidden text-[10px] font-semibold uppercase tracking-[0.35em] sm:inline">
+              <span className="hidden text-[10px] font-semibold uppercase tracking-[0.25em] sm:inline">
                 Menu
               </span>
             </button>
+            <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-5 lg:gap-7">
+              {navLeft.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`text-[10px] font-semibold uppercase tracking-[0.22em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
           </div>
 
           <div className="relative z-[1030] flex min-w-0 max-w-[calc(100vw-8rem)] justify-center px-1 sm:max-w-[calc(100vw-13rem)] sm:px-2 md:max-w-[calc(100vw-20rem)] lg:max-w-none">
@@ -330,7 +345,19 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             />
           </div>
 
-          <div className="flex min-w-0 items-center justify-end gap-0.5 overflow-x-clip min-[400px]:gap-1 sm:gap-2 md:gap-4">
+          <div className="flex min-w-0 items-center justify-end gap-1 overflow-x-clip min-[400px]:gap-2 sm:gap-2 md:gap-4">
+            <nav className="hidden md:flex items-center gap-5 lg:gap-7">
+              {navRight.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`text-[10px] font-semibold uppercase tracking-[0.22em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+            <span className={`hidden h-3 w-px shrink-0 md:block ${divider}`} aria-hidden />
             <a
               href={CONCIERGE_TEL_HREF}
               title={CONCIERGE_TEL}
@@ -343,30 +370,8 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             <span className={`hidden h-3 w-px shrink-0 md:block ${divider}`} aria-hidden />
 
             <Link
-              href="/villas"
-              className={`tap-target relative hidden h-10 w-10 shrink-0 items-center justify-center transition-opacity sm:flex sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
-              aria-label={
-                wishlistCount > 0
-                  ? `Favoris, ${wishlistCount} villa${wishlistCount > 1 ? "s" : ""}`
-                  : "Favoris"
-              }
-            >
-              <Heart size={20} strokeWidth={1.25} aria-hidden />
-              {wishlistCount > 0 ? (
-                <span
-                  className={`absolute right-1 top-1.5 h-2 w-2 rounded-full ring-2 ${
-                    isSolid || useLightTransparentChrome
-                      ? "bg-navy ring-white"
-                      : "bg-white ring-black/20"
-                  }`}
-                  aria-hidden
-                />
-              ) : null}
-            </Link>
-
-            <Link
               href={loginHref}
-              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center transition-opacity min-[400px]:h-11 min-[400px]:w-11 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus} focus-visible:ring-offset-0`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center transition-opacity min-[400px]:h-11 min-[400px]:w-11 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
               aria-label="Connexion / Inscription"
             >
               <User size={20} strokeWidth={1.25} aria-hidden />

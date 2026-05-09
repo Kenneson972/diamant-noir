@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { LandingShell, LandingSection, LandingBlockTitle } from "@/components/marketing/landing-sections";
 import { CONCIERGERIE_FAQ } from "@/data/conciergerie-faq";
+import { PageHero } from "@/components/marketing/PageHero";
 
 export const metadata: Metadata = {
   title: "FAQ | Conciergerie Kayvila — Martinique",
@@ -13,32 +14,11 @@ export const metadata: Metadata = {
 export default function FaqPage() {
   return (
     <LandingShell>
-      {/* Hero minimal */}
-      <section className="relative overflow-hidden bg-navy px-5 py-24 md:py-28">
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-3xl text-center">
-          <div className="mx-auto mb-6 h-px w-10 bg-gold/40" aria-hidden />
-          <h1
-            className="font-display font-normal leading-[1.06] text-white uppercase"
-            style={{
-              fontSize: "clamp(1.5rem, 4.5vw, 3rem)",
-              letterSpacing: "0.2em",
-            }}
-          >
-            Questions fréquentes
-          </h1>
-          <p className="mt-4 font-display text-[10px] uppercase tracking-[0.3em] text-white/60">
-            Tout ce qu&apos;il faut savoir sur notre conciergerie
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="FAQ"
+        title="Questions fréquentes"
+        subtitle="Tout ce qu'il faut savoir sur notre conciergerie — commission, services, reversements et bien plus."
+      />
 
       {/* FAQ */}
       <LandingSection bg="offwhite">
@@ -76,7 +56,7 @@ export default function FaqPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="mx-auto mb-6 h-px w-8 bg-gold/40" aria-hidden />
+            <div className="mx-auto mb-6 h-px w-8 bg-gold/50" aria-hidden />
             <p className="text-sm text-navy/50">
               Une question qui n&apos;est pas listée ici ?{" "}
               <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">

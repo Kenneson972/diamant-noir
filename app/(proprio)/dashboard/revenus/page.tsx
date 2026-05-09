@@ -7,13 +7,14 @@ export const metadata: Metadata = {
   title: "Revenus — Kayvila",
 };
 
+const MONTH_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+
 export default async function RevenusPage() {
   const supabase = await getSupabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch villas owned by this user to get villaIds
   const { data: villas } = await supabase
     .from("villas")
     .select("id")
@@ -21,19 +22,52 @@ export default async function RevenusPage() {
 
   const villaIds = villas?.map((v) => v.id) ?? [];
 
-  // Static demo data — actual payment data will be connected later
-  const monthlyData = [
-    { month: "Jan", revenue: 4200, isCurrent: false },
-    { month: "Fév", revenue: 3800, isCurrent: false },
-    { month: "Mar", revenue: 5100, isCurrent: false },
-    { month: "Avr", revenue: 4900, isCurrent: false },
-    { month: "Mai", revenue: 6200, isCurrent: true },
-  ];
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0-indexed
+  const currentYear = now.getFullYear();
 
-  const totalMonth = 6200;
-  const totalYear = 24200;
-  const averagePerNight = 350;
-  const comparisonMonth = 4900;
+  // Fetch last 6 months of confirmed/paid bookings
+  const sixMonthsAgo = new Date(currentYear, currentMonth - 5, 1).toISOString();
+
+  const { data: bookings } = villaIds.length > 0
+    ? await supabase
+        .from("bookings")
+        .select("total_price_cents, start_date, status")
+        .in("villa_id", villaIds)
+        .in("status", ["confirmed", "paid"])
+        .gte("start_date", sixMonthsAgo)
+    : { data: [] };
+
+  // Aggregate by month
+  const monthMap: Record<number, number> = {};
+  for (const b of bookings ?? []) {
+    const d = new Date(b.start_date);
+    const monthIndex = d.getMonth();
+    const cents = b.total_price_cents ?? 0;
+    monthMap[monthIndex] = (monthMap[monthIndex] ?? 0) + cents;
+  }
+
+  // Build 6-month series (oldest → newest)
+  const monthlyData = Array.from({ length: 6 }, (_, i) => {
+    const monthIndex = (currentMonth - 5 + i + 12) % 12;
+    const revenue = Math.round((monthMap[monthIndex] ?? 0) / 100);
+    return {
+      month: MONTH_LABELS[monthIndex],
+      revenue,
+      isCurrent: monthIndex === currentMonth,
+    };
+  });
+
+  const totalMonth = monthlyData.find((m) => m.isCurrent)?.revenue ?? 0;
+  const totalYear = monthlyData.reduce((s, m) => s + m.revenue, 0);
+  const paidMonths = monthlyData.filter((m) => m.revenue > 0);
+  const averagePerNight = paidMonths.length > 0
+    ? Math.round(totalYear / paidMonths.length)
+    : 0;
+  const prevMonthIndex = (currentMonth - 1 + 12) % 12;
+  const comparisonMonth = Math.round((monthMap[prevMonthIndex] ?? 0) / 100);
+
+  const hasEnoughHistory = monthlyData.filter((m) => m.revenue > 0).length >= 3;
 
   return (
     <main className="min-h-dvh bg-cream">
@@ -53,7 +87,7 @@ export default async function RevenusPage() {
             comparisonMonth={comparisonMonth}
           />
 
-          <RevenueChart data={monthlyData} hasEnoughHistory={true} />
+          <RevenueChart data={monthlyData} hasEnoughHistory={hasEnoughHistory} />
         </div>
       </div>
     </main>

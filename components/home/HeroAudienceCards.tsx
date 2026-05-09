@@ -92,7 +92,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
             Conciergerie Privée
           </span>
           <span
-            className={`w-full min-w-0 break-words font-display text-[0.8125rem] leading-snug sm:text-[1.1rem] ${isLight ? titleLight : titleDark}`}
+            className={`w-full min-w-0 break-words font-display text-[0.9375rem] font-light leading-snug sm:text-[1.2rem] ${isLight ? titleLight : titleDark}`}
           >
             {`Gérer ma villa avec ${SITE_BRAND_DISPLAY}`}
           </span>
@@ -114,7 +114,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
           >
             Espace Voyageur
           </span>
-          <span className={`font-display text-[0.8125rem] leading-snug sm:text-[1.1rem] ${isLight ? titleLight : titleDark}`}>
+          <span className={`font-display text-[0.9375rem] font-light leading-snug sm:text-[1.2rem] ${isLight ? titleLight : titleDark}`}>
             Réserver un séjour
           </span>
           <Search

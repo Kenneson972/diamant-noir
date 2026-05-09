@@ -70,7 +70,7 @@ export default function DocumentsPage() {
           <div className="border border-[rgba(13,27,42,0.07)] bg-white px-8 py-14 text-center">
             <FileText size={32} strokeWidth={1} className="text-[rgba(13,27,42,0.12)] mx-auto mb-4" />
             <p className="font-display text-[16px] text-[#0D1B2A]">Aucun document disponible</p>
-            <p className="font-cormorant italic text-[14px] text-[rgba(13,27,42,0.4)] mt-1">
+            <p className="font-display italic text-[14px] text-[rgba(13,27,42,0.4)] mt-1">
               Vos documents apparaîtront ici après confirmation de votre séjour.
             </p>
           </div>
@@ -84,7 +84,7 @@ export default function DocumentsPage() {
                       Séjour
                     </p>
                     <p className="text-[13px] font-medium text-[#0D1B2A]">{b.villa_name}</p>
-                    <p className="font-cormorant italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
+                    <p className="font-display italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
                       {fmt(b.start_date)} – {fmt(b.end_date)}
                     </p>
                   </div>

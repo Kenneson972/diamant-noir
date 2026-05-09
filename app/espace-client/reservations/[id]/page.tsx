@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
-import { ArrowLeft, Calendar, MapPin } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import {
@@ -68,6 +68,8 @@ export default function ReservationDetailPage() {
   const [data, setData] = useState<{ booking: any; villa: any } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cancelStep, setCancelStep] = useState<"idle" | "confirm" | "loading" | "done">("idle");
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase || !params?.id) return;
@@ -140,6 +142,31 @@ export default function ReservationDetailPage() {
   const nights = getNights(booking.start_date, booking.end_date);
   const isConfirmed = booking.status === "confirmed";
   const chipStatus = statusChipProps(booking.status);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isCancellable =
+    ["confirmed", "pending"].includes(booking.status) &&
+    new Date(booking.start_date) > today;
+
+  async function handleCancel() {
+    setCancelStep("loading");
+    setCancelError(null);
+    try {
+      const res = await fetch("/api/booking/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId: booking.id }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Erreur inconnue");
+      setData((prev) => prev ? { ...prev, booking: { ...prev.booking, status: "cancelled" } } : prev);
+      setCancelStep("done");
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : "Erreur inconnue");
+      setCancelStep("confirm");
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -240,6 +267,75 @@ export default function ReservationDetailPage() {
             </p>
           </CardContent>
         </Card>
+      )}
+
+      {/* ── Annulation ── */}
+      {isCancellable && cancelStep !== "done" && (
+        <Card className="rounded-none border border-red-200/60 bg-red-50/30 shadow-none">
+          <CardContent className="p-5 space-y-4">
+            {cancelStep === "idle" && (
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-navy/55">Vous souhaitez annuler cette réservation ?</p>
+                <button
+                  type="button"
+                  onClick={() => setCancelStep("confirm")}
+                  className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-red-600 transition-colors hover:text-red-800"
+                >
+                  Annuler ma réservation →
+                </button>
+              </div>
+            )}
+
+            {(cancelStep === "confirm" || cancelStep === "loading") && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-red-500" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-navy">Confirmer l&apos;annulation</p>
+                    <p className="text-xs text-navy/60">
+                      Cette action est irréversible. Votre réservation sera marquée comme annulée.
+                      Consultez les conditions d&apos;annulation de la villa pour le remboursement.
+                    </p>
+                  </div>
+                </div>
+
+                {cancelError && (
+                  <Alert status="danger" className="rounded-none">
+                    <AlertDescription>{cancelError}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={cancelStep === "loading"}
+                    className="inline-flex items-center gap-2 border border-red-500 bg-red-500 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+                  >
+                    {cancelStep === "loading" ? "Annulation…" : "Oui, annuler"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setCancelStep("idle"); setCancelError(null); }}
+                    disabled={cancelStep === "loading"}
+                    className="inline-flex items-center gap-2 border border-navy/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60 transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
+                  >
+                    Conserver
+                  </button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {cancelStep === "done" && (
+        <Alert status="success" className="rounded-none">
+          <AlertTitle>Réservation annulée</AlertTitle>
+          <AlertDescription>
+            Votre réservation a bien été annulée. Contactez-nous pour toute question sur le remboursement.
+          </AlertDescription>
+        </Alert>
       )}
 
       <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
