@@ -54,7 +54,7 @@ export function HomeOwnersSection() {
                 href="/soumettre-ma-villa"
                 className="inline-flex min-h-[48px] items-center border border-navy/25 px-7 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
               >
-                Soumettre ma villa
+                Confier ma villa
               </Link>
             </div>
           </ScrollReveal>

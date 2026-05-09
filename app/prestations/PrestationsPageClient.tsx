@@ -28,6 +28,7 @@ import {
   Star,
   type LucideIcon,
 } from "lucide-react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { SCROLL_SECTIONS, type ScrollSection } from "@/data/prestations-scroll-sections";
 import {
   LandingShell,
@@ -453,17 +454,9 @@ export default function PrestationsPageClient() {
                     <h2 className="mb-1 font-display text-xl font-bold leading-tight text-navy md:text-2xl">
                       {section.title}
                     </h2>
-                    <ul className="space-y-2.5">
-                      {section.items.map((item, j) => (
-                        <li
-                          key={j}
-                          className="flex items-start gap-3 text-sm leading-relaxed text-navy/90"
-                        >
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-navy/70 shadow-sm" aria-hidden />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-sm leading-relaxed text-navy/60">
+                      {section.scene}
+                    </p>
                     <button
                       type="button"
                       onClick={() => router.push(`/prestations/services/${section.id}`)}
@@ -588,7 +581,7 @@ export default function PrestationsPageClient() {
             className="relative w-full overflow-hidden bg-navy"
             aria-labelledby="prestations-title"
           >
-            <div className="relative aspect-[4/5] max-h-[min(72vh,640px)] w-full sm:aspect-[16/10] sm:max-h-[min(56vh,520px)]">
+            <div className="relative aspect-[4/5] max-h-[min(80vh,640px)] w-full sm:aspect-[16/10] sm:max-h-[min(56vh,520px)]">
               <Image
                 src="/prestations-hero.png"
                 alt=""
@@ -598,10 +591,10 @@ export default function PrestationsPageClient() {
                 sizes="100vw"
               />
               <div
-                className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/40 to-navy"
+                className="absolute inset-0 bg-gradient-to-b from-navy/75 via-navy/50 to-navy"
                 aria-hidden
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-8 pt-16 text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-6 pb-12 pt-20 text-center">
                 <div className="mx-auto mb-5 h-px w-12 bg-gold/50" aria-hidden />
                 <h1
                   id="prestations-title"
@@ -621,7 +614,7 @@ export default function PrestationsPageClient() {
                   onClick={() =>
                     document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="mt-8 inline-flex min-h-[44px] items-center rounded-full border border-white/25 bg-white/10 px-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                  className="mt-8 inline-flex min-h-[48px] items-center border border-white/25 bg-white/10 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                 >
                   Explorer les cinq piliers<span aria-hidden="true"> ↓</span>
                 </button>
@@ -642,18 +635,8 @@ export default function PrestationsPageClient() {
                   href="/soumettre-ma-villa"
                   className="inline-flex min-h-[44px] items-center justify-center border border-white bg-white px-5 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  Soumettre ma villa
+                  Confier ma villa
                 </Link>
-                {/* [FIX P2] "Découvrir" au lieu de répéter "Les cinq piliers" + aria-hidden sur ↓ */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="inline-flex min-h-[44px] items-center text-[10px] font-semibold uppercase tracking-[0.28em] text-white/50 underline-offset-8 transition-colors hover:text-white hover:underline"
-                >
-                  Découvrir les piliers<span aria-hidden="true"> ↓</span>
-                </button>
               </div>
               <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/30 md:mt-3">
                 Commission 20&nbsp;% TTC · Équipe locale 7j/7 · Présence en Martinique
@@ -685,37 +668,136 @@ export default function PrestationsPageClient() {
             </div>
           </section>
 
-          {/* ── Hub : liens vers pages détail ── */}
+          {/* ── Hub : piliers en mode editorial (alternance image/texte) ── */}
           <LandingSection id="piliers" bg="offwhite">
-            <LandingBlockTitle
-              eyebrow="Gestion clé en main"
-              title="Cinq piliers, une seule équipe"
-            />
-            <p className="-mt-4 max-w-2xl text-sm leading-relaxed text-navy/65 md:text-[15px]">
-              Chaque pilier a sa page dédiée : le détail des inclusions, sans surcharger cette vue.
-            </p>
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {SCROLL_SECTIONS.map((s) => (
-                <Link
-                  key={s.id}
-                  href={`/prestations/services/${s.id}`}
-                  className="group flex min-h-[44px] flex-col border border-navy/10 bg-white p-6 transition-colors duration-300 hover:border-navy/30 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/35"
-                >
-                  <span className="font-display text-4xl leading-none text-navy/[0.12] transition-colors group-hover:text-navy/30">
-                    {s.label}
-                  </span>
-                  <h3 className="mt-4 text-[11px] font-bold uppercase tracking-[0.22em] text-navy">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-navy/55">{s.tagline}</p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/35">{s.scene}</p>
-                  <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/75">
-                    Voir le détail <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
-                  </span>
-                </Link>
-              ))}
+            <ScrollReveal>
+              <div className="mx-auto max-w-2xl text-center">
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+                  Gestion clé en main
+                </span>
+                <h2 className="mt-4 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
+                  Cinq piliers,<br />une seule équipe
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-navy/55 md:text-[15px]">
+                  Chaque pilier est un chapitre à part entière — découvrez leur identité et ce qu'ils incluent.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="mt-16 space-y-20 md:space-y-28">
+              {SCROLL_SECTIONS.map((s, idx) => {
+                const visual = (() => {
+                  switch (s.id) {
+                    case "marketing": return { src: "/marketing.png", alt: "Piscine villa luxe coucher soleil — Marketing Kayvila", pos: "center 30%" };
+                    case "operations": return { src: "/terrain.png", alt: "Entrée villa vue extérieure — Opérations Kayvila", pos: "center 35%" };
+                    case "voyageurs": return { src: "/relation.png", alt: "Couple en terrasse face océan — Relation voyageurs Kayvila", pos: "center 50%" };
+                    case "menage": return { src: "/menage.png", alt: "Lit impeccable drap blanc — Ménage Kayvila", pos: "center 40%" };
+                    case "finance": return { src: "/finance.png", alt: "Bureau terrasse MacBook café — Finance Kayvila", pos: "center 30%" };
+                    default: return null;
+                  }
+                })();
+                const isEven = idx % 2 === 0;
+                return (
+                  <div
+                    key={s.id}
+                    className="grid grid-cols-1 items-center gap-10 border-b border-navy/[0.06] pb-20 last:border-0 last:pb-0 md:grid-cols-5 md:gap-14 lg:gap-20"
+                  >
+                    {/* Image — 3/5 de la largeur */}
+                    <ScrollReveal className={`${isEven ? "" : "md:order-2"} md:col-span-3`}>
+                      <Link
+                        href={`/prestations/services/${s.id}`}
+                        className="group relative block aspect-[3/2] w-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                      >
+                        {visual && (
+                          <Image
+                            src={visual.src}
+                            alt={visual.alt}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                            style={{ objectPosition: visual.pos }}
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden />
+                        <span className="absolute bottom-4 left-5 font-display text-[12px] font-bold tracking-[0.3em] text-white/0 transition-all duration-300 group-hover:text-white/80">
+                          Voir le détail →
+                        </span>
+                      </Link>
+                    </ScrollReveal>
+
+                    {/* Texte — 2/5 de la largeur */}
+                    <ScrollReveal className={`${isEven ? "md:order-2" : ""} md:col-span-2`} delay={100}>
+                      <div className="mb-5 flex items-center gap-4">
+                        <span className="font-display text-[11px] font-bold tracking-[0.2em] text-gold/50">
+                          {s.label}
+                        </span>
+                        <div className="h-px flex-1 bg-navy/[0.06]" aria-hidden />
+                      </div>
+
+                      <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/35">
+                        {s.tagline}
+                      </span>
+
+                      <h3 className="mt-3 font-display text-2xl font-normal leading-[1.08] text-navy md:text-3xl">
+                        {s.title}
+                      </h3>
+
+                      <div className="mt-5 h-px w-10 bg-gold/30" aria-hidden />
+
+                      <ul className="mt-6 space-y-3">
+                        {s.items.map((item, j) => (
+                          <li key={j} className="flex items-start gap-3 text-sm leading-relaxed text-navy/65 stagger-item">
+                            <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/[0.04] text-[9px] font-bold text-navy/35">
+                              {j + 1}
+                            </span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Link
+                        href={`/prestations/services/${s.id}`}
+                        className="mt-8 inline-flex min-h-[44px] items-center gap-2 border border-navy/20 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                      >
+                        Voir le détail complet <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
+                      </Link>
+                    </ScrollReveal>
+                  </div>
+                );
+              })}
             </div>
           </LandingSection>
 
-          {/* ── 14. Section soumettre ── */}
+          {/* ── FAQ dédiée ── */}
+          <LandingSection bg="white">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+                Questions fréquentes
+              </span>
+              <h2 className="mt-4 font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
+                Tout ce qu&apos;il faut savoir
+              </h2>
+              <p className="mt-3 text-sm text-navy/55">Consultez notre FAQ ou contactez-nous directement.</p>
+            </div>
+            <div className="mx-auto mt-10 max-w-2xl space-y-0 border-t border-navy/10">
+              {FAQ_ITEMS.map(({ q, a }) => (
+                <details key={q} className="group border-b border-navy/10 py-4">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[12px] font-bold uppercase tracking-[0.2em] text-navy outline-none transition-colors hover:text-navy/70 [&::-webkit-details-marker]:hidden">
+                    {q}
+                    <span className="shrink-0 text-navy/40 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/60">{a}</p>
+                </details>
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <Link href="/faq" className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy underline-offset-4 hover:underline">
+                Voir toutes les questions →
+              </Link>
+            </div>
+          </LandingSection>
+
+          {/* ── 14. Section soumettre (simplifiée) ── */}
           <LandingSection id="soumettre" bg="offwhite">
             <LandingBlockTitle eyebrow="Devenez partenaire" title="Confiez-nous votre villa" />
             <div className="grid gap-14 md:grid-cols-2 md:gap-20">
@@ -732,17 +814,6 @@ export default function PrestationsPageClient() {
                     </li>
                   ))}
                 </ul>
-                <div className="space-y-0 border-t border-navy/10">
-                  {FAQ_ITEMS.map(({ q, a }) => (
-                    <details key={q} className="group border-b border-navy/10 py-4">
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[12px] font-bold uppercase tracking-[0.2em] text-navy outline-none transition-colors hover:text-navy/70 [&::-webkit-details-marker]:hidden">
-                        {q}
-                        <span className="shrink-0 text-navy/40 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
-                      </summary>
-                      <p className="mt-3 text-sm leading-relaxed text-navy/60">{a}</p>
-                    </details>
-                  ))}
-                </div>
               </div>
               <div className="flex flex-col justify-center">
                 <div className="border border-navy/10 bg-navy px-8 py-12 text-center">

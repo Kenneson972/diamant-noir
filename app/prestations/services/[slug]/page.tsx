@@ -89,29 +89,6 @@ export async function generateMetadata({
   };
 }
 
-/** Bloc placeholder visible en attendant les vraies images */
-function ImagePlaceholder({
-  label,
-  className,
-}: {
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`flex aspect-[4/3] w-full items-center justify-center bg-navy/[0.06] ${className ?? ""}`}
-    >
-      <div className="px-6 text-center">
-        <div className="mx-auto mb-2 h-8 w-8 rounded-full border-2 border-dashed border-navy/20" aria-hidden />
-        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy/30">
-          {label}
-        </p>
-        <p className="mt-1 text-[9px] text-navy/20">(placeholder)</p>
-      </div>
-    </div>
-  );
-}
-
 export default async function PrestationServicePage({
   params,
 }: {
@@ -204,7 +181,15 @@ export default async function PrestationServicePage({
             </p>
           </div>
           {/* Image */}
-          <ImagePlaceholder label={d.images.sectionIntroAlt} />
+          <div className="relative aspect-[4/3] w-full overflow-hidden">
+            <Image
+              src={d.images.sectionIntro}
+              alt={d.images.sectionIntroAlt}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
         </div>
       </section>
 
@@ -213,7 +198,15 @@ export default async function PrestationServicePage({
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Image (passe en premier dans le DOM mais visuellement à gauche) */}
           <div className="lg:order-1">
-            <ImagePlaceholder label={d.images.sectionDetailsAlt} />
+            <div className="relative aspect-[4/3] w-full overflow-hidden">
+              <Image
+                src={d.images.sectionDetails}
+                alt={d.images.sectionDetailsAlt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
           </div>
           {/* Texte */}
           <div className="lg:order-2">
@@ -258,7 +251,15 @@ export default async function PrestationServicePage({
             </div>
           </div>
           {/* Image */}
-          <ImagePlaceholder label={d.images.sectionMarketAlt} />
+          <div className="relative aspect-[4/3] w-full overflow-hidden">
+            <Image
+              src={d.images.sectionMarket}
+              alt={d.images.sectionMarketAlt}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
         </div>
       </section>
 
@@ -284,7 +285,7 @@ export default async function PrestationServicePage({
               href="/soumettre-ma-villa"
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
-              Soumettre ma villa <ArrowRight size={14} aria-hidden />
+              Confier ma villa <ArrowRight size={14} aria-hidden />
             </Link>
           </div>
         </div>

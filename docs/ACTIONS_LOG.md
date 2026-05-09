@@ -79,3 +79,21 @@
 - **why**: Moderniser la navigation service, assurer la cohérence du discours commercial, éliminer le contenu dupliqué, finaliser le design avec des visuels réels.
 - **impact**: Site cohérent (FAQ ↔ vitrine), navigation service fluide, code simplifié (page proprio supprimée), design finalisé avec images réelles.
 - **verify**: `npm run build` OK ; revue manuelle de cohérence FAQ/piliers.
+
+---
+
+## 2026-05-09 (soir) — Animations, Prestations critique, Copilot redesign, Bug villas DNS
+
+- **type**: `ui | config | perf`
+- **summary**:
+  1. **Animations P1** : `stagger-fade` keyframes dans `globals.css` ; `ScrollReveal` sur villas, proprio, footer, PageHero ; création `ScrollRevealWrapper.tsx`.
+  2. **Bug villas invisibles** : `@keyframes stagger-fade` manquant dans `globals.css` → invisible sur l'index. Corrigé.
+  3. **Layout /prestations** : mobile hero amélioré ; hub 5 piliers transformé en layout éditorial alterné (images 3/5 + texte 2/5) ; images réelles aux placeholders.
+  4. **Animations /prestations** : `ScrollReveal` + `stagger-item` sur chaque pilier du hub.
+  5. **Critique design /prestations** : revue LLM + scan `impeccable` (zero AI slop). Score 19/40.
+  6. **Correctifs P1** : popups allégées (items retirés), FAQ séparée de la section soumettre, timeout 3s canvas, CTA double supprimé.
+  7. **Redesign Copilot (Finance)** : features list épurée (sans icônes lourdes), terminal allégé, en-tête aéré.
+  8. **Bug villas DNS** : `getaddrinfo ENOTFOUND` sandbox Cursor → `fetch` patched Next.js échouait. Remplacement par `https.get` natif + `force-dynamic` + relance avec permissions réseau. `EMFILE` watcher fix dans `next.config.mjs`.
+- **files**: [`app/globals.css`, `components/home/HomeFeaturedAudience.tsx`, `components/home/HomeOwnersSection.tsx`, `components/marketing/PageHero.tsx`, `components/layout/Footer.tsx`, `components/marketing/ScrollRevealWrapper.tsx`, `app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `components/prestations/FinanceCopilotSection.tsx`, `app/page.tsx`, `next.config.mjs`]
+- **why**: Amélioration continue de l'UI/UX, résolution des bugs bloquants, alignement avec les standards premium Kayvila.
+- **impact**: Animations subtiles cohérentes ; page /prestations mieux structurée ; section Copilot plus élégante ; villas visibles en local (sandbox DNS contourné).

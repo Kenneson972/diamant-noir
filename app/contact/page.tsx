@@ -24,7 +24,7 @@ const faqItems = [
   },
   {
     q: "Comment devenir propriétaire partenaire ?",
-    a: "Rendez-vous sur la page « Soumettre ma villa » pour présenter votre bien. Notre équipe étudie chaque demande et vous recontacte sous peu.",
+    a: "Rendez-vous sur la page « Confier ma villa » pour présenter votre bien. Notre équipe étudie chaque demande et vous recontacte sous peu.",
   },
 ];
 

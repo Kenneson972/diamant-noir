@@ -68,7 +68,7 @@ export function BookLandingMarketing({
                   <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
-                    <p className="mt-1 text-sm text-navy/70">Soumettre ma villa</p>
+                    <p className="mt-1 text-sm text-navy/70">Confier ma villa</p>
                   </div>
                 </Link>
                 <Link

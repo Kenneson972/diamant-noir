@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { VillaWizard } from "@/components/marketing/VillaWizard";
 
 export const metadata: Metadata = {
-  title: "Soumettre ma villa — Kayvila Conciergerie",
+  title: "Confier ma villa — Kayvila Conciergerie",
   description:
     "Confiez votre villa à Kayvila. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
 };

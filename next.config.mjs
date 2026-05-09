@@ -9,6 +9,16 @@ const nextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   // Compression gzip/brotli pour toutes les réponses
   compress: true,
+  webpack: (config, { dev }) => {
+    if (dev) {
+      // Réduire le nombre d'watchers en ignorant node_modules
+      config.watchOptions = {
+        ignored: ["**/node_modules/**", "**/.git/**", "**/.next/**"],
+        poll: false,
+      };
+    }
+    return config;
+  },
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -94,7 +104,7 @@ const nextConfig = {
               headers: [
                 {
                   key: "Cache-Control",
-                  value: "no-cache, no-store, must-revalidate",
+                  value: "no-cache, no-store, must-revalidate, no-transform",
                 },
               ],
             },

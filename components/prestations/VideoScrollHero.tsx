@@ -151,7 +151,19 @@ export function VideoScrollHero() {
   const [isReady, setIsReady] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [hasLoadError, setHasLoadError] = useState(false);
+  const [timeoutReached, setTimeoutReached] = useState(false);
   const errorCountRef = useRef(0);
+
+  // ── Fallback timeout sécurité : 3s max ───────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isReady) {
+        setTimeoutReached(true);
+        setIsReady(true); // force render même sans frames
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [isReady]);
 
   // ── Render frame (RAF-batched) ─────────────────────────────────────────
   const renderFrame = useCallback((index: number) => {
@@ -628,24 +640,10 @@ export function VideoScrollHero() {
                 {section.title}
               </h2>
 
-              {/* Items */}
-              <ul className="space-y-2.5">
-                {section.items.map((item, j) => (
-                  <li
-                    key={j}
-                    className="flex items-start gap-3 text-sm leading-relaxed text-navy/90"
-                  >
-                    <span
-                      className="mt-2 text-[10px]"
-                      style={{ color: "rgba(31,45,70,0.45)" }}
-                      aria-hidden
-                    >
-                      —
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              {/* Scene context text */}
+              <p className="text-sm leading-relaxed text-navy/60">
+                {section.scene}
+              </p>
 
               {/* Lien vers la section détail */}
               <Link

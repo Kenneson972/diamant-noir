@@ -301,24 +301,22 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
         </div>
       </aside>
 
-      {/* Barre supérieure — logo centré, menu à gauche, CTA à droite */}
+      {/* Barre supérieure — logo centré parfaitement via grid symétrique */}
       <header
         className={`fixed top-0 z-[1020] w-full transition-[background,box-shadow,border-color] duration-300 ${headerSurfaceClass}`}
       >
-        <div className="mx-auto grid min-h-10 max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 px-3 sm:gap-x-4 sm:px-6">
-          <div className="flex min-w-0 items-center justify-start">
+        <div className="mx-auto grid min-h-10 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-3 sm:px-6">
+          {/* Gauche : burger (mobile) + nav gauche (desktop) */}
+          <div className="flex items-center gap-3 lg:gap-5">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`md:hidden flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md sm:min-w-0 sm:justify-start sm:gap-2 ${barText} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
+              className={`md:hidden flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-md ${barText} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
               aria-expanded={menuOpen}
               aria-controls="site-nav-drawer"
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             >
               <Menu size={22} strokeWidth={1.25} aria-hidden className="shrink-0" />
-              <span className="hidden text-[10px] font-semibold uppercase tracking-[0.25em] sm:inline">
-                Menu
-              </span>
             </button>
             <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-5 lg:gap-7">
               {navLeft.map(({ href, label }) => (
@@ -333,7 +331,8 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             </nav>
           </div>
 
-          <div className="relative z-[1030] flex min-w-0 max-w-[calc(100vw-8rem)] justify-center px-1 sm:max-w-[calc(100vw-13rem)] sm:px-2 md:max-w-[calc(100vw-20rem)] lg:max-w-none">
+          {/* Centre : logo parfaitement centré */}
+          <div className="flex justify-center">
             <BrandLogo
               variant={logoVariant}
               size="nav"
@@ -341,11 +340,12 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               showWordmark={false}
               linkAriaLabel="Accueil"
               priority={pathname === "/"}
-              className="shrink-0 justify-center"
+              className="shrink-0"
             />
           </div>
 
-          <div className="flex min-w-0 items-center justify-end gap-1 overflow-x-clip min-[400px]:gap-2 sm:gap-2 md:gap-4">
+          {/* Droite : nav droite (desktop) + icônes utilitaires + CTA */}
+          <div className="flex items-center justify-end gap-1 sm:gap-2 md:gap-4">
             <nav className="hidden md:flex items-center gap-5 lg:gap-7">
               {navRight.map(({ href, label }) => (
                 <Link
@@ -371,7 +371,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
             <Link
               href={loginHref}
-              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center transition-opacity min-[400px]:h-11 min-[400px]:w-11 sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center transition-opacity sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${utilityFocus}`}
               aria-label="Connexion / Inscription"
             >
               <User size={20} strokeWidth={1.25} aria-hidden />
@@ -380,7 +380,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             <Link
               href={primaryCtaHref}
               aria-label={primaryCtaAria}
-              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:max-w-none md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
               <Sparkles size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
               <span className="hidden md:inline">{primaryCtaLabel}</span>

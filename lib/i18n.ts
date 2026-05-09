@@ -36,7 +36,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.menu": "Menu",
     "nav.close": "Fermer le menu",
     "nav.client_space": "Espace client",
-    "nav.submit_villa": "Soumettre ma villa",
+    "nav.submit_villa": "Confier ma villa",
     "nav.advisors": "Nos conseillers vous répondent au",
     "nav.hours": "Lun. au sam. · 9h30 – 18h30 (heure de Paris)",
     "nav.contact_us": "Contactez-nous",
@@ -44,7 +44,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // ── Footer ───────────────────────────────────────────────
     "footer.explore": "Explorer",
     "footer.support": "Support",
-    "footer.submit_villa": "Soumettre ma villa",
+    "footer.submit_villa": "Confier ma villa",
     "footer.contact_faq": "Contact & FAQ",
     "footer.terms": "Conditions d'utilisation",
     "footer.privacy": "Politique de confidentialité",
@@ -184,13 +184,13 @@ const translations: Record<Locale, Record<string, string>> = {
     // ── Accueil ──────────────────────────────────────────────
     "home.hero_tagline": "Conciergerie de luxe en Martinique",
     "home.hero_cta": "Découvrir nos villas",
-    "home.hero_secondary": "Soumettre ma villa",
+    "home.hero_secondary": "Confier ma villa",
     "home.villas_section": "Nos villas d'exception",
     "home.services_section": "Nos services",
     "home.owners_section": "Vous êtes propriétaire ?",
 
     // ── Soumission villa ─────────────────────────────────────
-    "submit.title": "Soumettre ma villa",
+    "submit.title": "Confier ma villa",
     "submit.subtitle": "Estimation gratuite",
     "submit.step1": "Votre villa",
     "submit.step2": "Vos coordonnées",
