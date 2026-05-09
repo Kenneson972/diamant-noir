@@ -86,19 +86,20 @@ const nextConfig = {
           },
         ],
       },
-      {
-        // Désactiver le cache navigateur en développement (évite les refreshes manuels)
-        source: "/:path((?!_next/static|favicon|brand/).*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value:
-              process.env.NODE_ENV === "development"
-                ? "no-cache, no-store, must-revalidate"
-                : undefined,
-          },
-        ],
-      },
+      // Désactiver le cache navigateur en développement (évite les refreshes manuels)
+      ...(process.env.NODE_ENV === "development"
+        ? [
+            {
+              source: "/:path((?!_next/static|favicon|brand/).*)",
+              headers: [
+                {
+                  key: "Cache-Control",
+                  value: "no-cache, no-store, must-revalidate",
+                },
+              ],
+            },
+          ]
+        : []),
       {
         source: "/api/:path*",
         headers: [{ key: "Cache-Control", value: "no-store" }],
