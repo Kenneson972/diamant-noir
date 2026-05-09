@@ -20,6 +20,7 @@ type PageHeroProps = {
 /**
  * Hero de page standard — aligné visuellement sur la homepage.
  * Fond navy + image de fond optionnelle + titre Sora + ligne or + sous-titre.
+ * Les éléments apparaissent séquentiellement avec blur-fade-in.
  */
 export function PageHero({
   eyebrow,
@@ -64,7 +65,10 @@ export function PageHero({
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-5 text-center sm:px-6">
         {/* Eyebrow */}
         {eyebrow && (
-          <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.4em] text-gold/80">
+          <p
+            className="blur-fade-in mb-5 text-[10px] font-bold uppercase tracking-[0.4em] text-gold/80"
+            style={{ animationDelay: "0ms" }}
+          >
             {eyebrow}
           </p>
         )}
@@ -72,23 +76,38 @@ export function PageHero({
         {/* Titre */}
         <h1
           id="page-hero-title"
-          className="font-display text-balance text-[clamp(1.75rem,4.5vw,3.75rem)] font-normal uppercase leading-[1.06] tracking-[0.06em] text-white"
+          className="blur-fade-in font-display text-balance text-[clamp(1.75rem,4.5vw,3.75rem)] font-normal uppercase leading-[1.06] tracking-[0.06em] text-white"
+          style={{ animationDelay: "100ms" }}
         >
           {title}
         </h1>
 
         {/* Ligne or */}
-        <span className="mt-6 block h-px w-12 bg-gold/80 md:mt-8" aria-hidden />
+        <span
+          className="blur-fade-in mt-6 block h-px w-12 bg-gold/80 md:mt-8"
+          style={{ animationDelay: "200ms" }}
+          aria-hidden
+        />
 
         {/* Sous-titre */}
         {subtitle && (
-          <p className="mt-6 max-w-2xl text-[15px] font-light leading-relaxed text-white/75 md:mt-8 md:text-base">
+          <p
+            className="blur-fade-in mt-6 max-w-2xl text-[15px] font-light leading-relaxed text-white/75 md:mt-8 md:text-base"
+            style={{ animationDelay: "300ms" }}
+          >
             {subtitle}
           </p>
         )}
 
         {/* Éléments additionnels */}
-        {children && <div className="mt-10 w-full">{children}</div>}
+        {children && (
+          <div
+            className="blur-fade-in mt-10 w-full"
+            style={{ animationDelay: "400ms" }}
+          >
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
