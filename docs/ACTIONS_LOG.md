@@ -10,7 +10,7 @@
 - **summary**: Correction du routage post-login pour que les admins atterrissent bien sur `/admin` et non `/dashboard`. Mise en place d'un fallback via `STAFF_ADMIN_EMAILS` dans `.env.local`.
 - **files**: [`lib/auth/admin-access.ts`, `middleware.ts`, `app/(admin)/admin/layout.tsx`, `app/login/page.tsx`, `app/auth/callback/route.ts`, `components/auth/TenantMagicLinkFlow.tsx`, `.env.local.example`, `docs/ACTIONS_LOG.md`]
 - **why**: Back-office semblait inaccessible (callback auth + rôle DB).
-- **impact**: Accès `/admin` prévisible ; secours par variable d’environnement.
+- **impact**: Accès `/admin` prévisible ; secours par variable d'environnement.
 - **verify**: `npm run build` OK.
 
 ---
@@ -36,7 +36,7 @@
 - **summary**:
   1. **Navbar/Footer marketing masqués** sur `/admin` et `/espace-client` (`Navbar.tsx`, `Footer.tsx`).
   2. **Chatbot masqué** sur les mêmes préfixes + inchangé pour `/dashboard` (`Chatbot.tsx`).
-  3. **Placeholder villa hub proprio** — gradient + icône au lieu d’une image 404 (`dashboard/proprio/page.tsx`).
+  3. **Placeholder villa hub proprio** — gradient + icône au lieu d'une image 404 (`dashboard/proprio/page.tsx`).
   4. **Page `/admin/villas/[id]`** — fiche synthèse + liens éditeur public / hub classique / sync OTA.
   5. **Shell admin** — `AdminLayout`, `AdminHeader`, `AdminSidebar`, `AdminMain` ; **`AdminPageIntro`** sur les pages admin cohérentes ; **Sync OTA** : intro serveur + contenu sans titre dupliqué.
   6. **Ajouter une villa** — page allégée (auth via layout) ; formulaire avec Bearer + redirect sur `result.data.id`.
@@ -63,3 +63,19 @@
 - **why**: Demande gérant Kayvilla — métriques moins anxiogènes, graphiques plus explicites, intégration saisonnalité Martinique, clarté commission FAQ.
 - **impact**: Dashboard proprio plus lisible ; graphiques contextualés avec saisonnalité ; auth renforcée ; FAQ alignée avec contrat.
 - **verify**: `npm run build` OK (6 commits sur `feat/langue-devise-localstorage`).
+
+---
+
+## 2026-05-09 — Scroll horizontal, FAQ cohérence, suppression page proprio, images piliers
+
+- **type**: `ui | docs`
+- **summary**:
+  1. **Scroll horizontal snap** — `HomeServicesSection` transformée en carrousel horizontal (snap-scroll, dots cliquables, layout image+texte par slide).
+  2. **Audit cohérence FAQ vs piliers** — Vérifié chaque pilier contre la FAQ. Identifié 2 incohérences Finance (encaissement, commission) et 1 chevauchement Marketing.
+  3. **Corrections Finance/Marketing** — Aligné les descriptions des piliers sur la FAQ (encaissement direct, assiette de commission, retrait "prix dynamiques").
+  4. **Suppression page `/proprietaires`** — Page dédiée, librairie, composant transition supprimés. Redirection des liens vers `/soumettre-ma-villa`. Nettoyage Navbar/Footer/sitemap/HomeOwnersSection/globals.css.
+  5. **Images des 5 piliers** — Copié les visuels réels (marketing, terrain, relation, ménage, finance, notre gestion) et mis à jour tous les chemins (carrousel, pages détail, HomeOwnersSection).
+- **files**: [`components/home/HomeServicesSection.tsx`, `data/conciergerie-faq.ts`, `data/prestations-service-details.ts`, `app/proprietaires/page.tsx`, `lib/proprietaires-data.ts`, `components/home/ProprietairesTransitionLink.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `app/sitemap.ts`, `components/home/HomeOwnersSection.tsx`, `app/globals.css`, `public/marketing.png`, `public/terrain.png`, `public/relation.png`, `public/menage.png`, `public/finance.png`, `public/notregestion.png`]
+- **why**: Moderniser la navigation service, assurer la cohérence du discours commercial, éliminer le contenu dupliqué, finaliser le design avec des visuels réels.
+- **impact**: Site cohérent (FAQ ↔ vitrine), navigation service fluide, code simplifié (page proprio supprimée), design finalisé avec images réelles.
+- **verify**: `npm run build` OK ; revue manuelle de cohérence FAQ/piliers.
