@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import type { LatLngBounds } from "leaflet";
 
 export type VillaMapItem = {
@@ -63,11 +61,8 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Charger Leaflet + markercluster (dynamique pour éviter L is not defined)
-    Promise.all([
-      import("leaflet"),
-      import("leaflet.markercluster"),
-    ]).then(([{ default: L }]) => {
+    // Charger Leaflet dynamiquement pour éviter L is not defined
+    import("leaflet").then(({ default: L }) => {
       if (!containerRef.current || mapRef.current) return;
 
       const map = L.map(containerRef.current, {
@@ -88,13 +83,6 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
         .addAttribution('© <a href="https://www.openstreetmap.org/copyright" style="color:#D4AF37">OSM</a> © <a href="https://carto.com" style="color:#D4AF37">CARTO</a>')
         .addTo(map);
 
-      // Cluster markers
-      const markerCluster = L.markerClusterGroup({
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        maxClusterRadius: 50,
-      });
-
       mapRef.current = map;
 
       const emitBounds = () => {
@@ -106,11 +94,15 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
         } catch { /* map tearing down */ }
       };
 
+      // Groupe de markers (sans clustering — 4 villas seulement)
+      const markerLayer = L.layerGroup();
+      map.addLayer(markerLayer);
+
       villas.forEach((villa) => {
         const marker = L.marker(villa.coords, {
           icon: makeHouseIcon(L, false),
         });
-        markerCluster.addLayer(marker);
+        markerLayer.addLayer(marker);
 
         const popupHtml = `
           <div class="dn-popup">
@@ -129,12 +121,10 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
           offset: [0, 0],
         });
 
-        // Click : ouvre QuickView (desktop + mobile touch)
         marker.on("click", () => {
           onSelect(villa.id);
         });
 
-        // Hover : popup preview (desktop uniquement, ignoré sur touch)
         marker.on("mouseover", function (this: typeof marker) {
           this.openPopup();
           onHover(villa.id);
@@ -146,8 +136,6 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
 
         markersRef.current[villa.id] = marker;
       });
-
-      map.addLayer(markerCluster);
 
       map.on("moveend", emitBounds);
       map.on("zoomend", emitBounds);
