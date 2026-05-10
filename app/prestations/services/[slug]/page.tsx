@@ -129,7 +129,7 @@ export default async function PrestationServicePage({
 
         <nav
           aria-label="Fil d'Ariane"
-          className="absolute left-6 top-6 z-10 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60 md:left-10 md:top-8"
+          className="absolute left-6 top-20 z-10 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60 md:left-10 md:top-8"
         >
           <Link href="/prestations" className="transition-colors hover:text-white">
             Prestations
@@ -276,11 +276,25 @@ export default async function PrestationServicePage({
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/prestations#piliers"
+              href="/prestations"
+              scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
               Tous les piliers
             </Link>
+            {(() => {
+              const nextSlug = SERVICE_SLUGS[SERVICE_SLUGS.indexOf(slug as ServiceSlug) + 1];
+              if (!nextSlug) return null;
+              const next = SERVICE_DETAILS[nextSlug as ServiceSlug];
+              return (
+                <Link
+                  href={`/prestations/services/${nextSlug}`}
+                  className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                >
+                  Pilier suivant : {next.title} <ArrowRight size={14} aria-hidden />
+                </Link>
+              );
+            })()}
             <Link
               href="/soumettre-ma-villa"
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"

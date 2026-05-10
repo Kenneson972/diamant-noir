@@ -399,60 +399,12 @@ function Step2({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
 
 // ── Step 3 — Vos attentes ─────────────────────────────────────────────────────
 
-const MANAGEMENT_TYPES = [
-  { value: "full", label: "Gestion complète", desc: "Kayvila gère tout — tranquillité absolue" },
-  { value: "partial", label: "Gestion partielle", desc: "Je garde la main sur certaines tâches" },
-  { value: "decouverte", label: "Je veux en savoir plus", desc: "Pas encore décidé — discutons-en" },
-];
-
 function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<WizardData>) => void }) {
   return (
     <div className="space-y-8">
-      <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
-          Type de gestion souhaité
-        </p>
-        <div className="space-y-2">
-          {MANAGEMENT_TYPES.map((opt) => (
-            <label
-              key={opt.value}
-              className={`flex cursor-pointer items-start gap-4 border p-4 transition-all duration-200 hover:shadow-[0_1px_8px_rgba(0,0,0,0.05)] ${
-                data.management_type === opt.value
-                  ? "border-gold/50 bg-gold/[0.04] shadow-[0_1px_8px_rgba(212,175,55,0.12)]"
-                  : "border-navy/10 bg-white hover:border-navy/25"
-              }`}
-            >
-              <div
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-2 transition-all duration-200 ${
-                  data.management_type === opt.value
-                    ? "border-gold bg-gold"
-                    : "border-navy/20 bg-white"
-                }`}
-              >
-                {data.management_type === opt.value && (
-                  <Check size={11} strokeWidth={2.5} className="text-navy" aria-hidden />
-                )}
-              </div>
-              <input
-                type="radio"
-                name="management_type"
-                value={opt.value}
-                checked={data.management_type === opt.value}
-                onChange={() => onChange({ management_type: opt.value })}
-                className="sr-only"
-              />
-              <div>
-                <p className="text-[13px] font-semibold text-navy">{opt.label}</p>
-                <p className="text-xs text-navy/45">{opt.desc}</p>
-              </div>
-            </label>
-          ))}
-        </div>
-      </div>
-
       <Field label="Vos attentes & contraintes particulières">
         <textarea
-          rows={5}
+          rows={7}
           value={data.message}
           onChange={(e) => onChange({ message: e.target.value })}
           placeholder="Périodes bloquées, exigences particulières, questions sur la conciergerie…"
@@ -761,7 +713,7 @@ function ErrorBlock({ message }: { message: string }) {
 const STEP_TITLES = [
   { title: "Votre bien", sub: "Type de bien, localisation & équipements" },
   { title: "Situation actuelle", sub: "Location en cours et revenus estimés" },
-  { title: "Vos attentes", sub: "Gestion souhaitée et contraintes particulières" },
+  { title: "Vos attentes", sub: "Attentes et contraintes particulières" },
   { title: "Contact & photos", sub: "Vos coordonnées et visuels de la villa" },
 ];
 
@@ -785,6 +737,7 @@ export function VillaWizard() {
     setError(null);
     setDirection("forward");
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {

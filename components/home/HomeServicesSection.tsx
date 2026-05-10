@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const SERVICE_VISUALS: Record<
   string,
@@ -67,6 +67,8 @@ const SERVICE_DESCS: Record<string, string> = {
 export function HomeServicesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [hintPlayed, setHintPlayed] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -84,8 +86,21 @@ export function HomeServicesSection() {
     setActiveIdx(idx);
   }, []);
 
+  const scrollPrev = useCallback(() => scrollTo(Math.max(activeIdx - 1, 0)), [activeIdx, scrollTo]);
+  const scrollNext = useCallback(() => scrollTo(Math.min(activeIdx + 1, SCROLL_SECTIONS.length - 1)), [activeIdx, scrollTo]);
+
+  useEffect(() => {
+    if (hintPlayed) return;
+    const timer = setTimeout(() => {
+      setShowHint(true);
+      setTimeout(() => setShowHint(false), 600);
+      setHintPlayed(true);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [hintPlayed]);
+
   return (
-    <section className="relative overflow-hidden bg-offwhite py-16 md:py-24" aria-labelledby="services-title">
+    <section className="relative overflow-hidden bg-offwhite py-14 md:py-20" aria-labelledby="services-title">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.03)_0%,transparent_60%),radial-gradient(circle_at_70%_80%,rgba(10,10,10,0.02)_0%,transparent_50%)]" />
 
       <div className="mx-auto max-w-7xl px-6 md:px-8 lg:px-12">
@@ -96,7 +111,7 @@ export function HomeServicesSection() {
             </span>
             <h2
               id="services-title"
-              className="mt-4 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl"
+              className="mt-4 font-display text-3xl font-light leading-[1.04] text-navy md:text-4xl lg:text-5xl"
             >
               Cinq piliers,
               <br />
@@ -109,25 +124,50 @@ export function HomeServicesSection() {
         </ScrollReveal>
 
         {/* ── Indicateur de position ── */}
-        <div className="mt-10 flex items-center justify-center gap-2" role="tablist" aria-label="Pilier actif">
-          {SCROLL_SECTIONS.map((_, i) => (
+        <div className="mt-10 flex items-center justify-center gap-1" role="tablist" aria-label="Pilier actif">
+          {SCROLL_SECTIONS.map((s, i) => (
             <button
               key={i}
               type="button"
               role="tab"
               aria-selected={i === activeIdx}
-              aria-label={`Pilier ${i + 1}`}
+              aria-label={`Pilier ${i + 1} — ${s.title}`}
+              title={s.title}
               onClick={() => scrollTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 ${
+              className={`relative flex h-11 w-11 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30`}
+            >
+              <span className={`block rounded-full transition-all duration-300 ${
                 i === activeIdx
-                  ? "w-8 bg-navy/30"
-                  : "w-1.5 bg-navy/10 hover:bg-navy/20"
-              }`}
-            />
+                  ? "h-1.5 w-8 bg-navy/30"
+                  : "h-1.5 w-1.5 bg-navy/10 hover:bg-navy/20"
+              }`} />
+            </button>
           ))}
         </div>
 
         {/* ── Carrousel horizontal snap ── */}
+        <div className="relative">
+          {/* Flèche gauche — desktop */}
+          <button
+            type="button"
+            onClick={scrollPrev}
+            disabled={activeIdx === 0}
+            aria-label="Pilier précédent"
+            className="absolute left-0 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 h-11 w-11 items-center justify-center border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-navy/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-30 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+          >
+            <ChevronLeft size={18} strokeWidth={1.5} />
+          </button>
+          {/* Flèche droite — desktop */}
+          <button
+            type="button"
+            onClick={scrollNext}
+            disabled={activeIdx === SCROLL_SECTIONS.length - 1}
+            aria-label="Pilier suivant"
+            className="absolute right-0 top-1/2 z-10 hidden translate-x-1/2 -translate-y-1/2 h-11 w-11 items-center justify-center border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-navy/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-30 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+          >
+            <ChevronRight size={18} strokeWidth={1.5} />
+          </button>
+
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -142,7 +182,7 @@ export function HomeServicesSection() {
             return (
               <div
                 key={service.id}
-                className="flex w-[85vw] shrink-0 snap-start snap-always md:w-[75vw] lg:w-[65vw]"
+                className={`flex w-[78vw] shrink-0 snap-start snap-always transition-transform duration-300 md:w-[75vw] lg:w-[65vw] ${showHint && i === 0 ? "translate-x-[-2%]" : ""}`}
               >
                 <Link
                   href={`/prestations/services/${service.id}`}
@@ -186,7 +226,21 @@ export function HomeServicesSection() {
                       {desc}
                     </p>
 
-                    <span className="mt-6 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/35 transition-colors group-hover:text-navy">
+                    {/* Progress indicator — 5 segments */}
+                    <div className="mt-6 flex items-center gap-1.5" aria-label={`Pilier ${i + 1} sur 5`}>
+                      {SCROLL_SECTIONS.map((_, si) => (
+                        <div
+                          key={si}
+                          className={`h-0.5 flex-1 transition-colors duration-300 ${si <= i ? "bg-gold" : "bg-navy/[0.1]"}`}
+                          aria-hidden
+                        />
+                      ))}
+                      <span className="ml-2 text-[9px] font-bold tabular-nums tracking-[0.15em] text-navy/30">
+                        {i + 1}/5
+                      </span>
+                    </div>
+
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/35 transition-colors group-hover:text-navy">
                       Voir le détail <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
                     </span>
                   </div>
@@ -195,11 +249,13 @@ export function HomeServicesSection() {
             );
           })}
         </div>
+        </div>{/* /relative */}
 
         <ScrollReveal delay={120}>
           <div className="mt-10 text-center">
             <Link
               href="/prestations"
+              scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
             >
               Tout savoir sur la conciergerie <ArrowRight size={14} aria-hidden />

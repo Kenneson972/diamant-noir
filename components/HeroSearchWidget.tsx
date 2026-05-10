@@ -37,7 +37,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
   const [guests, setGuests] = useState(2);
   const [openPanel, setOpenPanel] = useState<"date" | "guests" | null>(null);
 
-  const [datePickerStyle, setDatePickerStyle] = useState({ top: 0, left: 0, width: 0 });
+  const [datePickerStyle, setDatePickerStyle] = useState<React.CSSProperties>({ position: "fixed", top: 0, left: 0, width: 0, zIndex: 9999 });
 
   const isLight = surface === "light";
 
@@ -52,14 +52,22 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Reposition datepicker
+  // Reposition datepicker — flip above button if insufficient space below
   useEffect(() => {
     if (openPanel !== "date" || !datesBtnRef.current) return;
     const reposition = () => {
       const rect = datesBtnRef.current!.getBoundingClientRect();
       const w = Math.min(Math.max(rect.width, 300), window.innerWidth - 16);
       const left = Math.max(8, Math.min(rect.left, window.innerWidth - w - 8));
-      setDatePickerStyle({ top: rect.bottom + 4, left, width: w });
+      const spaceBelow = window.innerHeight - rect.bottom - 8;
+      const CALENDAR_MIN_HEIGHT = 380;
+      const maxH = `calc(100dvh - 16px)`;
+      if (spaceBelow >= CALENDAR_MIN_HEIGHT) {
+        setDatePickerStyle({ position: "fixed", top: rect.bottom + 4, left, width: w, maxHeight: maxH, overflowY: "auto", zIndex: 9999 });
+      } else {
+        const bottomOffset = window.innerHeight - rect.top + 4;
+        setDatePickerStyle({ position: "fixed", bottom: bottomOffset, top: "auto", left, width: w, maxHeight: maxH, overflowY: "auto", zIndex: 9999 });
+      }
     };
     reposition();
     window.addEventListener("scroll", reposition, true);
@@ -176,15 +184,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
 
       {/* Datepicker dropdown — fixed position to avoid overflow clip */}
       {openPanel === "date" && (
-        <div
-          style={{
-            position: "fixed",
-            top: datePickerStyle.top,
-            left: datePickerStyle.left,
-            width: datePickerStyle.width,
-            zIndex: 9999,
-          }}
-        >
+        <div style={datePickerStyle}>
           <HeroDatePicker
             checkin={checkin}
             checkout={checkout}

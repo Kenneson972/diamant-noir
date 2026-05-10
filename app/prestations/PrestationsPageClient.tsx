@@ -503,7 +503,7 @@ export default function PrestationsPageClient() {
                 aria-hidden
               />
 
-              <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-0">
+              <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-0 pt-20">
                 <div className="mx-auto mb-6 h-px w-12 bg-gold/40" aria-hidden />
 
                 <h1
@@ -535,7 +535,7 @@ export default function PrestationsPageClient() {
               {/* Flèche de scroll animée — style Apple */}
               <div
                 aria-hidden
-                className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 motion-safe:animate-[scrollFloat_3s_ease-in-out_infinite]"
+                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 motion-safe:animate-[scrollFloat_3s_ease-in-out_infinite]"
               >
                 <svg
                   width="32"
@@ -544,10 +544,10 @@ export default function PrestationsPageClient() {
                   fill="none"
                 >
                   <path
-                    d="M4 4L16 16L28 4"
+                    d="M4 16L16 4L28 16"
                     stroke="white"
-                    strokeOpacity="0.35"
-                    strokeWidth="1.5"
+                    strokeOpacity="0.7"
+                    strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     className="motion-safe:animate-[arrowBounce_2s_ease-in-out_infinite]"
