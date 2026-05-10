@@ -13,8 +13,12 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
   const galleryImages = images.filter(Boolean);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mobileIndex, setMobileIndex] = useState(0);
 
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const swipeContainerRef = useRef<HTMLDivElement>(null);
+  const swipeStateRef = useRef({ startX: 0, deltaX: 0, isDragging: false });
+  const [swipeDelta, setSwipeDelta] = useState(0);
 
   const openAt = (index: number) => { setActiveIndex(index); setIsOpen(true); };
   const close = () => setIsOpen(false);
@@ -38,6 +42,42 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
     }
   }, [isOpen]);
 
+  const prefersReducedMotion =
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false;
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    swipeStateRef.current = {
+      startX: e.touches[0].clientX,
+      deltaX: 0,
+      isDragging: true,
+    };
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!swipeStateRef.current.isDragging) return;
+    const deltaX = e.touches[0].clientX - swipeStateRef.current.startX;
+    swipeStateRef.current.deltaX = deltaX;
+    setSwipeDelta(deltaX);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const { deltaX, isDragging } = swipeStateRef.current;
+    if (!isDragging) return;
+    swipeStateRef.current.isDragging = false;
+
+    const threshold = 50;
+    if (Math.abs(deltaX) > threshold) {
+      if (deltaX > 0) {
+        setMobileIndex((p) => (p - 1 + galleryImages.length) % galleryImages.length);
+      } else {
+        setMobileIndex((p) => (p + 1) % galleryImages.length);
+      }
+    }
+    setSwipeDelta(0);
+  }, [galleryImages.length]);
+
   if (galleryImages.length === 0) {
     return (
       <div className="relative h-[60vh] w-full overflow-hidden bg-navy/5 flex items-center justify-center">
@@ -53,17 +93,90 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
     <>
       {/* ── Mosaic Grid ── */}
       <div className="relative w-full">
-        {/* Mobile : image unique plein écran */}
-        <div className="md:hidden relative h-[55vw] min-h-[260px] overflow-hidden cursor-pointer" onClick={() => openAt(0)}>
-          <Image src={galleryImages[0]} alt={title} fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent" />
-          <button
-            onClick={(e) => { e.stopPropagation(); openAt(0); }}
-            className="absolute bottom-5 right-5 flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-navy shadow-lg"
+        {/* Mobile : swipeable carousel */}
+        <div className="md:hidden relative h-[55vw] min-h-[260px] overflow-hidden">
+          <div
+            ref={swipeContainerRef}
+            className="relative h-full w-full cursor-grab active:cursor-grabbing"
+            onTouchStart={galleryImages.length > 1 ? handleTouchStart : undefined}
+            onTouchMove={galleryImages.length > 1 ? handleTouchMove : undefined}
+            onTouchEnd={galleryImages.length > 1 ? handleTouchEnd : undefined}
+            onClick={() => openAt(mobileIndex)}
           >
-            <Images size={14} />
-            {galleryImages.length} photos
-          </button>
+            {/* Image courante */}
+            <div
+              className="absolute inset-0"
+              style={{
+                transform: `translateX(${swipeDelta}px)`,
+                transition:
+                  swipeStateRef.current.isDragging || prefersReducedMotion
+                    ? "none"
+                    : "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              }}
+            >
+              <Image
+                key={`mobile-${mobileIndex}`}
+                src={galleryImages[mobileIndex]}
+                alt={`${title} — photo ${mobileIndex + 1}`}
+                fill
+                className="object-cover pointer-events-none"
+                priority={mobileIndex === 0}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent pointer-events-none" />
+            </div>
+
+            {/* Flèche gauche */}
+            {galleryImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMobileIndex((p) => (p - 1 + galleryImages.length) % galleryImages.length);
+                }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/80 backdrop-blur-sm p-2 text-navy shadow-md hover:bg-white transition-colors tap-target"
+                aria-label="Photo précédente"
+              >
+                <ChevronLeft size={18} />
+              </button>
+            )}
+
+            {/* Flèche droite */}
+            {galleryImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMobileIndex((p) => (p + 1) % galleryImages.length);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/80 backdrop-blur-sm p-2 text-navy shadow-md hover:bg-white transition-colors tap-target"
+                aria-label="Photo suivante"
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+
+            {/* Compteur */}
+            {galleryImages.length > 1 && (
+              <div className="absolute bottom-5 left-5 z-10">
+                <span
+                  className="rounded-full bg-navy/70 text-white/90 px-3 py-1 text-[11px] font-semibold tracking-wider font-display"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {mobileIndex + 1}
+                  <span className="text-white/40 mx-1">/</span>
+                  {galleryImages.length}
+                </span>
+              </div>
+            )}
+
+            {/* Bouton toutes les photos */}
+            <button
+              onClick={(e) => { e.stopPropagation(); openAt(mobileIndex); }}
+              className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-navy shadow-lg tap-target"
+            >
+              <Images size={14} />
+              {galleryImages.length} photos
+            </button>
+          </div>
         </div>
 
         {/* Desktop : grille mosaïque 1 grande + 4 petites */}

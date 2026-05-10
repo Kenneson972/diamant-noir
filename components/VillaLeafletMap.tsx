@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import type { LatLngBounds } from "leaflet";
 
 export type VillaMapItem = {
@@ -61,7 +63,11 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    import("leaflet").then((L) => {
+    // Charger Leaflet + markercluster (dynamique pour éviter L is not defined)
+    Promise.all([
+      import("leaflet"),
+      import("leaflet.markercluster"),
+    ]).then(([{ default: L }]) => {
       if (!containerRef.current || mapRef.current) return;
 
       const map = L.map(containerRef.current, {
@@ -82,6 +88,13 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
         .addAttribution('© <a href="https://www.openstreetmap.org/copyright" style="color:#D4AF37">OSM</a> © <a href="https://carto.com" style="color:#D4AF37">CARTO</a>')
         .addTo(map);
 
+      // Cluster markers
+      const markerCluster = L.markerClusterGroup({
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        maxClusterRadius: 50,
+      });
+
       mapRef.current = map;
 
       const emitBounds = () => {
@@ -96,7 +109,8 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
       villas.forEach((villa) => {
         const marker = L.marker(villa.coords, {
           icon: makeHouseIcon(L, false),
-        }).addTo(map);
+        });
+        markerCluster.addLayer(marker);
 
         const popupHtml = `
           <div class="dn-popup">
@@ -132,6 +146,8 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
 
         markersRef.current[villa.id] = marker;
       });
+
+      map.addLayer(markerCluster);
 
       map.on("moveend", emitBounds);
       map.on("zoomend", emitBounds);
@@ -169,7 +185,7 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mettre à jour les icônes au hover
+  // Mettre à jour les icônes au hover (supporte les markers dans clusterGroup)
   useEffect(() => {
     if (!mapRef.current) return;
     import("leaflet").then((L) => {

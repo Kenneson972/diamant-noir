@@ -118,6 +118,7 @@ export default function PrestationsPageClient() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
+  const scrollArrowRef = useRef<HTMLDivElement>(null);
   const videoScrollZoneRef = useRef<HTMLDivElement>(null);
   const scrollDriverRef = useRef<HTMLDivElement>(null);
   const transitionRef = useRef<HTMLDivElement>(null);
@@ -131,6 +132,7 @@ export default function PrestationsPageClient() {
 
   // ── State ───────────────────────────────────────────────────────────────
   const [isReady, setIsReady] = useState(false);
+  const [arrowVisible, setArrowVisible] = useState(true);
   /** Parallax scroll + canvas : desktop uniquement (Tailwind `md` = 768px). */
   const [desktopParallax, setDesktopParallax] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : true
@@ -366,9 +368,11 @@ export default function PrestationsPageClient() {
       const canvas = canvasRef.current;
       const vig = vignetteRef.current;
       const dots = dotsRef.current;
+      const arrow = scrollArrowRef.current;
       if (canvas) canvas.style.visibility = vis;
       if (vig) vig.style.visibility = vis;
       if (dots) dots.style.visibility = vis;
+      if (arrow) arrow.style.visibility = vis;
       SCROLL_SECTIONS.forEach((s) => {
         const el = document.getElementById(`pvsh-${s.id}`);
         if (el) el.style.visibility = vis;
@@ -410,6 +414,7 @@ export default function PrestationsPageClient() {
         <>
           <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
 
+
           <div
             ref={vignetteRef}
             aria-hidden
@@ -420,7 +425,7 @@ export default function PrestationsPageClient() {
             }}
           />
 
-          {SCROLL_SECTIONS.map((section) => {
+          {SCROLL_SECTIONS.map((section, idx) => {
             const left = section.position === "left";
             const vCls = scrollSectionVerticalClasses(section.vertical);
             return (
@@ -447,16 +452,24 @@ export default function PrestationsPageClient() {
                   </div>
 
                   <div className="relative rounded-2xl border border-white/60 bg-[rgba(255,255,255,0.76)] p-5 max-md:bg-[rgba(255,255,255,0.92)] md:rounded-3xl md:p-7 md:backdrop-blur-md [box-shadow:0_18px_45px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.55)]">
-                    <div className="mb-4 h-px w-10 rounded-full bg-navy/35" />
+                    {/* Indicateur de progression 360° */}
+                    <div className="mb-5 flex items-center gap-2" aria-label={`Pilier ${idx + 1} sur 5`}>
+                      {SCROLL_SECTIONS.map((_, si) => (
+                        <div
+                          key={si}
+                          className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${si <= idx ? "bg-gold" : "bg-gold/20"}`}
+                        />
+                      ))}
+                      <span className="ml-1 shrink-0 text-[9px] font-bold tabular-nums uppercase tracking-[0.18em] text-gold/75">
+                        {idx + 1} / 5
+                      </span>
+                    </div>
                     <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.35em] text-navy/70">
                       {section.tagline}
                     </p>
                     <h2 className="mb-1 font-display text-xl font-bold leading-tight text-navy md:text-2xl">
                       {section.title}
                     </h2>
-                    <p className="text-sm leading-relaxed text-navy/60">
-                      {section.scene}
-                    </p>
                     <button
                       type="button"
                       onClick={() => router.push(`/prestations/services/${section.id}`)}
@@ -503,8 +516,8 @@ export default function PrestationsPageClient() {
                 aria-hidden
               />
 
-              <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-0 pt-20">
-                <div className="mx-auto mb-6 h-px w-12 bg-gold/40" aria-hidden />
+              <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center pt-20">
+                <div className="mb-6 h-px w-12 bg-gold/40" aria-hidden />
 
                 <h1
                   id="prestations-title"
@@ -523,37 +536,34 @@ export default function PrestationsPageClient() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
+                  onClick={() => {
+                    setArrowVisible(false);
+                    window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+                  }}
+                  className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
                 >
-                  Explorer les cinq piliers
+                  Explorer les cinq piliers <ArrowRight size={16} strokeWidth={2} aria-hidden />
                 </button>
+
+                {arrowVisible && (
+                  <div
+                    aria-hidden
+                    className="mt-8 motion-safe:animate-[scrollFloat_3s_ease-in-out_infinite] transition-opacity duration-300"
+                  >
+                    <svg width="80" height="50" viewBox="0 0 80 50" fill="none">
+                      <path
+                        d="M0 40L40 10L80 40"
+                        stroke="white"
+                        strokeOpacity="0.8"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                )}
               </div>
 
-              {/* Flèche de scroll animée — style Apple */}
-              <div
-                aria-hidden
-                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 motion-safe:animate-[scrollFloat_3s_ease-in-out_infinite]"
-              >
-                <svg
-                  width="32"
-                  height="20"
-                  viewBox="0 0 32 20"
-                  fill="none"
-                >
-                  <path
-                    d="M4 16L16 4L28 16"
-                    stroke="white"
-                    strokeOpacity="0.7"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="motion-safe:animate-[arrowBounce_2s_ease-in-out_infinite]"
-                  />
-                </svg>
-              </div>
             </section>
 
             <div ref={scrollDriverRef} style={{ height: "500vh" }} aria-hidden />
@@ -611,12 +621,10 @@ export default function PrestationsPageClient() {
                 </p>
                 <button
                   type="button"
-                  onClick={() =>
-                    document.querySelector("#piliers")?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="mt-8 inline-flex min-h-[48px] items-center border border-white/25 bg-white/10 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                  onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
+                  className="mt-8 inline-flex min-h-[48px] items-center gap-2 border border-white/25 bg-white/10 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                 >
-                  Explorer les cinq piliers<span aria-hidden="true"> ↓</span>
+                  Explorer les cinq piliers<ArrowRight size={16} strokeWidth={2} aria-hidden />
                 </button>
               </div>
             </div>

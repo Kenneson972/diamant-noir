@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 
 type PageHeroProps = {
   /** Texte court en or en haut */
@@ -38,15 +39,14 @@ export function PageHero({
     >
       {/* Image de fond */}
       {imageSrc && (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageSrc}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ opacity: imageOpacity }}
-          />
-        </>
+        <Image
+          src={imageSrc}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          style={{ opacity: imageOpacity }}
+        />
       )}
 
       {/* Gradient overlay */}

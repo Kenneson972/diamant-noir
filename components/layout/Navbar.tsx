@@ -361,7 +361,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             <a
               href={CONCIERGE_TEL_HREF}
               title={CONCIERGE_TEL}
-              className={`tap-target hidden h-10 w-10 shrink-0 items-center justify-center sm:flex sm:h-11 sm:w-11 ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
+              className={`tap-target hidden h-10 w-10 shrink-0 items-center justify-center lg:flex lg:h-11 lg:w-11 ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
               <Phone size={20} strokeWidth={1.25} aria-hidden />
@@ -380,10 +380,10 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             <Link
               href={primaryCtaHref}
               aria-label={primaryCtaAria}
-              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 md:h-auto md:w-auto md:px-5 md:py-2 md:text-[10px] md:font-bold md:uppercase md:leading-snug md:tracking-[0.22em] ${primaryCtaSolidStyle}`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 lg:h-auto lg:w-auto lg:px-5 lg:py-2 lg:text-[10px] lg:font-bold lg:uppercase lg:leading-snug lg:tracking-[0.22em] ${primaryCtaSolidStyle}`}
             >
-              <Sparkles size={18} strokeWidth={1.25} className="md:hidden" aria-hidden />
-              <span className="hidden md:inline">{primaryCtaLabel}</span>
+              <Sparkles size={18} strokeWidth={1.25} className="lg:hidden" aria-hidden />
+              <span className="hidden lg:inline">{primaryCtaLabel}</span>
             </Link>
           </div>
         </div>

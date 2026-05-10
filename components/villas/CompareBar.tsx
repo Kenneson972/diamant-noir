@@ -106,9 +106,14 @@ export function CompareBar() {
                   ? "bg-gold text-navy hover:bg-white"
                   : "bg-white/10 text-white/30 cursor-not-allowed"
                 }
+                ${count === 1 ? "min-w-[180px] justify-center" : ""}
               `}
             >
-              Comparer <ArrowRight size={12} />
+              {count === 1 ? (
+                "Sélectionnez 2 villas"
+              ) : (
+                <>Comparer <ArrowRight size={12} /></>
+              )}
             </button>
           </div>
         </div>

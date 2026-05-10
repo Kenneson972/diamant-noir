@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
-import { Star } from "lucide-react";
 
 type BookingDate = {
   start_date: string;
@@ -22,6 +21,8 @@ type BookingFormProps = {
   capacity: number;
   checkInTime?: string;
   checkOutTime?: string;
+  externalStart?: string;
+  externalEnd?: string;
 };
 
 export const BookingForm = ({
@@ -30,10 +31,18 @@ export const BookingForm = ({
   capacity,
   checkInTime = "17:00",
   checkOutTime = "10:00",
+  externalStart,
+  externalEnd,
 }: BookingFormProps) => {
   const { formatPrice } = useLocale();
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
+  const [start, setStart] = useState(externalStart || "");
+  const [end, setEnd] = useState(externalEnd || "");
+
+  // Synchroniser les dates externes (depuis le calendrier)
+  useEffect(() => {
+    if (externalStart) setStart(externalStart);
+    if (externalEnd) setEnd(externalEnd);
+  }, [externalStart, externalEnd]);
   const [guests, setGuests] = useState(1);
   const [booked, setBooked] = useState<BookingDate[]>([]);
   const [loading, setLoading] = useState(false);
@@ -99,11 +108,6 @@ export const BookingForm = ({
         <div>
           <span className="font-display text-3xl text-navy">{formatPrice(basePrice)}</span>
           <span className="text-sm text-navy/60 font-medium"> / nuit</span>
-        </div>
-        <div className="flex items-center gap-1 text-sm font-semibold">
-          <Star size={14} className="fill-gold text-gold" />
-          <span className="text-navy">4.98</span>
-          <span className="text-navy/40 font-normal">· 128 avis</span>
         </div>
       </div>
 

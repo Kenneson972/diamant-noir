@@ -32,7 +32,7 @@ export function HomeOwnersSection() {
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/35">
               Propriétaires
             </span>
-            <h2 className="mt-5 font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
+            <h2 className="mt-4 font-display text-2xl font-light leading-[1.08] text-navy md:text-3xl">
               Votre villa,
               <br />
               notre gestion

@@ -129,7 +129,7 @@ export default async function PrestationServicePage({
 
         <nav
           aria-label="Fil d'Ariane"
-          className="absolute left-6 top-20 z-10 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60 md:left-10 md:top-8"
+          className="absolute left-6 top-20 z-10 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60 md:left-10 md:top-24"
         >
           <Link href="/prestations" className="transition-colors hover:text-white">
             Prestations
@@ -283,15 +283,17 @@ export default async function PrestationServicePage({
               Tous les piliers
             </Link>
             {(() => {
-              const nextSlug = SERVICE_SLUGS[SERVICE_SLUGS.indexOf(slug as ServiceSlug) + 1];
-              if (!nextSlug) return null;
+              const currentIdx = SERVICE_SLUGS.indexOf(slug as ServiceSlug);
+              const nextIdx = (currentIdx + 1) % SERVICE_SLUGS.length;
+              const nextSlug = SERVICE_SLUGS[nextIdx];
               const next = SERVICE_DETAILS[nextSlug as ServiceSlug];
+              const isLoop = nextIdx === 0;
               return (
                 <Link
                   href={`/prestations/services/${nextSlug}`}
                   className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                 >
-                  Pilier suivant : {next.title} <ArrowRight size={14} aria-hidden />
+                  {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <ArrowRight size={14} aria-hidden />
                 </Link>
               );
             })()}

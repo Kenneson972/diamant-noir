@@ -29,9 +29,10 @@ const VillaLeafletMap = dynamic(() => import("./VillaLeafletMap"), {
 
 interface Props {
   villas: VillaMapItem[];
+  dateQuery?: { checkin: string; checkout: string; guests?: string };
 }
 
-export default function VillasMapView({ villas }: Props) {
+export default function VillasMapView({ villas, dateQuery }: Props) {
   const { t } = useLocale();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mapVisible, setMapVisible] = useState(true);
@@ -142,40 +143,48 @@ export default function VillasMapView({ villas }: Props) {
                 }`}
               >
                 {/* Image portrait — 3/4 — lien vers la fiche */}
-                <Link
-                  href={`/villas/${villa.id}`}
-                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
-                  tabIndex={villa.dimmed ? -1 : 0}
-                >
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-none">
-                    <Image
-                      src={villa.image || "/villa-hero.jpg"}
-                      alt={villa.name}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                    />
-                    {/* Tier badge */}
-                    {villa.tier && (
-                      <div className="absolute top-4 left-4">
-                        <span className="rounded-none border border-gold/40 bg-navy/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
-                          {villa.tier}
-                        </span>
+                {(function() {
+                  const dateIntent = dateQuery?.checkin && dateQuery?.checkout;
+                  const qs = dateIntent
+                    ? `?checkin=${dateQuery.checkin}&checkout=${dateQuery.checkout}${dateQuery.guests ? `&guests=${dateQuery.guests}` : ''}`
+                    : '';
+                  return (
+                    <Link
+                      href={`/villas/${villa.id}${qs}`}
+                      className="focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
+                      tabIndex={villa.dimmed ? -1 : 0}
+                    >
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-none">
+                        <Image
+                          src={villa.image || "/villa-hero.jpg"}
+                          alt={villa.name}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                        {/* Tier badge */}
+                        {villa.tier && (
+                          <div className="absolute top-4 left-4">
+                            <span className="rounded-none border border-gold/40 bg-navy/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
+                              {villa.tier}
+                            </span>
+                          </div>
+                        )}
+                        {/* Overlay gradient bottom — prix visible au hover */}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60">
+                            À partir de
+                          </p>
+                          <p className="font-display text-lg text-white leading-none mt-0.5">
+                            {villa.price.toLocaleString("fr-FR")} €
+                            <span className="text-xs font-sans font-normal text-white/50">
+                              {" "}/ nuit
+                            </span>
+                          </p>
+                        </div>
                       </div>
-                    )}
-                    {/* Overlay gradient bottom — prix visible au hover */}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60">
-                        À partir de
-                      </p>
-                      <p className="font-display text-lg text-white leading-none mt-0.5">
-                        {villa.price.toLocaleString("fr-FR")} €
-                        <span className="text-xs font-sans font-normal text-white/50">
-                          {" "}/ nuit
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </Link>
+                    </Link>
+                  );
+                })()}
 
                 {/* Info sous l'image */}
                 <div className="pt-3 space-y-1 px-1 pb-2">

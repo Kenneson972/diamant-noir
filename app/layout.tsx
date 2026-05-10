@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Sora, Instrument_Sans } from "next/font/google";
+import { Sora, Instrument_Sans, Playfair_Display } from "next/font/google";
 import { cookies } from "next/headers";
 import { SiteFrame } from "@/components/layout/SiteFrame";
 import { LocaleProvider } from "@/contexts/LocaleContext";
@@ -20,6 +20,12 @@ const sora = Sora({
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-instrument-sans",
+  display: "swap",
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -67,7 +73,7 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLocale} className="scroll-smooth">
-      <body className={`${sora.variable} ${instrumentSans.variable} bg-offwhite`}>
+      <body className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} bg-offwhite`}>
         <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <AuthProvider>
           <WishlistProvider>

@@ -36,8 +36,8 @@ function getCoordFallback(location: string | null): [number, number] {
 const FALLBACK_VILLAS: VillaMapItem[] = [
   {
     id: "1", name: "Villa Kayvila", location: "Le Diamant, Martinique",
-    price: 1000, image: "/villa-hero.jpg", coords: [14.4750, -61.0247],
-    images: ["/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
+    price: 1000, image: "/prestations-hero.png", coords: [14.4750, -61.0247],
+    images: ["/prestations-hero.png", "/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
   },
   {
     id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique",
@@ -46,8 +46,8 @@ const FALLBACK_VILLAS: VillaMapItem[] = [
   },
   {
     id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique",
-    price: 900, image: "/villa-hero.jpg", coords: [14.5361, -61.0261],
-    images: ["/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
+    price: 900, image: "/notregestion.png", coords: [14.5361, -61.0261],
+    images: ["/notregestion.png", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
   },
 ];
 
@@ -155,7 +155,10 @@ export default async function VillasListingPage({
 
       {/* ── Split view: list + map (catalogue unique) ── */}
       <div id="catalogue" className="scroll-mt-24">
-        <VillasMapView villas={villas} />
+        <VillasMapView
+          villas={villas}
+          dateQuery={dateIntent ? { checkin: qCheckin, checkout: qCheckout, guests: qGuests || undefined } : undefined}
+        />
       </div>
     </main>
   );

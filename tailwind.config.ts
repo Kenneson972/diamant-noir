@@ -29,7 +29,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-instrument-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-sora)", "system-ui", "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
       },
       keyframes: {
         "fade-up": {
@@ -75,6 +75,10 @@ const config: Config = {
           "60%":       { transform: "translateX(-3px)" },
           "80%":       { transform: "translateX(3px)" },
         },
+        "slide-up": {
+          "0%":   { opacity: "0", transform: "translateY(100%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.6s ease-out forwards",
@@ -88,6 +92,7 @@ const config: Config = {
         "scale-in": "scale-in 0.3s ease-out forwards",
         "slide-in-right": "slide-in-right 0.28s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
         "slide-in-left": "slide-in-left 0.28s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
+        "slide-up": "slide-up 0.3s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
         shake: "shake 0.35s ease-in-out",
       },
     },

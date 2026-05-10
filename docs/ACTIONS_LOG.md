@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-05-10 — Session UX multi-correctifs (police, nav, mobile overflow, villa map, piliers loop)
+
+- **type**: `ui | config`
+- **summary**:
+  1. **Playfair Display restaurée** — `font-display` rebranché sur `--font-playfair` (import `next/font/google`, `tailwind.config.ts`).
+  2. **Wordmark KAYVILA +40 %** — `clamp` dans `HeroWordmarkBaseline.tsx` élargi de `2.85rem` max → `4rem` max.
+  3. **Navigation piliers — boucle 5→1** — index modulaire `% SERVICE_SLUGS.length`, bouton "Retour au pilier 1" au lieu de `null`.
+  4. **Navbar md — "À propos" non tronqué** — téléphone masqué jusqu'à `lg:`, CTA texte affiché à partir de `lg:` au lieu de `md:`.
+  5. **Villa détail — mini-carte localisation** — iframe après `VillaAccordionInfo` (conditionnel `map_embed_url` ou `lat/lon`).
+  6. **Mobile overflow supprimé** — `html` passe de `overflow-x: hidden` à `overflow-x: clip` dans `globals.css`.
+- **files**: [`app/layout.tsx`, `tailwind.config.ts`, `components/marketing/HeroWordmarkBaseline.tsx`, `app/prestations/services/[slug]/page.tsx`, `components/layout/Navbar.tsx`, `app/villas/[id]/page.tsx`, `app/globals.css`]
+- **why**: Ensemble de correctifs UI demandés — police, taille wordmark, navigation piliers, lisibilité nav, carte villa, overflow mobile.
+- **impact**: Site visuellement et fonctionnellement complet sur tous les écrans.
+- **verify**: `npx tsc --noEmit` OK.
+
+---
+
 ## 2026-05-01 — Correction routage admin (RBAC login + middleware)
 
 - **type**: `api | security | config`
@@ -112,3 +129,20 @@
 - **why**: Logo décentré, CTA "Soumettre" moins engageant, documentation très en retard (RECAP.md stale depuis avril).
 - **impact**: Navigation équilibrée, CTA propriétaire plus clair, documentation projet à jour.
 - **verify**: `npx tsc --noEmit` OK ; push git sur `feat/langue-devise-localstorage`.
+
+---
+
+## 2026-05-09 (21:30) — Audit villas : corrections P0/P1/P2 dispatchées
+
+- **type**: `ui`
+- **summary**:
+  1. **Section "L'expérience Kayvila" refondue** (`app/villas/[id]/page.tsx`) : remplacement des 4 blocs identiques icône+cercle+texte par des formats éditoriaux variés — image hero avec overlay pour Concierge dédié, citation blockquote pour Accueil personnalisé.
+  2. **Breadcrumb ajouté** (`app/villas/[id]/page.tsx`) : fil d'Ariane discret "Toutes nos villas → [nom]" entre galerie et titre.
+  3. **Feedback comparateur** (`components/villas/CompareBar.tsx`) : affichage "Sélectionnez 2 villas" quand 1 seule villa sélectionnée.
+  4. **Icône amenities corrigée** (`app/villas/[id]/page.tsx`) : `Shield` → `ChefHat` pour chef/cuisine/réfrigérateur.
+  5. **Hero Image** (`components/marketing/PageHero.tsx`) : `<img>` natif migré vers `<Image>` de `next/image` avec `fill` + `sizes="100vw"`.
+  6. **Loading listing** (`app/villas/loading.tsx`) : spinner remplacé par skeleton de grille (hero + toolbar + 4 cartes).
+- **files**: [`app/villas/[id]/page.tsx`, `components/villas/CompareBar.tsx`, `components/marketing/PageHero.tsx`, `app/villas/loading.tsx`]
+- **why**: Audit identifiait ces problèmes comme P0-P2 : AI slop section expérience, navigation sans breadcrumb, comparateur sans feedback, sémantique icônes incorrecte, perf hero image, loading trop minimal.
+- **impact**: Pages villas plus éditoriales, navigation plus fluide, meilleure accessibilité, performance améliorée (next/image).
+- **verify**: `npm run build` OK (sortie clean). 6 sous-agents dispatchés en parallèle.

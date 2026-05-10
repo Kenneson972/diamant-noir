@@ -48,7 +48,7 @@ export function HeroWordmarkBaseline({
           showWordmark
           linkToHome={false}
           priority
-          className="max-w-full justify-center [&_span.font-display]:text-[clamp(1.25rem,3.6vw+0.35rem,2.85rem)] [&_span.font-display]:font-normal [&_span.font-display]:leading-[1.06] [&_span.font-display]:tracking-[0.26em] sm:[&_span.font-display]:tracking-[0.32em] md:[&_span.font-display]:tracking-[0.38em]"
+          className="max-w-full justify-center [&_span.font-display]:text-[clamp(1.75rem,5vw+0.5rem,4rem)] [&_span.font-display]:font-normal [&_span.font-display]:leading-[1.06] [&_span.font-display]:tracking-[0.26em] sm:[&_span.font-display]:tracking-[0.32em] md:[&_span.font-display]:tracking-[0.38em]"
         />
       </h1>
 

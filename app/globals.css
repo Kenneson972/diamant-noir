@@ -6,7 +6,12 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  padding: 0;
+  margin: 0;
+  overflow-x: clip;
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -346,8 +351,8 @@ body { font-size: 16px; line-height: 1.6; }
 
 /* Flèche de scroll — flottement doux */
 @keyframes scrollFloat {
-  0%, 100% { transform: translateY(0) translateX(-50%); }
-  50% { transform: translateY(-4px) translateX(-50%); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 /* Rebond du chevron */
 @keyframes arrowBounce {
@@ -379,5 +384,24 @@ body { font-size: 16px; line-height: 1.6; }
       animation-duration: 0.38s;
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
     }
+  }
+}
+
+/* ── Respecter prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Désactiver backdrop-filter sur mobile (évite le jank Chrome Android) ── */
+@media (max-width: 768px) {
+  * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }

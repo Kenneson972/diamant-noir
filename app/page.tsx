@@ -76,12 +76,12 @@ export default async function HomePage() {
     <main className="min-h-dvh bg-offwhite">
       {/* ① Hero */}
       <section
-        className="relative flex min-h-[60dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-24 md:min-h-[70dvh] md:py-16 md:pt-24 lg:min-h-[min(75vh,640px)]"
+        className="relative flex min-h-[50dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-24 md:min-h-[60dvh] md:py-12 md:pt-24 lg:min-h-[min(65vh,560px)]"
         aria-labelledby="hero-title"
       >
         <HeroBackgroundMedia />
         <div className="absolute inset-0 bg-gradient-to-b from-black/14 via-black/8 to-black/48" />
-        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center sm:px-8">
+        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 text-center sm:px-8">
           <HeroWordmarkBaseline
             headingId="hero-title"
             titleLabel="Kayvila — Conciergerie privée"

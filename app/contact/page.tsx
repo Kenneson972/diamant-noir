@@ -63,7 +63,7 @@ export default function ContactPage() {
     <LandingShell>
       <PageHero
         eyebrow="Échange & support"
-        title="Contact & FAQ"
+        title="Contact"
         subtitle="Une question, une demande spéciale ? Notre équipe et le chatbot Kayvila sont à votre écoute."
       />
 

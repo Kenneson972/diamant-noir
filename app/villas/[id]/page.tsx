@@ -1,15 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookingForm } from "@/components/BookingForm";
-import { Check, Wifi, Wind, Waves, Coffee, Shield, Bed, ShieldCheck, User } from "lucide-react";
+import { Check, Wifi, Wind, Waves, Coffee, ChefHat, Bed, ShieldCheck, User } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { VillaGallery } from "@/components/VillaGallery";
 import { VillaHeaderActions, ExpandableDescription } from "@/components/VillaInteractions";
-import { AvailabilityCalendar } from "@/components/booking/AvailabilityCalendar";
 import { VillaViewTracker } from "@/components/VillaViewTracker";
 import { PriceDisplay } from "@/components/PriceDisplay";
+import { BookingBottomSheet } from "@/components/BookingBottomSheet";
+import { ConnectedBookingForm, VillaBookingWrapper } from "@/components/villas/VillaBookingWrapper";
+import { AvailabilityCalendar } from "@/components/booking/AvailabilityCalendar";
+import { VillaAccordionInfo } from "@/components/villas/VillaAccordionInfo";
+import { VillaReviews } from "@/components/VillaReviews";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +89,7 @@ const fallbackVilla: VillaDetails = {
   name: "Villa Kayvila",
   location: "Le Diamant, Martinique",
   description:
-    "Sur les hauteurs du sud caraïbe, Kayvila mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l’océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
+    "Sur les hauteurs du sud caraïbe, Kayvila mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l'océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
   price: 1000,
   capacity: 8,
   image: "/villa-hero.jpg",
@@ -114,21 +118,9 @@ const getIcon = (amenity: string) => {
   if (a.includes("piscine") || a.includes("jacuzzi")) return <Waves size={18} strokeWidth={1} />;
   if (a.includes("café") || a.includes("coffee")) return <Coffee size={18} strokeWidth={1} />;
   if (a.includes("mer") || a.includes("vue") || a.includes("plage")) return <Waves size={18} strokeWidth={1} />;
-  if (a.includes("chef") || a.includes("cuisine") || a.includes("réfrigérateur")) return <Shield size={18} strokeWidth={1} />;
+  if (a.includes("chef") || a.includes("cuisine") || a.includes("réfrigérateur")) return <ChefHat size={18} strokeWidth={1} />;
   return <Check size={18} strokeWidth={1} />;
 };
-
-/** Intérieur : liste dédiée ou repli sur `amenities` (import OTA). Extérieur : jamais dupliqué depuis `amenities`. */
-function getEquipmentDisplayLists(villa: Pick<VillaDetails, "amenities" | "equipment_interior" | "equipment_exterior">): {
-  interior: string[];
-  exterior: string[];
-} {
-  const amenities = (villa.amenities ?? []).map((s) => String(s).trim()).filter(Boolean);
-  const interiorExplicit = (villa.equipment_interior ?? []).map((s) => String(s).trim()).filter(Boolean);
-  const exterior = (villa.equipment_exterior ?? []).map((s) => String(s).trim()).filter(Boolean);
-  const interior = interiorExplicit.length > 0 ? interiorExplicit : amenities;
-  return { interior, exterior };
-}
 
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -205,10 +197,6 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     console.error("Supabase fetch error (villa details):", error);
   }
 
-  const { interior: equipmentInteriorList, exterior: equipmentExteriorList } = getEquipmentDisplayLists(villa);
-  const showEquipmentDetail = equipmentInteriorList.length > 0 || equipmentExteriorList.length > 0;
-  const equipmentGridTwoCols = equipmentInteriorList.length > 0 && equipmentExteriorList.length > 0;
-
   return (
     <main className="min-h-dvh bg-offwhite pb-24 sm:pb-0">
       <VillaViewTracker villaId={villa.id} />
@@ -218,8 +206,19 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         <VillaGallery images={villa.images} title={villa.name} />
       </div>
 
+      {/* ── Breadcrumb ── */}
+      <div className="mx-auto max-w-7xl px-6 pt-10 pb-0">
+        <nav aria-label="Fil d'Ariane" className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+          <Link href="/villas" className="min-h-[44px] flex items-center text-navy/40 hover:text-gold transition-colors duration-300">
+            Toutes nos villas
+          </Link>
+          <span className="text-navy/20" aria-hidden="true">→</span>
+          <span className="text-navy/50 min-h-[44px] flex items-center">{villa.name}</span>
+        </nav>
+      </div>
+
       {/* ── Titre & Localisation ── */}
-      <div className="mx-auto max-w-7xl px-6 pt-10 pb-6">
+      <div className="mx-auto max-w-7xl px-6 pb-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -248,71 +247,27 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── Contenu principal ── */}
+      <VillaBookingWrapper
+        villaId={villa.id}
+        basePrice={villa.price}
+        capacity={villa.capacity}
+        checkInTime={villa.check_in_time || "17:00"}
+        checkOutTime={villa.check_out_time || "10:00"}
+      >
       <div className="mx-auto max-w-7xl px-6 pb-28 pt-8">
         <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">
           
           {/* ── Colonne gauche ── */}
           <div className="space-y-16">
             
-            {/* Description */}
+            {/* 1. Description */}
             <section className="space-y-8">
               <div className="pt-2">
                 <ExpandableDescription text={villa.description || "Description à venir pour cette villa d'exception."} />
               </div>
             </section>
 
-            {/* L'expérience Kayvila — Conciergerie */}
-            <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">L&apos;expérience Kayvila</h2>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
-                    <User size={18} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-navy">Concierge dédié</h4>
-                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
-                      Une interlocutrice unique avant et pendant votre séjour pour organiser chaque détail.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-navy">Accueil personnalisé</h4>
-                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
-                      Remise des clés, visite guidée de la villa et conseils locaux par notre équipe.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-navy">Services à la carte</h4>
-                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
-                      Chef à domicile, location bateau, massages, transfert — composez votre séjour.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-2xl border border-navy/8 bg-white p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-navy">Disponibilité 7j/7</h4>
-                    <p className="mt-1 text-sm text-navy/60 leading-relaxed">
-                      Une équipe locale réactive, joignable avant et pendant tout votre séjour.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Les Incontournables */}
+            {/* 2. Les Incontournables */}
             {villa.amenities && villa.amenities.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
@@ -327,7 +282,107 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             )}
 
-            {/* Découvrez les chambres */}
+            {/* 3. Avis des voyageurs */}
+            <VillaReviews villaId={villa.id} villaName={villa.name} />
+
+            {/* 4. L'expérience Kayvila — Conciergerie */}
+            <section className="pt-10 border-t border-navy/10 space-y-6">
+              <h2 className="font-display font-normal text-2xl text-navy mb-8">L&apos;expérience Kayvila</h2>
+
+              {/* Bloc 1 — Image hero avec texte superposé : Concierge dédié */}
+              <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
+                <Image
+                  src="/prestations-hero.png"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-navy/80 via-navy/40 to-transparent" />
+                <div className="absolute inset-0 flex items-center p-8 md:p-12">
+                  <div className="max-w-md">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Service exclusif</span>
+                    <h3 className="mt-3 font-display text-3xl md:text-4xl text-white leading-[1.1]">
+                      Concierge dédié
+                    </h3>
+                    <p className="mt-4 text-sm text-white/70 leading-relaxed max-w-sm">
+                      Une interlocutrice unique avant et pendant votre séjour pour organiser chaque détail — transfert, restaurant, excursion, tout est orchestré pour vous.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloc 2 — Citation : Accueil personnalisé */}
+              <div className="relative bg-offwhite border border-navy/8 px-8 md:px-12 py-12 md:py-16">
+                <div className="max-w-2xl mx-auto text-center">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Accueil personnalisé</span>
+                  <blockquote className="mt-8">
+                    <p className="font-display text-xl md:text-2xl text-navy leading-[1.4] italic">
+                      «&nbsp;Ce qui fait la différence, ce n&apos;est pas la villa, c&apos;est la manière dont on vous y accueille.&nbsp;»
+                    </p>
+                    <footer className="mt-6 text-xs text-navy/40 uppercase tracking-[0.2em]">
+                      — L&apos;équipe Kayvila
+                    </footer>
+                  </blockquote>
+                  <p className="mt-8 text-sm text-navy/60 leading-relaxed">
+                    Remise des clés en main propre, visite guidée de la villa et conseils locaux par notre équipe. Vous arrivez en vacances, pas dans une location.
+                  </p>
+                </div>
+              </div>
+
+              {/* Bloc 3 — Checklist : Services à la carte */}
+              <div className="border border-navy/8 bg-white p-8 md:p-10">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Services à la carte</span>
+                <h3 className="mt-3 font-display text-xl text-navy">Composez votre séjour</h3>
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {[
+                    ['Chef à domicile', 'Un dîner privé préparé par un chef martiniquais dans votre villa.'],
+                    ['Location bateau', 'Catamaran ou annexe — explorez la baie, les fonds blancs, les îlets.'],
+                    ['Massages & bien-être', 'Praticien à domicile : massage créole, soins ayurvédiques, yoga.'],
+                    ['Transfert VIP', 'Prise en charge aéroport en véhicule climatisé, avec rafraîchissements.'],
+                    ['Cours de cuisine', 'Initiation aux saveurs antillaises avec un chef local.'],
+                    ['Baby-sitting', 'Garde d&apos;enfants par une professionnelle agréée.'],
+                  ].map(([service, desc]) => (
+                    <li key={service} className="flex gap-3">
+                      <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold/15">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </span>
+                      <div>
+                        <span className="text-sm font-semibold text-navy">{service}</span>
+                        <p className="mt-0.5 text-xs text-navy/50 leading-relaxed">{desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Bloc 4 — Photo pleine largeur : Disponibilité */}
+              <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
+                <Image
+                  src="/villa-hero.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-l from-navy/70 via-navy/30 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-end p-8 md:p-12">
+                  <div className="max-w-sm text-right">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Disponibilité</span>
+                    <h3 className="mt-3 font-display text-3xl md:text-4xl text-white leading-[1.1]">
+                      Présents 7j/7
+                    </h3>
+                    <p className="mt-4 text-sm text-white/70 leading-relaxed">
+                      Une équipe locale réactive, joignable avant et pendant tout votre séjour. Un message, une question, une demande — nous sommes là.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 5. Découvrez les chambres */}
             {villa.rooms && villa.rooms.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Découvrez les chambres</h2>
@@ -352,102 +407,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             )}
 
-            {/* Tous les équipements (détail : pas de duplication extérieur = même liste que incontournables) */}
-            {showEquipmentDetail && (
-              <section className="pt-10 border-t border-navy/10">
-                <h2 className="font-display font-normal text-2xl text-navy mb-8">Tous les équipements</h2>
-                <div className={`grid gap-8 ${equipmentGridTwoCols ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
-                  {equipmentInteriorList.length > 0 && (
-                    <div>
-                      <h3 className="font-display text-lg text-navy mb-4">Intérieur</h3>
-                      <div className="space-y-2 text-sm text-navy/70">
-                        {equipmentInteriorList.map((item, index) => (
-                          <p key={`eq-int-${index}`} className="flex items-center gap-2">
-                            <span className="text-gold">•</span>
-                            {item}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {equipmentExteriorList.length > 0 && (
-                    <div>
-                      <h3 className="font-display text-lg text-navy mb-4">Extérieur</h3>
-                      <div className="space-y-2 text-sm text-navy/70">
-                        {equipmentExteriorList.map((item, index) => (
-                          <p key={`eq-ext-${index}`} className="flex items-center gap-2">
-                            <span className="text-gold">•</span>
-                            {item}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* Services inclus */}
-            <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">Services inclus</h2>
-              {!!villa.included_services_home?.length && (
-                <>
-                  <h3 className="font-display text-lg text-navy mb-4">Services de la maison</h3>
-                  <div className="space-y-3 text-sm text-navy/70 mb-8">
-                    {villa.included_services_home.map((service, index) => (
-                      <div key={`home-${index}`} className="flex items-center gap-3">
-                        <Check size={18} className="text-gold" />
-                        {service}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              <h3 className="font-display text-lg text-navy mb-4">Services de conciergerie inclus</h3>
-              <div className="space-y-3 text-sm text-navy/70">
-                {(villa.included_services_collection?.length
-                  ? villa.included_services_collection
-                  : [
-                      "Concierge dédié avant et pendant votre séjour",
-                      "Accueil personnalisé à la villa",
-                      "Ménage en cours et en fin de séjour",
-                      "Indispensables du quotidien fournis",
-                    ]).map((service, index) => (
-                  <div key={`collection-${index}`} className="flex items-center gap-3">
-                    <Check size={18} className="text-gold" />
-                    {service}
-                  </div>
-                ))}
-              </div>
-
-              <h3 className="font-display text-lg text-navy mt-10 mb-6">Services à la carte</h3>
-              <p className="text-sm text-navy/60 mb-6">Composez votre séjour parmi l’ensemble de nos services sur mesure.</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-navy/70">
-                {(villa.a_la_carte_services?.length
-                  ? villa.a_la_carte_services
-                  : [
-                      "Transfert aéroport",
-                      "Chef à domicile",
-                      "Location de bateau",
-                      "Location de voiture",
-                      "Soins & massages",
-                      "Courses à l'arrivée",
-                    ]).map((service, index) => (
-                  <div key={`a-la-carte-${index}`} className="flex items-center gap-2">• {service}</div>
-                ))}
-              </div>
-            </section>
-
-            {/* Calendrier (large) */}
+            {/* 6. Disponibilités + Calendrier */}
             <section id="reserver-sejour" className="scroll-mt-28 pt-10 border-t border-navy/10">
               <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="font-display font-normal text-2xl text-navy">Disponibilités</h2>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-semibold text-navy">
+                  <span className="rounded-none border border-gold/40 bg-gold/10 px-3 py-1 font-semibold text-navy">
                     Arrivée: {villa.check_in_time || "17:00"}
                   </span>
-                  <span className="rounded-full border border-navy/20 bg-offwhite px-3 py-1 font-semibold text-navy/80">
+                  <span className="rounded-none border border-navy/20 bg-offwhite px-3 py-1 font-semibold text-navy/80">
                     Départ: {villa.check_out_time || "10:00"}
                   </span>
                 </div>
@@ -455,7 +423,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <AvailabilityCalendar villaId={villa.id} />
             </section>
 
-            {/* Carte */}
+            {/* 7. Les alentours (carte) */}
             {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-6">Les alentours</h2>
@@ -470,66 +438,42 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                       {(villa.nearby_points?.length
                         ? villa.nearby_points
                         : ["Plage", "Restaurants et bars", "Commerces"]).map((point, index) => (
-                        <span key={`near-${index}`} className="rounded-full border border-navy/10 px-3 py-1 text-xs text-navy/70">
+                        <span key={`near-${index}`} className="rounded-none border border-navy/10 px-3 py-1 text-xs text-navy/70">
                           {point}
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <div className="overflow-hidden border border-navy/10 aspect-[16/7] bg-navy/5">
+                <div className="relative overflow-hidden border border-navy/10 aspect-[16/7] bg-navy/5 group">
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 bg-white/80 px-3 py-1">
+                      Carte interactive
+                    </span>
+                  </div>
                   <iframe
                     src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
                     title="Carte"
-                    className="w-full h-full"
+                    className="w-full h-full grayscale-[0.3] contrast-[1.05] transition-all duration-300 group-hover:grayscale-0"
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
+                  <a
+                    href={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 flex items-center justify-center bg-navy/0 group-hover:bg-navy/10 transition-all duration-300"
+                  >
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 border border-navy/15 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
+                      Ouvrir dans Google Maps
+                    </span>
+                  </a>
                 </div>
               </section>
             )}
 
-            {/* Informations complémentaires */}
-            <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">Informations complémentaires</h2>
-              <div className="grid sm:grid-cols-2 gap-10">
-                <div>
-                  <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">Check-in / Check-out</h4>
-                  <ul className="space-y-2 text-navy/60 text-sm">
-                    <li className="flex justify-between border-b border-navy/5 pb-2">
-                      <span>Check-in</span>
-                      <span>{villa.check_in_time || "17:00"}</span>
-                    </li>
-                    <li className="flex justify-between border-b border-navy/5 pb-2">
-                      <span>Check-out</span>
-                      <span>{villa.check_out_time || "10:00"}</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {villa.house_rules && villa.house_rules !== "" && (
-                  <div>
-                    <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">Règlement</h4>
-                    <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">{villa.house_rules}</p>
-                  </div>
-                )}
-                {villa.cancellation_policy && villa.cancellation_policy !== "" && (
-                  <div>
-                    <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">Annulation</h4>
-                    <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">{villa.cancellation_policy}</p>
-                  </div>
-                )}
-                {villa.safety_info && villa.safety_info !== "" && (
-                  <div>
-                    <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">Sécurité</h4>
-                    <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">{villa.safety_info}</p>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Conditions de réservation */}
+            {/* 8. Conditions de réservation (avant accordéon) */}
             <section className="pt-10 border-t border-navy/10">
               <h2 className="font-display font-normal text-2xl text-navy mb-8">Conditions de réservation</h2>
               <div className="space-y-6">
@@ -552,7 +496,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                           "Les conditions varient selon la villa et la période. Consultez la politique d'annulation affichée et votre contrat.",
                       },
                     ]).map((term, index) => (
-                  <div key={`term-${index}`} className="rounded-2xl border border-navy/10 bg-white p-5">
+                  <div key={`term-${index}`} className="rounded-none border border-navy/10 bg-white p-5">
                     <h4 className="font-bold text-navy text-sm mb-2">{term.question}</h4>
                     <p className="text-sm text-navy/60 leading-relaxed">{term.answer}</p>
                   </div>
@@ -560,9 +504,35 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
             </section>
 
-            {/* Questions */}
+            {/* 9. Informations complémentaires (accordéon plié) */}
+            <VillaAccordionInfo
+              checkInTime={villa.check_in_time || "17:00"}
+              checkOutTime={villa.check_out_time || "10:00"}
+              houseRules={villa.house_rules}
+              cancellationPolicy={villa.cancellation_policy}
+              safetyInfo={villa.safety_info}
+            />
+
+            {/* 10. Mini-carte — localisation sous Informations complémentaires */}
+            {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
+              <div className="pt-8 border-t border-navy/10">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Localisation</p>
+                <div className="relative aspect-[16/9] overflow-hidden border border-navy/10 bg-navy/5">
+                  <iframe
+                    src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
+                    title="Localisation de la villa"
+                    className="h-full w-full grayscale-[0.3] contrast-[1.05]"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* 11. Questions */}
             <section className="pt-10 border-t border-navy/10">
-              <div className="rounded-2xl border border-gold/25 bg-gold/[0.03] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div className="rounded-none border border-gold/25 bg-gold/[0.03] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <div>
                   <h3 className="font-display text-2xl text-navy">Des questions à propos de {villa.name} ?</h3>
                   <p className="text-sm text-navy/60 mt-2">
@@ -582,18 +552,18 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           {/* ── Colonne droite — Booking Sticky ── */}
           <div className="relative hidden lg:block">
             <div className="sticky top-28 space-y-6">
-      <div className="bg-white rounded-2xl border border-navy/10 shadow-2xl shadow-navy/5 p-6">
-        <BookingForm
-          villaId={villa.id}
-          basePrice={villa.price}
-          capacity={villa.capacity}
-          checkInTime={villa.check_in_time || "17:00"}
-          checkOutTime={villa.check_out_time || "10:00"}
-        />
-      </div>
+              <div className="bg-white rounded-none border border-navy/10 shadow-2xl shadow-navy/5 p-6">
+                <ConnectedBookingForm
+                  villaId={villa.id}
+                  basePrice={villa.price}
+                  capacity={villa.capacity}
+                  checkInTime={villa.check_in_time || "17:00"}
+                  checkOutTime={villa.check_out_time || "10:00"}
+                />
+              </div>
               
-              <div className="p-6 bg-navy/5 rounded-2xl flex flex-col items-center text-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+              <div className="p-8 bg-navy/5 rounded-none border border-navy/15 flex flex-col items-center text-center gap-3">
+                <div className="w-10 h-10 rounded-none bg-gold/20 flex items-center justify-center text-gold">
                   <ShieldCheck size={20} />
                 </div>
                 <h4 className="font-display text-lg text-navy">L'Excellence Kayvila</h4>
@@ -606,6 +576,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
         </div>
       </div>
+      </VillaBookingWrapper>
 
       {/* ── Recommandées ── */}
       {recommendedVillas.length > 0 && (
@@ -656,12 +627,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <span className="text-xs font-normal text-navy/50"> / nuit</span>
             </p>
           </div>
-          <Link
-            href="#reserver-sejour"
-            className="flex min-h-[48px] min-w-[44px] flex-1 max-w-[min(180px,42vw)] items-center justify-center bg-navy px-2 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy/90"
-          >
-            Réserver
-          </Link>
+          <BookingBottomSheet trigger="Réserver" ariaLabel="Réserver votre séjour">
+            <BookingForm
+              villaId={villa.id}
+              basePrice={villa.price}
+              capacity={villa.capacity}
+              checkInTime={villa.check_in_time || "17:00"}
+              checkOutTime={villa.check_out_time || "10:00"}
+            />
+          </BookingBottomSheet>
         </div>
       </div>
 

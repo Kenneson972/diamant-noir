@@ -100,10 +100,10 @@ export function HomeServicesSection() {
   }, [hintPlayed]);
 
   return (
-    <section className="relative overflow-hidden bg-offwhite py-14 md:py-20" aria-labelledby="services-title">
+    <section className="relative overflow-hidden bg-offwhite py-12 md:py-20" aria-labelledby="services-title">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.03)_0%,transparent_60%),radial-gradient(circle_at_70%_80%,rgba(10,10,10,0.02)_0%,transparent_50%)]" />
 
-      <div className="mx-auto max-w-7xl px-6 md:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-12">
         <ScrollReveal>
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
@@ -111,20 +111,20 @@ export function HomeServicesSection() {
             </span>
             <h2
               id="services-title"
-              className="mt-4 font-display text-3xl font-light leading-[1.04] text-navy md:text-4xl lg:text-5xl"
+              className="mt-4 font-display text-2xl font-light leading-[1.04] text-navy md:text-4xl lg:text-5xl"
             >
               Cinq piliers,
               <br />
               une seule équipe
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-navy/55 md:text-[15px]">
+            <p className="mt-3 text-xs leading-relaxed text-navy/55 md:text-[15px] md:mt-4">
               Faites défiler pour découvrir chaque pilier — ou cliquez directement sur un service.
             </p>
           </div>
         </ScrollReveal>
 
         {/* ── Indicateur de position ── */}
-        <div className="mt-10 flex items-center justify-center gap-1" role="tablist" aria-label="Pilier actif">
+        <div className="mt-8 flex items-center justify-center gap-1 md:mt-10" role="tablist" aria-label="Pilier actif">
           {SCROLL_SECTIONS.map((s, i) => (
             <button
               key={i}
@@ -171,7 +171,7 @@ export function HomeServicesSection() {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="mt-6 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 scrollbar-hide"
+          className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 scrollbar-hide md:mt-6 md:gap-6 md:pb-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {SCROLL_SECTIONS.map((service, i) => {
@@ -182,29 +182,29 @@ export function HomeServicesSection() {
             return (
               <div
                 key={service.id}
-                className={`flex w-[78vw] shrink-0 snap-start snap-always transition-transform duration-300 md:w-[75vw] lg:w-[65vw] ${showHint && i === 0 ? "translate-x-[-2%]" : ""}`}
+                className={`flex w-[85vw] shrink-0 snap-start snap-always transition-transform duration-300 md:w-[75vw] lg:w-[65vw] ${showHint && i === 0 ? "translate-x-[-2%]" : ""}`}
               >
                 <Link
                   href={`/prestations/services/${service.id}`}
-                  className="group relative flex w-full overflow-hidden border border-navy/[0.07] bg-white transition-all duration-400 hover:border-navy/20 hover:shadow-[0_16px_48px_rgba(0,0,0,0.07)] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                  className="group relative flex w-full flex-col overflow-hidden border border-navy/[0.07] bg-white transition-all duration-400 hover:border-navy/20 hover:shadow-[0_16px_48px_rgba(0,0,0,0.07)] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 md:flex-row"
                 >
-                  {/* Image — prend la moitié gauche */}
+                  {/* Image — plein largeur mobile, moitié gauche desktop */}
                   {visual && (
-                    <div className="relative w-2/5 shrink-0 overflow-hidden sm:w-1/2">
+                    <div className="relative h-[40vw] min-h-[200px] w-full shrink-0 overflow-hidden md:w-1/2 md:h-auto">
                       <Image
                         src={visual.src}
                         alt={visual.alt}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                         style={{ objectPosition: visual.position }}
-                        sizes="(max-width: 768px) 40vw, 50vw"
+                        sizes="(max-width: 768px) 85vw, 50vw"
                       />
                     </div>
                   )}
 
-                  {/* Texte — moitié droite */}
-                  <div className="flex flex-1 flex-col justify-center px-6 py-8 sm:px-10 sm:py-12 lg:px-14">
-                    <div className="mb-4 flex items-center gap-3">
+                  {/* Texte — en dessous sur mobile, moitié droite desktop */}
+                  <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-6 sm:py-8 md:px-10 md:py-12 lg:px-14">
+                    <div className="mb-3 flex items-center gap-3 md:mb-4">
                       <span
                         aria-hidden
                         className="font-display text-[11px] font-bold tracking-[0.15em] text-gold/50"
@@ -218,16 +218,16 @@ export function HomeServicesSection() {
                       {tagline}
                     </p>
 
-                    <h3 className="mt-3 font-display text-xl leading-tight text-navy md:text-2xl">
+                    <h3 className="mt-2 font-display text-lg leading-tight text-navy md:mt-3 md:text-2xl">
                       {service.title}
                     </h3>
 
-                    <p className="mt-3 max-w-md text-[13px] leading-relaxed text-navy/55">
+                    <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/55 md:mt-3 md:text-[13px]">
                       {desc}
                     </p>
 
                     {/* Progress indicator — 5 segments */}
-                    <div className="mt-6 flex items-center gap-1.5" aria-label={`Pilier ${i + 1} sur 5`}>
+                    <div className="mt-4 flex items-center gap-1.5 md:mt-6" aria-label={`Pilier ${i + 1} sur 5`}>
                       {SCROLL_SECTIONS.map((_, si) => (
                         <div
                           key={si}
@@ -240,7 +240,7 @@ export function HomeServicesSection() {
                       </span>
                     </div>
 
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/35 transition-colors group-hover:text-navy">
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/35 transition-colors group-hover:text-navy md:mt-4">
                       Voir le détail <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
                     </span>
                   </div>

@@ -36,7 +36,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={`Aperçu rapide — ${villa.name}`}
-        className={`fixed inset-x-0 bottom-0 z-[1060] bg-white max-h-[85dvh] overflow-y-auto transition-transform duration-300 ${
+        className={`fixed inset-x-0 bottom-0 z-[1060] bg-white max-h-[85dvh] transition-transform duration-300 ${
           open ? "translate-y-0" : "translate-y-full"
         }`}
         onTouchStart={(e) => setTouchStartY(e.touches[0].clientY)}
@@ -84,7 +84,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
         </div>
 
         {/* Content */}
-        <div className="px-4 pb-6 space-y-4">
+        <div className="px-4 pb-6 space-y-4 overflow-y-auto">
           {/* Location eyebrow */}
           {villa.location && (
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold">
@@ -92,10 +92,21 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
             </p>
           )}
 
-          {/* Name */}
-          <h2 className="font-display text-2xl text-navy leading-snug">
-            {villa.name}
-          </h2>
+          {/* Name + Tier badge */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="font-display text-2xl text-navy leading-snug">
+              {villa.name}
+            </h2>
+            {villa.tier && (
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold border border-gold/30 px-2 py-0.5 shrink-0">
+                {villa.tier === "signature"
+                  ? "Collection Signature"
+                  : villa.tier === "prestige"
+                    ? "Collection Prestige"
+                    : "Collection Exclusive"}
+              </span>
+            )}
+          </div>
 
           {/* Stats grid — 4 cols */}
           <div className="grid grid-cols-4 gap-3 border-t border-b border-navy/8 py-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Share2, Heart, ChevronDown, ChevronUp } from "lucide-react";
+import { Share2, Heart, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useWishlist } from "@/contexts/WishlistContext";
 
 function getShareUrl(villaId: string) {
@@ -15,6 +15,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
   const { isFav, toggle } = useWishlist();
   const saved = isFav(villaId);
   const [shareOpen, setShareOpen] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fermeture au clic extérieur
@@ -86,6 +87,40 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
               </svg>
               Facebook
             </a>
+
+            <div className="mx-4 h-px bg-navy/6" />
+
+            {/* Copier le lien */}
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(shareUrl);
+                  setShowCopied(true);
+                  setTimeout(() => setShowCopied(false), 2000);
+                } catch {
+                  const textarea = document.createElement("textarea");
+                  textarea.value = shareUrl;
+                  document.body.appendChild(textarea);
+                  textarea.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(textarea);
+                  setShowCopied(true);
+                  setTimeout(() => setShowCopied(false), 2000);
+                }
+                // Ne pas fermer le dropdown pour laisser voir le toast
+              }}
+              role="menuitem"
+              className="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-colors hover:bg-navy hover:text-white w-full text-left"
+            >
+              <Copy size={14} strokeWidth={2} />
+              Copier le lien
+            </button>
+
+            {showCopied && (
+              <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-green-600 bg-green-50">
+                Lien copié
+              </div>
+            )}
           </div>
         )}
       </div>
