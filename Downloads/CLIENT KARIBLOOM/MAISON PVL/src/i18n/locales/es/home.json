@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "titre": "Elegancia a Medida",
+    "sous-titre": "Colecciones Primavera-Verano {{year}}",
+    "cta": "Descubrir"
+  },
+  "collections": {
+    "titre": "Nuestras Colecciones",
+    "decouvrir": "Descubrir la colección"
+  },
+  "nouveautes": {
+    "titre": "Novedades",
+    "sous-titre": "Las prendas imprescindibles de la temporada"
+  },
+  "essentiels": {
+    "titre": "Los Esenciales",
+    "sous-titre": "El guardarropa atemporal"
+  },
+  "inspiration": {
+    "titre": "Inspiración Maison PVL",
+    "sous-titre": "Descubra el arte de vivir según Maison PVL",
+    "cta": "Más información"
+  },
+  "newsletter": {
+    "titre": "Manténgase inspirado",
+    "sous-titre": "Reciba nuestras novedades e inspiraciones en exclusiva",
+    "placeholder": "Su correo electrónico",
+    "cta": "Suscribirse"
+  }
+}

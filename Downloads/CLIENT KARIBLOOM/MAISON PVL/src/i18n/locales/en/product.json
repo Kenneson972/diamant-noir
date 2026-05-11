@@ -1,0 +1,18 @@
+{
+  "tailles": "Available Sizes",
+  "selectionnez-taille": "Select a size",
+  "guide-taillles": "Size Guide",
+  "couleurs": "Available Colors",
+  "description": "Description",
+  "composition": "Composition & Care",
+  "livraison-retours": "Shipping & Returns",
+  "delai-livraison": "Delivered within 3 to 5 business days",
+  "retour-gratuit": "Free returns within 30 days",
+  "ajouter-panier": "Add to Cart",
+  "rupture-stock": "Out of Stock",
+  "livraison": "Free shipping from {{amount}}",
+  "nouveaute": "New Arrival",
+  "promo": "On Sale",
+  "pieces-associees": "Complete the Look",
+  "frais-livraison": "Shipping fees"
+}

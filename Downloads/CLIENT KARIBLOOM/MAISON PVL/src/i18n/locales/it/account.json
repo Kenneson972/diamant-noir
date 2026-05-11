@@ -1,0 +1,23 @@
+{
+  "titre": "Il mio account",
+  "informations": "Informazioni personali",
+  "commandes": "I miei ordini",
+  "commande-vide": "Non hai ancora effettuato ordini.",
+  "favoris": "I miei preferiti",
+  "favoris-vide": "Non hai ancora articoli preferiti.",
+  "adresses": "I miei indirizzi",
+  "adresse-ajouter": "Aggiungi un indirizzo",
+  "adresse-modifier": "Modifica indirizzo",
+  "profil": "Il mio profilo",
+  "profil-modifier": "Modifica il mio profilo",
+  "deconnexion": "Esci",
+  "bienvenue": "Ciao, {{name}}",
+  "email": "Indirizzo email",
+  "telephone": "Telefono",
+  "commandes-rec": "Ordini recenti",
+  "voir-tout": "Vedi tutti i miei ordini",
+  "commande": "Ordine",
+  "date": "Data",
+  "statut": "Stato",
+  "total": "Totale"
+}

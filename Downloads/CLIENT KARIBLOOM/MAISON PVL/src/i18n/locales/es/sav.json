@@ -1,0 +1,23 @@
+{
+  "titre": "Atención al cliente",
+  "sous-titre": "Estamos aquí para ayudarle",
+  "contact": "Contáctenos",
+  "tel": "Teléfono",
+  "tel-numero": "+33 1 23 45 67 89",
+  "email": "Correo electrónico",
+  "email-adresse": "contact@maisonpvl.com",
+  "horaires": "Lun–Vie, 9h–18h",
+  "reponse": "Respondemos en un plazo de 24 horas hábiles",
+  "faq": "Preguntas frecuentes",
+  "retours": "Devoluciones & Cambios",
+  "retour-titre": "Solicitud de devolución",
+  "retour-soustitre": "¿Desea devolver un artículo?",
+  "retour-numero": "Número de pedido",
+  "retour-motif": "Motivo de la devolución",
+  "retour-valider": "Enviar solicitud",
+  "suivi-retour": "Seguimiento de devolución",
+  "livraison": "Envío",
+  "livraison-info": "Envío gratuito desde {{amount}} en Francia metropolitana. Entrega en 3 a 5 días hábiles.",
+  "echanges": "Cambios",
+  "echange-info": "Dispone de 30 días para cambiar un artículo."
+}

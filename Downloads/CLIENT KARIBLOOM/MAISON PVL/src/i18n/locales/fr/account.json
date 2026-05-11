@@ -1,0 +1,23 @@
+{
+  "titre": "Mon compte",
+  "informations": "Informations personnelles",
+  "commandes": "Mes commandes",
+  "commande-vide": "Vous n'avez pas encore passé de commande.",
+  "favoris": "Mes favoris",
+  "favoris-vide": "Vous n'avez pas encore d'articles favoris.",
+  "adresses": "Mes adresses",
+  "adresse-ajouter": "Ajouter une adresse",
+  "adresse-modifier": "Modifier l'adresse",
+  "profil": "Mon profil",
+  "profil-modifier": "Modifier mon profil",
+  "deconnexion": "Se déconnecter",
+  "bienvenue": "Bonjour, {{name}}",
+  "email": "Adresse email",
+  "telephone": "Téléphone",
+  "commandes-rec": "Commandes récentes",
+  "voir-tout": "Voir toutes mes commandes",
+  "commande": "Commande",
+  "date": "Date",
+  "statut": "Statut",
+  "total": "Total"
+}

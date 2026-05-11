@@ -1,0 +1,23 @@
+{
+  "titre": "My Account",
+  "informations": "Personal Information",
+  "commandes": "My Orders",
+  "commande-vide": "You haven't placed any orders yet.",
+  "favoris": "My Wishlist",
+  "favoris-vide": "You don't have any favorite items yet.",
+  "adresses": "My Addresses",
+  "adresse-ajouter": "Add an Address",
+  "adresse-modifier": "Edit Address",
+  "profil": "My Profile",
+  "profil-modifier": "Edit My Profile",
+  "deconnexion": "Sign Out",
+  "bienvenue": "Hello, {{name}}",
+  "email": "Email Address",
+  "telephone": "Phone Number",
+  "commandes-rec": "Recent Orders",
+  "voir-tout": "View All Orders",
+  "commande": "Order",
+  "date": "Date",
+  "statut": "Status",
+  "total": "Total"
+}

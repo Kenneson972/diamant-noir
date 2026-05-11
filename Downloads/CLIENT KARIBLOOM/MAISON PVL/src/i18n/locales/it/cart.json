@@ -1,0 +1,21 @@
+{
+  "titre": "Carrello",
+  "vide": "Il tuo carrello è vuoto",
+  "vide-cta": "Scopri le nostre collezioni",
+  "sous-total": "Subtotale",
+  "livraison": "Spedizione",
+  "total": "Totale",
+  "commander": "Acquista",
+  "payer": "Procedi al pagamento",
+  "continuer-achats": "Continua gli acquisti",
+  "resume": "Riepilogo dell'ordine",
+  "code-promo": "Codice promozionale",
+  "code-promo-placeholder": "Inserisci il tuo codice",
+  "code-promo-ajouter": "Applica",
+  "unite": "{{count}} articolo",
+  "unites": "{{count}} articoli",
+  "supprimer": "Rimuovi",
+  "modifier": "Modifica",
+  "quantite": "Quantità",
+  "estimation-livraison": "Calcolato al passaggio successivo"
+}

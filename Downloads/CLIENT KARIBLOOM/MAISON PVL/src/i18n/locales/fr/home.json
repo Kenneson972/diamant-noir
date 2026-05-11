@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "titre": "L'Élégance sur Mesure",
+    "sous-titre": "Collections Printemps-Été {{year}}",
+    "cta": "Découvrir"
+  },
+  "collections": {
+    "titre": "Nos Collections",
+    "decouvrir": "Découvrir la collection"
+  },
+  "nouveautes": {
+    "titre": "Nouveautés",
+    "sous-titre": "Les pièces incontournables de la saison"
+  },
+  "essentiels": {
+    "titre": "Les Essentiels",
+    "sous-titre": "Le vestiaire intemporel"
+  },
+  "inspiration": {
+    "titre": "L'Inspiration Maison PVL",
+    "sous-titre": "Découvrez l'art de vivre selon Maison PVL",
+    "cta": "En savoir plus"
+  },
+  "newsletter": {
+    "titre": "Restez inspiré",
+    "sous-titre": "Recevez nos nouveautés et inspirations en avant-première",
+    "placeholder": "Votre adresse email",
+    "cta": "S'abonner"
+  }
+}

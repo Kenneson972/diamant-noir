@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "titre": "Tailored Elegance",
+    "sous-titre": "Spring-Summer {{year}} Collections",
+    "cta": "Discover"
+  },
+  "collections": {
+    "titre": "Our Collections",
+    "decouvrir": "Discover the collection"
+  },
+  "nouveautes": {
+    "titre": "New Arrivals",
+    "sous-titre": "The season's must-have pieces"
+  },
+  "essentiels": {
+    "titre": "The Essentials",
+    "sous-titre": "Timeless wardrobe staples"
+  },
+  "inspiration": {
+    "titre": "Maison PVL Inspiration",
+    "sous-titre": "Discover the art of living with Maison PVL",
+    "cta": "Learn More"
+  },
+  "newsletter": {
+    "titre": "Stay Inspired",
+    "sous-titre": "Receive our new arrivals and inspirations before anyone else",
+    "placeholder": "Your email address",
+    "cta": "Subscribe"
+  }
+}
