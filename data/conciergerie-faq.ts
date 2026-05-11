@@ -20,8 +20,8 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
         a: "Non. Les frais de ménage entre chaque réservation sont intégralement facturés au voyageur sortant. Ils couvrent le nettoyage complet, la remise en état et la préparation pour l'arrivée suivante. Aucun frais de ménage courant n'est à votre charge.",
       },
       {
-        q: "Que se passe-t-il sur les plateformes qui intègrent le ménage dans le prix affiché ?",
-        a: "Peu importe l'affichage de la plateforme, nous travaillons toujours sur une base contractuelle reconstituée : Base commission = Prix total encaissé − Forfait ménage contractuel. La commission de 20 % s'applique uniquement sur cette base nette.",
+        q: "Que se passe-t-il sur les plateformes où le ménage est intégré dans le prix affiché ?",
+        a: "Peu importe l'affichage de la plateforme, la commission de 20 % s'applique sur le montant brut total encaissé. Le montant du ménage et de la blanchisserie, défini dans l'Annexe Tarifaire, est inclus dans ce calcul et ne donne lieu à aucune facturation supplémentaire. Tout est détaillé dans votre rapport mensuel.",
       },
     ],
   },
@@ -70,7 +70,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
     items: [
       {
         q: "Quel est le montant exact du pack de démarrage ?",
-        a: "Le pack de démarrage est facturé une seule fois, lors de la première mise en service, pour un montant forfaitaire de 200 €. Il comprend les produits de cuisine essentiels, les consommables d'accueil, les produits de salle de bain, les produits d'entretien sanitaire, la raquette anti-insectes et l'installation de la boîte à clefs sécurisée.",
+        a: "Le pack de démarrage est à la charge du propriétaire lors de la première mise en service, pour un montant forfaitaire de 200 €. Il comprend les produits de cuisine essentiels (huile, sel, poivre, sucre, ail en poudre, piment, herbes de Provence, curcuma, curry, café, thé, pack d'eau), les consommables d'accueil (papier toilette, essuie-tout, liquide vaisselle, éponges, savon liquide, sacs poubelles, torchons, pastilles lave-vaisselle), les produits de salle de bain (gel douche, shampoing, désodorisant) et les produits d'entretien sanitaire (nettoyant WC), un guide de la Martinique, la raquette électrique anti-insectes, et l'installation de la boîte à clefs sécurisée. Le réassort de ces consommables entre chaque séjour est ensuite assuré par Kayvila Conciergerie, sans frais supplémentaire pour le propriétaire.",
       },
       {
         q: "Qui assume les coûts après la première location ?",
@@ -89,7 +89,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
     items: [
       {
         q: "Quel est le délai de reversement ?",
-        a: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via la plateforme. En fin de mois, Kayvila vous adresse une facture de commission (20 % sur les nuitées réalisées), réglable sous 8 jours. Un mandat de prélèvement SEPA peut simplifier ce règlement.",
+        a: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via la plateforme (Airbnb, Booking, etc.). En fin de mois, Kayvila vous adresse une facture correspondant à sa commission de 20 % sur le montant brut des séjours réalisés, réglable sous 8 jours à réception. Pour simplifier ce règlement, un mandat de prélèvement SEPA peut être mis en place dès la signature du contrat — la commission est alors prélevée automatiquement à date fixe, sans démarche de votre part. Pour les réservations effectuées directement via le site Kayvila, le paiement est scindé à la source : vous recevez votre part et Kayvila perçoit sa commission directement, sans intermédiaire ni facturation mensuelle.",
       },
       {
         q: "Qui assume les risques de non-paiement ?",
@@ -97,7 +97,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
       },
       {
         q: "Y a-t-il des frais bancaires supplémentaires ?",
-        a: "Non. Une seule facture mensuelle pour la commission de 20 % sur les nuitées du mois écoulé. Aucun frais caché, aucune déduction supplémentaire.",
+        a: "Pour les réservations via les plateformes (Airbnb, Booking, etc.), non. La facturation se limite à la commission de 20 % sur le montant brut des séjours — aucun frais caché, aucune déduction supplémentaire. Pour les réservations effectuées directement via le site Kayvila, des frais de traitement de 5 % s'appliquent sur le montant encaissé. Ces frais couvrent la gestion du paiement en ligne sécurisé, sans commission de plateforme. Au final, votre net perçu reste supérieur à ce qu'une réservation Airbnb ou Booking vous aurait rapporté, une fois leurs commissions déduites.",
       },
       {
         q: "Comment sont justifiées les déductions ?",
