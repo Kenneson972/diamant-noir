@@ -109,7 +109,7 @@ export function DashboardSidebar({
         </button>
         <Link
           href="/"
-          className="mt-2 block px-3 py-2 text-xs text-white/40 transition-colors hover:text-white/70"
+          className="mt-2 block px-3 py-2 text-xs text-white/50 transition-colors hover:text-white/70"
           onClick={onClose}
         >
           Retour au site public

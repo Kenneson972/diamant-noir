@@ -24,7 +24,7 @@ export default async function ProprioReservationsIndexPage() {
 
   if (!villas || villas.length === 0) {
     return (
-      <main className="min-h-dvh bg-cream">
+      <div>
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="mb-8">
             <h1 className="font-display text-2xl font-bold text-navy-900">
@@ -37,7 +37,7 @@ export default async function ProprioReservationsIndexPage() {
             <p className="text-sm text-muted">Aucune villa avec des réservations pour le moment.</p>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -50,7 +50,7 @@ export default async function ProprioReservationsIndexPage() {
     .slice(0, 10);
 
   return (
-    <main className="min-h-dvh bg-cream">
+    <div>
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="mb-8">
           <h1 className="font-display text-2xl font-bold text-navy-900">
@@ -110,6 +110,6 @@ export default async function ProprioReservationsIndexPage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

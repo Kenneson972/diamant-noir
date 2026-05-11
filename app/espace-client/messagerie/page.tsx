@@ -7,12 +7,12 @@ import { PageTopbar } from "@/components/espace-client/PageTopbar";
 
 function ChatLoadingDots() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-[#FAFAF8] min-h-[400px]">
+    <div className="flex-1 flex items-center justify-center bg-offwhite min-h-[400px]">
       <div className="flex gap-1.5">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="dn-typing-dot w-2 h-2 rounded-full bg-[rgba(13,27,42,0.15)]"
+            className="dn-typing-dot w-2 h-2 rounded-full bg-navy/15"
             style={{ animationDelay: `${i * 160}ms` }}
           />
         ))}
@@ -105,12 +105,12 @@ export default function MessageriePage() {
     return (
       <>
         <PageTopbar title="Messagerie" />
-        <div className="flex items-center justify-center bg-[#FAFAF8] min-h-[320px]">
+        <div className="flex items-center justify-center bg-offwhite min-h-[320px]">
           <div className="flex gap-1.5">
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="dn-typing-dot w-2 h-2 rounded-full bg-[rgba(13,27,42,0.15)]"
+                className="dn-typing-dot w-2 h-2 rounded-full bg-navy/15"
                 style={{ animationDelay: `${i * 160}ms` }}
               />
             ))}
@@ -125,24 +125,24 @@ export default function MessageriePage() {
       <PageTopbar title="Messagerie" />
 
       {booking && (
-        <div className="flex items-center gap-4 px-5 md:px-6 py-3 border-b border-[rgba(13,27,42,0.06)] bg-white shrink-0">
+        <div className="flex items-center gap-4 px-5 md:px-6 py-3 border-b border-navy/[0.06] bg-white shrink-0">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path
               d="M8 1L1 5v9h5V9h4v5h5V5L8 1z"
-              stroke="#0D1B2A"
+              stroke="#0A0A0A"
               strokeWidth="1"
               strokeLinejoin="round"
             />
           </svg>
           <div>
-            <p className="text-[8px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.5)]">
+            <p className="text-[11px] tracking-[0.15em] uppercase text-navy/50">
               {booking.villa?.name ?? "Villa Kayvila"}
             </p>
-            <p className="font-display italic text-[12px] font-light text-[rgba(13,27,42,0.4)]">
+            <p className="font-display italic text-[12px] font-light text-navy/40">
               {fmt(booking.start_date)} → {fmt(booking.end_date)}
             </p>
           </div>
-          <span className="ml-auto text-[7px] tracking-[0.18em] uppercase text-[rgba(13,27,42,0.3)]">
+          <span className="ml-auto text-[11px] tracking-[0.12em] uppercase text-navy/35">
             Réponse sous 2 h
           </span>
         </div>

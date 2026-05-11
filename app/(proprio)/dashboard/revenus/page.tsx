@@ -70,7 +70,7 @@ export default async function RevenusPage() {
   const hasEnoughHistory = monthlyData.filter((m) => m.revenue > 0).length >= 3;
 
   return (
-    <main className="min-h-dvh bg-cream">
+    <div>
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="mb-8">
           <h1 className="font-display text-2xl font-bold text-navy-900">
@@ -90,6 +90,6 @@ export default async function RevenusPage() {
           <RevenueChart data={monthlyData} hasEnoughHistory={hasEnoughHistory} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

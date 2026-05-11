@@ -7,18 +7,18 @@ interface PageTopbarProps {
 
 export function PageTopbar({ section, title, badge }: PageTopbarProps) {
   return (
-    <div className="flex h-[52px] bg-white border-b border-[rgba(13,27,42,0.06)] items-center px-5 md:px-8 shrink-0">
+    <div className="flex h-[52px] bg-white border-b border-navy/[0.06] items-center px-5 md:px-8 shrink-0">
       {section ? (
         <>
-          <span className="text-[8px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.26)]">{section}</span>
-          <div className="w-[14px] h-px bg-[rgba(13,27,42,0.1)] mx-3" />
+          <span className="text-[11px] tracking-[0.15em] uppercase text-navy/30">{section}</span>
+          <div className="w-[14px] h-px bg-navy/10 mx-3" />
         </>
       ) : null}
-      <span className="font-display text-[15px] font-normal text-[#0D1B2A]">{title}</span>
+      <span className="font-display text-[15px] font-normal text-navy">{title}</span>
       {badge && (
         <>
           <div className="flex-1" />
-          <span className="text-[8px] tracking-[0.2em] uppercase text-[#D4AF37] border border-[rgba(212,175,55,0.28)] px-[11px] py-[4px] rounded-[1px]">
+          <span className="text-[11px] tracking-[0.12em] uppercase text-gold border border-gold/30 px-[11px] py-[4px] rounded-[1px]">
             {badge}
           </span>
         </>

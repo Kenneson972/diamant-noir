@@ -43,27 +43,26 @@ function UpcomingStayHero({ booking }: { booking: any }) {
 
   return (
     <div
-      className="bg-white border border-[rgba(13,27,42,0.07)] flex flex-col sm:flex-row sm:items-stretch gap-0 overflow-hidden"
-      style={{ borderTop: "2px solid #D4AF37" }}
+      className="border border-navy/[0.07] border-t-2 border-t-gold bg-white flex flex-col sm:flex-row sm:items-stretch gap-0 overflow-hidden"
     >
       <div className="flex-1 min-w-0 px-7 py-8">
-        <p className="text-[10px] tracking-[0.32em] uppercase text-[#D4AF37] mb-4">
+        <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">
           {isToday ? "Séjour en cours" : "Votre prochain séjour"}
         </p>
-        <h2 className="font-display text-[22px] font-normal text-[#0D1B2A] leading-snug mb-2">
+        <h2 className="font-display text-[22px] font-normal text-navy leading-snug mb-2">
           {booking.villa?.name ?? "Villa Kayvila"}
         </h2>
         {booking.villa?.location && (
-          <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.32)] mb-0.5">
+          <p className="font-display italic text-[15px] font-light text-navy/35 mb-0.5">
             {booking.villa.location}, Martinique
           </p>
         )}
-        <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mb-7">
+        <p className="font-display italic text-[15px] font-light text-navy/40 mb-7">
           {fmt(startDate)} – {fmt(endDate)} · {nights} nuit{nights > 1 ? "s" : ""}
         </p>
         <Link
           href="/espace-client/livret"
-          className="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-[#D4AF37] hover:text-[rgba(212,175,55,0.7)] transition-colors no-underline"
+          className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase text-gold hover:text-gold/70 transition-colors no-underline"
         >
           Consulter le livret
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -72,17 +71,17 @@ function UpcomingStayHero({ booking }: { booking: any }) {
         </Link>
       </div>
 
-      <div className="hidden sm:block w-px self-stretch bg-[rgba(13,27,42,0.06)]" />
-      <div className="sm:hidden h-px mx-7 bg-[rgba(13,27,42,0.06)]" />
+      <div className="hidden sm:block w-px self-stretch bg-navy/[0.06]" />
+      <div className="sm:hidden h-px mx-7 bg-navy/[0.06]" />
 
       <div className="px-7 py-8 flex flex-col items-start sm:items-center justify-center gap-1.5 shrink-0 sm:min-w-[120px]">
         <p
-          className="font-display font-normal text-[#0D1B2A] leading-none"
+          className="font-display font-normal text-navy leading-none"
           style={{ fontSize: "48px", letterSpacing: "-0.02em" }}
         >
           {isToday ? "✦" : Math.max(0, daysUntil)}
         </p>
-        <p className="text-[10px] tracking-[0.28em] uppercase text-[rgba(13,27,42,0.28)]">
+        <p className="text-[11px] tracking-[0.15em] uppercase text-navy/35">
           {isToday ? "en cours" : "jours"}
         </p>
       </div>
@@ -297,14 +296,14 @@ export default function EspaceClientPage() {
               className="border border-[rgba(212,175,55,0.25)] bg-[rgba(212,175,55,0.04)] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-[#D4AF37] mb-1">
+                <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-gold mb-1">
                   En attente de confirmation
                 </p>
-                <p className="font-display text-[16px] font-normal text-[#0D1B2A] leading-snug">
+                <p className="font-display text-[16px] font-normal text-navy leading-snug">
                   {b.villa?.name ?? "Villa Kayvila"}
                 </p>
                 {b.start_date && b.end_date && (
-                  <p className="font-display italic text-[13px] text-[rgba(13,27,42,0.4)] mt-0.5">
+                  <p className="font-display italic text-[13px] text-navy/40 mt-0.5">
                     {new Date(b.start_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     {" – "}
                     {new Date(b.end_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
@@ -316,7 +315,7 @@ export default function EspaceClientPage() {
               </div>
               <Link
                 href="/espace-client/messagerie"
-                className="shrink-0 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.5)] no-underline hover:text-[#0D1B2A] transition-colors"
+                className="shrink-0 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.5)] no-underline hover:text-navy transition-colors"
               >
                 Contacter l&apos;équipe
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
@@ -335,7 +334,7 @@ export default function EspaceClientPage() {
       {upcomingBooking && (
         <div>
           <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25 mb-4">Accès rapide</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 border border-[rgba(13,27,42,0.07)]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 border border-navy/[0.07]">
             {[
               {
                 label: "Checklist",
@@ -386,15 +385,15 @@ export default function EspaceClientPage() {
                 href={href}
                 className={[
                   "group flex flex-col gap-3 px-3 py-4 xs:px-5 xs:py-6 min-h-[88px] xs:min-h-[110px]",
-                  "border-l border-[rgba(13,27,42,0.07)] first:border-l-0",
+                  "border-l border-navy/[0.07] first:border-l-0",
                   "hover:bg-[rgba(212,175,55,0.03)] transition-colors duration-200 no-underline",
                 ].join(" ")}
               >
-                <span className="text-[rgba(13,27,42,0.22)] group-hover:text-[rgba(212,175,55,0.7)] transition-colors duration-200">
+                <span className="text-[rgba(13,27,42,0.22)] group-hover:text-gold/70 transition-colors duration-200">
                   {icon}
                 </span>
                 <span>
-                  <span className="block text-[10px] tracking-[0.22em] uppercase text-[#0D1B2A] font-medium mb-1">
+                  <span className="block text-[10px] tracking-[0.22em] uppercase text-navy font-medium mb-1">
                     {label}
                   </span>
                   <span className="font-display italic text-[13px] font-light text-[rgba(13,27,42,0.35)]">

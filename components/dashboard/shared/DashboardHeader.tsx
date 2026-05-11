@@ -42,7 +42,7 @@ export function DashboardHeader({
           <Menu className="h-5 w-5" />
         </button>
         <div className="min-w-0">
-          <p className="font-display-dashboard text-[10px] font-bold uppercase tracking-[0.35em] text-gold">
+          <p className="font-display-dashboard text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
             {roleLabel}
           </p>
           <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">

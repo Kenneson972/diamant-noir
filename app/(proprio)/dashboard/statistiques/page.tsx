@@ -21,7 +21,7 @@ export default async function ProprioStatistiquesIndexPage() {
 
   if (!villas || villas.length === 0) {
     return (
-      <main className="min-h-dvh bg-cream">
+      <div>
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="mb-8">
             <h1 className="font-display text-2xl font-bold text-navy-900">
@@ -34,12 +34,12 @@ export default async function ProprioStatistiquesIndexPage() {
             <p className="text-sm text-muted">Aucune villa associée à votre compte.</p>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-dvh bg-cream">
+    <div>
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="mb-8">
           <h1 className="font-display text-2xl font-bold text-navy-900">
@@ -67,6 +67,6 @@ export default async function ProprioStatistiquesIndexPage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
