@@ -1,17 +1,6 @@
 @import "tailwindcss";
 @import "@heroui/styles";
-
-@font-face {
-  font-family: 'Rufina';
-  src: url('https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&display=swap');
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Karla';
-  src: url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&display=swap');
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&family=Karla:wght@300;400;500;600;700&display=swap');
 
 @theme {
   /* Core brand colors - oklch */
