@@ -39,6 +39,13 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
       status: "pending",
     });
     if (!error) {
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        type: "system",
+        title: "Demande envoyée",
+        body: `Votre demande "${REQUEST_TYPES[type]}" a été transmise à l'équipe Kayvila.`,
+        action_url: "/espace-client/demandes",
+      });
       setDone(true);
       onSuccess();
     }

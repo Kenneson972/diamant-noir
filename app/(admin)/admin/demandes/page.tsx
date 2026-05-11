@@ -42,7 +42,7 @@ export default function AdminDemandesPage() {
 
   useEffect(() => { fetchRequests(); }, [supabase, filter]);
 
-  const handleAction = async (id: string, status: string) => {
+  const handleAction = async (id: string, status: string, guestId?: string, requestType?: string) => {
     if (!supabase) return;
     const resp = responseText[id] ?? "";
     await supabase.from("requests").update({
@@ -50,6 +50,19 @@ export default function AdminDemandesPage() {
       admin_response: resp || null,
       updated_at: new Date().toISOString(),
     }).eq("id", id);
+
+    if (guestId) {
+      const statusLabel = status === "resolved" ? "résolue" : status === "rejected" ? "refusée" : "prise en charge";
+      const typeLabel = TYPE_LABELS[requestType ?? ""] ?? requestType ?? "Demande";
+      await supabase.from("notifications").insert({
+        user_id: guestId,
+        type: "request_update",
+        title: `Demande ${statusLabel}`,
+        body: `Votre demande "${typeLabel}" a été ${statusLabel}.${resp ? ` Réponse : ${resp}` : ""}`,
+        action_url: "/espace-client/demandes",
+      });
+    }
+
     setResponseText((prev) => { const n = { ...prev }; delete n[id]; return n; });
     fetchRequests();
   };
@@ -116,16 +129,16 @@ export default function AdminDemandesPage() {
                     className="w-full border border-navy/15 bg-white px-3 py-2 text-sm resize-none focus:outline-none focus:border-gold/50"
                   />
                   <div className="flex gap-2">
-                    <button onClick={() => handleAction(r.id, "resolved")}
+                    <button onClick={() => handleAction(r.id, "resolved", r.guest_id, r.type)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 text-[11px] font-semibold rounded-full hover:bg-emerald-100 transition-colors">
                       <Check size={14} /> Résoudre
                     </button>
-                    <button onClick={() => handleAction(r.id, "rejected")}
+                    <button onClick={() => handleAction(r.id, "rejected", r.guest_id, r.type)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-700 text-[11px] font-semibold rounded-full hover:bg-red-100 transition-colors">
                       <X size={14} /> Refuser
                     </button>
                     {r.status !== "in_progress" && (
-                      <button onClick={() => handleAction(r.id, "in_progress")}
+                      <button onClick={() => handleAction(r.id, "in_progress", r.guest_id, r.type)}
                         className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 text-[11px] font-semibold rounded-full hover:bg-blue-100 transition-colors">
                         <MessageCircle size={14} /> En cours
                       </button>

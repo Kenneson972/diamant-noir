@@ -18,7 +18,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, X, ExternalLink, CheckCheck, Building2, Calendar, AlertTriangle, Sparkles, Info } from "lucide-react";
+import { Bell, X, ExternalLink, CheckCheck, Building2, Calendar, AlertTriangle, Sparkles, Info, MessageCircle, Key, DoorOpen } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 
 // ─── Types ────────────────────────────────────────────────────────────────
@@ -28,7 +28,11 @@ type NotifType =
   | "booking_confirmed"
   | "ical_error"
   | "availability_alert"
-  | "system";
+  | "system"
+  | "request_update"
+  | "checkin_reminder"
+  | "checkout_reminder"
+  | "new_message";
 
 interface Notification {
   id: string;
@@ -56,7 +60,11 @@ const TYPE_CONFIG: Record<NotifType, { icon: any; color: string; bg: string }> =
   booking_confirmed:  { icon: CheckCheck,   color: "text-green-500",  bg: "bg-green-50" },
   ical_error:         { icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
   availability_alert: { icon: Bell,         color: "text-orange-500", bg: "bg-orange-50" },
-  system:             { icon: Info,         color: "text-navy/60",    bg: "bg-navy/5" },
+  system:             { icon: Info,           color: "text-navy/60",    bg: "bg-navy/5" },
+  request_update:     { icon: MessageCircle,  color: "text-gold",       bg: "bg-gold/10" },
+  checkin_reminder:   { icon: Key,            color: "text-emerald-500",bg: "bg-emerald-50" },
+  checkout_reminder:  { icon: DoorOpen,       color: "text-amber-500",  bg: "bg-amber-50" },
+  new_message:        { icon: MessageCircle,  color: "text-blue-500",   bg: "bg-blue-50" },
 };
 
 const SCORE_COLOR = (score: number) =>
@@ -68,9 +76,13 @@ const SCORE_COLOR = (score: number) =>
 interface NotificationBellProps {
   /** Mode collapsed de la sidebar */
   collapsed?: boolean;
+  /** ID de l'utilisateur courant (filtre les notifs) */
+  userId?: string;
+  /** Rôle pour adapter les liens */
+  role?: "admin" | "owner" | "tenant";
 }
 
-export function NotificationBell({ collapsed = false }: NotificationBellProps) {
+export function NotificationBell({ collapsed = false, userId, role }: NotificationBellProps) {
   const router = useRouter();
   const supabase = getSupabaseBrowser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -84,14 +96,16 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
   // ── Chargement initial ────────────────────────────────────────────────
   const fetchNotifications = useCallback(async () => {
     if (!supabase) return;
-    const { data } = await supabase
+    let query = supabase
       .from("notifications")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(20);
+    if (userId) query = query.eq("user_id", userId);
+    const { data } = await query;
     if (data) setNotifications(data as Notification[]);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, userId]);
 
   useEffect(() => {
     fetchNotifications();
@@ -338,10 +352,17 @@ export function NotificationBell({ collapsed = false }: NotificationBellProps) {
           {notifications.length > 0 && (
             <div className="px-4 py-2.5 border-t border-navy/[0.06] dark:border-white/10 bg-navy/[0.02] dark:bg-white/[0.02]">
               <button
-                onClick={() => { setOpen(false); router.push("/dashboard/proprio/submissions"); }}
+                onClick={() => {
+                  setOpen(false);
+                  router.push(
+                    role === "tenant"
+                      ? "/espace-client/notifications"
+                      : "/dashboard/proprio/submissions"
+                  );
+                }}
                 className="text-[10px] text-navy/50 dark:text-white/50 hover:text-gold transition-colors uppercase tracking-[0.15em] w-full text-center"
               >
-                Voir toutes les soumissions →
+                {role === "tenant" ? "Voir toutes les notifications →" : "Voir toutes les soumissions →"}
               </button>
             </div>
           )}

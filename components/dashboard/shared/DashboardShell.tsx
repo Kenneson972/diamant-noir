@@ -62,6 +62,8 @@ export function DashboardShell({
             roleLabel={roleLabel}
             displayName={displayName}
             onToggleSidebar={() => setSidebarOpen((v) => !v)}
+            userId={user?.id}
+            role={role}
           />
           <main
             id={`${role}-main`}

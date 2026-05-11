@@ -1,18 +1,23 @@
 "use client";
 
 import { useMemo } from "react";
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 
 interface DashboardHeaderProps {
   roleLabel: string;
   displayName: string;
   onToggleSidebar: () => void;
+  userId?: string;
+  role?: "admin" | "owner" | "tenant";
 }
 
 export function DashboardHeader({
   roleLabel,
   displayName,
   onToggleSidebar,
+  userId,
+  role,
 }: DashboardHeaderProps) {
   const today = useMemo(() => {
     return new Date().toLocaleDateString("fr-FR", {
@@ -57,13 +62,7 @@ export function DashboardHeader({
         >
           {today}
         </time>
-        <button
-          type="button"
-          className="relative flex h-10 w-10 items-center justify-center rounded-full text-navy/45 transition-colors hover:bg-navy/[0.06] hover:text-navy"
-          aria-label="Notifications (bientôt disponible)"
-        >
-          <Bell className="h-5 w-5" />
-        </button>
+        <NotificationBell userId={userId} role={role} />
         <div
           className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-xs font-bold text-white shadow-sm ring-2 ring-white md:h-10 md:w-10"
           title={displayName}

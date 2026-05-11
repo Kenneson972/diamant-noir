@@ -95,10 +95,13 @@ export interface Database {
         Row: {
           id: string;
           user_id: string | null;
+          type: string;
           title: string;
-          body: string | null;
-          type: string | null;
+          body: string;
+          metadata: Json | null;
+          action_url: string | null;
           is_read: boolean;
+          read_at: string | null;
           created_at: string;
         };
         Insert: Record<string, Json>;
