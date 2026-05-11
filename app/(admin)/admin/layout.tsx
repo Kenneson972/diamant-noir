@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { AdminLayout } from "@/components/dashboard/admin/AdminLayout";
+import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
+import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
 import { isStaffAdmin, normalizeRole } from "@/lib/auth/admin-access";
 
 export const metadata = {
@@ -41,5 +42,9 @@ export default async function AdminDashboardLayout({
     redirect("/espace-client");
   }
 
-  return <AdminLayout>{children}</AdminLayout>;
+  return (
+    <DashboardShell role="admin" roleLabel="Admin" menu={adminMenuItems}>
+      {children}
+    </DashboardShell>
+  );
 }

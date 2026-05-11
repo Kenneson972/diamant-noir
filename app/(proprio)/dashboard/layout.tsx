@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { OwnerLayout } from "@/components/dashboard/proprio/OwnerLayout";
+import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
+import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItems";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 
 export const metadata = {
@@ -46,5 +47,9 @@ export default async function ProprioDashboardLayout({
     redirect("/espace-client");
   }
 
-  return <OwnerLayout>{children}</OwnerLayout>;
+  return (
+    <DashboardShell role="owner" roleLabel="Propriétaire" menu={proprioMenuItems}>
+      {children}
+    </DashboardShell>
+  );
 }
