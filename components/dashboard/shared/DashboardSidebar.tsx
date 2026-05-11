@@ -3,13 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LogOut, X } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  LogOut, X,
+  LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
+  DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
+  Home, BookOpen, MessageCircle, FileText,
+  ClipboardList, BarChart3,
+} from "lucide-react";
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
+  DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
+  Home, BookOpen, MessageCircle, FileText,
+  ClipboardList, BarChart3,
+};
 
 export interface SidebarMenuItem {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: string;
   exact?: boolean;
 }
 
@@ -78,12 +90,17 @@ export function DashboardSidebar({
               )}
               aria-current={active ? "page" : undefined}
             >
-              <item.icon
-                className={cn(
-                  "h-5 w-5 shrink-0 transition-colors duration-200",
-                  active ? "text-gold" : "text-white/45 group-hover:text-white"
-                )}
-              />
+              {(() => {
+                const IconComponent = ICON_MAP[item.icon];
+                return IconComponent ? (
+                  <IconComponent
+                    className={cn(
+                      "h-5 w-5 shrink-0 transition-colors duration-200",
+                      active ? "text-gold" : "text-white/45 group-hover:text-white"
+                    )}
+                  />
+                ) : null;
+              })()}
               <span>{item.label}</span>
             </Link>
           );
