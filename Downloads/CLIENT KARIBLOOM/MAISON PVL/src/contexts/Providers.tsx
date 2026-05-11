@@ -31,26 +31,27 @@ export function Providers({ children }: { children: ReactNode }) {
 
 function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isEntry = pathname === '/';
   const isCheckout = pathname.startsWith('/checkout');
   const isAuth =
     pathname.startsWith('/connexion') || pathname.startsWith('/inscription');
+  const isGendered =
+    pathname.startsWith('/homme') || pathname.startsWith('/femme');
+
+  const showChrome = !isEntry && !isCheckout && !isAuth;
 
   return (
     <>
       <ScrollToTop />
       <div className="flex min-h-screen flex-col">
-        {!isCheckout && !isAuth && <Header />}
+        {showChrome && <Header variant={isGendered ? 'transparent' : 'solid'} />}
         <main
           id="main-content"
-          className={
-            isCheckout || isAuth
-              ? 'flex flex-1 flex-col'
-              : 'flex-1'
-          }
+          className={showChrome ? 'flex-1' : 'flex flex-1 flex-col'}
         >
           {children}
         </main>
-        {!isCheckout && !isAuth && <Footer />}
+        {showChrome && <Footer />}
       </div>
     </>
   );
