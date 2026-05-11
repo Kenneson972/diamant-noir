@@ -100,7 +100,7 @@ export function HomeServicesSection() {
   }, [hintPlayed]);
 
   return (
-    <section className="relative overflow-hidden bg-offwhite py-12 md:py-20" aria-labelledby="services-title">
+    <section id="piliers" className="relative overflow-hidden bg-offwhite py-12 md:py-20 scroll-mt-20" aria-labelledby="services-title">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.03)_0%,transparent_60%),radial-gradient(circle_at_70%_80%,rgba(10,10,10,0.02)_0%,transparent_50%)]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-12">

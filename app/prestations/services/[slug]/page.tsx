@@ -218,15 +218,15 @@ export default async function PrestationServicePage({
             </h2>
             <div className="mt-4 h-px w-8 bg-gold/40" aria-hidden />
             <div className="mt-8 space-y-6 text-[13px] leading-relaxed text-navy/60">
-              {d.items.map(({ title: iTitle, desc }, idx) => (
-                <div key={iTitle}>
-                  <span className="mr-2 text-[10px] font-bold text-gold/60">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-navy">
-                    {iTitle}
-                  </h3>
-                  <p>{desc}</p>
+              {d.items.map(({ title: iTitle, desc }) => (
+                <div key={iTitle} className="flex items-start gap-3">
+                  <span className="mt-[5px] block h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden />
+                  <div>
+                    <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-navy">
+                      {iTitle}
+                    </h3>
+                    <p>{desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -276,7 +276,7 @@ export default async function PrestationServicePage({
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href={`/prestations#pilier-${slug}`}
+              href={`/#piliers`}
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
