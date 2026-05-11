@@ -72,3 +72,22 @@
 - `Buffer.from()` n'existe pas côté client → utiliser `btoa()` / `atob()`
 - L'export .ics utilise le format `YYYYMMDDTHHmmssZ` pour DTSTART/DTEND
 - Les hooks React doivent TOUJOURS être avant tout `if (condition) return`
+
+---
+
+## 2026-05-11 — Phase 3 — Centre de Notifications ✅ TERMINÉ
+
+### Fait (1 créé, 10 modifiés, 1 migration)
+- **Migration Supabase** : colonne `user_id` sur `notifications`, 4 nouveaux types, RLS pour authenticated
+- **NotificationBell** : adapté pour guests (filtre userId, lien footer par rôle, nouveaux types)
+- **DashboardHeader** : cloche placeholder remplacée par `<NotificationBell>` fonctionnel
+- **DashboardShell** : passe `userId` et `role` au header
+- **Page notifications** : `/espace-client/notifications` avec historique, mark all read, empty state
+- **Menu tenant** : entrée "Notifications" (Bell) ajoutée
+- **Triggers** : admin résout/refuse → notif guest ; guest crée demande → notif confirmation
+
+### Règles apprises
+- Toujours vérifier si un composant existe déjà avant d'en créer un nouveau (NotificationBell était orphelin)
+- La table `notifications` existait déjà avec un schéma admin — l'adapter plutôt que d'en créer une nouvelle
+- Pour qu'un admin insère une notif pour un guest, il faut une RLS policy `authenticated_insert` avec `with check (true)` — pas juste un `authenticated_insert_own`
+- Les notifications temps réel utilisent Supabase Realtime via `postgres_changes`
