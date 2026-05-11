@@ -52,6 +52,20 @@
   5. **Page `/admin/avis`** — filtres statut, approuver/rejeter
   6. **ReviewForm** — étoiles cliquables, condition post-checkout, prévention doublons
   7. **Page Séjour enrichie** — re-réserver, villas similaires, formulaire avis intégré
+
+---
+
+## 2026-05-11 — Phase A — Fondations Refonte Admin
+
+- **type**: `refactor | security | supabase`
+- **summary**:
+  1. **`lib/constants.ts`** — constantes centralisées (10 exports), 4 fichiers nettoyés
+  2. **`lib/utils.ts`** — `timeAgo` + `formatDate` partagés, 2 doublons supprimés
+  3. **`types/supabase.ts`** — 4 tables ajoutées (requests, reviews, referrals, wishlist)
+  4. **RLS** — `requests` sécurisée (guest_own + admin_all), `villa_submissions` nettoyée
+  5. **Re-exports supprimés** — hub-classique, assistant, submissions (3 fichiers)
+  6. **Menu admin** — 10 entrées, Propriétaires migré vers Villas
+  7. **`conciergerie_settings`** — table pour contacts/horaires/services éditables
   6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
 - **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
 - **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.

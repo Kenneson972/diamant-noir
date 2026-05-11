@@ -111,3 +111,23 @@
 - Pour la RLS admin : `exists (select 1 from profiles where id = auth.uid() and role = 'admin')` permet aux admins de gérer toutes les reviews
 - La contrainte `unique(booking_id)` empêche les doublons d'avis sur un même séjour
 - Le code de parrainage utilise `KAYVILA-` préfixe + 6 caractères alphanumériques pour être identifiable
+
+---
+
+## 2026-05-11 — Phase A — Fondations Refonte Admin ✅
+
+### Fait (7 créés, 13 modifiés, 3 supprimés, 3 migrations)
+- **`lib/constants.ts`** : centralise REQUEST_TYPE_LABELS, REQUEST_STATUS_STYLES/LABELS, BOOKING_STATUS_STYLES/LABELS, REFERRAL_STATUS_STYLES/LABELS, NOTIF_TYPE_CONFIG
+- **`lib/utils.ts`** : ajout `timeAgo()` et `formatDate()` partagés, supprimés de NotificationBell + notifications/page
+- **`types/supabase.ts`** : ajout tables requests, reviews, referrals, wishlist
+- **RLS** : `requests` (guest_own + admin_all), fix `villa_submissions` (DROP policy permissive)
+- **Suppression 3 re-exports** : hub-classique, assistant, submissions
+- **Menu admin** : 10 entrées (retrait Hub classique, Assistant, Soumissions, Propriétaires)
+- **`conciergerie_settings`** : table pour contacts/horaires/services éditables
+
+### Règles apprises
+- 4 définitions de `STATUS_STYLES` coexistaient avec des clés différentes (demandes, réservations, parrainage) → nommer avec préfixe (`REQUEST_`, `BOOKING_`, `REFERRAL_`)
+- Les re-exports `export { default } from "..."` cassent la navigation naturelle → pages natives uniquement
+- `NOTIF_TYPE_CONFIG` utilise des strings d'icônes pour la page notifs, des composants React pour NotificationBell → on garde les deux versions car le contexte est différent (Server→Client)
+- La table `requests` était la seule table critique sans RLS — toujours auditer les nouvelles tables
+- `grep -r "STATUS_STYLES"` est ton ami après un refactor de constantes
