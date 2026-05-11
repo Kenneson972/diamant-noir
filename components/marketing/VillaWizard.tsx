@@ -108,7 +108,7 @@ const inputCls =
 
 function ProgressBar({ step }: { step: number }) {
   return (
-    <div className="mb-10">
+    <div id="stepper" className="mb-10">
       <div className="flex items-start">
         {STEPS.map((s, i) => {
           const done = i < step;
@@ -737,7 +737,7 @@ export function VillaWizard() {
     setError(null);
     setDirection("forward");
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.querySelector('#stepper')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const goBack = () => {

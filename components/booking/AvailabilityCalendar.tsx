@@ -96,7 +96,7 @@ export const AvailabilityCalendar = ({
   }, [onDatesChange]);
 
   return (
-    <div className="availability-calendar-container rounded-2xl border border-navy/10 bg-white p-3 md:p-6 overflow-hidden shadow-sm">
+    <div className="availability-calendar-container rounded-2xl border border-navy/10 bg-white p-3 md:p-6 overflow-x-auto shadow-sm">
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-semibold text-navy">
           <span className="h-2 w-2 rounded-full bg-gold" />

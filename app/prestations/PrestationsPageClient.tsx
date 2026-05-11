@@ -708,7 +708,8 @@ export default function PrestationsPageClient() {
                 return (
                   <div
                     key={s.id}
-                    className="grid grid-cols-1 items-center gap-10 border-b border-navy/[0.06] pb-20 last:border-0 last:pb-0 md:grid-cols-5 md:gap-14 lg:gap-20"
+                    id={`pilier-${s.id}`}
+                    className="grid grid-cols-1 items-center gap-10 border-b border-navy/[0.06] pb-20 last:border-0 last:pb-0 scroll-mt-28 md:grid-cols-5 md:gap-14 lg:gap-20"
                   >
                     {/* Image — 3/5 de la largeur */}
                     <ScrollReveal className={`${isEven ? "" : "md:order-2"} md:col-span-3`}>

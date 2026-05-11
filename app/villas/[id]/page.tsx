@@ -421,6 +421,22 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
               </div>
               <AvailabilityCalendar villaId={villa.id} />
+
+              {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
+                <div className="mt-6 sm:hidden">
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Localisation</p>
+                  <div className="relative aspect-[4/3] overflow-hidden border border-navy/10 bg-navy/5">
+                    <iframe
+                      src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
+                      title="Localisation de la villa"
+                      className="h-full w-full grayscale-[0.3] contrast-[1.05]"
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* 7. Les alentours (carte) */}

@@ -276,7 +276,7 @@ export default async function PrestationServicePage({
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/prestations"
+              href={`/prestations#pilier-${slug}`}
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
@@ -284,17 +284,30 @@ export default async function PrestationServicePage({
             </Link>
             {(() => {
               const currentIdx = SERVICE_SLUGS.indexOf(slug as ServiceSlug);
+              const prevIdx = currentIdx > 0 ? currentIdx - 1 : -1;
               const nextIdx = (currentIdx + 1) % SERVICE_SLUGS.length;
+              const prevSlug = prevIdx >= 0 ? SERVICE_SLUGS[prevIdx] : null;
+              const prev = prevSlug ? SERVICE_DETAILS[prevSlug as ServiceSlug] : null;
               const nextSlug = SERVICE_SLUGS[nextIdx];
               const next = SERVICE_DETAILS[nextSlug as ServiceSlug];
               const isLoop = nextIdx === 0;
               return (
-                <Link
-                  href={`/prestations/services/${nextSlug}`}
-                  className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
-                >
-                  {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <ArrowRight size={14} aria-hidden />
-                </Link>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  {prev && (
+                    <Link
+                      href={`/prestations/services/${prevSlug}`}
+                      className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                    >
+                      <ArrowRight size={14} className="rotate-180" aria-hidden /> Pilier précédent : {prev.title}
+                    </Link>
+                  )}
+                  <Link
+                    href={`/prestations/services/${nextSlug}`}
+                    className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                  >
+                    {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <ArrowRight size={14} aria-hidden />
+                  </Link>
+                </div>
               );
             })()}
             <Link
