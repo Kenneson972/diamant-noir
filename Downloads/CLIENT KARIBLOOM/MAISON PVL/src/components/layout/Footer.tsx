@@ -26,32 +26,25 @@ export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-pvl-charcoal text-pvl-white">
+    <footer className="bg-pvl-cream text-pvl-black">
       <div className="container-pvl py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link
               href="/"
-              className="font-display text-xl tracking-[-0.02em] text-pvl-white"
+              className="font-display text-xl tracking-[-0.02em] text-pvl-black"
             >
               Maison PVL
             </Link>
-            <p className="mt-3 text-[0.75rem] text-pvl-stone leading-relaxed max-w-xs">
+            <p className="mt-3 text-[0.75rem] text-pvl-slate leading-relaxed max-w-xs">
               {t('site.tagline')}
             </p>
             <div className="mt-6 flex items-center gap-3">
               <a
                 href="#"
-                className="p-2 text-pvl-stone hover:text-pvl-white transition-colors"
+                className="p-2 text-pvl-slate hover:text-pvl-black transition-colors"
                 aria-label="Instagram"
-              >
-                <Globe size={16} />
-              </a>
-              <a
-                href="#"
-                className="p-2 text-pvl-stone hover:text-pvl-white transition-colors"
-                aria-label="LinkedIn"
               >
                 <Globe size={16} />
               </a>
@@ -60,7 +53,7 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-pvl-stone mb-6">
+            <h4 className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-pvl-slate mb-6">
               {t('footer.aide')}
             </h4>
             <ul className="space-y-3">
@@ -68,7 +61,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[0.8125rem] text-pvl-stone hover:text-pvl-white transition-colors"
+                    className="text-[0.8125rem] text-pvl-slate hover:text-pvl-black transition-colors"
                   >
                     {t(`footer.${link.label}`)}
                   </Link>
@@ -78,7 +71,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-pvl-stone mb-6">
+            <h4 className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-pvl-slate mb-6">
               {t('footer.marque')}
             </h4>
             <ul className="space-y-3">
@@ -86,7 +79,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[0.8125rem] text-pvl-stone hover:text-pvl-white transition-colors"
+                    className="text-[0.8125rem] text-pvl-slate hover:text-pvl-black transition-colors"
                   >
                     {t(`footer.${link.label}`)}
                   </Link>
@@ -96,7 +89,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-pvl-stone mb-6">
+            <h4 className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-pvl-slate mb-6">
               {t('footer.legal')}
             </h4>
             <ul className="space-y-3">
@@ -104,7 +97,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[0.8125rem] text-pvl-stone hover:text-pvl-white transition-colors"
+                    className="text-[0.8125rem] text-pvl-slate hover:text-pvl-black transition-colors"
                   >
                     {t(`footer.${link.label}`)}
                   </Link>
@@ -115,9 +108,9 @@ export function Footer() {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-16 pt-10 border-t border-pvl-white/10">
+        <div className="mt-16 pt-10 border-t border-pvl-black/6">
           <div className="max-w-md">
-            <h4 className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-pvl-stone mb-3">
+            <h4 className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-pvl-slate mb-3">
               {t('footer.newsletter')}
             </h4>
             <form
@@ -127,11 +120,11 @@ export function Footer() {
               <input
                 type="email"
                 placeholder={t('footer.newsletter-placeholder')}
-                className="flex-1 bg-transparent border border-pvl-white/20 px-4 py-3 text-[0.8125rem] text-pvl-white placeholder:text-pvl-stone focus:outline-none focus:border-pvl-white transition-colors"
+                className="flex-1 bg-transparent border border-pvl-black/20 px-4 py-3 text-[0.8125rem] text-pvl-black placeholder:text-pvl-slate focus:outline-none focus:border-pvl-black transition-colors"
               />
               <button
                 type="submit"
-                className="bg-pvl-white text-pvl-black px-6 py-3 text-[0.6875rem] font-medium uppercase tracking-[0.2em] hover:bg-pvl-cream transition-colors"
+                className="bg-pvl-black text-pvl-white px-6 py-3 text-[0.6875rem] font-medium uppercase tracking-[0.2em] hover:bg-pvl-charcoal transition-colors"
               >
                 {t('footer.newsletter-cta')}
               </button>
@@ -140,20 +133,20 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-pvl-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[0.625rem] text-pvl-stone">
+        <div className="mt-12 pt-8 border-t border-pvl-black/6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[0.6875rem] text-pvl-slate">
             {t('footer.copyright', { year: new Date().getFullYear() })}
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/cgv"
-              className="text-[0.625rem] text-pvl-stone hover:text-pvl-white transition-colors"
+              className="text-[0.6875rem] text-pvl-slate hover:text-pvl-black transition-colors"
             >
               {t('footer.cgv')}
             </Link>
             <Link
               href="/confidentialite"
-              className="text-[0.625rem] text-pvl-stone hover:text-pvl-white transition-colors"
+              className="text-[0.6875rem] text-pvl-slate hover:text-pvl-black transition-colors"
             >
               {t('footer.confidentialite')}
             </Link>

@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-pvl-slate">Livraison</span>
-                  <span className="text-green-700 text-[0.625rem] uppercase tracking-[0.1em]">
+                  <span className="text-pvl-success text-[0.625rem] uppercase tracking-[0.1em]">
                     Offerte
                   </span>
                 </div>

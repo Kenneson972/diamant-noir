@@ -44,7 +44,7 @@ function AppShell({ children }: { children: ReactNode }) {
     <>
       <ScrollToTop />
       <div className="flex min-h-screen flex-col">
-        {showChrome && <Header variant={isGendered ? 'transparent' : 'solid'} />}
+        {showChrome && <Header />}
         <main
           id="main-content"
           className={showChrome ? 'flex-1' : 'flex flex-1 flex-col'}

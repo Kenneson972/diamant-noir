@@ -9,7 +9,7 @@ export default function OrderCancelledPage() {
 
   return (
     <div className="container-pvl py-20 text-center max-w-lg mx-auto">
-      <div className="mx-auto mb-8 w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+      <div className="mx-auto mb-8 w-16 h-16 rounded-full bg-pvl-error/10 flex items-center justify-center">
         <XCircle size={36} className="text-pvl-error" strokeWidth={1.5} />
       </div>
 

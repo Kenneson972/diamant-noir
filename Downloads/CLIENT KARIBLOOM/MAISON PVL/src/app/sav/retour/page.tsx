@@ -34,8 +34,8 @@ export default function ReturnPage() {
     return (
       <div className="container-pvl py-section-md md:py-section-lg">
         <div className="max-w-lg mx-auto text-center">
-          <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
-            <CheckCircle2 size={36} className="text-green-700" strokeWidth={1.5} />
+          <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-pvl-success/10 flex items-center justify-center">
+            <CheckCircle2 size={36} className="text-pvl-success" strokeWidth={1.5} />
           </div>
           <h1 className="font-display text-2xl md:text-3xl mb-4">
             Demande envoyée

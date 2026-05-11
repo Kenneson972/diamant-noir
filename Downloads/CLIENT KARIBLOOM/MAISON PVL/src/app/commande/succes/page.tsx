@@ -10,8 +10,8 @@ export default function OrderSuccessPage() {
   return (
     <div className="container-pvl py-20 text-center max-w-lg mx-auto">
       {/* Success animation */}
-      <div className="mx-auto mb-8 w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
-        <CheckCheck size={36} className="text-green-700" strokeWidth={1.5} />
+      <div className="mx-auto mb-8 w-16 h-16 rounded-full bg-pvl-success/10 flex items-center justify-center">
+        <CheckCheck size={36} className="text-pvl-success" strokeWidth={1.5} />
       </div>
 
       <h1 className="font-display text-2xl md:text-3xl mb-4">
@@ -49,7 +49,7 @@ export default function OrderSuccessPage() {
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-pvl-slate">Livraison</span>
-          <span className="text-green-700 text-[0.625rem] uppercase tracking-[0.1em]">
+          <span className="text-pvl-success text-[0.625rem] uppercase tracking-[0.1em]">
             Offerte
           </span>
         </div>

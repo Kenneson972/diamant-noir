@@ -12,18 +12,13 @@ import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { NAV_ITEMS, COLLECTION_TABS } from '@/lib/constants';
 
-interface HeaderProps {
-  variant?: 'solid' | 'transparent';
-}
-
-export function Header({ variant = 'solid' }: HeaderProps) {
+export function Header() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { user } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const isTransparent = variant === 'transparent';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -47,43 +42,23 @@ export function Header({ variant = 'solid' }: HeaderProps) {
   }, [mobileOpen]);
 
   const count = itemCount();
+  const isGendered = pathname.startsWith('/homme') || pathname.startsWith('/femme');
 
   return (
     <>
       <header
         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
         className={cn(
-          'sticky top-0 z-50 transition-all duration-300',
-          variant === 'transparent'
-            ? cn(
-                'bg-gradient-to-b from-black/40 to-transparent',
-                scrolled && '!bg-pvl-black/95 backdrop-blur-sm'
-              )
-            : cn(
-                scrolled
-                  ? 'bg-pvl-white/98 border-b border-pvl-black/8 shadow-[0_1px_12px_rgba(0,0,0,0.04)]'
-                  : 'bg-pvl-white border-b border-transparent'
-              )
+          'sticky top-0 z-50 bg-pvl-white transition-shadow duration-300',
+          scrolled && 'border-b border-pvl-black/8 shadow-[0_1px_12px_rgba(0,0,0,0.04)]'
         )}
       >
-        {/* Announcement bar - hidden in transparent mode */}
-        {!isTransparent && (
-          <div className="bg-pvl-black text-pvl-white text-center py-2 px-4">
-            <p className="text-[0.625rem] font-medium uppercase tracking-[0.2em]">
-              Livraison offerte dès 200€ — Retours sous 30 jours
-            </p>
-          </div>
-        )}
-
         <div className="container-pvl">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className={cn(
-                'md:hidden p-2 -ml-2 transition-colors',
-                isTransparent ? 'text-white/50 hover:text-white' : ''
-              )}
+              className="md:hidden p-2 -ml-2 text-pvl-black"
               aria-label={mobileOpen ? t('nav.fermer') : t('nav.menu')}
             >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -98,10 +73,8 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                   className={cn(
                     'text-[0.75rem] font-medium uppercase tracking-[0.18em] transition-colors',
                     pathname.startsWith(item.href)
-                      ? isTransparent ? 'text-white' : 'text-pvl-black'
-                      : isTransparent
-                        ? 'text-white/50 hover:text-white'
-                        : 'text-pvl-slate hover:text-pvl-black'
+                      ? 'text-pvl-black'
+                      : 'text-pvl-slate hover:text-pvl-black'
                   )}
                 >
                   {t(item.label)}
@@ -112,10 +85,7 @@ export function Header({ variant = 'solid' }: HeaderProps) {
             {/* Logo */}
             <Link
               href="/"
-              className={cn(
-                'font-display text-xl md:text-2xl tracking-[-0.02em]',
-                isTransparent ? 'text-white' : 'text-pvl-black'
-              )}
+              className="font-display text-xl md:text-2xl tracking-[-0.02em] text-pvl-black"
             >
               Maison PVL
             </Link>
@@ -124,12 +94,7 @@ export function Header({ variant = 'solid' }: HeaderProps) {
             <div className="flex items-center gap-3 md:gap-5">
               <Link
                 href="/recherche"
-                className={cn(
-                  'hidden md:flex p-1.5 transition-colors',
-                  isTransparent
-                    ? 'text-white/50 hover:text-white'
-                    : 'text-pvl-slate hover:text-pvl-black'
-                )}
+                className="hidden md:flex p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
                 aria-label={t('nav.recherche')}
               >
                 <Search size={18} />
@@ -137,12 +102,7 @@ export function Header({ variant = 'solid' }: HeaderProps) {
 
               <Link
                 href={user ? '/mon-compte/favoris' : '/connexion'}
-                className={cn(
-                  'hidden md:flex p-1.5 transition-colors',
-                  isTransparent
-                    ? 'text-white/50 hover:text-white'
-                    : 'text-pvl-slate hover:text-pvl-black'
-                )}
+                className="hidden md:flex p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
                 aria-label={t('nav.favoris')}
               >
                 <Heart size={18} />
@@ -150,12 +110,7 @@ export function Header({ variant = 'solid' }: HeaderProps) {
 
               <Link
                 href={user ? '/mon-compte' : '/connexion'}
-                className={cn(
-                  'p-1.5 transition-colors',
-                  isTransparent
-                    ? 'text-white/50 hover:text-white'
-                    : 'text-pvl-slate hover:text-pvl-black'
-                )}
+                className="p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
                 aria-label={t('nav.mon-compte')}
               >
                 <User size={18} />
@@ -163,20 +118,12 @@ export function Header({ variant = 'solid' }: HeaderProps) {
 
               <button
                 onClick={toggleCart}
-                className={cn(
-                  'relative p-1.5 transition-colors',
-                  isTransparent
-                    ? 'text-white/50 hover:text-white'
-                    : 'text-pvl-slate hover:text-pvl-black'
-                )}
+                className="relative p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
                 aria-label={t('nav.panier')}
               >
                 <ShoppingBag size={18} />
                 {count > 0 && (
-                  <span className={cn(
-                    'absolute -top-0.5 -right-0.5 text-[0.5rem] font-medium w-4 h-4 flex items-center justify-center rounded-full',
-                    isTransparent ? 'bg-white text-pvl-black' : 'bg-pvl-black text-pvl-white'
-                  )}>
+                  <span className="absolute -top-0.5 -right-0.5 bg-pvl-black text-pvl-white text-[0.625rem] font-medium w-4 h-4 flex items-center justify-center rounded-full">
                     {count > 9 ? '9+' : count}
                   </span>
                 )}
@@ -190,11 +137,8 @@ export function Header({ variant = 'solid' }: HeaderProps) {
         </div>
 
         {/* Sub-navigation for gender pages */}
-        {pathname.startsWith('/homme') || pathname.startsWith('/femme') ? (
-          <div className={cn(
-            'border-t',
-            isTransparent ? 'border-white/10' : 'border-pvl-black/6'
-          )}>
+        {isGendered && (
+          <div className="border-t border-pvl-black/6">
             <div className="container-pvl">
               <div className="flex items-center gap-6 h-11 overflow-x-auto scrollbar-hide">
                 {COLLECTION_TABS.map((tab) => (
@@ -204,30 +148,24 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                     className={cn(
                       'text-[0.625rem] uppercase tracking-[0.2em] whitespace-nowrap transition-colors',
                       pathname.includes(tab.slug)
-                        ? isTransparent ? 'text-white font-medium' : 'text-pvl-black font-medium'
-                        : isTransparent ? 'text-white/50 hover:text-white' : 'text-pvl-stone hover:text-pvl-black'
+                        ? 'text-pvl-black font-medium'
+                        : 'text-pvl-stone hover:text-pvl-black'
                     )}
                   >
                     {t(tab.label)}
                   </Link>
                 ))}
-                <span className={cn(
-                  'w-px h-3',
-                  isTransparent ? 'bg-white/20' : 'bg-pvl-black/10'
-                )} />
+                <span className="w-px h-3 bg-pvl-black/10" />
                 <Link
                   href={`/${pathname.split('/')[1]}/accessoires`}
-                  className={cn(
-                    'text-[0.625rem] uppercase tracking-[0.2em] transition-colors whitespace-nowrap',
-                    isTransparent ? 'text-white/50 hover:text-white' : 'text-pvl-stone hover:text-pvl-black'
-                  )}
+                  className="text-[0.625rem] uppercase tracking-[0.2em] text-pvl-stone hover:text-pvl-black transition-colors whitespace-nowrap"
                 >
                   {t('nav.accessoires')}
                 </Link>
               </div>
             </div>
           </div>
-        ) : null}
+        )}
       </header>
 
       {/* Mobile navigation overlay */}
@@ -237,10 +175,7 @@ export function Header({ variant = 'solid' }: HeaderProps) {
             className="absolute inset-0 bg-pvl-black/30 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <nav className={cn(
-            'absolute top-0 left-0 bottom-0 w-80 max-w-[85vw] p-6 pt-24 overflow-y-auto shadow-2xl',
-            isTransparent ? 'bg-pvl-black/95 text-white' : 'bg-pvl-white'
-          )}>
+          <nav className="absolute top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-pvl-white p-6 pt-24 overflow-y-auto shadow-2xl">
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-4">
                 <p className="text-[0.625rem] uppercase tracking-[0.2em] text-pvl-stone font-medium">
@@ -251,20 +186,14 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      'text-lg font-display transition-colors',
-                      isTransparent ? 'text-white hover:text-white/70' : 'text-pvl-black hover:text-pvl-slate'
-                    )}
+                    className="text-lg font-display text-pvl-black hover:text-pvl-slate transition-colors"
                   >
                     {t(item.label)}
                   </Link>
                 ))}
               </div>
 
-              <div className={cn(
-                'border-t pt-6',
-                isTransparent ? 'border-white/10' : 'border-pvl-black/8'
-              )}>
+              <div className="border-t border-pvl-black/8 pt-6">
                 <p className="text-[0.625rem] uppercase tracking-[0.2em] text-pvl-stone font-medium mb-4">
                   {t('nav.categorie')}
                 </p>
@@ -272,12 +201,9 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                   {COLLECTION_TABS.map((tab) => (
                     <Link
                       key={tab.slug}
-                      href={`/homme/${tab.slug}`}
+                      href={`/${pathname.startsWith('/femme') ? 'femme' : 'homme'}/${tab.slug}`}
                       onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        'text-sm transition-colors',
-                        isTransparent ? 'text-white/70 hover:text-white' : 'text-pvl-slate hover:text-pvl-black'
-                      )}
+                      className="text-sm text-pvl-slate hover:text-pvl-black transition-colors"
                     >
                       {t(tab.label)}
                     </Link>
@@ -285,17 +211,11 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                 </div>
               </div>
 
-              <div className={cn(
-                'border-t pt-6',
-                isTransparent ? 'border-white/10' : 'border-pvl-black/8'
-              )}>
+              <div className="border-t border-pvl-black/8 pt-6">
                 <Link
                   href={user ? '/mon-compte' : '/connexion'}
                   onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'flex items-center gap-3 text-sm transition-colors',
-                    isTransparent ? 'text-white/70 hover:text-white' : 'text-pvl-slate hover:text-pvl-black'
-                  )}
+                  className="flex items-center gap-3 text-sm text-pvl-slate hover:text-pvl-black transition-colors"
                 >
                   <User size={16} />
                   {t('nav.mon-compte')}
@@ -303,20 +223,14 @@ export function Header({ variant = 'solid' }: HeaderProps) {
                 <Link
                   href={user ? '/mon-compte/favoris' : '/connexion'}
                   onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'flex items-center gap-3 text-sm transition-colors mt-3',
-                    isTransparent ? 'text-white/70 hover:text-white' : 'text-pvl-slate hover:text-pvl-black'
-                  )}
+                  className="flex items-center gap-3 text-sm text-pvl-slate hover:text-pvl-black transition-colors mt-3"
                 >
                   <Heart size={16} />
                   {t('nav.favoris')}
                 </Link>
               </div>
 
-              <div className={cn(
-                'border-t pt-6',
-                isTransparent ? 'border-white/10' : 'border-pvl-black/8'
-              )}>
+              <div className="border-t border-pvl-black/8 pt-6">
                 <LanguageSwitcher />
               </div>
             </div>

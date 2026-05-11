@@ -1,19 +1,6 @@
-'use client';
-
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { CollectionGrid } from '@/components/home/CollectionGrid';
 import { EditorialBanner } from '@/components/home/EditorialBanner';
-import { NewArrivals } from '@/components/home/NewArrivals';
-
-const staggerItem = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] as const },
-  },
-};
 
 export default function FemmePage() {
   return (
@@ -24,32 +11,21 @@ export default function FemmePage() {
         style={{ background: 'linear-gradient(135deg, #c4b5a5, #948575)' }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.15 } },
-          }}
-          className="relative z-10 max-w-[600px]"
-        >
-          <motion.p variants={staggerItem} className="text-pvl-kicker text-pvl-gold mb-4">
+        <div className="relative z-10 max-w-[600px]">
+          <p className="text-pvl-kicker text-pvl-gold mb-4">
             COLLECTION &Eacute;T&Eacute; 2026
-          </motion.p>
-          <motion.h1 variants={staggerItem} className="text-pvl-hero-title text-white mb-8">
+          </p>
+          <h1 className="text-pvl-hero-title text-white mb-8">
             La silhouette<br />f&eacute;minine
-          </motion.h1>
-          <motion.div variants={staggerItem}>
-            <Link
-              href="/femme/nouveautes"
-              className="group inline-flex items-center gap-0 text-pvl-meta text-white uppercase"
-            >
-              D&Eacute;COUVRIR
-              <span className="block w-0 group-hover:w-full h-px bg-white/50 ml-2 transition-all duration-400" />
-            </Link>
-          </motion.div>
-        </motion.div>
+          </h1>
+          <Link
+            href="/femme/nouveautes"
+            className="group inline-flex items-center gap-0 text-pvl-meta text-white uppercase"
+          >
+            D&Eacute;COUVRIR
+            <span className="block w-0 group-hover:w-full h-px bg-white/50 ml-2 transition-all duration-400" />
+          </Link>
+        </div>
       </section>
 
       {/* Section 2: CollectionGrid */}
@@ -74,16 +50,15 @@ export default function FemmePage() {
         ]}
       />
 
-      {/* Section 3: EditorialBanner + NewArrivals */}
+      {/* Section 3: EditorialBanner */}
       <EditorialBanner
         kicker="ARTISANAT"
-        title="L'élégance féminine"
-        body="Chaque création est imaginée à Fort-de-France avec une exigence absolue. Dentelle de Calais, soie sauvage, lin français — des matières d'exception pour des pièces qui épousent le mouvement de la vie."
+        title="L&apos;elegance feminine"
+        body="Chaque creation est imaginee a Fort-de-France avec une exigence absolue. Dentelle de Calais, soie sauvage, lin francais — des matieres d'exception pour des pieces qui epousent le mouvement de la vie."
         href="/a-propos"
         linkLabel="En savoir plus"
         imageStyle={{ background: 'linear-gradient(135deg, #d4c5b5, #b4a595)' }}
       />
-      <NewArrivals title="NOUVEAUTÉS" products={[]} />
     </>
   );
 }
