@@ -91,3 +91,23 @@
 - La table `notifications` existait déjà avec un schéma admin — l'adapter plutôt que d'en créer une nouvelle
 - Pour qu'un admin insère une notif pour un guest, il faut une RLS policy `authenticated_insert` avec `with check (true)` — pas juste un `authenticated_insert_own`
 - Les notifications temps réel utilisent Supabase Realtime via `postgres_changes`
+
+---
+
+## 2026-05-11 — Phase 3 — Avis, Parrainage, Favoris, Re-réserver ✅ TERMINÉ
+
+### Fait (6 créés, 5 modifiés, 2 migrations)
+- **Table reviews** : rating 1-5, commentaire, photos, statut pending/approved/rejected, RLS (public lit approved, guest own, admin all)
+- **Table referrals** : code KAYVILA-XXXXX, statut invited/registered/booked, RLS referrer_own
+- **Page `/espace-client/favoris`** : utilise WishlistContext, grille villas avec bouton retirer, empty state
+- **Page `/espace-client/parrainage`** : formulaire invitation email, dashboard filleuls avec statuts
+- **Page `/admin/avis`** : filtres statut, approuver/rejeter, affichage étoiles + commentaire
+- **ReviewForm** : étoiles cliquables 1-5, condition post-checkout, submit vers reviews
+- **Page Séjour enrichie** : re-réserver, villas similaires (3), formulaire avis intégré
+- **Menus** : Favoris (Heart) + Parrainage (Gift) tenant, Avis (Star) admin
+
+### Règles apprises
+- Le wishlist/favoris existait déjà (`wishlist` table, `WishlistContext`, `WishlistProvider`) — toujours vérifier avant de créer
+- Pour la RLS admin : `exists (select 1 from profiles where id = auth.uid() and role = 'admin')` permet aux admins de gérer toutes les reviews
+- La contrainte `unique(booking_id)` empêche les doublons d'avis sur un même séjour
+- Le code de parrainage utilise `KAYVILA-` préfixe + 6 caractères alphanumériques pour être identifiable

@@ -38,6 +38,20 @@
   5. **Menu tenant** — entrée "Notifications" (Bell) ajoutée
   6. **Triggers** — admin résout/refuse → notif guest ; guest crée demande → notif confirmation
   7. **Temps réel** — Supabase Realtime via `postgres_changes`
+
+---
+
+## 2026-05-11 — Phase 3 — Avis, Parrainage, Favoris, Re-réserver
+
+- **type**: `feature | ui | supabase`
+- **summary**:
+  1. **Table reviews** — rating 1-5, commentaire, photos, statut pending/approved/rejected, RLS
+  2. **Table referrals** — code KAYVILA-XXXXX, statut invited/registered/booked, RLS
+  3. **Page `/espace-client/favoris`** — grille villas wishlistées, bouton retirer, empty state
+  4. **Page `/espace-client/parrainage`** — formulaire invitation + dashboard filleuls
+  5. **Page `/admin/avis`** — filtres statut, approuver/rejeter
+  6. **ReviewForm** — étoiles cliquables, condition post-checkout, prévention doublons
+  7. **Page Séjour enrichie** — re-réserver, villas similaires, formulaire avis intégré
   6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
 - **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
 - **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.
