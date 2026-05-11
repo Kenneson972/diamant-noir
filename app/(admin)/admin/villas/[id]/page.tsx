@@ -53,7 +53,7 @@ export default async function AdminVillaDetailPage({ params }: PageProps) {
   if (!villa) notFound();
 
   const publicHref = `/villas/${villa.id}`;
-  const editorHref = `/dashboard/proprio/${villa.id}`;
+  const editorHref = `/dashboard/villas/${villa.id}`;
 
   return (
     <div className="space-y-8 font-body-dashboard">

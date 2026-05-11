@@ -9,6 +9,6 @@ export default async function RegisterPage({
   searchParams: Promise<{ redirect?: string }>;
 }) {
   const { redirect: redirectTo } = await searchParams;
-  const next = redirectTo || "/dashboard/proprio";
+  const next = redirectTo || "/dashboard";
   redirect(`/login?tab=signup&redirect=${encodeURIComponent(next)}`);
 }

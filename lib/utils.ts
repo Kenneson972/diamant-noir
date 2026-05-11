@@ -23,3 +23,17 @@ export function getBookingPriceCents(booking: { total_price_cents?: number | nul
   if (booking.price != null) return Math.round(booking.price * 100);
   return 0;
 }
+
+/** Temps relatif en français (ex: "Il y a 5 min"). */
+export function timeAgo(iso: string): string {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60) return "À l'instant";
+  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
+  return `Il y a ${Math.floor(diff / 86400)} j`;
+}
+
+/** Formate une date en français avec options. */
+export function formatDate(dateStr: string, opts?: Intl.DateTimeFormatOptions): string {
+  return new Date(dateStr).toLocaleDateString("fr-FR", opts);
+}
