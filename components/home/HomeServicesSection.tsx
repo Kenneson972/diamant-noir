@@ -147,26 +147,6 @@ export function HomeServicesSection() {
 
         {/* ── Carrousel horizontal snap ── */}
         <div className="relative mt-4 md:mt-6">
-          {/* Flèche gauche — desktop, cercle */}
-          <button
-            type="button"
-            onClick={scrollPrev}
-            disabled={activeIdx === 0}
-            aria-label="Pilier précédent"
-            className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 lg:-left-12"
-          >
-            <ChevronLeft size={16} strokeWidth={1.5} />
-          </button>
-          {/* Flèche droite — desktop, cercle */}
-          <button
-            type="button"
-            onClick={scrollNext}
-            disabled={activeIdx === SCROLL_SECTIONS.length - 1}
-            aria-label="Pilier suivant"
-            className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 lg:-right-12"
-          >
-            <ChevronRight size={16} strokeWidth={1.5} />
-          </button>
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -181,8 +161,28 @@ export function HomeServicesSection() {
             return (
               <div
                 key={service.id}
-                className={`flex w-[85vw] shrink-0 snap-start snap-always transition-transform duration-300 md:w-[75vw] lg:w-[65vw] ${showHint && i === 0 ? "translate-x-[-2%]" : ""}`}
+                className={`flex w-[85vw] shrink-0 snap-start snap-always relative transition-transform duration-300 md:w-[75vw] lg:w-[65vw] ${showHint && i === 0 ? "translate-x-[-2%]" : ""}`}
               >
+                {/* Flèche gauche — cercle or sur le bord de la carte */}
+                <button
+                  type="button"
+                  onClick={scrollPrev}
+                  disabled={i === 0}
+                  aria-label="Pilier précédent"
+                  className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                >
+                  <ChevronLeft size={15} strokeWidth={1.5} />
+                </button>
+                {/* Flèche droite — cercle or sur le bord de la carte */}
+                <button
+                  type="button"
+                  onClick={scrollNext}
+                  disabled={i === SCROLL_SECTIONS.length - 1}
+                  aria-label="Pilier suivant"
+                  className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                >
+                  <ChevronRight size={15} strokeWidth={1.5} />
+                </button>
                 <Link
                   href={`/prestations/services/${service.id}`}
                   className="group relative flex w-full flex-col overflow-hidden border border-navy/[0.07] bg-white transition-all duration-400 hover:border-navy/20 hover:shadow-[0_16px_48px_rgba(0,0,0,0.07)] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 md:flex-row"
