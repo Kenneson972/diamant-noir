@@ -4,28 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Bell, CheckCheck, ExternalLink } from "lucide-react";
+import { NOTIF_TYPE_CONFIG } from "@/lib/constants";
+import { timeAgo } from "@/lib/utils";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 
-const TYPE_CONFIG: Record<string, { icon: string; color: string; bg: string }> = {
-  villa_submission:   { icon: "Building2",   color: "text-gold",        bg: "bg-gold/10" },
-  booking_new:        { icon: "Calendar",    color: "text-blue-500",    bg: "bg-blue-50" },
-  booking_confirmed:  { icon: "CheckCheck",  color: "text-emerald-500", bg: "bg-emerald-50" },
-  ical_error:         { icon: "AlertTriangle",color:"text-red-500",     bg: "bg-red-50" },
-  availability_alert: { icon: "Bell",        color: "text-amber-500",   bg: "bg-amber-50" },
-  system:             { icon: "Info",        color: "text-navy/60",     bg: "bg-navy/5" },
-  request_update:     { icon: "MessageCircle",color:"text-gold",        bg: "bg-gold/10" },
-  checkin_reminder:   { icon: "Key",         color: "text-emerald-500", bg: "bg-emerald-50" },
-  checkout_reminder:  { icon: "DoorOpen",    color: "text-amber-500",   bg: "bg-amber-50" },
-  new_message:        { icon: "MessageCircle",color:"text-blue-500",    bg: "bg-blue-50" },
-};
-
-function timeAgo(iso: string): string {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60) return "À l'instant";
-  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
-  return `Il y a ${Math.floor(diff / 86400)} j`;
-}
+const TYPE_CONFIG = NOTIF_TYPE_CONFIG;
 
 interface Notification {
   id: string;

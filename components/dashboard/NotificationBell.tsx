@@ -20,6 +20,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, X, ExternalLink, CheckCheck, Building2, Calendar, AlertTriangle, Sparkles, Info, MessageCircle, Key, DoorOpen } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { timeAgo } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 type NotifType =
@@ -43,15 +44,6 @@ interface Notification {
   action_url: string;
   is_read: boolean;
   created_at: string;
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────
-function timeAgo(iso: string): string {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60) return "À l'instant";
-  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
-  return `Il y a ${Math.floor(diff / 86400)} j`;
 }
 
 const TYPE_CONFIG: Record<NotifType, { icon: any; color: string; bg: string }> = {

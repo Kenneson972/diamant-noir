@@ -140,6 +140,60 @@ export interface Database {
         Insert: Record<string, Json>;
         Update: Record<string, Json>;
       };
+      requests: {
+        Row: {
+          id: string;
+          booking_id: string | null;
+          guest_id: string | null;
+          type: string;
+          status: string;
+          message: string | null;
+          admin_response: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      reviews: {
+        Row: {
+          id: string;
+          booking_id: string;
+          guest_id: string;
+          villa_id: string;
+          rating: number;
+          comment: string | null;
+          photos: Json | null;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      referrals: {
+        Row: {
+          id: string;
+          referrer_id: string;
+          friend_email: string;
+          friend_name: string | null;
+          code: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      wishlist: {
+        Row: {
+          id: string;
+          user_id: string;
+          villa_id: string;
+          created_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
       profiles: {
         Row: {
           id: string;

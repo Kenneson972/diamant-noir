@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Gift, Send, Copy, Check } from "lucide-react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { REFERRAL_STATUS_STYLES, REFERRAL_STATUS_LABELS } from "@/lib/constants";
 
 function generateCode(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -12,17 +13,7 @@ function generateCode(): string {
   return `KAYVILA-${code}`;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  invited: "Invité",
-  registered: "Inscrit",
-  booked: "A réservé",
-};
 
-const STATUS_STYLES: Record<string, string> = {
-  invited: "bg-amber-50 text-amber-700",
-  registered: "bg-blue-50 text-blue-700",
-  booked: "bg-emerald-50 text-emerald-700",
-};
 
 export default function ParrainagePage() {
   const supabase = getSupabaseBrowser();
@@ -160,8 +151,8 @@ export default function ParrainagePage() {
                       {r.friend_name ? `${r.friend_name} (${r.friend_email})` : r.friend_email}
                     </p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STATUS_STYLES[r.status] ?? "bg-gray-50 text-gray-600"}`}>
-                        {STATUS_LABELS[r.status] ?? r.status}
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${REFERRAL_STATUS_STYLES[r.status] ?? "bg-gray-50 text-gray-600"}`}>
+                        {REFERRAL_STATUS_LABELS[r.status] ?? r.status}
                       </span>
                       <button
                         onClick={() => copyCode(r.code)}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { REQUEST_TYPE_LABELS, REQUEST_STATUS_STYLES, REQUEST_STATUS_LABELS } from "@/lib/constants";
 
 interface RequestItem {
   id: string;
@@ -12,29 +13,7 @@ interface RequestItem {
   created_at: string;
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  early_checkin: "Early check-in",
-  late_checkout: "Late check-out",
-  date_change: "Modification de dates",
-  issue: "Problème signalé",
-  service: "Service ponctuel",
-  cancellation: "Demande d'annulation",
-  other: "Autre",
-};
 
-const STATUS_STYLES: Record<string, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-200",
-  in_progress: "bg-blue-50 text-blue-700 border-blue-200",
-  resolved: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  rejected: "bg-red-50 text-red-700 border-red-200",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  pending: "En attente",
-  in_progress: "En cours",
-  resolved: "Résolu",
-  rejected: "Refusé",
-};
 
 export function RequestList({ bookingId, refreshKey }: { bookingId: string; refreshKey: number }) {
   const supabase = getSupabaseBrowser();
@@ -64,10 +43,10 @@ export function RequestList({ bookingId, refreshKey }: { bookingId: string; refr
         <div key={r.id} className="border border-navy/10 bg-white p-4">
           <div className="flex items-center justify-between gap-3 mb-2">
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/60">
-              {TYPE_LABELS[r.type] ?? r.type}
+              {REQUEST_TYPE_LABELS[r.type] ?? r.type}
             </span>
-            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${STATUS_STYLES[r.status] ?? STATUS_STYLES.pending}`}>
-              {STATUS_LABELS[r.status] ?? r.status}
+            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${REQUEST_STATUS_STYLES[r.status] ?? REQUEST_STATUS_STYLES.pending}`}>
+              {REQUEST_STATUS_LABELS[r.status] ?? r.status}
             </span>
           </div>
           <p className="text-sm text-navy/60">{r.message}</p>

@@ -3,23 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Check, X, MessageCircle } from "lucide-react";
-
-const TYPE_LABELS: Record<string, string> = {
-  early_checkin: "Early check-in",
-  late_checkout: "Late check-out",
-  date_change: "Modification de dates",
-  issue: "Problème signalé",
-  service: "Service ponctuel",
-  cancellation: "Demande d'annulation",
-  other: "Autre",
-};
-
-const STATUS_STYLES: Record<string, string> = {
-  pending: "bg-amber-50 text-amber-700",
-  in_progress: "bg-blue-50 text-blue-700",
-  resolved: "bg-emerald-50 text-emerald-700",
-  rejected: "bg-red-50 text-red-700",
-};
+import { REQUEST_TYPE_LABELS, REQUEST_STATUS_STYLES } from "@/lib/constants";
 
 export default function AdminDemandesPage() {
   const supabase = getSupabaseBrowser();
@@ -53,7 +37,7 @@ export default function AdminDemandesPage() {
 
     if (guestId) {
       const statusLabel = status === "resolved" ? "résolue" : status === "rejected" ? "refusée" : "prise en charge";
-      const typeLabel = TYPE_LABELS[requestType ?? ""] ?? requestType ?? "Demande";
+      const typeLabel = REQUEST_TYPE_LABELS[requestType ?? ""] ?? requestType ?? "Demande";
       await supabase.from("notifications").insert({
         user_id: guestId,
         type: "request_update",
@@ -96,8 +80,8 @@ export default function AdminDemandesPage() {
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold">{TYPE_LABELS[r.type] ?? r.type}</span>
-                    <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${STATUS_STYLES[r.status] ?? "bg-gray-50 text-gray-600"}`}>
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold">{REQUEST_TYPE_LABELS[r.type] ?? r.type}</span>
+                    <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${REQUEST_STATUS_STYLES[r.status] ?? "bg-gray-50 text-gray-600"}`}>
                       {r.status === "pending" ? "En attente" : r.status === "in_progress" ? "En cours" : r.status === "resolved" ? "Résolu" : r.status}
                     </span>
                   </div>
