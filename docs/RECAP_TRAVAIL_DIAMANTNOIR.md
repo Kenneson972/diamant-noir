@@ -159,6 +159,18 @@ middleware.ts                # Auth guard
 
 ## 7. Travail récent (mai 2026)
 
+### 11 mai — Phase 3 — Centre de Notifications ✅
+- **NotificationBell** : composant orphelin réactivé, adapté pour guests (filtre userId, nouveaux types)
+- **Page `/espace-client/notifications`** : historique complet, mark all read
+- **DashboardHeader** : cloche fonctionnelle avec badge temps réel (Supabase Realtime)
+- **Triggers** : admin résout/refuse → notif guest ; guest crée demande → notif confirmation
+- **Migration** : `user_id` sur `notifications`, 4 nouveaux types, RLS pour authenticated
+
+### 11 mai — Phase 2 Espace Client Confort ✅
+- **Partage séjour** : page publique `/share/[token]`, lien copiable (btoa/atob)
+- **Calendrier .ics** : export Google/Apple/Outlook, `lib/generate-ics.ts`
+- **Services ponctuels** : ménage 80€, linge 40€, gaz sur devis
+
 ### 11 mai — Phase 1 Espace Client Fonctionnel ✅
 - **Request System** : 7 créés (RequestForm, RequestList, CheckinGuide, CheckoutInstructions, /demandes, /admin/demandes, migration SQL)
 - **Fonctionnalités** : demandes voyageur→admin, check-in autonome (digicode 24h avant), check-out checklist, facture PDF, profil enrichi (allergies, occasion, bébé)
@@ -174,8 +186,7 @@ middleware.ts                # Auth guard
 
 ## 8. Prochaines étapes
 
-1. **Stripe** : intégration paiement en ligne
-2. **Phase 2 Espace Client** : partage séjour, calendrier, guide alentours, services ponctuels
-3. **Phase 3 Espace Client** : notifications, avis, parrainage, favoris
-4. **Déploiement Vercel** : lier le repo, configurer env vars
-5. **Tests end-to-end** : valider le tunnel complet login → réservation → demande → admin
+1. **Phase 3 (suite)** : avis post-séjour, re-réserver & villas similaires, parrainage, favoris
+2. **Stripe** : intégration paiement en ligne
+3. **Déploiement Vercel** : lier le repo, configurer env vars
+4. **Tests end-to-end** : valider le tunnel complet login → réservation → demande → admin → notif

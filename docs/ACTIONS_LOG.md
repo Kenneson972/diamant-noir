@@ -13,6 +13,31 @@
   3. **Check-out instructions** — Checklist affichée la veille du départ.
   4. **Profil enrichi** — Allergies, occasion spéciale, heure d'arrivée, équipement bébé. Sauvegarde dans `profiles`.
   5. **Facture PDF** — Génération imprimable dans `/espace-client/documents` pour les séjours passés.
+
+---
+
+## 2026-05-11 — Phase 2 Espace Client Confort
+
+- **type**: `feature | ui`
+- **summary**:
+  1. **Partage séjour** — Page `/share/[token]` publique sans auth, lien copiable (btoa/atob)
+  2. **Calendrier .ics** — Export Google/Apple/Outlook, `lib/generate-ics.ts`
+  3. **Services ponctuels** — Ménage (80€), linge (40€), gaz (sur devis) dans Conciergerie
+  4. **Boutons Séjour** — Calendrier + partage ajoutés sous la grille Accès rapide
+
+---
+
+## 2026-05-11 — Phase 3 — Centre de Notifications
+
+- **type**: `feature | ui | supabase`
+- **summary**:
+  1. **Migration notifications** — colonne `user_id`, 4 nouveaux types (request_update, checkin_reminder, checkout_reminder, new_message), RLS pour authenticated
+  2. **NotificationBell réactivé** — composant orphelin adapté : filtre par userId, lien footer par rôle, 4 nouveaux types
+  3. **DashboardHeader** — cloche placeholder → NotificationBell fonctionnel avec badge temps réel
+  4. **Page `/espace-client/notifications`** — historique complet, mark all read, empty state
+  5. **Menu tenant** — entrée "Notifications" (Bell) ajoutée
+  6. **Triggers** — admin résout/refuse → notif guest ; guest crée demande → notif confirmation
+  7. **Temps réel** — Supabase Realtime via `postgres_changes`
   6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
 - **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
 - **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.
