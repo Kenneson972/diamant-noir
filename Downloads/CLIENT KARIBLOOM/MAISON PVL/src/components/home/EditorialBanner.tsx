@@ -1,37 +1,68 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-export function EditorialBanner() {
-  const { t } = useTranslation();
+interface EditorialBannerProps {
+  kicker: string;
+  title: string;
+  body: string;
+  href?: string;
+  linkLabel?: string;
+  imageStyle: React.CSSProperties;
+  imagePosition?: 'left' | 'right';
+}
+
+export function EditorialBanner({
+  kicker,
+  title,
+  body,
+  href,
+  linkLabel,
+  imageStyle,
+  imagePosition = 'left',
+}: EditorialBannerProps) {
+  const imageBlock = (
+    <motion.div
+      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 40 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7 }}
+      className="relative min-h-[50vh] md:min-h-[70vh]"
+      style={imageStyle}
+    />
+  );
+
+  const textBlock = (
+    <motion.div
+      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 40 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7, delay: 0.15 }}
+      className="bg-pvl-cream flex items-center p-[clamp(3rem,6vw,8rem)]"
+    >
+      <div className="max-w-md">
+        <p className="text-pvl-kicker text-pvl-gold-dim mb-4">{kicker}</p>
+        <h2 className="text-pvl-section-title text-pvl-black mb-6">{title}</h2>
+        <p className="text-pvl-manifesto text-pvl-slate leading-relaxed">{body}</p>
+        {href && linkLabel && (
+          <Link
+            href={href}
+            className="inline-block mt-8 text-pvl-meta text-pvl-slate hover:text-pvl-black transition-colors"
+          >
+            {linkLabel} &rarr;
+          </Link>
+        )}
+      </div>
+    </motion.div>
+  );
 
   return (
-    <section className="bg-pvl-cream">
-      <div className="container-pvl py-section-md md:py-section-lg">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-pvl-kicker mb-6">Savoir-faire</p>
-          <blockquote className="text-pvl-manifesto">
-            &ldquo;Chaque pièce Maison PVL est le fruit d&apos;une recherche
-            constante d&apos;équilibre entre tradition et modernité. Nous
-            sélectionnons les meilleurs tissus, les coupes les plus justes,
-            pour une silhouette qui vous ressemble.&rdquo;
-          </blockquote>
-          <div className="mt-10">
-            <Link
-              href="/a-propos"
-              className="group inline-flex items-center gap-2 text-[0.6875rem] uppercase tracking-[0.2em] text-pvl-black border-b border-pvl-black/20 pb-1 hover:border-pvl-black transition-colors"
-            >
-              {t('actions.en-savoir-plus')}
-              <ArrowRight
-                size={12}
-                className="transition-transform group-hover:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
-      </div>
+    <section
+      className={`flex flex-col ${imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'}`}
+    >
+      <div className="md:w-[60%]">{imageBlock}</div>
+      <div className="md:w-[40%]">{textBlock}</div>
     </section>
   );
 }
