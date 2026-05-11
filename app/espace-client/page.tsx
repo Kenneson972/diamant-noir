@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { RequestList } from "@/components/espace-client/RequestList";
+import { downloadICS } from "@/lib/generate-ics";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 function BookingCardSkeleton() {
@@ -366,17 +367,6 @@ export default function EspaceClientPage() {
                 ),
               },
               {
-                label: "Calendrier",
-                sub: "Ajouter au planning",
-                href: "/espace-client/checklist",
-                icon: (
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-                    <rect x="2.5" y="3.5" width="13" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
-                    <path d="M2.5 8h13M6 2.5v2M12 2.5v2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                  </svg>
-                ),
-              },
-              {
                 label: "Livret PDF",
                 sub: "Télécharger",
                 href: "/espace-client/livret/print",
@@ -410,6 +400,46 @@ export default function EspaceClientPage() {
                 </span>
               </Link>
             ))}
+          </div>
+
+          {/* Calendrier + Partage */}
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (upcomingBooking) {
+                  downloadICS({
+                    villaName: upcomingBooking.villa?.name ?? "Villa Kayvila",
+                    startDate: upcomingBooking.start_date,
+                    endDate: upcomingBooking.end_date,
+                  });
+                }
+              }}
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/50 hover:text-navy transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <rect x="1.5" y="2.5" width="13" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
+                <path d="M1.5 6h13M5 1.5v2M11 1.5v2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+              </svg>
+              Ajouter au calendrier
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (upcomingBooking) {
+                  const token = btoa(upcomingBooking.id).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+                  const url = `${window.location.origin}/share/${token}`;
+                  navigator.clipboard.writeText(url).then(() => alert("Lien copié ! Partagez-le avec vos co-voyageurs."));
+                }
+              }}
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/50 hover:text-navy transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <circle cx="6" cy="8" r="3.5" stroke="currentColor" strokeWidth="1" />
+                <path d="M8.5 5.5h4v4M14 3.5l-3.5 3.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Partager le séjour
+            </button>
           </div>
         </div>
       )}

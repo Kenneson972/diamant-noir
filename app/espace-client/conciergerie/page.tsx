@@ -99,8 +99,33 @@ export default function ConciergeriePage() {
           </div>
         </div>
 
+        {/* Services ponctuels */}
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold mb-4">Services ponctuels</p>
+          <div className="space-y-[1px] border border-navy/[0.07] bg-navy/[0.04]">
+            {[
+              { label: "Ménage supplémentaire", price: "À partir de 80 €", desc: "Nettoyage complet en cours de séjour" },
+              { label: "Changement de linge", price: "À partir de 40 €", desc: "Draps, serviettes, torchons renouvelés" },
+              { label: "Remplissage gaz / eau", price: "Sur devis", desc: "Bouteille de gaz ou bonbonne d'eau remplacée" },
+            ].map((s) => (
+              <a
+                key={s.label}
+                href="/espace-client/demandes"
+                className="flex items-center justify-between bg-offwhite px-5 py-4 no-underline hover:bg-white transition-colors group"
+              >
+                <div>
+                  <p className="text-sm font-medium text-navy">{s.label}</p>
+                  <p className="text-[11px] text-navy/40 mt-0.5">{s.desc}</p>
+                </div>
+                <span className="text-[11px] font-semibold text-navy/50 group-hover:text-gold transition-colors shrink-0 ml-4">{s.price} →</span>
+              </a>
+            ))}
+          </div>
+          <p className="text-[11px] text-navy/30 mt-2">Cliquez pour faire une demande — l&apos;équipe Kayvila vous confirmera le tarif exact.</p>
+        </div>
+
         {/* Note */}
-        <p className="text-[11px] text-navy/35 leading-relaxed border-t border-[rgba(13,27,42,0.06)] pt-6">
+        <p className="text-[11px] text-navy/35 leading-relaxed border-t border-navy/[0.06] pt-6">
           Pour toute demande non urgente, privilégiez la messagerie ci-dessous — elle conserve un historique de votre échange avec notre équipe.
         </p>
       </div>
