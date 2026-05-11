@@ -131,3 +131,24 @@
 - `NOTIF_TYPE_CONFIG` utilise des strings d'icônes pour la page notifs, des composants React pour NotificationBell → on garde les deux versions car le contexte est différent (Server→Client)
 - La table `requests` était la seule table critique sans RLS — toujours auditer les nouvelles tables
 - `grep -r "STATUS_STYLES"` est ton ami après un refactor de constantes
+
+---
+
+## 2026-05-11 — Phases B+C — Pages Admin + Messagerie + Fiche 360° ✅
+
+### Fait (5 créés, 6 modifiés, 1 commit)
+- **Dashboard** : activité récente dynamique (demandes + réservations + avis), alertes réelles, TOP 5 villas les plus aimées (wishlist)
+- **Hub Classique** natif : toutes villas avec stats, actions éditer/voir
+- **Réservations** : client component, pagination 20/page, filtres statut, boutons confirmer/annuler
+- **Revenus** : BarChart Recharts CA mensuel (12 derniers mois), 5 stat cards
+- **Paramètres** : ConciergerieSettingsForm éditable (téléphone, email)
+- **Avis** : AdminPageIntro + notification client à l'approbation/rejet
+- **Messagerie admin** (`/admin/messagerie`) : console chat temps réel, Supabase Realtime
+- **Fiche client 360°** (`/admin/clients/[id]`) : infos, préférences, réservations, demandes, avis
+
+### Règles apprises
+- Recharts `Tooltip` formatter a un type très strict en v3 — utiliser le rendu par défaut plutôt que des formatters custom si le typage bloque
+- Les server components Next.js peuvent être convertis en client components pour ajouter de l'interactivité (pagination, formulaires)
+- Pour éditer une section dans une page server, extraire un composant client plutôt que tout convertir
+- La fiche client 360° utilise `or(`guest_email.eq.${id}`)` pour matcher les bookings sans colonne `guest_id`
+- `chat_messages` n'a pas de policy RLS pour l'admin — l'admin utilise `service_role` via `getSupabaseServer()`
