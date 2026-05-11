@@ -152,3 +152,18 @@
 - Pour éditer une section dans une page server, extraire un composant client plutôt que tout convertir
 - La fiche client 360° utilise `or(`guest_email.eq.${id}`)` pour matcher les bookings sans colonne `guest_id`
 - `chat_messages` n'a pas de policy RLS pour l'admin — l'admin utilise `service_role` via `getSupabaseServer()`
+
+---
+
+## 2026-05-11 — Nettoyage Dashboard Proprio ✅
+
+### Fait (5 supprimés, 2 modifiés)
+- **Suppression `app/dashboard/proprio/`** — 5 pages legacy (-3 511 lignes), dont le monolithe [villaId] de 2 187 lignes
+- **Redirections fixées** : register → `/dashboard`, admin villa → `/dashboard/villas/[id]`
+- **Composants conservés** : `components/dashboard/proprio/` reste utilisé par `(proprio)/dashboard/`
+
+### Règles apprises
+- `app/(proprio)/dashboard/` est le VRAI dashboard proprio (DashboardShell, filtrage owner_id)
+- `app/dashboard/proprio/` était du legacy admin — les parenthèses `(proprio)` font la différence (route group)
+- Toujours vérifier avec `grep` les références avant de supprimer un dossier
+- Ne pas confondre `components/dashboard/proprio/` (composants partagés) avec `app/dashboard/proprio/` (pages legacy)
