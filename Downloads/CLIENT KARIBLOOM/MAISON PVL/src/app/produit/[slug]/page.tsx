@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { PageSEO } from '@/components/common/PageSEO';
+import { Product } from '@/types';
 import { ProductDetailClient } from '@/components/product/ProductDetailClient';
 
 // This would normally fetch from Supabase
-async function getProduct(slug: string) {
+async function getProduct(slug: string): Promise<Product | null> {
   return {
     id: 'demo-1',
     slug,
@@ -12,11 +12,14 @@ async function getProduct(slug: string) {
     description:
       "Un costume d'exception taillé dans une laine peignée italienne. Coupe ajustée, finitions main, doublure en soie. L'essence du raffinement masculin.",
     gender: 'homme',
+    category_id: '',
+    collection_id: null,
     price: 490,
-    compareAtPrice: null,
-    isNew: true,
+    compare_at_price: null,
+    is_new: true,
+    featured: false,
     materials: '97% Laine peignée, 3% Élasthanne',
-    careInstructions: 'Nettoyage à sec recommandé. Repassage vapeur doux.',
+    care_instructions: 'Nettoyage à sec recommandé. Repassage vapeur doux.',
     images: Array.from({ length: 6 }, (_, i) => ({
       id: `img-${i}`,
       url: '',
@@ -28,77 +31,87 @@ async function getProduct(slug: string) {
     variants: [
       {
         id: 'var-1',
+        product_id: 'demo-1',
         size: '46',
         color: 'Noir',
-        colorHex: '#1a1a1a',
+        color_hex: '#1a1a1a',
         sku: 'PVL-M-001-BLK-46',
         price: 490,
         stock: 5,
       },
       {
         id: 'var-2',
+        product_id: 'demo-1',
         size: '48',
         color: 'Noir',
-        colorHex: '#1a1a1a',
+        color_hex: '#1a1a1a',
         sku: 'PVL-M-001-BLK-48',
         price: 490,
         stock: 8,
       },
       {
         id: 'var-3',
+        product_id: 'demo-1',
         size: '50',
         color: 'Noir',
-        colorHex: '#1a1a1a',
+        color_hex: '#1a1a1a',
         sku: 'PVL-M-001-BLK-50',
         price: 490,
         stock: 3,
       },
       {
         id: 'var-4',
+        product_id: 'demo-1',
         size: '46',
         color: 'Gris Anthracite',
-        colorHex: '#36454f',
+        color_hex: '#36454f',
         sku: 'PVL-M-001-GRY-46',
         price: 490,
         stock: 2,
       },
       {
         id: 'var-5',
+        product_id: 'demo-1',
         size: '48',
         color: 'Gris Anthracite',
-        colorHex: '#36454f',
+        color_hex: '#36454f',
         sku: 'PVL-M-001-GRY-48',
         price: 490,
         stock: 6,
       },
       {
         id: 'var-6',
+        product_id: 'demo-1',
         size: '50',
         color: 'Gris Anthracite',
-        colorHex: '#36454f',
+        color_hex: '#36454f',
         sku: 'PVL-M-001-GRY-50',
         price: 490,
         stock: 4,
       },
       {
         id: 'var-7',
+        product_id: 'demo-1',
         size: '46',
         color: 'Bleu Nuit',
-        colorHex: '#191970',
+        color_hex: '#191970',
         sku: 'PVL-M-001-NVY-46',
         price: 520,
         stock: 0,
       },
       {
         id: 'var-8',
+        product_id: 'demo-1',
         size: '48',
         color: 'Bleu Nuit',
-        colorHex: '#191970',
+        color_hex: '#191970',
         sku: 'PVL-M-001-NVY-48',
         price: 520,
         stock: 3,
       },
     ],
+    created_at: '',
+    updated_at: '',
   };
 }
 

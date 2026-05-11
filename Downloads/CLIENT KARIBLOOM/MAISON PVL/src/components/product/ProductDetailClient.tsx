@@ -1,411 +1,250 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import {
-  Check,
-  Minus,
-  Plus,
-  Ruler,
-  Truck,
-  RotateCcw,
-  ChevronDown,
-  Heart,
-} from 'lucide-react';
-import { cn } from '@/lib/cn';
+import { Minus, Plus } from 'lucide-react';
+import { Product } from '@/types';
 import { useCart } from '@/store/cartStore';
-import { useWishlist } from '@/store/wishlistStore';
-import { formatPrice } from '@/lib/format';
-import Image from 'next/image';
 
 interface ProductDetailClientProps {
-  product: {
-    id: string;
-    slug: string;
-    name: string;
-    description: string;
-    gender: string;
-    price: number;
-    compareAtPrice: number | null;
-    isNew: boolean;
-    materials: string | null;
-    careInstructions: string | null;
-    images: Array<{
-      id: string;
-      url: string;
-      alt: string;
-      width: number;
-      height: number;
-      position: number;
-    }>;
-    variants: Array<{
-      id: string;
-      size: string;
-      color: string;
-      colorHex: string;
-      sku: string;
-      price: number;
-      stock: number;
-    }>;
-  };
+  product: Product;
 }
 
 export function ProductDetailClient({ product }: ProductDetailClientProps) {
-  const { t } = useTranslation();
-  const { addItem, openCart } = useCart();
-  const { isInWishlist, toggleItem } = useWishlist();
-
-  const [selectedColor, setSelectedColor] = useState(product.variants[0]?.color || '');
-  const [selectedSize, setSelectedSize] = useState('');
+  const { addItem } = useCart();
+  const [selectedColor, setSelectedColor] = useState<string | null>(
+    product.variants[0]?.color ?? null
+  );
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [accordionOpen, setAccordionOpen] = useState<string | null>('description');
+  const [added, setAdded] = useState(false);
 
-  const colors = Array.from(
-    new Map(product.variants.map((v) => [v.color, { name: v.color, hex: v.colorHex }])).values()
+  const currentVariant = product.variants.find(
+    (v) => v.color === selectedColor && v.size === selectedSize
   );
 
-  const sizesForColor = product.variants.filter((v) => v.color === selectedColor);
-  const selectedVariant = sizesForColor.find((v) => v.size === selectedSize);
+  const uniqueColors = Array.from(
+    new Map(product.variants.map((v) => [v.color, v.color_hex])).entries()
+  );
+
+  const availableSizes = Array.from(
+    new Set(
+      product.variants
+        .filter((v) => v.color === selectedColor)
+        .map((v) => v.size)
+    )
+  );
 
   const handleAddToCart = () => {
-    if (!selectedVariant) return;
-
-    const cartProduct = {
-      id: product.id,
-      slug: product.slug,
-      name: product.name,
-      description: product.description,
-      gender: product.gender as 'homme' | 'femme',
-      category_id: '',
-      collection_id: null,
-      price: selectedVariant.price,
-      compare_at_price: product.compareAtPrice,
-      images: product.images.map((img) => ({
-        ...img,
-        alt: img.alt,
-      })),
-      variants: product.variants.map((v) => ({
-        id: v.id,
-        product_id: product.id,
-        size: v.size,
-        color: v.color,
-        color_hex: v.colorHex,
-        sku: v.sku,
-        price: v.price,
-        stock: v.stock,
-      })),
-      materials: product.materials,
-      care_instructions: product.careInstructions,
-      is_new: product.isNew,
-      featured: false,
-      created_at: '',
-      updated_at: '',
-    };
-
-    const cartVariant = {
-      id: selectedVariant.id,
-      product_id: product.id,
-      size: selectedVariant.size,
-      color: selectedVariant.color,
-      color_hex: selectedVariant.colorHex,
-      sku: selectedVariant.sku,
-      price: selectedVariant.price,
-      stock: selectedVariant.stock,
-    };
-
-    addItem(cartProduct, cartVariant, quantity);
-    openCart();
+    if (!currentVariant) return;
+    addItem(product, currentVariant, quantity);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 3000);
   };
-
-  const toggleAccordion = (key: string) => {
-    setAccordionOpen(accordionOpen === key ? null : key);
-  };
-
-  const isWishlisted = isInWishlist(product.id);
 
   return (
-    <div className="container-pvl py-10">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[0.625rem] uppercase tracking-[0.15em] text-pvl-stone mb-8">
-        <Link href="/" className="hover:text-pvl-black transition-colors">
-          Accueil
-        </Link>
-        <span>/</span>
-        <Link
-          href={`/${product.gender}`}
-          className="hover:text-pvl-black transition-colors"
-        >
-          {product.gender === 'homme' ? 'Homme' : 'Femme'}
-        </Link>
-        <span>/</span>
-        <span className="text-pvl-black">{product.name}</span>
-      </nav>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-        {/* Gallery */}
-        <div className="space-y-4">
-          {/* Main image */}
-          <div className="aspect-[3/4] bg-pvl-cream overflow-hidden relative">
-            <div className="w-full h-full bg-gradient-to-br from-pvl-cream to-pvl-warm" />
-
-            {product.isNew && (
-              <span className="absolute top-4 left-4 bg-pvl-black text-pvl-white text-[0.5rem] font-medium uppercase tracking-[0.15em] px-3 py-1.5">
-                {t('product.nouveaute')}
-              </span>
-            )}
-          </div>
-
-          {/* Thumbnail strip */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-            {product.images.slice(0, 5).map((img, i) => (
-              <button
-                key={img.id}
-                onClick={() => setSelectedImage(i)}
-                className={cn(
-                  'w-16 h-20 flex-shrink-0 bg-pvl-cream overflow-hidden border-2 transition-colors',
-                  selectedImage === i
-                    ? 'border-pvl-black'
-                    : 'border-transparent hover:border-pvl-black/20'
-                )}
-              >
-                <div className="w-full h-full bg-gradient-to-br from-pvl-cream to-pvl-warm" />
-              </button>
-            ))}
-          </div>
+    <div className="flex flex-col md:flex-row">
+      {/* LEFT: Image stack (58%) */}
+      <div className="md:w-[58%]">
+        {/* Desktop: vertical image stack */}
+        <div className="hidden md:flex md:flex-col gap-[2px]">
+          {product.images.map((img, i) => (
+            <div
+              key={img.id}
+              className="w-full"
+              style={{ aspectRatio: i === 0 ? '3/4' : '4/5' }}
+            >
+              {img.url ? (
+                <img
+                  src={img.url}
+                  alt={img.alt}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-full h-full"
+                  style={{
+                    background: `linear-gradient(135deg, hsl(${i * 30}, 20%, 70%), hsl(${i * 30 + 30}, 15%, 50%))`,
+                  }}
+                />
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* Product Info */}
-        <div className="md:sticky md:top-28 md:self-start">
-          <h1 className="font-display text-2xl md:text-3xl mb-3">
+        {/* Mobile: horizontal snap carousel */}
+        <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+          {product.images.map((img, i) => (
+            <div
+              key={img.id}
+              className="flex-shrink-0 w-screen snap-center"
+              style={{ aspectRatio: '3/4' }}
+            >
+              {img.url ? (
+                <img
+                  src={img.url}
+                  alt={img.alt}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-full h-full"
+                  style={{
+                    background: `linear-gradient(135deg, hsl(${i * 30}, 20%, 70%), hsl(${i * 30 + 30}, 15%, 50%))`,
+                  }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile dots indicator */}
+        {product.images.length > 1 && (
+          <div className="flex md:hidden justify-center gap-2 py-4">
+            {product.images.map((_, i) => (
+              <span
+                key={i}
+                className="w-1.5 h-1.5 rounded-full bg-pvl-stone/40"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* RIGHT: Product info (42%) — sticky */}
+      <div className="md:w-[42%]">
+        <div className="md:sticky md:top-20 p-[clamp(2rem,4vw,4rem)]">
+          {/* Kicker — collection/season */}
+          <p className="text-pvl-kicker text-pvl-gold-dim mb-4">
+            {product.collection_id ? 'COLLECTION' : 'NOUVEAUTÉ'}
+          </p>
+
+          {/* Product name */}
+          <h1 className="font-display text-[clamp(1.5rem,2.5vw,2.25rem)] text-pvl-black leading-tight mb-4">
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-xl tabular-nums">
-              {formatPrice(selectedVariant?.price || product.price)}
-            </span>
-            {product.compareAtPrice && (
-              <span className="text-sm text-pvl-stone line-through">
-                {formatPrice(product.compareAtPrice)}
-              </span>
-            )}
-          </div>
+          {/* Price */}
+          <p className="text-pvl-price text-pvl-slate mb-8">
+            {new Intl.NumberFormat('fr-FR', {
+              style: 'currency',
+              currency: 'EUR',
+            }).format(currentVariant?.price ?? product.price)}
+          </p>
 
-          {/* Color selector */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[0.625rem] uppercase tracking-[0.15em] text-pvl-slate">
-                {t('product.couleurs')} —{' '}
-                <span className="text-pvl-black">{selectedColor}</span>
-              </span>
+          {/* Color swatches */}
+          {uniqueColors.length > 1 && (
+            <div className="mb-8">
+              <p className="text-pvl-meta text-pvl-slate mb-3">Couleur</p>
+              <div className="flex gap-3">
+                {uniqueColors.map(([color, hex]) => (
+                  <button
+                    key={color}
+                    onClick={() => {
+                      setSelectedColor(color);
+                      setSelectedSize(null);
+                    }}
+                    className="relative w-6 h-6 rounded-full border transition-all duration-150"
+                    style={{
+                      backgroundColor: hex,
+                      borderColor:
+                        selectedColor === color
+                          ? 'var(--color-pvl-black)'
+                          : 'oklch(62% 0.008 60 / 0.3)',
+                      borderWidth: selectedColor === color ? '2px' : '1px',
+                    }}
+                    aria-label={color}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="flex gap-2">
-              {colors.map((color) => (
-                <button
-                  key={color.name}
-                  onClick={() => {
-                    setSelectedColor(color.name);
-                    setSelectedSize('');
-                  }}
-                  className={cn(
-                    'w-8 h-8 rounded-full border-2 transition-all',
-                    selectedColor === color.name
-                      ? 'border-pvl-black scale-110'
-                      : 'border-pvl-black/10 hover:border-pvl-black/30'
-                  )}
-                  style={{ backgroundColor: color.hex }}
-                  aria-label={color.name}
-                />
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Size selector */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[0.625rem] uppercase tracking-[0.15em] text-pvl-slate">
-                {t('product.tailles')}
-              </span>
-              <button className="flex items-center gap-1 text-[0.5625rem] uppercase tracking-[0.15em] text-pvl-stone hover:text-pvl-black transition-colors">
-                <Ruler size={12} />
-                {t('product.guide-tailles')}
-              </button>
+          {availableSizes.length > 0 && (
+            <div className="mb-8">
+              <p className="text-pvl-meta text-pvl-slate mb-3">Taille</p>
+              <div className="flex flex-wrap gap-2">
+                {availableSizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className="min-w-[3rem] px-3 py-2 text-[0.75rem] uppercase border transition-all duration-150"
+                    style={{
+                      borderColor:
+                        selectedSize === size
+                          ? 'var(--color-pvl-black)'
+                          : 'oklch(62% 0.008 60 / 0.3)',
+                      backgroundColor:
+                        selectedSize === size
+                          ? 'var(--color-pvl-black)'
+                          : 'transparent',
+                      color:
+                        selectedSize === size
+                          ? 'var(--color-pvl-white)'
+                          : 'var(--color-pvl-black)',
+                      borderRadius: 'var(--radius-card)',
+                    }}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-5 gap-2">
-              {sizesForColor.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setSelectedSize(v.size)}
-                  disabled={v.stock === 0}
-                  className={cn(
-                    'py-3 text-[0.75rem] font-medium border transition-all',
-                    selectedSize === v.size
-                      ? 'bg-pvl-black text-pvl-white border-pvl-black'
-                      : v.stock === 0
-                      ? 'bg-pvl-cream text-pvl-stone border-pvl-black/6 line-through cursor-not-allowed'
-                      : 'bg-pvl-white text-pvl-black border-pvl-black/12 hover:border-pvl-black'
-                  )}
-                >
-                  {v.size}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* Quantity + Add to cart */}
-          <div className="flex gap-3 mb-6">
-            <div className="flex items-center border border-pvl-black/12">
+          {/* Quantity selector */}
+          <div className="mb-8">
+            <p className="text-pvl-meta text-pvl-slate mb-3">Quantité</p>
+            <div
+              className="flex items-center gap-4 border border-pvl-stone/20 w-fit"
+              style={{ borderRadius: 'var(--radius-card)' }}
+            >
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="p-3 text-pvl-slate hover:text-pvl-black transition-colors"
               >
-                <Minus size={14} />
+                <Minus size={14} strokeWidth={1.5} />
               </button>
-              <span className="px-4 text-sm tabular-nums min-w-[3ch] text-center">
+              <span className="font-sans tabular-nums text-[0.875rem] text-pvl-black min-w-[2ch] text-center">
                 {quantity}
               </span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
                 className="p-3 text-pvl-slate hover:text-pvl-black transition-colors"
               >
-                <Plus size={14} />
+                <Plus size={14} strokeWidth={1.5} />
               </button>
-            </div>
-            <button
-              onClick={handleAddToCart}
-              disabled={!selectedVariant || selectedVariant.stock === 0}
-              className="flex-1 bg-pvl-black text-pvl-white py-3 text-[0.6875rem] font-medium uppercase tracking-[0.2em] hover:bg-pvl-charcoal transition-colors disabled:bg-pvl-stone/30 disabled:text-pvl-stone disabled:cursor-not-allowed"
-            >
-              {selectedVariant?.stock === 0
-                ? t('product.rupture')
-                : t('actions.ajouter-panier')}
-            </button>
-            <button
-              onClick={() =>
-                toggleItem({
-                  id: product.id,
-                  slug: product.slug,
-                  name: product.name,
-                  description: product.description,
-                  gender: product.gender as 'homme' | 'femme',
-                  category_id: '',
-                  collection_id: null,
-                  price: product.price,
-                  compare_at_price: product.compareAtPrice,
-                  images: [],
-                  variants: [],
-                  materials: null,
-                  care_instructions: null,
-                  is_new: product.isNew,
-                  featured: false,
-                  created_at: '',
-                  updated_at: '',
-                })
-              }
-              className={cn(
-                'p-3 border transition-colors',
-                isWishlisted
-                  ? 'border-pvl-black bg-pvl-black text-pvl-white'
-                  : 'border-pvl-black/12 text-pvl-slate hover:text-pvl-black hover:border-pvl-black'
-              )}
-              aria-label={t('nav.favoris')}
-            >
-              <Heart size={16} className={isWishlisted ? 'fill-pvl-white' : ''} />
-            </button>
-          </div>
-
-          {/* Trust badges */}
-          <div className="flex items-center gap-6 mb-8 py-4 border-t border-pvl-black/8">
-            <div className="flex items-center gap-2">
-              <Truck size={14} className="text-pvl-stone" />
-              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-pvl-stone">
-                Livraison offerte
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <RotateCcw size={14} className="text-pvl-stone" />
-              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-pvl-stone">
-                Retours 30 jours
-              </span>
             </div>
           </div>
 
-          {/* Accordion */}
-          <div className="border-t border-pvl-black/8">
-            {/* Description */}
-            <div className="border-b border-pvl-black/8">
-              <button
-                onClick={() => toggleAccordion('description')}
-                className="w-full flex items-center justify-between py-4 text-[0.6875rem] font-medium uppercase tracking-[0.15em]"
-              >
-                {t('product.description')}
-                <ChevronDown
-                  size={14}
-                  className={cn(
-                    'transition-transform',
-                    accordionOpen === 'description' && 'rotate-180'
-                  )}
-                />
-              </button>
-              {accordionOpen === 'description' && (
-                <div className="pb-4 text-sm text-pvl-slate leading-relaxed">
-                  {product.description}
-                </div>
-              )}
-            </div>
+          {/* Add to cart */}
+          <button
+            onClick={handleAddToCart}
+            disabled={!currentVariant}
+            className="w-full py-4 text-pvl-kicker uppercase tracking-[0.2em] transition-all duration-300 disabled:opacity-30"
+            style={{
+              backgroundColor: added
+                ? 'var(--color-pvl-success)'
+                : 'var(--color-pvl-black)',
+              color: 'var(--color-pvl-white)',
+              borderRadius: 'var(--radius-card)',
+            }}
+          >
+            {added
+              ? 'Ajouté au panier'
+              : currentVariant
+                ? 'Ajouter au panier'
+                : 'Sélectionnez une taille'}
+          </button>
 
-            {/* Materials */}
-            {product.materials && (
-              <div className="border-b border-pvl-black/8">
-                <button
-                  onClick={() => toggleAccordion('materials')}
-                  className="w-full flex items-center justify-between py-4 text-[0.6875rem] font-medium uppercase tracking-[0.15em]"
-                >
-                  {t('product.compositions')}
-                  <ChevronDown
-                    size={14}
-                    className={cn(
-                      'transition-transform',
-                      accordionOpen === 'materials' && 'rotate-180'
-                    )}
-                  />
-                </button>
-                {accordionOpen === 'materials' && (
-                  <div className="pb-4 space-y-2 text-sm text-pvl-slate">
-                    <p>{product.materials}</p>
-                    {product.careInstructions && (
-                      <p>{product.careInstructions}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Shipping */}
-            <div className="border-b border-pvl-black/8">
-              <button
-                onClick={() => toggleAccordion('shipping')}
-                className="w-full flex items-center justify-between py-4 text-[0.6875rem] font-medium uppercase tracking-[0.15em]"
-              >
-                {t('product.livraison-retours')}
-                <ChevronDown
-                  size={14}
-                  className={cn(
-                    'transition-transform',
-                    accordionOpen === 'shipping' && 'rotate-180'
-                  )}
-                />
-              </button>
-              {accordionOpen === 'shipping' && (
-                <div className="pb-4 text-sm text-pvl-slate space-y-2 leading-relaxed">
-                  <p>Livraison offerte dès 200€ d&apos;achat. Délai de livraison : 3 à 5 jours ouvrés.</p>
-                  <p>Retours gratuits sous 30 jours. Remboursement sous 14 jours après réception.</p>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Materials / care */}
+          {(product.materials || product.care_instructions) && (
+            <p className="mt-8 text-pvl-meta text-pvl-stone leading-relaxed">
+              {product.materials}
+              {product.materials && product.care_instructions && ' — '}
+              {product.care_instructions}
+            </p>
+          )}
         </div>
       </div>
     </div>
