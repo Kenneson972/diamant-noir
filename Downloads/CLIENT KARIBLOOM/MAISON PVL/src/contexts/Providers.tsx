@@ -35,23 +35,25 @@ function AppShell({ children }: { children: ReactNode }) {
   const isCheckout = pathname.startsWith('/checkout');
   const isAuth =
     pathname.startsWith('/connexion') || pathname.startsWith('/inscription');
+  const isGendered =
+    pathname.startsWith('/homme') || pathname.startsWith('/femme');
 
   return (
     <>
       <ScrollToTop />
-      <div className={`flex min-h-screen flex-col${isEntry ? '' : ''}`}>
-        {!isCheckout && !isAuth && !isEntry && <Header />}
+      <div className={`flex min-h-screen flex-col${isEntry || isGendered ? '' : ''}`}>
+        {!isCheckout && !isAuth && !isEntry && !isGendered && <Header />}
         <main
           id="main-content"
           className={
-            isCheckout || isAuth || isEntry
+            isCheckout || isAuth || isEntry || isGendered
               ? 'flex flex-1 flex-col'
               : 'flex-1'
           }
         >
           {children}
         </main>
-        {!isCheckout && !isAuth && !isEntry && <Footer />}
+        {!isCheckout && !isAuth && !isEntry && !isGendered && <Footer />}
       </div>
     </>
   );
