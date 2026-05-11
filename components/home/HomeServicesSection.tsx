@@ -146,32 +146,31 @@ export function HomeServicesSection() {
         </div>
 
         {/* ── Carrousel horizontal snap ── */}
-        <div className="relative">
-          {/* Flèche gauche — desktop */}
+        <div className="relative mt-4 md:mt-6">
+          {/* Flèche gauche — desktop, cercle */}
           <button
             type="button"
             onClick={scrollPrev}
             disabled={activeIdx === 0}
             aria-label="Pilier précédent"
-            className="absolute left-0 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 h-11 w-11 items-center justify-center border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-navy/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-30 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+            className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 lg:-left-12"
           >
-            <ChevronLeft size={18} strokeWidth={1.5} />
+            <ChevronLeft size={16} strokeWidth={1.5} />
           </button>
-          {/* Flèche droite — desktop */}
+          {/* Flèche droite — desktop, cercle */}
           <button
             type="button"
             onClick={scrollNext}
             disabled={activeIdx === SCROLL_SECTIONS.length - 1}
             aria-label="Pilier suivant"
-            className="absolute right-0 top-1/2 z-10 hidden translate-x-1/2 -translate-y-1/2 h-11 w-11 items-center justify-center border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-navy/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-30 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+            className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30 lg:-right-12"
           >
-            <ChevronRight size={18} strokeWidth={1.5} />
+            <ChevronRight size={16} strokeWidth={1.5} />
           </button>
-
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 scrollbar-hide md:mt-6 md:gap-6 md:pb-4"
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 scrollbar-hide md:gap-6 md:pb-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {SCROLL_SECTIONS.map((service, i) => {
