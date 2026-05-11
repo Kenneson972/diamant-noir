@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@font-face {
+  font-family: 'Rufina';
+  src: url('https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&display=swap');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&display=swap');
+  font-display: swap;
+}
+
+@theme {
+  /* Core brand colors - oklch */
+  --color-pvl-black:    oklch(7% 0.003 60);
+  --color-pvl-charcoal: oklch(15% 0.005 60);
+  --color-pvl-slate:    oklch(35% 0.005 60);
+  --color-pvl-stone:    oklch(62% 0.008 60);
+  --color-pvl-cream:    oklch(97% 0.005 80);
+  --color-pvl-white:    oklch(100% 0 0);
+  --color-pvl-warm:     oklch(99% 0.002 60);
+
+  /* Cool metallic accents */
+  --color-pvl-gold:     oklch(65% 0.07 85);
+  --color-pvl-gold-dim: oklch(50% 0.06 85);
+
+  /* Semantic */
+  --color-pvl-success:  oklch(55% 0.14 150);
+  --color-pvl-warning:  oklch(65% 0.12 80);
+  --color-pvl-error:    oklch(50% 0.18 25);
+
+  /* Typography */
+  --font-display: 'Rufina', Georgia, serif;
+  --font-sans:    'Karla', system-ui, sans-serif;
+
+  /* Spacing sections */
+  --space-section-sm:  3rem;
+  --space-section-md:  5rem;
+  --space-section-lg:  8rem;
+
+  /* Radius */
+  --radius-card:    2px;
+  --radius-sm:      0;
+
+  /* Shadows - editorial, minimal */
+  --shadow-editorial-sm:
+    0 1px 2px color-mix(in oklch, var(--color-pvl-black) 4%, transparent);
+  --shadow-editorial-md:
+    0 2px 4px color-mix(in oklch, var(--color-pvl-black) 5%, transparent),
+    0 12px 32px color-mix(in oklch, var(--color-pvl-black) 5%, transparent);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    max-width: 100%;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-pvl-white);
+    color: var(--color-pvl-black);
+    font-size: 0.9375rem;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    outline: 2px solid var(--color-pvl-black);
+    outline-offset: 2px;
+  }
+}
+
+@utility text-pvl-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--color-pvl-slate);
+}
+
+@utility text-pvl-meta {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: color-mix(in oklch, var(--color-pvl-black) 48%, transparent);
+}
+
+@utility text-pvl-price {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+@utility text-pvl-product-name {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+@utility text-pvl-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2.75rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+@utility text-pvl-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+@utility text-pvl-manifesto {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 2.5vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.48;
+  letter-spacing: -0.01em;
+  color: color-mix(in oklch, var(--color-pvl-black) 85%, transparent);
+}
+
+@utility container-pvl {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 90rem) {
+    padding-inline: 3rem;
+  }
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
