@@ -9,7 +9,7 @@ export default function SilhouettesFemmePage() {
         title="Silhouettes"
         imageStyle={{ background: 'linear-gradient(135deg, #8b7a6a, #5a4b3a)' }}
       />
-      <ProductGrid products={[]} />
+      <ProductGrid gender="femme" />
     </>
   );
 }

@@ -9,7 +9,7 @@ export default function NouveautesFemmePage() {
         title="Nouveautés"
         imageStyle={{ background: 'linear-gradient(135deg, #7a6b5a, #4a3b2a)' }}
       />
-      <ProductGrid products={[]} />
+      <ProductGrid gender="femme" />
     </>
   );
 }

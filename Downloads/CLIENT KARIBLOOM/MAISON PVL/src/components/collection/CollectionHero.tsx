@@ -1,3 +1,5 @@
+'use client';
+
 interface CollectionHeroProps {
   title: string;
   kicker?: string;

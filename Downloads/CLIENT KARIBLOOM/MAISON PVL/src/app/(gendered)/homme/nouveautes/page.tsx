@@ -9,7 +9,7 @@ export default function NouveautesHommePage() {
         title="Nouveautés"
         imageStyle={{ background: 'linear-gradient(135deg, #5a4c3a, #3a2c1a)' }}
       />
-      <ProductGrid products={[]} />
+      <ProductGrid gender="homme" />
     </>
   );
 }

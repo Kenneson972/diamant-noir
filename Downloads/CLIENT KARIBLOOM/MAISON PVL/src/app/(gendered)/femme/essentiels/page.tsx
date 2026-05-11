@@ -9,7 +9,7 @@ export default function EssentielsFemmePage() {
         title="Essentiels"
         imageStyle={{ background: 'linear-gradient(135deg, #9a8b7a, #6a5b4a)' }}
       />
-      <ProductGrid products={[]} />
+      <ProductGrid gender="femme" />
     </>
   );
 }
