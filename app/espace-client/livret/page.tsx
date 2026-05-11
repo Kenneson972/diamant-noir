@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { CheckinGuide } from "@/components/espace-client/CheckinGuide";
+import { CheckoutInstructions } from "@/components/espace-client/CheckoutInstructions";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -343,6 +345,19 @@ export default function LivretPage() {
             Télécharger PDF
           </button>
         </div>
+
+        {/* Check-in & Check-out */}
+        {booking && (
+          <>
+            <CheckinGuide
+              startDate={booking.start_date}
+              address={booking.villa?.location ? `${booking.villa.location}, Martinique` : undefined}
+            />
+            <CheckoutInstructions
+              endDate={booking.end_date}
+            />
+          </>
+        )}
 
         {isEmptyBook ? (
           <div className="py-12 text-center">

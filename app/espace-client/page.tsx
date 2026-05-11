@@ -8,6 +8,7 @@ import { CalendarX, ArrowRight, MessageCircle, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { RequestList } from "@/components/espace-client/RequestList";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 function BookingCardSkeleton() {
@@ -329,6 +330,13 @@ export default function EspaceClientPage() {
 
       {/* Hero — prochain séjour */}
       {upcomingBooking && <UpcomingStayHero booking={upcomingBooking} />}
+
+      {/* Demandes en cours */}
+      {upcomingBooking && (
+        <section className="mt-10">
+          <RequestList bookingId={upcomingBooking.id} refreshKey={0} />
+        </section>
+      )}
 
       {/* Accès rapide */}
       {upcomingBooking && (
