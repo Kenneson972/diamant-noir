@@ -49,6 +49,23 @@ export default function ProfilPage() {
     })();
   }, [supabase]);
 
+  useEffect(() => {
+    if (!supabase || !user?.id) return;
+    (async () => {
+      const { data } = await supabase.from("profiles").select("allergies, special_occasion, special_occasion_date, estimated_arrival, needs_baby_bed, needs_high_chair").eq("id", user.id).maybeSingle();
+      if (data) {
+        setAllergies(data.allergies ?? "");
+        setSpecialOccasion(data.special_occasion ?? "");
+        setSpecialOccasionDate(data.special_occasion_date ?? "");
+        setEstimatedArrival(data.estimated_arrival ?? "");
+        setNeedsBabyBed(data.needs_baby_bed ?? false);
+        setNeedsHighChair(data.needs_high_chair ?? false);
+      }
+    })();
+  }, [supabase, user]);
+
+  const metadata = user?.user_metadata ?? {};
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -84,23 +101,6 @@ export default function ProfilPage() {
       </Card>
     );
   }
-
-  const metadata = user?.user_metadata ?? {};
-
-  useEffect(() => {
-    if (!supabase || !user?.id) return;
-    (async () => {
-      const { data } = await supabase.from("profiles").select("allergies, special_occasion, special_occasion_date, estimated_arrival, needs_baby_bed, needs_high_chair").eq("id", user.id).maybeSingle();
-      if (data) {
-        setAllergies(data.allergies ?? "");
-        setSpecialOccasion(data.special_occasion ?? "");
-        setSpecialOccasionDate(data.special_occasion_date ?? "");
-        setEstimatedArrival(data.estimated_arrival ?? "");
-        setNeedsBabyBed(data.needs_baby_bed ?? false);
-        setNeedsHighChair(data.needs_high_chair ?? false);
-      }
-    })();
-  }, [supabase, user]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
