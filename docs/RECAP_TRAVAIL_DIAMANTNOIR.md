@@ -1,7 +1,7 @@
 # Récap Travail — Diamant Noir / Kayvila
 
 > Synthèse de tout le travail effectué sur la conciergerie de luxe Diamant Noir.
-> Mise à jour : 1 mai 2026
+> Mise à jour : 11 mai 2026
 
 ---
 
@@ -157,11 +157,25 @@ middleware.ts                # Auth guard
 
 ---
 
-## 7. Prochaines étapes recommandées
+## 7. Travail récent (mai 2026)
 
-1. **Corriger le login** : diagnostiquer `@supabase/ssr` → middleware → cookies
-2. **Créer profiles manquants** pour utilisateurs existants
-3. **Créer table `villa_events`** pour analytics
+### 11 mai — Phase 1 Espace Client Fonctionnel ✅
+- **Request System** : 7 créés (RequestForm, RequestList, CheckinGuide, CheckoutInstructions, /demandes, /admin/demandes, migration SQL)
+- **Fonctionnalités** : demandes voyageur→admin, check-in autonome (digicode 24h avant), check-out checklist, facture PDF, profil enrichi (allergies, occasion, bébé)
+- **Vision** : Spec 16 fonctionnalités en 3 phases. Document gérant : `docs/vision-espace-client-kayvila.md`
+
+### 11 mai — Uniformisation Dashboards ✅
+- **DashboardShell unique** : sidebar dark, fond offwhite, Lucide, ≥11px, zéro side-stripe
+- **9 fichiers supprimés** : Admin/Owner/Tenant layouts remplacés par 3 composants partagés
+
+### 10 mai — Audit + Corrections ✅
+- **Audit 5 dimensions** (score 13→18/20) : accessibilité, performance, theming, responsive, anti-patrons
+- **Corrections** : tokens Tailwind (21+ hex migrés), texte ≥11px, skip-to-content, FAQ (4 contradictions corrigées)
+
+## 8. Prochaines étapes
+
+1. **Stripe** : intégration paiement en ligne
+2. **Phase 2 Espace Client** : partage séjour, calendrier, guide alentours, services ponctuels
+3. **Phase 3 Espace Client** : notifications, avis, parrainage, favoris
 4. **Déploiement Vercel** : lier le repo, configurer env vars
-5. **Tests end-to-end** : valider le tunnel complet login → réservation → paiement
-6. **Assistant IA propriétaire** : reprendre la feature dans le nouveau dashboard
+5. **Tests end-to-end** : valider le tunnel complet login → réservation → demande → admin

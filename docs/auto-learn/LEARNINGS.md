@@ -36,24 +36,24 @@
 
 ---
 
-## 2026-05-11 — Phase 1 Espace Client Fonctionnel
+## 2026-05-11 — Phase 1 Espace Client Fonctionnel ✅ TERMINÉ
 
-### Fait
+### Fait (7 créés, 4 modifiés, 1 SQL)
 - **Migration Supabase** : table `requests` + colonnes `profiles` + colonne `villas.house_manual`
 - **Request System** : RequestForm, RequestList, page `/espace-client/demandes`
-- **Check-in autonome** : CheckinGuide (digicode 24h avant, photos, plan, itinéraire)
+- **Check-in autonome** : CheckinGuide (digicode 24h avant, photos, plan)
 - **Check-out instructions** : CheckoutInstructions (checklist J-1)
-- **Menu** : "Demandes" ajouté au TenantMenuItems
-- **Build** : ✅ tout compile
-
-### Reste à faire (cette session)
-- Ajouter RequestList à la page Séjour
-- Ajouter CheckinGuide + CheckoutInstructions à la page Livret
-- Profil voyageur enrichi (allergies, occasions, arrivée, bébé)
-- Facture PDF imprimable dans Documents
-- Vue admin demandes dans l'assistant
+- **Facture PDF** : imprimable dans Documents (séjours passés)
+- **Profil enrichi** : allergies, occasion spéciale, heure arrivée, lit bébé/chaise haute
+- **Vue admin** : `/admin/demandes` avec filtres + actions (résoudre/refuser/en cours)
+- **Menus** : "Demandes" ajouté aux sidebars tenant + admin
+- **RequestList** intégré dans la page Séjour
+- **CheckinGuide + CheckoutInstructions** intégrés dans le Livret
 
 ### Règles apprises
 - Le Request System est le socle : chaque action voyageur → tâche admin avec statut
 - CheckinGuide s'affiche seulement 24h avant l'arrivée (condition `hoursUntil <= 24`)
-- CheckoutInstructions s'affiche seulement la veille du départ (condition `hoursUntil <= 24 && hoursUntil > 0`)
+- CheckoutInstructions s'affiche seulement la veille du départ
+- Les hooks React (`useState`, `useEffect`) doivent être avant tout early return
+- Le profil enrichi se sauvegarde dans la table `profiles` (pas dans `auth.users` metadata)
+- `border-l-2` → `border border-gold/30 bg-gold/[0.08]` (border complète + fond teinté)

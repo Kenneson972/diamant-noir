@@ -1,6 +1,50 @@
 # Actes techniques — DIAMANTNOIR
 
-> Journal des actions techniques significatives. Chaque entrée suit le format défini dans `kb-action-documentation.mdc`.
+> Journal des actions techniques significatives.
+
+---
+
+## 2026-05-11 — Phase 1 Espace Client Fonctionnel
+
+- **type**: `feature | ui | supabase`
+- **summary**:
+  1. **Request System** — Table `requests`, composants RequestForm/RequestList, page `/espace-client/demandes` et `/admin/demandes`. Chaque demande voyageur crée une tâche admin avec statut (pending→in_progress→resolved/rejected).
+  2. **Check-in autonome** — CheckinGuide affiche le digicode 24h avant l'arrivée, avec photos et plan d'accès.
+  3. **Check-out instructions** — Checklist affichée la veille du départ.
+  4. **Profil enrichi** — Allergies, occasion spéciale, heure d'arrivée, équipement bébé. Sauvegarde dans `profiles`.
+  5. **Facture PDF** — Génération imprimable dans `/espace-client/documents` pour les séjours passés.
+  6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
+- **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
+- **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.
+- **impact**: Le voyageur peut agir (demandes, check-in, check-out, factures). L'admin a un dashboard de gestion des demandes en temps réel.
+- **verify**: `npm run build` OK.
+
+---
+
+## 2026-05-11 — Uniformisation complète des dashboards
+
+- **type**: `refactor | ui`
+- **summary**:
+  1. **DashboardShell unique** — Création de DashboardShell, DashboardSidebar, DashboardHeader partagés. Remplace 3 layouts divergents.
+  2. **9 fichiers supprimés** — AdminLayout/Header/Sidebar/Main, OwnerLayout/Header/Sidebar, EspaceClientShell/Providers.
+  3. **Design unifié** — Sidebar dark (bg-navy), fond offwhite, texte navy, icônes Lucide, ≥11px, zéro side-stripe.
+  4. **Fix icônes** — Lucide React → noms string pour compatibilité Server→Client Next.js 15.
+- **files**: [`components/dashboard/shared/DashboardShell.tsx`, `DashboardSidebar.tsx`, `DashboardHeader.tsx`, `app/(admin)/admin/layout.tsx`, `app/(proprio)/dashboard/layout.tsx`, `app/espace-client/layout.tsx`]
+- **why**: 3 designs différents (3 fonds, 3 sidebars, 2 systèmes d'icônes) → 1 design unifié.
+- **impact**: Cohérence visuelle totale entre Admin, Propriétaire et Voyageur.
+
+---
+
+## 2026-05-10 — Audit impeccable + corrections
+
+- **type**: `audit | ui`
+- **summary**:
+  1. **Audit 5 dimensions** des 3 espaces dashboard (score 13/20 → ~18/20).
+  2. **Corrections P0-P2** : suppression side-stripes, texte ≥11px, tokens Tailwind (21+ hex → @apply), skip-to-content, alt text, suppression .glass-card.
+  3. **FAQ** : 4 contradictions corrigées (commission, frais bancaires, réservations directes, pack démarrage).
+- **files**: [`app/globals.css`, `app/layout.tsx`, `components/dashboard/admin/AdminSidebar.tsx`, `data/conciergerie-faq.ts`, +10 pages espace-client]
+- **why**: Qualité technique et cohérence du design.
+- **verify**: `npm run build` OK.
 
 ---
 
