@@ -1,143 +1,136 @@
-import Link from "next/link";
-import { getSupabaseServer } from "@/lib/supabase-server";
-import type { Metadata } from "next";
-import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
-import type { BookingStatus } from "@/types/domain";
-import { Calendar } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { getSupabaseBrowser } from "@/lib/supabase";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { BOOKING_STATUS_LABELS } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "Réservations — Administration Kayvila",
-};
+const PAGE_SIZE = 20;
 
-interface BookingRow {
-  id: string;
-  guest_name: string | null;
-  guest_email: string | null;
-  villa_id: string | null;
-  start_date: string;
-  end_date: string;
-  total_price_cents: number | null;
-  status: BookingStatus;
-  villa_name?: string | null;
-}
+export default function AdminReservationsPage() {
+  const supabase = getSupabaseBrowser();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [filter, setFilter] = useState("all");
 
-async function getBookings(): Promise<BookingRow[]> {
-  const supabase = await getSupabaseServer();
+  const fetchBookings = async () => {
+    if (!supabase) return;
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
 
-  const { data: bookings } = await supabase
-    .from("bookings")
-    .select("id, guest_name, guest_email, villa_id, start_date, end_date, total_price_cents, status")
-    .order("start_date", { ascending: false })
-    .limit(50);
+    let query = supabase
+      .from("bookings")
+      .select("id, guest_name, guest_email, villa_id, start_date, end_date, total_price_cents, status, villas(name)", { count: "exact" })
+      .order("start_date", { ascending: false })
+      .range(from, to);
 
-  if (!bookings?.length) return [];
+    if (filter !== "all") query = query.eq("status", filter);
 
-  // Fetch villa names in a separate query
-  const villaIds = [
-    ...new Set(bookings.map((b: { villa_id: string | null }) => b.villa_id).filter(Boolean)),
-  ] as string[];
+    const { data, count } = await query;
+    setBookings(data ?? []);
+    if (count != null) setTotal(count);
+    setLoading(false);
+  };
 
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("id, name")
-    .in("id", villaIds);
+  useEffect(() => { fetchBookings(); }, [supabase, page, filter]);
 
-  const villaMap: Record<string, string> = {};
-  if (villas) {
-    for (const v of villas) {
-      villaMap[v.id] = v.name;
-    }
-  }
+  const handleAction = async (id: string, status: string) => {
+    if (!supabase) return;
+    await supabase.from("bookings").update({ status, payment_status: status === "confirmed" ? "paid" : "cancelled" }).eq("id", id);
+    fetchBookings();
+  };
 
-  return bookings.map((b: { id: string; guest_name: string | null; guest_email: string | null; villa_id: string | null; start_date: string; end_date: string; total_price_cents: number | null; status: string }) => ({
-    ...b,
-    status: b.status as BookingStatus,
-    villa_name: b.villa_id ? villaMap[b.villa_id] ?? null : null,
-  }));
-}
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function formatPriceCents(cents: number | null): string {
-  if (cents === null || cents === undefined) return "—";
-  return `${(cents / 100).toLocaleString("fr-FR")} €`;
-}
-
-export default async function AdminReservationsPage() {
-  const bookings = await getBookings();
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div className="space-y-8">
-      <AdminPageIntro
-        title="Réservations"
-        description="Les 50 derniers séjours enregistrés (montants en centimes confirmés)."
-      />
+    <div className="space-y-6">
+      <AdminPageIntro title="Réservations" description={`${total} séjours enregistrés.`} />
 
-      {bookings.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-          <Calendar className="mx-auto h-12 w-12 text-gray-300" />
-          <p className="mt-4 text-sm text-gray-500">
-            Aucune réservation pour le moment.
-          </p>
+      <div className="flex gap-2 flex-wrap">
+        {["all", "pending", "confirmed", "cancelled"].map((f) => (
+          <button key={f} onClick={() => { setFilter(f); setPage(1); setLoading(true); }}
+            className={`px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] rounded-full transition-colors ${filter === f ? "bg-navy text-white" : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"}`}>
+            {f === "all" ? "Tous" : BOOKING_STATUS_LABELS[f] ?? f}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <p className="text-sm text-navy/40">Chargement...</p>
+      ) : bookings.length === 0 ? (
+        <div className="border border-navy/10 bg-white p-12 text-center">
+          <p className="text-sm text-navy/40">Aucune réservation.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border bg-white">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-navy/[0.02]">
-              <tr>
-                <th className="px-4 py-3 font-medium text-navy">Client</th>
-                <th className="px-4 py-3 font-medium text-navy">Villa</th>
-                <th className="px-4 py-3 font-medium text-navy">Arrivée</th>
-                <th className="px-4 py-3 font-medium text-navy">Départ</th>
-                <th className="px-4 py-3 font-medium text-navy">Montant</th>
-                <th className="px-4 py-3 font-medium text-navy">Statut</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {bookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">
-                      {booking.guest_name ?? "Anonyme"}
-                    </div>
-                    {booking.guest_email && (
-                      <div className="text-xs text-gray-500">
-                        {booking.guest_email}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {booking.villa_name ?? (
-                      <span className="font-mono text-xs text-gray-400">
-                        {booking.villa_id?.slice(0, 8)}…
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {formatDate(booking.start_date)}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {formatDate(booking.end_date)}
-                  </td>
-                    <td className="px-4 py-3 text-gray-900 font-medium">
-                    {formatPriceCents(booking.total_price_cents)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <BookingStatusBadge status={booking.status} />
-                  </td>
+        <>
+          <div className="overflow-x-auto border border-navy/10 bg-white">
+            <table className="w-full text-sm">
+              <thead className="border-b border-navy/10 bg-navy/[0.02]">
+                <tr className="text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-navy/50">
+                  <th className="px-4 py-3">Client</th>
+                  <th className="px-4 py-3">Villa</th>
+                  <th className="px-4 py-3">Arrivée</th>
+                  <th className="px-4 py-3">Départ</th>
+                  <th className="px-4 py-3">Montant</th>
+                  <th className="px-4 py-3">Statut</th>
+                  <th className="px-4 py-3">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-navy/[0.05]">
+                {bookings.map((b) => (
+                  <tr key={b.id} className="hover:bg-navy/[0.01]">
+                    <td className="px-4 py-3">
+                      <span className="font-medium text-navy">{b.guest_name || "Anonyme"}</span>
+                      {b.guest_email && <span className="block text-[11px] text-navy/40">{b.guest_email}</span>}
+                    </td>
+                    <td className="px-4 py-3 text-navy/70">{b.villas?.name ?? b.villa_id?.slice(0, 8)}</td>
+                    <td className="px-4 py-3 text-navy/70">{formatDate(b.start_date, { day: "numeric", month: "short" })}</td>
+                    <td className="px-4 py-3 text-navy/70">{formatDate(b.end_date, { day: "numeric", month: "short" })}</td>
+                    <td className="px-4 py-3 font-medium text-navy">{formatCurrency(b.total_price_cents ?? 0)}</td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${b.status === "confirmed" ? "bg-emerald-50 text-emerald-700" : b.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
+                        {BOOKING_STATUS_LABELS[b.status] ?? b.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1.5">
+                        {b.status === "pending" && (
+                          <button onClick={() => handleAction(b.id, "confirmed")}
+                            className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
+                            Confirmer
+                          </button>
+                        )}
+                        {(b.status === "pending" || b.status === "confirmed") && (
+                          <button onClick={() => handleAction(b.id, "cancelled")}
+                            className="text-[10px] font-semibold px-2 py-1 rounded bg-red-50 text-red-700 hover:bg-red-100">
+                            Annuler
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
+                className="text-[11px] font-semibold text-navy/50 hover:text-navy disabled:opacity-30">
+                ← Précédent
+              </button>
+              <span className="text-[11px] text-navy/40">Page {page} / {totalPages}</span>
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
+                className="text-[11px] font-semibold text-navy/50 hover:text-navy disabled:opacity-30">
+                Suivant →
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

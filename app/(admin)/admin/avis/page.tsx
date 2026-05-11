@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Star, Check, X } from "lucide-react";
+import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
 export default function AdminAvisPage() {
   const supabase = getSupabaseBrowser();
@@ -24,21 +25,27 @@ export default function AdminAvisPage() {
 
   useEffect(() => { fetchReviews(); }, [supabase, filter]);
 
-  const handleAction = async (id: string, status: string) => {
+  const handleAction = async (review: any, status: string) => {
     if (!supabase) return;
     await supabase.from("reviews").update({
       status,
       updated_at: new Date().toISOString(),
-    }).eq("id", id);
+    }).eq("id", review.id);
+
+    await supabase.from("notifications").insert({
+      user_id: review.guest_id,
+      type: "system",
+      title: status === "approved" ? "Avis approuvé" : "Avis refusé",
+      body: `Votre avis sur "${review.villas?.name ?? "la villa"}" a été ${status === "approved" ? "approuvé et publié" : "refusé"}.`,
+      action_url: "/espace-client",
+    });
+
     fetchReviews();
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold text-navy">Avis clients</h1>
-        <p className="text-sm text-navy/50 mt-1">Gérez et modérez les avis post-séjour</p>
-      </div>
+      <AdminPageIntro title="Avis clients" description="Gérez et modérez les avis post-séjour" />
 
       <div className="flex gap-2 flex-wrap">
         {["pending", "approved", "rejected", "all"].map((f) => (
@@ -95,11 +102,11 @@ export default function AdminAvisPage() {
               )}
               {r.status === "pending" && (
                 <div className="flex gap-2">
-                  <button onClick={() => handleAction(r.id, "approved")}
+                  <button onClick={() => handleAction(r, "approved")}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 text-[11px] font-semibold rounded-full hover:bg-emerald-100 transition-colors">
                     <Check size={14} /> Approuver
                   </button>
-                  <button onClick={() => handleAction(r.id, "rejected")}
+                  <button onClick={() => handleAction(r, "rejected")}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-700 text-[11px] font-semibold rounded-full hover:bg-red-100 transition-colors">
                     <X size={14} /> Refuser
                   </button>

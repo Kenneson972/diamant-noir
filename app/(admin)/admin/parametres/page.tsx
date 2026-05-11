@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { ConciergerieSettingsForm } from "@/components/dashboard/admin/ConciergerieSettingsForm";
+import { Phone, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Paramètres — Administration Kayvila",
@@ -137,8 +139,15 @@ export default async function AdminParametresPage() {
       <SettingsSection icon={Bell} title="Notifications">
         <ConfigField
           label="Statut notifications"
-          value="Configurer dans les paramètres avancés (à venir)"
+          value="Activées (Supabase Realtime)"
         />
+      </SettingsSection>
+
+      <SettingsSection icon={Phone} title="Conciergerie">
+        <p className="mb-4 text-xs text-gray-500">
+          Contacts et informations affichés sur la page Conciergerie de l&apos;espace client.
+        </p>
+        <ConciergerieSettingsForm />
       </SettingsSection>
 
       <SettingsSection icon={Settings} title="Saisons — Martinique">
