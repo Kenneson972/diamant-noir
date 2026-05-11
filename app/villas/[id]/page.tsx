@@ -293,7 +293,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
                 <Image
                   src="/prestations-hero.png"
-                  alt=""
+                  alt="Service de conciergerie Kayvila — équipe dédiée disponible pour organiser votre séjour"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -362,7 +362,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
                 <Image
                   src="/villa-hero.jpg"
-                  alt=""
+                  alt="Villa avec piscine en Martinique — disponibilité 7j/7 assurée par l'équipe Kayvila"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"

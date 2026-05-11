@@ -235,7 +235,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               <Link
                 href={primaryCtaHref}
                 onClick={closeMenu}
-                className="mx-4 flex min-h-[44px] items-center justify-center border border-navy bg-navy px-4 py-3 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90"
+                className="mx-4 flex min-h-[44px] items-center justify-center border border-navy bg-navy px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-navy/90"
               >
                 {primaryCtaLabel}
               </Link>
@@ -323,7 +323,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
                 <Link
                   key={href}
                   href={href}
-                  className={`text-[10px] font-semibold uppercase tracking-[0.22em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
                 >
                   {label}
                 </Link>
@@ -351,7 +351,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
                 <Link
                   key={href}
                   href={href}
-                  className={`text-[10px] font-semibold uppercase tracking-[0.22em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
                 >
                   {label}
                 </Link>
@@ -380,7 +380,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             <Link
               href={primaryCtaHref}
               aria-label={primaryCtaAria}
-              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 lg:h-auto lg:w-auto lg:px-5 lg:py-2 lg:text-[10px] lg:font-bold lg:uppercase lg:leading-snug lg:tracking-[0.22em] ${primaryCtaSolidStyle}`}
+              className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 lg:h-auto lg:w-auto lg:px-5 lg:py-2 lg:text-[11px] lg:font-semibold lg:uppercase lg:leading-snug lg:tracking-[0.18em] ${primaryCtaSolidStyle}`}
             >
               <Sparkles size={18} strokeWidth={1.25} className="lg:hidden" aria-hidden />
               <span className="hidden lg:inline">{primaryCtaLabel}</span>

@@ -73,62 +73,6 @@ export const Footer = () => {
           </NavColumn>
         </div>
 
-        {/* ──── Mobile ──── */}
-        <div className="md:hidden">
-          <div className="mb-10 flex flex-col items-center space-y-4">
-            <BrandLogo variant="onLight" size="sm" className="mx-auto" />
-            <p className="max-w-xs text-center text-xs leading-relaxed text-navy/55">
-              {audience === "proprietaire" ? (
-                "Conciergerie haut de gamme en Martinique : valorisation de biens d'exception et relation voyageurs pour les propriétaires qui exigent sérénité et exigence."
-              ) : (
-                "Un sanctuaire côtier exclusif conçu pour ceux qui recherchent la rareté, la tranquillité et une élégance raffinée."
-              )}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <h4 className="mb-4 text-[10px] font-bold uppercase tracking-[0.25em] text-black/35">{t("footer.explore")}</h4>
-              <ul className="space-y-2 text-sm text-navy/65">
-                {audience === "proprietaire" ? (
-                  <>
-                    <li><MobileLink href="/soumettre-ma-villa">{t("footer.submit_villa")}</MobileLink></li>
-                    <li><MobileLink href="/prestations">{t("nav.prestations")}</MobileLink></li>
-                    <li><MobileLink href="/villas">Locations (catalogue)</MobileLink></li>
-                    <li><MobileLink href="/qui-sommes-nous">{t("nav.about")}</MobileLink></li>
-                  </>
-                ) : (
-                  <>
-                    <li><MobileLink href="/villas">{t("nav.villas")}</MobileLink></li>
-                    <li><MobileLink href="/prestations">{t("nav.prestations")}</MobileLink></li>
-                    <li><MobileLink href="/qui-sommes-nous">{t("nav.about")}</MobileLink></li>
-                    {audience !== "voyageur" && <li><MobileLink href="/soumettre-ma-villa">{t("footer.submit_villa")}</MobileLink></li>}
-                  </>
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="mb-4 text-[10px] font-bold uppercase tracking-[0.25em] text-black/35">{t("footer.support")}</h4>
-              <ul className="space-y-2 text-sm text-navy/65">
-                <li><MobileLink href="/contact">{t("footer.contact")}</MobileLink></li>
-                <li><MobileLink href="/faq">{t("footer.faq")}</MobileLink></li>
-                <li><MobileLink href="/terms">{t("footer.terms")}</MobileLink></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 border-t border-black/10 pt-6">
-            <h4 className="mb-4 text-center text-[10px] font-bold uppercase tracking-[0.25em] text-black/35">Suivez-nous</h4>
-            <div className="flex items-center justify-center gap-3">
-              <SocialLinks />
-            </div>
-            <div className="mt-5 text-center">
-              <h5 className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-black/35">Langue / Devise</h5>
-              <div className="flex justify-center">
-                <LocaleCurrencySelectors locale={locale} setLocale={setLocale} currency={currency} setCurrency={setCurrency} />
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* ──── Mobile: grille 2×2 ──── */}
         <div className="md:hidden">
           {/* Row 1: Explorer (gauche) | Assistance (droite) */}
@@ -192,7 +136,7 @@ export const Footer = () => {
         )}
 
         {/* ──── Barre du bas ──── */}
-        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[9px] uppercase tracking-[0.12em] text-navy/35 md:mt-12 md:flex md:items-center md:justify-between md:text-left md:text-[10px]">
+        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/40 md:mt-12 md:flex md:items-center md:justify-between md:text-left">
           <p>© 2026 Kayvila. Tous droits réservés.</p>
           <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1 md:mt-0 md:justify-end">
             <Link href="/mentions-legales" className="transition-colors hover:text-black/70">Mentions légales</Link>

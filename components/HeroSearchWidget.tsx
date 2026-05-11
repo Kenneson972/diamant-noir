@@ -131,7 +131,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         />
         <div className="flex min-h-[52px] flex-1 items-center justify-between gap-2 py-3 sm:min-h-[56px]">
           <div className="flex flex-col gap-0.5">
-            <span className={`text-[9px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-navy/45" : "text-white/50"}`}>
+            <span className={`text-[11px] font-semibold uppercase tracking-[0.15em] ${isLight ? "text-navy/50" : "text-white/55"}`}>
               Dates
             </span>
             <span className={`text-sm ${!checkin ? (isLight ? "text-navy/35" : "text-white/40") : ""}`}>
@@ -161,7 +161,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
             aria-hidden
           />
           <div className="flex-1">
-            <span className={`mb-0.5 block text-[9px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-navy/45" : "text-white/50"}`}>
+            <span className={`mb-0.5 block text-[11px] font-semibold uppercase tracking-[0.15em] ${isLight ? "text-navy/50" : "text-white/55"}`}>
               Voyageurs
             </span>
             <HeroGuestPicker value={guests} onChange={setGuests} surface={isLight ? "light" : "dark"} />

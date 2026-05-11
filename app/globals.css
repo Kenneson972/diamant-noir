@@ -20,8 +20,8 @@ body {
 
 body {
   font-family: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
-  background-color: #fafafa;
-  color: #0a0a0a;
+  background-color: #FAFAFA;
+  color: #0A0A0A;
 }
 
 /* Réduit le délai de tap (300ms) sur les contrôles — sans affecter le zoom page */
@@ -43,26 +43,19 @@ button,
 
 /* ── Dashboard layout utilities ──────────────────────────────────────────── */
 
-/* Sidebar nav-900 */
+/* Sidebar — même navy que le thème principal */
 .bg-navy-sidebar {
-  background-color: #0B1D2E;
+  @apply bg-navy;
 }
 
 /* Card standard dashboard */
 .dashboard-card {
-  background-color: #ffffff;
-  border: 1px solid #E5E3DB;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  @apply bg-white border border-border-subtle rounded-xl p-6;
 }
 
 /* Eyebrow dashboard (labels KPI) */
 .dashboard-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #8B8B8B;
+  @apply text-[11px] font-bold uppercase tracking-[0.2em] text-muted;
 }
 
 
@@ -83,7 +76,7 @@ button,
 
 /* Focus rings accessibles */
 :focus-visible {
-  outline: 2px solid #0a0a0a;
+  outline: 2px solid #0A0A0A;
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -129,12 +122,6 @@ body { font-size: 16px; line-height: 1.6; }
   }
 }
 
-/* Recherche hero : discret, fond plat, pas de blur superflu */
-.glass-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
 /* ── Leaflet map — house pin markers ── */
 .dn-marker svg {
   filter: drop-shadow(0 3px 8px rgba(0,0,0,0.2));
@@ -152,7 +139,7 @@ body { font-size: 16px; line-height: 1.6; }
   padding: 0;
   border-radius: 0;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #0A0A0A;
   border: 1px solid rgba(212, 175, 55, 0.25);
   box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
@@ -165,7 +152,7 @@ body { font-size: 16px; line-height: 1.6; }
 .dn-leaflet-popup .leaflet-popup-tip {
   width: 14px;
   height: 14px;
-  background: #0a0a0a;
+  background: #0A0A0A;
   box-shadow: none;
   border: none;
   margin: -7px auto 0;
@@ -191,17 +178,17 @@ body { font-size: 16px; line-height: 1.6; }
   margin: 0 0 2px;
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff;
+  color: #FFF;
   line-height: 1.3;
 }
 .dn-popup__loc {
   margin: 0 0 8px;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #ffffff;
-  opacity: 0.4;
+  color: #FFF;
+  opacity: 0.45;
 }
 .dn-popup__price {
   margin: 0;
@@ -210,10 +197,10 @@ body { font-size: 16px; line-height: 1.6; }
   color: #D4AF37;
 }
 .dn-popup__price span {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
-  color: #ffffff;
-  opacity: 0.4;
+  color: #FFF;
+  opacity: 0.45;
 }
 
 /* Hide leaflet default attribution */
@@ -245,7 +232,7 @@ body { font-size: 16px; line-height: 1.6; }
   position: absolute;
   bottom: -2px; left: 0;
   width: 100%; height: 1px;
-  background: #0a0a0a;
+  background: #0A0A0A;
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -263,26 +250,26 @@ body { font-size: 16px; line-height: 1.6; }
   gap: 1rem;
   padding: 1rem 2.5rem;
   border: 1px solid currentColor;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   transition: background 0.3s ease, color 0.3s ease;
   min-height: 44px;
   cursor: pointer;
 }
 .btn-luxury:hover {
-  background: #0a0a0a;
-  color: #fff;
-  border-color: #0a0a0a;
+  background: #0A0A0A;
+  color: #FFF;
+  border-color: #0A0A0A;
 }
 .btn-luxury--white {
-  color: #fff;
+  color: #FFF;
   border-color: rgba(255,255,255,0.5);
 }
 .btn-luxury--white:hover {
-  background: #fff;
-  color: #0a0a0a;
+  background: #FFF;
+  color: #0A0A0A;
 }
 
 /* Card shadows — échelle cohérente */
@@ -301,10 +288,11 @@ body { font-size: 16px; line-height: 1.6; }
 
 /* Eyebrow label raffiné */
 .eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.45em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
+  color: #0A0A0A;
   opacity: 0.55;
 }
 

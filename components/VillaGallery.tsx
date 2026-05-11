@@ -171,7 +171,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
             {/* Bouton toutes les photos */}
             <button
               onClick={(e) => { e.stopPropagation(); openAt(mobileIndex); }}
-              className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-navy shadow-lg tap-target"
+              className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy shadow-lg tap-target"
             >
               <Images size={14} />
               {galleryImages.length} photos
@@ -224,7 +224,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
         {/* Bouton "Afficher toutes" — desktop */}
         <button
           onClick={() => openAt(0)}
-          className="hidden md:flex absolute bottom-6 right-6 items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-navy shadow-lg hover:bg-white transition-colors border border-navy/10"
+          className="hidden md:flex absolute bottom-6 right-6 items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy shadow-lg hover:bg-white transition-colors border border-navy/10"
         >
           <Images size={14} />
           Toutes les photos

@@ -33,7 +33,7 @@ function AdminSidebarAccount({ onClose }: { onClose: () => void }) {
         <p className="truncate text-[11px] font-medium text-white/90" title={email}>
           {email}
         </p>
-        <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/40">
+        <p className="mt-0.5 text-[11px] uppercase tracking-wider text-white/45">
           Administrateur
         </p>
       </div>
@@ -96,8 +96,8 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               className={cn(
                 "group flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "border-l-2 border-gold bg-white/[0.08] text-gold"
-                  : "border-l-2 border-transparent text-white/75 hover:border-gold/40 hover:bg-white/[0.05] hover:text-white"
+                  ? "border border-gold/30 bg-gold/[0.08] text-gold"
+                  : "border border-transparent text-white/75 hover:border-gold/30 hover:bg-white/[0.05] hover:text-white"
               )}
               aria-current={isActive ? "page" : undefined}
             >

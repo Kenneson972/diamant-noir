@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: "Kayvila",
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
   },
 };
 
@@ -74,12 +75,17 @@ export default async function RootLayout({
   return (
     <html lang={initialLocale} className="scroll-smooth">
       <body className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} bg-offwhite`}>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-navy focus:text-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-gold">
+          Aller au contenu
+        </a>
         <LocaleProvider initialLocale={initialLocale} initialCurrency={initialCurrency}>
           <AuthProvider>
           <WishlistProvider>
             <CompareProvider>
               <SiteFrame isDevelopment={isDevelopment}>
+                <div id="main-content" tabIndex={-1}>
                 {children}
+                </div>
               </SiteFrame>
               <ChatbotDynamic />
               <CompareBar />
