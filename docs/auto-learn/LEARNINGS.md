@@ -57,3 +57,18 @@
 - Les hooks React (`useState`, `useEffect`) doivent être avant tout early return
 - Le profil enrichi se sauvegarde dans la table `profiles` (pas dans `auth.users` metadata)
 - `border-l-2` → `border border-gold/30 bg-gold/[0.08]` (border complète + fond teinté)
+
+---
+
+## 2026-05-11 — Phase 2 Espace Client Confort ✅ TERMINÉ
+
+### Fait (3 créés, 2 modifiés)
+- **Partage séjour** : page `/share/[token]` publique sans auth, lien copiable (btoa/atob)
+- **Calendrier .ics** : export Google/Apple/Outlook, `lib/generate-ics.ts`
+- **Services ponctuels** : ménage, linge, gaz dans la page Conciergerie
+- **Boutons Séjour** : calendrier + partage ajoutés sous la grille Accès rapide
+
+### Règles apprises
+- `Buffer.from()` n'existe pas côté client → utiliser `btoa()` / `atob()`
+- L'export .ics utilise le format `YYYYMMDDTHHmmssZ` pour DTSTART/DTEND
+- Les hooks React doivent TOUJOURS être avant tout `if (condition) return`
