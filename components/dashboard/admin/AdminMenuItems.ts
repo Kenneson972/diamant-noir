@@ -12,6 +12,7 @@ export const adminMenuItems: MenuItem[] = [
   { label: "Propriétaires", href: "/admin/proprietaires", icon: "Users" },
   { label: "Clients", href: "/admin/clients", icon: "UserCircle" },
   { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
+  { label: "Avis", href: "/admin/avis", icon: "Star" },
   { label: "Assistant", href: "/admin/assistant", icon: "Sparkles" },
   { label: "Sync OTA", href: "/admin/sync-ota", icon: "Zap" },
   { label: "Soumissions", href: "/admin/submissions", icon: "Inbox" },

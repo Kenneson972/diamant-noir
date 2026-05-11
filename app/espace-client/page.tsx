@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { RequestList } from "@/components/espace-client/RequestList";
+import { ReviewForm } from "@/components/espace-client/ReviewForm";
 import { downloadICS } from "@/lib/generate-ics";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
@@ -98,6 +99,8 @@ export default function EspaceClientPage() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string | undefined>(undefined);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
+  const [similarVillas, setSimilarVillas] = useState<any[]>([]);
   useEffect(() => {
     if (!supabase) {
       setLoading(false);
@@ -135,8 +138,30 @@ export default function EspaceClientPage() {
         .in("id", villaIds);
 
       const villaMap = Object.fromEntries((villas || []).map((v: any) => [v.id, v]));
-      setBookings(data.map((b: any) => ({ ...b, villa: villaMap[b.villa_id] })));
+      const enriched = data.map((b: any) => ({ ...b, villa: villaMap[b.villa_id] }));
+      setBookings(enriched);
+      const pastVillaIds = enriched
+        .filter((b: any) => new Date(b.end_date) < new Date())
+        .map((b: any) => b.villa_id)
+        .filter(Boolean);
+      if (pastVillaIds.length > 0) {
+        const { data: similar } = await supabase
+          .from("villas")
+          .select("id, name, location, image_url, capacity, price_per_night")
+          .neq("id", pastVillaIds[0])
+          .eq("is_published", true)
+          .limit(3);
+        setSimilarVillas((similar ?? []) as any[]);
+      }
       setLoading(false);
+      // Fetch already-reviewed bookings
+      const { data: existingReviews } = await supabase
+        .from("reviews")
+        .select("booking_id")
+        .eq("guest_id", session.user.id);
+      if (existingReviews) {
+        setReviewedBookingIds(new Set(existingReviews.map((r: any) => r.booking_id)));
+      }
     })();
   }, [supabase]);
 
@@ -453,8 +478,65 @@ export default function EspaceClientPage() {
             </p>
           )}
           <div className="grid gap-3 sm:grid-cols-2">
-            {otherBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+            {otherBookings.map((booking) => {
+              const isPast = new Date(booking.end_date) < new Date();
+              const hasReviewed = reviewedBookingIds.has(booking.id);
+              return (
+                <div key={booking.id} className="space-y-3">
+                  <BookingCard booking={booking} />
+                  {isPast && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Link
+                        href={`/villas/${booking.villa_id}`}
+                        className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-navy/50 hover:text-gold transition-colors"
+                      >
+                        <ArrowRight size={12} />
+                        Re-réserver
+                      </Link>
+                    </div>
+                  )}
+                  {isPast && !hasReviewed && (
+                    <ReviewForm
+                      bookingId={booking.id}
+                      villaId={booking.villa_id}
+                      onSuccess={() => setReviewedBookingIds((prev) => new Set([...prev, booking.id]))}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Villas similaires */}
+      {similarVillas.length > 0 && (
+        <div className="space-y-4">
+          <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25">Villas similaires</p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {similarVillas.map((v: any) => (
+              <Link
+                key={v.id}
+                href={`/villas/${v.id}`}
+                className="group border border-navy/10 bg-white overflow-hidden no-underline hover:border-gold/30 transition-colors"
+              >
+                <div className="aspect-[16/9] bg-navy/5 overflow-hidden">
+                  {v.image_url ? (
+                    <img src={v.image_url} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-navy/10 text-[10px] uppercase">Kayvila</div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-display text-sm text-navy group-hover:text-gold transition-colors">{v.name}</h3>
+                  {v.location && (
+                    <p className="text-[11px] text-navy/40 mt-0.5">{v.location}</p>
+                  )}
+                  <p className="text-sm font-semibold text-navy mt-2">
+                    {v.price_per_night}€<span className="text-[10px] font-normal text-navy/40">/nuit</span>
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

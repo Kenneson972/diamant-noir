@@ -8,14 +8,14 @@ import {
   LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
   DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
   Home, BookOpen, MessageCircle, FileText,
-  ClipboardList, BarChart3, Bell,
+  ClipboardList, BarChart3, Bell, Heart, Gift, Star,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
   DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
   Home, BookOpen, MessageCircle, FileText,
-  ClipboardList, BarChart3, Bell,
+  ClipboardList, BarChart3, Bell, Heart, Gift, Star,
 };
 
 export interface SidebarMenuItem {
