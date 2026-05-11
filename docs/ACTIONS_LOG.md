@@ -66,6 +66,28 @@
   5. **Re-exports supprimés** — hub-classique, assistant, submissions (3 fichiers)
   6. **Menu admin** — 10 entrées, Propriétaires migré vers Villas
   7. **`conciergerie_settings`** — table pour contacts/horaires/services éditables
+
+---
+
+## 2026-05-11 — Phase B — Pages Admin Améliorées
+
+- **type**: `feature | ui | refactor`
+- **summary**:
+  1. **Dashboard** — activité récente dynamique (demandes+résas+avis), alertes réelles, TOP 5 villas aimées
+  2. **Hub Classique natif** — page admin-native remplaçant le re-export supprimé
+  3. **Réservations** — client component, pagination 20/page, filtres, boutons confirmer/annuler
+  4. **Revenus** — graphique Recharts BarChart CA mensuel (12 mois)
+  5. **Paramètres** — section Conciergerie éditable (ConciergerieSettingsForm)
+  6. **Avis** — AdminPageIntro + notification client à l'approbation/rejet
+
+---
+
+## 2026-05-11 — Phase C — Messagerie + Fiche Client 360°
+
+- **type**: `feature`
+- **summary**:
+  1. **Messagerie admin** (`/admin/messagerie`) — console chat temps réel (Supabase Realtime)
+  2. **Fiche client 360°** (`/admin/clients/[id]`) — infos, préférences séjour, réservations, demandes, avis
   6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
 - **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
 - **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.

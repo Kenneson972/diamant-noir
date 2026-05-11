@@ -166,6 +166,11 @@ middleware.ts                # Auth guard
 - **Triggers** : admin résout/refuse → notif guest ; guest crée demande → notif confirmation
 - **Migration** : `user_id` sur `notifications`, 4 nouveaux types, RLS pour authenticated
 
+### 11 mai — Refonte Dashboard Admin (Phases A+B+C) ✅
+- **Phase A** : constantes centralisées, RLS fixée, 3 re-exports supprimés, menu 10 entrées, types complets
+- **Phase B** : dashboard KPIs réels, hub classique natif, réservations actionnables, Recharts, conciergerie éditable
+- **Phase C** : messagerie admin temps réel, fiche client 360°
+
 ### 11 mai — Phase 2 Espace Client Confort ✅
 - **Partage séjour** : page publique `/share/[token]`, lien copiable (btoa/atob)
 - **Calendrier .ics** : export Google/Apple/Outlook, `lib/generate-ics.ts`
@@ -186,7 +191,20 @@ middleware.ts                # Auth guard
 
 ## 8. Prochaines étapes
 
-1. **Phase 3 (suite)** : avis post-séjour, re-réserver & villas similaires, parrainage, favoris
+1. **IA Copilot** : chatbot proactif + réactif pour le concierge
 2. **Stripe** : intégration paiement en ligne
 3. **Déploiement Vercel** : lier le repo, configurer env vars
 4. **Tests end-to-end** : valider le tunnel complet login → réservation → demande → admin → notif
+
+## 9. Statistiques globales (session du 11 mai 2026)
+
+| Métrique | Total |
+|---|---|
+| Fichiers créés | 24 |
+| Fichiers modifiés | 35 |
+| Fichiers supprimés | 12 |
+| Migrations Supabase | 9 |
+| Commits | 18 |
+| Build | ✅ 0 erreurs |
+| RLS fixée | requests, villa_submissions |
+| Tables enrichies | notifications, reviews, referrals, conciergerie_settings |
