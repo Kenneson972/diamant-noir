@@ -88,6 +88,17 @@
 - **summary**:
   1. **Messagerie admin** (`/admin/messagerie`) — console chat temps réel (Supabase Realtime)
   2. **Fiche client 360°** (`/admin/clients/[id]`) — infos, préférences séjour, réservations, demandes, avis
+
+---
+
+## 2026-05-11 — Nettoyage Dashboard Proprio
+
+- **type**: `cleanup | refactor`
+- **summary**:
+  1. **Suppression `app/dashboard/proprio/`** — 5 pages legacy (-3 511 lignes), dont le monolithe [villaId] de 2 187 lignes
+  2. **Redirections fixées** : register → `/dashboard`, admin villa → `/dashboard/villas/[id]`
+  3. **Menu proprio corrigé** — routes fantômes remplacées par les vraies routes `/dashboard/*`
+  4. **Composants conservés** : `components/dashboard/proprio/` (KpiRow, VillaCard, etc.) reste utilisé par le vrai dashboard
   6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
 - **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
 - **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.
