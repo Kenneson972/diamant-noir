@@ -1,98 +1,89 @@
+'use client';
+
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { CollectionGrid } from '@/components/home/CollectionGrid';
+import { EditorialBanner } from '@/components/home/EditorialBanner';
+import { NewArrivals } from '@/components/home/NewArrivals';
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] as const },
+  },
+};
 
 export default function FemmePage() {
   return (
     <>
-      {/* Hero */}
+      {/* Section 1: Hero Collection */}
       <section
-        className="relative h-screen flex items-end p-12 md:p-20"
-        style={{ background: 'linear-gradient(135deg, #948575 0%, #746555 100%)' }}
+        className="relative h-screen flex items-end p-[clamp(2rem,5vw,6rem)]"
+        style={{ background: 'linear-gradient(135deg, #c4b5a5, #948575)' }}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-        <div className="relative z-10">
-          <p className="text-[0.5625rem] uppercase tracking-[0.3em] text-white/40 mb-4">
-            Nouveaut&eacute;s &Eacute;t&eacute; 2026
-          </p>
-          <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] text-white leading-[0.95] tracking-[-0.02em]">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+          className="relative z-10 max-w-[600px]"
+        >
+          <motion.p variants={staggerItem} className="text-pvl-kicker text-pvl-gold mb-4">
+            COLLECTION &Eacute;T&Eacute; 2026
+          </motion.p>
+          <motion.h1 variants={staggerItem} className="text-pvl-hero-title text-white mb-8">
             La silhouette<br />f&eacute;minine
-          </h1>
-          <div className="mt-10 flex gap-6">
+          </motion.h1>
+          <motion.div variants={staggerItem}>
             <Link
               href="/femme/nouveautes"
-              className="group inline-flex items-center gap-3 border-b border-white/30 pb-2 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-white/70 hover:text-white hover:border-white/60 transition-all duration-300"
+              className="group inline-flex items-center gap-0 text-pvl-meta text-white uppercase"
             >
-              Nouveaut&eacute;s{' '}
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
+              D&Eacute;COUVRIR
+              <span className="block w-0 group-hover:w-full h-px bg-white/50 ml-2 transition-all duration-400" />
             </Link>
-            <Link
-              href="/femme/essentiels"
-              className="group inline-flex items-center gap-3 border-b border-white/30 pb-2 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-white/70 hover:text-white hover:border-white/60 transition-all duration-300"
-            >
-              Essentiels{' '}
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* Block 2 */}
-      <section
-        className="relative h-screen flex items-end p-12 md:p-20"
-        style={{ background: 'linear-gradient(135deg, #c4b5a5 0%, #948575 100%)' }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-        <div className="relative z-10 max-w-xl">
-          <p className="text-[0.5625rem] uppercase tracking-[0.3em] text-white/40 mb-4">
-            Essentiels
-          </p>
-          <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] text-white leading-[1.05] tracking-[-0.01em]">
-            La robe<br />signature
-          </h2>
-          <Link
-            href="/femme/essentiels"
-            className="group inline-flex items-center gap-3 border-b border-white/30 pb-2 mt-8 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-white/70 hover:text-white hover:border-white/60 transition-all duration-300"
-          >
-            D&eacute;couvrir{' '}
-            <ArrowRight
-              size={14}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
-        </div>
-      </section>
+      {/* Section 2: CollectionGrid */}
+      <CollectionGrid
+        blocks={[
+          {
+            title: 'Robes',
+            href: '/femme/nouveautes',
+            imageStyle: { background: 'linear-gradient(135deg, #d4c5b5, #a49585)' },
+            span: 'tall',
+          },
+          {
+            title: 'Tailleurs',
+            href: '/femme/essentiels',
+            imageStyle: { background: 'linear-gradient(135deg, #b4a595, #847565)' },
+          },
+          {
+            title: 'Soie',
+            href: '/femme/silhouettes',
+            imageStyle: { background: 'linear-gradient(135deg, #c4b5a5, #948575)' },
+          },
+        ]}
+      />
 
-      {/* Block 3 */}
-      <section
-        className="relative h-screen flex items-end p-12 md:p-20"
-        style={{ background: 'linear-gradient(135deg, #a49585 0%, #847565 100%)' }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-        <div className="relative z-10 max-w-xl ml-auto text-right">
-          <p className="text-[0.5625rem] uppercase tracking-[0.3em] text-white/40 mb-4">
-            Silhouettes
-          </p>
-          <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] text-white leading-[1.05] tracking-[-0.01em]">
-            La puissance<br />du mouvement
-          </h2>
-          <Link
-            href="/femme/silhouettes"
-            className="group inline-flex items-center gap-3 border-b border-white/30 pb-2 mt-8 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-white/70 hover:text-white hover:border-white/60 transition-all duration-300"
-          >
-            D&eacute;couvrir{' '}
-            <ArrowRight
-              size={14}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
-        </div>
-      </section>
+      {/* Section 3: EditorialBanner + NewArrivals */}
+      <EditorialBanner
+        kicker="ARTISANAT"
+        title="L'élégance féminine"
+        body="Chaque création est imaginée à Fort-de-France avec une exigence absolue. Dentelle de Calais, soie sauvage, lin français — des matières d'exception pour des pièces qui épousent le mouvement de la vie."
+        href="/a-propos"
+        linkLabel="En savoir plus"
+        imageStyle={{ background: 'linear-gradient(135deg, #d4c5b5, #b4a595)' }}
+      />
+      <NewArrivals title="NOUVEAUTÉS" products={[]} />
     </>
   );
 }
