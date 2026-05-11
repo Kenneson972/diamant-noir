@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, Heart, Calendar, Clock, Baby } from "lucide-react";
+import { Button } from "@/components/espace-client/tenant-ui";
 import Link from "next/link";
 import {
   Card,
@@ -19,6 +20,14 @@ export default function ProfilPage() {
   const supabase = getSupabaseBrowser();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [allergies, setAllergies] = useState("");
+  const [specialOccasion, setSpecialOccasion] = useState("");
+  const [specialOccasionDate, setSpecialOccasionDate] = useState("");
+  const [estimatedArrival, setEstimatedArrival] = useState("");
+  const [needsBabyBed, setNeedsBabyBed] = useState(false);
+  const [needsHighChair, setNeedsHighChair] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -76,7 +85,39 @@ export default function ProfilPage() {
     );
   }
 
-  const metadata = user.user_metadata ?? {};
+  const metadata = user?.user_metadata ?? {};
+
+  useEffect(() => {
+    if (!supabase || !user?.id) return;
+    (async () => {
+      const { data } = await supabase.from("profiles").select("allergies, special_occasion, special_occasion_date, estimated_arrival, needs_baby_bed, needs_high_chair").eq("id", user.id).maybeSingle();
+      if (data) {
+        setAllergies(data.allergies ?? "");
+        setSpecialOccasion(data.special_occasion ?? "");
+        setSpecialOccasionDate(data.special_occasion_date ?? "");
+        setEstimatedArrival(data.estimated_arrival ?? "");
+        setNeedsBabyBed(data.needs_baby_bed ?? false);
+        setNeedsHighChair(data.needs_high_chair ?? false);
+      }
+    })();
+  }, [supabase, user]);
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supabase || !user?.id) return;
+    setProfileLoading(true);
+    const { error } = await supabase.from("profiles").upsert({
+      id: user.id,
+      allergies,
+      special_occasion: specialOccasion,
+      special_occasion_date: specialOccasionDate || null,
+      estimated_arrival: estimatedArrival,
+      needs_baby_bed: needsBabyBed,
+      needs_high_chair: needsHighChair,
+    });
+    setProfileLoading(false);
+    if (!error) { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 3000); }
+  };
 
   return (
     <div className="space-y-8 max-w-md">
@@ -100,6 +141,65 @@ export default function ProfilPage() {
             currentAvatar={metadata.avatar_url}
             demoMode={false}
           />
+        </CardContent>
+      </Card>
+
+      {/* Préférences de séjour */}
+      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
+        <CardHeader className="px-6 pb-0 pt-6">
+          <CardTitle className="flex items-center gap-2 font-display text-base font-normal text-navy">
+            <Heart size={16} className="text-gold" />
+            Préférences de séjour
+          </CardTitle>
+          <p className="text-xs text-navy/40 mt-1">Ces informations aident notre équipe à préparer votre accueil.</p>
+        </CardHeader>
+        <CardContent className="p-6">
+          <form onSubmit={handleSaveProfile} className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Allergies & régimes alimentaires</label>
+              <input type="text" value={allergies} onChange={(e) => setAllergies(e.target.value)} placeholder="ex: arachides, lactose, végétarien" className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Occasion spéciale</label>
+                <select value={specialOccasion} onChange={(e) => setSpecialOccasion(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50">
+                  <option value="">Aucune</option>
+                  <option value="anniversary">Anniversaire de mariage</option>
+                  <option value="birthday">Anniversaire</option>
+                  <option value="honeymoon">Lune de miel</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Date</label>
+                <input type="date" value={specialOccasionDate} onChange={(e) => setSpecialOccasionDate(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2"><Clock size={12} className="inline mr-1" />Heure d'arrivée estimée</label>
+              <select value={estimatedArrival} onChange={(e) => setEstimatedArrival(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50">
+                <option value="">Non précisée</option>
+                {Array.from({ length: 9 }, (_, i) => i + 14).map(h => (<option key={h} value={`${h}:00`}>{h}:00</option>))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2"><Baby size={12} className="inline mr-1" />Équipement bébé</label>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 text-sm text-navy/70 cursor-pointer">
+                  <input type="checkbox" checked={needsBabyBed} onChange={(e) => setNeedsBabyBed(e.target.checked)} className="w-4 h-4 border-navy/20 text-gold focus:ring-gold" />
+                  Lit bébé
+                </label>
+                <label className="flex items-center gap-2 text-sm text-navy/70 cursor-pointer">
+                  <input type="checkbox" checked={needsHighChair} onChange={(e) => setNeedsHighChair(e.target.checked)} className="w-4 h-4 border-navy/20 text-gold focus:ring-gold" />
+                  Chaise haute
+                </label>
+              </div>
+            </div>
+            {profileSaved && <p className="text-[11px] text-emerald-600 font-medium">✓ Préférences sauvegardées</p>}
+            <Button type="submit" variant="primary" fullWidth disabled={profileLoading} className="h-12 rounded-xl border-0 bg-navy text-[11px] font-semibold uppercase tracking-[0.15em] text-white hover:bg-gold hover:text-navy">
+              {profileLoading ? "Enregistrement..." : "Enregistrer les préférences"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 

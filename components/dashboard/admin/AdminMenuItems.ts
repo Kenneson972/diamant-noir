@@ -11,6 +11,7 @@ export const adminMenuItems: MenuItem[] = [
   { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
   { label: "Propriétaires", href: "/admin/proprietaires", icon: "Users" },
   { label: "Clients", href: "/admin/clients", icon: "UserCircle" },
+  { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
   { label: "Assistant", href: "/admin/assistant", icon: "Sparkles" },
   { label: "Sync OTA", href: "/admin/sync-ota", icon: "Zap" },
   { label: "Soumissions", href: "/admin/submissions", icon: "Inbox" },
