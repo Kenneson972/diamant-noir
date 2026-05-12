@@ -23,7 +23,7 @@ const checkoutSchema = z.object({
 type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, openCart } = useCart();
   const {
     register,
     handleSubmit,
@@ -48,12 +48,12 @@ export default function CheckoutPage() {
           >
             Maison PVL
           </Link>
-          <Link
-            href="/panier"
+          <button
+            onClick={openCart}
             className="text-[0.625rem] uppercase tracking-[0.15em] text-pvl-stone hover:text-pvl-black transition-colors"
           >
             Retour au panier
-          </Link>
+          </button>
         </div>
       </div>
 

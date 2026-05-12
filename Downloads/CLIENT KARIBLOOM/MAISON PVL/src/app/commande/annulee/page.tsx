@@ -34,10 +34,10 @@ export default function OrderCancelledPage() {
           Réessayer le paiement
         </Link>
         <Link
-          href="/panier"
+          href="/"
           className="block w-full border border-pvl-black/12 py-4 text-[0.6875rem] font-medium uppercase tracking-[0.2em] hover:bg-pvl-cream transition-colors"
         >
-          Modifier mon panier
+          Retour à l'accueil
         </Link>
         <Link
           href="/homme"
