@@ -1,9 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Minus, Plus } from 'lucide-react';
 import { Product } from '@/types';
+import { cn } from '@/lib/cn';
 import { useCart } from '@/store/cartStore';
+import { ShopTheLook } from '@/components/product/ShopTheLook';
+import { YouMayLike } from '@/components/product/YouMayLike';
 
 interface ProductDetailClientProps {
   product: Product;
@@ -42,6 +47,25 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
   };
 
   return (
+    <>
+      {/* Breadcrumb */}
+      <nav className="container-pvl pt-28 pb-4">
+        <ol className="flex items-center gap-1.5 text-[0.625rem] uppercase tracking-[0.15em] text-pvl-stone">
+          <li>
+            <Link href={`/${product.gender}`} className="hover:text-pvl-black transition-colors">
+              {product.gender === 'femme' ? 'Femme' : 'Homme'}
+            </Link>
+          </li>
+          <span className="text-pvl-stone/40">/</span>
+          <li>
+            <Link href={`/${product.gender}/nouveautes`} className="hover:text-pvl-black transition-colors">
+              Collection
+            </Link>
+          </li>
+          <span className="text-pvl-stone/40">/</span>
+          <li className="text-pvl-black">{product.name}</li>
+        </ol>
+      </nav>
     <div className="flex flex-col md:flex-row">
       {/* LEFT: Image stack (58%) */}
       <div className="md:w-[58%]">
@@ -50,22 +74,20 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           {product.images.map((img, i) => (
             <div
               key={img.id}
-              className="w-full"
-              style={{ aspectRatio: i === 0 ? '3/4' : '4/5' }}
+              className="relative w-full"
+              style={{ aspectRatio: '3/4' }}
             >
               {img.url ? (
-                <img
+                <Image
                   src={img.url}
                   alt={img.alt}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="58vw"
+                  priority={i === 0}
                 />
               ) : (
-                <div
-                  className="w-full h-full"
-                  style={{
-                    background: `linear-gradient(135deg, hsl(${i * 30}, 20%, 70%), hsl(${i * 30 + 30}, 15%, 50%))`,
-                  }}
-                />
+                <div className="w-full h-full bg-pvl-cream" />
               )}
             </div>
           ))}
@@ -73,25 +95,22 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
 
         {/* Mobile: horizontal snap carousel */}
         <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
-          {product.images.map((img, i) => (
+          {product.images.map((img) => (
             <div
               key={img.id}
-              className="flex-shrink-0 w-screen snap-center"
+              className="relative flex-shrink-0 w-screen snap-center"
               style={{ aspectRatio: '3/4' }}
             >
               {img.url ? (
-                <img
+                <Image
                   src={img.url}
                   alt={img.alt}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
                 />
               ) : (
-                <div
-                  className="w-full h-full"
-                  style={{
-                    background: `linear-gradient(135deg, hsl(${i * 30}, 20%, 70%), hsl(${i * 30 + 30}, 15%, 50%))`,
-                  }}
-                />
+                <div className="w-full h-full bg-pvl-cream" />
               )}
             </div>
           ))}
@@ -168,27 +187,20 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className="min-w-[3rem] px-3 py-2 text-[0.75rem] uppercase border transition-all duration-150"
-                    style={{
-                      borderColor:
-                        selectedSize === size
-                          ? 'var(--color-pvl-black)'
-                          : 'oklch(62% 0.008 60 / 0.3)',
-                      backgroundColor:
-                        selectedSize === size
-                          ? 'var(--color-pvl-black)'
-                          : 'transparent',
-                      color:
-                        selectedSize === size
-                          ? 'var(--color-pvl-white)'
-                          : 'var(--color-pvl-black)',
-                      borderRadius: 'var(--radius-card)',
-                    }}
+                    className={cn(
+                      'min-w-[3rem] h-10 px-3 text-[0.75rem] uppercase border transition-colors',
+                      selectedSize === size
+                        ? 'border-pvl-black bg-pvl-black text-pvl-white'
+                        : 'border-pvl-stone/30 text-pvl-black hover:border-pvl-black'
+                    )}
                   >
                     {size}
                   </button>
                 ))}
               </div>
+              <button className="mt-3 text-[0.625rem] uppercase tracking-[0.1em] text-pvl-stone underline underline-offset-4 hover:text-pvl-black transition-colors">
+                Guide des tailles
+              </button>
             </div>
           )}
 
@@ -221,7 +233,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           <button
             onClick={handleAddToCart}
             disabled={!currentVariant}
-            className="w-full py-4 text-pvl-kicker uppercase tracking-[0.2em] transition-all duration-300 disabled:opacity-30"
+            className="w-full h-[52px] font-sans font-medium uppercase tracking-widest text-sm transition-all duration-300 disabled:opacity-30"
             style={{
               backgroundColor: added
                 ? 'var(--color-pvl-success)'
@@ -237,16 +249,79 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                 : 'Sélectionnez une taille'}
           </button>
 
-          {/* Materials / care */}
-          {(product.materials || product.care_instructions) && (
-            <p className="mt-8 text-pvl-meta text-pvl-stone leading-relaxed">
-              {product.materials}
-              {product.materials && product.care_instructions && ' — '}
-              {product.care_instructions}
-            </p>
-          )}
+          {/* Trust signals */}
+          <div className="mt-6 grid grid-cols-2 gap-3 text-center">
+            <div className="border border-pvl-black/6 py-3 px-2">
+              <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-pvl-stone">
+                Livraison offerte
+              </p>
+            </div>
+            <div className="border border-pvl-black/6 py-3 px-2">
+              <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-pvl-stone">
+                Retours 30 jours
+              </p>
+            </div>
+          </div>
+
+          {/* Accordions */}
+          <div className="mt-8 pt-8 border-t border-pvl-black/6 space-y-1">
+            <details className="group" open>
+              <summary className="flex items-center justify-between py-3 text-[0.6875rem] uppercase tracking-[0.15em] font-medium cursor-pointer text-pvl-black list-none">
+                Description
+                <span className="text-pvl-stone group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="pb-4 text-[0.8125rem] text-pvl-slate leading-relaxed">
+                {product.description}
+              </p>
+            </details>
+
+            {product.materials && (
+              <details className="group">
+                <summary className="flex items-center justify-between py-3 text-[0.6875rem] uppercase tracking-[0.15em] font-medium cursor-pointer text-pvl-black list-none">
+                  Matières
+                  <span className="text-pvl-stone group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="pb-4 text-[0.8125rem] text-pvl-slate leading-relaxed">
+                  {product.materials}
+                </p>
+              </details>
+            )}
+
+            {product.care_instructions && (
+              <details className="group">
+                <summary className="flex items-center justify-between py-3 text-[0.6875rem] uppercase tracking-[0.15em] font-medium cursor-pointer text-pvl-black list-none">
+                  Entretien
+                  <span className="text-pvl-stone group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="pb-4 text-[0.8125rem] text-pvl-slate leading-relaxed">
+                  {product.care_instructions}
+                </p>
+              </details>
+            )}
+
+            <details className="group">
+              <summary className="flex items-center justify-between py-3 text-[0.6875rem] uppercase tracking-[0.15em] font-medium cursor-pointer text-pvl-black list-none">
+                Livraison & retours
+                <span className="text-pvl-stone group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <div className="pb-4 text-[0.8125rem] text-pvl-slate leading-relaxed space-y-2">
+                <p>Livraison standard offerte en 3–5 jours ouvrés.</p>
+                <p>Retours gratuits sous 30 jours.</p>
+                <p>Click & Collect disponible en boutique.</p>
+              </div>
+            </details>
+          </div>
+
+          {/* Shop the Look */}
+          <div className="mt-8 pt-8 border-t border-pvl-black/6">
+            <ShopTheLook gender={product.gender as 'homme' | 'femme'} />
+          </div>
         </div>
       </div>
     </div>
+
+    {/* You May Also Like — full-width carousel */}
+    <YouMayLike gender={product.gender as 'homme' | 'femme'} />
+  </>
   );
 }
