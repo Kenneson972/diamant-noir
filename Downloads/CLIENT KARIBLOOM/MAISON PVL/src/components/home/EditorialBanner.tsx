@@ -1,68 +1,57 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 interface EditorialBannerProps {
   kicker: string;
   title: string;
-  body: string;
   href?: string;
   linkLabel?: string;
-  imageStyle: React.CSSProperties;
-  imagePosition?: 'left' | 'right';
+  imageUrl: string;
 }
 
 export function EditorialBanner({
   kicker,
   title,
-  body,
   href,
   linkLabel,
-  imageStyle,
-  imagePosition = 'left',
+  imageUrl,
 }: EditorialBannerProps) {
-  const imageBlock = (
-    <motion.div
-      whileInView={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 40 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7 }}
-      className="relative min-h-[50vh] md:min-h-[70vh]"
-      style={imageStyle}
-    />
-  );
-
-  const textBlock = (
-    <motion.div
-      whileInView={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 40 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, delay: 0.15 }}
-      className="bg-pvl-cream flex items-center p-[clamp(3rem,6vw,8rem)]"
-    >
-      <div className="max-w-md">
-        <p className="text-pvl-kicker text-pvl-gold-dim mb-4">{kicker}</p>
-        <h2 className="text-pvl-section-title text-pvl-black mb-6">{title}</h2>
-        <p className="text-pvl-manifesto text-pvl-slate leading-relaxed">{body}</p>
+  return (
+    <section className="relative w-screen h-[70dvh]">
+      <motion.div
+        whileInView={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.7 }}
+        className="absolute inset-0"
+      >
+        <Image
+          src={imageUrl}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+      </motion.div>
+      <div className="absolute inset-0 bg-black/15" />
+      <div className="absolute bottom-[4vw] left-[4vw] z-10">
+        <p className="text-[0.625rem] uppercase tracking-[0.2em] text-white/70 mb-3">{kicker}</p>
+        <h2 className="font-display text-[clamp(1.5rem,3.5vw,3rem)] font-normal leading-[1.1] text-white mb-4">
+          {title}
+        </h2>
         {href && linkLabel && (
           <Link
             href={href}
-            className="inline-block mt-8 text-pvl-meta text-pvl-slate hover:text-pvl-black transition-colors"
+            className="inline-block text-[0.6875rem] text-white/80 hover:text-white uppercase tracking-[0.2em] transition-colors"
           >
-            {linkLabel} &rarr;
+            {linkLabel} <ArrowRight size={14} strokeWidth={1.5} className="inline ml-1 -translate-y-px" />
           </Link>
         )}
       </div>
-    </motion.div>
-  );
-
-  return (
-    <section
-      className={`flex flex-col ${imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'}`}
-    >
-      <div className="md:w-[60%]">{imageBlock}</div>
-      <div className="md:w-[40%]">{textBlock}</div>
     </section>
   );
 }
