@@ -17,5 +17,6 @@
   "supprimer": "Remove",
   "modifier": "Edit",
   "quantite": "Quantity",
+  "livraison-offerte": "Free",
   "estimation-livraison": "Calculated at next step"
 }
