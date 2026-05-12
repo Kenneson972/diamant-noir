@@ -24,6 +24,15 @@ export function CartDrawer() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeCart();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [isOpen, closeCart]);
+
   if (!isOpen) return null;
 
   const count = items.reduce((n, i) => n + i.quantity, 0);
@@ -37,7 +46,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <div className="absolute top-0 right-0 bottom-0 w-full max-w-md bg-pvl-white flex flex-col">
+      <div role="dialog" aria-modal="true" aria-label={t('cart.titre')} className="absolute top-0 right-0 bottom-0 w-full max-w-md bg-pvl-white flex flex-col">
         {/* Header — 56px, aligned with site header */}
         <div className="flex items-center justify-between h-[56px] px-5 border-b border-pvl-black/6">
           <button
@@ -115,7 +124,7 @@ export function CartDrawer() {
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             className="p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
-                            aria-label={t('common.quantite')}
+                            aria-label="Diminuer la quantité"
                           >
                             <Minus size={14} strokeWidth={1.5} />
                           </button>
@@ -125,7 +134,7 @@ export function CartDrawer() {
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             className="p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
-                            aria-label={t('common.quantite')}
+                            aria-label="Augmenter la quantité"
                           >
                             <Plus size={14} strokeWidth={1.5} />
                           </button>
