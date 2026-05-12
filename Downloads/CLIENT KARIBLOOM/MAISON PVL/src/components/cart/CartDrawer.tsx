@@ -123,7 +123,7 @@ export function CartDrawer() {
                         <div className="flex items-center border border-pvl-black/12">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
+                            className="w-11 h-11 flex items-center justify-center text-pvl-slate hover:text-pvl-black transition-colors"
                             aria-label="Diminuer la quantité"
                           >
                             <Minus size={14} strokeWidth={1.5} />
@@ -133,7 +133,7 @@ export function CartDrawer() {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="p-1.5 text-pvl-slate hover:text-pvl-black transition-colors"
+                            className="w-11 h-11 flex items-center justify-center text-pvl-slate hover:text-pvl-black transition-colors"
                             aria-label="Augmenter la quantité"
                           >
                             <Plus size={14} strokeWidth={1.5} />

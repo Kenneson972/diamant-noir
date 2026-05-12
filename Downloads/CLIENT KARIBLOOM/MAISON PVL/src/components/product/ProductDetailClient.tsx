@@ -49,21 +49,21 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
   return (
     <>
       {/* Breadcrumb */}
-      <nav className="container-pvl pt-28 pb-4">
+      <nav aria-label="Fil d'ariane" className="container-pvl pt-28 pb-4">
         <ol className="flex items-center gap-1.5 text-[0.625rem] uppercase tracking-[0.15em] text-pvl-stone">
           <li>
             <Link href={`/${product.gender}`} className="hover:text-pvl-black transition-colors">
               {product.gender === 'femme' ? 'Femme' : 'Homme'}
             </Link>
           </li>
-          <span className="text-pvl-stone/40">/</span>
+          <li aria-hidden="true" className="text-pvl-stone/40">/</li>
           <li>
             <Link href={`/${product.gender}/nouveautes`} className="hover:text-pvl-black transition-colors">
               Collection
             </Link>
           </li>
-          <span className="text-pvl-stone/40">/</span>
-          <li className="text-pvl-black">{product.name}</li>
+          <li aria-hidden="true" className="text-pvl-stone/40">/</li>
+          <li className="text-pvl-black" aria-current="page">{product.name}</li>
         </ol>
       </nav>
     <div className="flex flex-col md:flex-row">
