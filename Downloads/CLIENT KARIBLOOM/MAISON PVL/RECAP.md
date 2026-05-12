@@ -1,6 +1,7 @@
 # Maison PVL — Recapitulatif du projet
 
 > Pret-a-porter premium homme & femme. Photographie d'abord, luxe editorial, inspiration SuitSupply + Bobbies.
+> Mis a jour : 2026-05-12 — Session CartDrawer Bobbies + fiche produit + audit taste-skill
 
 ---
 
@@ -27,120 +28,79 @@
 ```
 src/
 ├── app/
-│   ├── layout.tsx                    # Root layout, metadata, <Providers>
-│   ├── page.tsx                      # Split entry Homme/Femme (zero chrome)
+│   ├── layout.tsx                    # Root layout, metadata, skip-link, font preloads
+│   ├── page.tsx                      # Split entry Homme/Femme — CSS-only, zero animation
 │   ├── not-found.tsx                 # 404
-│   ├── (gendered)/                   # Route group — pages genrees
-│   │   ├── layout.tsx                #   GenderedLayout wrapper
-│   │   ├── homme/page.tsx            #   /homme — editorial full-bleed (3 sections)
-│   │   └── femme/page.tsx            #   /femme — editorial full-bleed (3 sections)
-│   ├── produit/[slug]/page.tsx       # /produit/[slug] — fiche produit
-│   ├── panier/page.tsx               # /panier
-│   ├── checkout/                     # /checkout (layout + page)
-│   ├── commande/                     # /commande/succes, /commande/annulee
-│   ├── connexion/page.tsx            # /connexion
-│   ├── inscription/page.tsx          # /inscription
-│   ├── mon-compte/                   # /mon-compte (layout + 6 pages)
-│   │   ├── page.tsx, profil/page.tsx
-│   │   ├── adresses/page.tsx
-│   │   ├── favoris/page.tsx
-│   │   └── commandes/page.tsx, commandes/[id]/page.tsx
-│   ├── recherche/page.tsx            # /recherche
-│   ├── a-propos/page.tsx             # /a-propos
-│   ├── contact/page.tsx              # /contact
-│   ├── cgv/page.tsx                  # /cgv
-│   ├── confidentialite/page.tsx      # /confidentialite
-│   ├── mentions-legales/page.tsx     # /mentions-legales
-│   ├── livraison-retours/page.tsx    # /livraison-retours
-│   ├── reinitialisation/page.tsx     # /reinitialisation (callback)
-│   ├── reinitialisation-mot-de-passe/page.tsx
-│   └── sav/                          # /sav, /sav/faq, /sav/retour
+│   ├── (gendered)/
+│   │   ├── homme/
+│   │   │   ├── page.tsx              # 6 sections photo (Hero → ImagePair → Banner → ImagePair → Banner → NewArrivals)
+│   │   │   ├── nouveautes/page.tsx    # CollectionHero + ProductGrid
+│   │   │   ├── essentiels/page.tsx    # CollectionHero + ProductGrid
+│   │   │   └── silhouettes/page.tsx   # CollectionHero + ProductGrid
+│   │   └── femme/
+│   │       ├── page.tsx              # 6 sections photo (Hero → ImagePair → Banner → ImagePair → Banner → NewArrivals)
+│   │       ├── nouveautes/page.tsx, essentiels/page.tsx, silhouettes/page.tsx
+│   ├── produit/[slug]/page.tsx       # Fiche produit (breadcrumb, grille tailles, accordeons, ShopTheLook, YouMayLike)
+│   ├── checkout/
+│   ├── commande/succes, commande/annulee
+│   ├── connexion/page.tsx, inscription/page.tsx
+│   ├── mon-compte/ (6 pages)
+│   ├── recherche/page.tsx
+│   ├── a-propos, contact, cgv, confidentialite, mentions-legales
+│   ├── livraison-retours/page.tsx
+│   ├── reinitialisation/page.tsx, reinitialisation-mot-de-passe/page.tsx
+│   └── sav/ (sav, faq, retour)
 │
 ├── components/
 │   ├── layout/
-│   │   ├── Header.tsx                # Variant solid | transparent, scroll detection
-│   │   ├── Footer.tsx                # 4 colonnes + newsletter + legal
-│   │   └── GenderedLayout.tsx        # Header transparent + main + Footer
+│   │   ├── Header.tsx                # 1 rangee 56px, logo centre, hamburger gauche, icones 44×44
+│   │   └── Footer.tsx                # 3 colonnes, fond transparent, sans newsletter
 │   ├── home/
-│   │   ├── HeroSection.tsx           # [OBSOLETE — remplace par le split]
-│   │   ├── CollectionGrid.tsx
-│   │   ├── EditorialBanner.tsx
-│   │   └── NewArrivals.tsx
+│   │   ├── ImagePair.tsx             # [NOUVEAU] 2 photos full-bleed cote-a-cote, 100vh desktop
+│   │   ├── CollectionGrid.tsx        # Zero overlay, zero "EXPLORER", H2 titres
+│   │   ├── EditorialBanner.tsx       # Full-bleed photo 70vh + texte superpose
+│   │   └── NewArrivals.tsx           # Carrousel horizontal produits
 │   ├── collection/
-│   │   ├── CollectionHero.tsx
-│   │   ├── ProductCard.tsx
-│   │   └── ProductGrid.tsx
+│   │   ├── CollectionHero.tsx        # Full-bleed, texte en bas a gauche
+│   │   ├── ProductCard.tsx           # Ratio 4:5, zero overlay, zero badge
+│   │   └── ProductGrid.tsx           # Grille 2-4 colonnes, filtres par categorie
 │   ├── product/
-│   │   ├── ProductDetailClient.tsx
-│   │   └── RelatedProducts.tsx
+│   │   ├── ProductDetailClient.tsx   # Layout 58/42, breadcrumb, grille tailles boutons, accordeons, trust signals
+│   │   ├── ShopTheLook.tsx           # [NOUVEAU] Drawer "Porter le look" avec 3 articles
+│   │   ├── YouMayLike.tsx            # [NOUVEAU] Carrousel "Vous aimerez peut-etre" 12 produits
+│   │   └── RelatedProducts.tsx       # [OBSOLETE — remplace par YouMayLike]
 │   ├── cart/
-│   │   └── CartDrawer.tsx            # Slide-over panier (Framer Motion)
+│   │   └── CartDrawer.tsx            # Slide-over panier
 │   └── common/
-│       ├── LanguageSwitcher.tsx      # FR/EN/ES/IT
+│       ├── LanguageSwitcher.tsx      # Dropdown compact "FR ⌄" avec ChevronDown
 │       ├── PageSEO.tsx
 │       └── ScrollToTop.tsx
 │
 ├── contexts/
-│   ├── Providers.tsx                  # I18nInit → AuthProvider → AppShell
-│   └── AuthContext.tsx               # Supabase Auth (signIn, signUp, signOut)
+│   ├── Providers.tsx                 # I18nInit → AuthProvider → AppShell (main#main-content)
+│   └── AuthContext.tsx
 │
 ├── store/
-│   ├── cartStore.ts                  # Zustand, persist localStorage
-│   └── wishlistStore.ts              # Zustand, persist localStorage
+│   ├── cartStore.ts
+│   └── wishlistStore.ts
 │
 ├── lib/
-│   ├── cn.ts                         # clsx + tailwind-merge
-│   ├── constants.ts                  # SITE_NAME, NAV_ITEMS, COLLECTION_TABS…
-│   ├── format.ts                     # formatPrice(), formatDate()
-│   ├── supabase.ts                   # Client Supabase unique
-│   └── stripe.ts                     # Stripe lazy-load singleton
+│   ├── cn.ts, constants.ts, format.ts, supabase.ts, stripe.ts
 │
 ├── types/
-│   └── index.ts                      # Product, Collection, Order, CartItem, Address…
+│   └── index.ts
 │
 └── i18n/
-    ├── config.ts                     # i18next init (4 locales, 6 namespaces)
+    ├── config.ts
     └── locales/{fr,en,es,it}/
-        ├── common.json
-        ├── home.json
-        ├── product.json
-        ├── account.json
-        ├── sav.json
-        └── cart.json
+        ├── common.json, home.json, product.json, account.json, sav.json, cart.json
 ```
 
 ---
 
 ## Routes (34 pages)
 
-| Route | Layout | Description |
-|---|---|---|
-| `/` | Minimal (zero chrome) | Split entry Homme/Femme |
-| `/homme` | GenderedLayout (header transparent) | Editorial Homme — 3 sections full-bleed |
-| `/femme` | GenderedLayout (header transparent) | Editorial Femme — 3 sections full-bleed |
-| `/produit/[slug]` | Default | Fiche produit |
-| `/panier` | Default | Page panier |
-| `/checkout` | Checkout | Paiement Stripe |
-| `/commande/succes` | Default | Confirmation commande |
-| `/commande/annulee` | Default | Commande annulee |
-| `/connexion` | Minimal | Connexion Supabase |
-| `/inscription` | Minimal | Inscription Supabase |
-| `/mon-compte` | Account layout | Dashboard compte |
-| `/mon-compte/profil` | Account layout | Edition profil |
-| `/mon-compte/adresses` | Account layout | Gestion adresses |
-| `/mon-compte/commandes` | Account layout | Historique commandes |
-| `/mon-compte/commandes/[id]` | Account layout | Detail commande |
-| `/mon-compte/favoris` | Account layout | Wishlist |
-| `/recherche` | Default | Recherche produits |
-| `/a-propos` | Default | A propos |
-| `/contact` | Default | Contact |
-| `/cgv` | Default | CGV |
-| `/confidentialite` | Default | Confidentialite |
-| `/mentions-legales` | Default | Mentions legales |
-| `/livraison-retours` | Default | Livraison & retours |
-| `/sav` | Default | Service apres-vente |
-| `/sav/faq` | Default | FAQ |
-| `/sav/retour` | Default | Demande de retour |
+Voir ci-dessus pour arborescence detaillee.
 
 ---
 
@@ -170,19 +130,6 @@ src/
 | Display | **Rufina** (Google Fonts) | 400, 700 |
 | Body | **Karla** (Google Fonts) | 300, 400, 500, 600 |
 
-### Utilities
-
-| Classe | Usage |
-|---|---|
-| `text-pvl-kicker` | Labels uppercase (0.6875rem, tracking 0.24em) |
-| `text-pvl-meta` | Metadonnees (0.6875rem, tracking 0.1em) |
-| `text-pvl-price` | Prix (0.875rem, tabular-nums) |
-| `text-pvl-product-name` | Nom produit (0.8125rem) |
-| `text-pvl-section-title` | Titre section (clamp 1.5-2.75rem) |
-| `text-pvl-hero-title` | Titre hero (clamp 2-4.5rem) |
-| `text-pvl-manifesto` | Texte editorial (clamp 1.125-1.75rem) |
-| `container-pvl` | Container 1440px max, padding responsive |
-
 ### Radius & Ombres
 
 - `--radius-card: 2px` / `--radius-sm: 0`
@@ -194,17 +141,8 @@ src/
 
 ```typescript
 Gender = 'homme' | 'femme'
-
-Product         // id, slug, name, description, gender, price, images[], variants[], materials…
-ProductImage    // id, url, alt, width, height, position
-ProductVariant  // id, size, color, color_hex, sku, price, stock
-Collection      // id, slug, name, description, gender, image
-Category        // id, slug, name, gender
-CartItem        // id, product: Product, variant: ProductVariant, quantity
-Order           // id, user_id, status, items[], addresses, totals, tracking…
-Address         // first_name, last_name, line1, city, postal_code, country…
-Return          // id, order_id, status, items[], reason
-UserProfile     // id, email, first_name, last_name, phone, avatar_url
+Product, ProductImage, ProductVariant, Collection, Category
+CartItem, Order, Address, Return, UserProfile
 ```
 
 ---
@@ -227,7 +165,6 @@ UserProfile     // id, email, first_name, last_name, phone, avatar_url
 - `AuthContext` expose : `{ user, loading, signIn, signUp, signOut, resetPassword }`
 - `useAuth()` hook dans tous les composants client
 - Routes protegees : `/mon-compte/*`
-- Reset password : `/reinitialisation` (callback)
 
 ---
 
@@ -247,6 +184,98 @@ UserProfile     // id, email, first_name, last_name, phone, avatar_url
 3. **Or comme metal, pas comme chaleur** — laiton poli, ~5% de presence
 4. **Confiance francaise** — labels editoriaux, pas de points d'exclamation
 5. **Service par retenue** — politiques integrees discretement, jamais de popup
+
+---
+
+## Journal des modifications (2026-05-11)
+
+### Session refonte header + layout + recommandations
+
+**Comparatif Suitsupply vs PVL (mesures Playwright) :**
+
+| Metrique | Suitsupply | Avant | Apres |
+|----------|-----------|-------|-------|
+| Header hauteur | 52px | 125px | **56px** |
+| Header rows | 1 | 2 | **1** |
+| Header padding | 15px | 48px | **15px** |
+| Container padding | 0px | 48px | **0px** (images) |
+| Hero padding | 0px | 72px | **0px** |
+| Section gaps | 0px | 0px | 0px |
+| Sections photo | 5 | 3 | **6** |
+| Hauteur page | 5175px | 2238px | **4668px** |
+| Product ratio | 4:5 | 3:4 | **4:5** |
+| Langue | dropdown | 4 boutons | **dropdown** |
+
+**Fichiers modifies (18) :**
+
+| Fichier | Changement |
+|---------|-----------|
+| `Header.tsx` | 1 rangee 56px, hamburger gauche, logo centre "PVL", icones 44×44px, nav overlay plein ecran |
+| `Footer.tsx` | 3 colonnes, fond transparent, sans newsletter, padding 4vw |
+| `LanguageSwitcher.tsx` | Dropdown compact "FR ⌄" au lieu de 4 boutons |
+| `CollectionGrid.tsx` | Zero overlay noir, zero "EXPLORER", titres H2 avec drop-shadow |
+| `EditorialBanner.tsx` | Full-bleed photo 70vh, texte superpose, plus de split 60/40 crame |
+| `CollectionHero.tsx` | Full-bleed, texte en bas a gauche, bg-black/20 |
+| `ProductCard.tsx` | Ratio 3:4 → 4:5 |
+| `ImagePair.tsx` | **[NOUVEAU]** 2 photos full-bleed cote-a-cote, 100vh desktop, 50vh mobile |
+| `ShopTheLook.tsx` | **[NOUVEAU]** Drawer "Porter le look" avec 3 articles + total + CTA |
+| `YouMayLike.tsx` | **[NOUVEAU]** Carrousel 12 produits "Vous aimerez peut-etre", full-width |
+| `ProductDetailClient.tsx` | Integration ShopTheLook + YouMayLike |
+| `page.tsx` (entry) | CSS-only, pas de Framer Motion, overlay reduit 10%→5% |
+| `homme/page.tsx` | 6 sections photo : Hero → ImagePair → Banner → ImagePair → Banner → NewArrivals |
+| `femme/page.tsx` | 6 sections photo : Hero → ImagePair → Banner → ImagePair → Banner → NewArrivals |
+| `layout.tsx` | Skip-link "Aller au contenu" + font preloads |
+| `Providers.tsx` | pt-[56px] pour nouveau header |
+| `product.json` ×4 | Cle `you-may-like` ajoutee (fr/en/es/it) |
+
+**Audit score :** 13/20 → ~17/20
+
+---
+
+## Journal des modifications (2026-05-12)
+
+### Session CartDrawer Bobbies-style + fiche produit polish + audit taste-skill
+
+**Recherche Playwright — Bobbies & Suitsupply :**
+- Bobbies : grille tailles boutons, couleur = URL distincte, conseil pointure inline, drawer panier
+- Suitsupply : breadcrumb, accordeons details, "Choisir la taille" comme CTA primaire, livraison offerte pres du bouton
+- Pattern commun : drawer > page panier, tailles en grille (pas dropdown), accordeons, trust signals
+
+**Audit taste-skill (DESIGN_VARIANCE=8, MOTION_INTENSITY=6, VISUAL_DENSITY=4) :**
+- Score initial : 22/32 (Bon)
+- Points forts : typo Rufina+Karla, OKLCH tokens, pas d'Inter, pas d'emojis, 2px radius
+- P1 corriges : `h-screen` → `h-[dvh]`, `&rarr;` → ArrowRight, icones 18→20px, empty state NewArrivals
+
+**CartDrawer Bobbies-style (7 commits) :**
+| Commit | Description |
+|--------|-------------|
+| `9c08e2a` | Suppression page `/panier` — drawer devient l'experience unique |
+| `60b1d45` | CartDrawer complet : photos produits 96×128, controles quantite, footer resume |
+| `5b97f6e` | Fix a11y : Escape handler, role=dialog, aria-labels distincts |
+| `2bed797` | Fix liens `/panier` → openCart() dans checkout + commande/annulee |
+| `4fa6a4a` | ProductDetailClient : breadcrumb, grille tailles boutons, accordeons, trust signals |
+| `4edc585` | Fix i18n `livraison-offerte` dans common.json (fr/en/es/it), breadcrumb HTML valide |
+| `697d48b` | Fix `h-[dvh]` explicite pour sections avec images `fill` (entry, heros, banners) |
+
+**Fichiers modifies/crees :**
+- `CartDrawer.tsx` — rewrite complet Bobbies-style
+- `ProductDetailClient.tsx` — +breadcrumb, +grille tailles, +accordeons, +trust signals
+- `page.tsx` (entry) — `h-screen` → `h-[100dvh]`
+- `femme/page.tsx` + `homme/page.tsx` — `h-screen` → `h-[100dvh]`
+- `EditorialBanner.tsx` — `h-[70vh]` → `h-[70dvh]`, `&rarr;` → `<ArrowRight>`
+- `CollectionHero.tsx` — `h-[60vh]` → `h-[60dvh]`
+- `ImagePair.tsx` — `h-[50vh]/h-[100vh]` → `h-[50dvh]/h-[100dvh]`
+- `Header.tsx` — icones 18px → 20px
+- `NewArrivals.tsx` — empty state "Nouveautes a venir"
+- `checkout/page.tsx` — lien `/panier` → `openCart()`
+- `commande/annulee/page.tsx` — lien `/panier` → `/`
+- `common.json` ×4 — cle `cart.livraison-offerte` ajoutee
+- `panier/page.tsx` — **supprime**
+
+**Note technique — `dvh` vs `min-h` :**
+Les sections avec `next/image fill` (position: absolute) necessitent une hauteur explicite sur le parent. `min-h` ne l'etablit pas → les images font 0px. Solution : `h-[100dvh]` (hauteur explicite + dynamic viewport pour iOS Safari).
+
+**Build :** 0 erreurs, lint propre (1 warning preexistant dans Header.tsx)
 
 ---
 
