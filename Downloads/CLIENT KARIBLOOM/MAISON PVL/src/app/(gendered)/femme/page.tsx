@@ -5,7 +5,7 @@ import { EditorialBanner } from '@/components/home/EditorialBanner';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import type { Product } from '@/types';
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1920&h=1080&fit=crop';
+const HERO_IMAGE = '/images/photos/hero-femme.png';
 
 const PAIR_IMAGES = {
   robes: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&h=1000&fit=crop',
@@ -14,20 +14,20 @@ const PAIR_IMAGES = {
   manteau: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&h=1000&fit=crop',
 };
 
-const BANNER_IMAGE = 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=1080&fit=crop';
+const BANNER_IMAGE = '/images/photos/banner-artisanat.png';
 const EDITORIAL_IMAGE = 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=1920&h=1080&fit=crop';
 
 const NEW_ARRIVALS_FEMME: Product[] = [
   {
     id: 'na-f-0', slug: 'robe-capri', name: 'Robe Capri', description: '', gender: 'femme',
     category_id: '', collection_id: null, price: 349, compare_at_price: null, is_new: true, featured: true,
-    images: [{ id: 'na-f-0-0', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=750&fit=crop', alt: 'Robe Capri', width: 600, height: 750, position: 0 }, { id: 'na-f-0-1', url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=750&fit=crop', alt: 'Robe Capri vue 2', width: 600, height: 750, position: 1 }],
+    images: [{ id: 'na-f-0-0', url: '/images/photos/prod-femme-bikini.png', alt: 'Robe Capri', width: 1122, height: 1402, position: 0 }, { id: 'na-f-0-1', url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=750&fit=crop', alt: 'Robe Capri vue 2', width: 600, height: 750, position: 1 }],
     variants: [], materials: null, care_instructions: null, created_at: '', updated_at: '',
   },
   {
     id: 'na-f-1', slug: 'tailleur-parisienne', name: 'Tailleur Parisienne', description: '', gender: 'femme',
     category_id: '', collection_id: null, price: 449, compare_at_price: null, is_new: true, featured: false,
-    images: [{ id: 'na-f-1-0', url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=750&fit=crop', alt: 'Tailleur Parisienne', width: 600, height: 750, position: 0 }, { id: 'na-f-1-1', url: 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=600&h=750&fit=crop', alt: 'Tailleur Parisienne vue 2', width: 600, height: 750, position: 1 }],
+    images: [{ id: 'na-f-1-0', url: '/images/photos/prod-femme-01.png', alt: 'Tailleur Parisienne', width: 1122, height: 1402, position: 0 }, { id: 'na-f-1-1', url: 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=600&h=750&fit=crop', alt: 'Tailleur Parisienne vue 2', width: 600, height: 750, position: 1 }],
     variants: [], materials: null, care_instructions: null, created_at: '', updated_at: '',
   },
   {

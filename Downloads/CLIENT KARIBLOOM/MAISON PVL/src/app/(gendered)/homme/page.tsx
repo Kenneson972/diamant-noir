@@ -5,7 +5,7 @@ import { EditorialBanner } from '@/components/home/EditorialBanner';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import type { Product } from '@/types';
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1920&h=1080&fit=crop';
+const HERO_IMAGE = '/images/photos/hero-homme.png';
 
 const PAIR_IMAGES = {
   costumes: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&h=1000&fit=crop',
@@ -14,14 +14,14 @@ const PAIR_IMAGES = {
   chemises: 'https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=800&h=1000&fit=crop',
 };
 
-const BANNER_IMAGE = 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1920&h=1080&fit=crop';
+const BANNER_IMAGE = '/images/photos/banner-savoir-faire.png';
 const EDITORIAL_IMAGE = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=1080&fit=crop';
 
 const NEW_ARRIVALS_HOMME: Product[] = [
   {
     id: 'na-m-0', slug: 'costume-napoli', name: 'Costume Napoli', description: '', gender: 'homme',
     category_id: '', collection_id: null, price: 649, compare_at_price: null, is_new: true, featured: true,
-    images: [{ id: 'na-m-0-0', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=750&fit=crop', alt: 'Costume Napoli', width: 600, height: 750, position: 0 }, { id: 'na-m-0-1', url: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=750&fit=crop', alt: 'Costume Napoli vue 2', width: 600, height: 750, position: 1 }],
+    images: [{ id: 'na-m-0-0', url: '/images/photos/prod-homme-01.png', alt: 'Costume Napoli', width: 1122, height: 1402, position: 0 }, { id: 'na-m-0-1', url: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=750&fit=crop', alt: 'Costume Napoli vue 2', width: 600, height: 750, position: 1 }],
     variants: [], materials: null, care_instructions: null, created_at: '', updated_at: '',
   },
   {

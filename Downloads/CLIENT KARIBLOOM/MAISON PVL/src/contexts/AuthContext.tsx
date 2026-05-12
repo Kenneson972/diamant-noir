@@ -7,8 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { supabase } from '@/lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { getSupabase } from '@/lib/supabase';
+import type { SupabaseClient, User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -21,19 +21,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function noopAuth(): SupabaseClient['auth'] | null {
+  const client = getSupabase();
+  return client?.auth ?? null;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const auth = noopAuth();
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -42,22 +53,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const auth = noopAuth();
+    if (!auth) return { error: 'Service indisponible' };
+    const { error } = await auth.signInWithPassword({ email, password });
     return { error: error?.message ?? null };
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const auth = noopAuth();
+    if (!auth) return { error: 'Service indisponible' };
+    const { error } = await auth.signUp({ email, password });
     return { error: error?.message ?? null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const auth = noopAuth();
+    if (!auth) return;
+    await auth.signOut();
     setUser(null);
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const auth = noopAuth();
+    if (!auth) return { error: 'Service indisponible' };
+    const { error } = await auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reinitialisation`,
     });
     return { error: error?.message ?? null };

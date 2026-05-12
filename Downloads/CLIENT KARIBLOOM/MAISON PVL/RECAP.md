@@ -1,7 +1,7 @@
 # Maison PVL — Recapitulatif du projet
 
 > Pret-a-porter premium homme & femme. Photographie d'abord, luxe editorial, inspiration SuitSupply + Bobbies.
-> Mis a jour : 2026-05-12 — Session CartDrawer Bobbies + fiche produit + audit taste-skill
+> Mis a jour : 2026-05-12 — Session soir : integration 9 photos reelles + fix Supabase lazy
 
 ---
 
@@ -276,6 +276,47 @@ CartItem, Order, Address, Return, UserProfile
 Les sections avec `next/image fill` (position: absolute) necessitent une hauteur explicite sur le parent. `min-h` ne l'etablit pas → les images font 0px. Solution : `h-[100dvh]` (hauteur explicite + dynamic viewport pour iOS Safari).
 
 **Build :** 0 erreurs, lint propre (1 warning preexistant dans Header.tsx)
+
+---
+
+## Journal des modifications (2026-05-12 — soir)
+
+### Session integration photos reelles + fix Supabase lazy
+
+**Fix Supabase :**
+- `supabase.ts` : client passe en lazy init (`getSupabase()`) pour ne plus crasher au build sans `.env.local`
+- `AuthContext.tsx` : pattern `noopAuth()` qui retourne `null` si Supabase non configure — `useEffect`, `signIn/Up/Out`, `resetPassword` geres
+- Le site demarre sans variables d'environnement (images Unsplash + placeholder products)
+
+**Integration 9 photos reelles :**
+- Source : `MAISON PVL PHOTOS/` — 9 PNGs generes par IA
+- 4 landscape 16:9 (1672×941) → heros + bannieres
+- 5 portrait 4:5 (1122×1402) → splits + produits
+
+**Mapping photos → pages :**
+
+| Fichier | Page | Emplacement |
+|---|---|---|
+| `entry-homme.png` | `/` | Split Homme |
+| `entry-femme.png` | `/` | Split Femme |
+| `hero-homme.png` | `/homme` | Hero full-bleed |
+| `hero-femme.png` | `/femme` | Hero full-bleed |
+| `banner-savoir-faire.png` | `/homme` | EditorialBanner SAVOIR-FAIRE |
+| `banner-artisanat.png` | `/femme` | EditorialBanner ARTISANAT |
+| `prod-homme-01.png` | `/homme` | Costume Napoli (Nouveautes) |
+| `prod-femme-01.png` | `/femme` | Tailleur Parisienne (Nouveautes) |
+| `prod-femme-bikini.png` | `/femme` | Robe Capri (Nouveautes) |
+
+**Fichiers modifies (5) :**
+- `src/lib/supabase.ts` — lazy init + `getSupabase()` export
+- `src/contexts/AuthContext.tsx` — `noopAuth()` pattern, toutes les methodes securisees
+- `src/app/page.tsx` — SPLIT_IMAGES Unsplash → `/images/photos/entry-*.png`
+- `src/app/(gendered)/homme/page.tsx` — hero, banner, 1 produit
+- `src/app/(gendered)/femme/page.tsx` — hero, banner, 2 produits
+
+**Photos restantes :** 6 sections ImagePair + 2 EditorialBanners + 8 produits gardent leurs placeholders Unsplash (en attente de plus de photos).
+
+**Dev server :** port 3001 (`npx next dev -p 3001`). `.env.local` non requis pour le dev.
 
 ---
 

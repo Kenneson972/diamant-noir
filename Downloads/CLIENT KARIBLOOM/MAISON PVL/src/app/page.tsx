@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const SPLIT_IMAGES = {
-  homme: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=1600&fit=crop&crop=faces',
-  femme: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=1600&fit=crop&crop=faces',
+  homme: '/images/photos/entry-homme.png',
+  femme: '/images/photos/entry-femme.png',
 };
 
 export default function EntryPage() {
