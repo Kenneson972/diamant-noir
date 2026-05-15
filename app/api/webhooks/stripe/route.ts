@@ -67,13 +67,26 @@ export async function POST(request: Request) {
 
       const guestEmail = session.customer_email || session.customer_details?.email || null;
 
+      // Récupérer le PaymentIntent depuis la session
+      let paymentIntentId: string | null = null;
+      if (session.payment_intent) {
+        paymentIntentId = typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : session.payment_intent.id;
+      }
+
+      const updateData: Record<string, any> = {
+        status: "confirmed",
+        payment_status: "paid",
+        ...(guestEmail && { guest_email: guestEmail }),
+      };
+      if (paymentIntentId) {
+        updateData.stripe_payment_intent_id = paymentIntentId;
+      }
+
       const { error: updateError } = await supabase
         .from("bookings")
-        .update({
-          status: "confirmed",
-          payment_status: "paid",
-          ...(guestEmail && { guest_email: guestEmail }),
-        })
+        .update(updateData)
         .eq("id", bookingId);
 
       if (updateError) {
@@ -114,6 +127,44 @@ export async function POST(request: Request) {
         });
       } catch (e) {
         console.error("Notify admin failed:", e);
+      }
+
+      // ── Créer un compte client automatique si pas déjà inscrit ──
+      const clientEmail = guestEmail;
+      if (clientEmail) {
+        try {
+          // Vérifier si un profil existe déjà pour cet email
+          const { data: existingProfile } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("email", clientEmail)
+            .maybeSingle();
+
+          if (!existingProfile) {
+            // Créer un utilisateur via l'Admin API (email confirmé, pas de mot de passe)
+            const { data: newUser, error: createUserError } = await supabase.auth.admin.createUser({
+              email: clientEmail,
+              email_confirm: true,
+              user_metadata: {
+                source: "booking",
+              },
+            });
+
+            if (createUserError) {
+              console.error("Auto-account creation failed:", createUserError);
+            } else if (newUser?.user) {
+              console.log(`Compte client créé automatiquement pour ${clientEmail}`);
+
+              // Envoyer un magic link pour que le client définisse son mot de passe
+              await supabase.auth.admin.inviteUserByEmail(clientEmail, {
+                redirectTo: `${baseUrl}/espace-client`,
+              });
+            }
+          }
+        } catch (e) {
+          // Échec non bloquant — la réservation est déjà confirmée
+          console.error("Auto-account creation error (non-blocking):", e);
+        }
       }
     }
 

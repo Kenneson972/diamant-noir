@@ -332,9 +332,12 @@ export default function PrestationsPageClient() {
       trigger: driver,
       start: "top top",
       end: "bottom bottom",
-      scrub: 1.2,
+      scrub: 0.8,
       onUpdate: (self) => {
         const progress = self.progress;
+        // Lecture directe du progrès (pas de lissage) pour les frames + popups,
+        // afin que tout reste synchro même en scroll rapide.
+        const rawProgress = self.direction === 0 ? progress : ScrollTrigger.getById("prestations-raw")?.progress ?? progress;
         const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
         currentFrameRef.current = fi;
         renderFrame(fi);

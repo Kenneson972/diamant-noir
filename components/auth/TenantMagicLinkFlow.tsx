@@ -44,8 +44,7 @@ export function TenantMagicLinkFlow({ redirectTo }: TenantMagicLinkFlowProps) {
         metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
-      router.push(dest)
-      router.refresh()
+      window.location.href = dest
     },
     [supabase, router]
   )

@@ -97,7 +97,9 @@ function PasswordPanel({
           ? "Identifiants incorrects. Vérifiez votre email et votre mot de passe."
           : formatSupabaseAuthMessage(signError.message)
       )
+      setLoading(false)
     } else {
+      // Forcer un rechargement complet pour que le middleware voie les cookies
       const { data: userData } = await supabase.auth.getUser()
       const u = userData.user
       let profileRole: string | null = null
@@ -115,10 +117,10 @@ function PasswordPanel({
         metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
-      router.push(dest)
-      router.refresh()
+      // window.location.href force un vrai chargement serveur
+      // → le middleware Next.js peut lire les cookies et valider la session
+      window.location.href = dest
     }
-    setLoading(false)
   }
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -173,8 +175,7 @@ function PasswordPanel({
         metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
-      router.push(dest)
-      router.refresh()
+      window.location.href = dest
       return
     }
     if (data.user) {

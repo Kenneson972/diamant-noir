@@ -2,8 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { BookingList } from "@/components/dashboard/proprio/BookingList";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Réservations — Kayvila",
@@ -29,8 +32,8 @@ export default async function VillaReservationsPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch bookings
-  const { data: bookings } = await supabase
+  // Fetch bookings using admin client to bypass RLS
+  const { data: bookings } = await supabaseAdmin()
     .from("bookings")
     .select(
       "id, start_date, end_date, guest_name, status, price, total_price_cents"

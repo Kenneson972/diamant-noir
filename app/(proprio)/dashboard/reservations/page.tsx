@@ -1,9 +1,11 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import type { Villa, Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import Link from "next/link";
 import { ArrowRight, CalendarCheck } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Réservations — Kayvila",
@@ -15,10 +17,10 @@ export default async function ProprioReservationsIndexPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch villas with bookings for this owner
+  // Fetch villas for this owner
   const { data: villas } = await supabase
     .from("villas")
-    .select("id, name, slug, bookings(id, guest_name, check_in, check_out, status, total_price_cents)")
+    .select("id, name")
     .eq("owner_id", user!.id)
     .order("name");
 
@@ -41,13 +43,24 @@ export default async function ProprioReservationsIndexPage() {
     );
   }
 
-  const allUpcoming = (villas as unknown as (Villa & { bookings: Booking[] })[])
-    .flatMap((v) =>
-      (v.bookings || []).map((b) => ({ ...b, villaName: v.name, villaId: v.id }))
-    )
-    .filter((b) => b.status !== "cancelled" && b.status !== "refunded")
-    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
-    .slice(0, 10);
+  // Fetch bookings for all owner villas using admin client to bypass RLS
+  const villaIds = villas.map((v) => v.id);
+  const { data: allBookings } = await supabaseAdmin()
+    .from("bookings")
+    .select("id, villa_id, guest_name, start_date, end_date, status, total_price_cents")
+    .in("villa_id", villaIds)
+    .order("start_date", { ascending: false });
+
+  // Merge bookings into villas
+  const bookingsByVillaId: Record<string, any[]> = {};
+  for (const b of allBookings ?? []) {
+    if (!bookingsByVillaId[b.villa_id]) bookingsByVillaId[b.villa_id] = [];
+    bookingsByVillaId[b.villa_id].push(b);
+  }
+  const villasWithBookings = villas.map((v) => ({
+    ...v,
+    bookings: bookingsByVillaId[v.id] ?? [],
+  }));
 
   return (
     <div>
@@ -61,7 +74,7 @@ export default async function ProprioReservationsIndexPage() {
 
         {/* Liste des villas avec leurs réservations */}
         <div className="space-y-4">
-          {(villas as unknown as (Villa & { bookings: Booking[] })[]).map((villa) => (
+          {villasWithBookings.map((villa) => (
             <Link
               key={villa.id}
               href={`/dashboard/reservations/${villa.id}`}
@@ -83,15 +96,15 @@ export default async function ProprioReservationsIndexPage() {
               {/* Prochaines réservations */}
               {(villa.bookings || []).length > 0 && (
                 <div className="mt-3 space-y-1.5 border-t border-border-subtle pt-3">
-                  {(villa.bookings as Booking[])
-                    .filter((b) => b.status !== "cancelled")
+                  {(villa.bookings as any[])
+                    .filter((b: any) => b.status !== "cancelled")
                     .sort(
-                      (a, b) =>
+                      (a: any, b: any) =>
                         new Date(a.start_date).getTime() -
                         new Date(b.start_date).getTime()
                     )
                     .slice(0, 3)
-                    .map((booking) => (
+                    .map((booking: any) => (
                       <div
                         key={booking.id}
                         className="flex items-center justify-between text-sm"

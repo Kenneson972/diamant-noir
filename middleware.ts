@@ -2,28 +2,33 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isOwnerRole, isStaffAdmin } from "@/lib/auth/admin-access";
 
-/** Conserve les cookies posés par Supabase SSR (ex. refresh JWT) lors d'une redirection. */
-function redirectWithSessionCookies(
-  request: NextRequest,
-  path: string,
-  sessionResponse: NextResponse
-): NextResponse {
-  const res = NextResponse.redirect(new URL(path, request.url));
-  sessionResponse.cookies.getAll().forEach(({ name, value }) => {
-    res.cookies.set(name, value);
-  });
-  return res;
-}
-
 const publicPaths = [
+  // Pages marketing / info
   "/",
   "/villas",
+  "/book",
+  "/prestations",
+  "/qui-sommes-nous",
+  "/faq",
+  "/contact",
+  "/terms",
+  "/mentions-legales",
+  "/cgv",
+  "/confidentialite",
+  "/cookies",
+  "/soumettre-ma-villa",
+  "/success",
+  // Auth
   "/login",
   "/register",
-  "/soumettre-ma-villa",
+  "/auth/callback",
+  "/auth/confirm",
+  // API
   "/api/booking",
   "/api/booking-session",
   "/api/webhooks/stripe",
+  "/api/stripe/connect-onboarding",
+  "/api/stripe/connect-verify",
   "/api/contact",
   "/api/sync-ota",
   "/api/import-airbnb",
@@ -35,35 +40,27 @@ const publicPaths = [
   "/api/chat",
 ];
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
 export async function middleware(request: NextRequest) {
-  let { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-  // Skip auth for public paths
-  const isPublic = publicPaths.some(
-    (p) => pathname === p || pathname.startsWith(p)
-  );
-  if (isPublic) {
-    return NextResponse.next();
-  }
-
-  // Skip auth for Next.js internals
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/images") ||
-    pathname.startsWith("/fonts")
+    pathname.startsWith("/fonts") ||
+    /\.(?:jpg|jpeg|png|gif|svg|webp|avif|ico|webm|mp4|mov|woff2?|ttf|eot|otf|pdf|xml|txt)$/i.test(pathname)
   ) {
     return NextResponse.next();
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  const isPublic = publicPaths.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
 
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
@@ -71,35 +68,58 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        response = NextResponse.next({
-          request: {
-            headers: request.headers,
-          },
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value);
         });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
+        supabaseResponse = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options);
+        });
       },
     },
   });
 
-  // Refresh session and get user — uses getUser() not getSession() for security
+  // getUser() valide le JWT côté serveur et rafraîchit le token si nécessaire
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Utilisateur connecté sur /login → rediriger vers son espace
+  if (user && pathname === "/login") {
+    const meta = (user.user_metadata?.role as string | undefined) ?? "client";
+    const dest = isStaffAdmin(null, meta, user.email)
+      ? "/admin"
+      : isOwnerRole(null, meta)
+      ? "/dashboard"
+      : "/espace-client";
+    const redirectRes = NextResponse.redirect(new URL(dest, request.url));
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      redirectRes.cookies.set(name, value);
+    });
+    return redirectRes;
+  }
+
+  // Pages publiques : laisser passer (la session a été rafraîchie)
+  if (isPublic) {
+    return supabaseResponse;
+  }
+
+  // Pages protégées : pas d'utilisateur → rediriger vers login
   if (!user) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    const url = new URL("/login", request.url);
+    url.searchParams.set("redirect", pathname);
+    const redirectRes = NextResponse.redirect(url);
+    // Copier les cookies rafraîchis par Supabase
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      redirectRes.cookies.set(name, value);
+    });
+    return redirectRes;
   }
 
   const metaRole =
     (user.user_metadata?.role as string | undefined) ?? "client";
 
+  // ── RBAC ──
   const needsProfileForRbac =
     pathname.startsWith("/admin") ||
     pathname.startsWith("/dashboard") ||
@@ -107,51 +127,62 @@ export async function middleware(request: NextRequest) {
 
   let profileRole: string | null = null;
   if (needsProfileForRbac) {
-    const { data: profile } = await supabase
+    // Initialize session in memory so _getAccessToken() uses the user's JWT (not anon key) for DB queries
+    await supabase.auth.getSession();
+
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .maybeSingle();
     profileRole = profile?.role ?? null;
+    if (profileError) {
+      console.error(`[RBAC] profiles query error for ${user.id}:`, profileError.message, profileError.code);
+    }
   }
 
   const adminUser = isStaffAdmin(profileRole, metaRole, user.email);
   const ownerUser = isOwnerRole(profileRole, metaRole);
 
-  // Zone /admin réservée au rôle admin (staff), pas aux propriétaires
+  // Helper pour rediriger en copiant les cookies de session
+  const doRedirect = (path: string) => {
+    const url = new URL(path, request.url);
+    const res = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      res.cookies.set(name, value);
+    });
+    return res;
+  };
+
+  // Zone /admin réservée au rôle admin (staff)
   if (pathname.startsWith("/admin")) {
     if (!adminUser) {
-      if (ownerUser) {
-        return redirectWithSessionCookies(request, "/dashboard", response);
-      }
-      return redirectWithSessionCookies(request, "/espace-client", response);
+      if (ownerUser) return doRedirect("/dashboard");
+      return doRedirect("/espace-client");
     }
   }
 
-  // Compte staff : tout le périmètre /dashboard* est le shell propriétaire → back-office /admin
-  // (hub « classique » : /admin/hub-classique)
+  // Compte staff sur dashboard → admin
   if (adminUser && pathname.startsWith("/dashboard")) {
-    return redirectWithSessionCookies(request, "/admin", response);
+    return doRedirect("/admin");
   }
 
-  // ── RBAC : JWT seul est trompeur (défaut "client") ; on s'appuie sur profiles.role ──
-
-  // Staff sur l'espace locataire → back-office
+  // Staff sur espace-client → admin
   if (adminUser && pathname.startsWith("/espace-client")) {
-    return redirectWithSessionCookies(request, "/admin", response);
+    return doRedirect("/admin");
   }
 
-  // Propriétaire sur l'espace locataire → dashboard proprio
+  // Propriétaire sur espace-client → dashboard
   if (ownerUser && pathname.startsWith("/espace-client")) {
-    return redirectWithSessionCookies(request, "/dashboard", response);
+    return doRedirect("/dashboard");
   }
 
-  // Locataire / autre non-proprio sur le dashboard proprio → espace client
+  // Locataire sur dashboard → espace-client
   if (!adminUser && !ownerUser && pathname.startsWith("/dashboard")) {
-    return redirectWithSessionCookies(request, "/espace-client", response);
+    return doRedirect("/espace-client");
   }
 
-  return response;
+  return supabaseResponse;
 }
 
 export const config = {

@@ -11,7 +11,7 @@ export async function getSupabaseServer() {
     throw new Error("Supabase server client is not configured.");
   }
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  const client = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -29,4 +29,8 @@ export async function getSupabaseServer() {
       },
     },
   });
+
+  // Warm up session so _getAccessToken() uses the user's JWT for DB queries (not anon key)
+  await client.auth.getSession();
+  return client;
 }

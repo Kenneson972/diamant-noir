@@ -1,8 +1,8 @@
-# Kayvila — Point d'avancement au 11 Mai 2026
+# Kayvila — Point d'avancement au 14 Mai 2026
 
 ## L'essentiel
 
-La plateforme Kayvila est aujourd'hui complète sur ses 3 piliers : l'espace voyageur, l'espace concierge, et l'espace propriétaire. Tout est connecté, fonctionnel, et prêt à être utilisé au quotidien.
+La plateforme Kayvila est aujourd'hui complète sur ses 3 piliers : l'espace voyageur, l'espace concierge, et l'espace propriétaire — **avec désormais un système de paiement complet liant clients, propriétaires et Kayvila via Stripe Connect.**
 
 ---
 
@@ -16,7 +16,7 @@ Vos clients disposent maintenant d'un espace personnel riche qui les accompagne 
 - **Pendant le séjour** : messagerie avec la conciergerie, demandes de services (ménage supplémentaire, changement de linge), partage du séjour avec leurs proches, ajout au calendrier
 - **Après le séjour** : facture, dépôt d'avis, proposition de villas similaires, ré-réservation en un clic
 
-**16 fonctionnalités au total**, pensées comme sur Airbnb mais adaptées au luxe Kayvila.
+**Nouveau (14 mai)** : Un compte client est automatiquement créé après chaque paiement réussi. Le client reçoit un email d'invitation et retrouve toutes ses réservations dans son espace client.
 
 ### Pour votre équipe concierge — Un tableau de bord professionnel
 
@@ -35,22 +35,35 @@ Votre équipe a maintenant un outil de travail complet :
 
 Chaque propriétaire accède à son propre tableau de bord pour suivre ses villas, ses réservations, ses revenus, ses tâches de maintenance et ses statistiques d'occupation.
 
+**Nouveau (14 mai)** : Les propriétaires peuvent connecter leur compte Stripe directement depuis le tableau de bord. Pour les réservations directes sur le site : reversement automatique de **80 % des nuitées** au propriétaire ; Kayvila perçoit **20 % du séjour** plus **100 % des frais de ménage et de service** (facturés au voyageur).
+
 ---
 
-## Ce qui a été fait cette semaine
+## Ce qui a été fait cette semaine (dernière mise à jour : 14 mai)
 
-1. **L'espace client a été entièrement construit** en 3 étapes : les essentiels (demandes, check-in, profil), le confort (partage, calendrier, services), et l'engagement (notifications, avis, favoris).
+1. **Espace client** entièrement construit (check-in, services, messagerie, avis, favoris)
 
-2. **Le tableau de bord de la conciergerie a été refondu** : tout est maintenant centralisé dans une interface unique, avec une messagerie en temps réel et des fiches clients complètes.
+2. **Dashboard conciergerie** refondu (interface centralisée, messagerie temps réel, fiches clients)
 
-3. **L'espace propriétaire a été nettoyé et vérifié** : les 3 tableaux de bord (client, concierge, propriétaire) sont maintenant parfaitement alignés visuellement et techniquement.
+3. **Espace propriétaire** nettoyé et aligné visuellement
 
-4. **La sécurité a été renforcée** : chaque utilisateur ne voit que ce qui le concerne.
+4. **Sécurité** renforcée (RLS, isolation par utilisateur)
+
+5. **Système de paiement complet** :
+   - Intégration Stripe avec calcul des frais côté serveur
+   - Zod validation sur les routes API
+   - Stockage du `payment_intent_id` pour traçabilité
+   - **Stripe Connect** : 80 % des nuitées au propriétaire ; Kayvila = 20 % du séjour + ménage + frais de service
+   - **Compte client automatique** : création de compte après paiement, réservations liées
+   - **UI d'onboarding** : les propriétaires connectent leur compte Stripe depuis leur dashboard
 
 ---
 
 ## Prochaines étapes possibles
 
-1. **Assistant IA pour l'équipe** — un chatbot intelligent qui détecte les anomalies et suggère des actions
-2. **Paiement en ligne (Stripe)** — pour que les clients puissent réserver et payer directement
-3. **Mise en ligne** — déploiement sur internet pour un accès public
+1. **Activation Stripe Connect** dans le dashboard Stripe (à faire)
+2. **Migration SQL** des colonnes Stripe Connect à exécuter (à faire)
+3. **Assistant IA pour l'équipe** — un chatbot intelligent qui détecte les anomalies et suggère des actions
+4. **Mise en ligne** — déploiement sur internet pour un accès public
+5. **Dashboard client fonctionnel** — espace client complet (réservations, profil, messagerie, check-in)
+6. **Dashboard propriétaire** — vue d'ensemble complète (revenus, réservations, calendrier, maintenance)

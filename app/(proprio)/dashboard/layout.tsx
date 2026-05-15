@@ -7,6 +7,7 @@ import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 export const metadata = {
   title: "Tableau de bord propriétaire",
 };
+export const dynamic = "force-dynamic";
 
 export default async function ProprioDashboardLayout({
   children,

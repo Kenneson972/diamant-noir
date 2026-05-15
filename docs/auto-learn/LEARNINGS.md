@@ -155,6 +155,23 @@
 
 ---
 
+## 2026-05-14 — Fix Auth : Session + Stripe Connect + Redirect Login ✅
+
+### Fait
+- **publicPaths "/" fix** : `pathname.startsWith("/")` matchait TOUT → RBAC mort. Fix : `pathname.startsWith(p + "/")`
+- **Stripe Connect** : `ownerProfile` query via anon → RLS bloque → null. Fix : `supabaseAdmin()` pour cette query
+- **profileRole null** : `skipAutoInitialize: true` dans SSR → session pas en mémoire pour les queries DB. Fix : `await getSession()` avant les queries dans middleware + `getSupabaseServer()`
+- **Redirect login** : `/login` dans `publicPaths` → aucun check "déjà connecté" → formulaire affiché à tort. Fix : si `user && pathname === "/login"` dans middleware → redirect vers dashboard selon rôle
+
+### Règles apprises
+- **Vrai bug login = UX manquante, pas session** : vérifier le comportement attendu AVANT d'analyser les internals. 2h perdues sur les refresh tokens alors que c'était 12 lignes de redirect.
+- `publicPaths` avec `"/"` + `startsWith` → poison tous les paths. Toujours utiliser `pathname === p || pathname.startsWith(p + "/")`
+- Pour bypass RLS côté serveur sans exposer les données : `supabaseAdmin()` (service role) uniquement pour les queries nécessaires
+- Les pages publiques (login, register) ne redirigent pas automatiquement les users connectés → gérer dans le middleware
+- Ne jamais debugger une session Supabase avant d'avoir vérifié que la page elle-même fait ce qu'on attend
+
+---
+
 ## 2026-05-11 — Nettoyage Dashboard Proprio ✅
 
 ### Fait (5 supprimés, 2 modifiés)

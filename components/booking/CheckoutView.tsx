@@ -11,7 +11,9 @@ import {
   Info,
   CreditCard,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Mail,
+  User
 } from "lucide-react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -28,7 +30,9 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [guestEmail, setGuestEmail] = useState<string | null>(null);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const fetchVilla = async () => {
@@ -36,7 +40,11 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
       if (!supabase) return;
 
       const { data: { session } } = await supabase.auth.getSession();
-      setGuestEmail(session?.user?.email ?? null);
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setGuestEmail(session.user.email ?? "");
+        setGuestName(session.user.user_metadata?.full_name || "");
+      }
 
       const { data, error } = await supabase
         .from("villas")
@@ -60,6 +68,20 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   }) : null;
 
   const handleConfirmBooking = async () => {
+    // Validation email obligatoire
+    if (!guestEmail.trim()) {
+      setError("Veuillez renseigner votre adresse email");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail.trim())) {
+      setError("Adresse email invalide");
+      return;
+    }
+    if (!guestName.trim()) {
+      setError("Veuillez renseigner votre nom");
+      return;
+    }
+
     setCheckoutLoading(true);
     setError(null);
     try {
@@ -71,7 +93,8 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
           endDate: checkout, 
           villaId,
           guests: guestsCount,
-          guestName: guestEmail ?? "Invité"
+          guestName: guestName.trim(),
+          guestEmail: guestEmail.trim(),
         }),
       });
       const payload = await response.json();
@@ -172,6 +195,49 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
               </div>
             </div>
           </section>
+
+          {/* Guest Information */}
+          {!isLoggedIn && (
+            <section className="space-y-6">
+              <h2 className="text-2xl font-semibold text-navy">Vos coordonnées</h2>
+              <p className="text-sm text-navy/50">Ces informations nous servent à vous envoyer la confirmation et à créer votre espace client.</p>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="guestName" className="block text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-2">
+                    Nom complet *
+                  </label>
+                  <div className="relative">
+                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-navy/30" />
+                    <input
+                      id="guestName"
+                      type="text"
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full rounded-2xl border border-navy/10 bg-white py-4 pl-12 pr-4 text-sm text-navy outline-none transition-all placeholder:text-navy/20 focus:border-gold focus:ring-1 focus:ring-gold"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="guestEmail" className="block text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-2">
+                    Adresse email *
+                  </label>
+                  <div className="relative">
+                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-navy/30" />
+                    <input
+                      id="guestEmail"
+                      type="email"
+                      value={guestEmail}
+                      onChange={(e) => setGuestEmail(e.target.value)}
+                      placeholder="john@exemple.com"
+                      autoComplete="email"
+                      className="w-full rounded-2xl border border-navy/10 bg-white py-4 pl-12 pr-4 text-sm text-navy outline-none transition-all placeholder:text-navy/20 focus:border-gold focus:ring-1 focus:ring-gold"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
 
           <hr className="border-navy/5" />
 

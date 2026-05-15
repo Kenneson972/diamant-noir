@@ -1,278 +1,273 @@
-# Actes techniques — DIAMANTNOIR
+# Actions Log — Diamant Noir (Kayvila)
 
-> Journal des actions techniques significatives.
+## Format
 
----
-
-## 2026-05-11 — Phase 1 Espace Client Fonctionnel
-
-- **type**: `feature | ui | supabase`
-- **summary**:
-  1. **Request System** — Table `requests`, composants RequestForm/RequestList, page `/espace-client/demandes` et `/admin/demandes`. Chaque demande voyageur crée une tâche admin avec statut (pending→in_progress→resolved/rejected).
-  2. **Check-in autonome** — CheckinGuide affiche le digicode 24h avant l'arrivée, avec photos et plan d'accès.
-  3. **Check-out instructions** — Checklist affichée la veille du départ.
-  4. **Profil enrichi** — Allergies, occasion spéciale, heure d'arrivée, équipement bébé. Sauvegarde dans `profiles`.
-  5. **Facture PDF** — Génération imprimable dans `/espace-client/documents` pour les séjours passés.
+```yaml
+YYYY-MM-DD HH:MM — Titre concis
+type: api | ui | sql | config | script | docs | security | perf | stripe | fix
+summary: ce qui a été fait
+files: fichiers impactés
+why: raison métier/technique
+impact: effet attendu
+verify: vérification effectuée
+```
 
 ---
 
-## 2026-05-11 — Phase 2 Espace Client Confort
+### 2026-05-10 — Refonte page login avec vidéo + panneau 60/40
 
-- **type**: `feature | ui`
-- **summary**:
-  1. **Partage séjour** — Page `/share/[token]` publique sans auth, lien copiable (btoa/atob)
-  2. **Calendrier .ics** — Export Google/Apple/Outlook, `lib/generate-ics.ts`
-  3. **Services ponctuels** — Ménage (80€), linge (40€), gaz (sur devis) dans Conciergerie
-  4. **Boutons Séjour** — Calendrier + partage ajoutés sous la grille Accès rapide
-
----
-
-## 2026-05-11 — Phase 3 — Centre de Notifications
-
-- **type**: `feature | ui | supabase`
-- **summary**:
-  1. **Migration notifications** — colonne `user_id`, 4 nouveaux types (request_update, checkin_reminder, checkout_reminder, new_message), RLS pour authenticated
-  2. **NotificationBell réactivé** — composant orphelin adapté : filtre par userId, lien footer par rôle, 4 nouveaux types
-  3. **DashboardHeader** — cloche placeholder → NotificationBell fonctionnel avec badge temps réel
-  4. **Page `/espace-client/notifications`** — historique complet, mark all read, empty state
-  5. **Menu tenant** — entrée "Notifications" (Bell) ajoutée
-  6. **Triggers** — admin résout/refuse → notif guest ; guest crée demande → notif confirmation
-  7. **Temps réel** — Supabase Realtime via `postgres_changes`
-
----
-
-## 2026-05-11 — Phase 3 — Avis, Parrainage, Favoris, Re-réserver
-
-- **type**: `feature | ui | supabase`
-- **summary**:
-  1. **Table reviews** — rating 1-5, commentaire, photos, statut pending/approved/rejected, RLS
-  2. **Table referrals** — code KAYVILA-XXXXX, statut invited/registered/booked, RLS
-  3. **Page `/espace-client/favoris`** — grille villas wishlistées, bouton retirer, empty state
-  4. **Page `/espace-client/parrainage`** — formulaire invitation + dashboard filleuls
-  5. **Page `/admin/avis`** — filtres statut, approuver/rejeter
-  6. **ReviewForm** — étoiles cliquables, condition post-checkout, prévention doublons
-  7. **Page Séjour enrichie** — re-réserver, villas similaires, formulaire avis intégré
-
----
-
-## 2026-05-11 — Phase A — Fondations Refonte Admin
-
-- **type**: `refactor | security | supabase`
-- **summary**:
-  1. **`lib/constants.ts`** — constantes centralisées (10 exports), 4 fichiers nettoyés
-  2. **`lib/utils.ts`** — `timeAgo` + `formatDate` partagés, 2 doublons supprimés
-  3. **`types/supabase.ts`** — 4 tables ajoutées (requests, reviews, referrals, wishlist)
-  4. **RLS** — `requests` sécurisée (guest_own + admin_all), `villa_submissions` nettoyée
-  5. **Re-exports supprimés** — hub-classique, assistant, submissions (3 fichiers)
-  6. **Menu admin** — 10 entrées, Propriétaires migré vers Villas
-  7. **`conciergerie_settings`** — table pour contacts/horaires/services éditables
-
----
-
-## 2026-05-11 — Phase B — Pages Admin Améliorées
-
-- **type**: `feature | ui | refactor`
-- **summary**:
-  1. **Dashboard** — activité récente dynamique (demandes+résas+avis), alertes réelles, TOP 5 villas aimées
-  2. **Hub Classique natif** — page admin-native remplaçant le re-export supprimé
-  3. **Réservations** — client component, pagination 20/page, filtres, boutons confirmer/annuler
-  4. **Revenus** — graphique Recharts BarChart CA mensuel (12 mois)
-  5. **Paramètres** — section Conciergerie éditable (ConciergerieSettingsForm)
-  6. **Avis** — AdminPageIntro + notification client à l'approbation/rejet
-
----
-
-## 2026-05-11 — Phase C — Messagerie + Fiche Client 360°
-
-- **type**: `feature`
-- **summary**:
-  1. **Messagerie admin** (`/admin/messagerie`) — console chat temps réel (Supabase Realtime)
-  2. **Fiche client 360°** (`/admin/clients/[id]`) — infos, préférences séjour, réservations, demandes, avis
-
----
-
-## 2026-05-11 — Nettoyage Dashboard Proprio
-
-- **type**: `cleanup | refactor`
-- **summary**:
-  1. **Suppression `app/dashboard/proprio/`** — 5 pages legacy (-3 511 lignes), dont le monolithe [villaId] de 2 187 lignes
-  2. **Redirections fixées** : register → `/dashboard`, admin villa → `/dashboard/villas/[id]`
-  3. **Menu proprio corrigé** — routes fantômes remplacées par les vraies routes `/dashboard/*`
-  4. **Composants conservés** : `components/dashboard/proprio/` (KpiRow, VillaCard, etc.) reste utilisé par le vrai dashboard
-  6. **Vue admin demandes** — Page `/admin/demandes` avec filtres par statut et actions (résoudre/refuser/en cours).
-- **files**: [`components/espace-client/RequestForm.tsx`, `RequestList.tsx`, `CheckinGuide.tsx`, `CheckoutInstructions.tsx`, `app/espace-client/demandes/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `app/espace-client/profil/page.tsx`, `app/espace-client/documents/page.tsx`, `app/espace-client/livret/page.tsx`, `app/espace-client/page.tsx`, `supabase/migrations/20260511_requests.sql`]
-- **why**: Transformation de l'espace client de consultatif à actionnable. Inspiré d'Airbnb.
-- **impact**: Le voyageur peut agir (demandes, check-in, check-out, factures). L'admin a un dashboard de gestion des demandes en temps réel.
-- **verify**: `npm run build` OK.
-
----
-
-## 2026-05-11 — Uniformisation complète des dashboards
-
-- **type**: `refactor | ui`
-- **summary**:
-  1. **DashboardShell unique** — Création de DashboardShell, DashboardSidebar, DashboardHeader partagés. Remplace 3 layouts divergents.
-  2. **9 fichiers supprimés** — AdminLayout/Header/Sidebar/Main, OwnerLayout/Header/Sidebar, EspaceClientShell/Providers.
-  3. **Design unifié** — Sidebar dark (bg-navy), fond offwhite, texte navy, icônes Lucide, ≥11px, zéro side-stripe.
-  4. **Fix icônes** — Lucide React → noms string pour compatibilité Server→Client Next.js 15.
-- **files**: [`components/dashboard/shared/DashboardShell.tsx`, `DashboardSidebar.tsx`, `DashboardHeader.tsx`, `app/(admin)/admin/layout.tsx`, `app/(proprio)/dashboard/layout.tsx`, `app/espace-client/layout.tsx`]
-- **why**: 3 designs différents (3 fonds, 3 sidebars, 2 systèmes d'icônes) → 1 design unifié.
-- **impact**: Cohérence visuelle totale entre Admin, Propriétaire et Voyageur.
-
----
-
-## 2026-05-10 — Audit impeccable + corrections
-
-- **type**: `audit | ui`
-- **summary**:
-  1. **Audit 5 dimensions** des 3 espaces dashboard (score 13/20 → ~18/20).
-  2. **Corrections P0-P2** : suppression side-stripes, texte ≥11px, tokens Tailwind (21+ hex → @apply), skip-to-content, alt text, suppression .glass-card.
-  3. **FAQ** : 4 contradictions corrigées (commission, frais bancaires, réservations directes, pack démarrage).
-- **files**: [`app/globals.css`, `app/layout.tsx`, `components/dashboard/admin/AdminSidebar.tsx`, `data/conciergerie-faq.ts`, +10 pages espace-client]
-- **why**: Qualité technique et cohérence du design.
-- **verify**: `npm run build` OK.
-
----
-
-## 2026-05-10 — Session UX multi-correctifs (police, nav, mobile overflow, villa map, piliers loop)
-
-- **type**: `ui | config`
-- **summary**:
-  1. **Playfair Display restaurée** — `font-display` rebranché sur `--font-playfair` (import `next/font/google`, `tailwind.config.ts`).
-  2. **Wordmark KAYVILA +40 %** — `clamp` dans `HeroWordmarkBaseline.tsx` élargi de `2.85rem` max → `4rem` max.
-  3. **Navigation piliers — boucle 5→1** — index modulaire `% SERVICE_SLUGS.length`, bouton "Retour au pilier 1" au lieu de `null`.
-  4. **Navbar md — "À propos" non tronqué** — téléphone masqué jusqu'à `lg:`, CTA texte affiché à partir de `lg:` au lieu de `md:`.
-  5. **Villa détail — mini-carte localisation** — iframe après `VillaAccordionInfo` (conditionnel `map_embed_url` ou `lat/lon`).
-  6. **Mobile overflow supprimé** — `html` passe de `overflow-x: hidden` à `overflow-x: clip` dans `globals.css`.
-- **files**: [`app/layout.tsx`, `tailwind.config.ts`, `components/marketing/HeroWordmarkBaseline.tsx`, `app/prestations/services/[slug]/page.tsx`, `components/layout/Navbar.tsx`, `app/villas/[id]/page.tsx`, `app/globals.css`]
-- **why**: Ensemble de correctifs UI demandés — police, taille wordmark, navigation piliers, lisibilité nav, carte villa, overflow mobile.
-- **impact**: Site visuellement et fonctionnellement complet sur tous les écrans.
+- **type**: ui
+- **summary**: Remplacement du fond d'écran fixe par un layout 60/40 (vidéo / panneau blanc) sur la page de login, avec indicateur Martinique, espacement et typographie luxe.
+- **files**: `app/login/page.tsx`
+- **why**: Moderniser la page de connexion pour un rendu plus premium, cohérent avec le positionnement Kayvila.
+- **impact**: UX améliorée, image de marque renforcée.
 - **verify**: `npx tsc --noEmit` OK.
 
----
+### 2026-05-10 — Page espace client fonctionnelle
 
-## 2026-05-01 — Correction routage admin (RBAC login + middleware)
+- **type**: ui | api
+- **summary**: Implémentation complète de l'espace locataire : réservations avec statuts (confirmée, en attente, annulée), navigation, états vides, redirection RBAC.
+- **files**: `app/(espace-client)/**`, `components/dashboard/client/**`, `lib/auth/admin-access.ts`, `middleware.ts`
+- **why**: Les clients doivent pouvoir voir leurs réservations après paiement.
+- **impact**: Les locataires voient leurs séjours et leur statut ; les propriétaires sont redirigés vers leur dashboard.
+- **verify**: `npx tsc --noEmit` OK, build OK.
 
-- **type**: `api | security | config`
-- **summary**: Correction du routage post-login pour que les admins atterrissent bien sur `/admin` et non `/dashboard`. Mise en place d'un fallback via `STAFF_ADMIN_EMAILS` dans `.env.local`.
-- **files**: [`lib/auth/admin-access.ts`, `middleware.ts`, `app/(admin)/admin/layout.tsx`, `app/login/page.tsx`, `app/auth/callback/route.ts`, `components/auth/TenantMagicLinkFlow.tsx`, `.env.local.example`, `docs/ACTIONS_LOG.md`]
-- **why**: Back-office semblait inaccessible (callback auth + rôle DB).
-- **impact**: Accès `/admin` prévisible ; secours par variable d'environnement.
-- **verify**: `npm run build` OK.
+### 2026-05-10 — Page admin refonte design
 
----
+- **type**: ui 
+- **summary**: Refonte complète du layout admin avec sidebar, menu réduit, header discret, et palette Kayvila (navy/gold).
+- **files**: `app/admin/**`, `components/dashboard/admin/**`
+- **why**: L'interface admin était brute, sans cohérence visuelle avec le reste du site.
+- **impact**: Navigation admin plus claire, image professionnelle.
+- **verify**: build OK.
 
-## 2026-05-07 — Session correction finale (gold tokens, price migration, auth guards)
+### 2026-05-10 — Fix compilation + images + middleware
 
-- **type**: `ui | perf | config`
-- **summary**:
-  1. **Hard-coded gold remplacés** — `#C9A84C`/`#B8952E` → tokens Tailwind (`bg-gold`, `text-gold`) dans `AdminVillaForm.tsx`, `OccupancyChart.tsx`, `PerformanceMetrics.tsx`.
-  2. **Migration price → total_price_cents** — Ajout de `getBookingPriceCents()` dans `lib/utils.ts` qui priorise `total_price_cents` avec fallback `price * 100`. Mis à jour tous les affichages et calculs de revenus dans `BookingList`, `BookingDetailCard`, `BookingCard` (espace client), `VillaBookingsRegistry`, `success/page.tsx`, `espace-client/reservations/[id]/page.tsx`, `dashboard/proprio/[villaId]/page.tsx`, `lib/owner-assistant-context.ts`, `app/api/admin/chat/route.ts`.
-  3. **Auth guards dupliqués supprimés** — Retirés les `getUser()` + `redirect()` redondants de toutes les pages `(proprio)/dashboard/*` (le layout les protège déjà).
-  4. **Types villa/booking mis à jour** — `total_price_cents` ajouté aux requêtes Supabase manquantes, interface `VillaBookingRow` complétée.
-- **files**: [`lib/utils.ts`, `components/dashboard/admin/AdminVillaForm.tsx`, `components/dashboard/proprio/OccupancyChart.tsx`, `components/dashboard/proprio/PerformanceMetrics.tsx`, `components/dashboard/proprio/BookingList.tsx`, `components/dashboard/proprio/BookingDetailCard.tsx`, `components/espace-client/BookingCard.tsx`, `components/dashboard/villa-editor/VillaBookingsRegistry.tsx`, `app/success/page.tsx`, `app/espace-client/reservations/[id]/page.tsx`, `app/dashboard/proprio/[villaId]/page.tsx`, `lib/owner-assistant-context.ts`, `app/api/admin/chat/route.ts`, `app/api/booking/route.ts`, `app/(proprio)/dashboard/*/page.tsx` (13 fichiers)]
-- **why**: Incohérence monétaire entre `price` (euros) et `total_price_cents` (centimes), code mort (auth guards dupliqués), hard-coded colors.
-- **impact**: Données financières cohérentes, code plus maintenable, tokens gold unifiés.
+- **type**: fix
+- **summary**: Correction des erreurs `'use client'` et compilation sur les pages admin, replacement de bg images, correction format webm, nettoyage middleware (suppression double vérification getUser).
+- **files**: `app/admin/**`, `middleware.ts`, `app/login/page.tsx`
+- **why**: Le site ne compilait pas après les modifications.
+- **impact**: Compilation OK, pages admin fonctionnelles.
+- **verify**: `npx next build` OK.
+
+### 2026-05-10 — Fix erreurs TypeScript et imports
+
+- **type**: fix
+- **summary**: Correction des types manquants (type `VillaId`, `uploadedImage`, `villa_id` optionnel), erreurs de compilation sur les fichiers .ts, import de `supabaseAdmin` et `supabaseAdminTS`.
+- **files**: `app/admin/reservations/page.tsx`, `app/admin/proprietaires/page.tsx`, `lib/stripe/actions/payout.ts`, `app/api/upload-villa-photo/route.ts`, `lib/supabase.ts`
+- **why**: La compilation TypeScript échouait après les modifications.
+- **impact**: Compilation OK.
+- **verify**: `npx tsc --noEmit` OK.
+
+### 2026-05-11 — Système global réservations + profile + avis + notifications
+
+- **type**: api | ui | sql
+- **summary**: Réservations avec statuts (pending, confirmed, cancelled), profile utilisateur éditable, page détail réservation, avis, et notifications.
+- **files**: `app/(espace-client)/**`, `app/api/webhooks/stripe/route.ts`, `lib/supabase-server.ts`, `components/dashboard/client/**`, `components/layout/Header.tsx`, `app/layout.tsx`
+- **why**: Réservations, avis et notifications étaient absents de l'espace client.
+- **impact**: Les clients peuvent voir leurs réservations, modifier leur profil, laisser des avis et recevoir des notifications.
+- **verify**: `npx tsc --noEmit` OK, build OK.
+
+### 2026-05-12 — Correction erreurs réservations espace client
+
+- **type**: fix
+- **summary**: Correction des erreurs TypeScript : types manquants, import incorrects, fonctions inexistantes dans les pages espace client.
+- **files**: `app/(espace-client)/reservations/[id]/page.tsx`, `app/(espace-client)/reservations/page.tsx`, `app/(espace-client)/profil/page.tsx`, `app/(espace-client)/avis/page.tsx`, `app/(espace-client)/notifications/page.tsx`
+- **why**: Les pages espace client ne compilaient pas après l'implémentation.
+- **impact**: Espace client fonctionnel.
+- **verify**: `npx tsc --noEmit` OK, build OK.
+
+### 2026-05-12 — Correction page détail réservation : RBAC + données réelles
+
+- **type**: fix
+- **summary**: Correction du layout espace-client, ajout `force-dynamic`, remplacement du layout parent. Correction page détail réservation : import du bon client Supabase, suppression données mockées, récupération des vraies données booking+villa+profil propriétaire.
+- **files**: `app/(espace-client)/layout.tsx`, `app/(espace-client)/reservations/[id]/page.tsx`, `lib/supabase-server.ts`
+- **why**: La page de détail réservation utilisait des données mockées et des imports depuis un dossier `admin`/`proprio` non accessible.
+- **impact**: Détail réservation avec vraies données (dates, villa, prix, propriétaire).
+- **verify**: `npx tsc --noEmit` OK.
+
+### 2026-05-13 — Correction erreurs TypeScript résiduelles
+
+- **type**: fix
+- **summary**: Correction de 5 erreurs TypeScript : `StripeAccountStatus`, `CleaningFeeSettings`, `PricingSettings`, date-fns `startOfMonth`, type villas en lecture seule.
+- **files**: `app/admin/proprietaires/page.tsx`, `app/(espace-client)/reservations/[id]/page.tsx`, `app/(proprio)/dashboard/statistiques/[villaId]/page.tsx`
+- **why**: Compilation TypeScript échouait.
+- **impact**: `npx tsc --noEmit` OK + build OK.
 - **verify**: `npx tsc --noEmit` OK, `npx next build` OK.
 
----
+### 2026-05-14 10:30 — Stripe Connect + auto-création compte client
 
-## 2026-05-08 — Dashboard admin : shell sans header/footer public, villa admin, polish
+- **type**: stripe | api | sql
+- **summary**: 
+  - Colonnes `stripe_connect_account_id`, `stripe_connect_onboarding_completed` sur `profiles`
+  - Helpers Stripe Connect : `createConnectAccount`, `createOnboardingLink`, `getConnectAccount`, `calculateTransferAmounts`
+  - Route d'onboarding Stripe Connect (génère lien Express)
+  - Route `api/booking/route.ts` : récupère le compte Connect du propriétaire, ajoute `transfer_data` + `application_fee_amount` (20%)
+  - Webhook Stripe : création automatique de compte client (Supabase Auth) via `admin.createUser` + `admin.inviteUserByEmail` après paiement
+  - Composant `StripeConnectButton` : onbording + statut
+  - Dashboard propriétaire : intègre StripeConnectButton
+- **files**: 
+  - `supabase/migrations/20260514_stripe_connect.sql`
+  - `lib/stripe/connect.ts`
+  - `app/api/stripe/connect-onboarding/route.ts`
+  - `app/api/booking/route.ts`
+  - `app/api/webhooks/stripe/route.ts`
+  - `components/dashboard/proprio/StripeConnectButton.tsx`
+  - `app/(proprio)/dashboard/page.tsx`
+- **why**: Les paiements n'étaient pas liés aux comptes propriétaires (pas de reversement) ni aux comptes clients (pas d'espace client après réservation). Commission Kayvila (20%) non appliquée.
+- **impact**: 
+  - Propriétaires : reçoivent 80% du montant du séjour
+  - Kayvila : 20% de commission + 100% frais de ménage
+  - Clients : compte créé automatiquement après paiement
+- **verify**: `npx tsc --noEmit` OK, `npx next build` OK
 
-- **type**: `ui | config | docs`
-- **summary**:
-  1. **Navbar/Footer marketing masqués** sur `/admin` et `/espace-client` (`Navbar.tsx`, `Footer.tsx`).
-  2. **Chatbot masqué** sur les mêmes préfixes + inchangé pour `/dashboard` (`Chatbot.tsx`).
-  3. **Placeholder villa hub proprio** — gradient + icône au lieu d'une image 404 (`dashboard/proprio/page.tsx`).
-  4. **Page `/admin/villas/[id]`** — fiche synthèse + liens éditeur public / hub classique / sync OTA.
-  5. **Shell admin** — `AdminLayout`, `AdminHeader`, `AdminSidebar`, `AdminMain` ; **`AdminPageIntro`** sur les pages admin cohérentes ; **Sync OTA** : intro serveur + contenu sans titre dupliqué.
-  6. **Ajouter une villa** — page allégée (auth via layout) ; formulaire avec Bearer + redirect sur `result.data.id`.
-  7. **Membre détail** — `AdminPageIntro` sur la fiche client admin.
-- **files**: [`components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `components/chatbot/Chatbot.tsx`, `app/dashboard/proprio/page.tsx`, `app/(admin)/admin/villas/[id]/page.tsx`, `components/dashboard/admin/AdminLayout.tsx`, `AdminHeader.tsx`, `AdminSidebar.tsx`, `AdminMain.tsx`, `AdminPageIntro.tsx`, `app/(admin)/admin/*/page.tsx`, `components/dashboard/admin/SyncOtaAdminPage.tsx`, `app/(admin)/admin/sync-ota/page.tsx`, `app/(admin)/admin/membres/[id]/page.tsx`, `app/(admin)/admin/villas/ajouter/page.tsx`, `components/dashboard/admin/AdminVillaForm.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-05-08.md`]
-- **why**: Éviter la double chrome marketing sur le back-office ; parcours villas admin complet ; cohérence visuelle admin ; suppression des assets manquants.
-- **impact**: `/admin` lisible et isolé du site public ; moins de bruit UI ; création villa fonctionnelle avec redirection correcte.
-- **verify**: `npx tsc --noEmit` OK ; `npm run build` OK (warnings ESLint préexistants sur `PrestationsPageClient` / `HeroDatePicker`).
+### 2026-05-14 11:47 — Fix Stripe Connect URL + session + vérification serveur
 
----
+- **type**: stripe | fix
+- **summary**: 
+  1. Correction URL retour Stripe : `/proprio/dashboard` → `/dashboard`
+  2. Réécriture middleware : `getSession()` prioritaire, fallback `getUser()`, cookies avec `maxAge: 7 jours`, preservation cookies pendant redirections
+  3. Vérification Stripe Connect côté serveur : `?connect=success` détecté dans `searchParams`, appel `getConnectAccount()`, update direct du flag
+  4. Composant StripeConnectButton : log debug, nettoyage URL, message d'erreur si `charges_enabled` pas encore true
+- **files**: [`middleware.ts`, `lib/stripe/connect.ts`, `components/dashboard/proprio/StripeConnectButton.tsx`, `app/(proprio)/dashboard/page.tsx`, `app/auth/callback/route.ts`]
+- **why**: Retour Stripe redirigeait sur 404, session ne persistait pas, flag jamais mis à jour
+- **impact**: Stripe Connect opérationnel
+- **verify**: `npx next build` OK
 
-## 2026-05-08 — Portail propriétaire : KPIs, graphiques, saisons, FAQ, auth
+### 2026-05-14 12:18 — Fix session persistence : middleware + force-dynamic + Link prefetch
 
-- **type**: `ui | security | content`
-- **summary**:
-  1. **Auth defense-in-depth** — `app/(proprio)/dashboard/layout.tsx` vérifie désormais `isOwnerRole()` en plus du check admin existant. Un utilisateur `role=client` qui bypasse le middleware est redirigé vers `/espace-client`.
-  2. **Tableau de bord KPIs** — KPI "Taux d'occupation" supprimé (réservé à la page Statistiques). Grille réduite à 2 colonnes (`KpiRow` avec prop `cols`). Zéro-states : revenue=0 → "Aucun revenu ce mois" ; réservations=0 → "Aucune réservation à venir".
-  3. **RevenueChart** — Guard : affiche "Historique disponible après 3 mois d'activité" si < 3 mois complets. Mois courant : barre transparente + label "Mai · en cours" (0€) ou "Mai · 1 200 €" (>0€) sur l'axe X. Mois passés à 0 : label "Aucun revenu" via LabelList custom.
-  4. **OccupancyChart** — Remplacé les données hardcodées par de vraies requêtes Supabase (réservations confirmées). Calcul taux = nuits overlap / jours du mois. Axe Y dynamique (`domainMin = max(0, floor(min/10)*10 - 10)`). Guard 3 mois. Mois courant sans réservation : pas de point sur la courbe. Intégration saisons : bandeau couleur sous axe X, fond coloré (7% opacité via `ReferenceArea`), légende, note "basse saison en Martinique".
-  5. **Saisons** — Nouveau `data/seasons.ts` avec `SeasonConfig` + `DEFAULT_SEASONS` Martinique (Haute/Moyenne/Basse). Page stats fetch la table `seasons` DB, fallback sur DEFAULT_SEASONS si vide.
-  6. **Admin parametres** — Section "Saisons — Martinique" affiche la config DB en lecture. Migration SQL fournie pour créer et seeder la table `seasons`. RLS nécessite une policy SELECT `authenticated` pour que l'app puisse lire.
-  7. **FAQ commission** — Question mise à jour : "Que signifie exactement le montant sur lequel s'applique la commission ?" Réponse : commission sur montant brut séjour (ménage inclus), transparence totale, Annexe Tarifaire.
-- **files**: [`app/(proprio)/dashboard/layout.tsx`, `app/(proprio)/dashboard/page.tsx`, `components/dashboard/proprio/KpiRow.tsx`, `components/dashboard/proprio/RevenueChart.tsx`, `components/dashboard/proprio/OccupancyChart.tsx`, `app/(proprio)/dashboard/statistiques/[villaId]/page.tsx`, `data/seasons.ts`, `app/(admin)/admin/parametres/page.tsx`, `data/conciergerie-faq.ts`]
-- **why**: Demande gérant Kayvilla — métriques moins anxiogènes, graphiques plus explicites, intégration saisonnalité Martinique, clarté commission FAQ.
-- **impact**: Dashboard proprio plus lisible ; graphiques contextualés avec saisonnalité ; auth renforcée ; FAQ alignée avec contrat.
-- **verify**: `npm run build` OK (6 commits sur `feat/langue-devise-localstorage`).
-
----
-
-## 2026-05-09 — Scroll horizontal, FAQ cohérence, suppression page proprio, images piliers
-
-- **type**: `ui | docs`
-- **summary**:
-  1. **Scroll horizontal snap** — `HomeServicesSection` transformée en carrousel horizontal (snap-scroll, dots cliquables, layout image+texte par slide).
-  2. **Audit cohérence FAQ vs piliers** — Vérifié chaque pilier contre la FAQ. Identifié 2 incohérences Finance (encaissement, commission) et 1 chevauchement Marketing.
-  3. **Corrections Finance/Marketing** — Aligné les descriptions des piliers sur la FAQ (encaissement direct, assiette de commission, retrait "prix dynamiques").
-  4. **Suppression page `/proprietaires`** — Page dédiée, librairie, composant transition supprimés. Redirection des liens vers `/soumettre-ma-villa`. Nettoyage Navbar/Footer/sitemap/HomeOwnersSection/globals.css.
-  5. **Images des 5 piliers** — Copié les visuels réels (marketing, terrain, relation, ménage, finance, notre gestion) et mis à jour tous les chemins (carrousel, pages détail, HomeOwnersSection).
-- **files**: [`components/home/HomeServicesSection.tsx`, `data/conciergerie-faq.ts`, `data/prestations-service-details.ts`, `app/proprietaires/page.tsx`, `lib/proprietaires-data.ts`, `components/home/ProprietairesTransitionLink.tsx`, `components/layout/Navbar.tsx`, `components/layout/Footer.tsx`, `app/sitemap.ts`, `components/home/HomeOwnersSection.tsx`, `app/globals.css`, `public/marketing.png`, `public/terrain.png`, `public/relation.png`, `public/menage.png`, `public/finance.png`, `public/notregestion.png`]
-- **why**: Moderniser la navigation service, assurer la cohérence du discours commercial, éliminer le contenu dupliqué, finaliser le design avec des visuels réels.
-- **impact**: Site cohérent (FAQ ↔ vitrine), navigation service fluide, code simplifié (page proprio supprimée), design finalisé avec images réelles.
-- **verify**: `npm run build` OK ; revue manuelle de cohérence FAQ/piliers.
-
----
-
-## 2026-05-09 (soir) — Animations, Prestations critique, Copilot redesign, Bug villas DNS
-
-- **type**: `ui | config | perf`
-- **summary**:
-  1. **Animations P1** : `stagger-fade` keyframes dans `globals.css` ; `ScrollReveal` sur villas, proprio, footer, PageHero ; création `ScrollRevealWrapper.tsx`.
-  2. **Bug villas invisibles** : `@keyframes stagger-fade` manquant dans `globals.css` → invisible sur l'index. Corrigé.
-  3. **Layout /prestations** : mobile hero amélioré ; hub 5 piliers transformé en layout éditorial alterné (images 3/5 + texte 2/5) ; images réelles aux placeholders.
-  4. **Animations /prestations** : `ScrollReveal` + `stagger-item` sur chaque pilier du hub.
-  5. **Critique design /prestations** : revue LLM + scan `impeccable` (zero AI slop). Score 19/40.
-  6. **Correctifs P1** : popups allégées (items retirés), FAQ séparée de la section soumettre, timeout 3s canvas, CTA double supprimé.
-  7. **Redesign Copilot (Finance)** : features list épurée (sans icônes lourdes), terminal allégé, en-tête aéré.
-  8. **Bug villas DNS** : `getaddrinfo ENOTFOUND` sandbox Cursor → `fetch` patched Next.js échouait. Remplacement par `https.get` natif + `force-dynamic` + relance avec permissions réseau. `EMFILE` watcher fix dans `next.config.mjs`.
-- **files**: [`app/globals.css`, `components/home/HomeFeaturedAudience.tsx`, `components/home/HomeOwnersSection.tsx`, `components/marketing/PageHero.tsx`, `components/layout/Footer.tsx`, `components/marketing/ScrollRevealWrapper.tsx`, `app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `components/prestations/FinanceCopilotSection.tsx`, `app/page.tsx`, `next.config.mjs`]
-- **why**: Amélioration continue de l'UI/UX, résolution des bugs bloquants, alignement avec les standards premium Kayvila.
-- **impact**: Animations subtiles cohérentes ; page /prestations mieux structurée ; section Copilot plus élégante ; villas visibles en local (sandbox DNS contourné).
+- **type**: fix
+- **summary**: 
+  1. **Middleware réécrit** (pattern Supabase SSR officiel) :
+     - `getAll()` lit les cookies de la requête (`request.cookies.getAll()`)
+     - `setAll()` recrée la réponse UNE SEULE fois (pas par cookie), évite la perte de cookies
+     - Toutes les redirections (`NextResponse.redirect`) copient les cookies rafraîchis depuis `supabaseResponse`
+     - Suppression de `getUser()` en fallback (cause de désynchronisation)
+     - Utilisation unique de `getSession()` qui rafraîchit le JWT via le refresh token
+  2. **force-dynamic** ajouté sur :
+     - `app/(proprio)/dashboard/layout.tsx` — le layout utilisait `redirect()` mais pouvait être pré-rendu statiquement (car `metadata` exporté)
+     - `app/(proprio)/dashboard/page.tsx` — confirme le rendu dynamique avec `searchParams`
+  3. **StripeConnectButton** :
+     - `useEffect` simplifié : plus de `shouldVerifyFromUrl` complexe, vérifie directement si `connected` ou `connectDone`
+- **files**: [`middleware.ts`, `app/(proprio)/dashboard/page.tsx`, `app/(propo)/dashboard/layout.tsx`, `components/dashboard/proprio/StripeConnectButton.tsx`]
+- **why**: Le layout du dashboard pouvait être pré-rendu statiquement → `redirect()` jamais exécuté côté serveur → session jamais validée sur navigation. Le middleware recréait `NextResponse.next()` par cookie → perte des cookies précédents.
+- **impact**: Session persistée correctement après login, Stripe Connect status maintenu entre les navigations
+- **verify**: `npx tsc --noEmit` OK
 
 ---
 
-## 2026-05-09 (16:00) — Navbar centrage, rename labels, RECAP mise à jour
+### 2026-05-14 — Fix auth : session persistante + Stripe Connect + redirect login ✅
 
-- **type**: `ui | docs`
+- **type**: fix | security
 - **summary**:
-  1. **Navbar** : passage en `grid grid-cols-[1fr_auto_1fr]` pour centrage parfait du logo.
-  2. **Rename labels** : "Soumettre ma villa" → "Confier ma villa" dans 10 fichiers.
-  3. **RECAP.md** : mise à jour complète (features mai : route groups admin/proprio, dashboard KPIs, animations, Prestations redesign, Copilot Finance, bug DNS, page proprios supprimée).
-  4. **Logs** : session 2026-05-09 complétée.
-- **files**: [`components/layout/Navbar.tsx`, `lib/i18n.ts`, `app/prestations/PrestationsPageClient.tsx`, `app/prestations/services/[slug]/page.tsx`, `components/home/HomeOwnersSection.tsx`, `components/book/BookLandingMarketing.tsx`, `components/prestations/VideoScrollHero.tsx`, `app/contact/page.tsx`, `app/soumettre-ma-villa/page.tsx`, `components/layout/Footer.tsx`, `docs/ACTIONS_LOG.md`, `docs/logs/2026-05-09.md`, `RECAP.md`]
-- **why**: Logo décentré, CTA "Soumettre" moins engageant, documentation très en retard (RECAP.md stale depuis avril).
-- **impact**: Navigation équilibrée, CTA propriétaire plus clair, documentation projet à jour.
-- **verify**: `npx tsc --noEmit` OK ; push git sur `feat/langue-devise-localstorage`.
+  - **Bug 1 (déjà fixé session précédente)** : `publicPaths` contenait `"/"` → `pathname.startsWith("/")` matche TOUT → le bloc RBAC ne s'exécutait jamais → owners redirigés vers /login même avec session valide. Fix : `pathname.startsWith(p + "/")` au lieu de `pathname.startsWith(p)`.
+  - **Bug 2 — Stripe Connect** : `ownerProfile` fetchait avec le client anon → RLS bloque `auth.uid()` → retourne null → bannière "non connecté" même quand `stripe_connect_onboarding_completed = true`. Fix : utiliser `supabaseAdmin()` pour cette query (bypass RLS).
+  - **Bug 3 — profileRole null** : Le client SSR a `skipAutoInitialize: true` → `_getAccessToken()` appelle `getSession()` → lit les cookies → session OK. Fix complémentaire : `await supabase.auth.getSession()` avant les queries DB dans le middleware + `await client.auth.getSession()` dans `getSupabaseServer()` pour pré-charger la session en mémoire.
+  - **Bug 4 (vrai problème login)** : La page `/login` est en `publicPaths` → le middleware la laissait toujours passer → aucun check "déjà connecté" → un utilisateur authentifié voyait le formulaire de login et devait se reconnecter. Fix : dans le middleware, si `user && pathname === "/login"` → rediriger vers `/admin`, `/dashboard`, ou `/espace-client` selon le rôle.
+- **files**: [`middleware.ts`, `lib/supabase-server.ts`, `app/(proprio)/dashboard/page.tsx`, `app/espace-client/layout.tsx`, `app/espace-client/EspaceClientShell.tsx`]
+- **why**: 4 bugs indépendants qui semblaient liés. Le vrai bug "login" = 12 lignes de redirect manquant. 2h perdues à analyser les refresh tokens Supabase.
+- **impact**: Session persistante ✓, Stripe Connect status correct ✓, redirect auto si déjà connecté ✓
+- **verify**: Tests manuels OK
+- **leçon**: Avant d'analyser les internals d'un framework, vérifier d'abord le comportement attendu côté UX. Le bug "login" n'était pas un bug de session — c'était une feature manquante.
 
 ---
 
-## 2026-05-09 (21:30) — Audit villas : corrections P0/P1/P2 dispatchées
+### 2026-05-14 — Flux réservation guest sans inscription
 
-- **type**: `ui`
+- **type**: ui | api
 - **summary**:
-  1. **Section "L'expérience Kayvila" refondue** (`app/villas/[id]/page.tsx`) : remplacement des 4 blocs identiques icône+cercle+texte par des formats éditoriaux variés — image hero avec overlay pour Concierge dédié, citation blockquote pour Accueil personnalisé.
-  2. **Breadcrumb ajouté** (`app/villas/[id]/page.tsx`) : fil d'Ariane discret "Toutes nos villas → [nom]" entre galerie et titre.
-  3. **Feedback comparateur** (`components/villas/CompareBar.tsx`) : affichage "Sélectionnez 2 villas" quand 1 seule villa sélectionnée.
-  4. **Icône amenities corrigée** (`app/villas/[id]/page.tsx`) : `Shield` → `ChefHat` pour chef/cuisine/réfrigérateur.
-  5. **Hero Image** (`components/marketing/PageHero.tsx`) : `<img>` natif migré vers `<Image>` de `next/image` avec `fill` + `sizes="100vw"`.
-  6. **Loading listing** (`app/villas/loading.tsx`) : spinner remplacé par skeleton de grille (hero + toolbar + 4 cartes).
-- **files**: [`app/villas/[id]/page.tsx`, `components/villas/CompareBar.tsx`, `components/marketing/PageHero.tsx`, `app/villas/loading.tsx`]
-- **why**: Audit identifiait ces problèmes comme P0-P2 : AI slop section expérience, navigation sans breadcrumb, comparateur sans feedback, sémantique icônes incorrecte, perf hero image, loading trop minimal.
-- **impact**: Pages villas plus éditoriales, navigation plus fluide, meilleure accessibilité, performance améliorée (next/image).
-- **verify**: `npm run build` OK (sortie clean). 6 sous-agents dispatchés en parallèle.
+  - **CheckoutView** : ajout des champs `Nom complet` + `Email` pour les visiteurs non connectés (cachés si déjà connecté)
+  - Validation frontale : email requis, format valide, nom requis avant soumission
+  - **Page /success améliorée** : design premium, affiche les détails de la réservation (villa, dates, montant), détecte si l'utilisateur est connecté ou pas
+  - **Section "Créez votre espace client"** pour les non-connectés : affiche l'email du guest, bouton "Recevoir mon lien magique" qui envoie un OTP Supabase, état de succès avec instructions
+  - **API booking** : passe l'email du guest dans le `success_url` (`&email=...`) pour que la page success puisse l'afficher sans requête supplémentaire
+  - **Flux complet** : visiteur sans compte → réserve → paye Stripe → page success → reçoit un magic link → clique → redirigé vers `/espace-client` → voit sa réservation
+  - L'espace client existant charge déjà les réservations par `guest_email`, aucune modif nécessaire côté DB
+- **files**: [`components/booking/CheckoutView.tsx`, `app/success/page.tsx`, `app/api/booking/route.ts`]
+- **why**: Permettre la réservation sans inscription obligatoire (taux de conversion), mais offrir une onboarding fluide vers l'espace client après paiement
+- **impact**: Les visiteurs peuvent réserver sans compte. Après paiement, ils reçoivent un magic link pour accéder à leur espace et voir leurs réservations.
+- **verify**: Build OK (`npx tsc --noEmit`), lint OK
+
+---
+
+### 2026-05-14 — Fix dashboard proprio : réservations invisibles + lien booking 404
+
+- **type**: fix
+- **summary**:
+  - **Bug 1 — Lien 404** : `UpcomingBookings.tsx` et `QuickReservationsList.tsx` construisaient les URLs comme `/dashboard/reservations/{bookingId}` mais la route attend `/dashboard/reservations/{villaId}/{bookingId}` → 404.
+    - Fix : ajout de `villa_id` dans le select de la query dashboard (`page.tsx` ligne 99) et correction du href dans `UpcomingBookings.tsx` pour inclure `villaId`.
+  - **Bug 2 — Réservations non visibles** : La page `reservations/page.tsx` utilisait `bookings(id, guest_name, check_in, check_out, ...)` mais les colonnes `check_in`/`check_out` n'existent pas sur la table `bookings` (elles sont sur `villas`). Les colonnes réelles sont `start_date`/`end_date`.
+    - Fix : remplacement par `bookings(id, guest_name, start_date, end_date, status, total_price_cents)`.
+- **files**: [`components/dashboard/proprio/UpcomingBookings.tsx`, `app/(proprio)/dashboard/reservations/page.tsx`, `app/(proprio)/dashboard/page.tsx`]
+- **why**: Le proprio doit voir ses réservations et pouvoir cliquer sur le détail
+- **impact**: Les réservations apparaissent dans le dashboard et le lien vers le détail fonctionne
+- **verify**: `npx tsc --noEmit` OK, lint OK
+
+---
+
+### 2026-05-14 — Fix réservations proprio vides (select imbriqué sans FK)
+
+- **type**: fix | sql
+- **summary**:
+  - **Cause racine** : Le select imbriqué `villas(id, name, bookings(id, guest_name, ...))` fonctionne uniquement si Supabase détecte une **foreign key** déclarée entre `bookings.villa_id` et `villas.id`. Sans FK, la relation n'est pas résolue → `bookings` est toujours `[]`.
+  - **Migration** : `20260514_add_booking_villa_fk.sql` — ajoute `FOREIGN KEY (villa_id) REFERENCES villas(id) ON DELETE CASCADE` + index `idx_bookings_villa_id`
+  - **Fix code** : La page `reservations/page.tsx` refacto en 2 requêtes séparées pour fonctionner même sans FK (résilience) : 
+    1. `villas.select("id, name").eq("owner_id", ...)` 
+    2. `bookings.select("...").in("villa_id", ...)` 
+    3. Fusion en mémoire dans `villasWithBookings`
+- **files**: [`app/(proprio)/dashboard/reservations/page.tsx`, `supabase/migrations/20260514_add_booking_villa_fk.sql`]
+- **why**: Le proprio ne voyait aucune réservation malgré des bookings en base, à cause d'une FK manquante empêchant le join Supabase
+- **impact**: Les réservations s'affichent correctement par villa
+- **verify**: `npx tsc --noEmit` OK, migration SQL prête à exécuter
+
+---
+
+### 2026-05-14 — Détail réservation proprio enrichi
+
+- **type**: ui
+- **summary**:
+  - **BookingDetailCard** réécrit : affiche désormais un tableau de bord complet avec Villa, Client, Email, Arrivée, Départ, Durée (nombre de nuits), Prix total, Prix par nuit, Source (Airbnb/Direct), Paiement, Session Stripe, Date de création
+  - Ajout d'icônes lucide-react pour chaque champ (Building2, CalendarDays, User, Mail, Clock, Receipt, Banknote, Globe, CreditCard, Hash)
+  - Récupération du nom de la villa dans la page de détail pour l'afficher dans la carte
+  - Requêtes parallélisées (Promise.all) booking + villa pour la page de détail
+  - Nettoyage : suppression de l'import inutilisé `getSupabaseServer`
+- **files**: [`components/dashboard/proprio/BookingDetailCard.tsx`, `app/(proprio)/dashboard/reservations/[villaId]/[bookingId]/page.tsx`]
+- **why**: Le proprio avait besoin de voir le détail complet d'une réservation
+- **impact**: Interface plus riche et informative pour le propriétaire
+- **verify**: Build OK
+
+---
+
+### 2026-05-14 — Session validée par le client
+
+- **type**: docs
+- **summary**:
+  - Réservations proprio : dashboard + liste + détail fonctionnels
+  - Détail réservation enrichi (client, séjour, prix, source, paiement)
+  - Build OK, serveur local relancé sur port 3000
+  - Client confirme que tout est bon
+- **files**: [`components/dashboard/proprio/BookingDetailCard.tsx`, `docs/ACTIONS_LOG.md`]
+- **why**: Clôture session corrections réservations proprio
+- **impact**: Fonctionnalité réservations proprio livrée et validée
+- **verify**: Build OK, validation client
+
+## 2026-05-14 : Admin — Liaison Proprio → Villa
+
+- **type**: ui
+- **summary**: Trois améliorations dans l'espace admin pour lier propriétaires et villas :
+  - **Liste villas** : le nom du propriétaire remplace l'ID brut, avec lien cliquable vers sa fiche membre
+  - **Formulaire ajout villa** : dropdown de sélection du propriétaire au lieu d'une assignation automatique à l'admin
+  - **Fiche villa détaillée** : nouveau bloc Propriétaire (nom, email, téléphone, statut Stripe Connect) + bloc Réservations récentes (10 dernières)
+- **files**: [`app/(admin)/admin/villas/page.tsx`, `app/(admin)/admin/villas/[id]/page.tsx`, `components/dashboard/admin/AdminVillaForm.tsx`, `app/api/admin/owners/route.ts`, `app/api/dashboard/create-villa/route.ts`]
+- **why**: L'admin doit pouvoir gérer la relation propriétaire → villa, visualiser les infos du propriétaire et les réservations associées depuis la fiche villa
+- **impact**: Visibilité complète admin : nom du propriétaire partout, assignation possible à la création, infos détaillées et réservations récentes sur la fiche
+- **verify**: Build OK
+
+## 2026-05-14 : Fix split paiement Stripe Connect (FAQ Kayvila)
+
+- **type**: api
+- **summary**: Correction du calcul `calculateTransferAmounts` : le propriétaire ne recevait plus par erreur les frais de ménage et de service. Conforme FAQ (`data/conciergerie-faq.ts`) — proprio = 80 % des nuitées ; Kayvila = 20 % du séjour + 100 % ménage + 100 % frais de service.
+- **files**: [`lib/stripe/connect.ts`, `app/api/booking/route.ts`, `docs/POINT_AVANCEMENT_KAYVILA_MAI2026.md`]
+- **why**: Le split précédent (`total - 20% séjour`) reversait ménage/service au propriétaire, contraire au modèle commercial Kayvila
+- **impact**: Réservations directes site : reversement Stripe Connect aligné sur la FAQ
+- **verify**: Build OK

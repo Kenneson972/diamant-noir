@@ -1,16 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
+interface OwnerOption {
+  id: string;
+  full_name: string | null;
+  email: string;
+}
+
 export function AdminVillaForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [owners, setOwners] = useState<OwnerOption[]>([]);
+  const [ownersLoading, setOwnersLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/owners");
+        const json = await res.json();
+        setOwners(json.owners ?? []);
+      } catch {
+        // silent fail
+      } finally {
+        setOwnersLoading(false);
+      }
+    })();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,6 +52,7 @@ export function AdminVillaForm() {
     const form = new FormData(e.currentTarget);
     const capacityRaw = form.get("capacity");
     const commissionRaw = form.get("commission_rate");
+    const ownerId = form.get("owner_id") as string;
 
     const data: Record<string, unknown> = {
       name: form.get("name") as string,
@@ -45,6 +68,7 @@ export function AdminVillaForm() {
         commissionRaw && String(commissionRaw).trim() !== ""
           ? Number(commissionRaw)
           : 15,
+      owner_id: ownerId || null,
     };
 
     const imageUrl = (form.get("image_url") as string)?.trim();
@@ -68,7 +92,7 @@ export function AdminVillaForm() {
 
       const newId = result.data?.id as string | undefined;
       if (!newId) {
-        setError("Réponse serveur invalide (pas d’identifiant villa).");
+        setError("Réponse serveur invalide (pas d'identifiant villa).");
         return;
       }
 
@@ -85,7 +109,7 @@ export function AdminVillaForm() {
     <div className="mx-auto max-w-3xl space-y-8 font-body-dashboard">
       <AdminPageIntro
         title="Ajouter une villa"
-        description="Créez la fiche minimale : vous pourrez enrichir médias, équipements et tarifs saisonniers dans l’éditeur complet (hub classique)."
+        description="Créez la fiche minimale : vous pourrez enrichir médias, équipements et tarifs saisonniers dans l'éditeur complet (hub classique)."
       />
 
       <div className="rounded-2xl border border-navy/8 bg-amber-50/80 px-4 py-3 text-sm text-navy/75">
@@ -133,6 +157,33 @@ export function AdminVillaForm() {
                 className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
                 placeholder="ex. Trois-Îlets, Martinique"
               />
+            </div>
+
+            <div>
+              <label
+                htmlFor="owner_id"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Propriétaire
+              </label>
+              <select
+                id="owner_id"
+                name="owner_id"
+                defaultValue=""
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 bg-white"
+                disabled={ownersLoading}
+              >
+                <option value="">
+                  {ownersLoading
+                    ? "Chargement des propriétaires…"
+                    : "Sélectionner un propriétaire"}
+                </option>
+                {owners.map((owner) => (
+                  <option key={owner.id} value={owner.id}>
+                    {owner.full_name ?? owner.email}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">

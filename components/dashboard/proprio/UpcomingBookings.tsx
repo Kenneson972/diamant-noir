@@ -5,7 +5,7 @@ import type { Booking } from "@/types/domain";
 interface UpcomingBookingsProps {
   bookings: Pick<
     Booking,
-    "id" | "start_date" | "end_date" | "guest_name" | "status"
+    "id" | "start_date" | "end_date" | "guest_name" | "status" | "villa_id"
   >[];
 }
 
@@ -39,7 +39,7 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
         {bookings.slice(0, 3).map((booking) => (
           <li key={booking.id}>
             <Link
-              href={`/dashboard/reservations/${booking.id}`}
+              href={`/dashboard/reservations/${booking.villa_id}/${booking.id}`}
               className="flex items-center justify-between gap-4 py-3 transition-colors hover:bg-navy-900/[0.02]"
             >
               <div className="min-w-0 flex-1">

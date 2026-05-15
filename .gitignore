@@ -1,39 +1,6 @@
-.next/
 node_modules/
-.claude-flow/
-*.tsbuildinfo
-
-# Environment files
+.next/
+.env.local
 .env
-.env.*
-!.env.local.example
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Build artifacts
-dist/
-build/
-coverage/
-playwright-report/
-test-results/
-
-# System
-.DS_Store
-.vercel
-
-# Debug / local artifacts
-.airbnb-debug*.html
-supabase/.temp/
-
-# Local brainstorm / tooling cache (not for repo)
-.superpowers/
-.worktrees/
-
-# Prestations / scroll local backups (not for repo)
-app/prestations/*.backup*
-app/prestations/**/*.backup*
-components/prestations/*.backup*
+.env.example
+*.tsbuildinfo

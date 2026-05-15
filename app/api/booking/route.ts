@@ -3,6 +3,8 @@ import Stripe from "stripe";
 import { calculatePrice } from "@/lib/price-engine";
 import { supabaseAdmin } from "@/lib/supabase";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
+import { BookingRequestSchema } from "@/types/stripe";
+import { calculateTransferAmounts } from "@/lib/stripe/connect";
 
 export const runtime = "nodejs";
 
@@ -10,9 +12,45 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2023-10-16",
-});
+let stripeInstance: Stripe | null = null;
+function getStripe(): Stripe | null {
+  if (!stripeSecretKey) return null;
+  if (!stripeInstance) {
+    stripeInstance = new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16",
+    });
+  }
+  return stripeInstance;
+}
+
+/**
+ * Récupère le compte Stripe Connect du propriétaire d'une villa.
+ * Retourne l'ID du compte ou null si pas de Connect configuré.
+ */
+async function getOwnerConnectAccountId(
+  supabase: ReturnType<typeof supabaseAdmin>,
+  villaId: string
+): Promise<string | null> {
+  const { data: villa } = await supabase
+    .from("villas")
+    .select("owner_id")
+    .eq("id", villaId)
+    .single();
+
+  if (!villa?.owner_id) return null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("stripe_connect_account_id, stripe_connect_onboarding_completed")
+    .eq("id", villa.owner_id)
+    .single();
+
+  if (profile?.stripe_connect_onboarding_completed && profile.stripe_connect_account_id) {
+    return profile.stripe_connect_account_id;
+  }
+
+  return null;
+}
 
 export async function POST(request: Request) {
   // Rate limiting : 10 req / 60s par IP
@@ -21,15 +59,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { startDate, endDate, villaId, guests, guestName } = await request.json();
+    const raw = await request.json();
 
-    // Validation basique des champs requis
-    if (!startDate || !endDate || !villaId) {
+    // ── Zod validation ──
+    const parsed = BookingRequestSchema.safeParse(raw);
+    if (!parsed.success) {
+      const firstError = parsed.error.issues[0];
       return NextResponse.json(
-        { error: "Informations de réservation incomplètes" },
+        { error: firstError?.message || "Données de réservation invalides" },
         { status: 400 }
       );
     }
+
+    const { startDate, endDate, villaId, guests, guestName, guestEmail, cleaningFee, serviceFeePercent } = parsed.data;
 
     // Validation du format des dates
     const start = new Date(startDate);
@@ -46,10 +88,10 @@ export async function POST(request: Request) {
 
     const supabase = supabaseAdmin();
 
-    // Fetch villa details for price and name
+    // Fetch villa details for price and name (include owner_id for Stripe Connect)
     const { data: villa, error: villaError } = await supabase
       .from("villas")
-      .select("id, name, price_per_night, capacity")
+      .select("id, name, price_per_night, capacity, owner_id")
       .eq("id", villaId)
       .single();
 
@@ -97,8 +139,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // ── Recalcul des frais côté serveur (sécurité : le client ne dicte pas le montant) ──
+    const stayCents = Math.round(price.total * 100);
+    const cleaningFeeCents = Math.round(cleaningFee * 100);
+    const serviceFeeCents = Math.round(price.total * serviceFeePercent / 100 * 100);
+    const totalCents = stayCents + cleaningFeeCents + serviceFeeCents;
+
+    // Récupérer le compte Connect du propriétaire (si configuré)
+    const ownerConnectAccountId = await getOwnerConnectAccountId(supabase, villaId);
+
     // 1. Create the booking in DB first
-    const priceCents = Math.round(price.total * 100);
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
       .insert({
@@ -109,8 +159,11 @@ export async function POST(request: Request) {
         payment_status: "unpaid",
         source: "direct",
         price: price.total,
-        total_price_cents: priceCents,
-        guest_name: guestName || "Client Site Web"
+        cleaning_fee: cleaningFeeCents / 100,
+        service_fee: serviceFeeCents / 100,
+        total_price_cents: totalCents,
+        guest_name: guestName || "Client Site Web",
+        guest_email: guestEmail || null,
       })
       .select()
       .single();
@@ -120,7 +173,8 @@ export async function POST(request: Request) {
     }
 
     // 2. If Stripe is not configured yet, just return the booking info (simulation)
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const stripeInstance = getStripe();
+    if (!stripeInstance) {
       return NextResponse.json({ 
         warning: "Stripe non configuré. Réservation créée en attente.",
         bookingId: booking.id,
@@ -128,29 +182,77 @@ export async function POST(request: Request) {
       });
     }
 
-    // 3. Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    // ── Stripe Connect : split conforme FAQ Kayvila ──
+    // Proprio : 80 % du séjour | Kayvila : 20 % séjour + 100 % ménage + 100 % service
+    const { platformFeeCents } = calculateTransferAmounts(
+      stayCents,
+      cleaningFeeCents,
+      serviceFeeCents,
+      20
+    );
+
+    // 3. Create Stripe Checkout Session avec le total incluant tous les frais
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "payment",
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}${guestEmail ? `&email=${encodeURIComponent(guestEmail)}` : ""}`,
       cancel_url: `${baseUrl}/villas?canceled=true&bookingId=${booking.id}`,
+      customer_email: guestEmail || undefined,
       metadata: {
         bookingId: booking.id,
-        villaId: villaId
+        villaId: villaId,
+        nights: String(price.nights),
+        cleaningFeeCents: String(cleaningFeeCents),
+        serviceFeeCents: String(serviceFeeCents),
+        ownerConnectAccountId: ownerConnectAccountId || "",
       },
       line_items: [
         {
           quantity: 1,
           price_data: {
             currency: "eur",
-            unit_amount: Math.round(price.total * 100),
+            unit_amount: stayCents,
             product_data: {
               name: `Séjour - ${villa.name}`,
               description: `Du ${startDate} au ${endDate} (${price.nights} nuits)`,
             },
           },
         },
+        {
+          quantity: 1,
+          price_data: {
+            currency: "eur",
+            unit_amount: cleaningFeeCents,
+            product_data: {
+              name: "Frais de ménage",
+              description: "Ménage professionnel après votre séjour",
+            },
+          },
+        },
+        {
+          quantity: 1,
+          price_data: {
+            currency: "eur",
+            unit_amount: serviceFeeCents,
+            product_data: {
+              name: "Frais de service Kayvila",
+              description: "Protection réservation et support client",
+            },
+          },
+        },
       ],
-    });
+    };
+
+    // Si le propriétaire a un compte Stripe Connect, ajouter le transfert automatique
+    if (ownerConnectAccountId) {
+      sessionParams.payment_intent_data = {
+        transfer_data: {
+          destination: ownerConnectAccountId,
+        },
+        application_fee_amount: platformFeeCents,
+      };
+    }
+
+    const session = await stripeInstance.checkout.sessions.create(sessionParams);
 
     // 4. Link Stripe session ID to the booking
     await supabase

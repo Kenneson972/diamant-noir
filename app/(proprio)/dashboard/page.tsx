@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
+export const dynamic = "force-dynamic";
 import { CalendarCheck, DollarSign } from "lucide-react";
 import type { Villa } from "@/types/domain";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
@@ -7,6 +8,9 @@ import { TodayTimeline } from "@/components/dashboard/proprio/TodayTimeline";
 import { AlertsWidget } from "@/components/dashboard/proprio/AlertsWidget";
 import { UpcomingBookings } from "@/components/dashboard/proprio/UpcomingBookings";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
+import { StripeConnectButton } from "@/components/dashboard/proprio/StripeConnectButton";
+import { supabaseAdmin } from "@/lib/supabase";
+import { getConnectAccount } from "@/lib/stripe/connect";
 
 function getMonthBounds() {
   const now = new Date();
@@ -19,7 +23,12 @@ function getMonthBounds() {
   return { start, end };
 }
 
-export default async function ProprioDashboardPage() {
+export default async function ProprioDashboardPage(props: {
+  searchParams?: Promise<{ connect?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const connectParam = searchParams?.connect;
+
   const supabase = await getSupabaseServer();
   const {
     data: { user },
@@ -30,6 +39,41 @@ export default async function ProprioDashboardPage() {
     .from("villas")
     .select("*")
     .eq("owner_id", user!.id);
+
+  // Récupérer les infos Stripe Connect du profil (admin pour bypasser RLS)
+  const { data: ownerProfile } = await supabaseAdmin()
+    .from("profiles")
+    .select("stripe_connect_account_id, stripe_connect_onboarding_completed")
+    .eq("id", user!.id)
+    .maybeSingle();
+
+  // Vérification Stripe Connect côté serveur si on revient de l'onboarding
+  let connectDone = false;
+  if (
+    connectParam === "success" &&
+    !ownerProfile?.stripe_connect_onboarding_completed &&
+    ownerProfile?.stripe_connect_account_id
+  ) {
+    try {
+      const admin = supabaseAdmin();
+      const account = await getConnectAccount(ownerProfile.stripe_connect_account_id);
+      // Onboarding terminé si details_submitted OU charges_enabled
+      // (en mode test, charges_enabled peut être false même si le formulaire est complet)
+      const onboarded = account.charges_enabled || account.details_submitted;
+      if (onboarded) {
+        await admin
+          .from("profiles")
+          .update({ stripe_connect_onboarding_completed: true })
+          .eq("id", user!.id);
+        connectDone = true;
+      }
+    } catch (e) {
+      console.error("Server-side Connect verification failed:", e);
+    }
+  }
+
+  const isStripeConnected =
+    ownerProfile?.stripe_connect_onboarding_completed || connectDone;
 
   if (!villas || villas.length === 0) {
     return (
@@ -52,7 +96,7 @@ export default async function ProprioDashboardPage() {
       // Upcoming bookings
       supabase
         .from("bookings")
-        .select("id, start_date, end_date, guest_name, status")
+        .select("id, start_date, end_date, guest_name, status, villa_id")
         .in("villa_id", villaIds)
         .gte("start_date", today)
         .order("start_date", { ascending: true })
@@ -208,6 +252,13 @@ export default async function ProprioDashboardPage() {
           Aperçu de votre activité
         </p>
       </div>
+
+      {/* Bannière Stripe Connect */}
+      <StripeConnectButton
+        ownerId={user!.id}
+        isOnboarded={isStripeConnected}
+        connectDone={connectDone}
+      />
 
       <KpiRow items={kpiItems} cols={2} />
 

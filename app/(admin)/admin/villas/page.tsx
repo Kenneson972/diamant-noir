@@ -1,21 +1,57 @@
 import Link from "next/link";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { Home, Plus } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Villas — Administration Kayvila",
 };
 
-async function getVillas() {
+interface VillaRow {
+  id: string;
+  name: string;
+  location: string | null;
+  price_per_night: number;
+  owner_id: string | null;
+  is_published: boolean;
+  owner_name: string | null;
+}
+
+async function getOwnersMap(): Promise<Record<string, string>> {
+  const supabase = await getSupabaseServer();
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, full_name, email")
+    .in("role", ["owner", "proprio"]);
+
+  const map: Record<string, string> = {};
+  if (profiles) {
+    for (const p of profiles) {
+      map[p.id] = p.full_name ?? p.email;
+    }
+  }
+  return map;
+}
+
+async function getVillas(): Promise<VillaRow[]> {
   const supabase = await getSupabaseServer();
   const { data } = await supabase
     .from("villas")
     .select("id, name, location, price_per_night, owner_id, is_published")
     .order("created_at", { ascending: false });
-  return data ?? [];
+
+  const villas = data ?? [];
+  const ownersMap = await getOwnersMap();
+
+  return villas.map((v) => ({
+    ...v,
+    owner_name: v.owner_id ? (ownersMap[v.owner_id] ?? null) : null,
+  }));
 }
 
 export default async function AdminVillasPage() {
@@ -72,11 +108,14 @@ export default async function AdminVillasPage() {
                   <td className="px-4 py-3 text-gray-900">
                     {villa.price_per_night.toLocaleString("fr-FR")} €
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">
-                    {villa.owner_id ? (
-                      <span title={villa.owner_id}>
-                        {villa.owner_id.slice(0, 8)}…
-                      </span>
+                  <td className="px-4 py-3">
+                    {villa.owner_name ? (
+                      <Link
+                        href={`/admin/membres/${villa.owner_id}`}
+                        className="text-sm font-medium text-gold hover:text-gold/80 transition-colors"
+                      >
+                        {villa.owner_name}
+                      </Link>
                     ) : (
                       <span className="text-gray-400">—</span>
                     )}

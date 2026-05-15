@@ -22,12 +22,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Allow admin to choose owner_id; fallback to self if not provided
+    const insertPayload: Record<string, unknown> = { ...payload };
+    if (!insertPayload.owner_id) {
+      insertPayload.owner_id = userData.user.id;
+    }
+
     const { data, error } = await admin
       .from("villas")
-      .insert({
-        ...payload,
-        owner_id: userData.user.id,
-      })
+      .insert(insertPayload)
       .select("*")
       .single();
 

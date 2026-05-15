@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import { BookingDetailCard } from "@/components/dashboard/proprio/BookingDetailCard";
 import type { Booking } from "@/types/domain";
 
@@ -9,17 +9,27 @@ interface PageProps {
   params: Promise<{ villaId: string; bookingId: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function BookingDetailPage({ params }: PageProps) {
   const { villaId, bookingId } = await params;
 
-  const supabase = await getSupabaseServer();
+  // Fetch booking and villa concurrently
+  const [bookingResult, villaResult] = await Promise.all([
+    supabaseAdmin()
+      .from("bookings")
+      .select("*")
+      .eq("id", bookingId)
+      .single(),
+    supabaseAdmin()
+      .from("villas")
+      .select("name")
+      .eq("id", villaId)
+      .single(),
+  ]);
 
-  // Fetch booking
-  const { data: booking, error } = await supabase
-    .from("bookings")
-    .select("*")
-    .eq("id", bookingId)
-    .single();
+  const { data: booking, error } = bookingResult;
+  const { data: villa } = villaResult;
 
   if (error || !booking) {
     notFound();
@@ -39,7 +49,10 @@ export default async function BookingDetailPage({ params }: PageProps) {
       </Link>
 
       {/* Detail card */}
-      <BookingDetailCard booking={typedBooking} />
+      <BookingDetailCard
+        booking={typedBooking}
+        villaName={villa?.name ?? undefined}
+      />
     </div>
   );
 }
