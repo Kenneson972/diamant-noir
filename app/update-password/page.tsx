@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { getSupabaseBrowser } from "@/lib/supabase"
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access"
 import { Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react"
-import type { AuthResponse } from "@supabase/supabase-js"
 
 const MIN_PASSWORD_LEN = 8
 
@@ -17,13 +16,18 @@ export default function UpdatePasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldError, setFieldError] = useState<string | null>(null)
+  const [sessionReady, setSessionReady] = useState(false)
   const router = useRouter()
   const supabase = getSupabaseBrowser()
 
   useEffect(() => {
     if (!supabase) return
-    supabase.auth.getUser().then((res: Awaited<ReturnType<typeof supabase.auth.getUser>>) => {
-      if (!res.data.user) router.replace("/login")
+    supabase.auth.getUser().then(({ data: { user } }: Awaited<ReturnType<typeof supabase.auth.getUser>>) => {
+      if (!user) {
+        router.replace("/login")
+      } else {
+        setSessionReady(true)
+      }
     })
   }, [supabase, router])
 
@@ -47,23 +51,36 @@ export default function UpdatePasswordPage() {
       setLoading(false)
       return
     }
-    const u = data.user
-    let profileRole: string | null = null
-    if (u) {
-      const { data: p } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", u.id)
-        .maybeSingle()
-      profileRole = p?.role ?? null
+    try {
+      const u = data.user
+      let profileRole: string | null = null
+      if (u) {
+        const { data: p } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", u.id)
+          .maybeSingle()
+        profileRole = p?.role ?? null
+      }
+      const meta = (u?.user_metadata?.role as string | undefined) ?? "client"
+      const dest = isStaffAdmin(profileRole, meta, u?.email)
+        ? "/admin"
+        : isOwnerRole(profileRole, meta)
+        ? "/dashboard"
+        : "/espace-client"
+      window.location.href = dest
+    } catch {
+      setError("Une erreur est survenue. Veuillez réessayer.")
+      setLoading(false)
     }
-    const meta = (u?.user_metadata?.role as string | undefined) ?? "client"
-    const dest = isStaffAdmin(profileRole, meta, u?.email)
-      ? "/admin"
-      : isOwnerRole(profileRole, meta)
-      ? "/dashboard"
-      : "/espace-client"
-    window.location.href = dest
+  }
+
+  if (!sessionReady) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-white">
+        <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
+      </main>
+    )
   }
 
   return (
