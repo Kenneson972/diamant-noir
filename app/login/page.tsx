@@ -52,7 +52,7 @@ function formatSupabaseAuthMessage(message: string): string {
   return message || "Une erreur est survenue. Réessayez."
 }
 
-type PasswordMode = "login" | "signup"
+type PasswordMode = "login" | "signup" | "forgot"
 
 function PasswordPanel({
   redirectTo,
@@ -72,6 +72,7 @@ function PasswordPanel({
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<{ confirm?: string }>({})
   const [signupSuccess, setSignupSuccess] = useState<"confirm_email" | null>(null)
+  const [forgotSuccess, setForgotSuccess] = useState(false)
   const router = useRouter()
   const supabase = getSupabaseBrowser()
 
@@ -181,6 +182,54 @@ function PasswordPanel({
     }
   }
 
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!supabase) { setError("Supabase n'est pas configuré."); return }
+    setLoading(true)
+    setError(null)
+    const cleanEmail = email.trim().toLowerCase()
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      redirectTo: `${origin}/auth/callback?next=/update-password`,
+    })
+    setLoading(false)
+    if (resetError) {
+      setError(formatSupabaseAuthMessage(resetError.message))
+    } else {
+      setForgotSuccess(true)
+    }
+  }
+
+  if (forgotSuccess) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <Send size={20} strokeWidth={1.25} className="text-navy/30" aria-hidden />
+        <div className="space-y-2">
+          <h2 className="font-display text-2xl text-navy">Vérifiez vos emails</h2>
+          <span className="block h-px w-10 bg-navy/12" />
+        </div>
+        <p className="text-sm leading-relaxed text-navy/55">
+          Un lien de réinitialisation a été envoyé à{" "}
+          <span className="font-medium text-navy">{email}</span>.
+        </p>
+        <p className="text-xs leading-relaxed text-navy/40">
+          Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setForgotSuccess(false)
+            setMode("login")
+            setError(null)
+          }}
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+        >
+          ← Retour à la connexion
+        </button>
+      </div>
+    )
+  }
+
   if (signupSuccess === "confirm_email") {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
@@ -217,7 +266,7 @@ function PasswordPanel({
 
   return (
     <div className="relative z-[1] space-y-8">
-      <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-7">
+      <form onSubmit={mode === "login" ? handleLogin : mode === "signup" ? handleSignup : handleForgot} className="space-y-7">
         {error && (
           <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
@@ -277,47 +326,49 @@ function PasswordPanel({
               />
             </div>
           </div>
-          <div className="space-y-1">
-            <label
-              htmlFor="password-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
-            >
-              Mot de passe <span className="text-red-600">*</span>
-            </label>
-            <div className="relative">
-              <Lock
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
-                size={15}
-                strokeWidth={1.25}
-                aria-hidden
-              />
-              <input
-                id="password-pass"
-                type={showPassword ? "text" : "password"}
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
-                aria-describedby={mode === "signup" ? "password-hint" : undefined}
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((s) => !s)}
-                className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
-                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          {mode !== "forgot" && (
+            <div className="space-y-1">
+              <label
+                htmlFor="password-pass"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
               >
-                {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
-              </button>
+                Mot de passe <span className="text-red-600">*</span>
+              </label>
+              <div className="relative">
+                <Lock
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
+                  size={15}
+                  strokeWidth={1.25}
+                  aria-hidden
+                />
+                <input
+                  id="password-pass"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
+                  aria-describedby={mode === "signup" ? "password-hint" : undefined}
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                >
+                  {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
+                </button>
+              </div>
+              {mode === "signup" && (
+                <p id="password-hint" className="text-xs text-navy/40">
+                  Au moins {MIN_PASSWORD_LEN} caractères.
+                </p>
+              )}
             </div>
-            {mode === "signup" && (
-              <p id="password-hint" className="text-xs text-navy/40">
-                Au moins {MIN_PASSWORD_LEN} caractères.
-              </p>
-            )}
-          </div>
+          )}
           {mode === "signup" && (
             <div className="space-y-1">
               <label
@@ -365,6 +416,17 @@ function PasswordPanel({
             </div>
           )}
         </div>
+        {mode === "login" && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => { setMode("forgot"); setError(null) }}
+              className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+            >
+              Mot de passe oublié ?
+            </button>
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading}
@@ -376,6 +438,11 @@ function PasswordPanel({
           ) : mode === "login" ? (
             <>
               Accéder à l&apos;espace
+              <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
+            </>
+          ) : mode === "forgot" ? (
+            <>
+              Envoyer le lien
               <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
             </>
           ) : (
@@ -402,7 +469,7 @@ function PasswordPanel({
             S&apos;inscrire
           </button>
         </p>
-      ) : (
+      ) : mode === "signup" ? (
         <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
           Déjà un compte ?{" "}
           <button
@@ -415,6 +482,16 @@ function PasswordPanel({
             className="text-navy underline-offset-4 hover:underline"
           >
             Se connecter
+          </button>
+        </p>
+      ) : (
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
+          <button
+            type="button"
+            onClick={() => { setMode("login"); setError(null) }}
+            className="text-navy underline-offset-4 hover:underline"
+          >
+            ← Retour à la connexion
           </button>
         </p>
       )}
