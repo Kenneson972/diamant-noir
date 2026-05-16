@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import Link from "next/link";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
 
@@ -74,6 +75,7 @@ export default function AdminReservationsPage() {
                   <th className="px-4 py-3">Villa</th>
                   <th className="px-4 py-3">Arrivée</th>
                   <th className="px-4 py-3">Départ</th>
+                  <th className="px-4 py-3">Nuits</th>
                   <th className="px-4 py-3">Montant</th>
                   <th className="px-4 py-3">Statut</th>
                   <th className="px-4 py-3">Actions</th>
@@ -89,6 +91,9 @@ export default function AdminReservationsPage() {
                     <td className="px-4 py-3 text-navy/70">{b.villas?.name ?? b.villa_id?.slice(0, 8)}</td>
                     <td className="px-4 py-3 text-navy/70">{formatDate(b.start_date, { day: "numeric", month: "short" })}</td>
                     <td className="px-4 py-3 text-navy/70">{formatDate(b.end_date, { day: "numeric", month: "short" })}</td>
+                    <td className="px-4 py-3 text-navy/70">
+                      {Math.round((new Date(b.end_date).getTime() - new Date(b.start_date).getTime()) / 86400000)} n.
+                    </td>
                     <td className="px-4 py-3 font-medium text-navy">{formatCurrency(b.total_price_cents ?? 0)}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${b.status === "confirmed" ? "bg-emerald-50 text-emerald-700" : b.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
@@ -97,6 +102,10 @@ export default function AdminReservationsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1.5">
+                        <Link href={`/admin/reservations/${b.id}`}
+                          className="text-[10px] font-semibold px-2 py-1 rounded bg-navy/5 text-navy/70 hover:bg-navy/10">
+                          Voir
+                        </Link>
                         {b.status === "pending" && (
                           <button onClick={() => handleAction(b.id, "confirmed")}
                             className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">

@@ -3,7 +3,14 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import Link from "next/link";
-import { ArrowRight, CalendarCheck } from "lucide-react";
+import { CalendarCheck } from "lucide-react";
+import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
+
+function calcNights(start: string, end: string): number {
+  return Math.round(
+    (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
+  );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -75,10 +82,9 @@ export default async function ProprioReservationsIndexPage() {
         {/* Liste des villas avec leurs réservations */}
         <div className="space-y-4">
           {villasWithBookings.map((villa) => (
-            <Link
+            <div
               key={villa.id}
-              href={`/dashboard/reservations/${villa.id}`}
-              className="dashboard-card group block transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="dashboard-card"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -90,12 +96,11 @@ export default async function ProprioReservationsIndexPage() {
                     {(villa.bookings || []).length > 1 ? "s" : ""}
                   </p>
                 </div>
-                <ArrowRight className="h-5 w-5 text-muted transition-transform group-hover:translate-x-1" />
               </div>
 
-              {/* Prochaines réservations */}
+              {/* Réservations — chacune cliquable vers la fiche détail */}
               {(villa.bookings || []).length > 0 && (
-                <div className="mt-3 space-y-1.5 border-t border-border-subtle pt-3">
+                <div className="mt-3 space-y-1 border-t border-border-subtle pt-3">
                   {(villa.bookings as any[])
                     .filter((b: any) => b.status !== "cancelled")
                     .sort(
@@ -103,23 +108,32 @@ export default async function ProprioReservationsIndexPage() {
                         new Date(a.start_date).getTime() -
                         new Date(b.start_date).getTime()
                     )
-                    .slice(0, 3)
-                    .map((booking: any) => (
-                      <div
-                        key={booking.id}
-                        className="flex items-center justify-between text-sm"
-                      >
-                        <span className="text-navy-900/70">{booking.guest_name}</span>
-                        <span className="text-xs text-muted">
-                          {new Date(booking.start_date).toLocaleDateString("fr-FR")} -{" "}
-                          {new Date(booking.end_date).toLocaleDateString("fr-FR")}
-                        </span>
-                        <BookingStatusBadge status={booking.status} />
-                      </div>
-                    ))}
+                    .map((booking: any) => {
+                      const nights = calcNights(booking.start_date, booking.end_date);
+                      const price = formatCurrency(getBookingPriceCents(booking));
+                      return (
+                        <Link
+                          key={booking.id}
+                          href={`/dashboard/reservations/${villa.id}/${booking.id}`}
+                          className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-navy/[0.04]"
+                        >
+                          <span className="w-1/4 font-medium text-navy-900/80">
+                            {booking.guest_name}
+                          </span>
+                          <span className="text-xs text-muted">
+                            {new Date(booking.start_date).toLocaleDateString("fr-FR")} –{" "}
+                            {new Date(booking.end_date).toLocaleDateString("fr-FR")}
+                          </span>
+                          <span className="text-xs text-navy/60">
+                            {nights} nuit{nights > 1 ? "s" : ""} · {price}
+                          </span>
+                          <BookingStatusBadge status={booking.status} />
+                        </Link>
+                      );
+                    })}
                 </div>
               )}
-            </Link>
+            </div>
           ))}
         </div>
       </div>
