@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { VillaEditorForm } from "@/components/dashboard/proprio/VillaEditorForm";
 import { VillaImageManagerWrapper } from "@/components/dashboard/villa-editor/VillaImageManagerWrapper";
 import { VillaBookingsRegistry } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
@@ -19,17 +19,21 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   const [bookingSourceFilter, setBookingSourceFilter] = useState<"all" | "airbnb" | "other">("all");
   const [icalSaving, setIcalSaving] = useState(false);
 
-  const filteredBookings = bookings.filter((b) => {
-    const matchSearch =
-      !bookingSearch ||
-      (b.guest_name ?? "").toLowerCase().includes(bookingSearch.toLowerCase());
-    const matchStatus =
-      bookingStatusFilter === "all" || b.status === bookingStatusFilter;
-    const matchSource =
-      bookingSourceFilter === "all" ||
-      (bookingSourceFilter === "airbnb" ? b.source === "airbnb" : b.source !== "airbnb");
-    return matchSearch && matchStatus && matchSource;
-  });
+  const filteredBookings = useMemo(
+    () =>
+      bookings.filter((b) => {
+        const matchSearch =
+          !bookingSearch ||
+          (b.guest_name ?? "").toLowerCase().includes(bookingSearch.toLowerCase());
+        const matchStatus =
+          bookingStatusFilter === "all" || b.status === bookingStatusFilter;
+        const matchSource =
+          bookingSourceFilter === "all" ||
+          (bookingSourceFilter === "airbnb" ? b.source === "airbnb" : b.source !== "airbnb");
+        return matchSearch && matchStatus && matchSource;
+      }),
+    [bookings, bookingSearch, bookingStatusFilter, bookingSourceFilter]
+  );
 
   const handleExportCsv = useCallback(() => {
     const rows = filteredBookings.map((b) =>
@@ -48,7 +52,11 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   const handleIcalSync = useCallback(async () => {
     setIcalSaving(true);
     try {
-      await fetch(`/api/villa/sync-ical?villaId=${villa.id}`, { method: "POST" });
+      await fetch("/api/sync-ota", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ villaId: villa.id }),
+      });
     } finally {
       setIcalSaving(false);
     }
