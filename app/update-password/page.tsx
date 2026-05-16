@@ -31,12 +31,12 @@ export default function UpdatePasswordPage() {
     e.preventDefault()
     setFieldError(null)
     setError(null)
-    if (password !== confirm) {
-      setFieldError("Les mots de passe ne correspondent pas.")
-      return
-    }
     if (password.length < MIN_PASSWORD_LEN) {
       setError(`Le mot de passe doit contenir au moins ${MIN_PASSWORD_LEN} caractères.`)
+      return
+    }
+    if (password !== confirm) {
+      setFieldError("Les mots de passe ne correspondent pas.")
       return
     }
     if (!supabase) { setError("Supabase n'est pas configuré."); return }
@@ -76,7 +76,7 @@ export default function UpdatePasswordPage() {
           <p className="text-sm text-navy/45">Choisissez un mot de passe sécurisé pour votre compte.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-7">
+        <form onSubmit={handleSubmit} aria-busy={loading} className="space-y-7">
           {error && (
             <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
