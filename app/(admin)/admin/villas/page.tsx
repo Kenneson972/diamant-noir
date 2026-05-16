@@ -55,8 +55,9 @@ async function getVillas(): Promise<VillaRow[]> {
     ownersMap[p.id] = p.full_name ?? p.email;
   }
 
-  const bookingByVilla: Record<string, any[]> = {};
-  for (const b of bookingsResult.data ?? []) {
+  type BookingRow = { villa_id: string; total_price_cents: number | null; status: string | null };
+  const bookingByVilla: Record<string, BookingRow[]> = {};
+  for (const b of (bookingsResult.data ?? []) as BookingRow[]) {
     if (!bookingByVilla[b.villa_id]) bookingByVilla[b.villa_id] = [];
     bookingByVilla[b.villa_id].push(b);
   }
@@ -65,8 +66,8 @@ async function getVillas(): Promise<VillaRow[]> {
     const vBookings = bookingByVilla[v.id] ?? [];
     const confirmedRevenue =
       vBookings
-        .filter((b) => b.status === "confirmed")
-        .reduce((s, b) => s + (b.total_price_cents ?? 0), 0) / 100;
+        .filter((b: BookingRow) => b.status === "confirmed")
+        .reduce((s: number, b: BookingRow) => s + (b.total_price_cents ?? 0), 0) / 100;
     return {
       ...v,
       owner_name: v.owner_id ? (ownersMap[v.owner_id] ?? null) : null,
