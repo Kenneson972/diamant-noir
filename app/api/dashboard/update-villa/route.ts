@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { isStaffAdmin } from "@/lib/auth/admin-access";
 
 export const runtime = "nodejs";
 
@@ -33,7 +34,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Villa not found" }, { status: 404 });
     }
 
-    if (villa.owner_id && villa.owner_id !== user.id) {
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const isAdmin = isStaffAdmin(
+      profile?.role,
+      user.user_metadata?.role as string,
+      user.email
+    );
+
+    if (!isAdmin && villa.owner_id && villa.owner_id !== user.id) {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }
 
