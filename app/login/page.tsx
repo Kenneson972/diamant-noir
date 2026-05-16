@@ -188,6 +188,7 @@ function PasswordPanel({
     setLoading(true)
     setError(null)
     const cleanEmail = email.trim().toLowerCase()
+    setEmail(cleanEmail)
     const origin = typeof window !== "undefined" ? window.location.origin : ""
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
       redirectTo: `${origin}/auth/callback?next=/update-password`,
@@ -221,6 +222,7 @@ function PasswordPanel({
             setForgotSuccess(false)
             setMode("login")
             setError(null)
+            setPassword("")
           }}
           className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
         >
