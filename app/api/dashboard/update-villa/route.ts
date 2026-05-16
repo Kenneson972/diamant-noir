@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     const isAdmin = isStaffAdmin(
       profile?.role,
-      user.user_metadata?.role as string,
+      user.user_metadata?.role as string | undefined,
       user.email
     );
 
