@@ -15,8 +15,6 @@ import {
   User,
 } from "lucide-react"
 import Link from "next/link"
-import { TenantMagicLinkFlow } from "@/components/auth/TenantMagicLinkFlow"
-import { useHomeAudience } from "@/contexts/HomeAudienceContext"
 import { postLoginDestination } from "@/lib/auth/admin-access"
 
 /**
@@ -477,16 +475,9 @@ function LoginSideVideo() {
 
 function LoginForm() {
   const searchParams = useSearchParams()
-  const { audience } = useHomeAudience()
   const redirectTo = searchParams.get("redirect") || "/dashboard"
-  const isTenant = redirectTo.startsWith("/espace-client")
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
   const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
-
-  const title = isTenant ? "Votre espace" : "Espace propriétaire"
-  const tagline = isTenant
-    ? "Réservations, livret et conciergerie."
-    : "Suivi des biens et des réservations."
 
   return (
     <main className="flex min-h-[100dvh] flex-col bg-white lg:flex-row">
@@ -497,9 +488,9 @@ function LoginForm() {
           <p className="text-[8px] font-bold uppercase tracking-[0.38em] text-navy">Kayvila</p>
 
           <div className="space-y-2">
-            <h1 className="font-display text-[1.9rem] leading-tight text-navy">{title}</h1>
+            <h1 className="font-display text-[1.9rem] leading-tight text-navy">Connexion</h1>
             <span className="block h-px w-8 bg-navy/12" />
-            <p className="text-sm text-navy/45">{tagline}</p>
+            <p className="text-sm text-navy/45">Accédez à votre espace Kayvila.</p>
           </div>
 
           {urlAuthError && (
@@ -508,30 +499,12 @@ function LoginForm() {
             </p>
           )}
 
-          {isTenant ? (
-            <TenantMagicLinkFlow redirectTo={redirectTo} />
-          ) : (
-            <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
-          )}
+          <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
 
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-navy/30">
+          <div className="flex items-center justify-start border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-navy/30">
             <Link href="/" className="transition-colors hover:text-navy">
               ← Retour au site
             </Link>
-            {isTenant ? (
-              audience !== "voyageur" ? (
-                <Link
-                  href="/login?redirect=/dashboard"
-                  className="transition-colors hover:text-navy"
-                >
-                  Accès propriétaire →
-                </Link>
-              ) : null
-            ) : audience !== "proprietaire" ? (
-              <Link href="/login?redirect=/espace-client" className="transition-colors hover:text-navy">
-                Espace locataire →
-              </Link>
-            ) : null}
           </div>
 
           <p className="text-[10px] uppercase tracking-[0.25em] text-navy/20">© 2026 Kayvila</p>
