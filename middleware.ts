@@ -18,6 +18,7 @@ const publicPaths = [
   "/cookies",
   "/soumettre-ma-villa",
   "/success",
+  "/update-password",
   // Auth
   "/login",
   "/register",
