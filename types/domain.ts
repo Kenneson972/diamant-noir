@@ -35,6 +35,7 @@ export interface Villa {
   rooms_details: RoomDetail[] | null;
   seasonal_prices: SeasonalPrice[] | null;
   commission_rate: number;
+  cleaning_fee_cents?: number | null;
   wifi_name: string | null;
   wifi_password: string | null;
   emergency_contacts: EmergencyContact[] | null;

@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     // Fetch villa details for price and name (include owner_id for Stripe Connect)
     const { data: villa, error: villaError } = await supabase
       .from("villas")
-      .select("id, name, price_per_night, capacity, owner_id")
+      .select("id, name, price_per_night, capacity, owner_id, cleaning_fee_cents")
       .eq("id", villaId)
       .single();
 
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
 
     // ── Recalcul des frais côté serveur (sécurité : le client ne dicte pas le montant) ──
     const stayCents = Math.round(price.total * 100);
-    const cleaningFeeCents = Math.round(cleaningFee * 100);
+    const cleaningFeeCents = villa.cleaning_fee_cents || 0;
     const serviceFeeCents = Math.round(price.total * serviceFeePercent / 100 * 100);
     const totalCents = stayCents + cleaningFeeCents + serviceFeeCents;
 

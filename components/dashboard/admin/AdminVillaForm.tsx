@@ -52,6 +52,7 @@ export function AdminVillaForm() {
     const form = new FormData(e.currentTarget);
     const capacityRaw = form.get("capacity");
     const commissionRaw = form.get("commission_rate");
+    const cleaningFeeRaw = form.get("cleaning_fee_euros");
     const ownerId = form.get("owner_id") as string;
 
     const data: Record<string, unknown> = {
@@ -68,6 +69,7 @@ export function AdminVillaForm() {
         commissionRaw && String(commissionRaw).trim() !== ""
           ? Number(commissionRaw)
           : 15,
+      cleaning_fee_cents: cleaningFeeRaw && String(cleaningFeeRaw).trim() !== "" ? Math.round(Number(cleaningFeeRaw) * 100) : 0,
       owner_id: ownerId || null,
     };
 
@@ -242,6 +244,21 @@ export function AdminVillaForm() {
                   defaultValue={15}
                   className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
                 />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-navy" htmlFor="cleaning_fee_euros">
+                  Frais de menage (EUR)
+                </label>
+                <input
+                  id="cleaning_fee_euros"
+                  name="cleaning_fee_euros"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  defaultValue={0}
+                  className="w-full rounded-none border border-gray-300 px-3 py-2 text-sm"
+                />
+                <p className="text-[11px] text-navy/40">100 % reverse a Kayvila pour le menage et la blanchisserie</p>
               </div>
               <div>
                 <label

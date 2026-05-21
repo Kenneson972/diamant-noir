@@ -50,6 +50,7 @@ export interface Database {
           latitude: number | null;
           longitude: number | null;
           map_embed_url: string | null;
+          cleaning_fee_cents: number | null;
           created_at: string;
         };
         Insert: Record<string, Json>;
