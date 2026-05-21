@@ -14,12 +14,23 @@ export async function POST(request: Request) {
       phone,
       villa_name,
       villa_location,
-      villa_description,
+      villa_type,
+      surface,
+      surface_terrain,
+      chambres,
+      salles_de_bains,
+      etages,
+      parking_places,
+      parking_securise,
+      equipements,
+      already_listed,
       airbnb_url,
-      no_photos,
       message,
-      photo_urls, // string[]
-      platforms, // [{ platform, ical_url, label }]
+      gardien_existant,
+      delai_souhaite,
+      adresse_postale,
+      no_photos,
+      photo_urls,
     } = body;
 
     if (!name || !email) {
@@ -38,12 +49,32 @@ export async function POST(request: Request) {
         phone: phone || null,
         villa_name: villa_name || null,
         villa_location: villa_location || null,
-        villa_description: villa_description || null,
+        villa_description: [
+          villa_type && `Type: ${villa_type}`,
+          surface && `Surface: ${surface} m²`,
+          surface_terrain && `Terrain: ${surface_terrain} m²`,
+          chambres && `Chambres: ${chambres}`,
+          salles_de_bains && `SdB: ${salles_de_bains}`,
+          etages && `Étages: ${etages}`,
+          parking_places && `Parking: ${parking_places} places${parking_securise ? " (sécurisé)" : ""}`,
+          equipements?.length > 0 && `Équipements: ${equipements.join(", ")}`,
+          already_listed && `Statut location: ${already_listed}`,
+          gardien_existant && `Gardien: ${gardien_existant}`,
+          delai_souhaite && `Délai: ${delai_souhaite}`,
+        ].filter(Boolean).join(" | ") || null,
         airbnb_url: airbnb_url || null,
         no_photos: Boolean(no_photos),
         message: message || null,
         photo_urls: Array.isArray(photo_urls) && photo_urls.length > 0 ? photo_urls : null,
-        platforms: Array.isArray(platforms) && platforms.length > 0 ? platforms : null,
+        surface_terrain: surface_terrain || null,
+        chambres: chambres || null,
+        salles_de_bains: salles_de_bains || null,
+        etages: etages || null,
+        parking_places: parking_places || null,
+        parking_securise: Boolean(parking_securise),
+        gardien_existant: gardien_existant || null,
+        delai_souhaite: delai_souhaite || null,
+        adresse_postale: adresse_postale || null,
         status: "pending",
       })
       .select()
@@ -52,7 +83,7 @@ export async function POST(request: Request) {
     if (insertError) {
       console.error("villa_submissions insert error:", insertError);
       return NextResponse.json(
-        { error: "Erreur lors de l'enregistrement. La table villa_submissions existe-t-elle ?" },
+        { error: "Erreur lors de l'enregistrement." },
         { status: 500 }
       );
     }
@@ -70,10 +101,14 @@ export async function POST(request: Request) {
             phone,
             villa_name,
             villa_location,
-            villa_description,
             airbnb_url,
             no_photos: Boolean(no_photos),
             message,
+            chambres,
+            salles_de_bains,
+            gardien_existant,
+            delai_souhaite,
+            adresse_postale,
           }),
         });
       } catch (e) {
@@ -104,7 +139,7 @@ export async function GET(request: Request) {
 
     const { data, error } = await supabase
       .from("villa_submissions")
-      .select("id, name, email, phone, villa_name, villa_location, airbnb_url, no_photos, status, created_at")
+      .select("id, name, email, phone, villa_name, villa_location, airbnb_url, no_photos, status, created_at, surface_terrain, chambres, salles_de_bains, etages, parking_places, parking_securise, gardien_existant, delai_souhaite, adresse_postale, message, photo_urls")
       .order("created_at", { ascending: false });
 
     if (error) {

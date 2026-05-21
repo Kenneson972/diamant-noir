@@ -886,18 +886,7 @@ export function VillaWizard() {
     setError(null);
     setSubmitting(true);
     try {
-      const photo_urls = photos.length > 0 ? await uploadPhotos() : [];
-      const descParts = [
-        data.villa_type && `Type: ${data.villa_type}`,
-        data.surface && `Surface: ${data.surface} m²`,
-        data.etages ? `${data.etages} étage(s)` : "Plain-pied",
-        data.chambres && `${data.chambres} chambre(s)`,
-        data.salles_de_bains && `${data.salles_de_bains} salle(s) de bains`,
-        data.parking_places && `${data.parking_places} place(s) de parking`,
-        data.parking_securise && "Parking sécurisé",
-        data.equipements.length > 0 && `Équipements: ${data.equipements.join(", ")}`,
-        data.already_listed && `Statut location: ${data.already_listed}`,
-      ].filter(Boolean);
+      const photo_urls = photos.length > 0 && !data.no_photos ? await uploadPhotos() : [];
 
       const res = await fetch("/api/villa-submissions", {
         method: "POST",
@@ -908,10 +897,22 @@ export function VillaWizard() {
           phone: data.phone || undefined,
           villa_name: data.villa_name || undefined,
           villa_location: data.villa_location || undefined,
-          villa_description: descParts.length > 0 ? descParts.join(" | ") : undefined,
+          villa_type: data.villa_type || undefined,
+          surface: data.surface || undefined,
+          surface_terrain: data.surface_terrain || undefined,
+          chambres: data.chambres || undefined,
+          salles_de_bains: data.salles_de_bains || undefined,
+          etages: data.etages || undefined,
+          parking_places: data.parking_places || undefined,
+          parking_securise: data.parking_securise,
+          equipements: data.equipements.length > 0 ? data.equipements : undefined,
+          already_listed: data.already_listed || undefined,
           airbnb_url: data.airbnb_url || undefined,
-          no_photos: data.no_photos,
           message: data.message || undefined,
+          gardien_existant: data.gardien_existant || undefined,
+          delai_souhaite: data.delai_souhaite || undefined,
+          adresse_postale: data.adresse_postale || undefined,
+          no_photos: data.no_photos,
           photo_urls: photo_urls.length > 0 ? photo_urls : undefined,
         }),
       });
