@@ -66,12 +66,6 @@ export default async function VillaEditPage({ params }: Props) {
                   Gerer les photos
                 </Link>
               </li>
-              <li className="flex items-center justify-between py-1">
-                <span className="text-sm text-navy/60">Frais de menage</span>
-                <span className="text-sm font-medium text-navy">
-                  {villa.cleaning_fee_cents != null ? `${((villa.cleaning_fee_cents as number) / 100).toFixed(2).replace(".", ",")} EUR` : "\u2014"}
-                </span>
-              </li>
             </ul>
           </div>
         </div>
