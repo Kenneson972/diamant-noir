@@ -918,6 +918,17 @@ export function VillaWizard() {
       });
 
       if (res.ok) {
+        // Envoyer l'email de confirmation (fire-and-forget)
+        fetch("/api/villa-submissions/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            villa_name: data.villa_name,
+          }),
+        }).catch(() => {});
+
         photos.forEach((p) => URL.revokeObjectURL(p.preview));
         setDone(true);
       } else {
