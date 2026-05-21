@@ -26,16 +26,22 @@ type WizardData = {
   villa_location: string;
   villa_type: string;
   surface: string;
-  capacity: string;
+  surface_terrain: string;
+  chambres: string;
+  salles_de_bains: string;
+  etages: string;
+  parking_places: string;
+  parking_securise: boolean;
   equipements: string[];
   already_listed: string;
   airbnb_url: string;
-  monthly_revenue: string;
-  management_type: string;
   message: string;
+  gardien_existant: string;
+  delai_souhaite: string;
   name: string;
   email: string;
   phone: string;
+  adresse_postale: string;
   no_photos: boolean;
 };
 
@@ -52,22 +58,28 @@ const INITIAL: WizardData = {
   villa_location: "",
   villa_type: "",
   surface: "",
-  capacity: "",
+  surface_terrain: "",
+  chambres: "",
+  salles_de_bains: "",
+  etages: "",
+  parking_places: "",
+  parking_securise: false,
   equipements: [],
   already_listed: "",
   airbnb_url: "",
-  monthly_revenue: "",
-  management_type: "",
   message: "",
+  gardien_existant: "",
+  delai_souhaite: "",
   name: "",
   email: "",
   phone: "",
+  adresse_postale: "",
   no_photos: false,
 };
 
 const STEPS = [
   { label: "Votre bien", icon: Building2, sub: "Type, localisation, équipements" },
-  { label: "Situation", icon: TrendingUp, sub: "Location actuelle & revenus" },
+  { label: "Situation", icon: TrendingUp, sub: "Location actuelle" },
   { label: "Attentes", icon: MessageSquare, sub: "Gestion souhaitée & contraintes" },
   { label: "Contact", icon: User, sub: "Coordonnées & photos" },
 ];
@@ -177,6 +189,10 @@ const EQUIPEMENTS = [
   "Climatisation",
   "Cuisine équipée",
   "Parking",
+  "WiFi",
+  "Barbecue",
+  "Salle de sport",
+  "Borne EV",
 ];
 
 const VILLA_TYPES = ["Villa", "Appartement", "Bungalow", "Maison", "Autre"];
@@ -243,9 +259,9 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
         </div>
       </div>
 
-      {/* Surface + capacité */}
+      {/* Surface habitable + terrain */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Surface (m²)">
+        <Field label="Surface habitable (m²)">
           <input
             type="number"
             min="1"
@@ -255,17 +271,83 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
             className={inputCls}
           />
         </Field>
-        <Field label="Capacité (personnes)">
+        <Field label="Surface terrain (m²)">
           <input
             type="number"
             min="1"
-            value={data.capacity}
-            onChange={(e) => onChange({ capacity: e.target.value })}
-            placeholder="8"
+            value={data.surface_terrain}
+            onChange={(e) => onChange({ surface_terrain: e.target.value })}
+            placeholder="500"
             className={inputCls}
           />
         </Field>
       </div>
+
+      {/* Chambres + SdB */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Chambres">
+          <input
+            type="number"
+            min="1"
+            value={data.chambres}
+            onChange={(e) => onChange({ chambres: e.target.value })}
+            placeholder="3"
+            className={inputCls}
+          />
+        </Field>
+        <Field label="Salles de bains">
+          <input
+            type="number"
+            min="1"
+            value={data.salles_de_bains}
+            onChange={(e) => onChange({ salles_de_bains: e.target.value })}
+            placeholder="2"
+            className={inputCls}
+          />
+        </Field>
+      </div>
+
+      {/* Étages + Parking */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Étages" hint="0 = plain-pied">
+          <input
+            type="number"
+            min="0"
+            value={data.etages}
+            onChange={(e) => onChange({ etages: e.target.value })}
+            placeholder="1"
+            className={inputCls}
+          />
+        </Field>
+        <Field label="Places de parking">
+          <input
+            type="number"
+            min="0"
+            value={data.parking_places}
+            onChange={(e) => onChange({ parking_places: e.target.value })}
+            placeholder="2"
+            className={inputCls}
+          />
+        </Field>
+      </div>
+
+      {/* Parking sécurisé */}
+      <label className="flex cursor-pointer items-center gap-3">
+        <div
+          className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 transition-all duration-200 ${
+            data.parking_securise ? "border-gold bg-gold" : "border-navy/20 bg-white hover:border-navy/40"
+          }`}
+        >
+          {data.parking_securise && <Check size={11} strokeWidth={2.5} className="text-navy" aria-hidden />}
+        </div>
+        <input
+          type="checkbox"
+          checked={data.parking_securise}
+          onChange={(e) => onChange({ parking_securise: e.target.checked })}
+          className="sr-only"
+        />
+        <span className="text-[13px] text-navy/60">Parking privé / sécurisé</span>
+      </label>
 
       {/* Équipements */}
       <div>
@@ -302,15 +384,6 @@ const LISTING_OPTIONS = [
   { value: "oui", label: "Oui, déjà sur Airbnb / Booking" },
   { value: "non", label: "Non, bien non encore listé" },
   { value: "partiel", label: "Géré partiellement par moi-même" },
-];
-
-const REVENUE_RANGES = [
-  "< 1 000 € / mois",
-  "1 000 – 2 500 €",
-  "2 500 – 5 000 €",
-  "5 000 – 10 000 €",
-  "> 10 000 €",
-  "Je ne sais pas encore",
 ];
 
 function Step2({ data, onChange }: { data: WizardData; onChange: (d: Partial<WizardData>) => void }) {
@@ -371,28 +444,6 @@ function Step2({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
           </Field>
         </div>
       )}
-
-      <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
-          Revenus locatifs actuels (estimés)
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {REVENUE_RANGES.map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => onChange({ monthly_revenue: r })}
-              className={`border px-4 py-2.5 text-[11px] transition-all duration-200 active:scale-[0.97] ${
-                data.monthly_revenue === r
-                  ? "border-gold bg-gold font-bold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
-                  : "border-navy/15 bg-white text-navy/55 hover:border-navy/35"
-              }`}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -404,13 +455,68 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
     <div className="space-y-8">
       <Field label="Vos attentes & contraintes particulières">
         <textarea
-          rows={7}
+          rows={5}
           value={data.message}
           onChange={(e) => onChange({ message: e.target.value })}
           placeholder="Périodes bloquées, exigences particulières, questions sur la conciergerie…"
           className={`${inputCls} resize-none`}
         />
       </Field>
+
+      {/* Gardien existant */}
+      <div>
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+          Un gardien ou concierge est-il déjà en place ?
+        </p>
+        <div className="flex gap-3">
+          {[
+            { value: "oui", label: "Oui" },
+            { value: "non", label: "Non" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange({ gardien_existant: opt.value })}
+              className={`border px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] transition-all duration-200 active:scale-95 ${
+                data.gardien_existant === opt.value
+                  ? "border-gold bg-gold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+                  : "border-navy/15 bg-white text-navy/50 hover:border-navy/40 hover:bg-navy/[0.02]"
+              }`}
+            >
+              {data.gardien_existant === opt.value && <Check size={9} className="mr-1.5 inline" aria-hidden />}
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Délai souhaité */}
+      <div>
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+          Délai souhaité pour démarrer
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "Dès que possible",
+            "Moins d'un mois",
+            "Moins de 3 mois",
+            "Pas pressé",
+          ].map((r) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => onChange({ delai_souhaite: r })}
+              className={`border px-4 py-2.5 text-[11px] transition-all duration-200 active:scale-[0.97] ${
+                data.delai_souhaite === r
+                  ? "border-gold bg-gold font-bold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+                  : "border-navy/15 bg-white text-navy/55 hover:border-navy/35"
+              }`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -493,6 +599,16 @@ function Step4({
         />
       </Field>
 
+      <Field label="Adresse postale" hint="Pour l'établissement du contrat de conciergerie">
+        <input
+          type="text"
+          value={data.adresse_postale}
+          onChange={(e) => onChange({ adresse_postale: e.target.value })}
+          placeholder="123 rue des Flamboyants, 97200 Fort-de-France"
+          className={inputCls}
+        />
+      </Field>
+
       {/* Drop zone */}
       {!data.no_photos && (
         <div>
@@ -500,7 +616,7 @@ function Step4({
             <ImageIcon size={13} className="text-gold" aria-hidden />
             Photos de la villa
             <span className="font-normal normal-case tracking-normal text-navy/30">
-              (optionnel — max {MAX_PHOTOS}, 10 Mo)
+              (recommandé — max{MAX_PHOTOS}, 10 Mo)
             </span>
           </p>
 
@@ -712,7 +828,7 @@ function ErrorBlock({ message }: { message: string }) {
 
 const STEP_TITLES = [
   { title: "Votre bien", sub: "Type de bien, localisation & équipements" },
-  { title: "Situation actuelle", sub: "Location en cours et revenus estimés" },
+  { title: "Situation actuelle", sub: "Location en cours" },
   { title: "Vos attentes", sub: "Attentes et contraintes particulières" },
   { title: "Contact & photos", sub: "Vos coordonnées et visuels de la villa" },
 ];
@@ -774,11 +890,13 @@ export function VillaWizard() {
       const descParts = [
         data.villa_type && `Type: ${data.villa_type}`,
         data.surface && `Surface: ${data.surface} m²`,
-        data.capacity && `Capacité: ${data.capacity} personnes`,
+        data.etages ? `${data.etages} étage(s)` : "Plain-pied",
+        data.chambres && `${data.chambres} chambre(s)`,
+        data.salles_de_bains && `${data.salles_de_bains} salle(s) de bains`,
+        data.parking_places && `${data.parking_places} place(s) de parking`,
+        data.parking_securise && "Parking sécurisé",
         data.equipements.length > 0 && `Équipements: ${data.equipements.join(", ")}`,
         data.already_listed && `Statut location: ${data.already_listed}`,
-        data.monthly_revenue && `Revenus estimés: ${data.monthly_revenue}`,
-        data.management_type && `Gestion souhaitée: ${data.management_type}`,
       ].filter(Boolean);
 
       const res = await fetch("/api/villa-submissions", {
