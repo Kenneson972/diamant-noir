@@ -86,7 +86,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
     vertical: "upper",
     items: [
       "Frais de ménage facturés aux voyageurs",
-      "Blanchisserie incluse hors commission 20%",
+      "Blanchisserie incluse hors commission 25%",
       "Coordination complète des équipes",
       "Réassort consommables à nos frais",
       "Entretien piscine & jardin (abonnement non inclus)",

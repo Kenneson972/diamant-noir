@@ -130,7 +130,7 @@ export default function QuiSommesNousPage() {
                 constante, séjour après séjour.
               </p>
               <p>
-                Notre modèle repose sur la transparence : commission de 20 % TTC sur les nuitées
+                Notre modèle repose sur la transparence : commission de 25 % TTC sur les nuitées
                 nettes, ménage et blanchisserie facturés aux voyageurs, réassort des consommables à
                 nos frais dès la deuxième location. Pas de frais cachés, pas de mauvaise surprise.
               </p>

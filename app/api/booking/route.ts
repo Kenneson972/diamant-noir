@@ -183,12 +183,12 @@ export async function POST(request: Request) {
     }
 
     // ── Stripe Connect : split conforme FAQ Kayvila ──
-    // Proprio : 80 % du séjour | Kayvila : 20 % séjour + 100 % ménage + 100 % service
+    // Proprio : 75 % du séjour | Kayvila : 25 % séjour + 100 % ménage + 100 % service
     const { platformFeeCents } = calculateTransferAmounts(
       stayCents,
       cleaningFeeCents,
       serviceFeeCents,
-      20
+      25
     );
 
     // 3. Create Stripe Checkout Session avec le total incluant tous les frais

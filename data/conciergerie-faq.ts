@@ -9,7 +9,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
     items: [
       {
         q: "Que signifie exactement le montant sur lequel s'applique la commission ?",
-        a: "La commission de 20 % de Kayvila Conciergerie s'applique sur le montant brut du séjour, tel qu'affiché sur la plateforme de réservation, frais de ménage et blanchisserie inclus. Ce mode de calcul garantit une transparence totale : aucune déduction ni retraitement n'est effectué avant application de la commission. Les frais de ménage et blanchisserie sont inclus dans le montant total de la réservation et n'engendrent aucune facturation supplémentaire pour le propriétaire. Le montant par séjour est défini dans l'Annexe Tarifaire.",
+        a: "La commission de 25 % de Kayvila Conciergerie s'applique sur le montant brut du séjour, tel qu'affiché sur la plateforme de réservation, frais de ménage et blanchisserie inclus. Ce mode de calcul garantit une transparence totale : aucune déduction ni retraitement n'est effectué avant application de la commission. Les frais de ménage et blanchisserie sont inclus dans le montant total de la réservation et n'engendrent aucune facturation supplémentaire pour le propriétaire. Le montant par séjour est défini dans l'Annexe Tarifaire.",
       },
       {
         q: "Qui fixe le prix des frais de ménage ?",
@@ -21,7 +21,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
       },
       {
         q: "Que se passe-t-il sur les plateformes où le ménage est intégré dans le prix affiché ?",
-        a: "Peu importe l'affichage de la plateforme, la commission de 20 % s'applique sur le montant brut total encaissé. Le montant du ménage et de la blanchisserie, défini dans l'Annexe Tarifaire, est inclus dans ce calcul et ne donne lieu à aucune facturation supplémentaire. Tout est détaillé dans votre rapport mensuel.",
+        a: "Peu importe l'affichage de la plateforme, la commission de 25 % s'applique sur le montant brut total encaissé. Le montant du ménage et de la blanchisserie, défini dans l'Annexe Tarifaire, est inclus dans ce calcul et ne donne lieu à aucune facturation supplémentaire. Tout est détaillé dans votre rapport mensuel.",
       },
     ],
   },
@@ -89,7 +89,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
     items: [
       {
         q: "Quel est le délai de reversement ?",
-        a: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via la plateforme (Airbnb, Booking, etc.). En fin de mois, Kayvila vous adresse une facture correspondant à sa commission de 20 % sur le montant brut des séjours réalisés, réglable sous 8 jours à réception. Pour simplifier ce règlement, un mandat de prélèvement SEPA peut être mis en place dès la signature du contrat — la commission est alors prélevée automatiquement à date fixe, sans démarche de votre part. Pour les réservations effectuées directement via le site Kayvila, le paiement est scindé à la source : vous recevez votre part et Kayvila perçoit sa commission directement, sans intermédiaire ni facturation mensuelle.",
+        a: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via la plateforme (Airbnb, Booking, etc.). En fin de mois, Kayvila vous adresse une facture correspondant à sa commission de 25 % sur le montant brut des séjours réalisés, réglable sous 8 jours à réception. Pour simplifier ce règlement, un mandat de prélèvement SEPA peut être mis en place dès la signature du contrat — la commission est alors prélevée automatiquement à date fixe, sans démarche de votre part. Pour les réservations effectuées directement via le site Kayvila, le paiement est scindé à la source : vous recevez votre part et Kayvila perçoit sa commission directement, sans intermédiaire ni facturation mensuelle.",
       },
       {
         q: "Qui assume les risques de non-paiement ?",
@@ -97,7 +97,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
       },
       {
         q: "Y a-t-il des frais bancaires supplémentaires ?",
-        a: "Pour les réservations via les plateformes (Airbnb, Booking, etc.), non. La facturation se limite à la commission de 20 % sur le montant brut des séjours — aucun frais caché, aucune déduction supplémentaire. Pour les réservations effectuées directement via le site Kayvila, des frais de traitement de 5 % s'appliquent sur le montant encaissé. Ces frais couvrent la gestion du paiement en ligne sécurisé, sans commission de plateforme. Au final, votre net perçu reste supérieur à ce qu'une réservation Airbnb ou Booking vous aurait rapporté, une fois leurs commissions déduites.",
+        a: "Pour les réservations via les plateformes (Airbnb, Booking, etc.), non. La facturation se limite à la commission de 25 % sur le montant brut des séjours — aucun frais caché, aucune déduction supplémentaire. Pour les réservations effectuées directement via le site Kayvila, des frais de traitement de 5 % s'appliquent sur le montant encaissé. Ces frais couvrent la gestion du paiement en ligne sécurisé, sans commission de plateforme. Au final, votre net perçu reste supérieur à ce qu'une réservation Airbnb ou Booking vous aurait rapporté, une fois leurs commissions déduites.",
       },
       {
         q: "Comment sont justifiées les déductions ?",

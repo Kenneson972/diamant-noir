@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Nos Prestations | Kayvila — Conciergerie Privée Martinique",
   description:
-    "Gestion hôtelière complète de votre villa en Martinique : marketing, opérations, relation voyageurs, finance. Commission 20% TTC, ménage facturé aux voyageurs.",
+    "Gestion hôtelière complète de votre villa en Martinique : marketing, opérations, relation voyageurs, finance. Commission 25% TTC, ménage facturé aux voyageurs.",
   keywords: [
     "conciergerie",
     "location villa",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Nos Prestations | Kayvila",
     description:
-      "Conciergerie privée clé en main pour villas de prestige en Martinique. 13 services inclus, équipe locale 7j/7, commission transparente 20% TTC.",
+      "Conciergerie privée clé en main pour villas de prestige en Martinique. 13 services inclus, équipe locale 7j/7, commission transparente 25% TTC.",
     images: [
       {
         url: "/prestations-hero.png",

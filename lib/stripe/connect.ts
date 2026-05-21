@@ -65,19 +65,19 @@ export async function getConnectAccount(accountId: string) {
  * Calcule les montants pour le split Stripe Connect (réservations directes Kayvila).
  *
  * Modèle commercial (FAQ conciergerie + spec Stripe Connect) :
- * - Propriétaire : 80 % du montant nuitées (séjour hors ménage/service)
- * - Kayvila : 20 % du séjour + 100 % frais de ménage + 100 % frais de service
+ * - Propriétaire : 75 % du montant nuitées (séjour hors ménage/service)
+ * - Kayvila : 25 % du séjour + 100 % frais de ménage + 100 % frais de service
  *
  * @param stayCents - Montant des nuitées uniquement
  * @param cleaningFeeCents - Frais de ménage (100 % Kayvila)
  * @param serviceFeeCents - Frais de service Kayvila (100 % Kayvila)
- * @param applicationFeePercent - Commission sur le séjour (défaut 20 %)
+ * @param applicationFeePercent - Commission sur le séjour (défaut 25 %)
  */
 export function calculateTransferAmounts(
   stayCents: number,
   cleaningFeeCents: number,
   serviceFeeCents: number,
-  applicationFeePercent = 20
+  applicationFeePercent = 25
 ): { ownerAmountCents: number; platformFeeCents: number } {
   const commissionOnStayCents = Math.round(
     stayCents * (applicationFeePercent / 100)

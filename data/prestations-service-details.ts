@@ -21,10 +21,8 @@ export type ServiceDetail = {
   images: {
     sectionIntro: string;
     sectionDetails: string;
-    sectionMarket: string;
     sectionIntroAlt: string;
     sectionDetailsAlt: string;
-    sectionMarketAlt: string;
   };
 };
 
@@ -62,10 +60,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/marketing.png",
       sectionDetails: "/marketing.png",
-      sectionMarket: "/marketing.png",
       sectionIntroAlt: "Piscine villa luxe au coucher du soleil — stratégie marketing locatif",
       sectionDetailsAlt: "Annonce premium optimisée pour villa martiniquaise",
-      sectionMarketAlt: "Analyse du marché locatif martiniquais — pricing dynamique",
     },
   },
   operations: {
@@ -101,10 +97,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/terrain.png",
       sectionDetails: "/terrain.png",
-      sectionMarket: "/terrain.png",
       sectionIntroAlt: "Entrée villa avec boîte à clés sécurisée — accueil check-in",
       sectionDetailsAlt: "Équipe terrain inspectant une villa avant un séjour",
-      sectionMarketAlt: "Carte de la Martinique avec zones d'intervention conciergerie",
     },
   },
   voyageurs: {
@@ -140,10 +134,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/relation.png",
       sectionDetails: "/relation.png",
-      sectionMarket: "/relation.png",
       sectionIntroAlt: "Couple en terrasse face à l'océan — accueil voyageurs Kayvila",
       sectionDetailsAlt: "Communication avec les voyageurs — service réactif 7j/7",
-      sectionMarketAlt: "Voyageurs internationaux en Martinique — clientèle premium",
     },
   },
   menage: {
@@ -152,7 +144,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Qualité séjour",
     tagline: "Facturé aux voyageurs — transparent pour vous",
     metaDescription:
-      "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 20 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
+      "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 25 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
     image: "/menage.png",
     imageAlt: "Lit impeccable avec drap blanc et fleur de frangipanier — Ménage blanchisserie Kayvila Martinique",
     imagePosition: "center 45%",
@@ -164,7 +156,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Les montants de ménage sont ajoutés au séjour : vous n'avancez pas ces coûts. Une présentation claire sur les annonces et au moment de la réservation.",
       },
       {
-        title: "Blanchisserie incluse hors commission 20 %",
+        title: "Blanchisserie incluse hors commission 25 %",
         desc: "Le linge et le ménage ne sont pas soumis à notre commission : vous conservez 100 % de ces revenus annexes selon le calibrage de votre annonce.",
       },
       {
@@ -183,10 +175,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/menage.png",
       sectionDetails: "/menage.png",
-      sectionMarket: "/menage.png",
       sectionIntroAlt: "Lit impeccable avec drap blanc et fleur — ménage blanchisserie haut standing",
       sectionDetailsAlt: "Linge de maison préparé aux standards hôteliers",
-      sectionMarketAlt: "Piscine et jardin entretenus en climat tropical martiniquais",
     },
   },
   finance: {
@@ -195,7 +185,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Transparence",
     tagline: "Vos revenus reversés, vos comptes clairs",
     metaDescription:
-      "Encaissement des loyers, commission 20 % TTC sur nuitées nettes, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
+      "Encaissement des loyers, commission 25 % TTC sur nuitées nettes, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
     image: "/finance.png",
     imageAlt: "Bureau en terrasse avec MacBook, café et orchidée — Gestion financière Kayvila Martinique",
     imagePosition: "center 40%",
@@ -207,8 +197,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via Airbnb, Booking ou toute autre plateforme. En fin de mois, Kayvila vous adresse une facture de commission — réglable sous 8 jours. Un mandat de prélèvement SEPA peut simplifier ce règlement.",
       },
       {
-        title: "Commission 20 % TTC sur les nuitées réalisées",
-        desc: "La commission de 20 % s'applique sur le montant brut du séjour, frais de ménage et blanchisserie inclus (selon l'affichage de la plateforme). Sur les plateformes qui intègrent le ménage dans le prix affiché, l'assiette est recalculée : base commission = prix total encaissé − forfait ménage contractuel. Ménage et blanchisserie facturés aux voyageurs — hors commission. Vous conservez 100 % de ces montants.",
+        title: "Commission 25 % TTC sur les nuitées réalisées",
+        desc: "La commission de 25 % s'applique sur le montant brut du séjour, frais de ménage et blanchisserie inclus (selon l'affichage de la plateforme). Sur les plateformes qui intègrent le ménage dans le prix affiché, l'assiette est recalculée : base commission = prix total encaissé − forfait ménage contractuel. Ménage et blanchisserie facturés aux voyageurs — hors commission. Vous conservez 100 % de ces montants.",
       },
       {
         title: "Espace propriétaire en ligne",
@@ -222,10 +212,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/finance.png",
       sectionDetails: "/finance.png",
-      sectionMarket: "/finance.png",
       sectionIntroAlt: "Bureau terrasse avec MacBook et café — gestion financière sereine",
       sectionDetailsAlt: "Tableau de bord propriétaire — reversements et commissions",
-      sectionMarketAlt: "Graphique d'évolution des revenus locatifs — marché martiniquais",
     },
   },
 };

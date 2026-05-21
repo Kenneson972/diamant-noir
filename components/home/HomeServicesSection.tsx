@@ -48,7 +48,7 @@ const SERVICE_TAGLINES: Record<string, string> = {
   menage:
     "Ménage et blanchisserie facturés aux voyageurs, hors commission.",
   finance:
-    "Commission 20 % TTC, espace propriétaire, Copilot IA inclus.",
+    "Commission 25 % TTC, espace propriétaire, Copilot IA inclus.",
 };
 
 const SERVICE_DESCS: Record<string, string> = {
@@ -61,7 +61,7 @@ const SERVICE_DESCS: Record<string, string> = {
   menage:
     "Les frais de ménage et blanchisserie sont facturés aux voyageurs, hors commission. Réassort des consommables à nos frais dès la 2e location.",
   finance:
-    "Vous encaissez directement via Airbnb ou Booking. Kayvila facture sa commission de 20 % TTC sur les nuitées réalisées en fin de mois. Espace propriétaire en ligne et assistant IA Copilot inclus.",
+    "Vous encaissez directement via Airbnb ou Booking. Kayvila facture sa commission de 25 % TTC sur les nuitées réalisées en fin de mois. Espace propriétaire en ligne et assistant IA Copilot inclus.",
 };
 
 export function HomeServicesSection() {
