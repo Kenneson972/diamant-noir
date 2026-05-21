@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { startDate, endDate, villaId, guests, guestName, guestEmail, cleaningFee, serviceFeePercent } = parsed.data;
+    const { startDate, endDate, villaId, guests, guestName, guestEmail, serviceFeePercent } = parsed.data;
 
     // Validation du format des dates
     const start = new Date(startDate);
@@ -113,7 +113,8 @@ export async function POST(request: Request) {
       .select("id, start_date, end_date, status")
       .eq("villa_id", villaId)
       .in("status", ["pending", "confirmed", "paid"])
-      .or(`start_date.lt.${endDate},end_date.gt.${startDate}`);
+      .lt("start_date", endDate)
+      .gt("end_date", startDate);
 
     if (conflictError) {
       throw new Error(`Erreur de vérification des disponibilités: ${conflictError.message}`);
@@ -217,7 +218,7 @@ export async function POST(request: Request) {
             },
           },
         },
-        {
+        ...(cleaningFeeCents > 0 ? [{
           quantity: 1,
           price_data: {
             currency: "eur",
@@ -227,7 +228,7 @@ export async function POST(request: Request) {
               description: "Ménage professionnel après votre séjour",
             },
           },
-        },
+        }] : []),
         {
           quantity: 1,
           price_data: {

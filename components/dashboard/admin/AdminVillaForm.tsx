@@ -68,7 +68,7 @@ export function AdminVillaForm() {
       commission_rate:
         commissionRaw && String(commissionRaw).trim() !== ""
           ? Number(commissionRaw)
-          : 15,
+          : 25,
       cleaning_fee_cents: cleaningFeeRaw && String(cleaningFeeRaw).trim() !== "" ? Math.round(Number(cleaningFeeRaw) * 100) : 0,
       owner_id: ownerId || null,
     };
@@ -241,7 +241,7 @@ export function AdminVillaForm() {
                   min="0"
                   max="100"
                   step="0.5"
-                  defaultValue={15}
+                  defaultValue={25}
                   className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
                 />
               </div>

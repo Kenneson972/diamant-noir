@@ -2,10 +2,11 @@ export interface MenuItem {
   label: string;
   href: string;
   icon: string;
+  exact?: boolean;
 }
 
 export const adminMenuItems: MenuItem[] = [
-  { label: "Tableau de bord", href: "/admin", icon: "LayoutDashboard" },
+  { label: "Tableau de bord", href: "/admin", icon: "LayoutDashboard", exact: true },
   { label: "Villas", href: "/admin/villas", icon: "Building2" },
   { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
   { label: "Clients", href: "/admin/clients", icon: "UserCircle" },
