@@ -169,9 +169,9 @@ export function HomeServicesSection() {
                   onClick={scrollPrev}
                   disabled={i === 0}
                   aria-label="Pilier précédent"
-                  className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                  className="absolute left-6 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                 >
-                  <ChevronLeft size={15} strokeWidth={1.5} />
+                  <ChevronLeft size={18} strokeWidth={2} />
                 </button>
                 {/* Flèche droite — cercle or sur le bord de la carte */}
                 <button
@@ -179,9 +179,9 @@ export function HomeServicesSection() {
                   onClick={scrollNext}
                   disabled={i === SCROLL_SECTIONS.length - 1}
                   aria-label="Pilier suivant"
-                  className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full border border-navy/15 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-gold/40 hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
+                  className="absolute right-6 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                 >
-                  <ChevronRight size={15} strokeWidth={1.5} />
+                  <ChevronRight size={18} strokeWidth={2} />
                 </button>
                 <Link
                   href={`/prestations/services/${service.id}`}
