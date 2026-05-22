@@ -173,15 +173,12 @@ export interface Database {
       reviews: {
         Row: {
           id: string;
-          booking_id: string;
-          guest_id: string;
           villa_id: string;
+          booking_id: string | null;
+          guest_name: string;
           rating: number;
           comment: string | null;
-          photos: Json | null;
-          status: string;
           created_at: string;
-          updated_at: string;
         };
         Insert: Record<string, Json>;
         Update: Record<string, Json>;

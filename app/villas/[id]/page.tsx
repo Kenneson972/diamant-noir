@@ -208,7 +208,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
       {/* ── Breadcrumb ── */}
       <div className="mx-auto max-w-7xl px-6 pt-10 pb-0">
-        <nav aria-label="Fil d'Ariane" className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+        <nav aria-label="Fil d'Ariane" className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]">
           <Link href="/villas" className="min-h-[44px] flex items-center text-navy/40 hover:text-gold transition-colors duration-300">
             Toutes nos villas
           </Link>
@@ -223,7 +223,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="h-px w-6 bg-gold" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/40">
+              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-navy/40">
                 {villa.location || "Martinique"}
               </p>
             </div>
@@ -258,7 +258,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">
           
           {/* ── Colonne gauche ── */}
-          <div className="space-y-16">
+          <div className="space-y-12">
             
             {/* 1. Description */}
             <section className="space-y-8">
@@ -268,30 +268,52 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             </section>
 
             {/* 2. L'expérience Kayvila */}
-            <section className="pt-10 border-t border-navy/10">
+            <section id="experience" className="pt-10 border-t border-navy/10">
               <h2 className="font-display font-normal text-2xl text-navy mb-8">L'expérience Kayvila</h2>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid sm:grid-cols-2 gap-px bg-navy/8">
                 {[
-                  { icon: User, title: "Concierge dédié", desc: "Un interlocuteur unique avant et pendant votre séjour." },
-                  { icon: Coffee, title: "Accueil personnalisé", desc: "Remise des clés, visite guidée, conseils locaux." },
-                  { icon: ShieldCheck, title: "Équipe 7j/7", desc: "Réactive, joignable à tout moment pour vos demandes." },
-                  { icon: Check, title: "Services à la carte", desc: "Chef, bateau, massage, transfert — composez votre séjour." },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={item.title} className="border border-navy/10 bg-white p-6">
-                      <Icon size={22} className="text-gold mb-3" strokeWidth={1} />
-                      <h3 className="font-bold text-sm text-navy mb-1">{item.title}</h3>
-                      <p className="text-xs text-navy/55 leading-relaxed">{item.desc}</p>
+                  { num: "01", title: "Concierge dédié", desc: "Un interlocuteur unique avant et pendant votre séjour pour orchestrer chaque détail." },
+                  { num: "02", title: "Accueil personnalisé", desc: "Remise des clés en main propre, visite guidée de la villa et conseils locaux par notre équipe." },
+                  { num: "03", title: "Équipe 7j/7", desc: "Réactive et joignable à tout moment — un message, une question, nous sommes là." },
+                  { num: "04", title: "Services à la carte", desc: "Chef à domicile, bateau, massage, transfert VIP — composez votre séjour sur mesure." },
+                ].map((item) => (
+                  <div key={item.num} className="bg-white p-8 flex gap-5">
+                    <span className="text-3xl font-light text-gold/25 tabular-nums shrink-0">{item.num}</span>
+                    <div>
+                      <h3 className="font-bold text-sm text-navy mb-1.5">{item.title}</h3>
+                      <p className="text-sm text-navy/55 leading-relaxed">{item.desc}</p>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Concierge Kayvila */}
+            <section id="concierge" className="pt-10 border-t border-navy/10">
+              <h2 className="font-display font-normal text-2xl text-navy mb-8">Votre concierge</h2>
+              <div className="flex flex-col sm:flex-row gap-6 items-start border border-navy/10 bg-white p-6">
+                <div className="w-16 h-16 shrink-0 bg-gold/20 flex items-center justify-center">
+                  <User size={28} className="text-gold" strokeWidth={1} />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl text-navy mb-1">L'équipe Kayvila</h3>
+                  <p className="text-[11px] text-navy/40 mb-3">Conciergerie · Martinique</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Avis</span><span className="font-semibold text-navy">98% satisfaits</span></div>
+                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Réponse</span><span className="font-semibold text-navy">&lt; 2 heures</span></div>
+                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Expérience</span><span className="font-semibold text-navy">8+ ans</span></div>
+                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Langues</span><span className="font-semibold text-navy">FR · EN · ES</span></div>
+                  </div>
+                  <p className="mt-4 text-sm text-navy/60 leading-relaxed">
+                    Une équipe dédiée, locale et passionnée. Nous connaissons chaque villa, chaque quartier, chaque restaurant — pour vous offrir un séjour fluide, sans surprise, avec la chaleur martiniquaise.
+                  </p>
+                </div>
               </div>
             </section>
 
             {/* 3. Les Incontournables */}
             {villa.amenities && villa.amenities.length > 0 && (
-              <section className="pt-10 border-t border-navy/10">
+              <section id="incontournables" className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
                 <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6">
                   {villa.amenities.slice(0, 8).map((item: string, i: number) => (
@@ -309,7 +331,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
             {/* 5. Découvrez les chambres */}
             {villa.rooms && villa.rooms.length > 0 && (
-              <section className="pt-10 border-t border-navy/10">
+              <section id="chambres" className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Découvrez les chambres</h2>
                 <div className="space-y-4">
                   {villa.rooms.map((room: any, i: number) => (
@@ -351,15 +373,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
             {/* 7. Les alentours (carte) */}
             {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
-              <section className="pt-10 border-t border-navy/10">
+              <section id="alentours" className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-6">Les alentours</h2>
                 <div className="mb-6 grid gap-6 sm:grid-cols-2">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">Environnement</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">Environnement</p>
                     <p className="text-sm text-navy/70">{villa.environment || "En dehors de la ville"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">À proximité</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">À proximité</p>
                     <div className="flex flex-wrap gap-2">
                       {(villa.nearby_points?.length
                         ? villa.nearby_points
@@ -373,7 +395,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <div className="relative overflow-hidden border border-navy/10 aspect-[16/7] bg-navy/5 group">
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 bg-white/80 px-3 py-1">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 bg-white/80 px-3 py-1">
                       Carte interactive
                     </span>
                   </div>
@@ -391,7 +413,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     rel="noopener noreferrer"
                     className="absolute inset-0 flex items-center justify-center bg-navy/0 group-hover:bg-navy/10 transition-all duration-300"
                   >
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 border border-navy/15 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 border border-navy/15 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-navy">
                       Ouvrir dans Google Maps
                     </span>
                   </a>
@@ -420,7 +442,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
+                  className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
                 >
                   Vivre l&apos;expérience Kayvila
                 </Link>
@@ -481,7 +503,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     />
                   </div>
                   <div className="p-4 space-y-1">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy/40">{item.location || "Martinique"}</p>
+                    <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-navy/40">{item.location || "Martinique"}</p>
                     <p className="font-display text-xl text-navy">{item.name}</p>
                     <p className="text-sm text-navy/60">
                       {item.capacity || 0} voyageurs · <PriceDisplay amount={item.price_per_night} /> / nuit
@@ -521,12 +543,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── CTA bas de page ── */}
       <div className="bg-navy py-20 text-center px-6">
         <div className="mx-auto max-w-xl space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold">Kayvila</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-gold">Kayvila</p>
           <h3 className="font-display text-4xl text-white">Prêt pour l'exception ?</h3>
           <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link
             href="/contact"
-            className="inline-block rounded-none border border-gold/50 px-10 py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-navy transition-all duration-300"
+            className="inline-block rounded-none border border-gold/50 px-10 py-4 text-[11px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-navy transition-all duration-300"
           >
             Contacter la conciergerie
           </Link>
