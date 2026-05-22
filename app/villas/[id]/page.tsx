@@ -267,7 +267,29 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
             </section>
 
-            {/* 2. Les Incontournables */}
+            {/* 2. L'expérience Kayvila */}
+            <section className="pt-10 border-t border-navy/10">
+              <h2 className="font-display font-normal text-2xl text-navy mb-8">L'expérience Kayvila</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { icon: User, title: "Concierge dédié", desc: "Un interlocuteur unique avant et pendant votre séjour." },
+                  { icon: Coffee, title: "Accueil personnalisé", desc: "Remise des clés, visite guidée, conseils locaux." },
+                  { icon: ShieldCheck, title: "Équipe 7j/7", desc: "Réactive, joignable à tout moment pour vos demandes." },
+                  { icon: Check, title: "Services à la carte", desc: "Chef, bateau, massage, transfert — composez votre séjour." },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="border border-navy/10 bg-white p-6">
+                      <Icon size={22} className="text-gold mb-3" strokeWidth={1} />
+                      <h3 className="font-bold text-sm text-navy mb-1">{item.title}</h3>
+                      <p className="text-xs text-navy/55 leading-relaxed">{item.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* 3. Les Incontournables */}
             {villa.amenities && villa.amenities.length > 0 && (
               <section className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
@@ -282,105 +304,8 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             )}
 
-            {/* 3. Avis des voyageurs */}
+            {/* 4. Avis des voyageurs */}
             <VillaReviews villaId={villa.id} villaName={villa.name} />
-
-            {/* 4. L'expérience Kayvila — Conciergerie */}
-            <section className="pt-10 border-t border-navy/10 space-y-6">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">L&apos;expérience Kayvila</h2>
-
-              {/* Bloc 1 — Image hero avec texte superposé : Concierge dédié */}
-              <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
-                <Image
-                  src="/prestations-hero.png"
-                  alt="Service de conciergerie Kayvila — équipe dédiée disponible pour organiser votre séjour"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-navy/80 via-navy/40 to-transparent" />
-                <div className="absolute inset-0 flex items-center p-8 md:p-12">
-                  <div className="max-w-md">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Service exclusif</span>
-                    <h3 className="mt-3 font-display text-3xl md:text-4xl text-white leading-[1.1]">
-                      Concierge dédié
-                    </h3>
-                    <p className="mt-4 text-sm text-white/70 leading-relaxed max-w-sm">
-                      Une interlocutrice unique avant et pendant votre séjour pour organiser chaque détail — transfert, restaurant, excursion, tout est orchestré pour vous.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bloc 2 — Citation : Accueil personnalisé */}
-              <div className="relative bg-offwhite border border-navy/8 px-8 md:px-12 py-12 md:py-16">
-                <div className="max-w-2xl mx-auto text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Accueil personnalisé</span>
-                  <blockquote className="mt-8">
-                    <p className="font-display text-xl md:text-2xl text-navy leading-[1.4] italic">
-                      «&nbsp;Ce qui fait la différence, ce n&apos;est pas la villa, c&apos;est la manière dont on vous y accueille.&nbsp;»
-                    </p>
-                    <footer className="mt-6 text-xs text-navy/40 uppercase tracking-[0.2em]">
-                      — L&apos;équipe Kayvila
-                    </footer>
-                  </blockquote>
-                  <p className="mt-8 text-sm text-navy/60 leading-relaxed">
-                    Remise des clés en main propre, visite guidée de la villa et conseils locaux par notre équipe. Vous arrivez en vacances, pas dans une location.
-                  </p>
-                </div>
-              </div>
-
-              {/* Bloc 3 — Checklist : Services à la carte */}
-              <div className="border border-navy/8 bg-white p-8 md:p-10">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Services à la carte</span>
-                <h3 className="mt-3 font-display text-xl text-navy">Composez votre séjour</h3>
-                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {[
-                    ['Chef à domicile', 'Un dîner privé préparé par un chef martiniquais dans votre villa.'],
-                    ['Location bateau', 'Catamaran ou annexe — explorez la baie, les fonds blancs, les îlets.'],
-                    ['Massages & bien-être', 'Praticien à domicile : massage créole, soins ayurvédiques, yoga.'],
-                    ['Transfert VIP', 'Prise en charge aéroport en véhicule climatisé, avec rafraîchissements.'],
-                    ['Cours de cuisine', 'Initiation aux saveurs antillaises avec un chef local.'],
-                    ['Baby-sitting', 'Garde d&apos;enfants par une professionnelle agréée.'],
-                  ].map(([service, desc]) => (
-                    <li key={service} className="flex gap-3">
-                      <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold/15">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      <div>
-                        <span className="text-sm font-semibold text-navy">{service}</span>
-                        <p className="mt-0.5 text-xs text-navy/50 leading-relaxed">{desc}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Bloc 4 — Photo pleine largeur : Disponibilité */}
-              <div className="relative aspect-[21/9] overflow-hidden bg-navy/5">
-                <Image
-                  src="/villa-hero.jpg"
-                  alt="Villa avec piscine en Martinique — disponibilité 7j/7 assurée par l'équipe Kayvila"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-l from-navy/70 via-navy/30 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-end p-8 md:p-12">
-                  <div className="max-w-sm text-right">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Disponibilité</span>
-                    <h3 className="mt-3 font-display text-3xl md:text-4xl text-white leading-[1.1]">
-                      Présents 7j/7
-                    </h3>
-                    <p className="mt-4 text-sm text-white/70 leading-relaxed">
-                      Une équipe locale réactive, joignable avant et pendant tout votre séjour. Un message, une question, une demande — nous sommes là.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* 5. Découvrez les chambres */}
             {villa.rooms && villa.rooms.length > 0 && (
@@ -422,21 +347,6 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
               <AvailabilityCalendar villaId={villa.id} />
 
-              {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
-                <div className="mt-6 sm:hidden">
-                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Localisation</p>
-                  <div className="relative aspect-[4/3] overflow-hidden border border-navy/10 bg-navy/5">
-                    <iframe
-                      src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
-                      title="Localisation de la villa"
-                      className="h-full w-full grayscale-[0.3] contrast-[1.05]"
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                  </div>
-                </div>
-              )}
             </section>
 
             {/* 7. Les alentours (carte) */}
@@ -489,38 +399,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             )}
 
-            {/* 8. Conditions de réservation (avant accordéon) */}
-            <section className="pt-10 border-t border-navy/10">
-              <h2 className="font-display font-normal text-2xl text-navy mb-8">Conditions de réservation</h2>
-              <div className="space-y-6">
-                {(villa.booking_terms?.length
-                  ? villa.booking_terms
-                  : [
-                      {
-                        question: "Comment fonctionne la réservation ?",
-                        answer:
-                          "Choisissez votre propriété, confirmez la disponibilité avec notre équipe, puis validez votre réservation avec un acompte.",
-                      },
-                      {
-                        question: "Comment se déroule le paiement ?",
-                        answer:
-                          "Un acompte est demandé pour confirmer la réservation. Le solde est réglé avant l'arrivée selon les modalités de votre contrat.",
-                      },
-                      {
-                        question: "Quelles sont les conditions d'annulation ?",
-                        answer:
-                          "Les conditions varient selon la villa et la période. Consultez la politique d'annulation affichée et votre contrat.",
-                      },
-                    ]).map((term, index) => (
-                  <div key={`term-${index}`} className="rounded-none border border-navy/10 bg-white p-5">
-                    <h4 className="font-bold text-navy text-sm mb-2">{term.question}</h4>
-                    <p className="text-sm text-navy/60 leading-relaxed">{term.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* 9. Informations complémentaires (accordéon plié) */}
+            {/* 8. Informations complémentaires (accordéon plié) */}
             <VillaAccordionInfo
               checkInTime={villa.check_in_time || "17:00"}
               checkOutTime={villa.check_out_time || "10:00"}
@@ -529,24 +408,8 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               safetyInfo={villa.safety_info}
             />
 
-            {/* 10. Mini-carte — localisation sous Informations complémentaires */}
-            {(villa.map_embed_url || (villa.latitude != null && villa.longitude != null)) && (
-              <div className="pt-8 border-t border-navy/10">
-                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Localisation</p>
-                <div className="relative aspect-[16/9] overflow-hidden border border-navy/10 bg-navy/5">
-                  <iframe
-                    src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
-                    title="Localisation de la villa"
-                    className="h-full w-full grayscale-[0.3] contrast-[1.05]"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </div>
-              </div>
-            )}
 
-            {/* 11. Questions */}
+            {/* 9. Questions */}
             <section className="pt-10 border-t border-navy/10">
               <div className="rounded-none border border-gold/25 bg-gold/[0.03] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <div>
