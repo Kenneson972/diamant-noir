@@ -20,7 +20,7 @@
 | **Paiements** | Stripe 14.25 (Checkout + Webhooks) |
 | **Calendrier** | FullCalendar 6.x, iCal sync |
 | **Cartes** | Leaflet + react-leaflet |
-| **Animations** | GSAP 3.14, Framer Motion, ScrollReveal |
+| **Animations** | GSAP 3.14, Framer Motion 11.x, ScrollReveal |
 | **Data viz** | Recharts 3.8 |
 | **Dates** | date-fns 4.x |
 | **Utilitaires** | clsx, tailwind-merge, zod, react-hook-form |
@@ -331,7 +331,121 @@ Modèle : `.env.local.example` → copier en `.env.local`.
 | **2026-05-08 (matin)** | Dashboard admin shell (layout, sidebar, page intro), villa admin CRUD, sync OTA, navbar/footer masqués |
 | **2026-05-08 (après-midi)** | Dashboard proprio (KPIs, RevenueChart, OccupancyChart + saisons), FAQ commission, auth defense-in-depth |
 | **2026-05-09** | Animations P1 (ScrollReveal, stagger-fade), page /prestations redesign (mobile hero + hub éditorial), critique design P1 fixes, Copilot Finance redesign, bug villas DNS sandbox, page proprios supprimée, images 5 piliers, Navbar centrage, rename labels |
+| **2026-05-21 (matin)** | Refonte formulaire Confier ma villa (wizard 4 étapes enrichi : chambres, SdB, parking, gardien, délai, adresse postale ; retrait revenus ; email Resend), commission 20 % → 25 % (10 fichiers UI + Stripe), frais de ménage personnalisés par villa (migration, admin form, dashboard proprio, Stripe), fix lien "Tous les piliers" (/#piliers → /prestations#piliers) |
 
 ---
 
-**Dernière mise à jour du récap :** 2026-05-09
+## 14. Session 2026-05-21 — Détail
+
+### Refonte formulaire Confier ma villa (`/soumettre-ma-villa`)
+- **Spéc** : `docs/superpowers/specs/2026-05-21-confier-ma-villa-form-design.md`
+- **Plan** : `docs/superpowers/plans/2026-05-21-confier-ma-villa-form.md`
+- **Étape 1 — Le bien** : surface terrain, chambres, SdB, étages, parking (places + sécurisé), équipements élargis (WiFi, BBQ, salle de sport, borne EV)
+- **Étape 2 — Situation** : retrait des revenus locatifs
+- **Étape 3 — Infos** : gardien existant, délai souhaité
+- **Étape 4 — Contact** : adresse postale (contrat), wording photos "Recommandé"
+- **Backend** : migration 9 colonnes sur `villa_submissions`, API POST/GET enrichie
+- **Email** : confirmation Resend au propriétaire (fire-and-forget)
+
+### Commission 20 % → 25 %
+- Logique Stripe : `lib/stripe/connect.ts` (défaut 25 %), `app/api/booking/route.ts` (split 75/25)
+- UI : 10 fichiers texte (homepage, prestations, FAQ, SEO, VideoScrollHero, qui-sommes-nous)
+
+### Frais de ménage par villa
+- **Spéc** : `docs/superpowers/specs/2026-05-21-cleaning-fee-per-villa-design.md`
+- Migration `cleaning_fee_cents` sur `villas`
+- AdminVillaForm : champ "Frais de ménage (€)"
+- Dashboard proprio : affichage lecture seule
+- Booking API : `villa.cleaning_fee_cents` utilisé dans la Session Stripe
+
+### Correctif navigation
+- Lien "Tous les piliers" (`/prestations/services/[slug]/page.tsx`) : `/#piliers` → `/prestations#piliers`
+
+---
+
+| **2026-05-21 (soir)** | Audit taste-skill (72/100), corrections P0-P2 : framer-motion installe, MagneticButton spring physics, HomeTrustBand retire, scroll listener rAF-throttle, squelettes shape-matched (SkeletonText/Card/Image), Button isLoading, copywriting HomeBottomCta |
+| **2026-05-22** | Refonte page villa style Airbnb (675→537 lignes, 10 sections), audit technique (12/20), correctifs P1-P3 (reviews réels, section concierge, grille expérience distinctive, font 11px min), fix flèches piliers homepage, installation taste-skill |
+
+---
+
+## 15. Session 2026-05-22 — Détail
+
+### Refonte page villa Airbnb (`/villas/[id]`)
+- **Spéc** : `docs/superpowers/specs/2026-05-22-villa-page-airbnb-redesign.md`
+- **Plan** : `docs/superpowers/plans/2026-05-22-villa-page-airbnb-redesign.md`
+- Expérience Kayvila : 4 blocs lourds → 1 grille compacte
+- Suppression : carte mobile en double, conditions redondantes, citations décoratives
+- Réorganisation en 10 sections ordre Airbnb
+
+### Audit + Correctifs
+- Score 12/20 → corrigé : reviews table + API + composant dynamique, section concierge, grille expérience 2-colonnes numérotée, text-[10px]→[11px], polish spacing + ancres id
+
+### Autres
+- Flèches piliers homepage : 36px→44px, bordure visible, couleur explicite
+- taste-skill ajouté dans settings.json (Leonxlnx/taste-skill)
+
+---
+
+## 16. Session 2026-05-21 (soir) — Audit taste-skill + Correctifs
+
+### Audit complet
+- Score global : **72/100** (Typographie 85, Couleur 90, Layout 55, Motion 50, Etats UI 65, Performance 80, Anti-Slop 78)
+- Baseline : Variance 8, Motion 6, Density 4
+
+### Correctifs (7 fichiers)
+1. **HomeTrustBand retire** — section + import supprimes
+2. **framer-motion installe** — npm install framer-motion
+3. **Scroll listener rAF-throttle** — Navbar, plus de jank
+4. **MagneticButton** — nouveau composant, spring physics + aimantation
+5. **4 CTAs upgrades** — HomeBottomCta + HomeOwnersSection
+6. **Squelettes shape-matched** — SkeletonText/Card/Image
+7. **Button isLoading** — spinner inline + active:scale-[0.98]
+8. **Copywriting** — HomeBottomCta phrase concrete
+
+### Points conserves
+min-h-[50dvh], off-black, Playfair+Instrument Sans, gold seul accent, backdrop-filter mobile off, prefers-reduced-motion, touch targets 44px, content-visibility auto
+
+---
+
+---
+
+## Session 2026-05-25 — Réservations Passées + Minimum de Nuits
+
+### Contexte
+Le gérant demande (1) un accès à l'historique des réservations passées par villa et (2) la possibilité de définir un nombre minimum de nuits par villa.
+
+### Spécification & Plan
+- **Spec :** `docs/superpowers/specs/2026-05-25-reservations-passees-min-nuits-design.md`
+- **Plan :** `docs/superpowers/plans/2026-05-25-reservations-passees-min-nuits.md`
+
+### Implémentation (7 commits)
+
+| Commit | Description |
+|--------|-------------|
+| `1ce5acc` | Migration SQL `min_nights` (colonne `villas.min_nights INTEGER DEFAULT 1`) |
+| `0d369c4` | Label `past: "Passées"` dans `BOOKING_STATUS_LABELS` |
+| `a34e886` | Filtre « Passées » dans `/admin/reservations` + support param `?villa=VillaID` |
+| `f0c6925` | `VillaPastBookingsDrawer` + `VillaTableRow` — drawer historique par villa, colonne Résa cliquable |
+| `a63d1ad` | Champ `min_nights` éditable dans le formulaire villa (VillaFormFields + VillaEditorForm) |
+| `32a32d2` | Blocage checkout si séjour < `min_nights` (CheckoutView) |
+
+### Fichiers modifiés (9)
+- **Créés :** `components/dashboard/VillaPastBookingsDrawer.tsx`, `components/dashboard/VillaTableRow.tsx`, `supabase/migrations/20260525_add_min_nights.sql`
+- **Modifiés :** `reservations/page.tsx`, `villas/page.tsx`, `CheckoutView.tsx`, `VillaEditorForm.tsx`, `VillaFormFields.tsx`, `constants.ts`
+
+### Design
+- **Filtre « Passées »** = réservations `confirmed` avec `end_date < today` (pas un nouveau statut DB)
+- **Drawer** 480px glissant depuis la droite, overlay backdrop-blur
+- **min_nights** : règle dure, bloquée au checkout avant Stripe
+
+### Correctif
+- **Bug `useRef` conditionnel** dans `VillaEditorForm.tsx:21` — corrigé (violait rules-of-hooks, bloquait le dev server)
+- **Dev server Next.js 15.5.14** — le mode TTY compact masque les détails d'erreur, workaround via script Node sans TTY
+
+### Migration Supabase
+- Projet : DIAMANT NOIR (`wsdawdxucyuyopkpgjij`)
+- Colonne `min_nights` appliquée et vérifiée
+
+---
+
+**Derniere mise a jour du recap :** 2026-05-25
