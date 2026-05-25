@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Loader2, Save } from "lucide-react";
 import { VillaFormFields } from "@/components/dashboard/villa-editor/VillaFormFields";
@@ -8,14 +8,24 @@ import { VillaAmenitiesEditorWrapper } from "@/components/dashboard/villa-editor
 
 interface VillaEditorFormProps {
   villa: Record<string, unknown>;
+  photosRef?: React.MutableRefObject<string[]>;
 }
 
 type ToastType = "success" | "error" | null;
 
-export function VillaEditorForm({ villa }: VillaEditorFormProps) {
+export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEditorFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
+  const amenitiesRef = useRef<string[]>((villa.amenities ?? []) as string[]);
+  const internalPhotosRef = useRef<string[]>(
+    Array.isArray(villa.photos)
+      ? (villa.photos as string[])
+      : villa.image_url
+        ? [villa.image_url as string]
+        : []
+  );
+  const photosRef = externalPhotosRef ?? internalPhotosRef;
 
   const showToast = useCallback((type: ToastType, message: string) => {
     setToast({ type, message });
@@ -39,6 +49,10 @@ export function VillaEditorForm({ villa }: VillaEditorFormProps) {
         "vf-checkout",
         "vf-desc",
         "vf-airbnb",
+        "vf-latitude",
+        "vf-longitude",
+        "vf-map-embed",
+        "vf-min-nights",
       ];
 
       const payload: Record<string, unknown> = {};
@@ -84,8 +98,24 @@ export function VillaEditorForm({ villa }: VillaEditorFormProps) {
           case "airbnb":
             payload.airbnb_url = value;
             break;
+          case "latitude":
+            payload.latitude = value ? Number(value) : null;
+            break;
+          case "longitude":
+            payload.longitude = value ? Number(value) : null;
+            break;
+          case "map-embed":
+            payload.map_embed_url = value || null;
+            break;
+          case "min-nights":
+            payload.min_nights = Number(value) || 1;
+            break;
         }
       });
+
+      // Include amenities and photos from refs (managed by wrapper components)
+      payload.amenities = amenitiesRef.current;
+      payload.image_urls = photosRef.current;
 
       const res = await fetch("/api/dashboard/update-villa", {
         method: "POST",
@@ -139,6 +169,7 @@ export function VillaEditorForm({ villa }: VillaEditorFormProps) {
         <VillaAmenitiesEditorWrapper
           villaId={villa.id as string}
           initialAmenities={(villa.amenities ?? []) as string[]}
+          onAmenitiesChange={(a) => { amenitiesRef.current = a; }}
         />
       </div>
 

@@ -68,6 +68,21 @@ export function VillaFormFields({ form, onChange: _onChange }: VillaFormFieldsPr
           />
         </div>
 
+        {/* Nuits minimum */}
+        <div>
+          <FieldLabel htmlFor="vf-min-nights" label="Nuits minimum" />
+          <Input
+            id="vf-min-nights"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            defaultValue={(form.min_nights as string) || "1"}
+            placeholder="1"
+            className="text-sm"
+          />
+        </div>
+
         {/* Capacité */}
         <div>
           <FieldLabel htmlFor="vf-capacity" label="Capacité (personnes)" />
@@ -138,6 +153,48 @@ export function VillaFormFields({ form, onChange: _onChange }: VillaFormFieldsPr
             placeholder="Description luxueuse de la villa..."
             className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 placeholder:text-muted/50 focus:border-navy-900/30 focus:outline-none"
           />
+        </div>
+
+        {/* Coordonnées GPS */}
+        <div>
+          <FieldLabel htmlFor="vf-latitude" label="Latitude" />
+          <Input
+            id="vf-latitude"
+            type="number"
+            min="-90"
+            max="90"
+            step="0.000001"
+            defaultValue={form.latitude as string || ""}
+            placeholder="14.4750"
+            className="text-sm"
+          />
+        </div>
+        <div>
+          <FieldLabel htmlFor="vf-longitude" label="Longitude" />
+          <Input
+            id="vf-longitude"
+            type="number"
+            min="-180"
+            max="180"
+            step="0.000001"
+            defaultValue={form.longitude as string || ""}
+            placeholder="-61.0247"
+            className="text-sm"
+          />
+        </div>
+
+        {/* URL carte embed */}
+        <div className="sm:col-span-2">
+          <FieldLabel htmlFor="vf-map-embed" label="URL carte Google Maps (embed)" />
+          <Input
+            id="vf-map-embed"
+            defaultValue={(form.map_embed_url as string) || ""}
+            placeholder="https://www.google.com/maps/embed?..."
+            className="text-sm"
+          />
+          <p className="mt-1 text-[10px] text-muted/60">
+            Optionnel. Prioritaire sur les coordonnées GPS si renseigné.
+          </p>
         </div>
 
         {/* Airbnb URL */}
