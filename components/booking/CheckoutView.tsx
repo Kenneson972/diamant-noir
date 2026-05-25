@@ -82,6 +82,16 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
       return;
     }
 
+    // Validation nuit minimum
+    const nights = Math.round(
+      (new Date(checkout).getTime() - new Date(checkin).getTime()) / 86400000
+    );
+    const minNights = villa?.min_nights ?? 1;
+    if (nights < minNights) {
+      setError(`Cette villa nécessite un séjour minimum de ${minNights} nuit${minNights > 1 ? "s" : ""}.`);
+      return;
+    }
+
     setCheckoutLoading(true);
     setError(null);
     try {
