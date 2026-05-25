@@ -16,11 +16,24 @@ export default function AdminReservationsPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("all");
+  const [villaFilter, setVillaFilter] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const villaParam = params.get("villa");
+    if (villaParam) {
+      setVillaFilter(villaParam);
+      setFilter("past");
+      setLoading(true);
+    }
+  }, []);
 
   const fetchBookings = async () => {
     if (!supabase) return;
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
+
+    const today = new Date().toISOString().split("T")[0];
 
     let query = supabase
       .from("bookings")
@@ -28,7 +41,15 @@ export default function AdminReservationsPage() {
       .order("start_date", { ascending: false })
       .range(from, to);
 
-    if (filter !== "all") query = query.eq("status", filter);
+    if (filter === "past") {
+      query = query.eq("status", "confirmed").lt("end_date", today);
+    } else if (filter !== "all") {
+      query = query.eq("status", filter);
+    }
+
+    if (villaFilter) {
+      query = query.eq("villa_id", villaFilter);
+    }
 
     const { data, count } = await query;
     setBookings(data ?? []);
@@ -51,7 +72,7 @@ export default function AdminReservationsPage() {
       <AdminPageIntro title="Réservations" description={`${total} séjours enregistrés.`} />
 
       <div className="flex gap-2 flex-wrap">
-        {["all", "pending", "confirmed", "cancelled"].map((f) => (
+        {["all", "pending", "confirmed", "cancelled", "past"].map((f) => (
           <button key={f} onClick={() => { setFilter(f); setPage(1); setLoading(true); }}
             className={`px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] rounded-full transition-colors ${filter === f ? "bg-navy text-white" : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"}`}>
             {f === "all" ? "Tous" : BOOKING_STATUS_LABELS[f] ?? f}
@@ -106,17 +127,21 @@ export default function AdminReservationsPage() {
                           className="text-[10px] font-semibold px-2 py-1 rounded bg-navy/5 text-navy/70 hover:bg-navy/10">
                           Voir
                         </Link>
-                        {b.status === "pending" && (
-                          <button onClick={() => handleAction(b.id, "confirmed")}
-                            className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
-                            Confirmer
-                          </button>
-                        )}
-                        {(b.status === "pending" || b.status === "confirmed") && (
-                          <button onClick={() => handleAction(b.id, "cancelled")}
-                            className="text-[10px] font-semibold px-2 py-1 rounded bg-red-50 text-red-700 hover:bg-red-100">
-                            Annuler
-                          </button>
+                        {filter !== "past" && (
+                          <>
+                            {b.status === "pending" && (
+                              <button onClick={() => handleAction(b.id, "confirmed")}
+                                className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
+                                Confirmer
+                              </button>
+                            )}
+                            {(b.status === "pending" || b.status === "confirmed") && (
+                              <button onClick={() => handleAction(b.id, "cancelled")}
+                                className="text-[10px] font-semibold px-2 py-1 rounded bg-red-50 text-red-700 hover:bg-red-100">
+                                Annuler
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
                     </td>
