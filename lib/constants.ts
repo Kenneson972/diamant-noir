@@ -41,6 +41,7 @@ export const BOOKING_STATUS_LABELS: Record<string, string> = {
   paid: "Payée",
   cancelled: "Annulée",
   refunded: "Remboursée",
+  past: "Passées",
 };
 
 /* ─── Statuts de parrainage ──────────────────────────────── */
