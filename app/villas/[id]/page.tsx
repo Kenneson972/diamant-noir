@@ -306,7 +306,9 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   { num: "01", title: "Concierge dédié", desc: "Un interlocuteur unique avant et pendant votre séjour pour orchestrer chaque détail." },
                   { num: "02", title: "Accueil personnalisé", desc: "Remise des clés en main propre, visite guidée de la villa et conseils locaux par notre équipe." },
                   { num: "03", title: "Équipe 7j/7", desc: "Réactive et joignable à tout moment — un message, une question, nous sommes là." },
-                  { num: "04", title: "Services à la carte", desc: "Chef à domicile, bateau, massage, transfert VIP — composez votre séjour sur mesure." },
+                  { num: "04", title: "Services à la carte", desc: (villa.a_la_carte_services && villa.a_la_carte_services.length > 0
+    ? villa.a_la_carte_services.join(", ") + " — composez votre séjour sur mesure."
+    : "Chef à domicile, bateau, massage, transfert VIP — composez votre séjour sur mesure.") },
                 ].map((item) => (
                   <div key={item.num} className="bg-white p-8 flex gap-5">
                     <span className="text-3xl font-light text-gold/25 tabular-nums shrink-0">{item.num}</span>
