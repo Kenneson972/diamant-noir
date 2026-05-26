@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookingForm } from "@/components/BookingForm";
-import { Check, Wifi, Wind, Waves, Flame, TreePine, Car, Utensils, Tv, Shirt, ChefHat, Ship, Heart, UserCheck, Bed, Zap, Dumbbell, Shield, Key, Plane, Coffee, ShieldCheck, User } from "lucide-react";
+import { Check, Wifi, Wind, Waves, Flame, TreePine, Car, Utensils, Tv, Shirt, ChefHat, Ship, Heart, UserCheck, Bed, Zap, Dumbbell, Shield, Key, Plane, ShieldCheck, User } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
