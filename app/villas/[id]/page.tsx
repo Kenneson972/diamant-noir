@@ -14,6 +14,8 @@ import { ConnectedBookingForm, VillaBookingWrapper } from "@/components/villas/V
 import { AvailabilityCalendar } from "@/components/booking/AvailabilityCalendar";
 import { VillaAccordionInfo } from "@/components/villas/VillaAccordionInfo";
 import { VillaReviews } from "@/components/VillaReviews";
+import { WishlistButton } from "@/components/villas/WishlistButton";
+import { VillaHostCard } from "@/components/villas/VillaHostCard";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +42,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return { title: "Villa — Kayvila" };
   }
 }
+
+type VillaHost = {
+  full_name: string | null;
+  avatar_url: string | null;
+  email: string | null;
+  role: string | null;
+};
 
 type VillaDetails = {
   id: string;
@@ -71,6 +80,7 @@ type VillaDetails = {
   latitude?: number | null;
   longitude?: number | null;
   map_embed_url?: string | null;
+  host: VillaHost | null;
 };
 
 type RecommendedVilla = {
@@ -109,6 +119,7 @@ const fallbackVilla: VillaDetails = {
   ],
   a_la_carte_services: ["Chef à domicile", "Location de bateau", "Babysitter"],
   booking_terms: [],
+  host: null,
 };
 
 const getEquipmentIcon = (label: string) => {
@@ -164,7 +175,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     const [villaResult, recommendationsResult] = await Promise.all([
       supabase
         .from("villas")
-        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url")
+        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id,profiles!villas_owner_id_fkey(full_name,avatar_url,email,role)")
         .eq("id", id)
         .single(),
       supabase
@@ -218,6 +229,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         latitude: data.latitude ?? null,
         longitude: data.longitude ?? null,
         map_embed_url: data.map_embed_url ?? null,
+        host: (data as any).profiles
+          ? {
+              full_name: ((data as any).profiles as any).full_name ?? null,
+              avatar_url: ((data as any).profiles as any).avatar_url ?? null,
+              email: ((data as any).profiles as any).email ?? null,
+              role: ((data as any).profiles as any).role ?? null,
+            }
+          : null,
       };
     }
 
@@ -258,8 +277,9 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 {villa.location || "Martinique"}
               </p>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl text-navy">
+            <h1 className="font-display text-4xl md:text-5xl text-navy flex items-center gap-3">
               {villa.name}
+              <WishlistButton villaId={villa.id} className="relative opacity-100" />
             </h1>
             <div className="flex items-center gap-3 mt-4 text-sm text-navy/60 font-medium">
               <span>{villa.capacity} voyageurs</span>
@@ -387,7 +407,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </section>
             ) : null}
 
-            {/* 4. Avis des voyageurs */}
+            {/* 4. Votre hôte */}
+            <VillaHostCard host={villa.host} villaName={villa.name} />
+
+            {/* 5. Avis des voyageurs */}
             <VillaReviews villaId={villa.id} villaName={villa.name} />
 
             {/* 5. Découvrez les chambres */}
