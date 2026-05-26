@@ -136,6 +136,23 @@ const getEquipmentIcon = (label: string) => {
   return <Check size={16} strokeWidth={1} />;
 };
 
+function EquipmentCategory({ title, items }: { title: string; items: string[] }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div>
+      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">{title}</p>
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <span className="text-navy/60">{getEquipmentIcon(item)}</span>
+            <span className="text-sm text-navy/70">{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   noStore();
@@ -339,6 +356,34 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
               </section>
             )}
+
+            {/* 3b. Ce que propose ce logement */}
+            {(villa.equipment_interior && villa.equipment_interior.length > 0) ||
+             (villa.equipment_exterior && villa.equipment_exterior.length > 0) ||
+             (villa.included_services_home && villa.included_services_home.length > 0) ||
+             (villa.included_services_collection && villa.included_services_collection.length > 0) ||
+             (villa.a_la_carte_services && villa.a_la_carte_services.length > 0) ? (
+              <section id="equipements" className="pt-10 border-t border-navy/10">
+                <h2 className="font-display font-normal text-2xl text-navy mb-8">Ce que propose ce logement</h2>
+                <div className="space-y-10">
+                  {villa.equipment_interior && villa.equipment_interior.length > 0 && (
+                    <EquipmentCategory title="Intérieur" items={villa.equipment_interior} />
+                  )}
+                  {villa.equipment_exterior && villa.equipment_exterior.length > 0 && (
+                    <EquipmentCategory title="Extérieur" items={villa.equipment_exterior} />
+                  )}
+                  {villa.included_services_home && villa.included_services_home.length > 0 && (
+                    <EquipmentCategory title="Services inclus — domicile" items={villa.included_services_home} />
+                  )}
+                  {villa.included_services_collection && villa.included_services_collection.length > 0 && (
+                    <EquipmentCategory title="Services inclus — collection" items={villa.included_services_collection} />
+                  )}
+                  {villa.a_la_carte_services && villa.a_la_carte_services.length > 0 && (
+                    <EquipmentCategory title="Services à la carte" items={villa.a_la_carte_services} />
+                  )}
+                </div>
+              </section>
+            ) : null}
 
             {/* 4. Avis des voyageurs */}
             <VillaReviews villaId={villa.id} villaName={villa.name} />
