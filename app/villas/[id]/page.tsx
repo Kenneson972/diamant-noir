@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookingForm } from "@/components/BookingForm";
-import { Check, Wifi, Wind, Waves, Coffee, ChefHat, Bed, ShieldCheck, User } from "lucide-react";
+import { Check, Wifi, Wind, Waves, Flame, TreePine, Car, Utensils, Tv, Shirt, ChefHat, Ship, Heart, UserCheck, Bed, Zap, Dumbbell, Shield, Key, Plane, Coffee, ShieldCheck, User } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
@@ -111,15 +111,29 @@ const fallbackVilla: VillaDetails = {
   booking_terms: [],
 };
 
-const getIcon = (amenity: string) => {
-  const a = amenity.toLowerCase();
-  if (a.includes("wifi")) return <Wifi size={18} strokeWidth={1} />;
-  if (a.includes("climatisation") || a.includes("clim")) return <Wind size={18} strokeWidth={1} />;
-  if (a.includes("piscine") || a.includes("jacuzzi")) return <Waves size={18} strokeWidth={1} />;
-  if (a.includes("café") || a.includes("coffee")) return <Coffee size={18} strokeWidth={1} />;
-  if (a.includes("mer") || a.includes("vue") || a.includes("plage")) return <Waves size={18} strokeWidth={1} />;
-  if (a.includes("chef") || a.includes("cuisine") || a.includes("réfrigérateur")) return <ChefHat size={18} strokeWidth={1} />;
-  return <Check size={18} strokeWidth={1} />;
+const getEquipmentIcon = (label: string) => {
+  const a = label.toLowerCase();
+  if (a.includes("wifi")) return <Wifi size={16} strokeWidth={1} />;
+  if (a.includes("climatisation") || a.includes("clim")) return <Wind size={16} strokeWidth={1} />;
+  if (a.includes("piscine")) return <Waves size={16} strokeWidth={1} />;
+  if (a.includes("jacuzzi")) return <Waves size={16} strokeWidth={1} />;
+  if (a.includes("barbecue") || a.includes("bbq")) return <Flame size={16} strokeWidth={1} />;
+  if (a.includes("jardin") || a.includes("terrasse") || a.includes("extérieur")) return <TreePine size={16} strokeWidth={1} />;
+  if (a.includes("parking") || a.includes("garage")) return <Car size={16} strokeWidth={1} />;
+  if (a.includes("cuisine") || a.includes("réfrigérateur")) return <Utensils size={16} strokeWidth={1} />;
+  if (a.includes("tv") || a.includes("télé") || a.includes("écran")) return <Tv size={16} strokeWidth={1} />;
+  if (a.includes("machine à laver") || a.includes("lave-linge")) return <Shirt size={16} strokeWidth={1} />;
+  if (a.includes("chef") || a.includes("restauration")) return <ChefHat size={16} strokeWidth={1} />;
+  if (a.includes("bateau") || a.includes("nautique") || a.includes("mer") || a.includes("vue") || a.includes("plage")) return <Ship size={16} strokeWidth={1} />;
+  if (a.includes("massage") || a.includes("spa") || a.includes("bien-être")) return <Heart size={16} strokeWidth={1} />;
+  if (a.includes("concierge") || a.includes("accueil") || a.includes("dédié")) return <UserCheck size={16} strokeWidth={1} />;
+  if (a.includes("ménage") || a.includes("draps") || a.includes("serviettes") || a.includes("linge")) return <Bed size={16} strokeWidth={1} />;
+  if (a.includes("borne") || a.includes("ev") || a.includes("électrique")) return <Zap size={16} strokeWidth={1} />;
+  if (a.includes("salle de sport") || a.includes("fitness") || a.includes("gym")) return <Dumbbell size={16} strokeWidth={1} />;
+  if (a.includes("sécurité") || a.includes("alarme") || a.includes("caméra")) return <Shield size={16} strokeWidth={1} />;
+  if (a.includes("clé") || a.includes("autonome") || a.includes("self")) return <Key size={16} strokeWidth={1} />;
+  if (a.includes("transfert") || a.includes("navette") || a.includes("transport")) return <Plane size={16} strokeWidth={1} />;
+  return <Check size={16} strokeWidth={1} />;
 };
 
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -318,7 +332,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6">
                   {villa.amenities.slice(0, 8).map((item: string, i: number) => (
                     <div key={i} className="flex flex-col gap-3">
-                      <div className="text-navy">{getIcon(item)}</div>
+                      <div className="text-navy">{getEquipmentIcon(item)}</div>
                       <span className="text-navy/80 text-sm font-medium">{item}</span>
                     </div>
                   ))}
