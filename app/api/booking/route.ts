@@ -17,7 +17,7 @@ function getStripe(): Stripe | null {
   if (!stripeSecretKey) return null;
   if (!stripeInstance) {
     stripeInstance = new Stripe(stripeSecretKey, {
-      apiVersion: "2025-01-27",
+      apiVersion: "2025-01-27" as any,
     });
   }
   return stripeInstance;
@@ -149,6 +149,39 @@ export async function POST(request: Request) {
     // Récupérer le compte Connect du propriétaire (si configuré)
     const ownerConnectAccountId = await getOwnerConnectAccountId(supabase, villaId);
 
+    // Idempotency check: avoid duplicate bookings on double-click
+    if (guestEmail) {
+      const { data: existingBooking } = await supabase
+        .from("bookings")
+        .select("id, stripe_session_id, status")
+        .eq("villa_id", villaId)
+        .eq("start_date", startDate)
+        .eq("end_date", endDate)
+        .eq("guest_email", guestEmail)
+        .eq("status", "pending")
+        .maybeSingle();
+
+      if (existingBooking) {
+        if (existingBooking.stripe_session_id) {
+          const stripe = getStripe();
+          if (stripe) {
+            try {
+              const session = await stripe.checkout.sessions.retrieve(existingBooking.stripe_session_id);
+              if (session.url) {
+                return NextResponse.json({ url: session.url, bookingId: existingBooking.id });
+              }
+            } catch {
+              // Session expired — fall through to create a new booking
+            }
+          }
+        }
+        return NextResponse.json({
+          url: `${baseUrl}/success?bookingId=${existingBooking.id}${guestEmail ? `&email=${encodeURIComponent(guestEmail)}` : ""}`,
+          bookingId: existingBooking.id,
+        });
+      }
+    }
+
     // 1. Create the booking in DB first
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
@@ -183,6 +216,26 @@ export async function POST(request: Request) {
       });
     }
 
+    // Create or retrieve Stripe Customer
+    let customerId: string | undefined;
+    if (guestEmail) {
+      try {
+        const customers = await stripeInstance.customers.list({ email: guestEmail, limit: 1 });
+        if (customers.data.length > 0) {
+          customerId = customers.data[0].id;
+        } else {
+          const customer = await stripeInstance.customers.create({
+            email: guestEmail,
+            name: guestName || undefined,
+            metadata: { source: "kayvila_booking" },
+          });
+          customerId = customer.id;
+        }
+      } catch (e) {
+        console.error("Stripe customer lookup/create failed:", e);
+      }
+    }
+
     // ── Stripe Connect : split conforme FAQ Kayvila ──
     // Proprio : 75 % du séjour | Kayvila : 25 % séjour + 100 % ménage + 100 % service
     const { platformFeeCents } = calculateTransferAmounts(
@@ -197,7 +250,9 @@ export async function POST(request: Request) {
       mode: "payment",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}${guestEmail ? `&email=${encodeURIComponent(guestEmail)}` : ""}`,
       cancel_url: `${baseUrl}/villas?canceled=true&bookingId=${booking.id}`,
-      customer_email: guestEmail || undefined,
+      ...(customerId
+        ? { customer: customerId }
+        : { customer_email: guestEmail || undefined }),
       metadata: {
         bookingId: booking.id,
         villaId: villaId,

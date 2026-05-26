@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
-const stripe = new Stripe(stripeSecretKey, { apiVersion: "2025-01-27" });
+const stripe = new Stripe(stripeSecretKey, { apiVersion: "2025-01-27" as any });
 
 export async function POST(request: Request) {
   if (!stripeSecretKey || !webhookSecret) {
