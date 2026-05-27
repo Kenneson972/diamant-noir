@@ -23,46 +23,26 @@ const SERVICE_ICONS: Record<ServiceSlug, LucideIcon> = {
   finance: Landmark,
 };
 
-const SERVICE_CONTEXT: Record<ServiceSlug, { intro: string; body: string; market: string }> = {
+const SERVICE_CONTEXT: Record<ServiceSlug, { intro: string }> = {
   marketing: {
     intro:
       "En Martinique, la visibilité d'une villa ne se décrète pas — elle se construit. Entre la concurrence des locations saisonnières et les attentes croissantes des voyageurs internationaux, une annonce standard ne suffit plus.",
-    body:
-      "Notre approche du marketing locatif repose sur un principe simple : votre villa doit être visible au bon endroit, au bon prix, avec les bonnes images. Nous ne nous contentons pas de publier une annonce — nous étudions le marché, la saisonnalité, le positionnement de votre bien et les tarifs pratiqués par les villas comparables. Cette analyse permet de définir une stratégie de prix dynamiques qui maximise votre taux d'occupation sans brader votre bien.",
-    market:
-      "Le marché martiniquais est marqué par une forte saisonnalité (haute saison de décembre à avril, basse saison de juin à novembre). Un prix unique à l'année est rarement optimal. Nos algorithmes ajustent les tarifs en temps réel selon la demande, les événements locaux et le comportement des voyageurs.",
   },
   operations: {
     intro:
       "La réussite d'une location saisonnière tient dans les détails opérationnels. Un voyageur qui arrive dans une villa impeccable, avec un accueil chaleureux et des équipements fonctionnels, est un voyageur qui revient et qui laisse une bonne note.",
-    body:
-      "Nous prenons en charge l'intégralité des opérations terrain : check-in et check-out avec remise des clés en main, visite de la villa, présentation des équipements et des bons plans locaux. Entre chaque séjour, une équipe dédiée inspecte la villa — équipements, électroménager, piscine, extérieurs — et coordonne le ménage, le linge et le réassort des consommables. Tout problème est identifié et résolu avant la prochaine arrivée.",
-    market:
-      "En Martinique, la coordination des prestataires est un enjeu clé : artisans, piscinistes, jardiniers, femmes de ménage. Notre carnet d'adresses local nous permet d'intervenir rapidement et de garantir une qualité constante — là où un propriétaire distant perdrait un temps précieux à chercher un intervenant de confiance.",
   },
   voyageurs: {
     intro:
       "La relation avec les voyageurs est souvent ce qui rebute les propriétaires : les messages à toute heure, les demandes spéciales, les imprévus de dernière minute. Notre mission est de vous libérer totalement de cette charge mentale.",
-    body:
-      "Nous sommes l'unique interlocuteur des voyageurs, de la première demande de réservation au message de remerciement après le séjour. Modifications, annulations, demandes particulières, urgences — tout passe par notre équipe, 7 jours sur 7. Vous ne recevez aucune notification, aucun appel, aucun message. Notre taux de réponse moyen est inférieur à 2 heures, et nous maintenons une note moyenne de 4,9 sur l'ensemble des villas que nous gérons.",
-    market:
-      "Les voyageurs qui choisissent la Martinique viennent du monde entier : France métropolitaine, Europe, Amérique du Nord, parfois Asie. Chaque marché a ses codes, ses attentes et ses fuseaux horaires. Notre équipe maîtrise ces différences culturelles et adapte sa communication en conséquence.",
   },
   menage: {
     intro:
       "Le ménage et la blanchisserie sont des services souvent sous-estimés dans leur impact sur la note et le taux de retour des voyageurs. Une villa impeccable est le premier critère de satisfaction — et le premier motif de plainte quand ce n'est pas le cas.",
-    body:
-      "Notre modèle est simple et transparent : les frais de ménage et de blanchisserie sont facturés aux voyageurs, pas à vous. Vous ne les avancez jamais, et ils ne sont pas soumis à notre commission de 20 % — vous conservez 100 % de ces montants. Le réassort des consommables de bienvenue (café, eau, savon, gel douche) est également à nos frais dès la deuxième location. Nous coordonnons et supervisons également l'entretien de la piscine et du jardin via des prestataires agréés (service facturé en sus, sur abonnement).",
-    market:
-      "En Martinique, l'humidité et la végétation tropicale imposent un rythme d'entretien plus soutenu qu'en métropole. Piscine, jardin, traitement anti-moustiques : un planning rigoureux est essentiel pour maintenir la villa au standard attendu par les voyageurs haut de gamme.",
   },
   finance: {
     intro:
       "La gestion financière d'une location saisonnière peut rapidement devenir complexe : encaissements multiples, commissions variables, devises, déclarations. Notre objectif est de rendre cette partie aussi transparente que possible.",
-    body:
-      "Nous collectons l'intégralité des paiements voyageurs et vous reversons vos revenus chaque mois, avec un relevé détaillé. Notre commission est de 20 % TTC sur les nuitées nettes — pas de frais cachés, pas de surprise. Le ménage et la blanchisserie, facturés aux voyageurs, sont hors commission. Vous disposez d'un espace propriétaire en ligne pour consulter réservations, revenus et interventions à tout moment. Pour les premières mises en location, un pack de démarrage est facturé une seule fois (inventaire, consommables initiaux, boîte à clés).",
-    market:
-      "Le marché locatif martiniquais connaît des fluctuations saisonnières marquées. Notre outil Copilot (inclus dans votre espace propriétaire) vous donne une visibilité précise sur les revenus prévisionnels, l'évolution de votre taux d'occupation et les tendances du marché local — de quoi piloter votre investissement en toute connaissance de cause.",
   },
 };
 
@@ -234,34 +214,6 @@ export default async function PrestationServicePage({
         </div>
       </section>
 
-      {/* ═══ SECTION 3 — Contexte : Texte [gauche] | Image [droite] ═══ */}
-      <section className="border-b border-navy/[0.06] bg-offwhite px-5 py-16 sm:px-6 md:py-24 lg:py-28">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          {/* Texte */}
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
-              Contexte local
-            </span>
-            <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
-              La Martinique, un marché singulier
-            </h2>
-            <div className="mt-4 h-px w-8 bg-gold/40" aria-hidden />
-            <div className="mt-8 space-y-5 text-[13px] leading-relaxed text-navy/60">
-              <p>{ctx.market}</p>
-            </div>
-          </div>
-          {/* Image */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
-            <Image
-              src={d.images.sectionMarket}
-              alt={d.images.sectionMarketAlt}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* ── Section Copilot Finance (si slug finance) ─── */}
       {slug === "finance" && <FinanceCopilotSection />}
