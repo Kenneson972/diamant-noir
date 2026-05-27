@@ -116,8 +116,8 @@ function PasswordPanel({
         metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
-      // window.location.href force un vrai chargement serveur
-      // → le middleware Next.js peut lire les cookies et valider la session
+      // Délai pour laisser les cookies Supabase s'écrire avant redirection
+      await new Promise((resolve) => setTimeout(resolve, 300));
       window.location.href = dest
     }
   }
@@ -174,6 +174,7 @@ function PasswordPanel({
         metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
+      await new Promise((resolve) => setTimeout(resolve, 300));
       window.location.href = dest
       return
     }
