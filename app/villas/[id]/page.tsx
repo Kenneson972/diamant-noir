@@ -175,7 +175,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     const [villaResult, recommendationsResult] = await Promise.all([
       supabase
         .from("villas")
-        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id,profiles!villas_owner_id_fkey(full_name,avatar_url,email,role)")
+        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id")
         .eq("id", id)
         .single(),
       supabase
@@ -229,15 +229,29 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         latitude: data.latitude ?? null,
         longitude: data.longitude ?? null,
         map_embed_url: data.map_embed_url ?? null,
-        host: (data as any).profiles
-          ? {
-              full_name: ((data as any).profiles as any).full_name ?? null,
-              avatar_url: ((data as any).profiles as any).avatar_url ?? null,
-              email: ((data as any).profiles as any).email ?? null,
-              role: ((data as any).profiles as any).role ?? null,
-            }
-          : null,
+        host: null, // Rempli par la query profiles séparée ci-dessous
       };
+
+      // Récupérer le profil hôte séparément (plus fiable que le join)
+      if (data.owner_id) {
+        try {
+          const { data: profileData } = await supabase
+            .from("profiles")
+            .select("full_name, avatar_url, email, role")
+            .eq("id", data.owner_id)
+            .maybeSingle();
+          if (profileData) {
+            villa.host = {
+              full_name: profileData.full_name ?? null,
+              avatar_url: profileData.avatar_url ?? null,
+              email: profileData.email ?? null,
+              role: profileData.role ?? null,
+            };
+          }
+        } catch {
+          // Host lookup non-bloquant
+        }
+      }
     }
 
     if (!recommendationsResult.error && recommendationsResult.data) {
