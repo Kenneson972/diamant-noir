@@ -174,7 +174,7 @@ export async function POST(request: Request) {
       if (bookingId) {
         const { data: currentBooking } = await supabase
           .from("bookings")
-          .select("id, status")
+          .select("id, status, stripe_payment_intent_id, payment_status")
           .eq("id", bookingId)
           .single();
 
@@ -191,8 +191,60 @@ export async function POST(request: Request) {
             changed_by: "stripe_webhook",
             reason: "checkout.session.expired",
           });
+
+          // Auto-refund if payment was already captured
+          if (currentBooking.stripe_payment_intent_id && currentBooking.payment_status === "paid") {
+            try {
+              const paymentIntent = await stripe.paymentIntents.retrieve(
+                currentBooking.stripe_payment_intent_id
+              );
+              if (paymentIntent.status === "succeeded") {
+                await stripe.refunds.create({
+                  payment_intent: currentBooking.stripe_payment_intent_id,
+                });
+                await supabase
+                  .from("bookings")
+                  .update({ payment_status: "refunded" })
+                  .eq("id", bookingId);
+              }
+            } catch (e) {
+              console.error("Auto-refund failed for booking", bookingId, e);
+            }
+          }
         }
       }
+    }
+
+    if (event.type === "account.updated") {
+      const account = event.data.object as Stripe.Account;
+      if (account.charges_enabled && account.details_submitted) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("stripe_connect_account_id", account.id)
+          .maybeSingle();
+
+        if (profile) {
+          await supabase
+            .from("profiles")
+            .update({ stripe_connect_onboarding_completed: true } as any)
+            .eq("id", profile.id);
+        }
+      }
+    }
+
+    if (event.type === "charge.dispute.created") {
+      const dispute = event.data.object as Stripe.Dispute;
+      await supabase.from("stripe_disputes").insert({
+        dispute_id: dispute.id,
+        charge_id: dispute.charge,
+        amount_cents: dispute.amount,
+        reason: dispute.reason,
+        status: dispute.status,
+        evidence_due_by: dispute.evidence_details?.due_by
+          ? new Date(dispute.evidence_details.due_by * 1000).toISOString()
+          : null,
+      });
     }
 
     // Marquer comme traité (idempotence)
