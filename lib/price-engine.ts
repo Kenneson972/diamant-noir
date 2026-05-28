@@ -5,6 +5,19 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const diffDays = (start: Date, end: Date) =>
   Math.ceil((end.getTime() - start.getTime()) / DAY_MS);
 
+type SeasonalPrice = { season: string; start: string; end: string; price: number };
+
+/** Find the applicable seasonal price for a date range */
+const findSeasonalPrice = (startDate: Date, endDate: Date, seasonalPrices?: SeasonalPrice[]): number | null => {
+  if (!seasonalPrices?.length) return null;
+  const start = startDate.toISOString().slice(5, 10); // MM-DD
+  const end = endDate.toISOString().slice(5, 10);
+  for (const sp of seasonalPrices) {
+    if (start >= sp.start && end <= sp.end) return sp.price;
+  }
+  return null;
+};
+
 /** Count weekend nights (Fri-Sat and Sat-Sun) in a date range */
 const countWeekendNights = (start: Date, nights: number): number => {
   let count = 0;
@@ -21,15 +34,20 @@ export const calculatePrice = ({
   startDate,
   endDate,
   basePrice = 1000,
+  seasonalPrices,
 }: BookingPriceInput): BookingPriceResult => {
   const nights = diffDays(startDate, endDate);
+
+  // Use seasonal price if applicable
+  const seasonalPrice = findSeasonalPrice(startDate, endDate, seasonalPrices as SeasonalPrice[]);
+  const effectiveBasePrice = seasonalPrice ?? basePrice;
   if (nights <= 0) {
     return { total: 0, nights: 0, breakdown: "invalid_date_range" };
   }
 
-  const dailyPrice = basePrice;
-  const weekPrice = basePrice * 3;
-  const weekendPrice = basePrice * 1.5;
+  const dailyPrice = effectiveBasePrice;
+  const weekPrice = effectiveBasePrice * 3;
+  const weekendPrice = effectiveBasePrice * 1.5;
 
   // Combinatorial: decompose N nights into weeks → weekends → remaining days
   const fullWeeks = Math.floor(nights / 7);

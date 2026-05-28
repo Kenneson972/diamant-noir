@@ -47,9 +47,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Soft delete — preserve history
     const { error: deleteError } = await admin
       .from("bookings")
-      .delete()
+      .update({
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+        cancelled_by: userId,
+      })
       .eq("id", bookingId);
 
     if (deleteError) {

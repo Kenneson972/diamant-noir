@@ -63,6 +63,39 @@ export const detectOTASource = (url: string): OTASource => {
 const buildExternalId = (source: OTASource, uid: string): string =>
   `${source}_${uid}`;
 
+/**
+ * Migrate legacy external_ids (without source prefix) to new format.
+ * Legacy format: just the iCal UID (e.g. "abc123")
+ * New format: "source_uid" (e.g. "airbnb_abc123")
+ */
+export async function migrateLegacyExternalIds(supabase: SupabaseClient): Promise<number> {
+  // Find bookings with legacy external_ids (no underscore prefix = no source)
+  const { data: legacy } = await supabase
+    .from("bookings")
+    .select("id, external_id, source")
+    .not("external_id", "is", null)
+    .not("source", "is", null);
+
+  if (!legacy?.length) return 0;
+
+  let migrated = 0;
+  for (const b of legacy) {
+    const extId = b.external_id as string;
+    // Already has the new format (contains underscore prefix)
+    if (extId.includes("_")) continue;
+
+    const newId = buildExternalId(b.source, extId);
+    const { error } = await supabase
+      .from("bookings")
+      .update({ external_id: newId })
+      .eq("id", b.id);
+
+    if (!error) migrated++;
+  }
+
+  return migrated;
+}
+
 // ─── Sync d'un canal OTA ──────────────────────────────────────────────────────
 
 export const syncOTAChannel = async (

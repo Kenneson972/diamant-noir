@@ -118,6 +118,7 @@ export interface BookingPriceInput {
   startDate: Date;
   endDate: Date;
   basePrice?: number;
+  seasonalPrices?: { season: string; start: string; end: string; price: number }[];
 }
 
 export interface BookingPriceResult {
