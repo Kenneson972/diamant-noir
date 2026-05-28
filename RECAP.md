@@ -634,4 +634,18 @@ Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
 
 ---
 
+## 2026-05-28 (Fin) — Cursor : Agents n8n + 7 routes API
+
+### Travail Cursor (non supervisé)
+- **3 workflows n8n** (18/24/28 nœuds) : Agent A Visiteur, B Propriétaire, C Admin
+- **Migration SQL** : `conversation_memory` + `banned_sessions` (RLS)
+- **7 routes API** pour alimenter les agents :
+  - `dashboard/villas`, `dashboard/bookings`, `dashboard/tasks`, `dashboard/ota-status`
+  - `admin/villas`, `admin/bookings`, `admin/global-stats`
+  - `villas/public`
+- Pattern cohérent : `requireAuth`/`requireAdmin` + `AuthError` catch + `dynamic=force-dynamic`
+- `owner_id` toujours dérivé de la session
+
+---
+
 **Derniere mise a jour du recap :** 2026-05-28
