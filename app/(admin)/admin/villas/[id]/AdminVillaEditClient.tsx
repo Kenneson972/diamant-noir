@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { VillaEditorForm } from "@/components/dashboard/proprio/VillaEditorForm";
 import { VillaImageManagerWrapper } from "@/components/dashboard/villa-editor/VillaImageManagerWrapper";
@@ -8,7 +8,7 @@ import { VillaBookingsRegistry } from "@/components/dashboard/villa-editor/Villa
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { PlanningIcalSyncCard } from "@/components/dashboard/villa-editor/PlanningIcalSyncCard";
 import { IcalConnectivityStatus } from "@/components/dashboard/villa-editor/IcalConnectivityStatus";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, ChevronDown } from "lucide-react";
 
 interface AdminVillaEditClientProps {
   villa: Record<string, unknown>;
@@ -25,6 +25,57 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   const [bookingStatusFilter, setBookingStatusFilter] = useState<"all" | "confirmed" | "pending">("all");
   const [bookingSourceFilter, setBookingSourceFilter] = useState<"all" | "airbnb" | "other">("all");
   const [icalSaving, setIcalSaving] = useState(false);
+
+  // Admin-only params
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [isPublished, setIsPublished] = useState(!!villa.is_published);
+  const [commissionRate, setCommissionRate] = useState(
+    ((villa.commission_rate as number) || 25)
+  );
+  const [collectionTier, setCollectionTier] = useState(
+    (villa.collection_tier as string) || "standard"
+  );
+  const [selectedOwnerId, setSelectedOwnerId] = useState(
+    (villa.owner_id as string) || ""
+  );
+  const [owners, setOwners] = useState<{ id: string; full_name: string; email: string }[]>([]);
+  const [adminSaving, setAdminSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/owners")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.owners) setOwners(data.owners);
+        else if (Array.isArray(data)) setOwners(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSaveAdminParams = useCallback(async () => {
+    setAdminSaving(true);
+    try {
+      const res = await fetch("/api/dashboard/update-villa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          villaId: villa.id,
+          payload: {
+            is_published: isPublished,
+            commission_rate: Number(commissionRate) || 25,
+            collection_tier: collectionTier,
+            owner_id: selectedOwnerId || null,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error("Erreur lors de la sauvegarde");
+      router.refresh();
+    } catch {
+      // silent
+    } finally {
+      setAdminSaving(false);
+    }
+  }, [villa.id, isPublished, commissionRate, collectionTier, selectedOwnerId, router]);
+
   const photosRef = useRef<string[]>(
     Array.isArray(villa.image_urls)
       ? (villa.image_urls as string[])
@@ -106,6 +157,116 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
     <div className="space-y-8">
       {/* Section 1 : Formulaire + équipements + save sticky */}
       <VillaEditorForm villa={villa} photosRef={photosRef} />
+
+      {/* Section admin : Paramètres admin (admin only) */}
+      <div className="rounded-2xl border border-gold/20 bg-white p-6 shadow-sm">
+        <button
+          type="button"
+          onClick={() => setAdminOpen(!adminOpen)}
+          className="flex w-full items-center justify-between text-left"
+        >
+          <h3 className="font-display text-base font-semibold text-navy-900">
+            🔧 Paramètres admin
+          </h3>
+          <ChevronDown
+            className={`h-5 w-5 text-muted transition-transform ${adminOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+        {adminOpen && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {/* is_published toggle */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsPublished(!isPublished)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isPublished ? "bg-emerald-600" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isPublished ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+              <label className="text-sm font-medium text-navy-900">
+                {isPublished ? "Publiée" : "Non publiée"}
+              </label>
+            </div>
+
+            {/* commission_rate */}
+            <div>
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="admin-commission">
+                Commission (%)
+              </label>
+              <input
+                id="admin-commission"
+                type="number"
+                min="0"
+                max="100"
+                step="1"
+                value={commissionRate}
+                onChange={(e) => setCommissionRate(Number(e.target.value))}
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+              />
+            </div>
+
+            {/* collection_tier */}
+            <div>
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="admin-tier">
+                Niveau collection
+              </label>
+              <select
+                id="admin-tier"
+                value={collectionTier}
+                onChange={(e) => setCollectionTier(e.target.value)}
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+              >
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
+                <option value="signature">Signature</option>
+              </select>
+            </div>
+
+            {/* owner_id */}
+            <div>
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="admin-owner">
+                Propriétaire
+              </label>
+              <select
+                id="admin-owner"
+                value={selectedOwnerId}
+                onChange={(e) => setSelectedOwnerId(e.target.value)}
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+              >
+                <option value="">— Sélectionner —</option>
+                {owners.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.full_name || o.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Save button */}
+            <div className="sm:col-span-2 flex justify-end">
+              <button
+                type="button"
+                onClick={handleSaveAdminParams}
+                disabled={adminSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-navy-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-800 disabled:opacity-50"
+              >
+                {adminSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                {adminSaving ? "Sauvegarde..." : "Enregistrer"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Section 1.5 : Frais de ménage */}
       <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm">

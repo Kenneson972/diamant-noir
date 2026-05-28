@@ -38,78 +38,110 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
 
     try {
       // Collect all form field values
-      const fields = [
-        "vf-name",
-        "vf-location",
-        "vf-price",
-        "vf-capacity",
-        "vf-bathrooms",
-        "vf-surface",
-        "vf-checkin",
-        "vf-checkout",
-        "vf-desc",
-        "vf-airbnb",
-        "vf-latitude",
-        "vf-longitude",
-        "vf-map-embed",
-        "vf-min-nights",
+      const textFields = [
+        "vf-name", "vf-location", "vf-airbnb", "vf-map-embed",
+        "vf-checkin", "vf-checkout", "vf-desc",
+        "vf-house-rules", "vf-safety-info", "vf-cancellation-policy",
+        "vf-environment", "vf-checkout-instructions",
+        "vf-wifi-name", "vf-wifi-password",
+      ];
+
+      const numberFields: [string, number][] = [
+        ["vf-price", 0], ["vf-capacity", 1], ["vf-bathrooms", 0],
+        ["vf-surface", 0], ["vf-min-nights", 1],
+      ];
+
+      const floatFields = ["vf-latitude", "vf-longitude"];
+
+      const tagsFields = [
+        "vf-equipment-interior", "vf-equipment-exterior",
+        "vf-included-home", "vf-included-collection",
+        "vf-a-la-carte", "vf-nearby-points",
+      ];
+
+      const jsonFields = [
+        "vf-booking-terms", "vf-emergency-contacts",
+        "vf-rooms-details", "vf-seasonal-prices",
       ];
 
       const payload: Record<string, unknown> = {};
 
-      fields.forEach((id) => {
-        const el = document.getElementById(id) as
-          | HTMLInputElement
-          | HTMLTextAreaElement
-          | null;
+      // Text fields
+      const textMap: Record<string, string> = {
+        name: "name", location: "location", airbnb: "airbnb_url",
+        "map-embed": "map_embed_url", checkin: "check_in_time",
+        checkout: "check_out_time", desc: "description",
+        "house-rules": "house_rules", "safety-info": "safety_info",
+        "cancellation-policy": "cancellation_policy",
+        environment: "environment",
+        "checkout-instructions": "checkout_instructions",
+        "wifi-name": "wifi_name", "wifi-password": "wifi_password",
+      };
+
+      textFields.forEach((id) => {
+        const el = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null;
         if (!el) return;
-
         const key = id.replace("vf-", "");
-        const value = el.value;
+        const mapped = textMap[key];
+        if (mapped) payload[mapped] = el.value;
+      });
 
-        switch (key) {
-          case "name":
-            payload.name = value;
-            break;
-          case "location":
-            payload.location = value;
-            break;
-          case "price":
-            payload.price_per_night = Number(value) || 0;
-            break;
-          case "capacity":
-            payload.capacity = Number(value) || 1;
-            break;
-          case "bathrooms":
-            payload.bathrooms_count = Number(value) || 0;
-            break;
-          case "surface":
-            payload.surface_m2 = Number(value) || 0;
-            break;
-          case "checkin":
-            payload.check_in_time = value;
-            break;
-          case "checkout":
-            payload.check_out_time = value;
-            break;
-          case "desc":
-            payload.description = value;
-            break;
-          case "airbnb":
-            payload.airbnb_url = value;
-            break;
-          case "latitude":
-            payload.latitude = value ? Number(value) : null;
-            break;
-          case "longitude":
-            payload.longitude = value ? Number(value) : null;
-            break;
-          case "map-embed":
-            payload.map_embed_url = value || null;
-            break;
-          case "min-nights":
-            payload.min_nights = Number(value) || 1;
-            break;
+      // Number fields
+      const numMap: Record<string, string> = {
+        price: "price_per_night", capacity: "capacity",
+        bathrooms: "bathrooms_count", surface: "surface_m2",
+        "min-nights": "min_nights",
+      };
+      numberFields.forEach(([id, def]) => {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (!el) return;
+        const key = id.replace("vf-", "");
+        const mapped = numMap[key];
+        if (mapped) payload[mapped] = Number(el.value) || def;
+      });
+
+      // Float fields
+      floatFields.forEach((id) => {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (!el) return;
+        const key = id.replace("vf-", "").replace("-", "_");
+        payload[key] = el.value ? Number(el.value) : null;
+      });
+
+      // Tags fields (comma-separated → array)
+      const tagsMap: Record<string, string> = {
+        "equipment-interior": "equipment_interior",
+        "equipment-exterior": "equipment_exterior",
+        "included-home": "included_services_home",
+        "included-collection": "included_services_collection",
+        "a-la-carte": "a_la_carte_services",
+        "nearby-points": "nearby_points",
+      };
+      tagsFields.forEach((id) => {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (!el) return;
+        const key = id.replace("vf-", "");
+        const mapped = tagsMap[key];
+        const raw = el.value.trim();
+        if (mapped) payload[mapped] = raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      });
+
+      // JSON fields
+      const jsonMap: Record<string, string> = {
+        "booking-terms": "booking_terms",
+        "emergency-contacts": "emergency_contacts",
+        "rooms-details": "rooms_details",
+        "seasonal-prices": "seasonal_prices",
+      };
+      jsonFields.forEach((id) => {
+        const el = document.getElementById(id) as HTMLTextAreaElement | null;
+        if (!el) return;
+        const key = id.replace("vf-", "");
+        const mapped = jsonMap[key];
+        try {
+          if (mapped) payload[mapped] = el.value.trim() ? JSON.parse(el.value) : null;
+        } catch {
+          if (mapped) payload[mapped] = el.value; // keep as string if invalid JSON
         }
       });
 
