@@ -492,6 +492,14 @@ Migration `supabase/migrations/20260528_security_hardening.sql` :
 | `villa-submissions/confirm` POST | `requireAdmin` | — |
 | `villa-submissions` GET/PATCH | `requireAdmin` | POST reste public (formulaire) |
 
+### Phase 4 — Renforts Élise (3 commits additionnels)
+
+| Commit | Correctif |
+|--------|-----------|
+| `5c331bb` | Fix JWT path : `auth.jwt() -> 'user_metadata' ->> 'role'` (au lieu de `auth.jwt() ->> 'role'`) |
+| `6c7d576` / `703c73b` | RLS villas : DELETE réservé à l'admin, INSERT admin-only, policies scindées |
+| `910dec0` | API `create-villa` + `delete-villa` : bloqués aux non-admins (check `user_metadata.role`) |
+
 ### Règles invariantes
 
 - **Jamais** de `owner_id` ou `prix` depuis le body client — toujours depuis `auth.uid()`
