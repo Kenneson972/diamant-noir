@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAuth, AuthError } from "@/lib/auth/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -16,7 +17,6 @@ export async function GET(request: Request) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!data || data.length === 0) return NextResponse.json([]);
 
-  // Resolve profiles for reviewer names
   const emails = data
     .map((r) => (r as any).bookings?.guest_email)
     .filter((e): e is string => Boolean(e));
@@ -59,19 +59,58 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { villa_id, booking_id, guest_name, rating, comment } = body;
-  if (!villa_id || !guest_name || !rating) {
-    return NextResponse.json({ error: "villa_id, guest_name, rating required" }, { status: 400 });
+  try {
+    const userId = await requireAuth(request);
+
+    const body = await request.json();
+    const { villa_id, booking_id, guest_name, rating, comment } = body;
+    if (!villa_id || !guest_name || !rating) {
+      return NextResponse.json({ error: "villa_id, guest_name, rating required" }, { status: 400 });
+    }
+
+    const supabase = supabaseAdmin();
+
+    // If booking_id provided, verify it belongs to the authenticated user
+    if (booking_id) {
+      const { data: booking, error: bookingError } = await supabase
+        .from("bookings")
+        .select("id, guest_email")
+        .eq("id", booking_id)
+        .single();
+
+      if (bookingError || !booking) {
+        return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("id", userId)
+        .single();
+
+      if (profile?.email !== booking.guest_email) {
+        return NextResponse.json(
+          { error: "Cette réservation ne vous appartient pas" },
+          { status: 403 }
+        );
+      }
+    }
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .insert({ villa_id, booking_id, guest_name, rating, comment })
+      .select()
+      .single();
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(data);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Server error" },
+      { status: 500 }
+    );
   }
-
-  const supabase = supabaseAdmin();
-  const { data, error } = await supabase
-    .from("reviews")
-    .insert({ villa_id, booking_id, guest_name, rating, comment })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
 }
