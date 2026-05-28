@@ -529,8 +529,46 @@ b2c8d7b feat(auth): shared auth helpers
 ### À faire manuellement
 
 - [ ] Appliquer la migration `20260528_security_hardening.sql` dans le SQL Editor Supabase
+- [ ] Appliquer la migration `20260528_add_missing_villa_columns.sql`
 - [ ] Tester les RLS avec `curl` + anon key
 - [ ] Ajouter `CRON_API_KEY` dans les env vars Vercel (pour les routes sync/analytics)
+
+---
+
+## 2026-05-28 (PM) — Corrections Cursor (4 lots, 4 commits)
+
+Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
+
+### Lot 1 — Critique : Photos admin déconnectées
+| Fichier | Correctif |
+|---------|-----------|
+| `AdminVillaEditClient.tsx` | `photosRef` partagé entre `VillaEditorForm` et `VillaImageManagerWrapper` |
+| `VillaImageManagerWrapper.tsx` | Sync `imageUrls` → `photosRef.current` via `useEffect` |
+| `VillaEditorForm.tsx` | `villa.photos` → `villa.image_urls`, `payload.image_url` fallback |
+
+### Lot 2 — Haute : Colonnes et tables fantômes
+| Fichier | Correctif |
+|---------|-----------|
+| `app/api/reviews/route.ts` | 5 colonnes fantômes supprimées (cleanliness_rating, location_rating, communication_rating, value_rating, checkin_rating) |
+| `20260528_add_missing_villa_columns.sql` | Migration : `wifi_name`, `wifi_password`, `emergency_contacts`, `checkout_instructions`, `local_recommendations` |
+| `owner-assistant-context.ts` | TODO pour table `tasks` non créée par migration |
+
+### Lot 3 — Moyenne : Sécurité API
+| Route | Correctif |
+|-------|-----------|
+| `import-airbnb` | `requireAdmin` ajouté |
+| `analytics-villas` | Filtre par `owner_id` pour non-admins |
+| `update-villa` | Whitelist 20 champs owner-modifiables |
+
+### Lot 4 — Majeure : 18 champs éditeur + sections pliables
+| Fichier | Correctif |
+|---------|-----------|
+| `VillaFormFields.tsx` | 5 sections pliables (ChevronDown), 18 nouveaux champs |
+| `VillaEditorForm.tsx` | Payload builder mis à jour (text, number, tags, JSON) |
+| `AdminVillaEditClient.tsx` | Section admin : toggle `is_published`, `commission_rate`, `collection_tier`, `owner_id` |
+
+### Nouveaux champs ajoutés
+`equipment_interior`, `equipment_exterior`, `included_services_home`, `included_services_collection`, `a_la_carte_services`, `house_rules`, `safety_info`, `cancellation_policy`, `booking_terms`, `wifi_name`, `wifi_password`, `emergency_contacts`, `checkout_instructions`, `environment`, `nearby_points`, `rooms_details`, `seasonal_prices`
 
 ---
 
