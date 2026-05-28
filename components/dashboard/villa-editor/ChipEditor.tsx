@@ -11,26 +11,32 @@ type ChipEditorProps = {
   onChange: (items: string[]) => void;
 };
 
-export function ChipEditor({ id, label, items, suggestions, onChange }: ChipEditorProps) {
+export function ChipEditor({ id, label, items: initialItems, suggestions, onChange }: ChipEditorProps) {
+  const [items, setItems] = useState<string[]>(initialItems);
   const [input, setInput] = useState("");
+
+  const updateItems = (next: string[]) => {
+    setItems(next);
+    onChange(next);
+  };
 
   const toggleSuggestion = (item: string) => {
     if (items.includes(item)) {
-      onChange(items.filter((i) => i !== item));
+      updateItems(items.filter((i) => i !== item));
     } else {
-      onChange([...items, item]);
+      updateItems([...items, item]);
     }
   };
 
   const addCustom = () => {
     const val = input.trim();
     if (!val || items.includes(val)) return;
-    onChange([...items, val]);
+    updateItems([...items, val]);
     setInput("");
   };
 
   const removeItem = (item: string) => {
-    onChange(items.filter((i) => i !== item));
+    updateItems(items.filter((i) => i !== item));
   };
 
   return (
