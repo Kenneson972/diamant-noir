@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAuth, verifyApiKey, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
+    if (!verifyApiKey(request)) {
+      await requireAuth(request);
+    }
+
     const body = await request.json();
     const { villaId, eventType } = body;
     if (!villaId || !eventType) {
@@ -19,7 +24,6 @@ export async function POST(request: Request) {
     try {
       supabase = supabaseAdmin();
     } catch {
-      // Service role key non configuré — analytics silencieusement ignoré
       return NextResponse.json({ success: true, skipped: "not_configured" });
     }
 
@@ -29,12 +33,14 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      // Table villa_events peut ne pas exister encore — ne pas crasher
       console.warn("villa_events insert skipped:", error.message);
       return NextResponse.json({ success: true, skipped: error.message });
     }
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Analytics villa API error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
