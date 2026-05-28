@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isStaffAdmin } from "@/lib/auth/admin-access";
+import { withCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   try {
     const supabase = await getSupabaseServer();
     const {
@@ -89,4 +90,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { withCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   try {
     const userId = await requireAdmin(request);
 
@@ -49,4 +50,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});

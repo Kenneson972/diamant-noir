@@ -7,8 +7,12 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   // Protection par API key interne
   const apiKey = process.env.API_SECRET_KEY;
+  if (!apiKey) {
+    console.error("notify-admin-booking: API_SECRET_KEY not configured");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
   const token = extractToken(request);
-  if (apiKey && (!token || token !== apiKey)) {
+  if (!token || token !== apiKey) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 

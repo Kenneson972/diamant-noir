@@ -9,8 +9,12 @@ const BOOKING_CONFIRMATION_WEBHOOK = process.env.BOOKING_CONFIRMATION_WEBHOOK ||
 export async function POST(request: Request) {
   // Protection par API key interne
   const apiKey = process.env.API_SECRET_KEY;
+  if (!apiKey) {
+    console.error("send-booking-confirmation: API_SECRET_KEY not configured");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
   const token = extractToken(request);
-  if (apiKey && (!token || token !== apiKey)) {
+  if (!token || token !== apiKey) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 

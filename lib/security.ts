@@ -94,6 +94,24 @@ export function verifyOrigin(request: Request, allowedOrigins?: string[]): boole
 }
 
 /**
+ * CSRF wrapper for mutation routes.
+ * Usage: export const POST = withCsrf(async (request) => { ... })
+ */
+export function withCsrf(
+  handler: (request: Request, ...args: any[]) => Promise<Response>
+) {
+  return async (request: Request, ...args: any[]): Promise<Response> => {
+    if (!verifyOrigin(request)) {
+      return new Response(JSON.stringify({ error: "Invalid origin" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return handler(request, ...args);
+  };
+}
+
+/**
  * Extrait le token Bearer d'une requête.
  */
 export function extractToken(request: Request): string | null {
