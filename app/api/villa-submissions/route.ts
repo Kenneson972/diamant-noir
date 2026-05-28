@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
@@ -124,19 +125,10 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization") || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const supabase = supabaseAdmin();
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin(request);
 
+    const supabase = supabaseAdmin();
     const { data, error } = await supabase
       .from("villa_submissions")
       .select("id, name, email, phone, villa_name, villa_location, airbnb_url, no_photos, status, created_at, surface_terrain, chambres, salles_de_bains, etages, parking_places, parking_securise, gardien_existant, delai_souhaite, adresse_postale, message, photo_urls")
@@ -147,24 +139,19 @@ export async function GET(request: Request) {
     }
     return NextResponse.json(data || []);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Villa submissions GET error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
 export async function PATCH(request: Request) {
-  const authHeader = request.headers.get("authorization") || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    await requireAdmin(request);
+
     const supabase = supabaseAdmin();
-    const { data: userData, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !userData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await request.json();
     const { id, status } = body;
@@ -202,6 +189,9 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json(submission);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Villa submissions PATCH error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
