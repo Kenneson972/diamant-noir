@@ -201,6 +201,7 @@ export async function POST(request: Request) {
               if (paymentIntent.status === "succeeded") {
                 await stripe.refunds.create({
                   payment_intent: currentBooking.stripe_payment_intent_id,
+                  reverse_transfer: true,
                 });
                 await supabase
                   .from("bookings")
@@ -230,6 +231,40 @@ export async function POST(request: Request) {
             .update({ stripe_connect_onboarding_completed: true } as any)
             .eq("id", profile.id);
         }
+      }
+    }
+
+    // ── Payment Intent handlers (async payments: SEPA, SOFORT) ──
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      if (pi.metadata?.bookingId) {
+        await supabase
+          .from("bookings")
+          .update({ payment_status: "paid", status: "confirmed" })
+          .eq("id", pi.metadata.bookingId)
+          .eq("status", "pending");
+      }
+    }
+
+    if (event.type === "payment_intent.payment_failed") {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      if (pi.metadata?.bookingId) {
+        await supabase
+          .from("bookings")
+          .update({ payment_status: "failed" })
+          .eq("id", pi.metadata.bookingId);
+      }
+    }
+
+    // ── Connect account deauthorized ──
+    if (event.type === "account.application.deauthorized") {
+      const acct = event.data.object as any;
+      const connectId = acct.id || acct.account;
+      if (connectId) {
+        await supabase
+          .from("profiles")
+          .update({ stripe_connect_onboarding_completed: false } as any)
+          .eq("stripe_connect_account_id", connectId);
       }
     }
 
