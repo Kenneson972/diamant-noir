@@ -599,4 +599,39 @@ Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
 
 ---
 
+## 2026-05-28 (PM Suite) — Batch 5-9 + 2.1 (20+ commits)
+
+### Batch 5 — Auth
+- 5.1 : `create-villa`, `delete-booking`, `admin/chat` → `requireAuth`/`requireAdmin`
+- 5.2 : AuthContext fetches `profiles.role` comme source primaire (JWT fallback)
+- 5.3 : `SIGNED_OUT` → clear user + profileRole
+
+### Batch 6 — Design & Ergonomie
+- 6.1 : Contraste WCAG AA — `text-navy/55→60`, `/40→55`, `/35→50` (80+ fichiers)
+- 6.2 : shadcn/ui → navy/gold (button outline, tabs)
+- 6.3 : Footer mobile — BrandLogo + description
+- 6.5 : VillaReviews — error state + retry button
+
+### Batch 7 — Logique métier
+- 7.1 : `migrateLegacyExternalIds()` + route `POST /api/admin/migrate-ota`
+- 7.2 : `calculatePrice()` avec `seasonalPrices`
+- 7.3 : `delete-booking` → soft delete (cancelled_at, cancelled_by)
+
+### Batch 8 — Tests
+- 8.1 : login.spec.ts — 11 tests (login, redirect, roles, open redirect)
+- 8.2 : a11y.spec.ts — axe-core sur 8 pages + landmarks
+
+### Batch 9 — Sécurité + Performance
+- 1.1 : `villa-submissions` POST → `requireAuth`
+- 1.2 : Routes email → `API_SECRET_KEY` obligatoire
+- 1.3/9.1 : `checkCsrf()` + `withCsrf()` sur 10 routes mutation
+- 1.4 : Reviews GET — pas d'email exposé
+- 2.1 : -127 packages (`@chakra-ui`, `@emotion`, `@fontsource/*`)
+- 2.2/9.2 : `<img>` → `<Image>` (6 fichiers)
+
+### Nouveaux composants/fichiers
+`checkCsrf()`, `migrateLegacyExternalIds()`, `POST /api/admin/migrate-ota`, `tests/a11y.spec.ts`, `tServer()`, `getServerLocale()`
+
+---
+
 **Derniere mise a jour du recap :** 2026-05-28
