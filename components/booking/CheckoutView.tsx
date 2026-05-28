@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 import {
   ChevronLeft,
   Calendar,
@@ -26,6 +27,7 @@ interface CheckoutViewProps {
 }
 
 export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: CheckoutViewProps) => {
+  const { t } = useLocale();
   const [villa, setVilla] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -70,15 +72,15 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const handleConfirmBooking = async () => {
     // Validation email obligatoire
     if (!guestEmail.trim()) {
-      setError("Veuillez renseigner votre adresse email");
+      setError(t("checkout.email_required"));
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail.trim())) {
-      setError("Adresse email invalide");
+      setError(t("checkout.invalid_email"));
       return;
     }
     if (!guestName.trim()) {
-      setError("Veuillez renseigner votre nom");
+      setError(t("checkout.name_required"));
       return;
     }
 
@@ -109,11 +111,11 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
       });
       const payload = await response.json();
       if (!response.ok) {
-        throw new Error(payload?.error || "La réservation a échoué");
+        throw new Error(payload?.error || t("checkout.booking_failed"));
       }
       window.location.href = payload.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "La réservation a échoué");
+      setError(err instanceof Error ? err.message : t("checkout.booking_failed"));
     } finally {
       setCheckoutLoading(false);
     }
@@ -164,7 +166,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
           disabled={checkoutLoading}
           className="w-full bg-navy py-3 text-[11px] font-bold uppercase tracking-[0.3em] text-white transition-colors hover:bg-gold hover:text-navy disabled:opacity-50"
         >
-          {checkoutLoading ? "Chargement…" : "Confirmer la réservation"}
+          {checkoutLoading ? t("common.loading") : t("checkout.confirm")}
         </button>
       </div>
 

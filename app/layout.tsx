@@ -41,19 +41,41 @@ const siteUrl =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
   "http://localhost:3000";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: { default: "Kayvila | Conciergerie de luxe Martinique", template: "%s | Kayvila" },
-  description:
-    "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.",
-  keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Kayvila"],
-  openGraph: {
-    type: "website",
-    locale: "fr_FR",
-    siteName: "Kayvila",
-    images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("dn_locale")?.value ?? "fr";
+  const ogLocale = localeCookie === "en" ? "en_US" : localeCookie === "es" ? "es_ES" : "fr_FR";
+  const title = localeCookie === "en"
+    ? "Kayvila | Luxury Concierge Martinique"
+    : localeCookie === "es"
+    ? "Kayvila | Conserjería de lujo Martinica"
+    : "Kayvila | Conciergerie de luxe Martinique";
+  const description = localeCookie === "en"
+    ? "Luxury concierge in Martinique. Exceptional villas, online booking, maintenance and management. Diamond Rock, Sun Beach."
+    : localeCookie === "es"
+    ? "Conserjería de lujo en Martinica. Villas excepcionales, reserva en línea, mantenimiento y gestión."
+    : "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.";
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: title, template: "%s | Kayvila" },
+    description,
+    keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Kayvila"],
+    openGraph: {
+      type: "website",
+      locale: ogLocale,
+      siteName: "Kayvila",
+      images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
+    },
+    alternates: {
+      languages: {
+        fr: "/",
+        en: "/",
+        es: "/",
+      },
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
