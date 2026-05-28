@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAuth, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
@@ -9,8 +10,11 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "i
 
 export async function POST(request: Request) {
   try {
+    const userId = await requireAuth(request);
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const villaId = formData.get("villaId") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "Aucun fichier fourni." }, { status: 400 });
@@ -23,6 +27,31 @@ export async function POST(request: Request) {
     }
 
     const supabase = supabaseAdmin();
+
+    // If villaId provided, verify ownership
+    if (villaId) {
+      const { data: villa, error: villaError } = await supabase
+        .from("villas")
+        .select("id, owner_id")
+        .eq("id", villaId)
+        .single();
+
+      if (villaError || !villa) {
+        return NextResponse.json({ error: "Villa introuvable." }, { status: 404 });
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .maybeSingle();
+
+      const isAdmin = profile?.role === "admin";
+      if (!isAdmin && villa.owner_id !== userId) {
+        return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
+      }
+    }
+
     const ext = file.name.split(".").pop() ?? "jpg";
     const path = `submissions/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -38,8 +67,11 @@ export async function POST(request: Request) {
 
     const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
     return NextResponse.json({ url: urlData.publicUrl });
-  } catch (err) {
-    console.error("villa-photo-upload error:", err);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    console.error("villa-photo-upload error:", error);
     return NextResponse.json({ error: "Erreur serveur." }, { status: 500 });
   }
 }
