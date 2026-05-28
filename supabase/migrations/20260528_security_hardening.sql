@@ -15,7 +15,7 @@ drop policy if exists "admin read all" on public.profiles;
 -- Re-create with auth.jwt() instead of self-referencing subquery
 create policy "admin read all" on public.profiles
   for select
-  using (auth.jwt() ->> 'role' = 'admin');
+  using (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. VILLAS — Add RLS policies
@@ -39,7 +39,7 @@ create policy "villas_select_owner_admin" on public.villas
   for select
   using (
     owner_id = auth.uid()
-    or auth.jwt() ->> 'role' = 'admin'
+    or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'
   );
 
 -- Policy C: Only owners can insert/update/delete their villas; admins can manage all
@@ -47,11 +47,11 @@ create policy "villas_manage_owner_admin" on public.villas
   for all
   using (
     owner_id = auth.uid()
-    or auth.jwt() ->> 'role' = 'admin'
+    or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'
   )
   with check (
     owner_id = auth.uid()
-    or auth.jwt() ->> 'role' = 'admin'
+    or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
