@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request: Request) {
-  if (!resend) {
-    return NextResponse.json({ error: "Resend not configured" }, { status: 500 });
-  }
-
   try {
+    await requireAdmin(request);
+
+    if (!resend) {
+      return NextResponse.json({ error: "Resend not configured" }, { status: 500 });
+    }
+
     const { name, email, villa_name } = await request.json();
 
     const { error } = await resend.emails.send({
@@ -45,6 +48,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Confirm email error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
