@@ -19,8 +19,8 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
   const amenitiesRef = useRef<string[]>((villa.amenities ?? []) as string[]);
   const internalPhotosRef = useRef<string[]>(
-    Array.isArray(villa.photos)
-      ? (villa.photos as string[])
+    Array.isArray(villa.image_urls)
+      ? (villa.image_urls as string[])
       : villa.image_url
         ? [villa.image_url as string]
         : []
@@ -116,6 +116,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       // Include amenities and photos from refs (managed by wrapper components)
       payload.amenities = amenitiesRef.current;
       payload.image_urls = photosRef.current;
+      payload.image_url = photosRef.current[0] || null;
 
       const res = await fetch("/api/dashboard/update-villa", {
         method: "POST",

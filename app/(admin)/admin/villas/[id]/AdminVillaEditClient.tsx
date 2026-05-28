@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { VillaEditorForm } from "@/components/dashboard/proprio/VillaEditorForm";
 import { VillaImageManagerWrapper } from "@/components/dashboard/villa-editor/VillaImageManagerWrapper";
@@ -25,6 +25,13 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   const [bookingStatusFilter, setBookingStatusFilter] = useState<"all" | "confirmed" | "pending">("all");
   const [bookingSourceFilter, setBookingSourceFilter] = useState<"all" | "airbnb" | "other">("all");
   const [icalSaving, setIcalSaving] = useState(false);
+  const photosRef = useRef<string[]>(
+    Array.isArray(villa.image_urls)
+      ? (villa.image_urls as string[])
+      : villa.image_url
+        ? [villa.image_url as string]
+        : []
+  );
 
   const filteredBookings = useMemo(
     () =>
@@ -98,7 +105,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   return (
     <div className="space-y-8">
       {/* Section 1 : Formulaire + équipements + save sticky */}
-      <VillaEditorForm villa={villa} />
+      <VillaEditorForm villa={villa} photosRef={photosRef} />
 
       {/* Section 1.5 : Frais de ménage */}
       <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm">
@@ -140,13 +147,8 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
       {/* Section 2 : Photos */}
       <VillaImageManagerWrapper
         villaId={villa.id as string}
-        initialPhotos={
-          Array.isArray(villa.photos)
-            ? (villa.photos as string[])
-            : villa.image_url
-              ? [villa.image_url as string]
-              : []
-        }
+        initialPhotos={photosRef.current}
+        photosRef={photosRef}
       />
 
       {/* Section 3 : Registre réservations */}
