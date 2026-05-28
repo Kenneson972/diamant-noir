@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { calculatePrice } from "@/lib/price-engine";
 import { supabaseAdmin } from "@/lib/supabase";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
+import { checkCsrf } from "@/lib/security";
 import { BookingRequestSchema } from "@/types/stripe";
 import { calculateTransferAmounts } from "@/lib/stripe/connect";
 

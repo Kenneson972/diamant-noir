@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth, AuthError } from "@/lib/auth/server";
+import { checkCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     const userId = await requireAuth(request);
 

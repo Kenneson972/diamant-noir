@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { z } from "zod";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
+import { checkCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 

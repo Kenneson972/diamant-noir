@@ -93,6 +93,20 @@ export function verifyOrigin(request: Request, allowedOrigins?: string[]): boole
   return false;
 }
 
+import { NextResponse } from "next/server";
+
+/**
+ * Inline CSRF check for mutation routes.
+ * Returns null if OK, or NextResponse 403 if blocked.
+ * Usage: const csrf = checkCsrf(request); if (csrf) return csrf;
+ */
+export function checkCsrf(request: Request): NextResponse | null {
+  if (!verifyOrigin(request)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+  return null;
+}
+
 /**
  * CSRF wrapper for mutation routes.
  * Usage: export const POST = withCsrf(async (request) => { ... })

@@ -8,11 +8,15 @@ import {
 import type { ListingFieldSource, ListingImportApiResponse } from "@/lib/listing-import-types";
 import { normalizeImportedAmenities } from "@/lib/amenity-import-normalize";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
+import { checkCsrf } from "@/lib/security";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  const csrf = checkCsrf(req);
+  if (csrf) return csrf;
+
   // Rate limiting : 5 req / 60s par IP
   if (!checkRateLimit(`import:${ipFromRequest(req)}`, 5, 60_000)) {
     return NextResponse.json({ error: "Trop de requêtes. Réessayez plus tard." }, { status: 429 });
