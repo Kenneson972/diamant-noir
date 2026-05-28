@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const supabase = supabaseAdmin();
   const { data, error } = await supabase
     .from("reviews")
-    .select("id, villa_id, booking_id, guest_name, rating, comment, created_at, cleanliness_rating, location_rating, communication_rating, value_rating, checkin_rating, bookings(guest_email)")
+    .select("id, villa_id, booking_id, guest_name, rating, comment, created_at, bookings(guest_email)")
     .eq("villa_id", villaId)
     .order("created_at", { ascending: false });
 
@@ -45,11 +45,6 @@ export async function GET(request: Request) {
       rating: r.rating,
       comment: r.comment,
       created_at: r.created_at,
-      cleanliness_rating: r.cleanliness_rating ?? null,
-      location_rating: r.location_rating ?? null,
-      communication_rating: r.communication_rating ?? null,
-      value_rating: r.value_rating ?? null,
-      checkin_rating: r.checkin_rating ?? null,
       full_name: profile?.full_name ?? null,
       avatar_url: profile?.avatar_url ?? null,
     };

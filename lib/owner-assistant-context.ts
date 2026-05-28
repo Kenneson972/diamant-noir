@@ -186,6 +186,7 @@ export async function buildOwnerContextPack(
       )
       .in("villa_id", villaIds)
       .order("start_date", { ascending: true }),
+    // TODO: table tasks non créée par migration — à créer manuellement si nécessaire
     admin
       .from("tasks")
       .select("id, villa_id, content, status, created_at")
