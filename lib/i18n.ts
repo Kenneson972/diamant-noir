@@ -619,3 +619,25 @@ const translations: Record<Locale, Record<string, string>> = {
 export function t(locale: Locale, key: string): string {
   return translations[locale]?.[key] ?? translations[DEFAULT_LOCALE][key] ?? key;
 }
+
+/**
+ * Server-compatible t() with variable substitution.
+ * Usage: tServer("fr", "checkout.total", { price: "250 €" })
+ */
+export function tServer(
+  locale: string,
+  key: string,
+  vars?: Record<string, string | number>
+): string {
+  const raw = translations[locale as Locale]?.[key] ?? translations[DEFAULT_LOCALE][key] ?? key;
+  if (!vars) return raw;
+  return raw.replace(/\{\{(\w+)\}\}/g, (_, name) => String(vars[name] ?? `{{${name}}}`));
+}
+
+/**
+ * Read locale from request headers (set by middleware from dn_locale cookie).
+ * Usage in server components: const locale = getServerLocale(headers())
+ */
+export function getServerLocale(requestHeaders: Headers): string {
+  return requestHeaders.get("x-dn-locale") ?? DEFAULT_LOCALE;
+}

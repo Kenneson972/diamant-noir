@@ -61,7 +61,13 @@ export async function middleware(request: NextRequest) {
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
-  let supabaseResponse = NextResponse.next({ request });
+  // Inject locale from cookie → header for server components
+  const localeCookie = request.cookies.get("dn_locale");
+  const locale = localeCookie?.value ?? "fr";
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-dn-locale", locale);
+
+  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
