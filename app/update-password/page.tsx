@@ -78,7 +78,7 @@ export default function UpdatePasswordPage() {
   if (!sessionReady) {
     return (
       <main className="flex min-h-[100dvh] items-center justify-center bg-white">
-        <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
+        <Loader2 className="animate-spin text-navy/55" size={22} strokeWidth={1.25} aria-hidden />
       </main>
     )
   }
@@ -103,7 +103,7 @@ export default function UpdatePasswordPage() {
             <div className="space-y-1">
               <label
                 htmlFor="new-password"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
               >
                 Nouveau mot de passe <span className="text-red-600">*</span>
               </label>
@@ -129,13 +129,13 @@ export default function UpdatePasswordPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
                 </button>
               </div>
-              <p id="pw-hint" className="text-xs text-navy/40">
+              <p id="pw-hint" className="text-xs text-navy/55">
                 Au moins {MIN_PASSWORD_LEN} caractères.
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function UpdatePasswordPage() {
             <div className="space-y-1">
               <label
                 htmlFor="confirm-password"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
               >
                 Confirmer <span className="text-red-600">*</span>
               </label>
@@ -172,7 +172,7 @@ export default function UpdatePasswordPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
                   {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}

@@ -57,7 +57,7 @@ export default function FavorisPage() {
         ) : villas.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 border border-navy/10 bg-white">
             <Heart size={32} className="text-navy/15" />
-            <p className="text-sm text-navy/40">Aucune villa favorite</p>
+            <p className="text-sm text-navy/55">Aucune villa favorite</p>
             <p className="text-[11px] text-navy/30">
               Explorez nos villas et cliquez sur le cœur pour les ajouter ici.
             </p>
@@ -93,13 +93,13 @@ export default function FavorisPage() {
                     <div>
                       <h3 className="font-display text-base text-navy">{v.name}</h3>
                       {v.location && (
-                        <p className="flex items-center gap-1 text-[11px] text-navy/40 mt-0.5">
+                        <p className="flex items-center gap-1 text-[11px] text-navy/55 mt-0.5">
                           <MapPin size={10} /> {v.location}
                         </p>
                       )}
                     </div>
                     <p className="text-sm font-semibold text-navy shrink-0">
-                      {v.price_per_night}€<span className="text-[10px] font-normal text-navy/40">/nuit</span>
+                      {v.price_per_night}€<span className="text-[10px] font-normal text-navy/55">/nuit</span>
                     </p>
                   </div>
                   <Link

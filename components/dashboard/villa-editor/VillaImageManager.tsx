@@ -175,7 +175,7 @@ export function VillaImageManager({
           </SortableContext>
         </DndContext>
       ) : (
-        <div className="flex min-h-[120px] items-center justify-center rounded-lg border-2 border-dashed border-navy/10 bg-navy/[0.02] text-[11px] text-navy/40">
+        <div className="flex min-h-[120px] items-center justify-center rounded-lg border-2 border-dashed border-navy/10 bg-navy/[0.02] text-[11px] text-navy/55">
           Aucune photo. Cliquez sur Ajouter pour en uploader.
         </div>
       )}

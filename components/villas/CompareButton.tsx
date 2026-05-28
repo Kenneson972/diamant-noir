@@ -33,7 +33,7 @@ export function CompareButton({ villa }: CompareButtonProps) {
         ${selected
           ? "text-gold"
           : canAdd
-            ? "text-navy/35 hover:text-navy/70"
+            ? "text-navy/50 hover:text-navy/70"
             : "text-navy/15 cursor-not-allowed"
         }
       `}

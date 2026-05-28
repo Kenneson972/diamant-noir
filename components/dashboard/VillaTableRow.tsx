@@ -106,7 +106,7 @@ export function VillaTableRow({ villa }: { villa: VillaRow }) {
               href={`/villas/${villa.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-navy/40 hover:text-navy transition-colors"
+              className="text-sm text-navy/55 hover:text-navy transition-colors"
               aria-label={`Voir ${villa.name} sur le site`}
             >
               Voir ↗

@@ -210,11 +210,11 @@ function PasswordPanel({
           <h2 className="font-display text-2xl text-navy">Vérifiez vos emails</h2>
           <span className="block h-px w-10 bg-navy/12" />
         </div>
-        <p className="text-sm leading-relaxed text-navy/55">
+        <p className="text-sm leading-relaxed text-navy/60">
           Un lien de réinitialisation a été envoyé à{" "}
           <span className="font-medium text-navy">{email}</span>.
         </p>
-        <p className="text-xs leading-relaxed text-navy/40">
+        <p className="text-xs leading-relaxed text-navy/55">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -225,7 +225,7 @@ function PasswordPanel({
             setError(null)
             setPassword("")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -241,12 +241,12 @@ function PasswordPanel({
           <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-navy/12" />
         </div>
-        <p className="text-sm leading-relaxed text-navy/55">
+        <p className="text-sm leading-relaxed text-navy/60">
           Nous avons envoyé un lien de confirmation à{" "}
           <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour
           activer votre compte, puis vous pourrez vous connecter.
         </p>
-        <p className="text-xs leading-relaxed text-navy/40">
+        <p className="text-xs leading-relaxed text-navy/55">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -259,7 +259,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -280,7 +280,7 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
               >
                 Nom <span className="font-normal normal-case tracking-normal text-navy/30">(optionnel)</span>
               </label>
@@ -306,7 +306,7 @@ function PasswordPanel({
           <div className="space-y-1">
             <label
               htmlFor="email-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
@@ -333,7 +333,7 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
               >
                 Mot de passe <span className="text-red-600">*</span>
               </label>
@@ -359,14 +359,14 @@ function PasswordPanel({
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
                 </button>
               </div>
               {mode === "signup" && (
-                <p id="password-hint" className="text-xs text-navy/40">
+                <p id="password-hint" className="text-xs text-navy/55">
                   Au moins {MIN_PASSWORD_LEN} caractères.
                 </p>
               )}
@@ -376,7 +376,7 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-confirm"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
@@ -405,7 +405,7 @@ function PasswordPanel({
                 <button
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/35 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
                   {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
@@ -424,7 +424,7 @@ function PasswordPanel({
             <button
               type="button"
               onClick={() => { setMode("forgot"); setError(null) }}
-              className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/35 transition-colors hover:text-navy"
+              className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
             >
               Mot de passe oublié ?
             </button>
@@ -458,7 +458,7 @@ function PasswordPanel({
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
           Pas encore de compte ?{" "}
           <button
             type="button"
@@ -473,7 +473,7 @@ function PasswordPanel({
           </button>
         </p>
       ) : mode === "signup" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
           Déjà un compte ?{" "}
           <button
             type="button"
@@ -488,7 +488,7 @@ function PasswordPanel({
           </button>
         </p>
       ) : (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/35">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
           <button
             type="button"
             onClick={() => { setMode("login"); setError(null) }}
@@ -601,7 +601,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <main className="flex min-h-[100dvh] items-center justify-center bg-white">
-          <Loader2 className="animate-spin text-navy/40" size={22} strokeWidth={1.25} aria-hidden />
+          <Loader2 className="animate-spin text-navy/55" size={22} strokeWidth={1.25} aria-hidden />
         </main>
       }
     >

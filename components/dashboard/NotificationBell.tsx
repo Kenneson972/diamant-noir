@@ -237,7 +237,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
-                  className="text-[10px] text-navy/40 dark:text-white/40 hover:text-gold transition-colors uppercase tracking-wider px-2 py-1"
+                  className="text-[10px] text-navy/55 dark:text-white/40 hover:text-gold transition-colors uppercase tracking-wider px-2 py-1"
                 >
                   Tout lire
                 </button>
@@ -260,7 +260,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 gap-2">
                 <Bell size={24} className="text-navy/15 dark:text-white/15" />
-                <p className="text-xs text-navy/40 dark:text-white/40">Aucune notification</p>
+                <p className="text-xs text-navy/55 dark:text-white/40">Aucune notification</p>
               </div>
             ) : (
               notifications.map((notif) => {
@@ -300,7 +300,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                         </div>
 
                         {/* Corps */}
-                        <p className="text-[11px] text-navy/55 dark:text-white/55 leading-relaxed line-clamp-2">
+                        <p className="text-[11px] text-navy/60 dark:text-white/55 leading-relaxed line-clamp-2">
                           {notif.body}
                         </p>
 
@@ -325,7 +325,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
 
                         {/* Footer : timestamp + lien */}
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[10px] text-navy/35 dark:text-white/35">
+                          <span className="text-[10px] text-navy/50 dark:text-white/35">
                             {timeAgo(notif.created_at)}
                           </span>
                           <span className="flex items-center gap-0.5 text-[10px] text-gold hover:text-gold/80">

@@ -30,7 +30,7 @@ export function TaskCard({ task, villaName }: TaskCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <ClipboardList className="h-4 w-4 shrink-0 text-navy/40" />
+            <ClipboardList className="h-4 w-4 shrink-0 text-navy/55" />
             <h3 className="truncate text-sm font-semibold text-navy group-hover:text-gold transition-colors">
               {task.title}
             </h3>

@@ -108,7 +108,7 @@ export default async function AdminPage() {
               </div>
             ))}
             {(recentRequests ?? []).length === 0 && (recentBookings ?? []).length === 0 && (recentReviews ?? []).length === 0 && (
-              <p className="text-sm text-navy/40">Aucune activité récente.</p>
+              <p className="text-sm text-navy/55">Aucune activité récente.</p>
             )}
           </div>
         </div>
@@ -118,7 +118,7 @@ export default async function AdminPage() {
           <div className="rounded-lg border border-navy/5 bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-lg font-semibold text-navy">Alertes</h2>
             {(pendingRequests ?? 0) === 0 && (pendingReviews ?? 0) === 0 ? (
-              <p className="text-sm text-navy/40">Aucune alerte.</p>
+              <p className="text-sm text-navy/55">Aucune alerte.</p>
             ) : (
               <div className="space-y-2">
                 {(pendingRequests ?? 0) > 0 && (

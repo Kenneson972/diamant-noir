@@ -21,7 +21,7 @@ function AccordionSection({
       >
         <h2 className="font-display font-normal text-2xl text-navy">{title}</h2>
         <span
-          className={`text-navy/40 text-xs transition-transform duration-300 ${
+          className={`text-navy/55 text-xs transition-transform duration-300 ${
             open ? "rotate-180" : ""
           }`}
         >

@@ -65,9 +65,9 @@ export function BookLandingMarketing({
                   href="/soumettre-ma-villa"
                   className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
                 >
-                  <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+                  <MapPin className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 2</p>
                     <p className="mt-1 text-sm text-navy/70">Confier ma villa</p>
                   </div>
                 </Link>
@@ -88,7 +88,7 @@ export function BookLandingMarketing({
           <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
             <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
               <div className="flex items-start gap-3 sm:items-center">
-                <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+                <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">Dates indiquées</p>
                   <p className="text-sm text-navy">
@@ -109,9 +109,9 @@ export function BookLandingMarketing({
 
         <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
           <div className="space-y-6 text-center">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">Une seule vitrine</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60">Une seule vitrine</p>
             <h2 className="font-display text-2xl text-navy md:text-3xl">Catalogue voyageurs &amp; exigence marque</h2>
-            <p className="text-sm leading-relaxed text-navy/55">
+            <p className="text-sm leading-relaxed text-navy/60">
               La page <span className="font-medium text-navy">Nos villas</span> présente la collection louée par
               Kayvila. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
             </p>
@@ -141,7 +141,7 @@ export function BookLandingMarketing({
               <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">
                 Un interlocuteur dédié
               </h2>
-              <p className="text-base font-light leading-relaxed text-navy/55">
+              <p className="text-base font-light leading-relaxed text-navy/60">
                 Pour un projet de mise en location ou le suivi de votre bien, notre équipe répond sur mesure.
               </p>
               <div className="pt-2">
@@ -187,9 +187,9 @@ export function BookLandingMarketing({
                 href={catalogueHref}
                 className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
-                <MapPin className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+                <MapPin className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 1</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 1</p>
                   <p className="mt-1 text-sm font-medium text-navy">Parcourir le catalogue</p>
                 </div>
               </Link>
@@ -197,9 +197,9 @@ export function BookLandingMarketing({
                 href={catalogueHref}
                 className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
-                <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+                <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/40">Étape 2</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 2</p>
                   <p className="mt-1 text-sm text-navy/70">Dates sur la fiche villa</p>
                 </div>
               </Link>
@@ -220,7 +220,7 @@ export function BookLandingMarketing({
         <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
           <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div className="flex items-start gap-3 sm:items-center">
-              <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+              <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">Dates indiquées</p>
                 <p className="text-sm text-navy">
@@ -241,9 +241,9 @@ export function BookLandingMarketing({
 
       <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
         <div className="space-y-6 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55">Un seul catalogue</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60">Un seul catalogue</p>
           <h2 className="font-display text-2xl text-navy md:text-3xl">Carte, liste et fiches détaillées</h2>
-          <p className="text-sm leading-relaxed text-navy/55">
+          <p className="text-sm leading-relaxed text-navy/60">
             La page <span className="font-medium text-navy">Nos villas</span> regroupe toute la collection. Après votre
             choix, les disponibilités et le paiement se font sur la page de la villa — sans parcourir deux catalogues.
           </p>
@@ -262,7 +262,7 @@ export function BookLandingMarketing({
           <div className="mx-auto max-w-2xl space-y-8 text-center">
             <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />
             <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">Un accompagnement sur mesure</h2>
-            <p className="text-base font-light leading-relaxed text-navy/55">
+            <p className="text-base font-light leading-relaxed text-navy/60">
               Notre conciergerie vous aide à composer votre séjour : transferts, expériences, équipe sur place.
             </p>
             <div className="pt-2">

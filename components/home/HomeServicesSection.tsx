@@ -117,7 +117,7 @@ export function HomeServicesSection() {
               <br />
               une seule équipe
             </h2>
-            <p className="mt-3 text-xs leading-relaxed text-navy/55 md:text-[15px] md:mt-4">
+            <p className="mt-3 text-xs leading-relaxed text-navy/60 md:text-[15px] md:mt-4">
               Faites défiler pour découvrir chaque pilier — ou cliquez directement sur un service.
             </p>
           </div>
@@ -213,7 +213,7 @@ export function HomeServicesSection() {
                       <div className="h-px flex-1 bg-navy/[0.06]" aria-hidden />
                     </div>
 
-                    <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/35">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/50">
                       {tagline}
                     </p>
 
@@ -221,7 +221,7 @@ export function HomeServicesSection() {
                       {service.title}
                     </h3>
 
-                    <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/55 md:mt-3 md:text-[13px]">
+                    <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/60 md:mt-3 md:text-[13px]">
                       {desc}
                     </p>
 
@@ -239,7 +239,7 @@ export function HomeServicesSection() {
                       </span>
                     </div>
 
-                    <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/35 transition-colors group-hover:text-navy md:mt-4">
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/50 transition-colors group-hover:text-navy md:mt-4">
                       Voir le détail <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
                     </span>
                   </div>

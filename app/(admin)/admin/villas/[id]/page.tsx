@@ -101,7 +101,7 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
             </a>
             <Link
               href="/admin/villas"
-              className="block text-center text-xs text-navy/40 hover:text-navy transition-colors"
+              className="block text-center text-xs text-navy/55 hover:text-navy transition-colors"
             >
               ← Retour aux villas
             </Link>

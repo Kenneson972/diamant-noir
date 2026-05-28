@@ -24,7 +24,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
       {/* En-tête — centré, titre grand */}
       <ScrollReveal>
         <div className="px-6 pb-10 pt-14 text-center md:px-8 md:pb-12 md:pt-20 lg:px-12">
-          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/35">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/50">
             Nos villas
           </span>
           <h2 className="mx-auto mt-3 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
@@ -50,7 +50,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
             {featuredError ? `Statut: ${featuredError}` : "Ajoutez des villas dans Supabase pour les afficher ici."}
           </p>
           {process.env.NODE_ENV === "development" && (
-            <p className="mt-3 text-[10px] uppercase tracking-widest text-navy/40">
+            <p className="mt-3 text-[10px] uppercase tracking-widest text-navy/55">
               Supabase: {featuredCount} ligne(s) reçue(s)
             </p>
           )}

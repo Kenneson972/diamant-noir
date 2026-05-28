@@ -31,7 +31,7 @@ export default function FaqPage() {
                     {theme.label}
                   </span>
                   <div className="h-px flex-1 bg-navy/10" />
-                  <span className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/40">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/55">
                     {theme.title}
                   </span>
                 </div>
@@ -43,7 +43,7 @@ export default function FaqPage() {
                         <ChevronDown
                           size={14}
                           strokeWidth={2}
-                          className="shrink-0 text-navy/35 transition-transform duration-200 group-open:rotate-180"
+                          className="shrink-0 text-navy/50 transition-transform duration-200 group-open:rotate-180"
                           aria-hidden
                         />
                       </summary>

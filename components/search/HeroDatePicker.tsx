@@ -189,7 +189,7 @@ export function HeroDatePicker({
       }
 
       const textCls = isLight
-        ? "text-[11px] font-bold uppercase tracking-[0.15em] text-navy/55"
+        ? "text-[11px] font-bold uppercase tracking-[0.15em] text-navy/60"
         : "text-[11px] font-bold uppercase tracking-[0.15em] text-white/55";
       const dayCls = isLight ? "text-[10px] font-semibold text-navy/30" : "text-[10px] font-semibold text-white/30";
 
@@ -244,14 +244,14 @@ export function HeroDatePicker({
     : "bg-[#0A1628] border-white/12";
   const shadowCls = "shadow-[0_24px_64px_rgba(0,0,0,0.35)]";
   const navCls = isLight
-    ? "text-navy/35 hover:bg-navy/5 hover:text-navy/60"
+    ? "text-navy/50 hover:bg-navy/5 hover:text-navy/60"
     : "text-white/40 hover:bg-white/8 hover:text-white/70";
   const summaryBarCls = isLight
     ? "bg-navy/[0.03] border-navy/8"
     : "bg-white/[0.03] border-white/8";
   const summaryTextCls = isLight ? "text-navy/50" : "text-white/50";
   const summaryActiveCls = isLight ? "text-navy" : "text-white";
-  const summaryLabelCls = isLight ? "text-navy/40" : "text-white/40";
+  const summaryLabelCls = isLight ? "text-navy/55" : "text-white/40";
 
   return (
     <div
@@ -323,7 +323,7 @@ export function HeroDatePicker({
 
       {/* Pied — bouton Fermer / instructions */}
       <div className={`border-t px-5 py-2.5 ${isLight ? "border-navy/8" : "border-white/8"}`}>
-        <p className={`text-center text-[9px] font-medium uppercase tracking-[0.1em] ${isLight ? "text-navy/35" : "text-white/35"}`}>
+        <p className={`text-center text-[9px] font-medium uppercase tracking-[0.1em] ${isLight ? "text-navy/50" : "text-white/35"}`}>
           {hasSelection
             ? "Appuyez sur Rechercher pour voir les villas disponibles"
             : "S\u00e9lectionnez votre arriv\u00e9e, puis votre d\u00e9part"}

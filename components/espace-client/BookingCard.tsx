@@ -84,7 +84,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
         <div className="min-w-0">
           <p className="truncate font-display text-base text-navy">{villaName}</p>
           {location && (
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-navy/40">
+            <p className="mt-0.5 flex items-center gap-1 text-xs text-navy/55">
               <MapPin size={10} strokeWidth={1.25} />
               {location}
             </p>

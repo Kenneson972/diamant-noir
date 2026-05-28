@@ -14,7 +14,7 @@ export function HomeExperiencesGrid() {
     <section className="overflow-hidden bg-white pb-0 pt-16 md:pt-20">
       {/* En-tête */}
       <div className="mb-10 px-8 md:mb-12 md:px-14">
-        <span className="text-[10px] font-bold uppercase tracking-[0.42em] text-navy/35">
+        <span className="text-[10px] font-bold uppercase tracking-[0.42em] text-navy/50">
           La conciergerie
         </span>
         <h2 className="mt-3 font-display text-4xl font-light italic text-navy md:text-5xl">

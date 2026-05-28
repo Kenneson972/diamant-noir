@@ -114,9 +114,9 @@ export function BookingSearchBar({
           aria-label="Choisir la date d'arrivée"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
-            <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+            <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Arrivée</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Arrivée</p>
               <p className={`mt-0.5 text-sm font-medium truncate ${checkin ? "text-navy" : "text-navy/45"}`}>
                 {formatDate(checkin) ?? "Choisir une date"}
               </p>
@@ -145,9 +145,9 @@ export function BookingSearchBar({
           aria-label="Choisir la date de départ"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
-            <Calendar className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+            <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Départ</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Départ</p>
               <p className={`mt-0.5 text-sm font-medium truncate ${checkout ? "text-navy" : "text-navy/45"}`}>
                 {formatDate(checkout) ?? "Choisir une date"}
               </p>
@@ -178,9 +178,9 @@ export function BookingSearchBar({
             aria-expanded={guestOpen}
             aria-haspopup="true"
           >
-            <Users className="h-4 w-4 shrink-0 text-navy/35" strokeWidth={1.25} aria-hidden />
+            <Users className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">Voyageurs</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Voyageurs</p>
               <p className="mt-0.5 text-sm font-medium text-navy">
                 {guests} voyageur{guests > 1 ? "s" : ""}
               </p>
@@ -226,7 +226,7 @@ export function BookingSearchBar({
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy">Voyageurs</p>
-              <p className="mt-0.5 text-[10px] text-navy/40">Adultes et enfants</p>
+              <p className="mt-0.5 text-[10px] text-navy/55">Adultes et enfants</p>
             </div>
             <div className="flex items-center gap-3">
               <button

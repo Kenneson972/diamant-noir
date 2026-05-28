@@ -49,7 +49,7 @@ export function HomeConciergeHighlight() {
         <ScrollReveal delay={120}>
           <Link
             href="/prestations"
-            className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/55 underline-offset-8 transition-colors hover:text-navy hover:underline"
+            className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60 underline-offset-8 transition-colors hover:text-navy hover:underline"
           >
             DÉCOUVRIR LA CONCIERGERIE COMPLÈTE
             <ArrowRight

@@ -68,10 +68,10 @@ export default function AdminDemandesPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-navy/40">Chargement...</p>
+        <p className="text-sm text-navy/55">Chargement...</p>
       ) : requests.length === 0 ? (
         <div className="border border-navy/10 bg-white p-12 text-center">
-          <p className="text-sm text-navy/40">Aucune demande.</p>
+          <p className="text-sm text-navy/55">Aucune demande.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -89,7 +89,7 @@ export default function AdminDemandesPage() {
                     {r.bookings?.villas?.name ?? "Villa"} — {r.bookings?.guest_name ?? "Voyageur"}
                   </p>
                   {r.bookings?.start_date && (
-                    <p className="text-[11px] text-navy/40 mt-0.5">
+                    <p className="text-[11px] text-navy/55 mt-0.5">
                       {new Date(r.bookings.start_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} → {new Date(r.bookings.end_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
                   )}

@@ -20,13 +20,13 @@ export function VillaFilters({ count }: { count: number }) {
           className={`tap-target rounded-full px-5 text-[10px] font-bold uppercase tracking-widest transition-all duration-150 ${
             activeFilter === filter
               ? "bg-gold text-navy"
-              : "border border-navy/20 text-navy/40 hover:text-navy hover:border-navy"
+              : "border border-navy/20 text-navy/55 hover:text-navy hover:border-navy"
           }`}
         >
           {filter}
         </button>
       ))}
-      <span className="text-navy/40 text-sm ml-2">{count} propriétés</span>
+      <span className="text-navy/55 text-sm ml-2">{count} propriétés</span>
     </div>
   );
 }

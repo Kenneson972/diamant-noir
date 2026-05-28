@@ -33,7 +33,7 @@ export const Footer = () => {
           {/* Colonne 1 : Logo + description */}
           <div className="flex flex-col items-start gap-4">
             <BrandLogo variant="onLight" size="sm" />
-            <p className="text-sm leading-relaxed text-navy/55">
+            <p className="text-sm leading-relaxed text-navy/60">
               {audience === "proprietaire" ? (
                 "Conciergerie haut de gamme en Martinique : valorisation de biens d'exception et relation voyageurs pour les propriétaires qui exigent sérénité et exigence."
               ) : (
@@ -75,6 +75,14 @@ export const Footer = () => {
 
         {/* ──── Mobile: grille 2×2 ──── */}
         <div className="md:hidden">
+          {/* Logo + branding */}
+          <div className="mb-8 text-center">
+            <BrandLogo variant="onLight" size="sm" />
+            <p className="mt-3 text-xs text-navy/60 max-w-xs mx-auto leading-relaxed">
+              {t("footer.branding_desc")}
+            </p>
+          </div>
+
           {/* Row 1: Explorer (gauche) | Assistance (droite) */}
           <div className="grid grid-cols-2 gap-6">
             <div>
@@ -128,7 +136,7 @@ export const Footer = () => {
             <button
               type="button"
               onClick={() => { clearAudience(); router.push("/"); }}
-              className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy/35 underline-offset-4 transition-colors hover:text-navy/55"
+              className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy/50 underline-offset-4 transition-colors hover:text-navy/60"
             >
               Changer de parcours
             </button>
@@ -136,7 +144,7 @@ export const Footer = () => {
         )}
 
         {/* ──── Barre du bas ──── */}
-        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/40 md:mt-12 md:flex md:items-center md:justify-between md:text-left">
+        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/55 md:mt-12 md:flex md:items-center md:justify-between md:text-left">
           <p>© 2026 Kayvila. Tous droits réservés.</p>
           <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1 md:mt-0 md:justify-end">
             <Link href="/mentions-legales" className="transition-colors hover:text-black/70">Mentions légales</Link>

@@ -258,7 +258,7 @@ export function AdminVillaForm() {
                   defaultValue={0}
                   className="w-full rounded-none border border-gray-300 px-3 py-2 text-sm"
                 />
-                <p className="text-[11px] text-navy/40">100 % reverse a Kayvila pour le menage et la blanchisserie</p>
+                <p className="text-[11px] text-navy/55">100 % reverse a Kayvila pour le menage et la blanchisserie</p>
               </div>
               <div>
                 <label

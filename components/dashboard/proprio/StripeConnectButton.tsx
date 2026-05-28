@@ -145,7 +145,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
         <p className="text-xs text-red-500">{error}</p>
       )}
 
-      <p className="text-xs leading-relaxed text-navy/40">
+      <p className="text-xs leading-relaxed text-navy/55">
         Vous serez redirigé vers Stripe pour configurer votre compte de réception des paiements.
         Le processus prend moins de 5 minutes.
       </p>

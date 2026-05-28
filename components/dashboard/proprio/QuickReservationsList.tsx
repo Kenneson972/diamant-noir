@@ -49,7 +49,7 @@ export function QuickReservationsList({ bookings }: QuickReservationsListProps) 
                 <span className="truncate text-sm font-medium text-navy">
                   {booking.guest_name ?? "Anonyme"}
                 </span>
-                <span className="hidden text-xs text-navy/40 sm:inline">
+                <span className="hidden text-xs text-navy/55 sm:inline">
                   <CalendarDays className="mr-1 inline h-3 w-3" aria-hidden />
                   {formatDate(booking.start_date)} – {formatDate(booking.end_date)}
                 </span>

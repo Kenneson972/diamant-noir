@@ -79,14 +79,14 @@ export function PriceCalculator({
         <span className="font-display text-2xl font-normal text-navy">
           {fmt(pricePerNight)}
         </span>
-        <span className="text-xs text-navy/40 tracking-wide">/ nuit</span>
+        <span className="text-xs text-navy/55 tracking-wide">/ nuit</span>
       </div>
 
       {/* Dates */}
       <div className="grid grid-cols-2 gap-px bg-navy/10 border border-navy/10">
         {/* Arrivée */}
         <div className="bg-white px-4 py-3">
-          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/55 mb-1.5">
             Arrivée
           </label>
           <input
@@ -102,7 +102,7 @@ export function PriceCalculator({
         </div>
         {/* Départ */}
         <div className="bg-white px-4 py-3">
-          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/40 mb-1.5">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-navy/55 mb-1.5">
             Départ
           </label>
           <input
@@ -117,8 +117,8 @@ export function PriceCalculator({
 
       {/* Voyageurs */}
       <div className="flex items-center gap-3 border border-navy/10 px-4 py-3">
-        <Users size={14} className="text-navy/40 shrink-0" />
-        <label className="text-[10px] uppercase tracking-[0.2em] text-navy/40 flex-1">
+        <Users size={14} className="text-navy/55 shrink-0" />
+        <label className="text-[10px] uppercase tracking-[0.2em] text-navy/55 flex-1">
           Voyageurs
         </label>
         <div className="flex items-center gap-3">
@@ -163,7 +163,7 @@ export function PriceCalculator({
             <span>Total</span>
             <span className="tabular-nums text-base">{fmt(calc.total)}</span>
           </div>
-          <p className="text-[10px] text-navy/35 tracking-wide">
+          <p className="text-[10px] text-navy/50 tracking-wide">
             Taxes incluses · Paiement sécurisé
           </p>
         </div>
@@ -196,7 +196,7 @@ export function PriceCalculator({
 
       {/* Hint discret */}
       {!calc && (
-        <p className="text-center text-[10px] text-navy/35 tracking-wide -mt-2">
+        <p className="text-center text-[10px] text-navy/50 tracking-wide -mt-2">
           Sélectionnez vos dates pour voir le prix total
         </p>
       )}

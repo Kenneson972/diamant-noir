@@ -152,7 +152,7 @@ function EquipmentCategory({ title, items }: { title: string; items: string[] })
   if (!items || items.length === 0) return null;
   return (
     <div>
-      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">{title}</p>
+      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">{title}</p>
       <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-3">
@@ -286,7 +286,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       {/* ── Breadcrumb ── */}
       <div className="mx-auto max-w-7xl px-6 pt-10 pb-0">
         <nav aria-label="Fil d'Ariane" className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]">
-          <Link href="/villas" className="min-h-[44px] flex items-center text-navy/40 hover:text-gold transition-colors duration-300">
+          <Link href="/villas" className="min-h-[44px] flex items-center text-navy/55 hover:text-gold transition-colors duration-300">
             Toutes nos villas
           </Link>
           <span className="text-navy/20" aria-hidden="true">→</span>
@@ -300,7 +300,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="h-px w-6 bg-gold" />
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-navy/40">
+              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-navy/55">
                 {villa.location || "Martinique"}
               </p>
             </div>
@@ -361,7 +361,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     <span className="text-3xl font-light text-gold/25 tabular-nums shrink-0">{item.num}</span>
                     <div>
                       <h3 className="font-bold text-sm text-navy mb-1.5">{item.title}</h3>
-                      <p className="text-sm text-navy/55 leading-relaxed">{item.desc}</p>
+                      <p className="text-sm text-navy/60 leading-relaxed">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -377,12 +377,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <div>
                   <h3 className="font-display text-xl text-navy mb-1">{ts(locale, "villa.team")}</h3>
-                  <p className="text-[11px] text-navy/40 mb-3">Conciergerie · Martinique</p>
+                  <p className="text-[11px] text-navy/55 mb-3">Conciergerie · Martinique</p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Avis</span><span className="font-semibold text-navy">98% satisfaits</span></div>
-                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Réponse</span><span className="font-semibold text-navy">&lt; 2 heures</span></div>
-                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Expérience</span><span className="font-semibold text-navy">8+ ans</span></div>
-                    <div><span className="block text-navy/40 text-[11px] uppercase tracking-wide">Langues</span><span className="font-semibold text-navy">FR · EN · ES</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Avis</span><span className="font-semibold text-navy">98% satisfaits</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Réponse</span><span className="font-semibold text-navy">&lt; 2 heures</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Expérience</span><span className="font-semibold text-navy">8+ ans</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Langues</span><span className="font-semibold text-navy">FR · EN · ES</span></div>
                   </div>
                   <p className="mt-4 text-sm text-navy/60 leading-relaxed">
                     Une équipe dédiée, locale et passionnée. Nous connaissons chaque villa, chaque quartier, chaque restaurant — pour vous offrir un séjour fluide, sans surprise, avec la chaleur martiniquaise.
@@ -473,11 +473,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <h2 className="font-display font-normal text-2xl text-navy mb-6">{ts(locale, "villa.surroundings")}</h2>
                 <div className="mb-6 grid gap-6 sm:grid-cols-2">
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">Environnement</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">Environnement</p>
                     <p className="text-sm text-navy/70">{villa.environment || "En dehors de la ville"}</p>
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 mb-2">À proximité</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">À proximité</p>
                     <div className="flex flex-wrap gap-2">
                       {(villa.nearby_points?.length
                         ? villa.nearby_points
@@ -491,7 +491,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <div className="relative overflow-hidden border border-navy/10 aspect-[16/7] bg-navy/5 group">
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 bg-white/80 px-3 py-1">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 bg-white/80 px-3 py-1">
                       Carte interactive
                     </span>
                   </div>
@@ -600,7 +600,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     />
                   </div>
                   <div className="p-4 space-y-1">
-                    <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-navy/40">{item.location || "Martinique"}</p>
+                    <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-navy/55">{item.location || "Martinique"}</p>
                     <p className="font-display text-xl text-navy">{item.name}</p>
                     <p className="text-sm text-navy/60">
                       {item.capacity || 0} voyageurs · <PriceDisplay amount={item.price_per_night} /> / nuit

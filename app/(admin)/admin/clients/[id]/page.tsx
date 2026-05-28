@@ -78,7 +78,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             <div key={b.id} className="flex items-center justify-between border border-navy/10 bg-white px-4 py-3">
               <div>
                 <p className="text-sm font-medium text-navy">{b.villas?.name ?? "Villa"}</p>
-                <p className="text-[11px] text-navy/40">
+                <p className="text-[11px] text-navy/55">
                   {formatDate(b.start_date)} → {formatDate(b.end_date)}
                   {b.checklist_state && Object.keys(b.checklist_state).length > 0 && (
                     <> · Checklist: {Object.values(b.checklist_state).filter(Boolean).length}/{Object.keys(b.checklist_state).length}</>
@@ -93,7 +93,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             </div>
           ))}
           {(bookings ?? []).length === 0 && (
-            <p className="text-sm text-navy/40 border border-navy/10 bg-white p-4 text-center">Aucune réservation.</p>
+            <p className="text-sm text-navy/55 border border-navy/10 bg-white p-4 text-center">Aucune réservation.</p>
           )}
         </div>
       </section>
@@ -120,7 +120,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             </div>
           ))}
           {(requests ?? []).length === 0 && (
-            <p className="text-sm text-navy/40 border border-navy/10 bg-white p-4 text-center">Aucune demande.</p>
+            <p className="text-sm text-navy/55 border border-navy/10 bg-white p-4 text-center">Aucune demande.</p>
           )}
         </div>
       </section>
@@ -149,7 +149,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             </div>
           ))}
           {(reviews ?? []).length === 0 && (
-            <p className="text-sm text-navy/40 border border-navy/10 bg-white p-4 text-center">Aucun avis.</p>
+            <p className="text-sm text-navy/55 border border-navy/10 bg-white p-4 text-center">Aucun avis.</p>
           )}
         </div>
       </section>

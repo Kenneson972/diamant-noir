@@ -182,7 +182,7 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-8 flex items-start gap-2 text-sm text-navy/55">
+            <p className="mt-8 flex items-start gap-2 text-sm text-navy/60">
               <Mail size={18} strokeWidth={1} className="mt-0.5 shrink-0 text-gold" aria-hidden />
               Le chatbot Kayvila répond aussi 24/7 depuis le coin inférieur droit.
             </p>

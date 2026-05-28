@@ -125,7 +125,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
       >
         <Calendar
           size={16}
-          className={`shrink-0 ${isLight ? "text-navy/35" : "text-white/40"}`}
+          className={`shrink-0 ${isLight ? "text-navy/50" : "text-white/40"}`}
           strokeWidth={1.5}
           aria-hidden
         />
@@ -134,7 +134,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
             <span className={`text-[11px] font-semibold uppercase tracking-[0.15em] ${isLight ? "text-navy/50" : "text-white/55"}`}>
               Dates
             </span>
-            <span className={`text-sm ${!checkin ? (isLight ? "text-navy/35" : "text-white/40") : ""}`}>
+            <span className={`text-sm ${!checkin ? (isLight ? "text-navy/50" : "text-white/40") : ""}`}>
               {dateSummary}
             </span>
           </div>
@@ -156,7 +156,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         <div className="flex items-center gap-3 px-4">
           <Users
             size={16}
-            className={`shrink-0 ${isLight ? "text-navy/35" : "text-white/40"}`}
+            className={`shrink-0 ${isLight ? "text-navy/50" : "text-white/40"}`}
             strokeWidth={1.5}
             aria-hidden
           />

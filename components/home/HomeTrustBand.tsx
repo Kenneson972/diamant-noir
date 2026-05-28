@@ -20,7 +20,7 @@ export function HomeTrustBand() {
                 <p className="font-display text-3xl font-light leading-none text-navy md:text-4xl">
                   {value}
                 </p>
-                <p className="mt-1.5 text-[9px] font-bold uppercase tracking-[0.32em] text-navy/35">
+                <p className="mt-1.5 text-[9px] font-bold uppercase tracking-[0.32em] text-navy/50">
                   {label}
                 </p>
               </div>

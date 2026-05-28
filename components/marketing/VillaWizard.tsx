@@ -108,7 +108,7 @@ function Field({
         {required && <span className="text-gold/70">*</span>}
       </label>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-navy/35">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-navy/50">{hint}</p>}
     </div>
   );
 }
@@ -209,7 +209,7 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
     <div className="space-y-8">
       {/* Type de bien */}
       <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">
           Type de bien
         </p>
         <div className="flex flex-wrap gap-2">
@@ -351,7 +351,7 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
 
       {/* Équipements */}
       <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">
           Équipements notables
         </p>
         <div className="flex flex-wrap gap-2">
@@ -390,7 +390,7 @@ function Step2({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">
           Votre villa est-elle actuellement en location ?
         </p>
         <div className="space-y-2">
@@ -465,7 +465,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
 
       {/* Gardien existant */}
       <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">
           Un gardien ou concierge est-il déjà en place ?
         </p>
         <div className="flex gap-3">
@@ -492,7 +492,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
 
       {/* Délai souhaité */}
       <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/40">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">
           Délai souhaité pour démarrer
         </p>
         <div className="flex flex-wrap gap-2">
@@ -509,7 +509,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
               className={`border px-4 py-2.5 text-[11px] transition-all duration-200 active:scale-[0.97] ${
                 data.delai_souhaite === r
                   ? "border-gold bg-gold font-bold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
-                  : "border-navy/15 bg-white text-navy/55 hover:border-navy/35"
+                  : "border-navy/15 bg-white text-navy/60 hover:border-navy/35"
               }`}
             >
               {r}
@@ -612,7 +612,7 @@ function Step4({
       {/* Drop zone */}
       {!data.no_photos && (
         <div>
-          <p className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/40">
+          <p className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/55">
             <ImageIcon size={13} className="text-gold" aria-hidden />
             Photos de la villa
             <span className="font-normal normal-case tracking-normal text-navy/30">
@@ -640,7 +640,7 @@ function Step4({
               className={`transition-transform duration-200 ${isDragging ? "scale-110 text-gold" : "text-navy/20"}`}
               aria-hidden
             />
-            <p className="text-sm text-navy/40">
+            <p className="text-sm text-navy/55">
               Glissez vos photos ici ou{" "}
               <span className="font-semibold text-navy/60 underline underline-offset-2">
                 cliquez pour sélectionner
@@ -754,11 +754,11 @@ function Confirmation({ name }: { name: string }) {
         <h2 className="font-display text-3xl font-normal text-navy">
           Merci, {name || "cher propriétaire"}.
         </h2>
-        <p className="mt-4 text-[15px] leading-relaxed text-navy/55">
+        <p className="mt-4 text-[15px] leading-relaxed text-navy/60">
           Votre dossier a bien été reçu. Notre équipe l&apos;étudiera avec
           attention et vous recontactera sous 48 h ouvrées.
         </p>
-        <p className="mt-2 text-sm text-navy/35">
+        <p className="mt-2 text-sm text-navy/50">
           Un email de confirmation vous a été envoyé.
         </p>
       </div>
@@ -769,7 +769,7 @@ function Confirmation({ name }: { name: string }) {
         style={{ animationDelay: "160ms" }}
       >
         {["Réponse sous 48 h", "Étude personnalisée", "Sans engagement"].map((s) => (
-          <span key={s} className="flex items-center gap-1.5 text-[11px] text-navy/40">
+          <span key={s} className="flex items-center gap-1.5 text-[11px] text-navy/55">
             <Check size={11} className="text-gold" aria-hidden />
             {s}
           </span>
@@ -963,7 +963,7 @@ export function VillaWizard() {
             <h2 className="font-display text-2xl font-normal text-navy md:text-3xl">
               {STEP_TITLES[step].title}
             </h2>
-            <p className="mt-1 text-[12px] text-navy/40">{STEP_TITLES[step].sub}</p>
+            <p className="mt-1 text-[12px] text-navy/55">{STEP_TITLES[step].sub}</p>
             {/* Animated gold underline */}
             <div className="mt-3 h-px w-12 animate-line-draw origin-left bg-gold" />
           </div>
@@ -1044,9 +1044,9 @@ export function VillaWizard() {
       {/* Bottom hint */}
       <p className="mt-5 text-center text-[10px] text-navy/25">
         Étape{" "}
-        <span className="font-semibold text-navy/40">{step + 1}</span>
+        <span className="font-semibold text-navy/55">{step + 1}</span>
         {" "}sur{" "}
-        <span className="font-semibold text-navy/40">{STEPS.length}</span>
+        <span className="font-semibold text-navy/55">{STEPS.length}</span>
         {" "}— Sans engagement
       </p>
     </div>

@@ -93,7 +93,7 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 border border-navy/10 bg-white">
             <Bell size={32} className="text-navy/15" />
-            <p className="text-sm text-navy/40">Aucune notification</p>
+            <p className="text-sm text-navy/55">Aucune notification</p>
             <p className="text-[11px] text-navy/30">
               Les notifications de vos demandes et messages apparaîtront ici.
             </p>

@@ -197,7 +197,7 @@ export function OccupancyChart({ data, hasEnoughHistory, seasons }: OccupancyCha
   return (
     <div className="rounded-lg border border-navy/5 bg-white p-5 shadow-sm">
       <h3 className="mb-1 text-sm font-semibold text-navy">Taux d&apos;occupation</h3>
-      <p className="mb-4 text-[10px] text-navy/40">
+      <p className="mb-4 text-[10px] text-navy/55">
         Janvier → Décembre {new Date().getFullYear()}
       </p>
 

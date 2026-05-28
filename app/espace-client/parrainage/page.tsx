@@ -135,11 +135,11 @@ export default function ParrainagePage() {
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-3">Mes filleuls</p>
           {loading ? (
-            <p className="text-sm text-navy/40">Chargement...</p>
+            <p className="text-sm text-navy/55">Chargement...</p>
           ) : referrals.length === 0 ? (
             <div className="border border-navy/10 bg-white p-8 text-center">
               <Gift size={24} className="text-navy/15 mx-auto mb-2" />
-              <p className="text-sm text-navy/40">Aucun filleul pour le moment</p>
+              <p className="text-sm text-navy/55">Aucun filleul pour le moment</p>
               <p className="text-[11px] text-navy/30 mt-1">Invitez vos amis pour commencer à cumuler des avantages.</p>
             </div>
           ) : (
@@ -156,7 +156,7 @@ export default function ParrainagePage() {
                       </span>
                       <button
                         onClick={() => copyCode(r.code)}
-                        className="inline-flex items-center gap-1 text-[10px] text-navy/40 hover:text-gold transition-colors"
+                        className="inline-flex items-center gap-1 text-[10px] text-navy/55 hover:text-gold transition-colors"
                       >
                         {copied === r.code ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
                         {copied === r.code ? "Copié !" : r.code}

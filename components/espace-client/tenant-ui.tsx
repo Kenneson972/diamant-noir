@@ -179,11 +179,11 @@ export function BreadcrumbsRow({
               </span>
             ) : null}
             {item.href ? (
-              <Link href={item.href} className="text-[10px] uppercase tracking-[0.2em] text-navy/40 hover:text-navy">
+              <Link href={item.href} className="text-[10px] uppercase tracking-[0.2em] text-navy/55 hover:text-navy">
                 {item.label}
               </Link>
             ) : (
-              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/55">{item.label}</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/60">{item.label}</span>
             )}
           </li>
         ))}
@@ -207,11 +207,11 @@ export function Field({
   return (
     <div className="w-full space-y-1.5">
       {id ? (
-        <label htmlFor={id} className="block text-[10px] font-bold uppercase tracking-widest text-navy/40">
+        <label htmlFor={id} className="block text-[10px] font-bold uppercase tracking-widest text-navy/55">
           {label}
         </label>
       ) : (
-        <span className="block text-[10px] font-bold uppercase tracking-widest text-navy/40">{label}</span>
+        <span className="block text-[10px] font-bold uppercase tracking-widest text-navy/55">{label}</span>
       )}
       {children}
       {hint ? (

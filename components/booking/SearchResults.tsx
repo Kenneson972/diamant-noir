@@ -122,7 +122,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
 
       {/* Résultat count */}
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-navy/40">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-navy/55">
           {filteredAndSorted.length} villa{filteredAndSorted.length !== 1 ? "s" : ""}
           {checkin && checkout ? (
             <span className="ml-1 text-navy/30">
@@ -139,7 +139,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
           <button
             type="button"
             onClick={() => { setGuestFilter("all"); setSort("default"); }}
-            className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/40 underline underline-offset-4 hover:text-navy transition-colors"
+            className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/55 underline underline-offset-4 hover:text-navy transition-colors"
           >
             Réinitialiser
           </button>
@@ -199,7 +199,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
                     </div>
                   </div>
                   <p className="text-sm text-navy/45">{villa.location || "Martinique"}</p>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/35">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/50">
                     {villa.capacity} voyageurs · {villa.rooms} chambres
                   </p>
                 </div>

@@ -48,7 +48,7 @@ export default function ConciergeriePage() {
             Contacts &amp; urgences
           </h1>
           <span className="mt-3 block h-px w-8 bg-gold/50" />
-          <p className="font-display italic text-[15px] font-light text-navy/40 mt-3">
+          <p className="font-display italic text-[15px] font-light text-navy/55 mt-3">
             Notre équipe est à votre disposition avant, pendant et après votre séjour.
           </p>
         </div>
@@ -67,13 +67,13 @@ export default function ConciergeriePage() {
                 className={gold ? "text-gold shrink-0" : "text-navy/25 shrink-0 group-hover:text-gold/60 transition-colors"}
               />
               <div className="flex-1 min-w-0">
-                <p className={`text-[9px] font-bold uppercase tracking-[0.28em] mb-0.5 ${gold ? "text-gold" : "text-navy/40"}`}>
+                <p className={`text-[9px] font-bold uppercase tracking-[0.28em] mb-0.5 ${gold ? "text-gold" : "text-navy/55"}`}>
                   {label}
                 </p>
                 <p className={`text-[14px] font-medium ${gold ? "text-navy" : "text-navy"}`}>
                   {value}
                 </p>
-                <p className="font-display italic text-[13px] font-light text-navy/35 mt-0.5">
+                <p className="font-display italic text-[13px] font-light text-navy/50 mt-0.5">
                   {sub}
                 </p>
               </div>
@@ -85,7 +85,7 @@ export default function ConciergeriePage() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Clock size={13} strokeWidth={1.25} className="text-navy/25" />
-            <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/35">
+            <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/50">
               Horaires
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function ConciergeriePage() {
               >
                 <div>
                   <p className="text-sm font-medium text-navy">{s.label}</p>
-                  <p className="text-[11px] text-navy/40 mt-0.5">{s.desc}</p>
+                  <p className="text-[11px] text-navy/55 mt-0.5">{s.desc}</p>
                 </div>
                 <span className="text-[11px] font-semibold text-navy/50 group-hover:text-gold transition-colors shrink-0 ml-4">{s.price} →</span>
               </a>
@@ -125,7 +125,7 @@ export default function ConciergeriePage() {
         </div>
 
         {/* Note */}
-        <p className="text-[11px] text-navy/35 leading-relaxed border-t border-navy/[0.06] pt-6">
+        <p className="text-[11px] text-navy/50 leading-relaxed border-t border-navy/[0.06] pt-6">
           Pour toute demande non urgente, privilégiez la messagerie ci-dessous — elle conserve un historique de votre échange avec notre équipe.
         </p>
       </div>

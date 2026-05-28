@@ -115,7 +115,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               <p className="text-lg font-display text-navy">
                 {villa.capacity ?? "—"}
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mt-0.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
                 Ch.
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               <p className="text-lg font-display text-navy">
                 {villa.capacity ? villa.capacity * 2 : "—"}
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mt-0.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
                 Voyag.
               </p>
             </div>
@@ -131,13 +131,13 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               <p className="text-lg font-display text-navy">
                 {villa.surface ?? "—"}
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mt-0.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
                 m²
               </p>
             </div>
             <div className="text-center">
               <p className="text-lg font-display text-navy">★</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40 mt-0.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
                 Note
               </p>
             </div>
@@ -149,7 +149,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               {villa.amenities.slice(0, 4).map((a) => (
                 <span
                   key={a}
-                  className="border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55"
+                  className="border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60"
                 >
                   {a}
                 </span>

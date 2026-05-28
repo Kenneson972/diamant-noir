@@ -76,7 +76,7 @@ export function HeroGuestPicker({ value, onChange, surface = "dark" }: HeroGuest
         </span>
         <ChevronDown
           className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
-            isLight ? "text-navy/35" : "text-white/40"
+            isLight ? "text-navy/50" : "text-white/40"
           } ${open ? "rotate-180" : ""}`}
           strokeWidth={1.5}
           aria-hidden
@@ -104,7 +104,7 @@ export function HeroGuestPicker({ value, onChange, surface = "dark" }: HeroGuest
               <p className={`text-[11px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-navy" : "text-white"}`}>
                 Voyageurs
               </p>
-              <p className={`mt-0.5 text-[10px] ${isLight ? "text-navy/40" : "text-white/40"}`}>
+              <p className={`mt-0.5 text-[10px] ${isLight ? "text-navy/55" : "text-white/40"}`}>
                 Adultes et enfants
               </p>
             </div>

@@ -115,7 +115,7 @@ export function EditorialImageSplit({
       className={`flex flex-col justify-center px-5 py-14 sm:px-6 md:px-10 md:py-16 lg:px-12 lg:py-20 ${textColClassName}`.trim()}
     >
       {eyebrow ? (
-        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">{eyebrow}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">{eyebrow}</p>
       ) : null}
       <h2
         className={`max-w-prose font-display text-3xl leading-snug text-navy md:text-4xl ${eyebrow ? "mt-4" : ""}`}
@@ -204,9 +204,9 @@ export function EditorialFigureBand({
   return (
     <section className="border-y border-navy/10 bg-offwhite px-5 py-20 sm:px-6 md:py-28">
       <div className="mx-auto max-w-5xl text-center md:text-left">
-        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">{label}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">{label}</p>
         <p className="mt-4 font-display text-6xl text-navy md:text-7xl lg:text-8xl">{figure}</p>
-        <p className="mt-4 max-w-xl text-sm uppercase tracking-[0.18em] text-navy/55 md:mx-0">{caption}</p>
+        <p className="mt-4 max-w-xl text-sm uppercase tracking-[0.18em] text-navy/60 md:mx-0">{caption}</p>
         {detailsCaption ? (
           <details className="mt-5 max-w-xl text-left">
             <summary className="cursor-pointer list-none text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 outline-none transition-colors hover:text-navy [&::-webkit-details-marker]:hidden">

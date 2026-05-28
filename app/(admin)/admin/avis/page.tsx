@@ -57,10 +57,10 @@ export default function AdminAvisPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-navy/40">Chargement...</p>
+        <p className="text-sm text-navy/55">Chargement...</p>
       ) : reviews.length === 0 ? (
         <div className="border border-navy/10 bg-white p-12 text-center">
-          <p className="text-sm text-navy/40">Aucun avis.</p>
+          <p className="text-sm text-navy/55">Aucun avis.</p>
         </div>
       ) : (
         <div className="space-y-4">

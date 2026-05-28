@@ -287,7 +287,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
               onChange={(e) => setCleaningFeeEuros(Number(e.target.value))}
               className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
-            <p className="mt-1 text-[11px] text-navy/40">100 % reversé à Kayvila pour le ménage et la blanchisserie</p>
+            <p className="mt-1 text-[11px] text-navy/55">100 % reversé à Kayvila pour le ménage et la blanchisserie</p>
           </div>
           <button
             type="button"

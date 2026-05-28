@@ -62,9 +62,9 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-navy/5 bg-white px-6 py-5">
           <div>
             <h2 className="font-display text-xl text-navy">{villaName}</h2>
-            <p className="text-xs text-navy/40">Historique des r&eacute;servations pass&eacute;es</p>
+            <p className="text-xs text-navy/55">Historique des r&eacute;servations pass&eacute;es</p>
           </div>
-          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:text-navy hover:border-navy/20 transition-colors">
+          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-navy/10 text-navy/55 hover:text-navy hover:border-navy/20 transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -76,12 +76,12 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
             </div>
           ) : bookings.length === 0 ? (
             <div className="py-20 text-center">
-              <p className="text-sm text-navy/40">Aucune r&eacute;servation pass&eacute;e pour cette villa.</p>
+              <p className="text-sm text-navy/55">Aucune r&eacute;servation pass&eacute;e pour cette villa.</p>
             </div>
           ) : (
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.15em] text-navy/40">
+                <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.15em] text-navy/55">
                   <th className="pb-3 font-bold">Client</th>
                   <th className="pb-3 font-bold">Dates</th>
                   <th className="pb-3 font-bold">Nuits</th>

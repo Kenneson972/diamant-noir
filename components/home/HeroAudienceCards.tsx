@@ -47,7 +47,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
             onClick={clearAudience}
             className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 active:scale-95 ${
               isLight
-                ? "text-navy/40 hover:bg-navy/5 focus-visible:ring-navy/20"
+                ? "text-navy/55 hover:bg-navy/5 focus-visible:ring-navy/20"
                 : "text-white/50 hover:bg-white/10 focus-visible:ring-white/25"
             }`}
             aria-label="Retour au choix voyageur ou propriétaire"
@@ -70,8 +70,8 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
     "border-white/18 bg-white/[0.025] hover:border-white/28 hover:bg-white/[0.05] focus-visible:ring-white/22";
   const titleLight = "text-navy";
   const titleDark = "text-white";
-  const iconLight = "text-navy/40 group-hover:text-navy/55";
-  const iconLight2 = "text-navy/35 group-hover:text-navy/50";
+  const iconLight = "text-navy/55 group-hover:text-navy/60";
+  const iconLight2 = "text-navy/50 group-hover:text-navy/50";
   const iconDark = "text-white/55";
   const iconDark2 = "text-white/50";
 

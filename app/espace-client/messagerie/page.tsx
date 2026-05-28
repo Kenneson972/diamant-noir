@@ -138,11 +138,11 @@ export default function MessageriePage() {
             <p className="text-[11px] tracking-[0.15em] uppercase text-navy/50">
               {booking.villa?.name ?? "Villa Kayvila"}
             </p>
-            <p className="font-display italic text-[12px] font-light text-navy/40">
+            <p className="font-display italic text-[12px] font-light text-navy/55">
               {fmt(booking.start_date)} → {fmt(booking.end_date)}
             </p>
           </div>
-          <span className="ml-auto text-[11px] tracking-[0.12em] uppercase text-navy/35">
+          <span className="ml-auto text-[11px] tracking-[0.12em] uppercase text-navy/50">
             Réponse sous 2 h
           </span>
         </div>

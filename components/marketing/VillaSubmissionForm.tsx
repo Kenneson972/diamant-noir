@@ -253,7 +253,7 @@ export function VillaSubmissionForm() {
                   cliquez pour sélectionner
                 </span>
               </p>
-              <p className="text-xs text-navy/35">JPG, PNG, WEBP — max 10 Mo par fichier</p>
+              <p className="text-xs text-navy/50">JPG, PNG, WEBP — max 10 Mo par fichier</p>
             </div>
 
             <input

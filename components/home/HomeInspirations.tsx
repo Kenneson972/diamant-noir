@@ -36,7 +36,7 @@ export function HomeInspirations() {
     <section className="bg-offwhite px-6 py-12 md:py-16">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex items-baseline justify-between border-b border-navy/8 pb-5">
-          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/40">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/55">
             Inspirations
           </span>
           <Link

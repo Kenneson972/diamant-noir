@@ -81,10 +81,10 @@ export default function AdminReservationsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-navy/40">Chargement...</p>
+        <p className="text-sm text-navy/55">Chargement...</p>
       ) : bookings.length === 0 ? (
         <div className="border border-navy/10 bg-white p-12 text-center">
-          <p className="text-sm text-navy/40">Aucune réservation.</p>
+          <p className="text-sm text-navy/55">Aucune réservation.</p>
         </div>
       ) : (
         <>
@@ -107,7 +107,7 @@ export default function AdminReservationsPage() {
                   <tr key={b.id} className="hover:bg-navy/[0.01]">
                     <td className="px-4 py-3">
                       <span className="font-medium text-navy">{b.guest_name || "Anonyme"}</span>
-                      {b.guest_email && <span className="block text-[11px] text-navy/40">{b.guest_email}</span>}
+                      {b.guest_email && <span className="block text-[11px] text-navy/55">{b.guest_email}</span>}
                     </td>
                     <td className="px-4 py-3 text-navy/70">{b.villas?.name ?? b.villa_id?.slice(0, 8)}</td>
                     <td className="px-4 py-3 text-navy/70">{formatDate(b.start_date, { day: "numeric", month: "short" })}</td>
@@ -157,7 +157,7 @@ export default function AdminReservationsPage() {
                 className="text-[11px] font-semibold text-navy/50 hover:text-navy disabled:opacity-30">
                 ← Précédent
               </button>
-              <span className="text-[11px] text-navy/40">Page {page} / {totalPages}</span>
+              <span className="text-[11px] text-navy/55">Page {page} / {totalPages}</span>
               <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
                 className="text-[11px] font-semibold text-navy/50 hover:text-navy disabled:opacity-30">
                 Suivant →

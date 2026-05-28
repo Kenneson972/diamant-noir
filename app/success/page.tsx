@@ -104,7 +104,7 @@ function SuccessContent() {
             <div role="status" className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent">
               <span className="sr-only">Chargement de votre confirmation...</span>
             </div>
-            <p className="mt-6 text-sm text-navy/40">Vérification de votre réservation...</p>
+            <p className="mt-6 text-sm text-navy/55">Vérification de votre réservation...</p>
           </div>
         </div>
       </main>
@@ -210,7 +210,7 @@ function SuccessContent() {
                     Du {startDate} au {endDate}
                   </p>
                   {nights && (
-                    <p className="text-xs text-navy/40">{nights} nuit{nights > 1 ? "s" : ""}</p>
+                    <p className="text-xs text-navy/55">{nights} nuit{nights > 1 ? "s" : ""}</p>
                   )}
                 </div>
               </div>
@@ -360,7 +360,7 @@ function SuccessContent() {
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full bg-navy/5 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/40 transition-all hover:bg-navy/10"
+            className="inline-flex items-center gap-2 rounded-full bg-navy/5 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 transition-all hover:bg-navy/10"
           >
             Retour à l&apos;accueil
           </Link>

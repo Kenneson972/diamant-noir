@@ -30,7 +30,7 @@ export function CheckinGuide({
     return (
       <div className="border border-navy/10 bg-white p-6 mt-8">
         <h3 className="font-display text-lg text-navy mb-2">Check-in</h3>
-        <p className="text-sm text-navy/40">Votre séjour est en cours ou terminé.</p>
+        <p className="text-sm text-navy/55">Votre séjour est en cours ou terminé.</p>
       </div>
     );
   }

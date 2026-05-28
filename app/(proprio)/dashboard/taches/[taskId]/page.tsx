@@ -64,7 +64,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5 text-navy/40" />
+              <ClipboardList className="h-5 w-5 text-navy/55" />
               <h1 className="text-xl font-bold text-navy">
                 {typedTask.title}
               </h1>
@@ -78,7 +78,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
 
         {typedTask.description && (
           <div className="mt-6">
-            <h2 className="mb-1 text-xs font-medium uppercase tracking-wider text-navy/40">
+            <h2 className="mb-1 text-xs font-medium uppercase tracking-wider text-navy/55">
               Description
             </h2>
             <p className="text-sm leading-relaxed text-navy/70">
@@ -89,7 +89,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-lg bg-gray-50 p-3">
-            <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/40">
+            <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
               <Calendar className="h-3.5 w-3.5" />
               Date limite
             </div>
@@ -100,7 +100,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
 
           {villa?.name && (
             <div className="rounded-lg bg-gray-50 p-3">
-              <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/40">
+              <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
                 <Home className="h-3.5 w-3.5" />
                 Villa
               </div>
@@ -111,7 +111,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
           )}
 
           <div className="rounded-lg bg-gray-50 p-3">
-            <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/40">
+            <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
               <Calendar className="h-3.5 w-3.5" />
               Créée le
             </div>

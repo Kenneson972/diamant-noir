@@ -33,7 +33,7 @@ export function RequestList({ bookingId, refreshKey }: { bookingId: string; refr
     })();
   }, [supabase, bookingId, refreshKey]);
 
-  if (loading) return <div className="py-4 text-sm text-navy/40">Chargement...</div>;
+  if (loading) return <div className="py-4 text-sm text-navy/55">Chargement...</div>;
   if (requests.length === 0) return null;
 
   return (

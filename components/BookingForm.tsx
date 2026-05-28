@@ -172,7 +172,7 @@ export const BookingForm = ({
 
       {price ? (
         <div className="space-y-4 pt-4 text-sm text-navy/70 animate-in fade-in slide-in-from-top-2 duration-300">
-          <p className="text-center text-xs text-navy/40 mb-4">Vous ne serez pas encore débité</p>
+          <p className="text-center text-xs text-navy/55 mb-4">Vous ne serez pas encore débité</p>
           <div className="flex justify-between">
             <span className="underline decoration-navy/20 underline-offset-4">{formatPrice(basePrice)} x {price.nights} nuits</span>
             <span>{formatPrice(price.total)}</span>
@@ -191,7 +191,7 @@ export const BookingForm = ({
           </div>
         </div>
       ) : (
-        <p className="text-center text-xs text-navy/40">Entrez vos dates pour voir le prix total</p>
+        <p className="text-center text-xs text-navy/55">Entrez vos dates pour voir le prix total</p>
       )}
 
       {error ? <p className="text-center text-xs text-red-500">{error}</p> : null}

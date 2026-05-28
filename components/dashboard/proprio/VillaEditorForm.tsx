@@ -298,7 +298,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40" htmlFor="vf-ota-import-url">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-navy/55" htmlFor="vf-ota-import-url">
               URL de l'annonce
             </label>
             <Input

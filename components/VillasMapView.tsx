@@ -72,7 +72,7 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
       {/* ── Toolbar ── */}
       <div className="sticky top-[calc(72px+env(safe-area-inset-top,0px))] z-20 border-b border-navy/8 bg-offwhite/95 backdrop-blur-none md:backdrop-blur-sm px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">
             {villas.length} propriété{villas.length > 1 ? "s" : ""}
           </p>
           {viewportCount !== null && viewportCount < villas.length && (
@@ -192,21 +192,21 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
                     {villa.name}
                   </p>
                   {villa.location && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">
                       {villa.location}
                     </p>
                   )}
                   <div className="flex items-center justify-between pt-0.5">
-                    <p className="text-xs text-navy/55">
+                    <p className="text-xs text-navy/60">
                       {formatPrice(villa.price)}
-                      <span className="text-navy/35"> / nuit</span>
+                      <span className="text-navy/50"> / nuit</span>
                     </p>
                     {/* Aperçu rapide — desktop: hover / mobile: toujours visible */}
                     <button
                       type="button"
                       onClick={() => setQuickViewId(villa.id)}
                       aria-label={`Aperçu rapide — ${villa.name}`}
-                      className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 border border-navy/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 hover:border-gold hover:text-gold min-h-[44px] flex items-center"
+                      className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 border border-navy/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60 hover:border-gold hover:text-gold min-h-[44px] flex items-center"
                     >
                       {t("common.preview")}
                     </button>

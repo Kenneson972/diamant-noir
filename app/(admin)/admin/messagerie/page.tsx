@@ -69,11 +69,11 @@ export default function AdminMessageriePage() {
       <AdminPageIntro title="Messagerie" description="Console de chat — répondez aux messages des clients." />
 
       {loading ? (
-        <p className="text-sm text-navy/40">Chargement...</p>
+        <p className="text-sm text-navy/55">Chargement...</p>
       ) : messages.length === 0 ? (
         <div className="border border-navy/10 bg-white p-12 text-center">
           <MessageCircle size={32} className="text-navy/15 mx-auto mb-3" />
-          <p className="text-sm text-navy/40">Aucun message.</p>
+          <p className="text-sm text-navy/55">Aucun message.</p>
           <p className="text-[11px] text-navy/30 mt-1">Les messages des clients apparaîtront ici en temps réel.</p>
         </div>
       ) : (

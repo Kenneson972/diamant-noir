@@ -50,6 +50,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Conditions d'utilisation",
     "footer.privacy": "Politique de confidentialité",
     "footer.cookies": "Gestion des cookies",
+    "footer.branding_desc": "Conciergerie de luxe en Martinique. Villas d'exception, service sur mesure.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Réserver",
@@ -274,6 +275,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Terms of use",
     "footer.privacy": "Privacy policy",
     "footer.cookies": "Cookie policy",
+    "footer.branding_desc": "Luxury concierge in Martinique. Exceptional villas, bespoke service.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Book now",
@@ -498,6 +500,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Condiciones de uso",
     "footer.privacy": "Política de privacidad",
     "footer.cookies": "Política de cookies",
+    "footer.branding_desc": "Conserjería de lujo en Martinica. Villas excepcionales, servicio a medida.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Reservar",

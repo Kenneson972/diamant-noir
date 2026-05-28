@@ -48,7 +48,7 @@ export function VillaBookingsRegistry({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="font-display text-3xl text-navy">Registre des réservations</h3>
-            <p className="text-sm text-navy/40">
+            <p className="text-sm text-navy/55">
               {filteredBookings.length === bookingsTotal
                 ? "Tous les séjours enregistrés pour cette villa."
                 : `${filteredBookings.length} réservation(s) affichée(s) sur ${bookingsTotal}.`}
@@ -70,7 +70,7 @@ export function VillaBookingsRegistry({
           role="search"
           aria-label="Filtrer les réservations"
         >
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-navy/40">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-navy/55">
             <Filter size={14} aria-hidden />
             Filtrer
           </div>
@@ -107,7 +107,7 @@ export function VillaBookingsRegistry({
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/40">
+            <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">
               <th className="pb-4 pl-4 font-bold">Client</th>
               <th className="pb-4 font-bold">Dates</th>
               <th className="pb-4 font-bold">Provenance</th>
@@ -131,7 +131,7 @@ export function VillaBookingsRegistry({
                 <tr key={booking.id} className="group hover:bg-offwhite transition-colors">
                   <td className="py-5 pl-4">
                     <p className="font-bold text-navy">{booking.guest_name || "Client Privé"}</p>
-                    <p className="text-[10px] text-navy/40 uppercase tracking-widest">ID: {booking.id.slice(0, 8)}</p>
+                    <p className="text-[10px] text-navy/55 uppercase tracking-widest">ID: {booking.id.slice(0, 8)}</p>
                   </td>
                   <td className="py-5">
                     <p className="text-sm text-navy">

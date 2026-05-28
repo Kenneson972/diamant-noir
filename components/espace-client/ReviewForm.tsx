@@ -77,7 +77,7 @@ export function ReviewForm({ bookingId, villaId, onSuccess }: ReviewFormProps) {
           </button>
         ))}
         {rating > 0 && (
-          <span className="text-[11px] text-navy/40 ml-1">{rating}/5</span>
+          <span className="text-[11px] text-navy/55 ml-1">{rating}/5</span>
         )}
       </div>
 

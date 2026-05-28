@@ -149,7 +149,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-24 sm:pb-12 lg:py-20">
       <div className="mb-12">
-        <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/40 hover:text-navy transition-colors group">
+        <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/55 hover:text-navy transition-colors group">
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           Modifier la sélection
         </Link>
@@ -184,7 +184,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                     <Calendar size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Dates</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">Dates</p>
                     <p className="text-sm font-bold text-navy">
                       {new Date(checkin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - {new Date(checkout).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
@@ -199,7 +199,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                     <Users size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">Voyageurs</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">Voyageurs</p>
                     <p className="text-sm font-bold text-navy">{guestsCount} voyageur{guestsCount > 1 ? 's' : ''}</p>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
               <p className="text-sm text-navy/50">Ces informations nous servent à vous envoyer la confirmation et à créer votre espace client.</p>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="guestName" className="block text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-2">
+                  <label htmlFor="guestName" className="block text-[10px] font-bold uppercase tracking-widest text-navy/55 mb-2">
                     Nom complet *
                   </label>
                   <div className="relative">
@@ -231,7 +231,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="guestEmail" className="block text-[10px] font-bold uppercase tracking-widest text-navy/40 mb-2">
+                  <label htmlFor="guestEmail" className="block text-[10px] font-bold uppercase tracking-widest text-navy/55 mb-2">
                     Adresse email *
                   </label>
                   <div className="relative">
@@ -295,7 +295,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                 <Lock size={20} className="text-navy/20" />
               </div>
             </div>
-            <p className="text-xs text-navy/40">
+            <p className="text-xs text-navy/55">
               En sélectionnant le bouton ci-dessous, j'accepte les <Link href="/terms" className="underline hover:opacity-70 transition-opacity">Règles de la maison</Link>, les <span className="underline">Règles de sécurité pour les expériences</span> et la <span className="underline">Politique de remboursement des voyageurs</span>.
             </p>
             
@@ -339,7 +339,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
                   />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">{villa.location}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">{villa.location}</p>
                   <h4 className="font-display text-lg leading-tight text-navy">{villa.name}</h4>
                   {/* Rating masqué — données non dynamiques */}
                 </div>
@@ -375,7 +375,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-navy">Paiement Sécurisé</p>
-                <p className="text-[10px] text-navy/40">Données cryptées SSL</p>
+                <p className="text-[10px] text-navy/55">Données cryptées SSL</p>
               </div>
             </div>
           </div>

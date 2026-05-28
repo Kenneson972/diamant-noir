@@ -171,7 +171,7 @@ export default function ReservationDetailPage() {
   return (
     <div className="space-y-6">
       <BreadcrumbsRow
-        className="text-[10px] uppercase tracking-[0.2em] text-navy/40"
+        className="text-[10px] uppercase tracking-[0.2em] text-navy/55"
         items={[
           { href: "/espace-client", label: "Espace client" },
           { label: "Livret séjour" },
@@ -249,7 +249,7 @@ export default function ReservationDetailPage() {
                 <div>
                   <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
                   <p className="text-navy">{villa.location}</p>
-                  <p className="text-xs text-navy/40">Martinique</p>
+                  <p className="text-xs text-navy/55">Martinique</p>
                 </div>
               </div>
             )}
@@ -275,7 +275,7 @@ export default function ReservationDetailPage() {
           <CardContent className="p-5 space-y-4">
             {cancelStep === "idle" && (
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-navy/55">Vous souhaitez annuler cette réservation ?</p>
+                <p className="text-sm text-navy/60">Vous souhaitez annuler cette réservation ?</p>
                 <button
                   type="button"
                   onClick={() => setCancelStep("confirm")}
@@ -340,7 +340,7 @@ export default function ReservationDetailPage() {
 
       <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
         <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-navy/55">Un problème ou une question sur votre séjour ?</p>
+          <p className="text-sm text-navy/60">Un problème ou une question sur votre séjour ?</p>
           <Link
             href="/espace-client/messagerie"
             className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-gold no-underline transition-colors hover:text-navy"

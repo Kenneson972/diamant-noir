@@ -70,10 +70,10 @@ function DetailRow({
   return (
     <div className={`flex items-start gap-3 ${className ?? ""}`}>
       <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg bg-navy/5">
-        <Icon className="h-4 w-4 text-navy/40" />
+        <Icon className="h-4 w-4 text-navy/55" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wider text-navy/40">
+        <p className="text-xs font-medium uppercase tracking-wider text-navy/55">
           {label}
         </p>
         <div className="mt-0.5 text-sm font-medium text-navy">{value}</div>

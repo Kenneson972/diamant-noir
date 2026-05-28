@@ -151,7 +151,7 @@ export default function ProfilPage() {
             <Heart size={16} className="text-gold" />
             Préférences de séjour
           </CardTitle>
-          <p className="text-xs text-navy/40 mt-1">Ces informations aident notre équipe à préparer votre accueil.</p>
+          <p className="text-xs text-navy/55 mt-1">Ces informations aident notre équipe à préparer votre accueil.</p>
         </CardHeader>
         <CardContent className="p-6">
           <form onSubmit={handleSaveProfile} className="space-y-5">
@@ -218,7 +218,7 @@ export default function ProfilPage() {
         <CardContent className="p-6">
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <Download size={32} className="text-navy/20" />
-            <p className="text-sm text-navy/40">
+            <p className="text-sm text-navy/55">
               Vos contrats et factures apparaîtront ici dès qu&apos;ils seront disponibles.
             </p>
             <a

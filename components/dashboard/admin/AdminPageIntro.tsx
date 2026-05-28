@@ -24,7 +24,7 @@ export function AdminPageIntro({
         {title}
       </h1>
       {description ? (
-        <p className="max-w-2xl text-sm leading-relaxed text-navy/55">
+        <p className="max-w-2xl text-sm leading-relaxed text-navy/60">
           {description}
         </p>
       ) : null}

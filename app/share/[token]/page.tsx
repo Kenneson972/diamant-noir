@@ -48,12 +48,12 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/40 mb-1">Arrivée</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/55 mb-1">Arrivée</p>
               <p className="font-display text-lg text-navy">{fmt(booking.start_date)}</p>
               <p className="text-sm text-navy/50 mt-0.5">{v.check_in_time ?? "17:00"}</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/40 mb-1">Départ</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/55 mb-1">Départ</p>
               <p className="font-display text-lg text-navy">{fmt(booking.end_date)}</p>
               <p className="text-sm text-navy/50 mt-0.5">{v.check_out_time ?? "10:00"}</p>
             </div>
@@ -74,7 +74,7 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
 
           <div className="h-px bg-navy/8" />
 
-          <p className="text-[11px] text-navy/35 text-center">
+          <p className="text-[11px] text-navy/50 text-center">
             Kayvila Conciergerie — Martinique
           </p>
         </div>

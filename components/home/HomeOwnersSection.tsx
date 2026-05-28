@@ -29,7 +29,7 @@ export function HomeOwnersSection() {
         {/* Texte droite */}
         <div className="flex w-full flex-col justify-center px-8 py-16 lg:w-[42%] lg:px-16 lg:py-0">
           <ScrollReveal delay={80}>
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/35">
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/50">
               Propriétaires
             </span>
             <h2 className="mt-4 font-display text-2xl font-light leading-[1.08] text-navy md:text-3xl">
@@ -38,7 +38,7 @@ export function HomeOwnersSection() {
               notre gestion
             </h2>
             <div className="mt-5 h-px w-8 bg-gold/40" aria-hidden />
-            <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/55">
+            <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/60">
               De la mise en ligne au reversement, nous prenons en charge chaque aspect de votre bien
               avec une équipe locale au Diamant. Vous recevez vos revenus, vos voyageurs sont comblés,
               vous ne gérez rien.

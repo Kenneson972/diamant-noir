@@ -49,11 +49,11 @@ export function FinanceCopilotSection() {
         {/* ── En-tête ── */}
         <div className="mb-14 text-center md:mb-20">
           <div className="mb-4 inline-flex items-center gap-2 border border-navy/10 bg-white px-4 py-2">
-            <Bot size={13} strokeWidth={1.5} className="text-navy/40" aria-hidden />
+            <Bot size={13} strokeWidth={1.5} className="text-navy/55" aria-hidden />
             <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-navy/45">Espace propriétaire</span>
           </div>
           <h2 className="font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
-            Assistant IA <span className="font-normal text-navy/40">24h/24</span>
+            Assistant IA <span className="font-normal text-navy/55">24h/24</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-navy/45">
             Un copilot intelligent qui répond avec vos données réelles — sans attente, sans formulaire.
@@ -69,7 +69,7 @@ export function FinanceCopilotSection() {
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy/60">
                     {title}
                   </p>
-                  <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-navy/40">
+                  <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-navy/55">
                     {desc}
                   </p>
                 </div>

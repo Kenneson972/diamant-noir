@@ -80,7 +80,7 @@ export default function DocumentsPage() {
               <div key={b.id} className="bg-offwhite px-5 py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/35 mb-1">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/50 mb-1">
                       Séjour
                     </p>
                     <p className="text-[13px] font-medium text-navy">{b.villa_name}</p>
@@ -113,7 +113,7 @@ export default function DocumentsPage() {
                 <div key={`invoice-${b.id}`} className="flex items-center justify-between bg-white border border-navy/10 px-5 py-4">
                   <div>
                     <p className="text-[13px] font-medium text-navy">{b.villa_name}</p>
-                    <p className="text-[11px] text-navy/40 mt-0.5">
+                    <p className="text-[11px] text-navy/55 mt-0.5">
                       {fmt(b.start_date)} → {fmt(b.end_date)}
                     </p>
                   </div>
@@ -137,7 +137,7 @@ export default function DocumentsPage() {
           </div>
         )}
 
-        <p className="text-[11px] text-navy/35 leading-relaxed border-t border-navy/[0.06] pt-6">
+        <p className="text-[11px] text-navy/50 leading-relaxed border-t border-navy/[0.06] pt-6">
           Pour toute autre demande, contactez notre équipe via la messagerie.
         </p>
       </div>

@@ -63,22 +63,43 @@ function ReviewerAvatar({ review }: { review: Review }) {
 export function VillaReviews({ villaId, villaName }: { villaId: string; villaName: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const fetchReviews = () => {
+    setError(false);
+    setLoading(true);
     fetch(`/api/reviews?villa_id=${villaId}`)
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setReviews(data);
       })
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchReviews();
   }, [villaId]);
+
+  if (error) {
+    return (
+      <section className="pt-10 border-t border-navy/10">
+        <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
+        <div className="border border-navy/10 bg-white p-8 text-center">
+          <p className="text-sm text-navy/60 mb-3">Impossible de charger les avis.</p>
+          <button onClick={fetchReviews} className="text-xs font-bold uppercase tracking-wider text-gold hover:underline">
+            Réessayer
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   if (loading) {
     return (
       <section className="pt-10 border-t border-navy/10">
         <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
-        <p className="text-sm text-navy/40">Chargement des avis...</p>
+        <p className="text-sm text-navy/55">Chargement des avis...</p>
       </section>
     );
   }
@@ -141,7 +162,7 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
                 <p className="text-sm font-semibold text-navy">
                   {review.full_name || review.guest_name}
                 </p>
-                <p className="text-[11px] text-navy/35">
+                <p className="text-[11px] text-navy/50">
                   {new Date(review.created_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}
                 </p>
               </div>

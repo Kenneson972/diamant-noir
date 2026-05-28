@@ -89,7 +89,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
                 <span className="font-medium text-navy tabular-nums">
                   {(villa.rating ?? 4.9).toFixed(2)}
                 </span>
-                <span className="text-navy/35">·</span>
+                <span className="text-navy/50">·</span>
                 <span className="uppercase tracking-wider">Avis vérifiés</span>
               </div>
             </div>
@@ -97,7 +97,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
               <span className="text-2xl font-medium text-navy tabular-nums">
                 {formatPrice(villa.price)}
               </span>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-navy/40">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-navy/55">
                 par nuit
               </p>
               {totalPrice && (
@@ -122,20 +122,20 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           )}
 
           {/* Description */}
-          <p className="line-clamp-3 text-sm leading-relaxed text-navy/55">
+          <p className="line-clamp-3 text-sm leading-relaxed text-navy/60">
             {villa.description || "Une adresse sélectionnée pour son cadre et son confort."}
           </p>
 
           {/* Specs */}
           <div className="flex flex-col gap-3 xs:flex-row xs:gap-8 border-y border-black/6 py-5">
             <div className="flex items-center gap-2 text-navy/80">
-              <Users size={18} strokeWidth={1.25} className="text-navy/35" aria-hidden />
+              <Users size={18} strokeWidth={1.25} className="text-navy/50" aria-hidden />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {villa.capacity} voyageurs
               </span>
             </div>
             <div className="flex items-center gap-2 text-navy/80">
-              <BedDouble size={18} strokeWidth={1.25} className="text-navy/35" aria-hidden />
+              <BedDouble size={18} strokeWidth={1.25} className="text-navy/50" aria-hidden />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {villa.rooms} chambre{villa.rooms > 1 ? "s" : ""}
               </span>

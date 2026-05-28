@@ -24,9 +24,9 @@ export function VillaPublishChecklist({ items }: { items: VillaPublishChecklistI
             ) : (
               <Circle className="mt-0.5 h-4 w-4 shrink-0 text-navy/25" aria-hidden />
             )}
-            <span className={item.optional && !item.ok ? "text-navy/55" : ""}>
+            <span className={item.optional && !item.ok ? "text-navy/60" : ""}>
               {item.label}
-              {item.optional ? <span className="ml-1 text-[10px] text-navy/35">(optionnel)</span> : null}
+              {item.optional ? <span className="ml-1 text-[10px] text-navy/50">(optionnel)</span> : null}
             </span>
           </li>
         ))}

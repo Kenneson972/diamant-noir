@@ -34,7 +34,7 @@ export default function DemandesPage() {
     return (
       <>
         <PageTopbar title="Demandes" />
-        <div className="p-5 md:p-10 text-sm text-navy/40">Chargement...</div>
+        <div className="p-5 md:p-10 text-sm text-navy/55">Chargement...</div>
       </>
     );
   }
