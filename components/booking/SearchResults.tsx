@@ -25,13 +25,13 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
     let result = [...initialVillas];
 
     // Guest filter
-    if (guestFilter === "2+") result = result.filter((v) => v.guests >= 2);
-    else if (guestFilter === "4+") result = result.filter((v) => v.guests >= 4);
-    else if (guestFilter === "8+") result = result.filter((v) => v.guests >= 8);
+    if (guestFilter === "2+") result = result.filter((v) => v.capacity >= 2);
+    else if (guestFilter === "4+") result = result.filter((v) => v.capacity >= 4);
+    else if (guestFilter === "8+") result = result.filter((v) => v.capacity >= 8);
 
     // Also filter by selected guests from search
     if (guests && guests > 1) {
-      result = result.filter((v) => !v.guests || v.guests >= guests);
+      result = result.filter((v) => !v.capacity || v.capacity >= guests);
     }
 
     // Sort
@@ -199,7 +199,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
                   </div>
                   <p className="text-sm text-navy/45">{villa.location || "Martinique"}</p>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/35">
-                    {villa.guests} voyageurs · {villa.rooms} chambres
+                    {villa.capacity} voyageurs · {villa.rooms} chambres
                   </p>
                 </div>
               </Link>

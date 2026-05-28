@@ -130,7 +130,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
             <div className="flex items-center gap-2 text-navy/80">
               <Users size={18} strokeWidth={1.25} className="text-navy/35" aria-hidden />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
-                {villa.guests} voyageurs
+                {villa.capacity} voyageurs
               </span>
             </div>
             <div className="flex items-center gap-2 text-navy/80">

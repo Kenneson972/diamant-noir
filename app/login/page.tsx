@@ -555,7 +555,9 @@ function LoginSideVideo() {
 
 function LoginForm() {
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get("redirect") || "/dashboard"
+  const raw = searchParams.get("redirect") || "/dashboard"
+  // Sécurité : n'accepter que les URLs relatives (pas d'open redirect)
+  const redirectTo = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard"
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
   const urlAuthError = loginUrlErrorMessage(searchParams.get("error"))
 
