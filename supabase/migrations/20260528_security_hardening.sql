@@ -62,9 +62,13 @@ create policy "villas_manage_owner_admin" on public.villas
 do $$
 begin
   if exists (select 1 from storage.buckets where id = 'villa-images') then
-    -- Drop existing anon policies if any
+    -- Drop all policies for this bucket (idempotent — safe to re-run)
     drop policy if exists "anon_upload_villa_images" on storage.objects;
     drop policy if exists "owner_admin_manage_villa_images" on storage.objects;
+    drop policy if exists "owner_admin_insert_villa_images" on storage.objects;
+    drop policy if exists "owner_admin_update_villa_images" on storage.objects;
+    drop policy if exists "owner_admin_delete_villa_images" on storage.objects;
+    drop policy if exists "public_read_villa_images" on storage.objects;
 
     -- Only authenticated users can insert
     create policy "owner_admin_insert_villa_images" on storage.objects
@@ -100,8 +104,11 @@ end $$;
 do $$
 begin
   if exists (select 1 from storage.buckets where id = 'villa-submissions') then
+    -- Drop all policies for this bucket (idempotent — safe to re-run)
     drop policy if exists "anon_upload_villa_submissions" on storage.objects;
     drop policy if exists "auth_manage_villa_submissions" on storage.objects;
+    drop policy if exists "auth_insert_villa_submissions" on storage.objects;
+    drop policy if exists "auth_select_villa_submissions" on storage.objects;
 
     -- Authenticated users can insert (the route handler verifies ownership)
     create policy "auth_insert_villa_submissions" on storage.objects
