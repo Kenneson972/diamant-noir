@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    await requireAdmin(request);
+
     const admin = supabaseAdmin();
     const { data: profiles, error } = await admin
       .from("profiles")
@@ -18,6 +21,9 @@ export async function GET() {
 
     return NextResponse.json({ owners: profiles ?? [] });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Server error" },
       { status: 500 }
