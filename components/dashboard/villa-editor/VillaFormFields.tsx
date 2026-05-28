@@ -1,125 +1,82 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { ChipEditor } from "./ChipEditor";
+import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
+import { RoomsEditor } from "./RoomsEditor";
+import { SeasonalPricesEditor } from "./SeasonalPricesEditor";
 
 /* ─── Props ─────────────────────────────────────────── */
 
-type VillaFormFieldsProps = {
+export type VillaFormFieldsProps = {
   form: Record<string, any>;
   onChange: (key: string, value: any) => void;
 };
 
-/* ─── Label helper ──────────────────────────────────── */
+/* ─── Helpers ───────────────────────────────────────── */
+
+const s = (val: unknown) => (typeof val === "string" ? val : "");
+const a = (val: unknown): string[] => (Array.isArray(val) ? val : []);
+const j = (val: unknown, fallback: any[] = []) => {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string" && val.trim()) {
+    try { return JSON.parse(val); } catch { return fallback; }
+  }
+  return fallback;
+};
 
 function FieldLabel({ htmlFor, label }: { htmlFor: string; label: string }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted"
-    >
+    <label htmlFor={htmlFor} className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">
       {label}
     </label>
   );
 }
 
-/* ─── Collapsible section ───────────────────────────── */
-
-function CollapsibleSection({
-  title,
-  icon,
-  defaultOpen = false,
-  children,
-}: {
-  title: string;
-  icon: string;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
+function CollapsibleSection({ title, icon, defaultOpen = false, children }: {
+  title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between text-left"
-      >
-        <h3 className="font-display text-base font-semibold text-navy-900">
-          {icon} {title}
-        </h3>
-        <ChevronDown
-          className={`h-5 w-5 text-muted transition-transform ${open ? "rotate-180" : ""}`}
-        />
+      <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-left">
+        <h3 className="font-display text-base font-semibold text-navy-900">{icon} {title}</h3>
+        <ChevronDown className={`h-5 w-5 text-muted transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && <div className="mt-6 space-y-4">{children}</div>}
     </div>
   );
 }
 
-/* ─── Textarea helper ───────────────────────────────── */
+/* ─── Suggestions ───────────────────────────────────── */
 
-function TextareaField({
-  id,
-  label,
-  defaultValue,
-  placeholder,
-  rows = 3,
-}: {
-  id: string;
-  label: string;
-  defaultValue: string;
-  placeholder: string;
-  rows?: number;
-}) {
-  return (
-    <div>
-      <FieldLabel htmlFor={id} label={label} />
-      <textarea
-        id={id}
-        defaultValue={defaultValue}
-        rows={rows}
-        placeholder={placeholder}
-        className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 placeholder:text-muted/50 focus:border-navy-900/30 focus:outline-none"
-      />
-    </div>
-  );
-}
-
-/* ─── Tags input helper ─────────────────────────────── */
-
-function TagsField({
-  id,
-  label,
-  defaultValue,
-  placeholder,
-}: {
-  id: string;
-  label: string;
-  defaultValue: string[];
-  placeholder: string;
-}) {
-  return (
-    <div>
-      <FieldLabel htmlFor={id} label={label} />
-      <Input
-        id={id}
-        defaultValue={Array.isArray(defaultValue) ? defaultValue.join(", ") : ""}
-        placeholder={placeholder}
-        className="text-sm"
-      />
-      <p className="mt-1 text-[10px] text-muted/60">
-        Séparez les éléments par des virgules
-      </p>
-    </div>
-  );
-}
+const INTERIOR_SUGGESTIONS = ["Wi-Fi", "Climatisation", "Télévision", "Cuisine équipée", "Lave-linge", "Sèche-linge", "Baignoire", "Eau chaude", "Détecteur de fumée"];
+const EXTERIOR_SUGGESTIONS = ["Piscine", "Jardin", "Terrasse ou balcon", "Barbecue", "Parking gratuit", "Vue mer"];
+const SERVICES_HOME_SUGGESTIONS = ["Draps", "Serviettes", "Ménage fin de séjour", "Linges de maison", "Produits d'accueil", "Lit bébé"];
+const SERVICES_COLLECTION_SUGGESTIONS = ["Concierge dédié", "Accueil champagne", "Voiturier", "Chef à domicile", "Massage", "Service voiture"];
+const A_LA_CARTE_SUGGESTIONS = ["Chef privé", "Massage", "Location bateau", "Babysitter", "Visite guidée", "Transfert aéroport", "Location voiture", "Cours de plongée", "Petit-déjeuner"];
+const HOUSE_RULES_SUGGESTIONS = ["Pas de fête", "Non-fumeur", "Animaux acceptés", "Animaux non acceptés", "Respect du voisinage", "Pas de bruit après 22h", "Enfants bienvenus", "Adultes seulement", "Check-in autonome"];
+const SAFETY_SUGGESTIONS = ["Extincteur", "Trousse premiers secours", "Détecteur de fumée", "Détecteur CO", "Caméra de surveillance", "Alarme", "Issues de secours", "Piscine sécurisée", "Portail sécurisé"];
+const NEARBY_SUGGESTIONS = ["Plage", "Restaurant", "Supermarché", "Pharmacie", "Hôpital", "Aéroport", "Golf", "Randonnée", "Marché local", "Musée", "Centre commercial", "Station essence", "Location voiture", "Snack", "Boulangerie"];
 
 /* ─── Composant principal ───────────────────────────── */
 
-export function VillaFormFields({ form, onChange: _onChange }: VillaFormFieldsProps) {
-  const s = (val: unknown) => (typeof val === "string" ? val : "");
-  const a = (val: unknown) => (Array.isArray(val) ? val : []);
+export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = document.getElementById("vf-latitude") as HTMLInputElement | null;
+        const lng = document.getElementById("vf-longitude") as HTMLInputElement | null;
+        if (lat) lat.value = pos.coords.latitude.toFixed(6);
+        if (lng) lng.value = pos.coords.longitude.toFixed(6);
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -171,8 +128,15 @@ export function VillaFormFields({ form, onChange: _onChange }: VillaFormFieldsPr
             <Input id="vf-latitude" type="number" min="-90" max="90" step="0.000001" defaultValue={form.latitude as string || ""} placeholder="14.4750" className="text-sm" />
           </div>
           <div>
-            <FieldLabel htmlFor="vf-longitude" label="Longitude" />
-            <Input id="vf-longitude" type="number" min="-180" max="180" step="0.000001" defaultValue={form.longitude as string || ""} placeholder="-61.0247" className="text-sm" />
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <FieldLabel htmlFor="vf-longitude" label="Longitude" />
+                <Input id="vf-longitude" type="number" min="-180" max="180" step="0.000001" defaultValue={form.longitude as string || ""} placeholder="-61.0247" className="text-sm" />
+              </div>
+              <button type="button" onClick={handleGeolocate} className="mb-0.5 shrink-0 rounded-xl border border-gold/30 bg-gold/5 px-3 py-2 text-xs font-medium text-gold hover:bg-gold/10">
+                <MapPin size={14} className="inline mr-1" />Me localiser
+              </button>
+            </div>
           </div>
           <div className="sm:col-span-2">
             <FieldLabel htmlFor="vf-map-embed" label="URL carte Google Maps (embed)" />
@@ -187,78 +151,84 @@ export function VillaFormFields({ form, onChange: _onChange }: VillaFormFieldsPr
 
       {/* 🛋️ Équipements & Services */}
       <CollapsibleSection title="Équipements & Services" icon="🛋️">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <TagsField id="vf-equipment-interior" label="Équipements intérieurs" defaultValue={a(form.equipment_interior)} placeholder="Wifi, Climatisation, TV, Lave-vaisselle, ..." />
-          </div>
-          <div className="sm:col-span-2">
-            <TagsField id="vf-equipment-exterior" label="Équipements extérieurs" defaultValue={a(form.equipment_exterior)} placeholder="Piscine, Barbecue, Terrasse, Jardin, ..." />
-          </div>
-          <div className="sm:col-span-2">
-            <TagsField id="vf-included-home" label="Services inclus — Home" defaultValue={a(form.included_services_home)} placeholder="Draps, Serviettes, Ménage fin de séjour, ..." />
-          </div>
-          <div className="sm:col-span-2">
-            <TagsField id="vf-included-collection" label="Services inclus — Collection" defaultValue={a(form.included_services_collection)} placeholder="Concierge dédié, Accueil champagne, ..." />
-          </div>
-          <div className="sm:col-span-2">
-            <TagsField id="vf-a-la-carte" label="Services à la carte" defaultValue={a(form.a_la_carte_services)} placeholder="Chef privé, Massage, Location bateau, ..." />
-          </div>
+        <div className="space-y-6">
+          <ChipEditor id="vf-equipment-interior" label="Équipements intérieurs" items={a(form.equipment_interior)} suggestions={INTERIOR_SUGGESTIONS} onChange={(items) => onChange("equipment_interior", items)} />
+          <ChipEditor id="vf-equipment-exterior" label="Équipements extérieurs" items={a(form.equipment_exterior)} suggestions={EXTERIOR_SUGGESTIONS} onChange={(items) => onChange("equipment_exterior", items)} />
+          <ChipEditor id="vf-included-home" label="Services inclus — Home" items={a(form.included_services_home)} suggestions={SERVICES_HOME_SUGGESTIONS} onChange={(items) => onChange("included_services_home", items)} />
+          <ChipEditor id="vf-included-collection" label="Services inclus — Collection" items={a(form.included_services_collection)} suggestions={SERVICES_COLLECTION_SUGGESTIONS} onChange={(items) => onChange("included_services_collection", items)} />
+          <ChipEditor id="vf-a-la-carte" label="Services à la carte" items={a(form.a_la_carte_services)} suggestions={A_LA_CARTE_SUGGESTIONS} onChange={(items) => onChange("a_la_carte_services", items)} />
         </div>
       </CollapsibleSection>
 
       {/* 📋 Règles & Sécurité */}
       <CollapsibleSection title="Règles & Sécurité" icon="📋">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-house-rules" label="Règles de la maison" defaultValue={s(form.house_rules)} placeholder="Pas de fêtes, respect du voisinage..." rows={4} />
-          </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-safety-info" label="Infos sécurité" defaultValue={s(form.safety_info)} placeholder="Extincteur, trousse premiers secours..." rows={3} />
-          </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-cancellation-policy" label="Politique d'annulation" defaultValue={s(form.cancellation_policy)} placeholder="Remboursement intégral jusqu'à 30 jours..." rows={3} />
-          </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-booking-terms" label="Conditions de réservation (JSON)" defaultValue={typeof form.booking_terms === "string" ? form.booking_terms : form.booking_terms ? JSON.stringify(form.booking_terms, null, 2) : ""} placeholder='{"deposit_percent": 30, ...}' rows={3} />
-          </div>
+        <div className="space-y-6">
+          <ChipEditor id="vf-house-rules" label="Règles de la maison" items={a(form.house_rules)} suggestions={HOUSE_RULES_SUGGESTIONS} onChange={(items) => onChange("house_rules", items)} />
+          <ChipEditor id="vf-safety-info" label="Infos sécurité" items={a(form.safety_info)} suggestions={SAFETY_SUGGESTIONS} onChange={(items) => onChange("safety_info", items)} />
+
           <div>
-            <FieldLabel htmlFor="vf-wifi-name" label="WiFi nom (SSID)" />
-            <Input id="vf-wifi-name" defaultValue={s(form.wifi_name)} placeholder="VillaOcean_WiFi" className="text-sm" />
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-cancellation-policy">Politique d'annulation</label>
+            <select id="vf-cancellation-policy" defaultValue={s(form.cancellation_policy)} className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 mb-2">
+              <option value="">Personnalisée</option>
+              <option value="Stricte — Remboursement 50% jusqu'à 30 jours">Stricte — Remboursement 50% jusqu'à 30 jours</option>
+              <option value="Modérée — Remboursement intégral jusqu'à 14 jours">Modérée — Remboursement intégral jusqu'à 14 jours</option>
+              <option value="Flexible — Remboursement intégral jusqu'à 7 jours">Flexible — Remboursement intégral jusqu'à 7 jours</option>
+              <option value="Très flexible — Remboursement intégral jusqu'à 24h avant">Très flexible — Remboursement intégral jusqu'à 24h avant</option>
+            </select>
+            <textarea id="vf-cancellation-policy-custom" defaultValue={s(form.cancellation_policy)} rows={2} placeholder="Ou saisissez une politique personnalisée..." className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 focus:border-navy-900/30 focus:outline-none" />
           </div>
+
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Conditions de réservation</label>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <span className="text-[10px] text-muted">Acompte (%)</span>
+                <input id="vf-deposit-percent" type="number" min="0" max="100" defaultValue={form.booking_terms?.deposit_percent || ""} className="w-full rounded-lg border border-navy/10 px-3 py-2 text-sm focus:border-gold focus:outline-none" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted">Préavis check-in (heures)</span>
+                <input id="vf-checkin-notice" type="number" min="0" defaultValue={form.booking_terms?.checkin_notice_hours || ""} className="w-full rounded-lg border border-navy/10 px-3 py-2 text-sm focus:border-gold focus:outline-none" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted">Âge minimum</span>
+                <input id="vf-min-age" type="number" min="0" defaultValue={form.booking_terms?.min_age || ""} className="w-full rounded-lg border border-navy/10 px-3 py-2 text-sm focus:border-gold focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <EmergencyContactsEditor contacts={j(form.emergency_contacts, [])} onChange={(contacts) => onChange("emergency_contacts", contacts)} />
+
           <div>
-            <FieldLabel htmlFor="vf-wifi-password" label="WiFi mot de passe" />
-            <Input id="vf-wifi-password" defaultValue={s(form.wifi_password)} placeholder="MotDePasse123" className="text-sm" />
-          </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-emergency-contacts" label="Contacts urgence (JSON)" defaultValue={typeof form.emergency_contacts === "string" ? form.emergency_contacts : form.emergency_contacts ? JSON.stringify(form.emergency_contacts, null, 2) : "[]"} placeholder='[{"name":"Pompier","phone":"18"}, ...]' rows={3} />
-          </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-checkout-instructions" label="Consignes check-out" defaultValue={s(form.checkout_instructions)} placeholder="Sortir les poubelles, fermer les volets..." rows={3} />
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-checkout-instructions">Consignes check-out</label>
+            <textarea id="vf-checkout-instructions" defaultValue={s(form.checkout_instructions)} rows={3} placeholder="Sortir les poubelles, fermer les volets..." className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 focus:border-navy-900/30 focus:outline-none" />
           </div>
         </div>
       </CollapsibleSection>
 
       {/* 📍 Localisation & Environs */}
       <CollapsibleSection title="Localisation & Environs" icon="📍">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-environment" label="Environnement" defaultValue={s(form.environment)} placeholder="Quartier calme, vue mer, à 5min de la plage..." rows={3} />
+        <div className="space-y-6">
+          <div>
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-environment">Environnement</label>
+            <textarea id="vf-environment" defaultValue={s(form.environment)} rows={3} placeholder="Quartier calme, vue mer, à 5min de la plage..." className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 focus:border-navy-900/30 focus:outline-none" />
           </div>
-          <div className="sm:col-span-2">
-            <TagsField id="vf-nearby-points" label="Points d'intérêt proches" defaultValue={a(form.nearby_points)} placeholder="Plage des Salines, Golf, Marché local, ..." />
-          </div>
+          <ChipEditor id="vf-nearby-points" label="Points d'intérêt proches" items={a(form.nearby_points)} suggestions={NEARBY_SUGGESTIONS} onChange={(items) => onChange("nearby_points", items)} />
         </div>
       </CollapsibleSection>
 
       {/* 💰 Prix & Conditions */}
       <CollapsibleSection title="Prix & Conditions" icon="💰">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-rooms-details" label="Détail des chambres (JSON)" defaultValue={typeof form.rooms_details === "string" ? form.rooms_details : form.rooms_details ? JSON.stringify(form.rooms_details, null, 2) : "[]"} placeholder='[{"name":"Chambre 1","bed":"King size","ensuite":true}]' rows={4} />
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-wifi-name">WiFi — Nom (SSID)</label>
+            <Input id="vf-wifi-name" defaultValue={s(form.wifi_name)} placeholder="VillaOcean_WiFi" className="text-sm" />
           </div>
-          <div className="sm:col-span-2">
-            <TextareaField id="vf-seasonal-prices" label="Prix saisonniers (JSON)" defaultValue={typeof form.seasonal_prices === "string" ? form.seasonal_prices : form.seasonal_prices ? JSON.stringify(form.seasonal_prices, null, 2) : "[]"} placeholder='[{"season":"Haute","start":"12-01","end":"04-30","price":450}]' rows={4} />
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-wifi-password">WiFi — Mot de passe</label>
+            <Input id="vf-wifi-password" defaultValue={s(form.wifi_password)} placeholder="MotDePasse123" className="text-sm" />
           </div>
+          <RoomsEditor rooms={j(form.rooms_details, [])} onChange={(rooms) => onChange("rooms_details", rooms)} />
+          <SeasonalPricesEditor seasons={j(form.seasonal_prices, [])} onChange={(seasons) => onChange("seasonal_prices", seasons)} />
         </div>
       </CollapsibleSection>
     </div>

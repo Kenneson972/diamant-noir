@@ -19,6 +19,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
   const [importing, setImporting] = useState(false);
   const [importUseAi, setImportUseAi] = useState(false);
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
+  const formRef = useRef<Record<string, any>>({});
   const internalPhotosRef = useRef<string[]>(
     Array.isArray(villa.image_urls)
       ? (villa.image_urls as string[])
@@ -137,17 +138,6 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
 
       const floatFields = ["vf-latitude", "vf-longitude"];
 
-      const tagsFields = [
-        "vf-equipment-interior", "vf-equipment-exterior",
-        "vf-included-home", "vf-included-collection",
-        "vf-a-la-carte", "vf-nearby-points",
-      ];
-
-      const jsonFields = [
-        "vf-booking-terms", "vf-emergency-contacts",
-        "vf-rooms-details", "vf-seasonal-prices",
-      ];
-
       const payload: Record<string, unknown> = {};
 
       // Text fields
@@ -192,42 +182,53 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
         payload[key] = el.value ? Number(el.value) : null;
       });
 
-      // Tags fields (comma-separated → array)
-      const tagsMap: Record<string, string> = {
-        "equipment-interior": "equipment_interior",
-        "equipment-exterior": "equipment_exterior",
-        "included-home": "included_services_home",
-        "included-collection": "included_services_collection",
-        "a-la-carte": "a_la_carte_services",
-        "nearby-points": "nearby_points",
-      };
-      tagsFields.forEach((id) => {
-        const el = document.getElementById(id) as HTMLInputElement | null;
-        if (!el) return;
-        const key = id.replace("vf-", "");
-        const mapped = tagsMap[key];
-        const raw = el.value.trim();
-        if (mapped) payload[mapped] = raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      // ChipEditor fields from formRef
+      const chipFields: [string, string][] = [
+        ["equipment_interior", "equipment_interior"],
+        ["equipment_exterior", "equipment_exterior"],
+        ["included_services_home", "included_services_home"],
+        ["included_services_collection", "included_services_collection"],
+        ["a_la_carte_services", "a_la_carte_services"],
+        ["house_rules", "house_rules"],
+        ["safety_info", "safety_info"],
+        ["nearby_points", "nearby_points"],
+      ];
+      chipFields.forEach(([key, mapped]) => {
+        const val = formRef.current[key];
+        if (Array.isArray(val)) payload[mapped] = val;
       });
 
-      // JSON fields
-      const jsonMap: Record<string, string> = {
-        "booking-terms": "booking_terms",
-        "emergency-contacts": "emergency_contacts",
-        "rooms-details": "rooms_details",
-        "seasonal-prices": "seasonal_prices",
-      };
-      jsonFields.forEach((id) => {
-        const el = document.getElementById(id) as HTMLTextAreaElement | null;
-        if (!el) return;
-        const key = id.replace("vf-", "");
-        const mapped = jsonMap[key];
-        try {
-          if (mapped) payload[mapped] = el.value.trim() ? JSON.parse(el.value) : null;
-        } catch {
-          if (mapped) payload[mapped] = el.value; // keep as string if invalid JSON
-        }
-      });
+      // Structured editor fields from formRef
+      if (formRef.current.emergency_contacts) {
+        payload.emergency_contacts = formRef.current.emergency_contacts;
+      }
+      if (formRef.current.rooms_details) {
+        payload.rooms_details = formRef.current.rooms_details;
+      }
+      if (formRef.current.seasonal_prices) {
+        payload.seasonal_prices = formRef.current.seasonal_prices;
+      }
+
+      // Booking terms from structured inputs
+      const depositEl = document.getElementById("vf-deposit-percent") as HTMLInputElement | null;
+      const noticeEl = document.getElementById("vf-checkin-notice") as HTMLInputElement | null;
+      const minAgeEl = document.getElementById("vf-min-age") as HTMLInputElement | null;
+      if (depositEl || noticeEl || minAgeEl) {
+        payload.booking_terms = {
+          deposit_percent: depositEl?.value ? Number(depositEl.value) : undefined,
+          checkin_notice_hours: noticeEl?.value ? Number(noticeEl.value) : undefined,
+          min_age: minAgeEl?.value ? Number(minAgeEl.value) : undefined,
+        };
+      }
+
+      // Cancellation policy — prefer custom textarea, fallback to select
+      const cancelSelect = document.getElementById("vf-cancellation-policy") as HTMLSelectElement | null;
+      const cancelCustom = document.getElementById("vf-cancellation-policy-custom") as HTMLTextAreaElement | null;
+      if (cancelCustom?.value?.trim()) {
+        payload.cancellation_policy = cancelCustom.value.trim();
+      } else if (cancelSelect?.value) {
+        payload.cancellation_policy = cancelSelect.value;
+      }
 
       // Include photos from refs (managed by wrapper components)
       payload.image_urls = photosRef.current;
@@ -337,7 +338,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
 
       {/* Form fields */}
       <div className="space-y-8">
-        <VillaFormFields form={villa} onChange={() => {}} />
+        <VillaFormFields form={villa} onChange={(key, value) => { formRef.current[key] = value; }} />
       </div>
 
       {/* Save button */}
