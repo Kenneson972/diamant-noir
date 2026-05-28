@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { isStaffAdmin } from "@/lib/auth/admin-access";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,31 @@ export async function GET(request: Request) {
     const { data: userData, error: authError } = await supabase.auth.getUser(token);
     if (authError || !userData?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = userData.user.id;
+
+    // Check if admin
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const isAdmin = isStaffAdmin(
+      profile?.role ?? null,
+      userData.user.user_metadata?.role as string | undefined,
+      userData.user.email
+    );
+
+    // Get owner's villa IDs if not admin
+    let ownerVillaIds: string[] = [];
+    if (!isAdmin) {
+      const { data: ownerVillas } = await supabase
+        .from("villas")
+        .select("id")
+        .eq("owner_id", userId);
+      ownerVillaIds = (ownerVillas || []).map((v) => v.id);
     }
 
     const [eventsRes, villasRes, bookingsRes] = await Promise.all([
@@ -51,7 +77,12 @@ export async function GET(request: Request) {
       revenueByVilla[vid] = (revenueByVilla[vid] || 0) + Number(b.price || 0);
     }
 
-    const result = (villas || []).map((v) => ({
+    // Filter by owner_id for non-admin users
+    const filteredVillas = isAdmin
+      ? (villas || [])
+      : (villas || []).filter((v) => ownerVillaIds.includes(v.id));
+
+    const result = filteredVillas.map((v) => ({
       villaId: v.id,
       villaName: v.name,
       views: byVilla[v.id]?.views ?? 0,

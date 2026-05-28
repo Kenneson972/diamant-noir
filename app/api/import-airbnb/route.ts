@@ -8,6 +8,7 @@ import {
 import type { ListingFieldSource, ListingImportApiResponse } from "@/lib/listing-import-types";
 import { normalizeImportedAmenities } from "@/lib/amenity-import-normalize";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,8 @@ export async function POST(req: Request) {
   }
 
   try {
+    await requireAdmin(req);
+
     const body = (await req.json()) as { url?: string; useAi?: boolean };
     const url = typeof body.url === "string" ? body.url.trim() : "";
     const useAi = Boolean(body.useAi);
@@ -103,6 +106,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(payload);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("import-airbnb:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Import failed" },
