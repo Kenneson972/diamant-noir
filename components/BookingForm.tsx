@@ -23,6 +23,7 @@ type BookingFormProps = {
   checkOutTime?: string;
   externalStart?: string;
   externalEnd?: string;
+  cleaningFeeCents?: number | null;
 };
 
 export const BookingForm = ({
@@ -33,7 +34,9 @@ export const BookingForm = ({
   checkOutTime = "10:00",
   externalStart,
   externalEnd,
+  cleaningFeeCents,
 }: BookingFormProps) => {
+  const cleaningFee = (cleaningFeeCents || 0) / 100;
   const { formatPrice } = useLocale();
   const [start, setStart] = useState(externalStart || "");
   const [end, setEnd] = useState(externalEnd || "");
@@ -176,7 +179,7 @@ export const BookingForm = ({
           </div>
           <div className="flex justify-between">
             <span className="underline decoration-navy/20 underline-offset-4">Frais de ménage</span>
-            <span>{formatPrice(150)}</span>
+            <span>{formatPrice(cleaningFee)}</span>
           </div>
           <div className="flex justify-between">
             <span className="underline decoration-navy/20 underline-offset-4">Frais de service Kayvila</span>
@@ -184,7 +187,7 @@ export const BookingForm = ({
           </div>
           <div className="flex justify-between font-bold text-navy pt-4 border-t border-navy/10 text-lg">
             <span>Total</span>
-            <span>{formatPrice(Math.round(price.total + 150 + price.total * 0.05))}</span>
+            <span>{formatPrice(Math.round(price.total + cleaningFee + price.total * 0.05))}</span>
           </div>
         </div>
       ) : (

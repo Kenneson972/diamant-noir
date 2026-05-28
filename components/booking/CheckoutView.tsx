@@ -140,7 +140,7 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
     );
   }
 
-  const cleaningFee = 150;
+  const cleaningFee = ((villa as any)?.cleaning_fee_cents || 0) / 100;
   const serviceFee = priceResult ? Math.round(priceResult.total * 0.05) : 0;
   const totalAmount = priceResult ? priceResult.total + cleaningFee + serviceFee : 0;
 

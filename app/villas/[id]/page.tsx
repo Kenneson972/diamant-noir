@@ -80,6 +80,7 @@ type VillaDetails = {
   latitude?: number | null;
   longitude?: number | null;
   map_embed_url?: string | null;
+  cleaning_fee_cents?: number | null;
   host: VillaHost | null;
 };
 
@@ -175,7 +176,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     const [villaResult, recommendationsResult] = await Promise.all([
       supabase
         .from("villas")
-        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id")
+        .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id,cleaning_fee_cents")
         .eq("id", id)
         .single(),
       supabase
@@ -233,6 +234,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         latitude: data.latitude ?? null,
         longitude: data.longitude ?? null,
         map_embed_url: data.map_embed_url ?? null,
+        cleaning_fee_cents: data.cleaning_fee_cents ?? null,
         host: null, // Rempli par la query profiles séparée ci-dessous
       };
 
@@ -547,6 +549,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   capacity={villa.capacity}
                   checkInTime={villa.check_in_time || "17:00"}
                   checkOutTime={villa.check_out_time || "10:00"}
+                  cleaningFeeCents={villa.cleaning_fee_cents}
                 />
               </div>
               
@@ -622,6 +625,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               capacity={villa.capacity}
               checkInTime={villa.check_in_time || "17:00"}
               checkOutTime={villa.check_out_time || "10:00"}
+              cleaningFeeCents={villa.cleaning_fee_cents}
             />
           </BookingBottomSheet>
         </div>

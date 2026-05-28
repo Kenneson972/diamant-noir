@@ -80,6 +80,7 @@ export const ConnectedBookingForm = (props: {
   capacity: number;
   checkInTime?: string;
   checkOutTime?: string;
+  cleaningFeeCents?: number | null;
 }) => {
   const { selectedDates } = useBookingDates();
 

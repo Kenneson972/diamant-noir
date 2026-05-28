@@ -42,7 +42,7 @@ export function PriceCalculator({
   pricePerNight,
   villaId,
   cleaningFee = 150,
-  conciergeRate = 0,
+  conciergeRate = 0.05,
 }: PriceCalculatorProps) {
   const router = useRouter();
   const today = new Date().toISOString().split("T")[0];

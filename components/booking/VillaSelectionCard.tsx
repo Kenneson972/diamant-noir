@@ -9,7 +9,7 @@ interface VillaProps {
   name: string;
   location: string | null;
   price: number;
-  guests: number;
+  capacity: number;
   rooms: number;
   rating: number;
   image: string;

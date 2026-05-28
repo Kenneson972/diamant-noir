@@ -5,9 +5,16 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const diffDays = (start: Date, end: Date) =>
   Math.ceil((end.getTime() - start.getTime()) / DAY_MS);
 
-const isWeekendRange = (start: Date, end: Date, nights: number) => {
-  const startDay = start.getDay(); // 5 = Friday
-  return startDay === 5 && nights === 2;
+/** Count weekend nights (Fri-Sat and Sat-Sun) in a date range */
+const countWeekendNights = (start: Date, nights: number): number => {
+  let count = 0;
+  const d = new Date(start);
+  for (let i = 0; i < nights; i++) {
+    const day = d.getDay(); // 5=Friday, 6=Saturday
+    if (day === 5 || day === 6) count++;
+    d.setDate(d.getDate() + 1);
+  }
+  return count;
 };
 
 export const calculatePrice = ({
@@ -20,31 +27,55 @@ export const calculatePrice = ({
     return { total: 0, nights: 0, breakdown: "invalid_date_range" };
   }
 
-  // Logic: 
-  // Week (7 nights) = 3x daily price (as requested 3000 vs 1000)
-  // Weekend (Fri-Sun, 2 nights) = 1.5x daily price (as requested 1500 vs 1000)
-  // Day = daily price
-  
   const dailyPrice = basePrice;
   const weekPrice = basePrice * 3;
   const weekendPrice = basePrice * 1.5;
 
-  if (nights % 7 === 0) {
-    const weeks = nights / 7;
-    return {
-      total: weeks * weekPrice,
-      nights,
-      breakdown: `${weeks}x_semaine`,
-    };
+  // Combinatorial: decompose N nights into weeks → weekends → remaining days
+  const fullWeeks = Math.floor(nights / 7);
+  const remainingAfterWeeks = nights - fullWeeks * 7;
+
+  const weekendNights = countWeekendNights(
+    new Date(startDate.getTime() + fullWeeks * 7 * DAY_MS),
+    remainingAfterWeeks
+  );
+  const weekendPairs = Math.floor(weekendNights / 2);
+  const remainingAfterWeekends = remainingAfterWeeks - weekendPairs * 2;
+
+  const remainingDays = remainingAfterWeekends;
+
+  const parts: string[] = [];
+  let total = 0;
+
+  if (fullWeeks > 0) {
+    total += fullWeeks * weekPrice;
+    parts.push(`${fullWeeks}x_semaine`);
+  }
+  if (weekendPairs > 0) {
+    total += weekendPairs * weekendPrice;
+    parts.push(`${weekendPairs}x_weekend`);
+  }
+  if (remainingDays > 0) {
+    total += remainingDays * dailyPrice;
+    parts.push(`${remainingDays}x_journée`);
   }
 
-  if (isWeekendRange(startDate, endDate, nights)) {
-    return { total: weekendPrice, nights, breakdown: "weekend" };
-  }
+  const breakdown = parts.join("+") || "0_nuit";
 
-  return {
-    total: nights * dailyPrice,
-    nights,
-    breakdown: `${nights}x_journée`,
-  };
+  return { total, nights, breakdown };
 };
+
+// ─── Tests (run with: npx ts-node lib/price-engine.ts) ──────────────
+// Example cases (copy into a .test.ts file for real test runner):
+//
+// Nightly:
+//   1 night (Wed)  → 1×1000  = 1000
+// Weekend:
+//   2 nights Fri-Sun → 1 weekend pair → 1×1500 = 1500
+// Week:
+//   7 nights Mon-Sun → 1 week → 1×3000 = 3000
+// Combinatorial:
+//   8 nights Mon-Mon (1w+1d) → 1×3000 + 1×1000 = 4000
+//   9 nights Fri-Sun (1w+2d weekend) → 1×3000 + 1×1500 = 4500
+//   10 nights Mon-Wed (1w+3d, 0 weekend) → 1×3000 + 3×1000 = 6000
+//   12 nights containing weekends
