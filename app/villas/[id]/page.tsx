@@ -202,6 +202,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           ? data.image_urls
           : [data.image_url || "/villa-hero.jpg"],
         amenities: Array.isArray(data.amenities) ? data.amenities : [],
+        // Fallback: if equipment_interior is empty, use legacy amenities
+        equipment_interior:
+          (Array.isArray(data.equipment_interior) && data.equipment_interior.length > 0
+            ? data.equipment_interior
+            : Array.isArray(data.amenities) ? data.amenities : []),
         rooms: Array.isArray(data.rooms_details) ? data.rooms_details : [],
         cancellation_policy: data.cancellation_policy ?? null,
         house_rules: data.house_rules ?? null,
@@ -212,7 +217,6 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         check_out_time: data.check_out_time ?? null,
         environment: data.environment ?? null,
         nearby_points: Array.isArray(data.nearby_points) ? data.nearby_points : [],
-        equipment_interior: Array.isArray(data.equipment_interior) ? data.equipment_interior : [],
         equipment_exterior: Array.isArray(data.equipment_exterior) ? data.equipment_exterior : [],
         included_services_home: Array.isArray(data.included_services_home) ? data.included_services_home : [],
         included_services_collection: Array.isArray(data.included_services_collection) ? data.included_services_collection : [],
@@ -378,22 +382,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
             </section>
 
-            {/* 3. Les Incontournables */}
-            {villa.amenities && villa.amenities.length > 0 && (
-              <section id="incontournables" className="pt-10 border-t border-navy/10">
-                <h2 className="font-display font-normal text-2xl text-navy mb-8">Les incontournables</h2>
-                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6">
-                  {villa.amenities.slice(0, 8).map((item: string, i: number) => (
-                    <div key={i} className="flex flex-col gap-3">
-                      <div className="text-navy">{getEquipmentIcon(item)}</div>
-                      <span className="text-navy/80 text-sm font-medium">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* 3b. Ce que propose ce logement */}
+            {/* 3. Ce que propose ce logement */}
             {(villa.equipment_interior && villa.equipment_interior.length > 0) ||
              (villa.equipment_exterior && villa.equipment_exterior.length > 0) ||
              (villa.included_services_home && villa.included_services_home.length > 0) ||
