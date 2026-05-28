@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Filter, Star, Map as MapIcon, ArrowUpDown, SlidersHorizontal } from "lucide-react";
 import { VillaSelectionCard } from "@/components/booking/VillaSelectionCard";
+import { formatPrice } from "@/lib/i18n";
 
 type SortOption = "default" | "price_asc" | "price_desc" | "rating";
 type GuestFilter = "all" | "2+" | "4+" | "8+";
@@ -183,7 +184,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:hover:scale-100"
                   />
                   <div className="absolute right-3 top-3 border border-white/40 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-navy backdrop-blur-sm">
-                    {villa.price.toLocaleString("fr-FR")} €{" "}
+                    {formatPrice(villa.price)}{" "}
                     <span className="font-normal text-navy/50">/ nuit</span>
                   </div>
                 </div>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Users, BedDouble, ArrowRight, CalendarDays } from "lucide-react";
+import { formatPrice } from "@/lib/i18n";
 
 interface VillaProps {
   id: string;
@@ -94,14 +95,14 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
             </div>
             <div className="text-left sm:text-right">
               <span className="text-2xl font-medium text-navy tabular-nums">
-                {villa.price.toLocaleString("fr-FR")} €
+                {formatPrice(villa.price)}
               </span>
               <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-navy/40">
                 par nuit
               </p>
               {totalPrice && (
                 <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold">
-                  {totalPrice.toLocaleString("fr-FR")} € · {dateRange?.nights} nuit{(dateRange?.nights ?? 0) > 1 ? "s" : ""}
+                  {formatPrice(totalPrice)} · {dateRange?.nights} nuit{(dateRange?.nights ?? 0) > 1 ? "s" : ""}
                 </p>
               )}
             </div>

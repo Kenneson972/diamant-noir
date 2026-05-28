@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { formatPrice } from "@/lib/i18n";
 
 export type HomeFeaturedVilla = {
   id: string;
@@ -80,7 +81,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
                 </p>
                 {villa.price > 0 && (
                   <p className="mt-1 text-[9px] font-medium uppercase tracking-[0.15em] text-white/60">
-                    {villa.price.toLocaleString("fr-FR")} € / nuit
+                    {formatPrice(villa.price)} / nuit
                   </p>
                 )}
               </div>

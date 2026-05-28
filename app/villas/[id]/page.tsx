@@ -173,7 +173,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   const { headers } = await import("next/headers");
   const hdrs = await headers();
   const locale = hdrs.get("x-dn-locale") ?? "fr";
-  const { tServer: ts } = await import("@/lib/i18n");
+  const { tServer: ts, formatPrice: fp } = await import("@/lib/i18n");
 
   let villa: VillaDetails = fallbackVilla;
   let recommendedVillas: RecommendedVilla[] = [];
@@ -621,7 +621,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           <div>
             <p className="text-xs text-navy/50">À partir de</p>
             <p className="text-base font-semibold text-navy">
-              {villa!.price.toLocaleString("fr-FR")} €
+              {fp(villa!.price)}
               <span className="text-xs font-normal text-navy/50"> / nuit</span>
             </p>
           </div>

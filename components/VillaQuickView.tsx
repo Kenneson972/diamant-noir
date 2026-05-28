@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { formatPrice } from "@/lib/i18n";
 import type { VillaMapItem } from "./VillaLeafletMap";
 
 interface Props {
@@ -159,7 +160,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
           {/* Price */}
           <p className="text-navy">
             <span className="font-display text-2xl">
-              {villa.price.toLocaleString("fr-FR")} €
+              {formatPrice(villa.price)}
             </span>
             <span className="text-[11px] text-navy/45 ml-1">/ nuit</span>
           </p>

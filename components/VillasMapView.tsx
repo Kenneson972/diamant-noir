@@ -33,7 +33,7 @@ interface Props {
 }
 
 export default function VillasMapView({ villas, dateQuery }: Props) {
-  const { t } = useLocale();
+  const { t, formatPrice } = useLocale();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mapVisible, setMapVisible] = useState(true);
   const [activeFilters, setActiveFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -175,7 +175,7 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
                             À partir de
                           </p>
                           <p className="font-display text-lg text-white leading-none mt-0.5">
-                            {villa.price.toLocaleString("fr-FR")} €
+                            {formatPrice(villa.price)}
                             <span className="text-xs font-sans font-normal text-white/50">
                               {" "}/ nuit
                             </span>
@@ -198,7 +198,7 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
                   )}
                   <div className="flex items-center justify-between pt-0.5">
                     <p className="text-xs text-navy/55">
-                      {villa.price.toLocaleString("fr-FR")} €
+                      {formatPrice(villa.price)}
                       <span className="text-navy/35"> / nuit</span>
                     </p>
                     {/* Aperçu rapide — desktop: hover / mobile: toujours visible */}

@@ -5,7 +5,9 @@ import dynamic from "next/dynamic";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import frLocale from "@fullcalendar/core/locales/fr";
+import enLocale from "@fullcalendar/core/locales/en-gb";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const FullCalendar = dynamic(() => import("@fullcalendar/react"), {
   ssr: false,
@@ -23,6 +25,8 @@ export const AvailabilityCalendar = ({
   villaId: string;
   onDatesChange?: (range: DateRange | null) => void;
 }) => {
+  const { locale } = useLocale();
+  const calendarLocale = locale.startsWith("en") ? "en-gb" : "fr";
   const [bookedDates, setBookedDates] = useState<any[]>([]);
   const [selectedRange, setSelectedRange] = useState<DateRange | null>(null);
 
@@ -113,8 +117,8 @@ export const AvailabilityCalendar = ({
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        locales={[frLocale]}
-        locale="fr"
+        locales={[frLocale, enLocale]}
+        locale={calendarLocale}
         headerToolbar={{
           left: "title",
           center: "",
