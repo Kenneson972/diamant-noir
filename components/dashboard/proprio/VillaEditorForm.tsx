@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Save, Download } from "lucide-react";
+import { Check, Loader2, Save, Wand2, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { VillaFormFields } from "@/components/dashboard/villa-editor/VillaFormFields";
 
 interface VillaEditorFormProps {
@@ -16,6 +17,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [importUseAi, setImportUseAi] = useState(false);
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
   const internalPhotosRef = useRef<string[]>(
     Array.isArray(villa.image_urls)
@@ -33,13 +35,13 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  // ─── Airbnb import ──────────────────────────────────────────────
+  // ─── OTA Import ────────────────────────────────────────────────
 
-  const handleImportAirbnb = useCallback(async () => {
-    const el = document.getElementById("vf-airbnb") as HTMLInputElement | null;
+  const handleOtaImport = useCallback(async () => {
+    const el = document.getElementById("vf-ota-import-url") as HTMLInputElement | null;
     const url = el?.value?.trim();
     if (!url) {
-      showToast("error", "Veuillez entrer une URL Airbnb");
+      showToast("error", "Veuillez coller l'URL de votre annonce");
       return;
     }
 
@@ -50,24 +52,24 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       const res = await fetch("/api/import-airbnb", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, useAi: importUseAi }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Échec de l'import" }));
+        const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Échec de l'import");
       }
 
       const data = await res.json();
+      let count = 0;
+
       const setVal = (id: string, val: string) => {
         const input = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null;
-        if (input) input.value = val;
+        if (input) { input.value = val; count++; }
       };
 
-      let filledCount = 0;
       const fill = (id: string, val: unknown) => {
         if (val != null && val !== "") {
           setVal(id, Array.isArray(val) ? val.join(", ") : String(val));
-          filledCount++;
         }
       };
 
@@ -81,26 +83,38 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       fill("vf-longitude", data.longitude);
       fill("vf-equipment-interior", data.equipment_interior ?? data.amenities);
       fill("vf-equipment-exterior", data.equipment_exterior);
+      fill("vf-included-home", data.included_services_home);
+      fill("vf-included-collection", data.included_services_collection);
+      fill("vf-a-la-carte", data.a_la_carte_services);
       fill("vf-house-rules", data.house_rules);
+      fill("vf-safety-info", data.safety_info);
+      fill("vf-cancellation-policy", data.cancellation_policy);
       fill("vf-checkin", data.check_in_time);
       fill("vf-checkout", data.check_out_time);
+      fill("vf-environment", data.environment);
+      fill("vf-nearby-points", data.nearby_points);
+      fill("vf-wifi-name", data.wifi_name);
+      fill("vf-wifi-password", data.wifi_password);
+      fill("vf-checkout-instructions", data.checkout_instructions);
+      fill("vf-rooms-details", data.rooms_details ? JSON.stringify(data.rooms_details, null, 2) : null);
+      fill("vf-seasonal-prices", data.seasonal_prices ? JSON.stringify(data.seasonal_prices, null, 2) : null);
+      fill("vf-booking-terms", data.booking_terms ? JSON.stringify(data.booking_terms, null, 2) : null);
+      fill("vf-emergency-contacts", data.emergency_contacts ? JSON.stringify(data.emergency_contacts, null, 2) : null);
 
-      // Fill photos ref
-      const photos: string[] = data.image_urls?.length
-        ? data.image_urls
-        : data.image_url ? [data.image_url] : [];
-      if (photos.length > 0) {
-        photosRef.current = photos;
-        filledCount++;
-      }
+      // Photos
+      const photos = data.image_urls?.length ? data.image_urls : data.image_url ? [data.image_url] : [];
+      if (photos.length) { photosRef.current = photos; count++; }
 
-      showToast("success", `Import réussi — ${filledCount} champs remplis`);
+      // Remplir aussi le champ URL Airbnb dans le form
+      if (data.airbnb_url) setVal("vf-airbnb", data.airbnb_url);
+
+      showToast("success", `Import réussi — ${count} champs remplis`);
     } catch (err) {
       showToast("error", err instanceof Error ? err.message : "Échec de l'import");
     } finally {
       setImporting(false);
     }
-  }, [showToast]);
+  }, [showToast, importUseAi]);
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -264,26 +278,61 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
         </div>
       )}
 
-      {/* Import Airbnb button */}
-      <div className="flex items-center justify-end">
-        <button
-          type="button"
-          onClick={handleImportAirbnb}
-          disabled={importing}
-          className="inline-flex items-center gap-2 rounded-xl border border-gold/30 bg-gold/5 px-4 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-gold/10 disabled:opacity-50"
-        >
-          {importing ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Import en cours...
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4" />
-              Importer depuis Airbnb
-            </>
-          )}
-        </button>
+      {/* Carte Import Magique OTA */}
+      <div className="rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">
+            Import annonce (OTA)
+          </h4>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
+            <Wand2 size={16} />
+          </div>
+        </div>
+
+        <p className="text-xs text-navy/60 leading-relaxed mb-6">
+          Collez le lien public de votre fiche (Airbnb, Booking, Abritel, etc.).
+          Les métadonnées et le texte de page sont analysés ; optionnellement,
+          l'IA complète les champs encore vides.
+        </p>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-navy/40" htmlFor="vf-ota-import-url">
+              URL de l'annonce
+            </label>
+            <Input
+              id="vf-ota-import-url"
+              defaultValue={(villa.airbnb_url as string) || ""}
+              placeholder="https://www.airbnb.com/rooms/… ou booking.com/hotel/…"
+              className="rounded-xl"
+            />
+          </div>
+
+          <label className="flex cursor-pointer items-start gap-3 text-left">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-navy/25 text-gold focus:ring-gold"
+              checked={importUseAi}
+              onChange={(e) => setImportUseAi(e.target.checked)}
+            />
+            <span className="text-xs leading-relaxed text-navy/70">
+              Compléter avec l'IA les informations manquantes (après extraction automatique).
+            </span>
+          </label>
+
+          <button
+            type="button"
+            onClick={handleOtaImport}
+            disabled={importing}
+            className="w-full rounded-xl bg-navy text-white hover:bg-gold hover:text-navy transition-all h-12 font-bold uppercase tracking-widest text-[10px] gap-2 inline-flex items-center justify-center disabled:opacity-50"
+          >
+            {importing ? (
+              <><RefreshCw size={14} className="animate-spin" /> Importation...</>
+            ) : (
+              <><Wand2 size={14} /> Importer les détails</>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Form fields */}
