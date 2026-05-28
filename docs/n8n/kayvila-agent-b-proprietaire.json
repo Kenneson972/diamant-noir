@@ -1,0 +1,397 @@
+{
+  "name": "Kayvila — Agent B — Copilot Propriétaire",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kayvila-owner",
+        "responseMode": "responseNode",
+        "options": { "allowedOrigins": "*" }
+      },
+      "id": "b1-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1500, 0],
+      "webhookId": "kayvila-owner-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = ($('Webhook').first().json.body.token || $('Webhook').first().json.headers?.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const payload = JSON.parse(Buffer.from(raw.split('.')[1] || '', 'base64').toString('utf8'));\n  userId = payload.sub || payload.user_id || payload.userId || '';\n  role = payload.role || (payload.user_metadata && payload.user_metadata.role) || (payload.app_metadata && payload.app_metadata.role) || '';\n} catch (e) {}\nconst body = $('Webhook').first().json.body;\nconst valid = !!userId && ['owner', 'proprietaire', 'proprio', 'authenticated'].includes(String(role).toLowerCase());\nreturn [{ json: { userId, role, token: raw, sessionId: body.sessionid || ('owner-' + userId), userMessage: body.message || '', valid: valid ? 'true' : 'false' } }];"
+      },
+      "id": "b1-auth",
+      "name": "Code - Auth JWT",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1280, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 1 },
+          "conditions": [
+            { "id": "b1-c-auth", "leftValue": "={{ $json.valid }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1-if-auth",
+      "name": "IF - Auth Valide ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-1060, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { response: \"Accès non autorisé. Reconnecte-toi à ton espace propriétaire Kayvila.\", success: false } }];"
+      },
+      "id": "b1-refus",
+      "name": "Code - Reponse Refus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-840, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/analytics-villas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $json.token }}" } ]
+        },
+        "options": {}
+      },
+      "id": "b1-owner-context",
+      "name": "Get Owner Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-840, -160],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Code - Auth JWT').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 30",
+        "options": {}
+      },
+      "id": "b1-get-memory",
+      "name": "Get Long-Term Memory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [-620, -160],
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://gbrain-kayvila:8080/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"query\": $('Code - Auth JWT').first().json.userMessage, \"entity\": \"owner-\" + $('Code - Auth JWT').first().json.userId, \"limit\": 5 } }}",
+        "options": {}
+      },
+      "id": "b1-gbrain-recall",
+      "name": "gbrain Recall",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-400, -160],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "b1-f-msg", "name": "userMessage", "value": "={{ $('Code - Auth JWT').first().json.userMessage }}", "type": "string" },
+            { "id": "b1-f-sid", "name": "sessionId", "value": "={{ $('Code - Auth JWT').first().json.sessionId }}", "type": "string" },
+            { "id": "b1-f-uid", "name": "userId", "value": "={{ $('Code - Auth JWT').first().json.userId }}", "type": "string" },
+            { "id": "b1-f-own", "name": "ownerContext", "value": "={{ JSON.stringify($('Get Owner Context').first().json) }}", "type": "string" },
+            { "id": "b1-f-gb", "name": "gbrainContext", "value": "={{ JSON.stringify($('gbrain Recall').first().json) }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1-edit-fields",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-180, -160]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es le copilote d'un propriétaire de villa sur Kayvila.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nMÉMOIRE SÉMANTIQUE (gbrain — décisions et contexte passés) :\n{{ $json.gbrainContext }}\n\nDONNÉES DASHBOARD (injectées, source de vérité) :\n{{ $json.ownerContext }}\n\nMESSAGE PROPRIÉTAIRE : {{ $json.userMessage }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nTON RÔLE :\n- Répondre aux questions business du propriétaire\n- Lui donner des insights sur ses performances\n- L'alerter sur les problèmes (tâches en retard, conflits de réservation)\n- Ne JAMAIS modifier une réservation ou un prix sans confirmation explicite\n\nTON TON :\n- Respectueux et direct\n- Créole bienvenu si le proprio l'utilise\n- Toujours sourcer les chiffres (\"Selon ton dashboard...\")\n\nCAPACITÉS :\n- \"Combien j'ai gagné ce mois-ci ?\" → chiffres + comparer au mois précédent\n- \"Qui arrive cette semaine ?\" → liste des check-ins avec détails\n- \"La villa Corail est dispo en juillet ?\" → vérifier le calendrier\n- \"Tâches en retard ?\" → lister avec priorité\n- \"Comment va la synchro Airbnb ?\" → diagnostiquer\n\nRÈGLES :\n- Ne contacter un client qu'avec validation explicite\n- Ne jamais modifier les prix\n- Alerter proactivement si problème détecté\n\nOUTILS : kayvila-my-villas, kayvila-my-bookings, kayvila-my-stats, kayvila-my-tasks, kayvila-ota-status, postgres-chat-memory",
+        "options": {}
+      },
+      "id": "b1-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [60, -200]
+    },
+    {
+      "parameters": { "options": { "temperature": 0.3 } },
+      "id": "b1-deepseek",
+      "name": "DeepSeek Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [-120, 80],
+      "credentials": {
+        "deepSeekApi": { "id": "REPLACE_DEEPSEEK", "name": "KAYVILA DEEPSEEK" }
+      }
+    },
+    {
+      "parameters": { "tableName": "conversation_data" },
+      "id": "b1-chat-memory",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [20, 80],
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Liste les villas du propriétaire connecté.",
+        "method": "GET",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/villas",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" } ] },
+        "options": {}
+      },
+      "id": "b1-tool-villas",
+      "name": "kayvila-my-villas",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [160, 80]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Liste les réservations (à venir et récentes) du propriétaire connecté.",
+        "method": "GET",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/bookings",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" } ] },
+        "options": {}
+      },
+      "id": "b1-tool-bookings",
+      "name": "kayvila-my-bookings",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [300, 80]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Statistiques et revenus mensuels des villas du propriétaire connecté.",
+        "method": "GET",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/analytics-villas",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" } ] },
+        "options": {}
+      },
+      "id": "b1-tool-stats",
+      "name": "kayvila-my-stats",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [440, 80]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tâches de maintenance / ménage du propriétaire connecté.",
+        "method": "GET",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/tasks",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" } ] },
+        "options": {}
+      },
+      "id": "b1-tool-tasks",
+      "name": "kayvila-my-tasks",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [580, 80]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Santé des synchronisations OTA (Airbnb / Booking) des villas du propriétaire.",
+        "method": "GET",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/ota-status",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" } ] },
+        "options": {}
+      },
+      "id": "b1-tool-ota",
+      "name": "kayvila-ota-status",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [720, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = $input.first().json;\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: $('Code - Auth JWT').first().json.sessionId, userId: $('Code - Auth JWT').first().json.userId } }];"
+      },
+      "id": "b1-format",
+      "name": "FORMAT RESPONSE",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, -200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = ($('Code - Auth JWT').first().json.userMessage || '').toLowerCase();\nconst urgentKw = ['urgent', 'retard', 'annul', 'conflit', 'problème', 'probleme', 'panne', 'litige', 'check-in', 'checkin', 'aujourd', 'ce soir', 'demain', 'ménage pas fait', 'menage pas fait'];\nconst isUrgent = urgentKw.some(k => msg.includes(k));\nreturn [{ json: { isUrgent: isUrgent ? 'true' : 'false', userId: $('Code - Auth JWT').first().json.userId, message: $('Code - Auth JWT').first().json.userMessage, aiOutput: ($('AI Agent').first().json.output || '') } }];"
+      },
+      "id": "b1-summary",
+      "name": "PREPARE SUMMARY PROMPT",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, -440]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 1 },
+          "conditions": [
+            { "id": "b1-c-urg", "leftValue": "={{ $json.isUrgent }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1-if-urgent",
+      "name": "IF - Urgent ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, -440]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.TELEGRAM_OWNER_CHAT_ID || 'REMPLACER_CHAT_ID' }}",
+        "text": "=⚠️ Kayvila — Demande urgente d'un propriétaire\n\nProprio: {{ $json.userId }}\nMessage: {{ $json.message }}",
+        "additionalFields": {}
+      },
+      "id": "b1-telegram",
+      "name": "Telegram - Alerte Proprio",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [720, -440],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_TELEGRAM", "name": "KAYVILA TELEGRAM" }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "b1-s-sid", "name": "session_id", "value": "={{ $json.sessionId }}", "type": "string" },
+            { "id": "b1-s-user", "name": "conversation_data.user", "value": "={{ $('Code - Auth JWT').first().json.userMessage }}", "type": "string" },
+            { "id": "b1-s-ai", "name": "conversation_data.assistant", "value": "={{ $json.response }}", "type": "string" },
+            { "id": "b1-s-meta", "name": "metadata", "value": "={{ { \"session_id\": $json.sessionId, \"agent\": \"proprietaire\", \"user_id\": $json.userId } }}", "type": "object" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1-edit-fields1",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [500, -200]
+    },
+    {
+      "parameters": {
+        "schema": { "__rl": true, "value": "public", "mode": "list" },
+        "table": { "__rl": true, "value": "conversation_memory", "mode": "list" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.session_id }}",
+            "conversation_data": "={{ $json.conversation_data }}",
+            "metadata": "={{ $json.metadata }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b1-save-memory",
+      "name": "Save Memory Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [720, -200],
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://gbrain-kayvila:8080/put_page",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"slug\": \"memory/owner-\" + $('Code - Auth JWT').first().json.userId + \"/\" + new Date().toISOString().slice(0,10), \"content\": ($('Code - Auth JWT').first().json.userMessage + ' → ' + $('FORMAT RESPONSE').first().json.response) } }}",
+        "options": {}
+      },
+      "id": "b1-gbrain-capture",
+      "name": "gbrain Capture",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, -200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"response\": $('FORMAT RESPONSE').first().json.response, \"success\": true } }}",
+        "options": {}
+      },
+      "id": "b1-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [1160, -40]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Code - Auth JWT", "type": "main", "index": 0 }]] },
+    "Code - Auth JWT": { "main": [[{ "node": "IF - Auth Valide ?", "type": "main", "index": 0 }]] },
+    "IF - Auth Valide ?": {
+      "main": [
+        [{ "node": "Get Owner Context", "type": "main", "index": 0 }],
+        [{ "node": "Code - Reponse Refus", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code - Reponse Refus": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
+    "Get Owner Context": { "main": [[{ "node": "Get Long-Term Memory", "type": "main", "index": 0 }]] },
+    "Get Long-Term Memory": { "main": [[{ "node": "gbrain Recall", "type": "main", "index": 0 }]] },
+    "gbrain Recall": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
+    "Edit Fields": { "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]] },
+    "AI Agent": {
+      "main": [
+        [
+          { "node": "FORMAT RESPONSE", "type": "main", "index": 0 },
+          { "node": "PREPARE SUMMARY PROMPT", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]] },
+    "Postgres Chat Memory": { "ai_memory": [[{ "node": "AI Agent", "type": "ai_memory", "index": 0 }]] },
+    "kayvila-my-villas": { "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]] },
+    "kayvila-my-bookings": { "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]] },
+    "kayvila-my-stats": { "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]] },
+    "kayvila-my-tasks": { "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]] },
+    "kayvila-ota-status": { "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]] },
+    "FORMAT RESPONSE": { "main": [[{ "node": "Edit Fields1", "type": "main", "index": 0 }]] },
+    "PREPARE SUMMARY PROMPT": { "main": [[{ "node": "IF - Urgent ?", "type": "main", "index": 0 }]] },
+    "IF - Urgent ?": { "main": [[{ "node": "Telegram - Alerte Proprio", "type": "main", "index": 0 }]] },
+    "Edit Fields1": { "main": [[{ "node": "Save Memory Supabase", "type": "main", "index": 0 }]] },
+    "Save Memory Supabase": { "main": [[{ "node": "gbrain Capture", "type": "main", "index": 0 }]] },
+    "gbrain Capture": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "tags": []
+}

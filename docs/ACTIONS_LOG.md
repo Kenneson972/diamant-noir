@@ -14,6 +14,24 @@ verify: vérification effectuée
 
 ---
 
+### 2026-05-28 — Routes API pour les agents n8n + auth Bearer
+
+- **type**: api | security
+- **summary**: Création des routes consommées par les agents n8n (le vrai blocage : elles n'existaient pas). Public : `/api/villas/public` (villas publiées, champs non sensibles, `?search=`). Owner (Bearer `requireAuth`, scope owner_id dérivé serveur) : `/api/dashboard/{villas,bookings,tasks,ota-status}`. Admin (Bearer `requireAdmin`) : `/api/admin/{villas,bookings,global-stats,ota-status}`. Alignement des agents B/C sur l'auth **Bearer** (forward du JWT utilisateur en `Authorization: Bearer`), suppression du `x-api-key` + param `owner`.
+- **files**: `app/api/villas/public/route.ts`, `app/api/dashboard/{villas,bookings,tasks,ota-status}/route.ts`, `app/api/admin/{villas,bookings,global-stats,ota-status}/route.ts`, `docs/n8n/kayvila-agent-b-proprietaire.json`, `docs/n8n/kayvila-agent-c-admin.json`, `docs/n8n/README.md`
+- **why**: Sans ces routes, les outils des agents échouaient silencieusement. Le contrat Bearer (cohérent avec `/api/admin/owners`, `/api/villa-submissions`) est plus sûr que `x-api-key` : le serveur valide le token et dérive le périmètre, sans faire confiance à un param d'URL.
+- **impact**: Les 3 agents disposent désormais d'endpoints réels et sécurisés ; il ne reste que la config n8n (credentials + placeholders domaine/gbrain/chat IDs).
+- **verify**: `npx tsc --noEmit` OK ; les 3 workflows JSON re-validés (parse + cohérence connexions). Tests runtime des endpoints à faire avec un vrai token.
+
+### 2026-05-28 — 3 agents n8n Kayvila (inspirés Élise 13)
+
+- **type**: script | sql | docs
+- **summary**: Création de 3 workflows n8n importables (Agent A Chatbot Visiteur, Agent B Copilot Propriétaire, Agent C Copilot Admin) reprenant l'architecture Élise 13 : sécurité (banned/JWT), mémoire courte Supabase + mémoire sémantique gbrain (B/C), cœur DeepSeek + AI Agent à outils, post-traitement (FORMAT RESPONSE, analyse mots-clés) et alertes Telegram. Ajout de la migration des tables de mémoire et d'un README d'import.
+- **files**: `docs/n8n/kayvila-agent-a-visiteur.json`, `docs/n8n/kayvila-agent-b-proprietaire.json`, `docs/n8n/kayvila-agent-c-admin.json`, `docs/n8n/README.md`, `supabase/migrations/20260528_agents_memory.sql`
+- **why**: Doter Kayvila d'assistants IA par rôle (visiteur, propriétaire, admin) sur la base éprouvée du workflow Élise déjà en production.
+- **impact**: Workflows prêts à importer dans n8n (cloud `kenneson.app.n8n.cloud`) ; restent à câbler credentials (Supabase/DeepSeek/Telegram) + remplacer les placeholders domaine/gbrain/API key avant activation.
+- **verify**: `node` JSON.parse OK sur les 3 fichiers ; cohérence sources/cibles de connexions vérifiée (toutes valides). SQL et docs relus manuellement. Activation/test runtime à faire côté n8n par l'utilisateur.
+
 ### 2026-05-10 — Refonte page login avec vidéo + panneau 60/40
 
 - **type**: ui
