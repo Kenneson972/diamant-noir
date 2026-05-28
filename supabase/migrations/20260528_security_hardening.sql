@@ -127,3 +127,38 @@ begin
       );
   end if;
 end $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 5. VILLAS — Scinder INSERT (admin only) du reste (owner+admin)
+--    Fix: la policy FOR ALL était trop permissive — les owners pouvaient
+--    créer des villas. Désormais seul l'admin peut INSERT.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Supprimer l'ancienne policy FOR ALL trop permissive
+drop policy if exists "villas_manage_owner_admin" on public.villas;
+
+-- SELECT : publiées visibles par tous, owner voit les siennes, admin tout
+drop policy if exists "villas_select_owner_admin" on public.villas;
+create policy "villas_select_owner_admin" on public.villas 
+  for select 
+  using (
+    is_published = true 
+    or owner_id = auth.uid() 
+    or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'
+  );
+
+-- INSERT : admin UNIQUEMENT
+create policy "villas_insert_admin_only" on public.villas 
+  for insert 
+  with check (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+-- UPDATE : owner ou admin
+create policy "villas_update_owner_admin" on public.villas 
+  for update 
+  using (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
+  with check (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+-- DELETE : owner ou admin
+create policy "villas_delete_owner_admin" on public.villas 
+  for delete 
+  using (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
