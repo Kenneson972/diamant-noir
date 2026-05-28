@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -74,7 +75,7 @@ export default function FavorisPage() {
               <div key={v.id} className="group border border-navy/10 bg-white overflow-hidden">
                 <div className="aspect-[16/7] bg-navy/5 overflow-hidden relative">
                   {v.image_url ? (
-                    <img src={v.image_url} alt={v.name} className="w-full h-full object-cover" />
+                    <Image src={v.image_url} alt={v.name} className="w-full h-full object-cover"  fill />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-navy/15">
                       <Heart size={32} />

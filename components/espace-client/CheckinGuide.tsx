@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPin, Clock, Phone } from "lucide-react";
+import Image from "next/image";
 
 interface CheckinGuideProps {
   startDate: string;
@@ -71,7 +72,7 @@ export function CheckinGuide({
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-3">Photos d&apos;accès</p>
             <div className="grid grid-cols-2 gap-2">
               {checkinImages.map((url, i) => (
-                <img key={i} src={url} alt={`Accès étape ${i + 1}`} className="w-full aspect-[4/3] object-cover border border-navy/10" />
+                <Image key={i} src={url} alt={`Accès étape ${i + 1}`} className="w-full aspect-[4/3] object-cover border border-navy/10" />
               ))}
             </div>
           </div>

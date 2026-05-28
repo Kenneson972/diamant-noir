@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BookingCard } from "@/components/espace-client/BookingCard";
 import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
@@ -522,7 +523,7 @@ export default function EspaceClientPage() {
               >
                 <div className="aspect-[16/9] bg-navy/5 overflow-hidden">
                   {v.image_url ? (
-                    <img src={v.image_url} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={v.image_url} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"  fill />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-navy/10 text-[10px] uppercase">Kayvila</div>
                   )}

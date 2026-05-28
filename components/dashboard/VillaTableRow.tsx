@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Building2 } from "lucide-react";
@@ -29,8 +30,7 @@ export function VillaTableRow({ villa }: { villa: VillaRow }) {
       <tr className="hover:bg-gray-50">
         <td className="px-4 py-3">
           {villa.image_url ? (
-            <img
-              src={villa.image_url}
+            <Image               src={villa.image_url}
               alt=""
               className="h-10 w-10 rounded object-cover"
             />

@@ -1,5 +1,6 @@
 import { ShieldCheck, Mail } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type VillaHost = {
   full_name: string | null;
@@ -12,8 +13,7 @@ function HostAvatar({ name, url }: { name: string; url: string | null }) {
   if (url) {
     return (
       <div className="w-16 h-16 shrink-0 overflow-hidden border border-navy/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={url} alt={name} className="w-full h-full object-cover" />
+        <Image src={url} alt={name} fill className="w-full h-full object-cover" />
       </div>
     );
   }

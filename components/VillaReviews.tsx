@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Star } from "lucide-react";
 
 interface Review {
@@ -47,8 +48,7 @@ function ReviewerAvatar({ review }: { review: Review }) {
   if (review.avatar_url) {
     return (
       <div className="w-8 h-8 shrink-0 overflow-hidden border border-navy/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={review.avatar_url} alt={name} className="w-full h-full object-cover" />
+        <Image src={review.avatar_url} alt={name} fill className="w-full h-full object-cover" />
       </div>
     );
   }
