@@ -22,6 +22,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Seul l'admin peut créer une villa
+    const role = userData.user.user_metadata?.role;
+    if (role !== "admin") {
+      return NextResponse.json({ error: "Forbidden — admin only" }, { status: 403 });
+    }
+
     // Allow admin to choose owner_id; fallback to self if not provided
     const insertPayload: Record<string, unknown> = { ...payload };
     if (!insertPayload.owner_id) {

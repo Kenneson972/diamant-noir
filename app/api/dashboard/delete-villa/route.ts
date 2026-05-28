@@ -36,6 +36,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Seul l'admin peut supprimer une villa
+    const role = userData.user.user_metadata?.role;
+    if (role !== "admin") {
+      return NextResponse.json({ error: "Forbidden — admin only" }, { status: 403 });
+    }
+
     const { error: deleteError } = await admin
       .from("villas")
       .delete()
