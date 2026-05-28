@@ -572,4 +572,31 @@ Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
 
 ---
 
+## 2026-05-28 (PM) — Corrections Cursor supplémentaires (3 sessions)
+
+### Session 1 — Cleanup doublons + Import Airbnb
+- Suppression `VillaAmenitiesEditorWrapper` (doublon avec nouveaux champs tags)
+- Bouton "Import Airbnb" : appelle `/api/import-airbnb`, remplit 13 champs + photos
+- Nettoyage fiche publique : suppression "Les incontournables", fallback amenities → equipment_interior
+
+### Session 2 — Import Magique OTA (Wand2)
+- Remplacement bouton simple par carte d'import stylée (gold/navy, icône Wand2)
+- Champ URL séparé (`vf-ota-import-url`), checkbox "Compléter avec l'IA"
+- 26 champs remplis + photos + URL Airbnb
+
+### Session 3 — Ergonomie éditeur (ChipEditors, zéro JSON)
+- **ChipEditor** : composant réutilisable (8 instances) avec suggestions cliquables + input custom
+- **EmergencyContactsEditor** : formulaire répétable nom + téléphone
+- **RoomsEditor** : chambres répétables (nom, type lit, salle de bain privative)
+- **SeasonalPricesEditor** : saisons répétables (nom, dates, prix/nuit)
+- Annulation : `select` presets + textarea custom
+- Booking terms : inputs structurés (acompte %, préavis, âge min)
+- Bouton "Me localiser" GPS (navigator.geolocation)
+- `formRef` sync entre éditeurs et handleSave
+
+### Nouveaux composants créés
+`ChipEditor.tsx`, `EmergencyContactsEditor.tsx`, `RoomsEditor.tsx`, `SeasonalPricesEditor.tsx`
+
+---
+
 **Derniere mise a jour du recap :** 2026-05-28
