@@ -22,6 +22,17 @@ CREATE TABLE IF NOT EXISTS banned_sessions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Journal de toxicité (agent A) : alimente l'auto-ban après 3 messages toxiques / heure
+CREATE TABLE IF NOT EXISTS toxicity_log (
+  id BIGSERIAL PRIMARY KEY,
+  session_id TEXT NOT NULL,
+  message TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_toxicity_log_session
+  ON toxicity_log (session_id, created_at);
+
 -- ----------------------------------------------------------------------------
 -- RLS : ces tables sont écrites/lues uniquement par n8n via la connexion
 -- Postgres directe (service-level). On active RLS et on n'ouvre AUCUNE policy
@@ -30,3 +41,4 @@ CREATE TABLE IF NOT EXISTS banned_sessions (
 -- ----------------------------------------------------------------------------
 ALTER TABLE conversation_memory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE banned_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE toxicity_log ENABLE ROW LEVEL SECURITY;

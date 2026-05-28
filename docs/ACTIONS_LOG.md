@@ -289,3 +289,18 @@ verify: vérification effectuée
 - **why**: Le split précédent (`total - 20% séjour`) reversait ménage/service au propriétaire, contraire au modèle commercial Kayvila
 - **impact**: Réservations directes site : reversement Stripe Connect aligné sur la FAQ
 - **verify**: Build OK
+
+## 2026-05-28 : Agents n8n Kayvila — corrections critiques (revue sécurité/robustesse)
+
+- **type**: security
+- **summary**: Durcissement des 3 workflows n8n suite à revue.
+  - **JWT (B & C)** : `Code - Auth JWT` vérifie désormais le token côté serveur via `GET /auth/v1/user` Supabase (signature validée) au lieu d'un décodage local du payload ; token invalide → refus.
+  - **Rôles (B)** : `authenticated` retiré des rôles valides (`owner`/`proprietaire`/`proprio` uniquement).
+  - **Auto-ban toxicité (A)** : nouveaux nœuds `Log Toxicité` → `Compter Toxicité` → `IF Seuil ?` → `Bannir Session` ; 3 messages toxiques / heure ⇒ bannissement (`ON CONFLICT DO NOTHING`).
+  - **`continueOnFail` (C)** : ajouté sur `Save Memory Supabase`.
+  - **Fallback catalogue (A)** : `Code - Vérifier Catalogue` injecte un message de repli si `/api/villas/public` est down/vide.
+  - **Slug gbrain horodaté (B & C)**, **`Init Session` garantissant un `sessionId` (A)**, **suppression des contextes redondants** (`Get Owner/Admin Context`, `Get Villa Submissions`) — l'agent passe par ses outils.
+- **files**: [`docs/n8n/kayvila-agent-a-visiteur.json`, `docs/n8n/kayvila-agent-b-proprietaire.json`, `docs/n8n/kayvila-agent-c-admin.json`, `supabase/migrations/20260528_agents_memory.sql`, `docs/n8n/README.md`, `docs/n8n/RECAP.md`]
+- **why**: Le décodage JWT non vérifié et l'absence d'anti-abus / de fallback étaient des failles bloquantes (P0)
+- **impact**: Auth réellement vérifiée, abus auto-bloqués, dégradation propre si API down ; workflows plus simples (moins de nœuds redondants)
+- **verify**: `JSON.parse` OK sur les 3 fichiers + script de cohérence des connexions (aucune référence orpheline)

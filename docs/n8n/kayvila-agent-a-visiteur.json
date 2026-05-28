@@ -14,20 +14,30 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-1200, 0],
+      "position": [-1320, 0],
       "webhookId": "kayvila-visitor-webhook"
     },
     {
       "parameters": {
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9));\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '' } }];"
+      },
+      "id": "a1-init-session",
+      "name": "Init Session",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1100, 0]
+    },
+    {
+      "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT session_id FROM banned_sessions WHERE session_id = '{{ $json.body.sessionid }}' LIMIT 1",
+        "query": "SELECT session_id FROM banned_sessions WHERE session_id = '{{ $json.sessionId }}' LIMIT 1",
         "options": {}
       },
       "id": "a1-check-banned",
       "name": "Postgres - Check Banned Session",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
-      "position": [-980, 0],
+      "position": [-880, 0],
       "alwaysOutputData": true,
       "continueOnFail": true,
       "credentials": {
@@ -36,7 +46,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const d = $input.first().json || {};\nconst banned = !!(d.session_id || (d[0] && d[0].session_id));\nreturn [{ json: { isBanned: banned ? 'true' : 'false', sessionId: $('Webhook').first().json.body.sessionid || '' } }];"
+        "jsCode": "const d = $input.first().json || {};\nconst banned = !!(d.session_id || (d[0] && d[0].session_id));\nreturn [{ json: { isBanned: banned ? 'true' : 'false', sessionId: $('Init Session').first().json.sessionId } }];"
       },
       "id": "a1-code-bancheck",
       "name": "Code - Ban Check",
@@ -74,7 +84,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Webhook').first().json.body.sessionid }}' ORDER BY created_at ASC LIMIT 20",
+        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Init Session').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 20",
         "options": {}
       },
       "id": "a1-get-memory",
@@ -102,12 +112,23 @@
     },
     {
       "parameters": {
+        "jsCode": "const c = $input.first().json || {};\nconst villas = Array.isArray(c.villas) ? c.villas : (Array.isArray(c) ? c : []);\nif (c.error || villas.length === 0) {\n  return [{ json: { catalog: '[]', catalogFallback: \"⚠️ Le catalogue est momentanément indisponible. Dis au visiteur : 'Notre service est temporairement perturbé. Tu peux nous contacter directement ou revenir dans quelques minutes.'\" } }];\n}\nreturn [{ json: { catalog: JSON.stringify(villas), catalogFallback: '' } }];"
+      },
+      "id": "a1-check-catalog",
+      "name": "Code - Vérifier Catalogue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [120, -360]
+    },
+    {
+      "parameters": {
         "assignments": {
           "assignments": [
-            { "id": "a1-f-msg", "name": "userMessage", "value": "={{ $('Webhook').first().json.body.message }}", "type": "string" },
-            { "id": "a1-f-sid", "name": "sessionId", "value": "={{ $('Webhook').first().json.body.sessionid }}", "type": "string" },
-            { "id": "a1-f-cat", "name": "catalog", "value": "={{ JSON.stringify($('Get Villa Catalog').first().json) }}", "type": "string" },
-            { "id": "a1-f-ctx", "name": "context", "value": "={{ $('Webhook').first().json.body.page || 'Visiteur site Kayvila' }}", "type": "string" }
+            { "id": "a1-f-msg", "name": "userMessage", "value": "={{ $('Init Session').first().json.message }}", "type": "string" },
+            { "id": "a1-f-sid", "name": "sessionId", "value": "={{ $('Init Session').first().json.sessionId }}", "type": "string" },
+            { "id": "a1-f-cat", "name": "catalog", "value": "={{ $('Code - Vérifier Catalogue').first().json.catalog }}", "type": "string" },
+            { "id": "a1-f-fb", "name": "catalogFallback", "value": "={{ $('Code - Vérifier Catalogue').first().json.catalogFallback }}", "type": "string" },
+            { "id": "a1-f-ctx", "name": "context", "value": "={{ $('Init Session').first().json.page || 'Visiteur site Kayvila' }}", "type": "string" }
           ]
         },
         "options": {}
@@ -137,7 +158,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const s = $('Webhook').first().json.body.sessionid || '';\nreturn [{ json: { response: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à ta disposition. Bonne continuation.\", sessionId: s, success: true } }];"
+        "jsCode": "const s = $('Init Session').first().json.sessionId;\nreturn [{ json: { response: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à ta disposition. Bonne continuation.\", sessionId: s, success: true } }];"
       },
       "id": "a1-code-toxic-reply",
       "name": "Code - Reponse Toxique",
@@ -147,8 +168,75 @@
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO toxicity_log (session_id, message) VALUES ('{{ $('Init Session').first().json.sessionId }}', '{{ ($('Init Session').first().json.message || '').replace(/'/g, \"''\") }}')",
+        "options": {}
+      },
+      "id": "a1-tox-log",
+      "name": "Postgres - Log Toxicité",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [780, 220],
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS count FROM toxicity_log WHERE session_id = '{{ $('Init Session').first().json.sessionId }}' AND created_at > NOW() - INTERVAL '1 hour'",
+        "options": {}
+      },
+      "id": "a1-tox-count",
+      "name": "Postgres - Compter Toxicité",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1000, 220],
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            { "id": "a1-c-seuil", "leftValue": "={{ Number($json.count) }}", "rightValue": 3, "operator": { "type": "number", "operation": "gte" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1-tox-if",
+      "name": "IF - Seuil Dépassé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1220, 220]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO banned_sessions (session_id, reason) VALUES ('{{ $('Init Session').first().json.sessionId }}', 'Auto-ban : 3+ messages toxiques en 1h') ON CONFLICT (session_id) DO NOTHING",
+        "options": {}
+      },
+      "id": "a1-tox-ban",
+      "name": "Postgres - Bannir Session",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1440, 220],
+      "continueOnFail": true,
+      "credentials": {
+        "postgres": { "id": "REPLACE_SUPABASE_PG", "name": "KAYVILA SUPABASE" }
+      }
+    },
+    {
+      "parameters": {
         "promptType": "define",
-        "text": "=Tu es le guide virtuel de Kayvila, plateforme de location de villas de luxe en Martinique.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nCATALOGUE VILLAS (données réelles, ne rien inventer) :\n{{ $json.catalog }}\n\nMESSAGE VISITEUR : {{ $json.userMessage }}\nCONTEXTE PAGE : {{ $json.context }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nTON RÔLE :\n- Aider les visiteurs à trouver la villa parfaite\n- Répondre aux questions sur les villas et la Martinique\n- Rediriger vers le formulaire de réservation\n\nTON TON :\n- Chaleureux et fier de la Martinique\n- Tutoiement naturel\n- Pas d'emojis sauf si le visiteur en utilise\n\nRÈGLES ABSOLUES :\n- Ne JAMAIS inventer un prix ou une disponibilité\n- Si tu ne sais pas → \"Je vérifie et je te confirme\"\n- Ne parler QUE de Kayvila et de la Martinique\n- Si le visiteur est indécis → poser 2-3 questions (dates, capacité, budget)\n- Rediriger vers le site pour réserver\n\nOUTILS DISPONIBLES :\n- kayvila-search : chercher des villas par mots-clés (capacité, localisation, prix)\n- postgres-chat-memory : te souvenir de la conversation",
+        "text": "=Tu es le guide virtuel de Kayvila, plateforme de location de villas de luxe en Martinique.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nCATALOGUE VILLAS (données réelles, ne rien inventer) :\n{{ $json.catalog }}\n{{ $json.catalogFallback }}\n\nMESSAGE VISITEUR : {{ $json.userMessage }}\nCONTEXTE PAGE : {{ $json.context }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nTON RÔLE :\n- Aider les visiteurs à trouver la villa parfaite\n- Répondre aux questions sur les villas et la Martinique\n- Rediriger vers le formulaire de réservation\n\nTON TON :\n- Chaleureux et fier de la Martinique\n- Tutoiement naturel\n- Pas d'emojis sauf si le visiteur en utilise\n\nRÈGLES ABSOLUES :\n- Ne JAMAIS inventer un prix ou une disponibilité\n- Si tu ne sais pas → \"Je vérifie et je te confirme\"\n- Ne parler QUE de Kayvila et de la Martinique\n- Si le visiteur est indécis → poser 2-3 questions (dates, capacité, budget)\n- Rediriger vers le site pour réserver\n\nOUTILS DISPONIBLES :\n- kayvila-search : chercher des villas par mots-clés (capacité, localisation, prix)\n- postgres-chat-memory : te souvenir de la conversation",
         "options": {}
       },
       "id": "a1-agent",
@@ -270,7 +358,8 @@
     }
   ],
   "connections": {
-    "Webhook": { "main": [[{ "node": "Postgres - Check Banned Session", "type": "main", "index": 0 }]] },
+    "Webhook": { "main": [[{ "node": "Init Session", "type": "main", "index": 0 }]] },
+    "Init Session": { "main": [[{ "node": "Postgres - Check Banned Session", "type": "main", "index": 0 }]] },
     "Postgres - Check Banned Session": { "main": [[{ "node": "Code - Ban Check", "type": "main", "index": 0 }]] },
     "Code - Ban Check": { "main": [[{ "node": "IF - Session Bannie ?", "type": "main", "index": 0 }]] },
     "IF - Session Bannie ?": {
@@ -281,7 +370,8 @@
     },
     "Code - Reponse Bannie": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
     "Get Long-Term Memory": { "main": [[{ "node": "Get Villa Catalog", "type": "main", "index": 0 }]] },
-    "Get Villa Catalog": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
+    "Get Villa Catalog": { "main": [[{ "node": "Code - Vérifier Catalogue", "type": "main", "index": 0 }]] },
+    "Code - Vérifier Catalogue": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
     "Edit Fields": { "main": [[{ "node": "IF - Toxique ?", "type": "main", "index": 0 }]] },
     "IF - Toxique ?": {
       "main": [
@@ -289,7 +379,17 @@
         [{ "node": "AI Agent", "type": "main", "index": 0 }]
       ]
     },
-    "Code - Reponse Toxique": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
+    "Code - Reponse Toxique": {
+      "main": [
+        [
+          { "node": "Respond to Webhook", "type": "main", "index": 0 },
+          { "node": "Postgres - Log Toxicité", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Postgres - Log Toxicité": { "main": [[{ "node": "Postgres - Compter Toxicité", "type": "main", "index": 0 }]] },
+    "Postgres - Compter Toxicité": { "main": [[{ "node": "IF - Seuil Dépassé ?", "type": "main", "index": 0 }]] },
+    "IF - Seuil Dépassé ?": { "main": [[{ "node": "Postgres - Bannir Session", "type": "main", "index": 0 }]] },
     "AI Agent": { "main": [[{ "node": "FORMAT RESPONSE", "type": "main", "index": 0 }]] },
     "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]] },
     "Postgres Chat Memory": { "ai_memory": [[{ "node": "AI Agent", "type": "ai_memory", "index": 0 }]] },

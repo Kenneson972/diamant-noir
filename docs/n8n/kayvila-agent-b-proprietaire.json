@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = ($('Webhook').first().json.body.token || $('Webhook').first().json.headers?.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const payload = JSON.parse(Buffer.from(raw.split('.')[1] || '', 'base64').toString('utf8'));\n  userId = payload.sub || payload.user_id || payload.userId || '';\n  role = payload.role || (payload.user_metadata && payload.user_metadata.role) || (payload.app_metadata && payload.app_metadata.role) || '';\n} catch (e) {}\nconst body = $('Webhook').first().json.body;\nconst valid = !!userId && ['owner', 'proprietaire', 'proprio', 'authenticated'].includes(String(role).toLowerCase());\nreturn [{ json: { userId, role, token: raw, sessionId: body.sessionid || ('owner-' + userId), userMessage: body.message || '', valid: valid ? 'true' : 'false' } }];"
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst hdr = $('Webhook').first().json.headers || {};\nconst raw = (b.token || hdr.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const response = await fetch('https://VOTRE-PROJET-SUPABASE.supabase.co/auth/v1/user', {\n    headers: { Authorization: `Bearer ${raw}`, apikey: 'VOTRE_SUPABASE_ANON_KEY' }\n  });\n  if (!response.ok) throw new Error('Token invalid');\n  const user = await response.json();\n  userId = user.id || '';\n  role = (user.user_metadata && user.user_metadata.role) || (user.app_metadata && user.app_metadata.role) || '';\n} catch (e) {}\nconst valid = !!userId && ['owner', 'proprietaire', 'proprio'].includes(String(role).toLowerCase());\nreturn [{ json: { userId, role, token: raw, sessionId: b.sessionid || ('owner-' + userId), userMessage: b.message || '', valid: valid ? 'true' : 'false' } }];"
       },
       "id": "b1-auth",
       "name": "Code - Auth JWT",
@@ -51,22 +51,6 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-840, 200]
-    },
-    {
-      "parameters": {
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/analytics-villas",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [ { "name": "Authorization", "value": "=Bearer {{ $json.token }}" } ]
-        },
-        "options": {}
-      },
-      "id": "b1-owner-context",
-      "name": "Get Owner Context",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [-840, -160],
-      "continueOnFail": true
     },
     {
       "parameters": {
@@ -108,7 +92,6 @@
             { "id": "b1-f-msg", "name": "userMessage", "value": "={{ $('Code - Auth JWT').first().json.userMessage }}", "type": "string" },
             { "id": "b1-f-sid", "name": "sessionId", "value": "={{ $('Code - Auth JWT').first().json.sessionId }}", "type": "string" },
             { "id": "b1-f-uid", "name": "userId", "value": "={{ $('Code - Auth JWT').first().json.userId }}", "type": "string" },
-            { "id": "b1-f-own", "name": "ownerContext", "value": "={{ JSON.stringify($('Get Owner Context').first().json) }}", "type": "string" },
             { "id": "b1-f-gb", "name": "gbrainContext", "value": "={{ JSON.stringify($('gbrain Recall').first().json) }}", "type": "string" }
           ]
         },
@@ -123,7 +106,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Tu es le copilote d'un propriétaire de villa sur Kayvila.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nMÉMOIRE SÉMANTIQUE (gbrain — décisions et contexte passés) :\n{{ $json.gbrainContext }}\n\nDONNÉES DASHBOARD (injectées, source de vérité) :\n{{ $json.ownerContext }}\n\nMESSAGE PROPRIÉTAIRE : {{ $json.userMessage }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nTON RÔLE :\n- Répondre aux questions business du propriétaire\n- Lui donner des insights sur ses performances\n- L'alerter sur les problèmes (tâches en retard, conflits de réservation)\n- Ne JAMAIS modifier une réservation ou un prix sans confirmation explicite\n\nTON TON :\n- Respectueux et direct\n- Créole bienvenu si le proprio l'utilise\n- Toujours sourcer les chiffres (\"Selon ton dashboard...\")\n\nCAPACITÉS :\n- \"Combien j'ai gagné ce mois-ci ?\" → chiffres + comparer au mois précédent\n- \"Qui arrive cette semaine ?\" → liste des check-ins avec détails\n- \"La villa Corail est dispo en juillet ?\" → vérifier le calendrier\n- \"Tâches en retard ?\" → lister avec priorité\n- \"Comment va la synchro Airbnb ?\" → diagnostiquer\n\nRÈGLES :\n- Ne contacter un client qu'avec validation explicite\n- Ne jamais modifier les prix\n- Alerter proactivement si problème détecté\n\nOUTILS : kayvila-my-villas, kayvila-my-bookings, kayvila-my-stats, kayvila-my-tasks, kayvila-ota-status, postgres-chat-memory",
+        "text": "=Tu es le copilote d'un propriétaire de villa sur Kayvila.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nMÉMOIRE SÉMANTIQUE (gbrain — décisions et contexte passés) :\n{{ $json.gbrainContext }}\n\nMESSAGE PROPRIÉTAIRE : {{ $json.userMessage }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nSOURCE DE VÉRITÉ : utilise SYSTÉMATIQUEMENT tes outils pour récupérer les données réelles (villas, réservations, stats, tâches, OTA). Ne jamais inventer un chiffre — appelle l'outil correspondant.\n\nTON RÔLE :\n- Répondre aux questions business du propriétaire\n- Lui donner des insights sur ses performances\n- L'alerter sur les problèmes (tâches en retard, conflits de réservation)\n- Ne JAMAIS modifier une réservation ou un prix sans confirmation explicite\n\nTON TON :\n- Respectueux et direct\n- Créole bienvenu si le proprio l'utilise\n- Toujours sourcer les chiffres (\"Selon ton dashboard...\")\n\nCAPACITÉS :\n- \"Combien j'ai gagné ce mois-ci ?\" → chiffres + comparer au mois précédent\n- \"Qui arrive cette semaine ?\" → liste des check-ins avec détails\n- \"La villa Corail est dispo en juillet ?\" → vérifier le calendrier\n- \"Tâches en retard ?\" → lister avec priorité\n- \"Comment va la synchro Airbnb ?\" → diagnostiquer\n\nRÈGLES :\n- Ne contacter un client qu'avec validation explicite\n- Ne jamais modifier les prix\n- Alerter proactivement si problème détecté\n\nOUTILS : kayvila-my-villas, kayvila-my-bookings, kayvila-my-stats, kayvila-my-tasks, kayvila-ota-status, postgres-chat-memory",
         "options": {}
       },
       "id": "b1-agent",
@@ -332,7 +315,7 @@
         "url": "http://gbrain-kayvila:8080/put_page",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { \"slug\": \"memory/owner-\" + $('Code - Auth JWT').first().json.userId + \"/\" + new Date().toISOString().slice(0,10), \"content\": ($('Code - Auth JWT').first().json.userMessage + ' → ' + $('FORMAT RESPONSE').first().json.response) } }}",
+        "jsonBody": "={{ { \"slug\": \"memory/owner-\" + $('Code - Auth JWT').first().json.userId + \"/\" + new Date().toISOString().replace(/[:.]/g, '-'), \"content\": ($('Code - Auth JWT').first().json.userMessage + ' → ' + $('FORMAT RESPONSE').first().json.response) } }}",
         "options": {}
       },
       "id": "b1-gbrain-capture",
@@ -360,12 +343,11 @@
     "Code - Auth JWT": { "main": [[{ "node": "IF - Auth Valide ?", "type": "main", "index": 0 }]] },
     "IF - Auth Valide ?": {
       "main": [
-        [{ "node": "Get Owner Context", "type": "main", "index": 0 }],
+        [{ "node": "Get Long-Term Memory", "type": "main", "index": 0 }],
         [{ "node": "Code - Reponse Refus", "type": "main", "index": 0 }]
       ]
     },
     "Code - Reponse Refus": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
-    "Get Owner Context": { "main": [[{ "node": "Get Long-Term Memory", "type": "main", "index": 0 }]] },
     "Get Long-Term Memory": { "main": [[{ "node": "gbrain Recall", "type": "main", "index": 0 }]] },
     "gbrain Recall": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
     "Edit Fields": { "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]] },

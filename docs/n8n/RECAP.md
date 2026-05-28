@@ -10,12 +10,12 @@
 ### Workflows n8n (importables)
 | Fichier | Nœuds | Webhook | Rôle |
 |---|---|---|---|
-| `kayvila-agent-a-visiteur.json` | 18 | `POST /webhook/kayvila-visitor` | Chatbot visiteur public (catalogue, recherche villa). |
-| `kayvila-agent-b-proprietaire.json` | 24 | `POST /webhook/kayvila-owner` | Copilot propriétaire (revenus, résas, tâches, OTA, alertes). |
-| `kayvila-agent-c-admin.json` | 28 | `POST /webhook/kayvila-admin` | Copilot admin (vue globale, soumissions, alertes critiques). |
+| `kayvila-agent-a-visiteur.json` | 24 | `POST /webhook/kayvila-visitor` | Chatbot visiteur public (catalogue, recherche villa, anti-abus). |
+| `kayvila-agent-b-proprietaire.json` | 23 | `POST /webhook/kayvila-owner` | Copilot propriétaire (revenus, résas, tâches, OTA, alertes). |
+| `kayvila-agent-c-admin.json` | 26 | `POST /webhook/kayvila-admin` | Copilot admin (vue globale, soumissions, alertes critiques). |
 
 ### Base de données
-- `supabase/migrations/20260528_agents_memory.sql` → tables `conversation_memory` + `banned_sessions` (RLS activé, aucun accès public).
+- `supabase/migrations/20260528_agents_memory.sql` → tables `conversation_memory` + `banned_sessions` + `toxicity_log` (RLS activé, aucun accès public).
 
 ### Routes API (créées dans le repo)
 Le **vrai blocage** : les routes appelées par les agents n'existaient pas. Toutes créées sous `app/api/` :
@@ -66,7 +66,7 @@ Webhook → Sécurité (banned / JWT) → Mémoire courte (Supabase)
 1. Exécuter la migration SQL `20260528_agents_memory.sql`.
 2. Importer les 3 JSON dans n8n (importés **inactifs**).
 3. Rattacher les credentials : `KAYVILA SUPABASE` (Postgres), `KAYVILA DEEPSEEK`, `KAYVILA TELEGRAM`.
-4. Remplacer les placeholders : `https://VOTRE-DOMAINE-KAYVILA`, `http://gbrain-kayvila:8080`, chat IDs Telegram.
+4. Remplacer les placeholders : `https://VOTRE-DOMAINE-KAYVILA`, `https://VOTRE-PROJET-SUPABASE.supabase.co` + `VOTRE_SUPABASE_ANON_KEY` (Auth JWT B/C), `http://gbrain-kayvila:8080`, chat IDs Telegram.
 5. Tester chaque webhook avec un vrai token, puis activer.
 
 ---
@@ -74,4 +74,24 @@ Webhook → Sécurité (banned / JWT) → Mémoire courte (Supabase)
 ## 5. Vérifications faites
 
 - `npx tsc --noEmit` : 0 erreur sur les routes créées (erreurs restantes = pré-existantes, dans `tests/a11y.spec.ts`).
-- Les 3 workflows JSON : parse OK + cohérence des connexions vérifiée.
+- Les 3 workflows JSON : parse OK + cohérence des connexions vérifiée (aucune référence orpheline).
+
+---
+
+## 6. Corrections critiques (revue post-livraison)
+
+Suite à la revue de sécurité / robustesse, les workflows ont été durcis :
+
+**P0 — bloquant**
+- **Vérif signature JWT (B & C)** : `Code - Auth JWT` ne décode plus localement le payload ; il appelle `GET /auth/v1/user` Supabase (signature validée côté serveur). Token invalide → refus silencieux.
+- **Rôles stricts (B)** : `authenticated` retiré ; seuls `owner` / `proprietaire` / `proprio` passent.
+- **Auto-ban toxicité (A)** : chaque message toxique est journalisé (`toxicity_log`) ; au-delà de **3 / heure**, la session est insérée dans `banned_sessions` (`ON CONFLICT DO NOTHING`).
+- **`continueOnFail` sur Save Memory (C)** : un échec d'écriture mémoire ne casse plus la réponse.
+- **Fallback catalogue (A)** : `Code - Vérifier Catalogue` détecte une API indisponible / vide et injecte un message de repli dans le prompt.
+
+**P1 — important**
+- **Slug gbrain horodaté (B & C)** : `…/<ISO complet>` (`replace(/[:.]/g,'-')`) au lieu de la date seule → plus d'écrasement intra-journée.
+- **`sessionId` garanti (A)** : nœud `Init Session` génère `visitor-<ts>-<rand>` si absent ; toutes les références pointent dessus.
+- **Suppression des contextes redondants (B & C)** : `Get Owner Context`, `Get Admin Context`, `Get Villa Submissions` supprimés. L'agent récupère tout via ses outils (source de vérité unique).
+
+> Nouveaux placeholders à remplacer : `https://VOTRE-PROJET-SUPABASE.supabase.co` et `VOTRE_SUPABASE_ANON_KEY` (dans `Code - Auth JWT` des agents B et C).
