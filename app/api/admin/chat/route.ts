@@ -1,40 +1,15 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { isAdminChatAllowedUser } from "@/lib/admin-chat-allowlist";
 import { getBookingPriceCents } from "@/lib/utils";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
-function getBearer(request: Request): string | null {
-  const h = request.headers.get("authorization") || "";
-  return h.startsWith("Bearer ") ? h.slice(7) : null;
-}
-
 export async function POST(request: Request) {
   try {
-    const token = getBearer(request);
-    if (!token) {
-      return NextResponse.json(
-        { error: "Unauthorized — Bearer requis (équipe / gérant uniquement)" },
-        { status: 401 }
-      );
-    }
+    await requireAdmin(request);
 
     const admin = supabaseAdmin();
-    const { data: userData, error: authErr } = await admin.auth.getUser(token);
-    if (authErr || !userData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!isAdminChatAllowedUser(userData.user)) {
-      return NextResponse.json(
-        {
-          error:
-            "Forbidden — réservé à l'équipe. Les propriétaires utilisent le copilot espace propriétaire.",
-        },
-        { status: 403 }
-      );
-    }
 
     const body = await request.json();
     const { message, sessionid, history } = body;
@@ -311,6 +286,9 @@ export async function POST(request: Request) {
       strategic_alert: data.strategic_alert || null,
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Admin Chat Error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }

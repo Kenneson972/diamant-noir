@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAuth, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get("authorization") || "";
-    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = await requireAuth(request);
 
     const { bookingId } = await request.json();
     if (!bookingId) {
@@ -17,10 +14,6 @@ export async function POST(request: Request) {
     }
 
     const admin = supabaseAdmin();
-    const { data: userData, error: userError } = await admin.auth.getUser(token);
-    if (userError || !userData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const { data: booking, error: bookingError } = await admin
       .from("bookings")
@@ -42,7 +35,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Villa not found" }, { status: 404 });
     }
 
-    if (villa.owner_id && villa.owner_id !== userData.user.id) {
+    // Check admin role
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const isAdmin = profile?.role === "admin";
+    if (!isAdmin && villa.owner_id !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -65,6 +66,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Server error" },
       { status: 500 }

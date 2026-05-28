@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get("authorization") || "";
-    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = await requireAdmin(request);
 
     const payload = await request.json();
     if (!payload?.name) {
@@ -17,21 +14,11 @@ export async function POST(request: Request) {
     }
 
     const admin = supabaseAdmin();
-    const { data: userData, error: userError } = await admin.auth.getUser(token);
-    if (userError || !userData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Seul l'admin peut créer une villa
-    const role = userData.user.user_metadata?.role;
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Forbidden — admin only" }, { status: 403 });
-    }
 
     // Allow admin to choose owner_id; fallback to self if not provided
     const insertPayload: Record<string, unknown> = { ...payload };
     if (!insertPayload.owner_id) {
-      insertPayload.owner_id = userData.user.id;
+      insertPayload.owner_id = userId;
     }
 
     const { data, error } = await admin
@@ -54,6 +41,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Server error" },
       { status: 500 }
