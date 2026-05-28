@@ -158,7 +158,7 @@ create policy "villas_update_owner_admin" on public.villas
   using (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
   with check (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
 
--- DELETE : owner ou admin
-create policy "villas_delete_owner_admin" on public.villas 
+-- DELETE : admin UNIQUEMENT
+create policy "villas_delete_admin_only" on public.villas 
   for delete 
-  using (owner_id = auth.uid() or auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  using (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
