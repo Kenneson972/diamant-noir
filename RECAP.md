@@ -448,4 +448,82 @@ Le gérant demande (1) un accès à l'historique des réservations passées par 
 
 ---
 
-**Derniere mise a jour du recap :** 2026-05-25
+**Derniere mise a jour du recap :** 2026-05-28
+
+---
+
+## 2026-05-28 — Security Hardening (15 commits)
+
+### Contexte
+
+Audit de sécurité complet : 12 vulnérabilités critiques et élevées corrigées sur la couche RLS Supabase et les routes API Next.js.
+
+### Phase 1 — Auth partagé (`lib/auth/server.ts`)
+
+- `getUserFromRequest(request)` — extrait le Bearer token, valide le JWT via Supabase
+- `requireAuth(request)` — throw `AuthError(401)` si non authentifié
+- `requireAdmin(request)` — throw `AuthError(403)` si non admin (vérifie profil + JWT metadata + email staff)
+- `verifyApiKey(request)` — compare le Bearer token à `CRON_API_KEY`
+- `AuthError` — classe Error avec propriété `status`
+
+### Phase 2 — RLS SQL
+
+Migration `supabase/migrations/20260528_security_hardening.sql` :
+
+| Table | Correctif |
+|-------|-----------|
+| `profiles` | Récursion infinie fixée : `auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'` (au lieu de sous-requête `profiles`) |
+| `villas` | 3 policies : `select_public` (is_published=true), `select_owner_admin`, `manage_owner_admin` |
+| `storage.villa-images` | Bloqué anon, authenticated only (insert/update/delete) + public read |
+| `storage.villa-submissions` | Bloqué anon, authenticated only (insert/select) |
+
+### Phase 3 — API Routes (10 routes protégées)
+
+| Route | Garde | Note |
+|-------|-------|------|
+| `admin/owners` GET | `requireAdmin` | — |
+| `stripe/connect-verify` POST | `requireAuth` | `ownerId` de la session, plus du body |
+| `stripe/connect-onboarding` POST | `requireAuth` | `ownerId` de la session, plus du body |
+| `reviews` POST | `requireAuth` | Vérifie que le booking appartient au posteur |
+| `villa-photo-upload` POST | `requireAuth` | Vérifie owner de la villa |
+| `sync` GET | Admin ou `CRON_API_KEY` | — |
+| `sync-ota` POST | `requireAuth` | Vérifie owner de la villa |
+| `analytics/villa` POST | `requireAuth` ou `CRON_API_KEY` | — |
+| `villa-submissions/confirm` POST | `requireAdmin` | — |
+| `villa-submissions` GET/PATCH | `requireAdmin` | POST reste public (formulaire) |
+
+### Règles invariantes
+
+- **Jamais** de `owner_id` ou `prix` depuis le body client — toujours depuis `auth.uid()`
+- `supabaseAdmin()` reste pour les opérations DB, l'auth est vérifiée avant
+- JWT role path correct : `auth.jwt() -> 'user_metadata' ->> 'role'` (pas `auth.jwt() ->> 'role'`)
+
+### Commits (15)
+
+```
+6d82ca0 fix: make RLS migration idempotent
+477bf47 feat: secure villa-submissions GET/PATCH
+0e42a49 feat: secure villa-submissions confirm
+db12f3f feat: secure analytics villa
+b919fe8 feat: secure sync-ota
+b9debbb feat: secure sync
+2dc10c9 feat: secure villa-photo-upload
+388064f feat: secure reviews POST
+ea27422 feat: secure stripe connect-onboarding
+234c1a6 feat: secure stripe connect-verify
+b47187f feat: secure admin owners
+e122357 fix(rls): security hardening migration
+b2c8d7b feat(auth): shared auth helpers
+8247069 docs: implementation plan
+40c7bbb docs: security hardening spec
+```
+
+### À faire manuellement
+
+- [ ] Appliquer la migration `20260528_security_hardening.sql` dans le SQL Editor Supabase
+- [ ] Tester les RLS avec `curl` + anon key
+- [ ] Ajouter `CRON_API_KEY` dans les env vars Vercel (pour les routes sync/analytics)
+
+---
+
+**Derniere mise a jour du recap :** 2026-05-28
