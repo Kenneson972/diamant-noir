@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Building2 } from "lucide-react";
+import { Building2, Calendar } from "lucide-react";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
 
 interface VillaRow {
@@ -30,8 +30,11 @@ export function VillaTableRow({ villa }: { villa: VillaRow }) {
       <tr className="hover:bg-gray-50">
         <td className="px-4 py-3">
           {villa.image_url ? (
-            <Image               src={villa.image_url}
+            <Image
+              src={villa.image_url}
               alt=""
+              width={40}
+              height={40}
               className="h-10 w-10 rounded object-cover"
             />
           ) : (
@@ -101,6 +104,14 @@ export function VillaTableRow({ villa }: { villa: VillaRow }) {
               className="text-sm text-gold hover:text-gold/80 font-medium"
             >
               Modifier
+            </Link>
+            <Link
+              href={`/admin/reservations?villa=${villa.id}&view=calendar`}
+              className="inline-flex items-center gap-1 text-sm text-navy/55 hover:text-navy transition-colors"
+              title="Calendrier des disponibilités"
+            >
+              <Calendar size={14} />
+              Calendrier
             </Link>
             <a
               href={`/villas/${villa.id}`}

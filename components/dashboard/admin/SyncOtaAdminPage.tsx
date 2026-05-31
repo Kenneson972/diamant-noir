@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Zap, RefreshCcw, CheckCircle2, XCircle, Wifi, AlertTriangle, ExternalLink } from "lucide-react";
+import { Zap, RefreshCcw, CheckCircle2, XCircle, Wifi, AlertTriangle, ExternalLink, Clock } from "lucide-react";
 import Link from "next/link";
 
 interface OTAChannel {
@@ -25,6 +25,19 @@ interface SyncResult {
   totalDeleted: number;
   message?: string;
   error?: string;
+  syncedAt?: string;
+}
+
+function timeAgo(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const mins = Math.round((now.getTime() - date.getTime()) / 60000);
+  if (mins < 1) return "À l'instant";
+  if (mins < 60) return `Il y a ${mins} min`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `Il y a ${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `Il y a ${days}j`;
 }
 
 export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
@@ -33,6 +46,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
 
   const handleSync = async (villaId: string) => {
     setSyncingVilla(villaId);
+    const syncedAt = new Date().toISOString();
     try {
       const res = await fetch("/api/sync-ota", {
         method: "POST",
@@ -42,12 +56,12 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
       const data = await res.json();
       setResults((prev) => ({
         ...prev,
-        [villaId]: { ...data, villaId, channels: data.channels ?? [] },
+        [villaId]: { ...data, villaId, channels: data.channels ?? [], syncedAt },
       }));
     } catch {
       setResults((prev) => ({
         ...prev,
-        [villaId]: { villaId, channels: [], totalInserted: 0, totalDeleted: 0, error: "Erreur réseau" },
+        [villaId]: { villaId, channels: [], totalInserted: 0, totalDeleted: 0, error: "Erreur réseau", syncedAt },
       }));
     } finally {
       setSyncingVilla(null);
@@ -64,7 +78,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-emerald-700">
             Villas connectées
@@ -82,6 +96,23 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
             Total villas
           </p>
           <p className="mt-2 text-2xl font-bold text-navy">{villas.length}</p>
+        </div>
+        <div className="rounded-lg border border-navy/10 bg-white p-5">
+          <p className="text-xs font-medium uppercase tracking-wider text-navy/60">
+            Dernière synchro globale
+          </p>
+          {(() => {
+            const syncedResults = Object.values(results).filter((r) => r.syncedAt);
+            if (syncedResults.length === 0) {
+              return <p className="mt-2 text-sm text-navy/40">—</p>;
+            }
+            const latest = syncedResults.sort((a, b) => new Date(b.syncedAt!).getTime() - new Date(a.syncedAt!).getTime())[0];
+            return (
+              <p className="mt-2 text-sm font-medium text-navy">
+                {timeAgo(latest.syncedAt!)}
+              </p>
+            );
+          })()}
         </div>
       </div>
 
@@ -124,6 +155,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
                           <span
                             key={i}
                             className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-medium capitalize"
+                            title={ch.ical_url ?? ""}
                           >
                             <Wifi size={10} />
                             {ch.label ?? ch.source}
@@ -144,6 +176,20 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
                       </button>
                     </div>
                   </div>
+
+                  {/* Statut dernière synchro */}
+                  {result?.syncedAt && (
+                    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-navy/40">
+                      <Clock size={10} />
+                      Dernière synchro : {timeAgo(result.syncedAt)}
+                    </div>
+                  )}
+                  {!result?.syncedAt && (
+                    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-navy/30">
+                      <Clock size={10} />
+                      Aucune synchro effectuée
+                    </div>
+                  )}
 
                   {result && (
                     <div className={`mt-3 rounded-lg border p-3 text-sm ${
@@ -175,7 +221,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
         </div>
       )}
 
-      {/* Villas sans OTA */}
+      {/* Villes sans OTA */}
       {villasWithoutOTA.length > 0 && (
         <div>
           <h2 className="mb-4 text-lg font-semibold text-navy">

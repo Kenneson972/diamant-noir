@@ -15,5 +15,6 @@ export const adminMenuItems: MenuItem[] = [
   { label: "Messagerie", href: "/admin/messagerie", icon: "MessageCircle" },
   { label: "Revenus", href: "/admin/revenus", icon: "DollarSign" },
   { label: "Sync OTA", href: "/admin/sync-ota", icon: "Zap" },
+  { label: "Tarification", href: "/admin/tarification", icon: "Percent" },
   { label: "Paramètres", href: "/admin/parametres", icon: "Settings" },
 ];

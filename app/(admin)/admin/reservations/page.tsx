@@ -5,18 +5,25 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { ReservationCalendar } from "@/components/dashboard/ReservationCalendar";
+import { CreateBookingModal } from "@/components/dashboard/CreateBookingModal";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
+import { LayoutList, Calendar, Plus, X } from "lucide-react";
 
 const PAGE_SIZE = 20;
 
 export default function AdminReservationsPage() {
   const supabase = getSupabaseBrowser();
   const [bookings, setBookings] = useState<any[]>([]);
+  const [allBookings, setAllBookings] = useState<any[]>([]); // pour le calendrier (sans pagination)
+  const [villas, setVillas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("all");
   const [villaFilter, setVillaFilter] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "calendar">("list");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -24,9 +31,19 @@ export default function AdminReservationsPage() {
     if (villaParam) {
       setVillaFilter(villaParam);
       setFilter("past");
-      setLoading(true);
     }
+    const viewParam = params.get("view");
+    if (viewParam === "calendar") setView("calendar");
   }, []);
+
+  // Charger la liste des villas pour les chips
+  useEffect(() => {
+    if (!supabase) return;
+    (async () => {
+      const { data } = await supabase.from("villas").select("id, name").order("name");
+      setVillas(data ?? []);
+    })();
+  }, [supabase]);
 
   const fetchBookings = async () => {
     if (!supabase) return;
@@ -57,20 +74,53 @@ export default function AdminReservationsPage() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchBookings(); }, [supabase, page, filter]);
+  // Charger TOUTES les résas pour le calendrier (sans pagination, mois courant seulement)
+  const fetchAllForCalendar = async () => {
+    if (!supabase) return;
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split("T")[0];
+
+    let query = supabase
+      .from("bookings")
+      .select("id, guest_name, villa_id, start_date, end_date, status, villas(name)")
+      .eq("status", "confirmed")
+      .or(`start_date.gte.${monthStart},end_date.gte.${monthStart}`)
+      .order("start_date");
+
+    if (villaFilter) query = query.eq("villa_id", villaFilter);
+
+    const { data } = await query;
+    setAllBookings(data ?? []);
+  };
+
+  useEffect(() => { fetchBookings(); }, [supabase, page, filter, villaFilter]);
+  useEffect(() => { fetchAllForCalendar(); }, [supabase, villaFilter, view]);
 
   const handleAction = async (id: string, status: string) => {
     if (!supabase) return;
     await supabase.from("bookings").update({ status, payment_status: status === "confirmed" ? "paid" : "cancelled" }).eq("id", id);
     fetchBookings();
+    fetchAllForCalendar();
   };
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+  const villaName = villaFilter ? (villas.find((v) => v.id === villaFilter)?.name ?? villaFilter.slice(0, 8)) : null;
 
   return (
     <div className="space-y-6">
-      <AdminPageIntro title="Réservations" description={`${total} séjours enregistrés.`} />
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <AdminPageIntro title="Réservations" description={`${total} séjours enregistrés.`} />
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-gold px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gold/90"
+        >
+          <Plus size={16} />
+          Nouvelle réservation
+        </button>
+      </div>
 
+      {/* Filtres statut */}
       <div className="flex gap-2 flex-wrap">
         {["all", "pending", "confirmed", "cancelled", "past"].map((f) => (
           <button key={f} onClick={() => { setFilter(f); setPage(1); setLoading(true); }}
@@ -80,7 +130,60 @@ export default function AdminReservationsPage() {
         ))}
       </div>
 
-      {loading ? (
+      {/* Filtre par villa (chips) + toggle vue */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40">Villa</span>
+          <button
+            onClick={() => { setVillaFilter(null); setPage(1); setLoading(true); }}
+            className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${!villaFilter ? "bg-navy text-white" : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"}`}
+          >
+            Toutes
+          </button>
+          {villas.map((v) => (
+            <button
+              key={v.id}
+              onClick={() => { setVillaFilter(v.id); setPage(1); setLoading(true); }}
+              className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${villaFilter === v.id ? "bg-navy text-white" : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"}`}
+            >
+              {v.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Toggle vue */}
+        <div className="flex rounded-lg border border-navy/10 overflow-hidden">
+          <button
+            onClick={() => setView("list")}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold transition-colors ${view === "list" ? "bg-navy text-white" : "bg-white text-navy/50 hover:text-navy"}`}
+          >
+            <LayoutList size={14} />
+            Liste
+          </button>
+          <button
+            onClick={() => setView("calendar")}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold transition-colors ${view === "calendar" ? "bg-navy text-white" : "bg-white text-navy/50 hover:text-navy"}`}
+          >
+            <Calendar size={14} />
+            Calendrier
+          </button>
+        </div>
+      </div>
+
+      {/* Badge villa filtrée */}
+      {villaFilter && villaName && (
+        <div className="inline-flex items-center gap-1.5 bg-gold/[0.08] border border-gold/20 rounded-full px-3 py-1 text-xs text-gold font-medium">
+          {villaName}
+          <button onClick={() => { setVillaFilter(null); setPage(1); setLoading(true); }} className="text-gold/60 hover:text-gold">
+            <X size={12} />
+          </button>
+        </div>
+      )}
+
+      {/* Contenu : liste ou calendrier */}
+      {view === "calendar" ? (
+        <ReservationCalendar bookings={allBookings} villaFilter={villaFilter} />
+      ) : loading ? (
         <p className="text-sm text-navy/55">Chargement...</p>
       ) : bookings.length === 0 ? (
         <div className="border border-navy/10 bg-white p-12 text-center">
@@ -166,6 +269,13 @@ export default function AdminReservationsPage() {
           )}
         </>
       )}
+
+      {/* Modal création réservation */}
+      <CreateBookingModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={() => { fetchBookings(); fetchAllForCalendar(); }}
+      />
     </div>
   );
 }
