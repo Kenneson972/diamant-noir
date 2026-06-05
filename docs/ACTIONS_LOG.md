@@ -562,3 +562,21 @@ verify: vérification effectuée
 - **why**: Annuler/confirmer en admin échouait — DB n'autorisait que `pending`/`confirmed`
 - **impact**: Actions admin réservations (annuler, confirmer, bulk) fonctionnent ; création manuelle `source: manual` OK
 - **verify**: Migration appliquée prod MCP ; test SQL `status=cancelled` OK ; `npm run build` OK
+
+## 2026-06-06T23:00:00Z : Fin session — handoff reprise
+
+- **type**: docs
+- **summary**: Dev server arrêté (port 3000) ; récap handoff dans `docs/logs/2026-06-05.md`, `docs/todo.md`, `docs/lessons.md` (bookings_status_check).
+- **files**: [`docs/logs/2026-06-05.md`, `docs/todo.md`, `docs/lessons.md`]
+- **why**: Reprise propre sans relancer au hasard ni perdre le contexte Supabase/admin
+- **impact**: Prochaine session : `git pull` + `npm run dev` + checklist validation admin
+- **verify**: `lsof -ti tcp:3000` vide ; `main` = `origin/main` @ `61425af`
+
+## 2026-06-06T23:30:00Z : Fix build Vercel — HeroUI Pro CI token
+
+- **type**: config | docs
+- **summary**: Vercel `installCommand` + `transpilePackages` HeroUI Pro ; doc `HEROUI_AUTH_TOKEN` (token CI/CD heroui.pro) dans `.env.local.example`, `docs/todo.md`, `docs/lessons.md`.
+- **files**: [`vercel.json`, `next.config.mjs`, `.env.local.example`, `docs/todo.md`, `docs/lessons.md`, `docs/logs/2026-06-05.md`]
+- **why**: Build Vercel échoue `Can't resolve '@heroui-pro/react'` — postinstall licence sans token CI
+- **impact**: Après ajout env var Vercel + redeploy cache clear, build prod OK
+- **verify**: action manuelle Vercel requise (HEROUI_AUTH_TOKEN) ; build local déjà OK

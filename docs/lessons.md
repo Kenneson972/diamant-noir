@@ -13,3 +13,5 @@
 - `.select("..., slug, ...")` sans migration préalable en prod.
 - `guest_email.eq.${uuid}` pour lier bookings à un client (utiliser `client_user_id` + email profil).
 - Filtre `?villa=xxx` forcé en « passées » sur `/admin/reservations` (masque les pending).
+- **`bookings_status_check`** : toujours aligner contrainte SQL avec `lib/constants.ts` / UI admin (`cancelled`, `paid`, `refunded`). Vérifier aussi `bookings_source_check` si POST admin utilise `source: "manual"`.
+- **HeroUI Pro sur Vercel** : `@heroui-pro/react` a un postinstall (CDN licence). Sur CI/Vercel, déclarer `HEROUI_AUTH_TOKEN` (token CI/CD du dashboard heroui.pro) dans les env vars Production + Preview. Sans ça : `Can't resolve '@heroui-pro/react'`. Local OK car login CLI `heroui-pro login`.
