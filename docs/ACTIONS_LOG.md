@@ -427,3 +427,12 @@ verify: vérification effectuée
 - **why**: Tour qualité post mega-fix pour prioriser la roadmap Semaine 1 admin
 - **impact**: Backlog structuré P0/P1/quick wins par page et par espace
 - **verify**: 3 sous-agents explore + vérification manuelle revenus admin et AdminMenuItems
+
+## 2026-06-06 : 10 finitions client Kayvila — prompt Élise
+
+- **type**: ui
+- **summary**: Implémentation `cursor-client-finishing-touches.md` — HoverCard/Sheet mobile, filtres minGuests, calculateur remboursement, AddToCalendar, carte OSM iframe, page comparer, LocalGuide, ré-réservation « Envie de revenir ? », partage UUID `booking_shares`.
+- **files**: [`components/villas/VillaListingCard.tsx`, `components/VillasMapView.tsx`, `components/VillasMapEmbed.tsx`, `components/VillaFilterBar.tsx`, `hooks/use-media-query.ts`, `lib/refund-policy.ts`, `components/booking/AddToCalendar.tsx`, `components/espace-client/LocalGuide.tsx`, `app/villas/comparer/page.tsx`, `app/espace-client/page.tsx`, `app/espace-client/reservations/[id]/page.tsx`, `app/share/[token]/page.tsx`, `app/api/booking/share/route.ts`, `supabase/migrations/20260606120000_booking_shares.sql`]
+- **why**: Finitions UX client demandées par Élise — conversion, rétention, partage séjour sécurisé
+- **impact**: Liste villas plus légère (sans Leaflet) ; espace client enrichi ; liens partage expirables 7j
+- **verify**: `npm run build` OK ; migration `booking_shares` à pousser en prod

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Map, LayoutGrid } from "lucide-react";
 import { VillaListingCard } from "@/components/villas/VillaListingCard";
 import type { VillaMapItem } from "./VillaLeafletMap";
-import type { LatLngBounds } from "leaflet";
 import VillaFilterBar, {
   DEFAULT_FILTERS,
   filterVillas,
@@ -15,11 +14,11 @@ import type { FilterState } from "./VillaFilterBar";
 import VillaQuickView from "./VillaQuickView";
 import { useLocale } from "@/contexts/LocaleContext";
 
-const VillaLeafletMap = dynamic(() => import("./VillaLeafletMap"), {
+const VillasMapEmbed = dynamic(() => import("./VillasMapEmbed"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-navy/5 flex items-center justify-center">
-      <span className="text-navy/20 text-sm tracking-widest uppercase font-bold animate-pulse">
+    <div className="flex h-full w-full items-center justify-center bg-navy/5">
+      <span className="animate-pulse text-sm font-bold uppercase tracking-widest text-navy/20">
         Chargement de la carte…
       </span>
     </div>
@@ -35,34 +34,22 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
   const { t, formatPrice } = useLocale();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mapVisible, setMapVisible] = useState(true);
-  const [activeFilters, setActiveFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const minGuests = dateQuery?.guests ? Number.parseInt(dateQuery.guests, 10) : null;
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    ...DEFAULT_FILTERS,
+    minGuests: minGuests && minGuests > 0 ? minGuests : null,
+  });
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
-  const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
 
-  // Stable callbacks
-  const handleBoundsChange = useCallback((bounds: LatLngBounds) => {
-    setMapBounds(bounds);
-  }, []);
-
-  const handleSelect = useCallback((id: string) => {
-    setQuickViewId(id);
-  }, []);
-
-  // Filtrage cumulatif : chips ∩ bounds
   const chipsActive = isFilterActive(activeFilters);
   const filteredSet = filterVillas(villas, activeFilters);
 
   const villasDisplay = villas.map((v) => {
     const passesChips = !chipsActive || filteredSet.has(v.id);
-    const passesViewport =
-      !mapBounds || mapBounds.contains(v.coords as [number, number]);
-    return { ...v, dimmed: !passesChips || !passesViewport };
+    return { ...v, dimmed: !passesChips };
   });
 
   const passCount = villasDisplay.filter((v) => !v.dimmed).length;
-  const viewportCount = mapBounds
-    ? villas.filter((v) => mapBounds.contains(v.coords as [number, number])).length
-    : null;
 
   const quickViewVilla = villas.find((v) => v.id === quickViewId) ?? null;
 
@@ -74,9 +61,9 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/55">
             {villas.length} propriété{villas.length > 1 ? "s" : ""}
           </p>
-          {viewportCount !== null && viewportCount < villas.length && (
+          {chipsActive && passCount < villas.length && (
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold/80">
-              · {viewportCount} {t("villas.in_view")}
+              · {passCount} {t("villas.filter.results")}
             </p>
           )}
         </div>
@@ -151,27 +138,15 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
         {/* ── Map panel desktop ── */}
         {mapVisible && (
           <div className="hidden md:block md:w-[42%] lg:w-[38%] shrink-0 sticky top-[120px] h-[calc(100dvh-120px)] min-h-[280px]">
-            <VillaLeafletMap
-              villas={villas}
-              hoveredId={hoveredId}
-              onHover={setHoveredId}
-              onSelect={handleSelect}
-              onBoundsChange={handleBoundsChange}
-            />
+            <VillasMapEmbed />
           </div>
         )}
       </div>
 
       {/* ── Map panel mobile (sous la liste) ── */}
       {mapVisible && (
-        <div className="md:hidden w-full h-[60dvh] min-h-[320px] border-t border-navy/10">
-          <VillaLeafletMap
-            villas={villas}
-            hoveredId={hoveredId}
-            onHover={setHoveredId}
-            onSelect={handleSelect}
-            onBoundsChange={handleBoundsChange}
-          />
+        <div className="h-[60dvh] min-h-[320px] w-full border-t border-navy/10 md:hidden">
+          <VillasMapEmbed />
         </div>
       )}
 

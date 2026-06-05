@@ -12,7 +12,8 @@ import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/e
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { RequestList } from "@/components/espace-client/RequestList";
 import { ReviewForm } from "@/components/espace-client/ReviewForm";
-import { downloadICS } from "@/lib/generate-ics";
+import { LocalGuide } from "@/components/espace-client/LocalGuide";
+import { AddToCalendar } from "@/components/booking/AddToCalendar";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 function BookingCardSkeleton() {
@@ -174,6 +175,7 @@ export default function EspaceClientPage() {
   const otherBookings = bookings.filter(
     (b) => b.id !== upcomingBooking?.id && b.status !== "pending"
   );
+  const pastBookings = bookings.filter((b) => new Date(b.end_date) < new Date());
 
   const totalNights = bookings.reduce((acc, b) => {
     const nights = Math.round((new Date(b.end_date).getTime() - new Date(b.start_date).getTime()) / 86400000);
@@ -419,33 +421,32 @@ export default function EspaceClientPage() {
           </div>
 
           {/* Calendrier + Partage */}
-          <div className="flex items-center gap-4 mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            {upcomingBooking ? (
+              <AddToCalendar
+                villaName={upcomingBooking.villa?.name ?? "Villa Kayvila"}
+                startDate={upcomingBooking.start_date}
+                endDate={upcomingBooking.end_date}
+                address={upcomingBooking.villa?.location}
+                className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/50 transition-colors hover:text-navy"
+              />
+            ) : null}
             <button
               type="button"
-              onClick={() => {
-                if (upcomingBooking) {
-                  downloadICS({
-                    villaName: upcomingBooking.villa?.name ?? "Villa Kayvila",
-                    startDate: upcomingBooking.start_date,
-                    endDate: upcomingBooking.end_date,
+              onClick={async () => {
+                if (!upcomingBooking) return;
+                try {
+                  const res = await fetch("/api/booking/share", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bookingId: upcomingBooking.id }),
                   });
-                }
-              }}
-              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/50 hover:text-navy transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                <rect x="1.5" y="2.5" width="13" height="12" rx="1" stroke="currentColor" strokeWidth="1" />
-                <path d="M1.5 6h13M5 1.5v2M11 1.5v2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-              </svg>
-              Ajouter au calendrier
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (upcomingBooking) {
-                  const token = btoa(upcomingBooking.id).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-                  const url = `${window.location.origin}/share/${token}`;
-                  navigator.clipboard.writeText(url).then(() => alert("Lien copié ! Partagez-le avec vos co-voyageurs."));
+                  const json = await res.json();
+                  if (!res.ok) throw new Error(json.error ?? "Erreur");
+                  await navigator.clipboard.writeText(json.shareUrl);
+                  alert("Lien copié ! Partagez-le avec vos co-voyageurs (valide 7 jours).");
+                } catch (err) {
+                  alert(err instanceof Error ? err.message : "Impossible de générer le lien");
                 }
               }}
               className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/50 hover:text-navy transition-colors"
@@ -500,10 +501,13 @@ export default function EspaceClientPage() {
         </div>
       )}
 
-      {/* Villas similaires */}
-      {similarVillas.length > 0 && (
-        <div className="space-y-4">
-          <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25">Villas similaires</p>
+      {/* Ré-réservation */}
+      {pastBookings.length > 0 && similarVillas.length > 0 && (
+        <section className="space-y-4 border-t border-navy/8 pt-8">
+          <div>
+            <h2 className="font-display text-2xl font-normal text-navy">Envie de revenir ?</h2>
+            <p className="mt-1 text-sm text-navy/55">Ces villas pourraient vous plaire</p>
+          </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {similarVillas.map((v: any) => (
               <Link
@@ -530,8 +534,11 @@ export default function EspaceClientPage() {
               </Link>
             ))}
           </div>
-        </div>
+        </section>
       )}
+
+      {/* Guide local */}
+      {(upcomingBooking || pastBookings.length > 0) && <LocalGuide />}
 
       {/* Services */}
       <div>

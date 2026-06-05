@@ -7,6 +7,8 @@ import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
 import { ArrowLeft, Calendar, MapPin, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
+import { getRefundAmountCents } from "@/lib/refund-policy";
+import { AddToCalendar } from "@/components/booking/AddToCalendar";
 import {
   Alert,
   AlertDescription,
@@ -87,7 +89,7 @@ export default function ReservationDetailPage() {
 
       const { data: bookingRaw, error: bookingError } = await supabase
         .from("bookings")
-        .select("id, villa_id, start_date, end_date, status, price, guest_name, guest_email")
+        .select("id, villa_id, start_date, end_date, status, price, total_price_cents, guest_name, guest_email")
         .eq("id", params.id as string)
         .single();
 
@@ -148,6 +150,9 @@ export default function ReservationDetailPage() {
   const isCancellable =
     ["confirmed", "pending"].includes(booking.status) &&
     new Date(booking.start_date) > today;
+
+  const totalCents = getBookingPriceCents(booking);
+  const refundCents = getRefundAmountCents(totalCents, booking.start_date);
 
   async function handleCancel() {
     setCancelStep("loading");
@@ -254,6 +259,17 @@ export default function ReservationDetailPage() {
               </div>
             )}
           </div>
+
+          {isConfirmed ? (
+            <div className="mt-6 border-t border-navy/8 pt-5">
+              <AddToCalendar
+                villaName={villa?.name ?? "Villa Kayvila"}
+                startDate={booking.start_date}
+                endDate={booking.end_date}
+                address={villa?.location ?? undefined}
+              />
+            </div>
+          ) : null}
         </CardContent>
       </Card>
 
@@ -294,8 +310,21 @@ export default function ReservationDetailPage() {
                     <p className="text-sm font-semibold text-navy">Confirmer l&apos;annulation</p>
                     <p className="text-xs text-navy/60">
                       Cette action est irréversible. Votre réservation sera marquée comme annulée.
-                      Consultez les conditions d&apos;annulation de la villa pour le remboursement.
                     </p>
+                    {refundCents !== null ? (
+                      <p className="text-xs text-navy/70">
+                        Remboursement estimé selon notre politique Kayvila :{" "}
+                        <span className="font-semibold text-navy">
+                          {refundCents > 0 ? formatCurrency(refundCents) : "Aucun remboursement"}
+                        </span>
+                        {refundCents > 0 && totalCents > 0 ? (
+                          <span className="text-navy/50">
+                            {" "}
+                            ({Math.round((refundCents / totalCents) * 100)} % du montant payé)
+                          </span>
+                        ) : null}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 

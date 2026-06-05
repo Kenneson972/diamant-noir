@@ -10,6 +10,7 @@ export type FilterState = {
   chambres: boolean;
   budget: null | "<800" | "800-1200" | ">1200";
   tier: null | "Signature" | "Prestige" | "Exclusive";
+  minGuests: number | null;
 };
 
 export const DEFAULT_FILTERS: FilterState = {
@@ -19,6 +20,7 @@ export const DEFAULT_FILTERS: FilterState = {
   chambres: false,
   budget: null,
   tier: null,
+  minGuests: null,
 };
 
 export function isFilterActive(filters: FilterState): boolean {
@@ -28,7 +30,8 @@ export function isFilterActive(filters: FilterState): boolean {
     filters.plage ||
     filters.chambres ||
     filters.budget !== null ||
-    filters.tier !== null
+    filters.tier !== null ||
+    filters.minGuests !== null
   );
 }
 
@@ -44,6 +47,7 @@ export function filterVillas(villas: VillaMapItem[], filters: FilterState): Set<
     if (filters.budget === "800-1200" && (v.price < 800 || v.price > 1200)) continue;
     if (filters.budget === ">1200" && v.price <= 1200) continue;
     if (filters.tier && v.tier !== filters.tier) continue;
+    if (filters.minGuests && (v.capacity === null || v.capacity < filters.minGuests)) continue;
     passing.add(v.id);
   }
   return passing;
