@@ -617,6 +617,15 @@ verify: vérification effectuée
 - **impact**: Cron OTA fonctionnel avec CRON_SECRET Vercel ; pas de résa sans split Connect ; remboursement admin ; proprio configure iCal ; agents n8n ont mémoire DB
 - **verify**: `npm run build` ; tables prod `conversation_memory` / `banned_sessions` / `toxicity_log` créées via `supabase db query --linked`
 
+## 2026-06-06T32:00:00Z : Clôture session — agents n8n v2 (Claude)
+
+- **type**: docs
+- **summary**: Pull `63bfae0` — fix sécurité/bugs workflows `kayvila-agent-{a,b,c}-v2.json` ; clôture journal 2026-06-06.
+- **files**: [`docs/n8n/kayvila-agent-a-visiteur-v2.json`, `docs/n8n/kayvila-agent-b-proprietaire-v2.json`, `docs/n8n/kayvila-agent-c-admin-v2.json`, `docs/logs/2026-06-06.md`, `docs/RECAP_ELISE_2026-06-06.md`]
+- **why**: Session terminée — traçabilité commit agents post-session Cursor/Claude
+- **impact**: Handoff complet ; import manuel n8n reste à faire
+- **verify**: `git pull` → HEAD `63bfae0`
+
 ## 2026-06-06T30:00:00Z : Resend validé en envoi réel (domaine kayvila.com)
 
 - **type**: config

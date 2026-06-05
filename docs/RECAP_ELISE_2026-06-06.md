@@ -3,7 +3,7 @@
 **Pour** : Elise  
 **Date** : 6 juin 2026  
 **Projet** : `diamant-noir` (conciergerie Kayvila)  
-**Branche** : `main` · dernier commit : `8368ef2`
+**Branche** : `main` · dernier commit : `63bfae0`
 
 ---
 
@@ -59,6 +59,8 @@ Projet : `wsdawdxucyuyopkpgjij`
 | `82a2367` | docs: prompt integration Resend (Elise) |
 | `4fa2e56` | docs: récap pré-livraison + CRON_SECRET |
 | `8368ef2` | feat(email): Resend templates, triggers, crons |
+| `61b048c` | docs: récap Resend tests kayvila.com |
+| `63bfae0` | fix(n8n): sécurité agents A/B/C v2 (Claude) |
 
 ---
 
@@ -179,7 +181,8 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 ## État fin de session
 
 - Localhost : dev possible (`npm run dev`)
-- Git : **à jour** `origin/main` · `8368ef2`
+- Git : **à jour** `origin/main` · `63bfae0`
+- Session **2026-06-06 clôturée** — voir bilan `docs/logs/2026-06-06.md`
 - Vercel : `HEROUI_AUTH_TOKEN`, `CRON_SECRET` ; **ajouter vars Resend** en prod
 - Resend : domaine **kayvila.com** validé ; envoi test OK (local)
 - Supabase prod : tables agents mémoire créées
