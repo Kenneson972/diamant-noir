@@ -247,7 +247,7 @@ export default function AdminReservationsPage() {
               setPage(1);
               setLoading(true);
             }}
-            className={`rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${filter === f ? "bg-navy text-white" : "border border-navy/10 bg-white text-navy/50 hover:border-navy/30"}`}
+            className={`inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${filter === f ? "bg-navy text-white" : "border border-navy/10 bg-white text-navy/50 hover:border-navy/30"}`}
           >
             {f === "all" ? "Tous" : (BOOKING_STATUS_LABELS[f] ?? f)}
           </button>

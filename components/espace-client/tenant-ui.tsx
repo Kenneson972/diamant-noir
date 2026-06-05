@@ -37,7 +37,7 @@ const buttonVariants = {
     ghost: "border-0 bg-transparent text-navy hover:bg-navy/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2",
   },
   size: {
-    sm: "min-h-[36px] px-3 py-1.5 text-[10px]",
+    sm: "min-h-[44px] px-3 py-2 text-[10px]",
     md: "min-h-[44px] px-6 py-3 text-[10px]",
   },
 };

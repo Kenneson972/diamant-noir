@@ -141,7 +141,7 @@ export function AdminReservationsDataGrid({
         <div className="flex gap-1.5">
           <Link
             href={`/admin/reservations/${item.id}`}
-            className="rounded bg-navy/5 px-2 py-1 text-[10px] font-semibold text-navy/70 hover:bg-navy/10"
+            className="inline-flex min-h-[44px] items-center rounded bg-navy/5 px-3 py-2 text-[11px] font-semibold text-navy/70 hover:bg-navy/10"
           >
             Voir
           </Link>
@@ -151,7 +151,7 @@ export function AdminReservationsDataGrid({
                 <button
                   type="button"
                   onClick={() => onConfirm(item.id)}
-                  className="rounded bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700 hover:bg-emerald-100"
+                  className="inline-flex min-h-[44px] items-center rounded bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100"
                 >
                   Confirmer
                 </button>
@@ -160,7 +160,7 @@ export function AdminReservationsDataGrid({
                 <button
                   type="button"
                   onClick={() => onCancel(item.id)}
-                  className="rounded bg-red-50 px-2 py-1 text-[10px] font-semibold text-red-700 hover:bg-red-100"
+                  className="inline-flex min-h-[44px] items-center rounded bg-red-50 px-3 py-2 text-[11px] font-semibold text-red-700 hover:bg-red-100"
                 >
                   Annuler
                 </button>

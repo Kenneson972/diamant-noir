@@ -43,7 +43,7 @@ export function OwnerInfoTab({ profile }: Props) {
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none"
+                className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
               />
             </div>
             <div>
@@ -53,7 +53,7 @@ export function OwnerInfoTab({ profile }: Props) {
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none"
+                className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
               />
             </div>
           </div>
@@ -64,7 +64,7 @@ export function OwnerInfoTab({ profile }: Props) {
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none"
+              className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/25 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
             />
           </div>
         </div>

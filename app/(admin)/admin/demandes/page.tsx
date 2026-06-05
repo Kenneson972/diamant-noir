@@ -173,7 +173,7 @@ export default function AdminDemandesPage() {
                       <select
                         value={r.assignee_id ?? ""}
                         onChange={(e) => handleAssign(r.id, e.target.value)}
-                        className="text-[10px] border border-navy/10 rounded-full px-2 py-1 bg-white text-navy/60 focus:outline-none focus:border-gold/50"
+                        className="min-h-[44px] rounded-full border border-navy/10 bg-white px-3 py-2 text-[10px] text-navy/60 focus:border-gold/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
                       >
                         <option value="">Non assigné</option>
                         {teamMembers.map((m) => (
@@ -209,7 +209,7 @@ export default function AdminDemandesPage() {
                       onChange={(e) => setResponseText((prev) => ({ ...prev, [r.id]: e.target.value }))}
                       placeholder="Réponse (optionnelle)..."
                       rows={2}
-                      className="w-full border border-navy/15 bg-white px-3 py-2 text-sm resize-none focus:outline-none focus:border-gold/50"
+                      className="w-full resize-none border border-navy/15 bg-white px-3 py-2 text-sm focus:border-gold/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
                     />
                     <div className="flex gap-2">
                       <button onClick={() => handleAction(r.id, "resolved", r.guest_id, r.type)}

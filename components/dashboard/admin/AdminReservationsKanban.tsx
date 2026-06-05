@@ -138,12 +138,17 @@ export function AdminReservationsKanban({ rows, onStatusChange }: AdminReservati
   });
 
   return (
-    <div className="overflow-x-auto pb-2">
+    <div className="relative pb-2">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-navy/40 md:hidden">
+        Glissez horizontalement pour voir toutes les colonnes →
+      </p>
+      <div className="overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]">
       <Kanban hideScrollBar className="min-h-[420px] items-start gap-3">
         {COLUMNS.map((col) => (
           <KanbanColumnBoard key={col.id} column={col.id} kanban={kanban} />
         ))}
       </Kanban>
+      </div>
     </div>
   );
 }

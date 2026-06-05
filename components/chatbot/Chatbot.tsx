@@ -268,7 +268,7 @@ export const Chatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group fixed z-50 flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-navy/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
+          className="group fixed z-[1060] flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-navy/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
           aria-label="Ouvrir le chat"
         >
           <Sparkles className="relative z-10 animate-pulse" size={28} />
@@ -281,14 +281,14 @@ export const Chatbot = () => {
       {/* Chat Window */}
       {isOpen && (
         <div
-          className={`fixed z-50 flex flex-col bg-white shadow-2xl transition-all ${
+          className={`fixed z-[1050] flex flex-col bg-white shadow-2xl transition-all ${
             isFullscreen || isMobile
               ? "inset-0 h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] rounded-none"
               : "bottom-6 right-6 h-[600px] max-h-[85dvh] w-[400px] max-w-[calc(100vw-2rem)] rounded-[32px]"
           }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 bg-navy p-5 text-white">
+          <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-navy p-5 text-white">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
@@ -312,7 +312,7 @@ export const Chatbot = () => {
                     content: "Chat réinitialisé. Comment puis-je vous aider ?"
                   }]);
                 }}
-                className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-white/10 transition-colors"
                 title="Réinitialiser"
               >
                 <RotateCcw size={16} />
@@ -320,7 +320,7 @@ export const Chatbot = () => {
               {!isMobile && (
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-white/10 transition-colors"
                   aria-label={isFullscreen ? "Réduire" : "Agrandir"}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -328,7 +328,7 @@ export const Chatbot = () => {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-white/10 transition-colors"
                 aria-label="Fermer"
               >
                 <X size={18} />

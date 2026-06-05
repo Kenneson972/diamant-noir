@@ -152,7 +152,16 @@ export function VideoScrollHero() {
   const [hasLoadError, setHasLoadError] = useState(false);
   const [timeoutReached, setTimeoutReached] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+  const [isMobileHero, setIsMobileHero] = useState(false);
   const errorCountRef = useRef(0);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobileHero(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   // ── Fallback timeout sécurité : 3s max ───────────────────────────────
   useEffect(() => {
@@ -210,6 +219,11 @@ export function VideoScrollHero() {
 
   // ── Preload ────────────────────────────────────────────────────────────
   useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setIsReady(true);
+      return;
+    }
+
     let loaded = 0;
     let errors = 0;
 
@@ -272,7 +286,7 @@ export function VideoScrollHero() {
     (progress: number) => {
       const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
       currentFrameRef.current = fi;
-      renderFrame(fi);
+      if (!isMobileHero) renderFrame(fi);
 
       const active = SECTIONS.find((s) => {
         const range = getActivationRange(s);
@@ -290,7 +304,7 @@ export function VideoScrollHero() {
         setActiveSectionId(newId);
       }
     },
-    [getActivationRange, renderFrame]
+    [getActivationRange, isMobileHero, renderFrame]
   );
 
   useScrollScrub(scrollDriverRef, isReady, handleScrollProgress);
@@ -483,10 +497,24 @@ export function VideoScrollHero() {
         </div>
       )}
 
+      {/* ── Fond statique mobile (perf) ─────────────────────────────── */}
+      {isMobileHero ? (
+        <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
+          <Image
+            src="/prestations-hero.png"
+            alt=""
+            fill
+            priority
+            className="object-cover opacity-55"
+            sizes="100vw"
+          />
+        </div>
+      ) : null}
+
       {/* ── Canvas fixe — fond de toute la section ─────────────────── */}
       <canvas
         ref={canvasRef}
-        className="fixed left-0 top-0 z-0 block"
+        className={`fixed left-0 top-0 z-0 block ${isMobileHero ? "hidden" : ""}`}
         aria-hidden
       />
 

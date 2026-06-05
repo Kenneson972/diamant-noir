@@ -1,17 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Fond hero : vidéo autoplay si le mouvement est autorisé ; sinon poster statique (perf + confort).
  *
- * SSR + premier rendu client : toujours le poster — évite mismatch d’hydratation
+ * SSR + premier rendu client : toujours le poster — évite mismatch d'hydratation
  * (`useSyncExternalStore` avec snapshot serveur ≠ `matchMedia` client si prefers-reduced-motion).
  * Après montage : passage vidéo si le mouvement est autorisé.
+ * Fallback poster si autoplay bloqué (iOS Safari, politiques navigateur).
  */
 export function HeroBackgroundMedia() {
   const [allowVideo, setAllowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -20,6 +22,14 @@ export function HeroBackgroundMedia() {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (allowVideo && videoRef.current) {
+      videoRef.current.play().catch(() => {
+        setAllowVideo(false);
+      });
+    }
+  }, [allowVideo]);
 
   if (!allowVideo) {
     return (
@@ -38,6 +48,7 @@ export function HeroBackgroundMedia() {
 
   return (
     <video
+      ref={videoRef}
       autoPlay
       muted
       loop

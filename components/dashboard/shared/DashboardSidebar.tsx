@@ -145,7 +145,7 @@ export function DashboardSidebar({
         <div className="fixed inset-0 z-50 md:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-none md:backdrop-blur-sm"
             onClick={onClose}
             aria-label="Fermer le menu"
           />

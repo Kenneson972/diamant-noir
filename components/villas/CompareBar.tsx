@@ -25,7 +25,7 @@ export function CompareBar() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-up">
+    <div className="fixed bottom-0 left-0 right-0 z-[1045] animate-fade-up">
       {/* Backdrop blur subtle */}
       <div className="border-t border-white/10 bg-navy/95 shadow-[0_-8px_40px_rgba(0,0,0,0.35)] backdrop-blur-none md:backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-3">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 sm:px-6">
@@ -67,9 +67,9 @@ export function CompareBar() {
                 <button
                   onClick={() => remove(item.id)}
                   aria-label={`Retirer ${item.name} de la comparaison`}
-                  className="ml-1 text-white/30 hover:text-white transition-colors shrink-0"
+                  className="ml-1 flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-white/30 transition-colors hover:text-white"
                 >
-                  <X size={12} />
+                  <X size={14} />
                 </button>
               </div>
             ))}

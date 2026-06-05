@@ -598,3 +598,12 @@ verify: vérification effectuée
 - **why**: Quick wins signalés par Elise (25 % hardcodé, FK dupliquée PGRST201)
 - **impact**: Revenus admin proprio alignés DB ; un seul embed FK villas sur bookings
 - **verify**: migration prod MCP ; `npm run build` ; QA `/admin/proprietaires/[id]` onglet Revenus
+
+## 2026-06-06T24:30:00Z : Audit responsive mobile — fixes Elise + P1/P2
+
+- **type**: ui | perf
+- **summary**: Chatbot header sticky + z-index 1050/1060 ; hero vidéo fallback autoplay ; CompareBar/CreateBookingModal z-index ; touch targets admin ; prestations canvas désactivé mobile ; messagerie flex ; focus-visible demandes/OwnerInfoTab.
+- **files**: [`components/chatbot/Chatbot.tsx`, `components/home/HeroBackgroundMedia.tsx`, `components/villas/CompareBar.tsx`, `components/dashboard/CreateBookingModal.tsx`, `components/dashboard/admin/AdminReservationsDataGrid.tsx`, `app/(admin)/admin/reservations/page.tsx`, `app/(admin)/admin/demandes/page.tsx`, `components/dashboard/admin/AdminReservationsKanban.tsx`, `components/prestations/VideoScrollHero.tsx`, `components/espace-client/tenant-ui.tsx`, `app/espace-client/messagerie/page.tsx`, `components/dashboard/admin/OwnerInfoTab.tsx`, `components/dashboard/shared/DashboardSidebar.tsx`, `docs/FIX_RESPONSIVE_MOBILE.md`]
+- **why**: « ok go pour tout » — implémentation complète audit responsive 390px (Elise + rapport /audit)
+- **impact**: Chat fermable sur mobile, overlays au bon niveau, cibles tactiles 44px, perf prestations mobile
+- **verify**: `npm run build` ; checklist `docs/FIX_RESPONSIVE_MOBILE.md`

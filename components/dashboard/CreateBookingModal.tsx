@@ -96,11 +96,15 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[1080] flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-navy/[0.06]">
           <h2 className="text-lg font-semibold text-navy">Nouvelle réservation</h2>
-          <button onClick={onClose} className="text-navy/30 hover:text-navy">
+          <button
+            onClick={onClose}
+            aria-label="Fermer"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center text-navy/30 hover:text-navy"
+          >
             <X size={20} />
           </button>
         </div>

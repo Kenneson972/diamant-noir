@@ -124,7 +124,7 @@ export default function MessageriePage() {
   }
 
   return (
-    <div className="flex flex-col min-h-0">
+    <div className="flex min-h-[min(100dvh,900px)] flex-col">
       <PageTopbar title="Messagerie" />
 
       {booking ? (
@@ -144,10 +144,7 @@ export default function MessageriePage() {
         </div>
       ) : null}
 
-      <div
-        className="flex-1 min-h-0 overflow-hidden"
-        style={{ height: "calc(100dvh - 280px)", minHeight: 400 }}
-      >
+      <div className="flex min-h-[400px] flex-1 flex-col overflow-hidden">
         <TenantChatbot
           guestEmail={user.email}
           guestName={user.name}

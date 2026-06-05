@@ -126,45 +126,19 @@ export function HeroBackgroundMedia() {
 
 ## Fix 4 — Dashboard proprio/admin : sidebar mobile sans overlay ni bouton fermer
 
-**Fichier** : Composant sidebar dashboard (probablement `components/dashboard/Sidebar.tsx` ou `app/dashboard/layout.tsx`)
+**Statut** : ✅ **Déjà corrigé** dans `components/dashboard/shared/DashboardSidebar.tsx` (overlay `bg-black/60` + bouton X mobile, lignes 144–164).
 
-**Problème** : Sur mobile 390px, la sidebar fait `w-64` (256px) — plus de la moitié de l'écran. Une fois ouverte, aucun overlay ni bouton X pour la refermer.
-
-**Fix** :
-- Ajouter un `<div>` overlay semi-transparent (`bg-black/50`) qui ferme la sidebar au clic
-- Ajouter un bouton X dans le header de la sidebar mobile
-- La sidebar desktop (`lg:` breakpoint) ne change pas
-
-```tsx
-// Pseudo-code — adapter au composant existant
-{sidebarOpen && (
-  <>
-    <div 
-      className="fixed inset-0 z-30 bg-black/50 lg:hidden" 
-      onClick={() => setSidebarOpen(false)} 
-    />
-    <aside className="fixed left-0 top-0 z-40 flex h-dvh w-64 flex-col ...">
-      <div className="flex items-center justify-between p-4 lg:hidden">
-        <span>Kayvila</span>
-        <button onClick={() => setSidebarOpen(false)} aria-label="Fermer le menu">
-          <X size={20} />
-        </button>
-      </div>
-      {/* ... contenu existant de la sidebar ... */}
-    </aside>
-  </>
-)}
-```
+Amélioration perf mobile (juin 2026) : `backdrop-blur-none` sur l'overlay mobile, blur conservé en `md:`.
 
 ---
 
 ## Checklist post-fix
 
-- [ ] Chatbot : ouvrir sur mobile, vérifier que le header reste visible et que le bouton X fonctionne
-- [ ] Chatbot : vérifier que le bouton 💎 (FAB) reste cliquable et au-dessus de tout
-- [ ] Vidéo : tester sur iOS Safari et/ou avec "prefers-reduced-motion: reduce" activé
-- [ ] Vidéo : vérifier que le poster s'affiche bien si la vidéo ne joue pas
-- [ ] Sidebar dashboard : overlay + bouton X fonctionnels en mobile
+- [x] Chatbot : header `shrink-0`, z-index 1050/1060, touch targets 44px
+- [x] Vidéo hero : fallback `.play().catch()` → poster
+- [x] Sidebar dashboard : overlay + bouton X (déjà en place)
+- [x] Audit complémentaire : CompareBar z-index, admin touch targets, prestations mobile léger, messagerie flex
+- [ ] Vérification manuelle iOS Safari recommandée
 - [ ] `npm run build` passe sans erreur
 
 ---
