@@ -20,22 +20,25 @@ export function KayvilaPressableButton({
   children,
   className,
   variant = "gold",
-  disabled,
+  disabled = false,
   type = "button",
   ...props
 }: KayvilaPressableButtonProps) {
+  const isDisabled = Boolean(disabled);
+
   return (
-    <PressableFeedback
+    <button
       type={type}
-      isDisabled={disabled}
+      disabled={isDisabled}
       className={cn("relative w-full overflow-hidden py-4", VARIANT_CLASSES[variant], className)}
       {...props}
     >
       {children}
       <PressableFeedback.Ripple
+        isDisabled={isDisabled}
         pressedOpacity={0.2}
         style={{ backgroundColor: "#D4AF37" }}
       />
-    </PressableFeedback>
+    </button>
   );
 }

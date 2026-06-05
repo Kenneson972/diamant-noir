@@ -14,6 +14,15 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — Fix KayvilaPressableButton disabled React 19
+
+- **type**: fix | ui
+- **summary**: `KayvilaPressableButton` — `<button disabled={boolean}>` natif + `PressableFeedback.Ripple` enfant ; évite `disabled="true"` string de HeroUI `PressableFeedback` root.
+- **files**: `components/ui/pro/kayvila-pressable-button.tsx`
+- **why**: Warning console React 19 sur fiche villa (`BookingForm` → Réserver).
+- **impact**: Ripple gold conservé ; attribut `disabled` booléen correct.
+- **verify**: `npm run build` OK après pull `ebd3eb6`
+
 ### 2026-06-06 — Restauration design Airbnb villa + Phase 4 HeroUI polish
 
 - **type**: ui
