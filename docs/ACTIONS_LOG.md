@@ -318,3 +318,16 @@ verify: vérification effectuée
 - **why**: Fermer les failles P0/P1 du prompt `cursor-mega-fix-2026-06-05.md` avant mise en prod
 - **impact**: Booking plus sûr et fiable ; revenus admin/proprio alignés sur le modèle commission FAQ ; tarifs saisonniers prêts côté table
 - **verify**: `tsc --noEmit`, `npm run build`, `npm run dev`
+
+## 2026-06-06 : RBAC JWT critique (phase-rbac-jwt-critical)
+
+- **type**: security
+- **summary**: Correction claim JWT RLS + routes create/delete-villa pour proprios.
+  - Migration `20260606120000_fix_rls_jwt_role_claim.sql` : 7 policies `auth.jwt() ->> 'role'` → `user_metadata.role` (5 tables en prod).
+  - `create-villa` : auth cookie/Bearer, proprio forcé `owner_id = user.id`, admin peut assigner.
+  - `delete-villa` : pattern `isAdmin || isOwner` aligné sur `update-villa`.
+  - Helper `getSessionUser()` dans `lib/auth/server.ts`.
+- **files**: [`supabase/migrations/20260606120000_fix_rls_jwt_role_claim.sql`, `supabase/migrations/20260501_rls_audit.sql`, `app/api/dashboard/create-villa/route.ts`, `app/api/dashboard/delete-villa/route.ts`, `lib/auth/server.ts`]
+- **why**: `auth.jwt() ->> 'role'` = `authenticated` pour tous — faille RBAC ; proprios bloqués sur create/delete villa
+- **impact**: Seuls les vrais admins passent les policies RLS ; proprios peuvent créer/supprimer leurs villas via API
+- **verify**: migration Supabase MCP OK, grep policies prod 0 résultat mauvais claim, lint routes OK

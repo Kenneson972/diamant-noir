@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { getSessionUser } from "@/lib/auth/server";
+import { isStaffAdmin } from "@/lib/auth/admin-access";
 import { checkCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
@@ -10,7 +11,11 @@ export async function POST(request: Request) {
   if (csrf) return csrf;
 
   try {
-    await requireAdmin(request);
+    const user = await getSessionUser(request);
+
+    if (!user) {
+      return NextResponse.json({ error: "Non connecté" }, { status: 401 });
+    }
 
     const { villaId } = await request.json();
     if (!villaId) {
@@ -18,6 +23,33 @@ export async function POST(request: Request) {
     }
 
     const admin = supabaseAdmin();
+
+    const { data: villa, error: villaError } = await admin
+      .from("villas")
+      .select("owner_id")
+      .eq("id", villaId)
+      .single();
+
+    if (villaError || !villa) {
+      return NextResponse.json({ error: "Villa not found" }, { status: 404 });
+    }
+
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const isAdmin = isStaffAdmin(
+      profile?.role,
+      user.user_metadata?.role as string | undefined,
+      user.email
+    );
+    const isOwner = villa.owner_id === user.id;
+
+    if (!isAdmin && !isOwner) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
     const { error: deleteError } = await admin
       .from("villas")
@@ -30,9 +62,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Server error" },
       { status: 500 }

@@ -1,3 +1,4 @@
+import type { User } from "@supabase/supabase-js";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { isStaffAdmin } from "@/lib/auth/admin-access";
 
@@ -19,6 +20,22 @@ export async function getUserFromRequest(request: Request) {
   if (error || !data?.user) return { user: null };
 
   return { user: { id: data.user.id, email: data.user.email } };
+}
+
+/** Session cookie (dashboard) ou Bearer token (admin form). */
+export async function getSessionUser(request: Request): Promise<User | null> {
+  const supabase = await getSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) return user;
+
+  const token = getBearer(request);
+  if (!token) return null;
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) return null;
+  return data.user;
 }
 
 // ─── Guards (throw on failure — caller catches and returns HTTP response) ──

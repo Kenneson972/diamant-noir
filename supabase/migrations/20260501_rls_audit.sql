@@ -10,14 +10,14 @@ BEGIN
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'contact_requests') THEN
     EXECUTE 'ALTER TABLE contact_requests ENABLE ROW LEVEL SECURITY';
     EXECUTE 'CREATE POLICY contact_requests_insert_anon ON contact_requests FOR INSERT WITH CHECK (true)';
-    EXECUTE 'CREATE POLICY contact_requests_select_admin ON contact_requests FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY contact_requests_select_admin ON contact_requests FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
   END IF;
 
   -- 2. villa_events
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'villa_events') THEN
     EXECUTE 'ALTER TABLE villa_events ENABLE ROW LEVEL SECURITY';
     EXECUTE 'CREATE POLICY villa_events_insert_anon ON villa_events FOR INSERT WITH CHECK (true)';
-    EXECUTE 'CREATE POLICY villa_events_select_admin ON villa_events FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY villa_events_select_admin ON villa_events FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
   END IF;
 
   -- 3. availability_alerts
@@ -31,22 +31,22 @@ BEGIN
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'villa_submissions') THEN
     EXECUTE 'ALTER TABLE villa_submissions ENABLE ROW LEVEL SECURITY';
     EXECUTE 'CREATE POLICY villa_submissions_insert_anon ON villa_submissions FOR INSERT WITH CHECK (true)';
-    EXECUTE 'CREATE POLICY villa_submissions_select_admin ON villa_submissions FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
-    EXECUTE 'CREATE POLICY villa_submissions_update_admin ON villa_submissions FOR UPDATE USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY villa_submissions_select_admin ON villa_submissions FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY villa_submissions_update_admin ON villa_submissions FOR UPDATE USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
   END IF;
 
   -- 5. admin_chat_logs
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'admin_chat_logs') THEN
     EXECUTE 'ALTER TABLE admin_chat_logs ENABLE ROW LEVEL SECURITY';
     EXECUTE 'CREATE POLICY admin_chat_logs_insert_admin ON admin_chat_logs FOR INSERT WITH CHECK (auth.role() = ''service_role'')';
-    EXECUTE 'CREATE POLICY admin_chat_logs_select_admin ON admin_chat_logs FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY admin_chat_logs_select_admin ON admin_chat_logs FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
   END IF;
 
   -- 6. ai_action_logs
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'ai_action_logs') THEN
     EXECUTE 'ALTER TABLE ai_action_logs ENABLE ROW LEVEL SECURITY';
-    EXECUTE 'CREATE POLICY ai_action_logs_insert_admin ON ai_action_logs FOR INSERT WITH CHECK (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
-    EXECUTE 'CREATE POLICY ai_action_logs_select_admin ON ai_action_logs FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY ai_action_logs_insert_admin ON ai_action_logs FOR INSERT WITH CHECK (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
+    EXECUTE 'CREATE POLICY ai_action_logs_select_admin ON ai_action_logs FOR SELECT USING (auth.role() = ''service_role'' OR auth.jwt() -> ''user_metadata'' ->> ''role'' = ''admin'')';
   END IF;
 
   -- 7. owner_alerts
