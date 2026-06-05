@@ -607,3 +607,12 @@ verify: vérification effectuée
 - **why**: « ok go pour tout » — implémentation complète audit responsive 390px (Elise + rapport /audit)
 - **impact**: Chat fermable sur mobile, overlays au bon niveau, cibles tactiles 44px, perf prestations mobile
 - **verify**: `npm run build` ; checklist `docs/FIX_RESPONSIVE_MOBILE.md`
+
+## 2026-06-06T25:00:00Z : Correctifs pré-livraison J-10 (audit Elise)
+
+- **type**: api | security | ui | sql
+- **summary**: Cron auth CRON_SECRET+Vercel ; blocage booking si proprio non onboardé Connect ; route `POST /api/stripe/admin-refund` ; UI iCal proprio (`VillaIcalPanel`) ; migration `agents_memory` appliquée prod.
+- **files**: [`lib/auth/server.ts`, `app/api/booking/route.ts`, `app/api/stripe/admin-refund/route.ts`, `components/dashboard/proprio/VillaIcalPanel.tsx`, `app/(proprio)/dashboard/villas/[villaId]/VillaEditClient.tsx`, `.env.local.example`, `supabase/migrations/20260528_agents_memory.sql`]
+- **why**: Audit `cursor-verification-pre-livraison.md` — gaps P0/P1 avant livraison 16 juin
+- **impact**: Cron OTA fonctionnel avec CRON_SECRET Vercel ; pas de résa sans split Connect ; remboursement admin ; proprio configure iCal ; agents n8n ont mémoire DB
+- **verify**: `npm run build` ; tables prod `conversation_memory` / `banned_sessions` / `toxicity_log` créées via `supabase db query --linked`

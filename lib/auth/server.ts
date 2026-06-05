@@ -91,12 +91,15 @@ export async function requireAdmin(request: Request): Promise<string> {
 }
 
 /**
- * Verify the request carries a valid CRON_API_KEY (for webhook/cron routes).
- * Returns true if the Bearer token matches process.env.CRON_API_KEY.
+ * Verify cron / internal API auth.
+ * Accepts Bearer matching CRON_API_KEY (custom) or CRON_SECRET (Vercel Cron auto-header).
  */
 export function verifyApiKey(request: Request): boolean {
-  const key = process.env.CRON_API_KEY;
-  if (!key) return false;
   const token = getBearer(request);
-  return token === key;
+  if (!token) return false;
+
+  const keys = [process.env.CRON_API_KEY, process.env.CRON_SECRET].filter(
+    (k): k is string => Boolean(k)
+  );
+  return keys.some((key) => token === key);
 }

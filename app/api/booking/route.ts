@@ -116,6 +116,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Villa non disponible" }, { status: 404 });
     }
 
+    // Stripe Connect : villa avec propriétaire → onboarding obligatoire avant paiement
+    if (villa.owner_id && stripeSecretKey) {
+      const { data: ownerProfile } = await supabase
+        .from("profiles")
+        .select("stripe_connect_onboarding_completed, stripe_connect_account_id")
+        .eq("id", villa.owner_id)
+        .maybeSingle();
+
+      const connectReady =
+        ownerProfile?.stripe_connect_onboarding_completed &&
+        ownerProfile?.stripe_connect_account_id;
+
+      if (!connectReady) {
+        return NextResponse.json(
+          {
+            error:
+              "Cette villa n'est pas encore disponible à la réservation en ligne. Le propriétaire doit finaliser son compte de paiement.",
+          },
+          { status: 503 }
+        );
+      }
+    }
+
     const nights = Math.round(
       (new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000
     );
