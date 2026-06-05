@@ -190,9 +190,13 @@ export interface Database {
           villa_id: string;
           booking_id: string | null;
           guest_name: string;
+          guest_id: string | null;
           rating: number;
           comment: string | null;
+          photos: Json;
+          status: string;
           created_at: string;
+          updated_at: string;
         };
         Insert: Record<string, Json>;
         Update: Record<string, Json>;
@@ -229,6 +233,9 @@ export interface Database {
           role: string;
           avatar_url: string | null;
           created_at: string;
+          suspended: boolean;
+          stripe_connect_account_id: string | null;
+          stripe_connect_onboarding_completed: boolean;
         };
         Insert: Record<string, Json>;
         Update: Record<string, Json>;

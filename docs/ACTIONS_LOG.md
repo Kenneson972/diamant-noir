@@ -500,6 +500,15 @@ verify: vérification effectuée
 - **impact**: Confirmation affichée même sans `stripe listen` en local ; message clair si finalisation lente
 - **verify**: `npm run build` OK
 
+## 2026-06-06 : Restauration colonnes modération `reviews` (P0 Élise)
+
+- **type**: sql | fix
+- **summary**: Migration `20260606190000_reviews_restore_admin_columns.sql` — réintroduit `status`, `photos`, `guest_id`, `updated_at` + RLS admin/guest ; backfill `approved` sur avis existants ; types `supabase.ts` alignés ; checklist prompt Élise synchronisée.
+- **files**: [`supabase/migrations/20260606190000_reviews_restore_admin_columns.sql`, `types/supabase.ts`, `docs/prompts/cursor-fix-conciergerie.md`]
+- **why**: `20260522_create_reviews.sql` avait DROP/recréé la table sans colonnes modération → `/admin/avis` et KPI `pendingReviews` cassés
+- **impact**: Modération avis et compteurs admin dashboard fonctionnels après application migration
+- **verify**: `npm run build` OK ; migration appliquée prod via MCP Supabase (`reviews_restore_admin_columns` — `wsdawdxucyuyopkpgjij`)
+
 ## 2026-06-06 : Fix contraste texte KayvilaPressableButton (Réserver / booking)
 
 - **type**: ui | fix

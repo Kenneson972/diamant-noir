@@ -324,14 +324,16 @@ Remplacer le message par un formulaire d'édition des saisons :
 ## Checklist — Ordre d'exécution
 
 - [ ] **P0-1** : Page livret restaurée (vérifier si le dossier existe, sinon git checkout)
-- [ ] **P0-2** : VillaHostCard → Kayvila Conciergerie (pas de proprio)
-- [ ] **P0-3** : Messagerie admin : noms clients au lieu d'UUIDs
-- [ ] **P0-4** : Notifications : triggers pour demandes, réponses, messages
-- [ ] **P0-5** : Tâches auto : création automatique après réservation
-- [ ] **P1-6** : Conciergerie : charger depuis `conciergerie_settings`
-- [ ] **P1-7** : Upload fichiers dans messagerie
-- [ ] **P2-8** : Supprimer comparateur de villas
-- [ ] **P2-9** : Saisons éditables dans paramètres
+- [ ] **P0-2** : Migration `reviews` — colonnes `status`, `photos`, `guest_id`, `updated_at` + RLS admin
+- [ ] **P0-3** : Page détail résa `/admin/reservations/[bookingId]` (vérifier si déjà présente)
+- [ ] **P0-4** : RLS admin bookings — migration `20260606140000_audit_dashboard_fixes.sql` appliquée
+- [ ] **P0-5** : Messagerie admin : noms clients au lieu d'UUIDs
+- [ ] **P0-6** : Notifications : triggers pour demandes, réponses, messages
+- [ ] **P0-7** : Tâches auto : création automatique après réservation
+- [ ] **P1-8** : Conciergerie : charger depuis `conciergerie_settings`
+- [ ] **P1-9** : Upload fichiers dans messagerie
+- [ ] **P2-10** : Supprimer comparateur de villas
+- [ ] **P2-11** : Saisons éditables dans paramètres
+- [ ] VillaHostCard **conservé** (décision Ken — pas de masquage proprio)
 - [ ] `npm run build` passe
-- [ ] `grep -rn "owner_id\|owner:owner_id\|VillaHost" app/villas/` → vérifier qu'aucune info proprio ne leak
 - [ ] Playfair Display intacte
