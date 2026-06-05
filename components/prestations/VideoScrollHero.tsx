@@ -20,8 +20,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import { ChevronDown, ArrowRight } from "lucide-react";
 
 // NE PAS appeler gsap.registerPlugin() au niveau module — crash SSR.
@@ -152,6 +151,7 @@ export function VideoScrollHero() {
   const [loadError, setLoadError] = useState(false);
   const [hasLoadError, setHasLoadError] = useState(false);
   const [timeoutReached, setTimeoutReached] = useState(false);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const errorCountRef = useRef(0);
 
   // ── Fallback timeout sécurité : 3s max ───────────────────────────────
@@ -259,128 +259,55 @@ export function VideoScrollHero() {
     };
   }, [renderFrame]);
 
-  // ── GSAP scroll ────────────────────────────────────────────────────────
+  const getActivationRange = useCallback((section: Section) => {
+    const segmentLength = section.endFrame - section.startFrame;
+    const offset = Math.round(segmentLength * 0.15);
+    return {
+      activationStart: section.startFrame + offset,
+      activationEnd: section.endFrame - offset,
+    };
+  }, []);
+
+  const handleScrollProgress = useCallback(
+    (progress: number) => {
+      const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
+      currentFrameRef.current = fi;
+      renderFrame(fi);
+
+      const active = SECTIONS.find((s) => {
+        const range = getActivationRange(s);
+        return fi >= range.activationStart && fi <= range.activationEnd;
+      });
+      const newId = active?.id ?? null;
+      if (newId !== currentSectionRef.current) {
+        currentSectionRef.current = newId;
+        if (newId && typeof window !== "undefined" && (window as Window & { posthog?: { capture: (e: string, p: object) => void } }).posthog) {
+          (window as Window & { posthog?: { capture: (e: string, p: object) => void } }).posthog?.capture(
+            "prestations_section_viewed",
+            { section_id: newId, timestamp: Date.now() }
+          );
+        }
+        setActiveSectionId(newId);
+      }
+    },
+    [getActivationRange, renderFrame]
+  );
+
+  useScrollScrub(scrollDriverRef, isReady, handleScrollProgress);
+
   useEffect(() => {
     if (!isReady) return;
-
-    // Enregistrement ici (client uniquement) — jamais au niveau module
-    gsap.registerPlugin(ScrollTrigger);
-
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [isReady, resizeCanvas]);
 
-    const driver = scrollDriverRef.current;
-    const transitionEl = transitionRef.current;
-    if (!driver) return;
-
-    SECTIONS.forEach((s) => {
-      const el = document.getElementById(`pvsh-section-${s.id}`);
-      const motion = el?.querySelector<HTMLElement>(".pvsh-motion");
-      if (el) gsap.set(el, { opacity: 0, willChange: "opacity" });
-      if (motion) gsap.set(motion, { y: 12, willChange: "transform" });
-    });
-
-    const getSEl = (id: string) => document.getElementById(`pvsh-section-${id}`);
-    const getDot = (id: string) => document.getElementById(`pvsh-dot-${id}`);
-
-    // Calcul intelligent du timing pour chaque section
-    const getActivationRange = (section: Section) => {
-      const segmentLength = section.endFrame - section.startFrame;
-      const offset = Math.round(segmentLength * 0.15);
-      return {
-        activationStart: section.startFrame + offset,
-        activationEnd: section.endFrame - offset,
-      };
-    };
-
-    const activateSection = (id: string | null) => {
-      // TODO: PostHog tracking if available
-      if (id && typeof window !== 'undefined' && (window as any).posthog) {
-        (window as any).posthog.capture('prestations_section_viewed', {
-          section_id: id,
-          timestamp: Date.now(),
-        });
-      }
-      // Placeholder console.log for development
-      if (id) console.log(`[Analytics] Section viewed: ${id}`);
-
-      SECTIONS.forEach((s) => {
-        const el = getSEl(s.id);
-        const dot = getDot(s.id);
-        const isActive = s.id === id;
-        const motion = el?.querySelector<HTMLElement>(".pvsh-motion");
-        if (el) {
-          gsap.to(el, {
-            opacity: isActive ? 1 : 0,
-            duration: isActive ? 0.7 : 0.4,
-            ease: isActive ? "power2.out" : "power2.in",
-            overwrite: "auto",
-          });
-        }
-        if (motion) {
-          gsap.to(motion, {
-            y: isActive ? 0 : 12,
-            duration: isActive ? 0.7 : 0.4,
-            ease: isActive ? "power2.out" : "power2.in",
-            overwrite: "auto",
-          });
-        }
-        if (dot) {
-          gsap.to(dot, {
-            backgroundColor: isActive ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.32)",
-            scale: isActive ? 1.5 : 1,
-            duration: 0.3,
-            overwrite: true,
-          });
-        }
-      });
-    };
-
-    // Main scrub trigger
-    const mainTrigger = ScrollTrigger.create({
-      trigger: driver,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1.2,
-      onUpdate: (self) => {
-        const fi = Math.min(Math.round(self.progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
-        currentFrameRef.current = fi;
-        renderFrame(fi);
-
-        const active = SECTIONS.find((s) => {
-          const range = getActivationRange(s);
-          return fi >= range.activationStart && fi <= range.activationEnd;
-        });
-        const newId = active?.id ?? null;
-        if (newId !== currentSectionRef.current) {
-          currentSectionRef.current = newId;
-          activateSection(newId);
-        }
-      },
-    });
-
-    // Hide overlays when transitioning to page content below
-    let fadeTrigger: ScrollTrigger | null = null;
-    if (transitionEl) {
-      fadeTrigger = ScrollTrigger.create({
-        trigger: transitionEl,
-        start: "top 60%",
-        onEnter: () => activateSection(null),
-        onLeaveBack: () => activateSection(SECTIONS[SECTIONS.length - 1].id),
-      });
-    }
-
-    return () => {
-      mainTrigger.kill();
-      fadeTrigger?.kill();
-      window.removeEventListener("resize", resizeCanvas);
-      // Supprimer will-change après les animations pour libérer GPU
-      SECTIONS.forEach((s) => {
-        const el = document.getElementById(`pvsh-section-${s.id}`);
-        if (el) el.style.willChange = "auto";
-      });
-    };
-  }, [isReady, renderFrame, resizeCanvas]);
+  useIntersectionTrigger(transitionRef, isReady, {
+    rootMargin: "-40% 0px 0px 0px",
+    threshold: 0,
+    onEnter: () => setActiveSectionId(null),
+    onLeaveBack: () => setActiveSectionId(SECTIONS[SECTIONS.length - 1]?.id ?? null),
+  });
 
   const loadProgress = Math.round((loadedCount / TOTAL_FRAMES) * 100);
 
@@ -594,12 +521,13 @@ export function VideoScrollHero() {
           <div
             key={section.id}
             id={`pvsh-section-${section.id}`}
-            className={`pointer-events-none fixed top-1/2 z-20 w-[min(390px,calc(100vw-2rem))] -translate-y-1/2 will-change-transform ${
+            className={`pvsh-scroll-panel pointer-events-none fixed top-1/2 z-20 w-[min(390px,calc(100vw-2rem))] -translate-y-1/2 will-change-transform ${
+              activeSectionId === section.id ? "is-active" : ""
+            } ${
               left
                 ? "left-4 sm:left-8 md:left-12 lg:left-16"
                 : "right-4 sm:right-8 md:right-12 lg:right-16"
             }`}
-            style={{ opacity: 0 }}
           >
             <div className="pvsh-motion relative">
             {/* Numéro décoratif */}
@@ -664,7 +592,7 @@ export function VideoScrollHero() {
           <div
             key={section.id}
             id={`pvsh-dot-${section.id}`}
-            className="h-1 w-1 rounded-full will-change-transform"
+            className={`pvsh-scroll-dot h-1 w-1 rounded-full will-change-transform ${activeSectionId === section.id ? "is-active" : ""}`}
             style={{ backgroundColor: "rgba(255,255,255,0.12)" }}
             title={section.title}
           />

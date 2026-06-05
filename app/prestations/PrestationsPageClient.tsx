@@ -15,8 +15,7 @@
 
 import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -133,6 +132,8 @@ export default function PrestationsPageClient() {
   // ── State ───────────────────────────────────────────────────────────────
   const [isReady, setIsReady] = useState(false);
   const [arrowVisible, setArrowVisible] = useState(true);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+  const [videoStackVisible, setVideoStackVisible] = useState(true);
   /** Parallax scroll + canvas : desktop uniquement (Tailwind `md` = 768px). */
   const [desktopParallax, setDesktopParallax] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : true
@@ -265,143 +266,50 @@ export default function PrestationsPageClient() {
     };
   }, [immersiveParallax, renderFrame]);
 
-  // ── GSAP scroll (desktop parallax uniquement) ───────────────────────────
+  const handleScrollProgress = useCallback(
+    (progress: number) => {
+      const POPUP_MIN_PROGRESS = 0.0001;
+      const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
+      currentFrameRef.current = fi;
+      renderFrame(fi);
+      if (typeof window !== "undefined" && (window as Window & { __PVSH_LOG_FRAMES?: boolean }).__PVSH_LOG_FRAMES) {
+        console.log("[prestations scroll] frame", fi, "progress", progress);
+      }
+      const active =
+        progress > POPUP_MIN_PROGRESS
+          ? SCROLL_SECTIONS.find((s) => fi >= s.startFrame && fi <= s.endFrame)
+          : undefined;
+      const newId = active?.id ?? null;
+      if (newId !== currentSectionRef.current) {
+        currentSectionRef.current = newId;
+        setActiveSectionId(newId);
+      }
+    },
+    [renderFrame]
+  );
+
+  useScrollScrub(scrollDriverRef, immersiveParallax && isReady, handleScrollProgress);
+
   useEffect(() => {
     if (!immersiveParallax || !isReady) return;
-
-    // Enregistrement ici — jamais au niveau module (crash SSR)
-    gsap.registerPlugin(ScrollTrigger);
-
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [immersiveParallax, isReady, resizeCanvas]);
 
-    const driver = scrollDriverRef.current;
-    const transition = transitionRef.current;
-    if (!driver) return;
+  useIntersectionTrigger(transitionRef, immersiveParallax && isReady, {
+    rootMargin: "-35% 0px 0px 0px",
+    threshold: 0,
+    onEnter: () => setActiveSectionId(null),
+    onLeaveBack: () =>
+      setActiveSectionId(SCROLL_SECTIONS[SCROLL_SECTIONS.length - 1]?.id ?? null),
+  });
 
-    // Initial states — opacité sur le panneau, `y` sur l'enfant `.pvsh-motion` pour ne pas
-    // écraser le translate-y Tailwind du conteneur (sinon les cartes « flottent » mal).
-    SCROLL_SECTIONS.forEach((s) => {
-      const el = document.getElementById(`pvsh-${s.id}`);
-      const motion = el?.querySelector<HTMLElement>(".pvsh-motion");
-      if (el) gsap.set(el, { opacity: 0, willChange: "opacity" });
-      if (motion) gsap.set(motion, { y: 28, willChange: "transform" });
-    });
-
-    const getSEl = (id: string) => document.getElementById(`pvsh-${id}`);
-    const getDot = (id: string) => document.getElementById(`pvsh-dot-${id}`);
-
-    const activateSection = (id: string | null) => {
-      currentSectionRef.current = id;
-      SCROLL_SECTIONS.forEach((s) => {
-        const el = getSEl(s.id);
-        const dot = getDot(s.id);
-        const active = s.id === id;
-        const motion = el?.querySelector<HTMLElement>(".pvsh-motion");
-        if (el) {
-          gsap.to(el, {
-            opacity: active ? 1 : 0,
-            duration: active ? 0.55 : 0.15,
-            ease: active ? "power3.out" : "power2.in",
-            overwrite: "auto",
-          });
-        }
-        if (motion) {
-          gsap.to(motion, {
-            y: active ? 0 : 20,
-            duration: active ? 0.55 : 0.15,
-            ease: active ? "power3.out" : "power2.in",
-            overwrite: "auto",
-          });
-        }
-        if (dot) {
-          gsap.to(dot, {
-            backgroundColor: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.32)",
-            scale: active ? 1.7 : 1,
-            duration: 0.3,
-            overwrite: true,
-          });
-        }
-      });
-    };
-
-    /** Tant que le scrub n'a pas commencé (haut de page / hero), aucune carte — évite le1er popup collé + disparition en remontant. */
-    const POPUP_MIN_PROGRESS = 0.0001;
-
-    const mainTrigger = ScrollTrigger.create({
-      trigger: driver,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 0.8,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        // Lecture directe du progrès (pas de lissage) pour les frames + popups,
-        // afin que tout reste synchro même en scroll rapide.
-        const rawProgress = self.direction === 0 ? progress : ScrollTrigger.getById("prestations-raw")?.progress ?? progress;
-        const fi = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
-        currentFrameRef.current = fi;
-        renderFrame(fi);
-        if (typeof window !== "undefined" && (window as Window & { __PVSH_LOG_FRAMES?: boolean }).__PVSH_LOG_FRAMES) {
-          console.log("[prestations scroll] frame", fi, "progress", progress);
-        }
-        const active =
-          progress > POPUP_MIN_PROGRESS
-            ? SCROLL_SECTIONS.find((s) => fi >= s.startFrame && fi <= s.endFrame)
-            : undefined;
-        const newId = active?.id ?? null;
-        if (newId !== currentSectionRef.current) {
-          activateSection(newId);
-        }
-      },
-    });
-
-    let fadeTrigger: ScrollTrigger | null = null;
-    if (transition) {
-      fadeTrigger = ScrollTrigger.create({
-        trigger: transition,
-        start: "top 65%",
-        onEnter: () => activateSection(null),
-        onLeaveBack: () => activateSection(SCROLL_SECTIONS[SCROLL_SECTIONS.length - 1].id),
-      });
-    }
-
-    /** Canvas/vignette/popups sont `fixed` : sans masquage, la dernière frame reste visible sous tout le hub + footer. */
-    const setVideoStackVisible = (visible: boolean) => {
-      const vis = visible ? "visible" : "hidden";
-      const canvas = canvasRef.current;
-      const vig = vignetteRef.current;
-      const dots = dotsRef.current;
-      const arrow = scrollArrowRef.current;
-      if (canvas) canvas.style.visibility = vis;
-      if (vig) vig.style.visibility = vis;
-      if (dots) dots.style.visibility = vis;
-      if (arrow) arrow.style.visibility = vis;
-      SCROLL_SECTIONS.forEach((s) => {
-        const el = document.getElementById(`pvsh-${s.id}`);
-        if (el) el.style.visibility = vis;
-      });
-    };
-
-    const videoZone = videoScrollZoneRef.current;
-    let videoHideTrigger: ScrollTrigger | null = null;
-    if (videoZone) {
-      videoHideTrigger = ScrollTrigger.create({
-        trigger: videoZone,
-        start: "top top",
-        end: "bottom top",
-        onLeave: () => setVideoStackVisible(false),
-        onEnterBack: () => setVideoStackVisible(true),
-      });
-    }
-
-    return () => {
-      mainTrigger.kill();
-      fadeTrigger?.kill();
-      videoHideTrigger?.kill();
-      setVideoStackVisible(true);
-      window.removeEventListener("resize", resizeCanvas);
-    };
-  }, [immersiveParallax, isReady, renderFrame, resizeCanvas]);
+  useIntersectionTrigger(videoScrollZoneRef, immersiveParallax && isReady, {
+    threshold: 0,
+    onEnter: () => setVideoStackVisible(true),
+    onLeaveBack: () => setVideoStackVisible(false),
+  });
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
@@ -415,7 +323,12 @@ export default function PrestationsPageClient() {
 
       {immersiveParallax ? (
         <>
-          <canvas ref={canvasRef} className="fixed left-0 top-0 z-0 block" aria-hidden />
+          <canvas
+            ref={canvasRef}
+            className="fixed left-0 top-0 z-0 block"
+            style={{ visibility: videoStackVisible ? "visible" : "hidden" }}
+            aria-hidden
+          />
 
 
           <div
@@ -423,6 +336,7 @@ export default function PrestationsPageClient() {
             aria-hidden
             className="pointer-events-none fixed inset-0 z-[1]"
             style={{
+              visibility: videoStackVisible ? "visible" : "hidden",
               background:
                 "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.6) 100%)",
             }}
@@ -436,12 +350,18 @@ export default function PrestationsPageClient() {
                 key={section.id}
                 id={`pvsh-${section.id}`}
                 suppressHydrationWarning
-                className={`pointer-events-none fixed z-20 w-[min(390px,calc(100vw-2rem))] will-change-[opacity,transform] max-md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] max-md:top-auto max-md:max-h-[min(48vh,400px)] max-md:translate-y-0 max-md:overflow-y-auto ${vCls} ${
+                className={`pvsh-scroll-panel pointer-events-none fixed z-20 w-[min(390px,calc(100vw-2rem))] will-change-[opacity,transform] max-md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] max-md:top-auto max-md:max-h-[min(48vh,400px)] max-md:translate-y-0 max-md:overflow-y-auto ${vCls} ${
+                  activeSectionId === section.id ? "is-active" : ""
+                } ${
                   left
                     ? "left-4 sm:left-8 md:left-12 lg:left-16"
                     : "right-4 sm:right-8 md:right-12 lg:right-16"
                 }`}
-                style={{ opacity: 0, minHeight: "280px", contain: "layout style" }}
+                style={{
+                  visibility: videoStackVisible ? "visible" : "hidden",
+                  minHeight: "280px",
+                  contain: "layout style",
+                }}
               >
                 <div className="pvsh-motion relative">
                   <div
@@ -490,12 +410,13 @@ export default function PrestationsPageClient() {
             ref={dotsRef}
             aria-hidden="true"
             className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 md:flex"
+            style={{ visibility: videoStackVisible ? "visible" : "hidden" }}
           >
             {SCROLL_SECTIONS.map((s) => (
               <div
                 key={s.id}
                 id={`pvsh-dot-${s.id}`}
-                className="h-1.5 w-1.5 rounded-full transition-all"
+                className={`pvsh-scroll-dot h-1.5 w-1.5 rounded-full ${activeSectionId === s.id ? "is-active" : ""}`}
                 style={{ backgroundColor: "rgba(255,255,255,0.32)" }}
               />
             ))}

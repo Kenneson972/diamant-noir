@@ -1,28 +1,10 @@
 "use client";
 
 import { useState, useRef, ChangeEvent } from "react";
-import Image from "next/image";
-import { Upload, X, Trash2 } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
 import { SortableImage } from "@/components/dashboard/SortableImage";
-import { GripVertical } from "lucide-react";
-
-/* ─── Props ─────────────────────────────────────────── */
 
 type VillaImageManagerProps = {
   imageUrls: string[];
@@ -31,8 +13,6 @@ type VillaImageManagerProps = {
   onMainImageChange: (url: string) => void;
   onError: (msg: string) => void;
 };
-
-/* ─── Composant ─────────────────────────────────────── */
 
 export function VillaImageManager({
   imageUrls,
@@ -44,12 +24,14 @@ export function VillaImageManager({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
+  const moveImage = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= imageUrls.length) return;
+    const urls = [...imageUrls];
+    [urls[index], urls[target]] = [urls[target], urls[index]];
+    onImagesChange(urls);
+  };
 
-  /* Upload fichier */
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -97,23 +79,6 @@ export function VillaImageManager({
     }
   };
 
-  /* Suppression */
-  const remove = (index: number) => {
-    const updated = [...imageUrls];
-    updated.splice(index, 1);
-    onImagesChange(updated);
-  };
-
-  /* Drag & drop */
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = imageUrls.indexOf(active.id);
-      const newIndex = imageUrls.indexOf(over.id);
-      onImagesChange(arrayMove(imageUrls, oldIndex, newIndex));
-    }
-  };
-
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -142,38 +107,31 @@ export function VillaImageManager({
       />
 
       {imageUrls.length > 0 ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={imageUrls}
-            strategy={rectSortingStrategy}
-          >
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
-              {imageUrls.map((url, idx) => (
-                <SortableImage
-                  key={url}
-                  url={url}
-                  isPrimary={idx === 0}
-                  onSetPrimary={(newUrl) => {
-                    const urls = [...imageUrls];
-                    const currIdx = urls.indexOf(newUrl);
-                    if (currIdx > 0) {
-                      [urls[0], urls[currIdx]] = [urls[currIdx], urls[0]];
-                      onImagesChange(urls);
-                    }
-                  }}
-                  onRemove={(remUrl) => {
-                    const urls = imageUrls.filter((u) => u !== remUrl);
-                    onImagesChange(urls);
-                  }}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
+          {imageUrls.map((url, idx) => (
+            <SortableImage
+              key={url}
+              url={url}
+              isPrimary={idx === 0}
+              canMoveUp={idx > 0}
+              canMoveDown={idx < imageUrls.length - 1}
+              onMoveUp={() => moveImage(idx, -1)}
+              onMoveDown={() => moveImage(idx, 1)}
+              onSetPrimary={(newUrl) => {
+                const urls = [...imageUrls];
+                const currIdx = urls.indexOf(newUrl);
+                if (currIdx > 0) {
+                  [urls[0], urls[currIdx]] = [urls[currIdx], urls[0]];
+                  onImagesChange(urls);
+                }
+              }}
+              onRemove={(remUrl) => {
+                const urls = imageUrls.filter((u) => u !== remUrl);
+                onImagesChange(urls);
+              }}
+            />
+          ))}
+        </div>
       ) : (
         <div className="flex min-h-[120px] items-center justify-center rounded-lg border-2 border-dashed border-navy/10 bg-navy/[0.02] text-[11px] text-navy/55">
           Aucune photo. Cliquez sur Ajouter pour en uploader.

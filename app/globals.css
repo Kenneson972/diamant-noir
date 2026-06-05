@@ -1,6 +1,240 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Tokens Kayvila — avant HeroUI pour aligner tailwind.config.ts (git) */
+@theme {
+  --breakpoint-xs: 430px;
+
+  --color-gold: #d4af37;
+  --color-navy: #0a0a0a;
+  --color-navy-900: #0b1d2e;
+  --color-navy-800: #132a41;
+  --color-offwhite: #fafafa;
+  --color-cream: #f5f0e8;
+  --color-champagne: #f0e6ce;
+  --color-sand: #ddd5c4;
+  --color-muted: #8b8b8b;
+  --color-border-subtle: #e5e3db;
+
+  --font-sans: var(--font-instrument-sans), system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+
+  --animate-fade-up: fade-up 0.6s ease-out forwards;
+  --animate-fade-up-slow: fade-up 0.8s ease-out forwards;
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-blur-fade: blur-fade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-fade-in-slow: blur-fade 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-line-draw: line-draw 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-stagger-fade: stagger-fade 0.5s ease-out forwards;
+  --animate-gold-shimmer: gold-shimmer 2.5s linear infinite;
+  --animate-scale-in: scale-in 0.3s ease-out forwards;
+  --animate-slide-in-right: slide-in-right 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-slide-in-left: slide-in-left 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-slide-up: slide-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  --animate-shake: shake 0.35s ease-in-out;
+
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes blur-fade {
+    0% {
+      opacity: 0;
+      filter: blur(8px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @keyframes line-draw {
+    0% {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+    100% {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+  }
+
+  @keyframes stagger-fade {
+    0% {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes gold-shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slide-in-right {
+    0% {
+      opacity: 0;
+      transform: translateX(32px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-in-left {
+    0% {
+      opacity: 0;
+      transform: translateX(-32px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-5px);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(-3px);
+    }
+    80% {
+      transform: translateX(3px);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@import "@heroui/styles";
+@import "@heroui-pro/react/css";
+
+/* Polices Kayvila — même mapping que tailwind.config.ts sur git */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+
+  .font-sans {
+    font-family: var(--font-instrument-sans), system-ui, sans-serif;
+  }
+}
+
+/* HeroUI tokens — palette Kayvila (gold / navy) */
+:root {
+  --accent: #d4af37;
+  --accent-foreground: #0a0a0a;
+  --accent-soft: color-mix(in oklab, #d4af37 18%, white);
+  --accent-soft-foreground: #0a0a0a;
+  --accent-hover: #c4a030;
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --default: color-mix(in oklab, #0a0a0a 6%, white);
+  --muted: color-mix(in oklab, #0a0a0a 45%, white);
+  --border: color-mix(in oklab, #0a0a0a 12%, white);
+  --overlay: #ffffff;
+  --segment: #ffffff;
+  --segment-foreground: #0a0a0a;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out both;
+  animation-timeline: view();
+}
+
+/* Prestations / video scroll — remplace GSAP pour les panneaux */
+.pvsh-scroll-panel {
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pvsh-scroll-panel.is-active {
+  opacity: 1;
+}
+
+.pvsh-scroll-panel .pvsh-motion {
+  transform: translateY(20px);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pvsh-scroll-panel.is-active .pvsh-motion {
+  transform: translateY(0);
+}
+
+.pvsh-scroll-dot {
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
+  transform: scale(1);
+}
+
+.pvsh-scroll-dot.is-active {
+  transform: scale(1.7);
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
 
 * {
   box-sizing: border-box;
@@ -18,8 +252,12 @@ body {
   overflow-x: hidden;
 }
 
-body {
+html {
   font-family: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: inherit;
   background-color: #FAFAFA;
   color: #0A0A0A;
 }

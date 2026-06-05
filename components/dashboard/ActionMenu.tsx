@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreVertical, Edit, Trash2, ExternalLink, CheckCircle, XCircle } from "lucide-react";
+import { Dropdown, Label } from "@heroui/react";
+import { MoreVertical } from "lucide-react";
 
 type ActionMenuItem = {
   label: string;
@@ -18,8 +18,8 @@ type ActionMenuProps = {
 
 export function ActionMenu({ items, trigger }: ActionMenuProps) {
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
+    <Dropdown>
+      <Dropdown.Trigger>
         <button
           type="button"
           aria-label="Menu d’actions"
@@ -27,33 +27,33 @@ export function ActionMenu({ items, trigger }: ActionMenuProps) {
         >
           {trigger || <MoreVertical size={18} className="text-navy/55" aria-hidden />}
         </button>
-      </DropdownMenu.Trigger>
-
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className="z-[100] min-w-[160px] overflow-hidden rounded-xl border border-navy/5 bg-white p-1 shadow-xl animate-in fade-in zoom-in-95 duration-100"
-          sideOffset={5}
-          align="end"
+      </Dropdown.Trigger>
+      <Dropdown.Popover className="min-w-[160px] border border-navy/5 bg-white p-0 shadow-xl">
+        <Dropdown.Menu
+          onAction={(key) => {
+            const idx = Number(key);
+            const item = items[idx];
+            if (item) item.onClick();
+          }}
         >
           {items.map((item, index) => (
-            <DropdownMenu.Item
+            <Dropdown.Item
               key={index}
-              onClick={(e) => {
-                e.stopPropagation();
-                item.onClick();
-              }}
-              className={`flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold outline-none transition-colors ${
+              id={String(index)}
+              textValue={item.label}
+              variant={item.variant === "danger" ? "danger" : undefined}
+              className={
                 item.variant === "danger"
-                  ? "text-red-500 hover:bg-red-50"
-                  : "text-navy hover:bg-navy/5"
-              }`}
+                  ? "text-red-500"
+                  : "text-navy"
+              }
             >
-              <span className="opacity-60">{item.icon}</span>
-              {item.label}
-            </DropdownMenu.Item>
+              <span className="mr-2 opacity-60">{item.icon}</span>
+              <Label>{item.label}</Label>
+            </Dropdown.Item>
           ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 }

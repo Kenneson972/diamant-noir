@@ -95,8 +95,11 @@ export default async function RootLayout({
     : DEFAULT_CURRENCY;
 
   return (
-    <html lang={initialLocale} className="scroll-smooth">
-      <body className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} bg-offwhite`}>
+    <html
+      lang={initialLocale}
+      className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
+    >
+      <body className="bg-offwhite font-sans">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-navy focus:text-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-gold">
           Aller au contenu
         </a>

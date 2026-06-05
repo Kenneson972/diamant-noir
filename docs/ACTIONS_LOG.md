@@ -14,6 +14,37 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — Fix build Tailwind v4 + HeroUI `@apply text-sm`
+
+- **type**: config | fix
+- **summary**: Suppression de `@config "../tailwind.config.ts"` dans `globals.css` (incompatible TW4 + `@heroui/styles`) ; migration tokens Kayvila (couleurs, fonts, animations) vers bloc `@theme`.
+- **files**: `app/globals.css`
+- **why**: Build/dev échouaient sur `accordion.css` — `Cannot apply unknown utility class text-sm` car le config v3 cassait la résolution des utilitaires dans les CSS HeroUI.
+- **impact**: `@heroui/styles` et `@heroui-pro/react/css` compilent correctement ; classes `text-navy`, `bg-gold`, `animate-fade-up` conservées via `@theme`.
+- **verify**: `npm run build` OK ; dev relancé sur `:3000`
+
+### 2026-06-06 — Migration Hero UI Pro + nettoyage dépendances
+
+- **type**: ui | config | perf
+- **summary**: Installation `@heroui/react` + `@heroui-pro/react` (CLI `heroui-pro install`), Tailwind v4, suppression Radix/FullCalendar/dnd-kit/GSAP ; calendriers → `RangeCalendar`/`Calendar` HeroUI ; dropdown/tabs → HeroUI ; photos villa → flèches ; scroll prestations → CSS natif ; Leaflet conservé pour carte interactive `/villas`.
+- **files**: `package.json`, `postcss.config.js`, `app/globals.css`, `components/booking/AvailabilityCalendar.tsx`, `components/{AdminCalendar,TeamCalendar}.tsx`, `components/dashboard/{ActionMenu,VillaImageManager,SortableImage}.tsx`, `components/ui/tabs.tsx`, `app/prestations/PrestationsPageClient.tsx`, `components/prestations/VideoScrollHero.tsx`, `lib/calendar/date-utils.ts`, `lib/scroll/use-scroll-scrub.ts`, `tsconfig.json`
+- **why**: Prompt `cursor-hero-ui-migration.md` — réduire ~17 packages UI, unifier sur HeroUI Pro, préserver design gold/navy.
+- **impact**: Bundle allégé ; booking/admin calendriers sur HeroUI ; animations prestations sans GSAP.
+- **verify**: `npm run build` OK ; MCP HeroUI Pro utilisé pour docs Calendar/Dropdown/Tabs
+
+---
+
+### 2026-06-06 — Retrait magic link sur `/login`
+
+- **type**: ui
+- **summary**: Suppression du bouton « Recevoir un lien magique (espace client) » et du handler `signInWithOtp` sur la page login.
+- **files**: `app/login/page.tsx`
+- **why**: Demande client — connexion uniquement par email + mot de passe sur `/login` (magic link conservé post-paiement sur `/success`).
+- **impact**: Plus d'option OTP sur l'écran de connexion ; flux mot de passe / inscription / mot de passe oublié inchangés.
+- **verify**: lint OK sur `app/login/page.tsx`
+
+---
+
 ### 2026-06-06 — Correctifs audit dashboard (Cursor + Élise)
 
 - **type**: fix | security | api | ui | sql

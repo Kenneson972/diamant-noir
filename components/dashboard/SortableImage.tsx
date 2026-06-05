@@ -1,49 +1,52 @@
 "use client";
 
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-import { GripVertical } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 type SortableImageProps = {
   url: string;
   isPrimary: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   onSetPrimary: (url: string) => void;
   onRemove: (url: string) => void;
 };
 
-export function SortableImage({ url, isPrimary, onSetPrimary, onRemove }: SortableImageProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: url });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 50 : "auto",
-    opacity: isDragging ? 0.5 : 1,
-  };
-
+export function SortableImage({
+  url,
+  isPrimary,
+  canMoveUp,
+  canMoveDown,
+  onMoveUp,
+  onMoveDown,
+  onSetPrimary,
+  onRemove,
+}: SortableImageProps) {
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="group relative aspect-square overflow-hidden rounded-2xl border border-navy/5 bg-white shadow-sm"
-    >
+    <div className="group relative aspect-square overflow-hidden rounded-2xl border border-navy/5 bg-white shadow-sm">
       <Image src={url} alt="Galerie" fill className="object-cover" />
-      
-      {/* Handle for dragging */}
-      <div 
-        {...attributes} 
-        {...listeners}
-        className="absolute left-2 top-2 z-10 cursor-grab rounded-lg bg-navy/40 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
-      >
-        <GripVertical size={14} />
+
+      <div className="absolute left-2 top-2 z-10 flex flex-col gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <button
+          type="button"
+          aria-label="Monter la photo"
+          disabled={!canMoveUp}
+          onClick={onMoveUp}
+          className="tap-target rounded-lg bg-navy/40 p-1 text-white disabled:opacity-30"
+        >
+          <ChevronUp size={14} />
+        </button>
+        <button
+          type="button"
+          aria-label="Descendre la photo"
+          disabled={!canMoveDown}
+          onClick={onMoveDown}
+          className="tap-target rounded-lg bg-navy/40 p-1 text-white disabled:opacity-30"
+        >
+          <ChevronDown size={14} />
+        </button>
       </div>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-navy/80 opacity-0 transition-opacity group-hover:opacity-100">
