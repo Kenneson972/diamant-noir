@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
-import Image from "next/image";
-import { Card, CardContent, Chip, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
+import { Chip } from "@heroui/react";
+import { VillaCoverImage } from "@/components/ui/villa-cover-image";
+import { pickVillaImageUrl } from "@/lib/villa-image";
+import { linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 
 interface Booking {
@@ -25,29 +27,22 @@ function getNights(start: string, end: string): number {
 
 function getStatus(booking: Booking): {
   label: string;
-  chipColor: "danger" | "success" | "warning" | "default";
+  color: "danger" | "success" | "warning" | "default";
 } {
   const now = new Date();
   const start = new Date(booking.start_date);
   const end = new Date(booking.end_date);
 
   if (booking.status === "cancelled") {
-    return { label: "Annulée", chipColor: "danger" };
+    return { label: "Annulée", color: "danger" };
   }
   if (now >= start && now <= end) {
-    return { label: "En cours", chipColor: "success" };
+    return { label: "En cours", color: "success" };
   }
   if (now < start) {
-    return { label: "À venir", chipColor: "warning" };
+    return { label: "À venir", color: "warning" };
   }
-  return { label: "Terminée", chipColor: "default" };
-}
-
-function villaImageUrl(villa?: Booking["villa"]): string | undefined {
-  if (!villa) return undefined;
-  if (villa.image_url) return villa.image_url;
-  const first = villa.image_urls?.[0];
-  return first || undefined;
+  return { label: "Terminée", color: "default" };
 }
 
 export function BookingCard({ booking }: { booking: Booking }) {
@@ -55,44 +50,38 @@ export function BookingCard({ booking }: { booking: Booking }) {
   const nights = getNights(booking.start_date, booking.end_date);
   const villaName = booking.villa?.name ?? "Villa";
   const location = booking.villa?.location;
-  const img = villaImageUrl(booking.villa);
+  const imageSrc = pickVillaImageUrl(booking.villa?.image_url, booking.villa?.image_urls ?? null);
 
   return (
-    <Card className="group/card gap-0 overflow-hidden rounded-none border border-navy/8 bg-white p-0 shadow-none transition-all hover:border-navy/15 hover:shadow-sm">
+    <article className="group/card overflow-hidden rounded-none border border-navy/8 bg-white transition-all hover:border-navy/15 hover:shadow-sm">
       <div className="relative aspect-[16/7] overflow-hidden bg-navy/5">
-        {img ? (
-          <Image
-            src={img}
-            alt={villaName}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 50vw"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center px-3">
-            <p className="max-w-full truncate text-center text-[10px] font-medium text-navy/25">{villaName}</p>
-          </div>
-        )}
+        <VillaCoverImage
+          src={imageSrc}
+          alt={villaName}
+          fill
+          className="object-cover transition-transform duration-700 group-hover/card:scale-[1.02]"
+          sizes="(max-width: 640px) 100vw, 50vw"
+        />
         <span className="absolute right-2.5 top-2.5">
-          <Chip color={status.chipColor} className="uppercase">
+          <Chip size="sm" variant="soft" color={status.color} className="uppercase">
             {status.label}
           </Chip>
         </span>
       </div>
 
-      <CardContent className="flex flex-col gap-4 p-5">
+      <div className="flex flex-col gap-4 p-5">
         <div className="min-w-0">
           <p className="truncate font-display text-base text-navy">{villaName}</p>
-          {location && (
+          {location ? (
             <p className="mt-0.5 flex items-center gap-1 text-xs text-navy/55">
-              <MapPin size={10} strokeWidth={1.25} />
+              <MapPin size={10} strokeWidth={1.25} aria-hidden />
               {location}
             </p>
-          )}
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2 text-sm text-navy/60">
-          <Calendar size={13} strokeWidth={1.25} className="shrink-0 text-gold" />
+          <Calendar size={13} strokeWidth={1.25} className="shrink-0 text-gold" aria-hidden />
           <span>
             {new Date(booking.start_date).toLocaleDateString("fr-FR", {
               day: "numeric",
@@ -114,7 +103,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
         <div className="mt-auto flex items-center justify-between border-t border-navy/5 pt-2">
           {booking.price != null || booking.total_price_cents != null ? (
             <span className="text-sm font-medium text-navy">
-              {formatCurrency(getBookingPriceCents(booking as any))}
+              {formatCurrency(getBookingPriceCents(booking))}
             </span>
           ) : (
             <span />
@@ -124,14 +113,14 @@ export function BookingCard({ booking }: { booking: Booking }) {
             className={linkAsButtonClasses(
               "ghost",
               "sm",
-              "rounded-none px-2 text-gold hover:text-navy uppercase no-underline"
+              "rounded-none px-2 uppercase text-gold no-underline hover:text-navy"
             )}
           >
             Détail
-            <ArrowRight size={11} strokeWidth={1.5} />
+            <ArrowRight size={11} strokeWidth={1.5} aria-hidden />
           </Link>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </article>
   );
 }

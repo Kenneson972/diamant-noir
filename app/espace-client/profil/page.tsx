@@ -3,18 +3,13 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
-import { FileText, Download, Heart, Calendar, Clock, Baby } from "lucide-react";
-import { Button } from "@/components/espace-client/tenant-ui";
+import { Download, Clock, Baby } from "lucide-react";
+import { Button, Chip } from "@heroui/react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Chip,
-  linkAsButtonClasses,
-  Spinner,
-} from "@/components/espace-client/tenant-ui";
+import { Spinner } from "@/components/espace-client/tenant-ui";
+import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
+import { tenantFieldClass, tenantLabelClass } from "@/components/espace-client/tenant-form-styles";
 
 export default function ProfilPage() {
   const supabase = getSupabaseBrowser();
@@ -52,7 +47,13 @@ export default function ProfilPage() {
   useEffect(() => {
     if (!supabase || !user?.id) return;
     (async () => {
-      const { data } = await supabase.from("profiles").select("allergies, special_occasion, special_occasion_date, estimated_arrival, needs_baby_bed, needs_high_chair").eq("id", user.id).maybeSingle();
+      const { data } = await supabase
+        .from("profiles")
+        .select(
+          "allergies, special_occasion, special_occasion_date, estimated_arrival, needs_baby_bed, needs_high_chair"
+        )
+        .eq("id", user.id)
+        .maybeSingle();
       if (data) {
         setAllergies(data.allergies ?? "");
         setSpecialOccasion(data.special_occasion ?? "");
@@ -65,42 +66,6 @@ export default function ProfilPage() {
   }, [supabase, user]);
 
   const metadata = user?.user_metadata ?? {};
-
-  if (loading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner size="lg" className="text-gold" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <Card className="max-w-lg rounded-none border border-navy/10 bg-white shadow-none">
-        <CardContent className="space-y-5 px-8 py-14 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-navy/30">Profil</p>
-          <p className="font-display text-xl text-navy">Connexion requise</p>
-          <p className="mx-auto max-w-md text-sm text-navy/50">
-            Connectez-vous pour accéder à vos informations personnelles.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <Link
-              href="/login?redirect=/espace-client/profil"
-              className={linkAsButtonClasses("primary", "md", "rounded-none uppercase no-underline")}
-            >
-              Se connecter
-            </Link>
-            <Link
-              href="/villas"
-              className={linkAsButtonClasses("outline", "md", "rounded-none border-navy/25 uppercase no-underline")}
-            >
-              Voir les villas
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,23 +81,44 @@ export default function ProfilPage() {
       needs_high_chair: needsHighChair,
     });
     setProfileLoading(false);
-    if (!error) { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 3000); }
+    if (!error) {
+      setProfileSaved(true);
+      window.setTimeout(() => setProfileSaved(false), 3000);
+    }
   };
 
-  return (
-    <div className="space-y-8 max-w-md">
-      <div>
-        <h1 className="font-display text-2xl text-navy">Mon profil</h1>
-        <p className="text-sm text-navy/50 mt-1">Gérez vos informations personnelles</p>
-      </div>
+  if (loading) {
+    return (
+      <>
+        <PageTopbar title="Mon profil" />
+        <div className="flex justify-center py-20">
+          <Spinner size="lg" className="text-gold" />
+        </div>
+      </>
+    );
+  }
 
-      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
-        <CardHeader className="px-6 pb-0 pt-6">
-          <CardTitle className="font-display text-base font-normal text-navy">
-            Informations personnelles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
+  if (!user) {
+    return (
+      <>
+        <PageTopbar title="Mon profil" />
+        <KayvilaEmptyState
+          title="Connexion requise"
+          description="Connectez-vous pour accéder à vos informations personnelles."
+          actionLabel="Se connecter"
+          actionHref="/login?redirect=/espace-client/profil"
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageTopbar title="Mon profil" />
+      <div className="mx-auto max-w-2xl space-y-6">
+        <p className="text-sm text-navy/55">Gérez vos informations et préférences d&apos;accueil.</p>
+
+        <KayvilaTenantWidget title="Informations personnelles">
           <ProfileForm
             email={user.email ?? ""}
             initialName={metadata.full_name ?? ""}
@@ -141,28 +127,31 @@ export default function ProfilPage() {
             currentAvatar={metadata.avatar_url}
             demoMode={false}
           />
-        </CardContent>
-      </Card>
+        </KayvilaTenantWidget>
 
-      {/* Préférences de séjour */}
-      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
-        <CardHeader className="px-6 pb-0 pt-6">
-          <CardTitle className="flex items-center gap-2 font-display text-base font-normal text-navy">
-            <Heart size={16} className="text-gold" />
-            Préférences de séjour
-          </CardTitle>
-          <p className="text-xs text-navy/55 mt-1">Ces informations aident notre équipe à préparer votre accueil.</p>
-        </CardHeader>
-        <CardContent className="p-6">
+        <KayvilaTenantWidget
+          title="Préférences de séjour"
+          description="Ces informations aident notre équipe à préparer votre accueil."
+        >
           <form onSubmit={handleSaveProfile} className="space-y-5">
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Allergies & régimes alimentaires</label>
-              <input type="text" value={allergies} onChange={(e) => setAllergies(e.target.value)} placeholder="ex: arachides, lactose, végétarien" className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50" />
+              <label className={tenantLabelClass}>Allergies & régimes alimentaires</label>
+              <input
+                type="text"
+                value={allergies}
+                onChange={(e) => setAllergies(e.target.value)}
+                placeholder="ex: arachides, lactose, végétarien"
+                className={tenantFieldClass}
+              />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Occasion spéciale</label>
-                <select value={specialOccasion} onChange={(e) => setSpecialOccasion(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50">
+                <label className={tenantLabelClass}>Occasion spéciale</label>
+                <select
+                  value={specialOccasion}
+                  onChange={(e) => setSpecialOccasion(e.target.value)}
+                  className={tenantFieldClass}
+                >
                   <option value="">Aucune</option>
                   <option value="anniversary">Anniversaire de mariage</option>
                   <option value="birthday">Anniversaire</option>
@@ -171,65 +160,100 @@ export default function ProfilPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2">Date</label>
-                <input type="date" value={specialOccasionDate} onChange={(e) => setSpecialOccasionDate(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50" />
+                <label className={tenantLabelClass}>Date</label>
+                <input
+                  type="date"
+                  value={specialOccasionDate}
+                  onChange={(e) => setSpecialOccasionDate(e.target.value)}
+                  className={tenantFieldClass}
+                />
               </div>
             </div>
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2"><Clock size={12} className="inline mr-1" />Heure d'arrivée estimée</label>
-              <select value={estimatedArrival} onChange={(e) => setEstimatedArrival(e.target.value)} className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50">
+              <label className={tenantLabelClass}>
+                <Clock size={12} className="mr-1 inline" aria-hidden />
+                Heure d&apos;arrivée estimée
+              </label>
+              <select
+                value={estimatedArrival}
+                onChange={(e) => setEstimatedArrival(e.target.value)}
+                className={tenantFieldClass}
+              >
                 <option value="">Non précisée</option>
-                {Array.from({ length: 9 }, (_, i) => i + 14).map(h => (<option key={h} value={`${h}:00`}>{h}:00</option>))}
+                {Array.from({ length: 9 }, (_, i) => i + 14).map((h) => (
+                  <option key={h} value={`${h}:00`}>
+                    {h}:00
+                  </option>
+                ))}
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50 mb-2"><Baby size={12} className="inline mr-1" />Équipement bébé</label>
-              <div className="flex items-center gap-6">
-                <label className="flex items-center gap-2 text-sm text-navy/70 cursor-pointer">
-                  <input type="checkbox" checked={needsBabyBed} onChange={(e) => setNeedsBabyBed(e.target.checked)} className="w-4 h-4 border-navy/20 text-gold focus:ring-gold" />
+              <label className={tenantLabelClass}>
+                <Baby size={12} className="mr-1 inline" aria-hidden />
+                Équipement bébé
+              </label>
+              <div className="flex flex-wrap items-center gap-6">
+                <label className="flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-navy/70">
+                  <input
+                    type="checkbox"
+                    checked={needsBabyBed}
+                    onChange={(e) => setNeedsBabyBed(e.target.checked)}
+                    className="h-4 w-4 border-navy/20 text-gold focus:ring-gold"
+                  />
                   Lit bébé
                 </label>
-                <label className="flex items-center gap-2 text-sm text-navy/70 cursor-pointer">
-                  <input type="checkbox" checked={needsHighChair} onChange={(e) => setNeedsHighChair(e.target.checked)} className="w-4 h-4 border-navy/20 text-gold focus:ring-gold" />
+                <label className="flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-navy/70">
+                  <input
+                    type="checkbox"
+                    checked={needsHighChair}
+                    onChange={(e) => setNeedsHighChair(e.target.checked)}
+                    className="h-4 w-4 border-navy/20 text-gold focus:ring-gold"
+                  />
                   Chaise haute
                 </label>
               </div>
             </div>
-            {profileSaved && <p className="text-[11px] text-emerald-600 font-medium">✓ Préférences sauvegardées</p>}
-            <Button type="submit" variant="primary" fullWidth disabled={profileLoading} className="h-12 rounded-xl border-0 bg-navy text-[11px] font-semibold uppercase tracking-[0.15em] text-white hover:bg-gold hover:text-navy">
-              {profileLoading ? "Enregistrement..." : "Enregistrer les préférences"}
+            {profileSaved ? (
+              <p role="status" className="text-[11px] font-medium text-emerald-700">
+                Préférences sauvegardées
+              </p>
+            ) : null}
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              isDisabled={profileLoading}
+              isPending={profileLoading}
+              className="min-h-[48px] rounded-none bg-navy text-[10px] font-bold uppercase tracking-[0.2em] text-white data-[hover=true]:bg-gold data-[hover=true]:text-navy"
+            >
+              Enregistrer les préférences
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </KayvilaTenantWidget>
 
-      <Card className="rounded-none border border-navy/10 bg-white shadow-none">
-        <CardHeader className="px-6 pb-0 pt-6">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 font-display text-base font-normal text-navy">
-              <FileText size={16} className="text-gold" />
-              Mes documents
-            </CardTitle>
-            <Chip color="default" className="text-[10px] uppercase tracking-[0.2em]">
-              Bientôt disponible
+        <KayvilaTenantWidget
+          title="Mes documents"
+          description="Contrats et factures de séjour"
+          action={
+            <Chip size="sm" variant="soft" color="default" className="uppercase">
+              Bientôt
             </Chip>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex flex-col items-center gap-3 py-6 text-center">
-            <Download size={32} className="text-navy/20" />
-            <p className="text-sm text-navy/55">
+          }
+        >
+          <div className="flex flex-col items-center gap-3 py-4 text-center">
+            <Download size={28} className="text-navy/20" aria-hidden />
+            <p className="max-w-sm text-sm text-navy/55">
               Vos contrats et factures apparaîtront ici dès qu&apos;ils seront disponibles.
             </p>
-            <a
+            <Link
               href="/contact"
-              className="text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:text-navy"
+              className="text-[10px] font-bold uppercase tracking-[0.22em] text-gold transition-colors hover:text-navy"
             >
               Demander un document →
-            </a>
+            </Link>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </KayvilaTenantWidget>
+      </div>
+    </>
   );
 }

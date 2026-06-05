@@ -445,3 +445,39 @@ verify: vérification effectuée
 - **why**: Checkout hors charte Kayvila (clone Airbnb) ; lenteur navigation dev ; carte OSM bloquée par CSP
 - **impact**: Tunnel réservation aligné marque ; navigation perçue plus fluide en local ; iframe carte villas fonctionnelle
 - **verify**: `npm run build` OK
+
+## 2026-06-06 : Retour Leaflet + fallback images villa 404
+
+- **type**: ui | fix
+- **summary**: Restauration `VillaLeafletMap` (Carto dark, markers, hover sync) à la place de l'iframe OSM ; `VillaCoverImage` + `pickVillaImageUrl` pour repli `/villa-hero.jpg` si URL Supabase 404.
+- **files**: [`components/VillasMapView.tsx`, `components/VillaLeafletMap.tsx`, `components/ui/villa-cover-image.tsx`, `lib/villa-image.ts`, `components/villas/VillaListingCard.tsx`, `components/booking/CheckoutView.tsx`, `components/booking/CheckoutPriceSummary.tsx`] — suppression `VillasMapEmbed.tsx`
+- **why**: Préférence client carte interactive ; `image_url` Supabase manquant en storage
+- **impact**: Carte premium réactive ; plus d'erreur console bloquante sur checkout/liste
+- **verify**: `npm run build` OK
+
+## 2026-06-06 : Retrait parrainage espace client
+
+- **type**: ui
+- **summary**: Parrainage retiré du menu tenant ; `/espace-client/parrainage` redirige vers `/espace-client` ; `CLIENT.features.referral = false`.
+- **files**: [`components/espace-client/TenantMenuItems.ts`, `app/espace-client/parrainage/page.tsx`, `template/client.config.ts`]
+- **why**: Demande client — feature non souhaitée dans l'espace client
+- **impact**: Plus d'entrée sidebar ; anciens liens redirigés ; table Supabase `referrals` inchangée
+- **verify**: `npm run build` OK
+
+## 2026-06-06 : Refonte design home espace client (HeroUI Pro)
+
+- **type**: ui
+- **summary**: Home `/espace-client` — `KayvilaTenantWidget`, hero séjour image+Chip HeroUI, suppression stats héros, `TenantQuickLinks`/`TenantShareBar`, `BookingCard` Chip Pro + `VillaCoverImage`, header unifié `TenantPageHeader`.
+- **files**: [`app/espace-client/page.tsx`, `components/ui/pro/kayvila-tenant-widget.tsx`, `components/espace-client/TenantPageHeader.tsx`, `UpcomingStayHero.tsx`, `TenantQuickLinks.tsx`, `TenantShareBar.tsx`, `BookingCard.tsx`, `EspaceClientShell.tsx`]
+- **why**: Audit espace client — trop basique, peu HeroUI Pro
+- **impact**: Rendu plus premium éditorial ; toast partage (plus d'alert) ; widgets Pro cohérents admin
+- **verify**: `npm run build` OK
+
+## 2026-06-06 : Refonte design espace client — phases 2 & 3
+
+- **type**: ui
+- **summary**: Profil, Favoris, Messagerie (phase 2) + Notifications, Documents, Demandes, Conciergerie, Checklist (phase 3) — `KayvilaTenantWidget`, `KayvilaEmptyState`, `TenantSectionHeader`, Button/Chip HeroUI ; layout `max-w-2xl` unifié.
+- **files**: [`app/espace-client/profil/page.tsx`, `favoris/page.tsx`, `messagerie/page.tsx`, `notifications/page.tsx`, `documents/page.tsx`, `demandes/page.tsx`, `conciergerie/page.tsx`, `checklist/page.tsx`, `components/espace-client/TenantSectionHeader.tsx`]
+- **why**: Poursuite audit espace client — aligner toutes les sous-pages sur le design Kayvila / HeroUI Pro
+- **impact**: Cohérence visuelle sur 8 pages tenant ; empty states Pro ; widgets éditoriaux ; plus de spinners/alertes bricolées
+- **verify**: `npm run build` OK

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { HoverCard, Sheet } from "@heroui-pro/react";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 import { Users, Maximize2 } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
+import { VillaCoverImage } from "@/components/ui/villa-cover-image";
+import { pickVillaImageUrl, VILLA_IMAGE_FALLBACK } from "@/lib/villa-image";
 
 type VillaListingCardProps = {
   villa: VillaMapItem & { dimmed?: boolean };
@@ -28,8 +29,8 @@ function CardImageBlock({
 }) {
   return (
     <div className="relative aspect-[3/4] overflow-hidden rounded-none">
-      <Image
-        src={villa.image || "/villa-hero.jpg"}
+      <VillaCoverImage
+        src={villa.image}
         alt={villa.name}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
@@ -61,12 +62,12 @@ function PreviewBody({
   formatPrice: (price: number) => string;
   href: string;
 }) {
-  const previewImage = villa.images[0] ?? villa.image ?? "/villa-hero.jpg";
+  const previewImage = pickVillaImageUrl(villa.image, villa.images) || VILLA_IMAGE_FALLBACK;
 
   return (
     <>
       <div className="relative mb-3 aspect-[4/3] overflow-hidden rounded-lg">
-        <Image src={previewImage} alt={villa.name} fill className="object-cover" sizes="320px" />
+        <VillaCoverImage src={previewImage} alt={villa.name} fill className="object-cover" sizes="320px" />
       </div>
       <div className="flex items-start justify-between gap-2">
         <span className="font-display text-lg text-navy">{villa.name}</span>

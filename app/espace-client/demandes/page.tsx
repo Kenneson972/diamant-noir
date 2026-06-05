@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { RequestForm } from "@/components/espace-client/RequestForm";
 import { RequestList } from "@/components/espace-client/RequestList";
+import { Spinner } from "@/components/espace-client/tenant-ui";
+import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 
 export default function DemandesPage() {
   const supabase = getSupabaseBrowser();
@@ -34,7 +37,9 @@ export default function DemandesPage() {
     return (
       <>
         <PageTopbar title="Demandes" />
-        <div className="p-5 md:p-10 text-sm text-navy/55">Chargement...</div>
+        <div className="flex justify-center py-20">
+          <Spinner size="lg" className="text-gold" />
+        </div>
       </>
     );
   }
@@ -43,8 +48,18 @@ export default function DemandesPage() {
     return (
       <>
         <PageTopbar title="Demandes" />
-        <div className="p-5 md:p-10 text-center">
-          <p className="text-sm text-navy/50">Aucun séjour en cours. Les demandes sont disponibles pendant votre séjour.</p>
+        <div className="mx-auto max-w-2xl space-y-6">
+          <TenantSectionHeader
+            eyebrow="Demandes"
+            title="Services & demandes"
+            description="Conciergerie, ménage, transferts et autres besoins pendant votre séjour."
+          />
+          <KayvilaEmptyState
+            title="Aucun séjour actif"
+            description="Les demandes sont disponibles pendant votre séjour confirmé."
+            actionLabel="Voir mes réservations"
+            actionHref="/espace-client"
+          />
         </div>
       </>
     );
@@ -53,12 +68,18 @@ export default function DemandesPage() {
   return (
     <>
       <PageTopbar title="Demandes" section="Espace Client" />
-      <div className="p-5 md:p-10 space-y-10">
-        <div>
-          <h2 className="font-display text-xl text-navy mb-4">Nouvelle demande</h2>
+      <div className="mx-auto max-w-2xl space-y-8">
+        <TenantSectionHeader
+          eyebrow="Demandes"
+          title="Services & demandes"
+          description="Notre équipe traite vos demandes sous 24h en moyenne."
+        />
+        <KayvilaTenantWidget title="Nouvelle demande">
           <RequestForm bookingId={bookingId} onSuccess={() => setRefreshKey((k) => k + 1)} />
-        </div>
-        <RequestList bookingId={bookingId} refreshKey={refreshKey} />
+        </KayvilaTenantWidget>
+        <KayvilaTenantWidget title="Historique" description="Suivi de vos demandes en cours">
+          <RequestList bookingId={bookingId} refreshKey={refreshKey} />
+        </KayvilaTenantWidget>
       </div>
     </>
   );

@@ -1,5 +1,8 @@
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
+import { KayvilaTenantWidget } from "@/components/ui/pro";
 import { Phone, Mail, Clock, AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
 const CONTACTS = [
   {
@@ -34,99 +37,88 @@ const HOURS = [
   { day: "Dimanche & jours fériés", hours: "Urgences uniquement" },
 ];
 
+const SERVICES = [
+  { label: "Ménage supplémentaire", price: "À partir de 80 €", desc: "Nettoyage complet en cours de séjour" },
+  { label: "Changement de linge", price: "À partir de 40 €", desc: "Draps, serviettes, torchons renouvelés" },
+  { label: "Remplissage gaz / eau", price: "Sur devis", desc: "Bouteille de gaz ou bonbonne d'eau remplacée" },
+];
+
 export default function ConciergeriePage() {
   return (
     <>
       <PageTopbar title="Conciergerie" />
-      <div className="space-y-10">
-        {/* Header */}
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
-            Conciergerie
-          </p>
-          <h1 className="font-display text-2xl font-normal text-navy mt-2 leading-none">
-            Contacts &amp; urgences
-          </h1>
-          <span className="mt-3 block h-px w-8 bg-gold/50" />
-          <p className="font-display italic text-[15px] font-light text-navy/55 mt-3">
-            Notre équipe est à votre disposition avant, pendant et après votre séjour.
-          </p>
-        </div>
+      <div className="mx-auto max-w-2xl space-y-8">
+        <TenantSectionHeader
+          eyebrow="Conciergerie"
+          title="Contacts & urgences"
+          description="Notre équipe est à votre disposition avant, pendant et après votre séjour."
+        />
 
-        {/* Contacts */}
-        <div className="space-y-[1px] border border-navy/[0.07] bg-navy/[0.04]">
-          {CONTACTS.map(({ label, value, sub, href, icon: Icon, gold }) => (
-            <a
-              key={label}
-              href={href}
-              className="flex items-center gap-5 bg-offwhite px-6 py-5 no-underline hover:bg-white transition-colors group"
-            >
-              <Icon
-                size={16}
-                strokeWidth={1.25}
-                className={gold ? "text-gold shrink-0" : "text-navy/25 shrink-0 group-hover:text-gold/60 transition-colors"}
-              />
-              <div className="flex-1 min-w-0">
-                <p className={`text-[9px] font-bold uppercase tracking-[0.28em] mb-0.5 ${gold ? "text-gold" : "text-navy/55"}`}>
-                  {label}
-                </p>
-                <p className={`text-[14px] font-medium ${gold ? "text-navy" : "text-navy"}`}>
-                  {value}
-                </p>
-                <p className="font-display italic text-[13px] font-light text-navy/50 mt-0.5">
-                  {sub}
-                </p>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Horaires */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Clock size={13} strokeWidth={1.25} className="text-navy/25" />
-            <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/50">
-              Horaires
-            </p>
+        <KayvilaTenantWidget title="Nous joindre">
+          <div className="divide-y divide-navy/5 -mx-6 -my-5">
+            {CONTACTS.map(({ label, value, sub, href, icon: Icon, gold }) => (
+              <a
+                key={label}
+                href={href}
+                className="flex items-center gap-5 px-6 py-5 no-underline transition-colors hover:bg-navy/[0.02] group"
+              >
+                <Icon
+                  size={16}
+                  strokeWidth={1.25}
+                  className={
+                    gold ? "shrink-0 text-gold" : "shrink-0 text-navy/25 transition-colors group-hover:text-gold/60"
+                  }
+                  aria-hidden
+                />
+                <div className="min-w-0 flex-1">
+                  <p className={`mb-0.5 text-[9px] font-bold uppercase tracking-[0.28em] ${gold ? "text-gold" : "text-navy/55"}`}>
+                    {label}
+                  </p>
+                  <p className="text-[14px] font-medium text-navy">{value}</p>
+                  <p className="mt-0.5 font-display text-[13px] font-light italic text-navy/50">{sub}</p>
+                </div>
+              </a>
+            ))}
           </div>
-          <div className="divide-y divide-navy/[0.06] border border-navy/[0.07] bg-white">
+        </KayvilaTenantWidget>
+
+        <KayvilaTenantWidget
+          title="Horaires"
+          action={<Clock size={13} strokeWidth={1.25} className="text-navy/25" aria-hidden />}
+        >
+          <div className="divide-y divide-navy/5">
             {HOURS.map(({ day, hours }) => (
-              <div key={day} className="flex items-center justify-between px-5 py-3.5">
-                <p className="text-[11px] text-[rgba(13,27,42,0.55)]">{day}</p>
+              <div key={day} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
+                <p className="text-[11px] text-navy/55">{day}</p>
                 <p className="text-[11px] font-medium text-navy">{hours}</p>
               </div>
             ))}
           </div>
-        </div>
+        </KayvilaTenantWidget>
 
-        {/* Services ponctuels */}
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold mb-4">Services ponctuels</p>
-          <div className="space-y-[1px] border border-navy/[0.07] bg-navy/[0.04]">
-            {[
-              { label: "Ménage supplémentaire", price: "À partir de 80 €", desc: "Nettoyage complet en cours de séjour" },
-              { label: "Changement de linge", price: "À partir de 40 €", desc: "Draps, serviettes, torchons renouvelés" },
-              { label: "Remplissage gaz / eau", price: "Sur devis", desc: "Bouteille de gaz ou bonbonne d'eau remplacée" },
-            ].map((s) => (
-              <a
+        <KayvilaTenantWidget title="Services ponctuels" description="Cliquez pour faire une demande — tarif confirmé par l'équipe">
+          <div className="divide-y divide-navy/5 -mx-6 -my-5">
+            {SERVICES.map((s) => (
+              <Link
                 key={s.label}
                 href="/espace-client/demandes"
-                className="flex items-center justify-between bg-offwhite px-5 py-4 no-underline hover:bg-white transition-colors group"
+                className="flex items-center justify-between px-6 py-4 no-underline transition-colors hover:bg-navy/[0.02] group"
               >
                 <div>
                   <p className="text-sm font-medium text-navy">{s.label}</p>
-                  <p className="text-[11px] text-navy/55 mt-0.5">{s.desc}</p>
+                  <p className="mt-0.5 text-[11px] text-navy/55">{s.desc}</p>
                 </div>
-                <span className="text-[11px] font-semibold text-navy/50 group-hover:text-gold transition-colors shrink-0 ml-4">{s.price} →</span>
-              </a>
+                <span className="ml-4 shrink-0 text-[11px] font-semibold text-navy/50 transition-colors group-hover:text-gold">
+                  {s.price} →
+                </span>
+              </Link>
             ))}
           </div>
-          <p className="text-[11px] text-navy/30 mt-2">Cliquez pour faire une demande — l&apos;équipe Kayvila vous confirmera le tarif exact.</p>
-        </div>
+        </KayvilaTenantWidget>
 
-        {/* Note */}
-        <p className="text-[11px] text-navy/50 leading-relaxed border-t border-navy/[0.06] pt-6">
-          Pour toute demande non urgente, privilégiez la messagerie ci-dessous — elle conserve un historique de votre échange avec notre équipe.
+        <p className="border-t border-navy/[0.06] pt-6 text-[11px] leading-relaxed text-navy/50">
+          Pour toute demande non urgente, privilégiez la messagerie — elle conserve un historique de votre échange avec
+          notre équipe.
         </p>
       </div>
     </>

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import type { LatLngBounds } from "leaflet";
+import { pickVillaImageUrl } from "@/lib/villa-image";
 
 export type VillaMapItem = {
   id: string;
@@ -72,15 +73,17 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
         attributionControl: false,
       });
 
-      // CartoDB Dark Matter — style noir premium, sans clé API
+      // Carto Voyager — fond clair, eau lisible, sans clé API
       L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
         { subdomains: "abcd", maxZoom: 19 }
       ).addTo(map);
 
       L.control.zoom({ position: "bottomright" }).addTo(map);
       L.control.attribution({ position: "bottomleft", prefix: false })
-        .addAttribution('© <a href="https://www.openstreetmap.org/copyright" style="color:#D4AF37">OSM</a> © <a href="https://carto.com" style="color:#D4AF37">CARTO</a>')
+        .addAttribution(
+          '© <a href="https://www.openstreetmap.org/copyright" style="color:#0A2540">OSM</a> © <a href="https://carto.com" style="color:#0A2540">CARTO</a>'
+        )
         .addTo(map);
 
       mapRef.current = map;
@@ -106,7 +109,7 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
 
         const popupHtml = `
           <div class="dn-popup">
-            <div class="dn-popup__img" style="background-image:url('${villa.image || "/villa-hero.jpg"}')"></div>
+            <div class="dn-popup__img" style="background-image:url('${pickVillaImageUrl(villa.image, villa.images).replace(/'/g, "%27")}')"></div>
             <div class="dn-popup__body">
               <p class="dn-popup__name">${villa.name}</p>
               <p class="dn-popup__loc">${villa.location || ""}</p>

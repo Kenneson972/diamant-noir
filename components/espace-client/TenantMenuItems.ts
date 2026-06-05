@@ -15,6 +15,5 @@ export const tenantMenuItems: TenantMenuItem[] = [
   { label: "Checklist", href: "/espace-client/checklist", icon: "CheckSquare" },
   { label: "Profil", href: "/espace-client/profil", icon: "User" },
   { label: "Documents", href: "/espace-client/documents", icon: "FileText" },
-  { label: "Parrainage", href: "/espace-client/parrainage", icon: "Gift" },
   { label: "Conciergerie", href: "/espace-client/conciergerie", icon: "UserCircle" },
 ];

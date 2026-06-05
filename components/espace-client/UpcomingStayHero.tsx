@@ -1,0 +1,85 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowRight, BookOpen } from "lucide-react";
+import { Chip } from "@heroui/react";
+import { VillaCoverImage } from "@/components/ui/villa-cover-image";
+import { pickVillaImageUrl } from "@/lib/villa-image";
+
+type UpcomingBooking = {
+  start_date: string;
+  end_date: string;
+  villa?: {
+    name?: string;
+    location?: string | null;
+    image_url?: string | null;
+    image_urls?: string[] | null;
+  } | null;
+};
+
+export function UpcomingStayHero({ booking }: { booking: UpcomingBooking }) {
+  const startDate = new Date(booking.start_date);
+  const endDate = new Date(booking.end_date);
+  const daysUntil = Math.ceil((startDate.getTime() - Date.now()) / 86400000);
+  const nights = Math.round((endDate.getTime() - startDate.getTime()) / 86400000);
+  const isToday = daysUntil <= 0 && Date.now() < endDate.getTime();
+  const isInProgress = isToday;
+
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+
+  const imageSrc = pickVillaImageUrl(booking.villa?.image_url, booking.villa?.image_urls ?? null);
+
+  return (
+    <article className="overflow-hidden border border-navy/8 border-t-2 border-t-gold bg-white">
+      <div className="grid md:grid-cols-[1.15fr_1fr]">
+        <div className="relative aspect-[16/10] min-h-[200px] bg-navy/5 md:aspect-auto md:min-h-[280px]">
+          <VillaCoverImage
+            src={imageSrc}
+            alt={booking.villa?.name ?? "Villa Kayvila"}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 55vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-navy/5" />
+        </div>
+
+        <div className="flex flex-col justify-center px-6 py-8 md:px-8 md:py-10">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Chip size="sm" variant="soft" color={isInProgress ? "success" : "warning"}>
+              {isInProgress ? "Séjour en cours" : "Prochain séjour"}
+            </Chip>
+            {!isInProgress && daysUntil > 0 ? (
+              <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
+                Dans {daysUntil} jour{daysUntil > 1 ? "s" : ""}
+              </span>
+            ) : null}
+          </div>
+
+          <h2 className="font-display text-2xl font-normal leading-snug text-navy md:text-[26px]">
+            {booking.villa?.name ?? "Villa Kayvila"}
+          </h2>
+          {booking.villa?.location ? (
+            <p className="mt-1 font-display text-sm italic text-navy/50">
+              {booking.villa.location}, Martinique
+            </p>
+          ) : null}
+          <p className="mt-4 text-sm text-navy/65">
+            {fmt(startDate)} – {fmt(endDate)}
+            <span className="text-navy/35"> · {nights} nuit{nights > 1 ? "s" : ""}</span>
+          </p>
+
+          <Link
+            href="/espace-client/livret"
+            className="mt-7 inline-flex min-h-[44px] items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-gold no-underline transition-colors hover:text-navy"
+          >
+            <BookOpen size={14} strokeWidth={1.25} aria-hidden />
+            Consulter le livret
+            <ArrowRight size={12} aria-hidden />
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}

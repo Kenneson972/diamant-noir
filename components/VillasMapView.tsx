@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { Map, LayoutGrid } from "lucide-react";
 import { VillaListingCard } from "@/components/villas/VillaListingCard";
@@ -14,7 +14,7 @@ import type { FilterState } from "./VillaFilterBar";
 import VillaQuickView from "./VillaQuickView";
 import { useLocale } from "@/contexts/LocaleContext";
 
-const VillasMapEmbed = dynamic(() => import("./VillasMapEmbed"), {
+const VillaLeafletMap = dynamic(() => import("./VillaLeafletMap"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-navy/5">
@@ -52,6 +52,10 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
   const passCount = villasDisplay.filter((v) => !v.dimmed).length;
 
   const quickViewVilla = villas.find((v) => v.id === quickViewId) ?? null;
+
+  const handleSelect = useCallback((id: string) => {
+    setQuickViewId(id);
+  }, []);
 
   return (
     <div className="relative">
@@ -138,7 +142,12 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
         {/* ── Map panel desktop ── */}
         {mapVisible && (
           <div className="hidden md:block md:w-[42%] lg:w-[38%] shrink-0 sticky top-[120px] h-[calc(100dvh-120px)] min-h-[280px]">
-            <VillasMapEmbed />
+            <VillaLeafletMap
+              villas={villas}
+              hoveredId={hoveredId}
+              onHover={setHoveredId}
+              onSelect={handleSelect}
+            />
           </div>
         )}
       </div>
@@ -146,7 +155,12 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
       {/* ── Map panel mobile (sous la liste) ── */}
       {mapVisible && (
         <div className="h-[60dvh] min-h-[320px] w-full border-t border-navy/10 md:hidden">
-          <VillasMapEmbed />
+          <VillaLeafletMap
+            villas={villas}
+            hoveredId={hoveredId}
+            onHover={setHoveredId}
+            onSelect={handleSelect}
+          />
         </div>
       )}
 

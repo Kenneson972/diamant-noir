@@ -4,11 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Bell, CheckCheck, ExternalLink } from "lucide-react";
-import { NOTIF_TYPE_CONFIG } from "@/lib/constants";
+import { Button, Chip } from "@heroui/react";
 import { timeAgo } from "@/lib/utils";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
-
-const TYPE_CONFIG = NOTIF_TYPE_CONFIG;
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
+import { Spinner } from "@/components/espace-client/tenant-ui";
+import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 
 interface Notification {
   id: string;
@@ -65,80 +66,84 @@ export default function NotificationsPage() {
   return (
     <>
       <PageTopbar title="Notifications" />
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl text-navy">Mes notifications</h1>
-            <p className="text-sm text-navy/50 mt-1">
-              {unreadCount > 0
-                ? `${unreadCount} notification${unreadCount > 1 ? "s" : ""} non lue${unreadCount > 1 ? "s" : ""}`
-                : "Tout est lu"}
-            </p>
-          </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={markAllRead}
-              className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-navy/50 hover:text-gold transition-colors"
-            >
-              <CheckCheck size={14} />
-              Tout marquer comme lu
-            </button>
-          )}
-        </div>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <TenantSectionHeader
+          eyebrow="Notifications"
+          title="Mes notifications"
+          description={
+            unreadCount > 0
+              ? `${unreadCount} notification${unreadCount > 1 ? "s" : ""} non lue${unreadCount > 1 ? "s" : ""}`
+              : "Tout est lu"
+          }
+        />
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+            <Spinner size="lg" className="text-gold" />
           </div>
         ) : notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3 border border-navy/10 bg-white">
-            <Bell size={32} className="text-navy/15" />
-            <p className="text-sm text-navy/55">Aucune notification</p>
-            <p className="text-[11px] text-navy/30">
-              Les notifications de vos demandes et messages apparaîtront ici.
-            </p>
-          </div>
+          <KayvilaEmptyState
+            icon={<Bell aria-hidden />}
+            title="Aucune notification"
+            description="Les notifications de vos demandes et messages apparaîtront ici."
+          />
         ) : (
-          <div className="space-y-[1px] border border-navy/[0.07] bg-navy/[0.04]">
-            {notifications.map((notif) => (
-              <button
-                key={notif.id}
-                onClick={() => handleClick(notif)}
-                className={`w-full text-left px-5 py-4 bg-offwhite hover:bg-white transition-colors ${
-                  !notif.is_read ? "bg-gold/[0.03]" : ""
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 mt-0.5">
-                    {!notif.is_read && (
-                      <span className="block w-2 h-2 rounded-full bg-gold" />
-                    )}
-                    {notif.is_read && (
-                      <span className="block w-2 h-2 rounded-full bg-navy/10" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm ${!notif.is_read ? "font-semibold text-navy" : "text-navy/60"}`}>
-                      {notif.title}
-                    </p>
-                    <p className="text-[11px] text-navy/45 mt-0.5 line-clamp-2">
-                      {notif.body}
-                    </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-navy/30">
-                        {timeAgo(notif.created_at)}
-                      </span>
-                      {notif.action_url && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-gold">
-                          Voir <ExternalLink size={9} />
-                        </span>
-                      )}
+          <KayvilaTenantWidget
+            title="Activité récente"
+            action={
+              unreadCount > 0 ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={markAllRead}
+                  className="min-h-[44px] rounded-none text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 data-[hover=true]:text-gold"
+                >
+                  <CheckCheck size={14} aria-hidden />
+                  Tout lire
+                </Button>
+              ) : (
+                <Chip size="sm" variant="soft" color="success" className="uppercase">
+                  À jour
+                </Chip>
+              )
+            }
+          >
+            <div className="divide-y divide-navy/5 -mx-6 -my-5">
+              {notifications.map((notif) => (
+                  <button
+                    key={notif.id}
+                    type="button"
+                    onClick={() => handleClick(notif)}
+                    className={`w-full px-6 py-4 text-left transition-colors hover:bg-navy/[0.02] ${
+                      !notif.is_read ? "bg-gold/[0.03]" : ""
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 shrink-0">
+                        <span
+                          className={`block h-2 w-2 rounded-full ${!notif.is_read ? "bg-gold" : "bg-navy/10"}`}
+                          aria-hidden
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-sm ${!notif.is_read ? "font-semibold text-navy" : "text-navy/60"}`}>
+                          {notif.title}
+                        </p>
+                        <p className="mt-0.5 line-clamp-2 text-[11px] text-navy/45">{notif.body}</p>
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-[10px] text-navy/30">{timeAgo(notif.created_at)}</span>
+                          {notif.action_url ? (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] text-gold">
+                              Voir <ExternalLink size={9} aria-hidden />
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
+                  </button>
+              ))}
+            </div>
+          </KayvilaTenantWidget>
         )}
       </div>
     </>

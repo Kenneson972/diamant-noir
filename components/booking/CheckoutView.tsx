@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useMemo } from "react";
 import type { Session } from "@supabase/supabase-js";
-import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import { ChevronLeft, Calendar, Users, ShieldCheck, Mail, User } from "lucide-react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { KayvilaPressableButton } from "@/components/ui/pro";
+import { VillaCoverImage } from "@/components/ui/villa-cover-image";
+import { pickVillaImageUrl } from "@/lib/villa-image";
 import { CheckoutPriceSummary } from "@/components/booking/CheckoutPriceSummary";
 import type { CheckoutVilla } from "@/components/booking/checkout-types";
 
@@ -69,7 +70,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
   const totalAmount = priceResult.total + cleaningFee + serviceFee;
   const nights = priceResult.nights;
 
-  const heroImage = villa.image_url || villa.image_urls?.[0] || "/villa-hero.jpg";
+  const heroImage = pickVillaImageUrl(villa.image_url, villa.image_urls);
   const editHref = `/villas/${villa.id}?checkin=${checkin}&checkout=${checkout}&guests=${guestsCount}`;
 
   const houseRules = useMemo(() => {
@@ -149,7 +150,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
     <div className="min-h-dvh bg-offwhite">
       {/* Hero éditorial compact */}
       <header className="relative overflow-hidden bg-navy text-white">
-        <Image
+        <VillaCoverImage
           src={heroImage}
           alt=""
           fill

@@ -7,7 +7,7 @@ import { tenantMenuItems } from "@/components/espace-client/TenantMenuItems";
 export default function EspaceClientShell({ children }: { children: ReactNode }) {
   return (
     <DashboardShell role="tenant" roleLabel="Client" menu={tenantMenuItems}>
-      <div className="p-5 md:p-10 max-w-5xl w-full mx-auto">{children}</div>
+      <div className="mx-auto w-full max-w-6xl p-5 md:p-10">{children}</div>
     </DashboardShell>
   );
 }

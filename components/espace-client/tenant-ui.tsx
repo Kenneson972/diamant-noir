@@ -228,7 +228,7 @@ export function FieldInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       className={cn(
-        "tap-target min-h-[44px] w-full rounded-xl border border-navy/20 px-3 py-2 text-sm text-navy placeholder:text-navy/30 focus:border-navy focus:outline-none focus:ring-0 disabled:bg-navy/[0.04] disabled:text-navy/50",
+        "tap-target min-h-[44px] w-full rounded-none border border-navy/15 px-4 py-2.5 text-sm text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none focus:ring-0 disabled:bg-navy/[0.04] disabled:text-navy/50",
         className
       )}
       {...rest}

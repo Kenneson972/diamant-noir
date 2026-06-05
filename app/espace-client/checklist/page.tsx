@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { Button, Chip } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
+import { Spinner } from "@/components/espace-client/tenant-ui";
+import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import Link from "next/link";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -195,12 +199,8 @@ export default function ChecklistPage() {
     return (
       <>
         <PageTopbar title="Avant votre arrivée" />
-        <div className="max-w-2xl mx-auto px-6 py-10 animate-pulse space-y-4">
-          <div className="h-8 w-32 bg-[rgba(13,27,42,0.06)] rounded" />
-          <div className="h-2 w-full bg-[rgba(13,27,42,0.04)] rounded" />
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-16 bg-[rgba(13,27,42,0.03)] border border-[rgba(13,27,42,0.06)]" />
-          ))}
+        <div className="flex justify-center py-20">
+          <Spinner size="lg" className="text-gold" />
         </div>
       </>
     );
@@ -210,67 +210,62 @@ export default function ChecklistPage() {
     <>
       <PageTopbar title="Avant votre arrivée" />
 
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">
-            Checklist avant-arrivée
-          </p>
-          <h1 className="font-display text-2xl font-normal text-[#0D1B2A] mb-1">
-            Avant votre arrivée
-          </h1>
-          {booking && (
-            <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)]">
-              {booking.villa?.name} · {fmt(booking.start_date)}
-            </p>
-          )}
-        </div>
+      <div className="mx-auto max-w-2xl space-y-8">
+        <TenantSectionHeader
+          eyebrow="Checklist avant-arrivée"
+          title="Avant votre arrivée"
+          description={
+            booking ? `${booking.villa?.name} · ${fmt(booking.start_date)}` : undefined
+          }
+        />
 
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex items-baseline gap-3 mb-3">
-            <span
-              className="font-display font-normal text-[#0D1B2A] leading-none"
-              style={{ fontSize: "28px" }}
-            >
-              {checked} / {total}
-            </span>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.32)]">
-              étapes complétées
-            </span>
-            {saving && (
-              <span className="text-[10px] tracking-[0.15em] uppercase text-[rgba(13,27,42,0.25)] ml-auto">
-                Sauvegarde…
-              </span>
-            )}
-          </div>
-          <div
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`${checked} sur ${total} étapes complétées`}
-            className="h-[2px] bg-[rgba(13,27,42,0.07)] rounded-full overflow-hidden"
+        {booking ? (
+          <KayvilaTenantWidget
+            title="Progression"
+            action={
+              saving ? (
+                <Chip size="sm" variant="soft" color="default" className="uppercase">
+                  Sauvegarde…
+                </Chip>
+              ) : progress === 100 ? (
+                <Chip size="sm" variant="soft" color="success" className="uppercase">
+                  Prêt
+                </Chip>
+              ) : null
+            }
           >
+            <div className="mb-6 flex items-baseline gap-3">
+              <span className="font-display text-[28px] font-normal leading-none text-navy">
+                {checked} / {total}
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/32">étapes complétées</span>
+            </div>
             <div
-              className="h-full bg-[#D4AF37] rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+              role="progressbar"
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${checked} sur ${total} étapes complétées`}
+              className="h-[2px] overflow-hidden rounded-full bg-navy/7"
+            >
+              <div
+                className="h-full rounded-full bg-gold transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </KayvilaTenantWidget>
+        ) : null}
 
-        {/* Checklist items */}
         {!booking ? (
-          <div className="py-12 text-center">
-            <p className="font-display italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
-              Aucune réservation à venir.{" "}
-              <Link href="/villas" className="text-[#D4AF37] underline underline-offset-4">
-                Découvrir nos villas →
-              </Link>
-            </p>
-          </div>
+          <KayvilaEmptyState
+            title="Aucune réservation à venir"
+            description="Votre checklist s'affichera dès qu'un séjour sera confirmé."
+            actionLabel="Découvrir nos villas"
+            actionHref="/villas"
+          />
         ) : (
-          <div className="space-y-[2px]">
+          <KayvilaTenantWidget title="Étapes à compléter">
+            <div className="space-y-[2px] -mx-6 -my-5">
             {ITEMS.map(({ key, label, description, cta }) => {
               const isChecked = checklist[key];
               return (
@@ -321,29 +316,28 @@ export default function ChecklistPage() {
 
                     {/* CTA calendrier */}
                     {cta === "calendar" && booking && !isChecked && (
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <button
-                          type="button"
-                          onClick={() => downloadICS(booking)}
-                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onPress={() => downloadICS(booking)}
+                          className="min-h-[44px] rounded-none border-navy/12 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 data-[hover=true]:border-gold data-[hover=true]:text-gold"
                         >
                           iCal
-                        </button>
+                        </Button>
                         <a
                           href={googleCalendarUrl(booking)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
-                          style={{ textDecoration: "none" }}
+                          className="inline-flex min-h-[44px] items-center rounded-none border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 no-underline transition-colors hover:border-gold hover:text-gold"
                         >
-                          Google Calendar
+                          Google
                         </a>
                         <a
                           href={outlookCalendarUrl(booking)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] tracking-[0.16em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-1.5 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors no-underline"
-                          style={{ textDecoration: "none" }}
+                          className="inline-flex min-h-[44px] items-center rounded-none border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 no-underline transition-colors hover:border-gold hover:text-gold"
                         >
                           Outlook
                         </a>
@@ -364,19 +358,16 @@ export default function ChecklistPage() {
                 </div>
               );
             })}
-          </div>
+            </div>
+          </KayvilaTenantWidget>
         )}
 
-        {/* Lien retour séjour */}
-        <div className="mt-8">
-          <Link
-            href="/espace-client"
-            className="text-[10px] tracking-[0.18em] uppercase text-[rgba(13,27,42,0.35)] hover:text-[#0D1B2A] transition-colors no-underline"
-            style={{ textDecoration: "none" }}
-          >
-            ← Retour à mon séjour
-          </Link>
-        </div>
+        <Link
+          href="/espace-client"
+          className="inline-block text-[10px] uppercase tracking-[0.18em] text-navy/35 no-underline transition-colors hover:text-navy"
+        >
+          ← Retour à mon séjour
+        </Link>
       </div>
     </>
   );

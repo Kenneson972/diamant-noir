@@ -3,6 +3,7 @@ export type { DataGridColumn } from "./kayvila-data-grid";
 export { KayvilaEmptyState } from "./kayvila-empty-state";
 export { KayvilaRating } from "./kayvila-rating";
 export { KayvilaWidget } from "./kayvila-widget";
+export { KayvilaTenantWidget } from "./kayvila-tenant-widget";
 export { KayvilaCarousel } from "./kayvila-carousel";
 export type { KayvilaCarouselImage } from "./kayvila-carousel";
 export { KayvilaStepper } from "./kayvila-stepper";

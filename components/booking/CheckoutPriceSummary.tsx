@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import type { CheckoutVilla } from "@/components/booking/checkout-types";
+import { VillaCoverImage } from "@/components/ui/villa-cover-image";
+import { pickVillaImageUrl } from "@/lib/villa-image";
 import { Lock } from "lucide-react";
 
 type CheckoutPriceSummaryProps = {
@@ -25,7 +26,7 @@ export function CheckoutPriceSummary({
   formatPrice,
   compact = false,
 }: CheckoutPriceSummaryProps) {
-  const imageSrc = villa.image_url || villa.image_urls?.[0] || "/villa-hero.jpg";
+  const imageSrc = pickVillaImageUrl(villa.image_url, villa.image_urls);
 
   return (
     <aside
@@ -38,7 +39,7 @@ export function CheckoutPriceSummary({
       {!compact && (
         <div className="mb-6 flex gap-4 border-b border-navy/8 pb-6">
           <div className="relative h-20 w-28 shrink-0 overflow-hidden">
-            <Image src={imageSrc} alt={villa.name} fill className="object-cover" sizes="112px" />
+            <VillaCoverImage src={imageSrc} alt={villa.name} fill className="object-cover" sizes="112px" />
           </div>
           <div className="min-w-0 space-y-1">
             {villa.location ? (
