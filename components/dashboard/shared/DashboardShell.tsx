@@ -35,7 +35,7 @@ export function DashboardShell({
     router.push("/");
   };
 
-  const fullBleed = role === "admin" && pathname.startsWith("/admin/assistant");
+  const fullBleed = false;
 
   return (
     <>

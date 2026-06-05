@@ -97,9 +97,23 @@ export default function AdminReservationsPage() {
   useEffect(() => { fetchBookings(); }, [supabase, page, filter, villaFilter]);
   useEffect(() => { fetchAllForCalendar(); }, [supabase, villaFilter, view]);
 
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const handleAction = async (id: string, status: string) => {
-    if (!supabase) return;
-    await supabase.from("bookings").update({ status, payment_status: status === "confirmed" ? "paid" : "cancelled" }).eq("id", id);
+    setActionError(null);
+    const res = await fetch("/api/admin/bookings", {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setActionError(
+        typeof payload.error === "string" ? payload.error : "Mise à jour impossible."
+      );
+      return;
+    }
     fetchBookings();
     fetchAllForCalendar();
   };
@@ -109,6 +123,12 @@ export default function AdminReservationsPage() {
 
   return (
     <div className="space-y-6">
+      {actionError && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </p>
+      )}
+
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <AdminPageIntro title="Réservations" description={`${total} séjours enregistrés.`} />
         <button

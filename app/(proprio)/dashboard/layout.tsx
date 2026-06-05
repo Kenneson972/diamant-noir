@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItems";
+import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
+import { CopilotButton } from "@/components/dashboard/proprio/CopilotButton";
+import { CopilotPanel } from "@/components/dashboard/proprio/CopilotPanel";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 
 export const metadata = {
@@ -49,8 +52,12 @@ export default async function ProprioDashboardLayout({
   }
 
   return (
-    <DashboardShell role="owner" roleLabel="Propriétaire" menu={proprioMenuItems}>
-      {children}
-    </DashboardShell>
+    <CopilotProvider>
+      <DashboardShell role="owner" roleLabel="Propriétaire" menu={proprioMenuItems}>
+        {children}
+      </DashboardShell>
+      <CopilotButton />
+      <CopilotPanel />
+    </CopilotProvider>
   );
 }

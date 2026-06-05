@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { syncAllOTAChannels, detectOTASource, type OTAChannel } from "@/lib/ota-hub";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
-import { requireAuth, AuthError } from "@/lib/auth/server";
+import { getSessionUser, AuthError } from "@/lib/auth/server";
+import { isStaffAdmin } from "@/lib/auth/admin-access";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const userId = await requireAuth(req);
+    const user = await getSessionUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Authentification requise" }, { status: 401 });
+    }
+    const userId = user.id;
 
     const { villaId, channels, addUrl } = await req.json();
 
@@ -38,7 +43,11 @@ export async function POST(req: Request) {
       .eq("id", userId)
       .maybeSingle();
 
-    const isAdmin = profile?.role === "admin";
+    const isAdmin = isStaffAdmin(
+      profile?.role,
+      user.user_metadata?.role as string | undefined,
+      user.email
+    );
     if (!isAdmin && villa.owner_id !== userId) {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }

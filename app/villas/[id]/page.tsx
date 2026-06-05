@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BookingForm } from "@/components/BookingForm";
 import { Check, Wifi, Wind, Waves, Flame, TreePine, Car, Utensils, Tv, Shirt, ChefHat, Ship, Heart, UserCheck, Bed, Zap, Dumbbell, Shield, Key, Plane, ShieldCheck, User } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
@@ -10,8 +9,12 @@ import { VillaHeaderActions, ExpandableDescription } from "@/components/VillaInt
 import { VillaViewTracker } from "@/components/VillaViewTracker";
 import { PriceDisplay } from "@/components/PriceDisplay";
 import { BookingBottomSheet } from "@/components/BookingBottomSheet";
-import { ConnectedBookingForm, VillaBookingWrapper } from "@/components/villas/VillaBookingWrapper";
-import { AvailabilityCalendar } from "@/components/booking/AvailabilityCalendar";
+import {
+  ConnectedAvailabilityCalendar,
+  ConnectedBookingForm,
+  ConnectedMobileBookingForm,
+  VillaBookingWrapper,
+} from "@/components/villas/VillaBookingWrapper";
 import { VillaAccordionInfo } from "@/components/villas/VillaAccordionInfo";
 import { VillaReviews } from "@/components/VillaReviews";
 import { WishlistButton } from "@/components/villas/WishlistButton";
@@ -177,10 +180,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
   let villa: VillaDetails = fallbackVilla;
   let recommendedVillas: RecommendedVilla[] = [];
+  let seasonalPrices: { season: string; start: string; end: string; price: number }[] = [];
 
   try {
     const supabase = await getSupabaseServer();
-    const [villaResult, recommendationsResult] = await Promise.all([
+    const [villaResult, recommendationsResult, seasonalResult] = await Promise.all([
       supabase
         .from("villas")
         .select("id,name,location,description,price_per_night,capacity,image_url,image_urls,amenities,rooms_details,is_published,cancellation_policy,house_rules,safety_info,bathrooms_count,surface_m2,check_in_time,check_out_time,environment,nearby_points,equipment_interior,equipment_exterior,included_services_home,included_services_collection,a_la_carte_services,collection_tier,booking_terms,latitude,longitude,map_embed_url,owner_id,cleaning_fee_cents")
@@ -192,6 +196,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         .eq("is_published", true)
         .neq("id", id)
         .limit(3),
+      supabase
+        .from("seasonal_rates")
+        .select("label, start_date, end_date, price_per_night")
+        .eq("villa_id", id)
+        .order("start_date"),
     ]);
 
     const { data, error } = villaResult;
@@ -270,6 +279,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     if (!recommendationsResult.error && recommendationsResult.data) {
       recommendedVillas = recommendationsResult.data.filter((v) => v.is_published) as RecommendedVilla[];
     }
+
+    if (!seasonalResult.error && seasonalResult.data) {
+      seasonalPrices = seasonalResult.data.map((r) => ({
+        season: r.label ?? "Saison",
+        start: r.start_date,
+        end: r.end_date,
+        price: Number(r.price_per_night) || 0,
+      }));
+    }
   } catch (error) {
     console.error("Supabase fetch error (villa details):", error);
   }
@@ -311,7 +329,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             <div className="flex items-center gap-3 mt-4 text-sm text-navy/60 font-medium">
               <span>{villa.capacity} voyageurs</span>
               <span>·</span>
-              <span>{villa.rooms?.length || 4} chambres</span>
+              <span>{villa.rooms?.length ? `${villa.rooms.length} chambres` : "Chambres sur demande"}</span>
               <span>·</span>
               <span>{villa.bathrooms_count || villa.rooms?.length || 4} salles de bain</span>
               <span>·</span>
@@ -463,7 +481,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   </span>
                 </div>
               </div>
-              <AvailabilityCalendar villaId={villa.id} />
+              <ConnectedAvailabilityCalendar villaId={villa.id} />
 
             </section>
 
@@ -557,6 +575,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   checkInTime={villa.check_in_time || "17:00"}
                   checkOutTime={villa.check_out_time || "10:00"}
                   cleaningFeeCents={villa.cleaning_fee_cents}
+                  seasonalPrices={seasonalPrices}
                 />
               </div>
               
@@ -626,13 +645,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             </p>
           </div>
           <BookingBottomSheet trigger="Réserver" ariaLabel="Réserver votre séjour">
-            <BookingForm
+            <ConnectedMobileBookingForm
               villaId={villa.id}
               basePrice={villa.price}
               capacity={villa.capacity}
               checkInTime={villa.check_in_time || "17:00"}
               checkOutTime={villa.check_out_time || "10:00"}
               cleaningFeeCents={villa.cleaning_fee_cents}
+              seasonalPrices={seasonalPrices}
             />
           </BookingBottomSheet>
         </div>

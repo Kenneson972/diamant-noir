@@ -29,9 +29,11 @@ export const AvailabilityCalendar = ({
   const calendarLocale = locale.startsWith("en") ? "en-gb" : "fr";
   const [bookedDates, setBookedDates] = useState<any[]>([]);
   const [selectedRange, setSelectedRange] = useState<DateRange | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookings = async () => {
+      setLoading(true);
       const isUUID =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
           villaId
@@ -56,6 +58,7 @@ export const AvailabilityCalendar = ({
         }));
         setBookedDates(events);
       }
+      setLoading(false);
     };
 
     fetchBookings();
@@ -101,6 +104,11 @@ export const AvailabilityCalendar = ({
 
   return (
     <div className="availability-calendar-container rounded-2xl border border-navy/10 bg-white p-3 md:p-6 overflow-x-auto shadow-sm">
+      {loading && (
+        <p className="mb-3 text-xs text-navy/50" role="status">
+          Chargement des disponibilités…
+        </p>
+      )}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-semibold text-navy">
           <span className="h-2 w-2 rounded-full bg-gold" />
@@ -131,7 +139,7 @@ export const AvailabilityCalendar = ({
         }}
         dayMaxEvents={true}
         fixedWeekCount={false}
-        selectable={true}
+        selectable={!loading}
         selectMirror={true}
         unselectAuto={false}
         select={handleSelect}

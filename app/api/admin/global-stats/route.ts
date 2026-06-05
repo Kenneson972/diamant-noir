@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import {
+  grossCentsFromBooking,
+  platformFeeCents,
+} from "@/lib/revenue/booking-revenue";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-// Prix en centimes : total_price_cents fait foi, sinon fallback sur price (euros legacy)
-function priceCents(b: { total_price_cents: number | null; price: number | null }): number {
-  if (typeof b.total_price_cents === "number" && b.total_price_cents > 0) return b.total_price_cents;
-  return Math.round(Number(b.price ?? 0) * 100);
-}
 
 /**
  * Statistiques globales plateforme (revenus Stripe, occupation, soumissions) — Agent C.
@@ -22,7 +20,11 @@ export async function GET(request: Request) {
 
     const [villasRes, bookingsRes, submissionsRes] = await Promise.all([
       supabase.from("villas").select("id, is_published"),
-      supabase.from("bookings").select("total_price_cents, price, status, payment_status, start_date"),
+      supabase
+        .from("bookings")
+        .select(
+          "total_price_cents, price, cleaning_fee, service_fee, status, payment_status, start_date"
+        ),
       supabase.from("villa_submissions").select("id, status"),
     ]);
 
@@ -35,10 +37,15 @@ export async function GET(request: Request) {
     const isPaid = (b: { status: string; payment_status: string }) =>
       b.status === "confirmed" || b.status === "paid" || b.payment_status === "paid";
 
-    const revenueTotalCents = bookings.filter(isPaid).reduce((s, b) => s + priceCents(b), 0);
-    const revenueCurrentMonthCents = bookings
-      .filter((b) => isPaid(b) && String(b.start_date ?? "").startsWith(monthKey))
-      .reduce((s, b) => s + priceCents(b), 0);
+    const paid = bookings.filter(isPaid);
+    const revenueTotalCents = paid.reduce((s, b) => s + grossCentsFromBooking(b), 0);
+    const platformTotalCents = paid.reduce((s, b) => s + platformFeeCents(b), 0);
+    const revenueCurrentMonthCents = paid
+      .filter((b) => String(b.start_date ?? "").startsWith(monthKey))
+      .reduce((s, b) => s + grossCentsFromBooking(b), 0);
+    const platformCurrentMonthCents = paid
+      .filter((b) => String(b.start_date ?? "").startsWith(monthKey))
+      .reduce((s, b) => s + platformFeeCents(b), 0);
 
     return NextResponse.json(
       {
@@ -54,8 +61,12 @@ export async function GET(request: Request) {
         revenue: {
           total_cents: revenueTotalCents,
           total_eur: Math.round(revenueTotalCents / 100),
+          platform_cents: platformTotalCents,
+          platform_eur: Math.round(platformTotalCents / 100),
           current_month_cents: revenueCurrentMonthCents,
           current_month_eur: Math.round(revenueCurrentMonthCents / 100),
+          current_month_platform_cents: platformCurrentMonthCents,
+          current_month_platform_eur: Math.round(platformCurrentMonthCents / 100),
         },
         submissions: {
           total: submissions.length,

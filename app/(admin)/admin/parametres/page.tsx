@@ -131,7 +131,7 @@ export default async function AdminParametresPage() {
         <ConfigField label="Type d'authentification" value="Supabase Auth" />
         <ConfigField
           label="Protection CSRF"
-          value="Activée (Next.js Server Actions)"
+          value="Routes API sensibles (booking, admin) — pas globale"
         />
         <ConfigField label="Consentement cookies" value="Activé (CookieConsent)" />
       </SettingsSection>

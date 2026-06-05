@@ -65,7 +65,7 @@ export async function requireAuth(request: Request): Promise<string> {
  * Returns the authenticated admin's user id.
  */
 export async function requireAdmin(request: Request): Promise<string> {
-  const { user } = await getUserFromRequest(request);
+  const user = await getSessionUser(request);
   if (!user) throw new AuthError("Authentification requise", 401);
 
   const supabase = await getSupabaseServer();
@@ -75,9 +75,14 @@ export async function requireAdmin(request: Request): Promise<string> {
     .eq("id", user.id)
     .maybeSingle();
 
+  const metadataRole =
+    (user.user_metadata?.role as string | undefined) ??
+    (user.app_metadata?.role as string | undefined) ??
+    null;
+
   const admin = isStaffAdmin(
     profile?.role ?? null,
-    null,
+    metadataRole,
     user.email ?? null,
   );
 

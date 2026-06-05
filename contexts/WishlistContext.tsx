@@ -71,36 +71,35 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback(
     async (villaId: string) => {
+      let removing = false;
       setIds((prev) => {
         const next = new Set(prev);
-        if (next.has(villaId)) {
-          next.delete(villaId);
-        } else {
-          next.add(villaId);
-        }
+        removing = next.has(villaId);
+        if (removing) next.delete(villaId);
+        else next.add(villaId);
         localStorage.setItem(LS_KEY, JSON.stringify([...next]));
         return next;
       });
 
-      // Sync Supabase si connecté
       if (!supabase) return;
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) return;
 
-      const isCurrent = ids.has(villaId);
-      if (isCurrent) {
+      if (removing) {
         await supabase
           .from("wishlist")
           .delete()
           .eq("user_id", session.user.id)
           .eq("villa_id", villaId);
       } else {
-        await (supabase as any)
+        await supabase
           .from("wishlist")
           .upsert({ user_id: session.user.id, villa_id: villaId });
       }
     },
-    [ids, supabase]
+    [supabase]
   );
 
   return (

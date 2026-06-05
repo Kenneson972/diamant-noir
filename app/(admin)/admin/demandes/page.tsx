@@ -27,6 +27,7 @@ export default function AdminDemandesPage() {
   const [loading, setLoading] = useState(true);
   const [responseText, setResponseText] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState("pending");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -55,12 +56,21 @@ export default function AdminDemandesPage() {
 
   const handleAction = async (id: string, status: string, guestId?: string, requestType?: string) => {
     if (!supabase) return;
+    setActionError(null);
     const resp = responseText[id] ?? "";
-    await supabase.from("requests").update({
-      status,
-      admin_response: resp || null,
-      updated_at: new Date().toISOString(),
-    }).eq("id", id);
+    const { error: updateError } = await supabase
+      .from("requests")
+      .update({
+        status,
+        admin_response: resp || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    if (updateError) {
+      setActionError(updateError.message);
+      return;
+    }
 
     if (guestId) {
       const statusLabel = status === "resolved" ? "résolue" : status === "rejected" ? "refusée" : "prise en charge";
@@ -80,15 +90,29 @@ export default function AdminDemandesPage() {
 
   const handleAssign = async (requestId: string, assigneeId: string) => {
     if (!supabase) return;
-    await supabase.from("requests").update({
-      assignee_id: assigneeId || null,
-      updated_at: new Date().toISOString(),
-    }).eq("id", requestId);
+    setActionError(null);
+    const { error } = await supabase
+      .from("requests")
+      .update({
+        assignee_id: assigneeId || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", requestId);
+    if (error) {
+      setActionError(error.message);
+      return;
+    }
     fetchRequests();
   };
 
   return (
     <div className="space-y-6">
+      {actionError && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </p>
+      )}
+
       <div>
         <h1 className="font-display text-2xl font-bold text-navy">Demandes voyageurs</h1>
         <p className="text-sm text-navy/50 mt-1">Gérez les demandes des voyageurs en temps réel</p>

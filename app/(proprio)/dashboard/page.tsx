@@ -10,7 +10,7 @@ import { UpcomingBookings } from "@/components/dashboard/proprio/UpcomingBooking
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { StripeConnectButton } from "@/components/dashboard/proprio/StripeConnectButton";
 import { supabaseAdmin } from "@/lib/supabase";
-import { getConnectAccount } from "@/lib/stripe/connect";
+import { calculateTransferAmounts, getConnectAccount } from "@/lib/stripe/connect";
 
 function getMonthBounds() {
   const now = new Date();
@@ -135,9 +135,9 @@ export default async function ProprioDashboardPage(props: {
       // Revenue data for chart — fetch last 6 months for monthly aggregation
       supabase
         .from("bookings")
-        .select("start_date, total_price_cents")
+        .select("start_date, price, cleaning_fee, service_fee, total_price_cents, villa_id, payment_status")
         .in("villa_id", villaIds)
-        .eq("status", "confirmed")
+        .in("status", ["confirmed", "paid"])
         .then((r) => r.data ?? []),
     ]);
 
@@ -168,14 +168,50 @@ export default async function ProprioDashboardPage(props: {
       body: villaNameById(t.villa_id, villas),
     }));
 
-  // Revenue KPI value (current month)
-  const revenueThisMonth = revenueDataRaw
+  const commissionByVilla = new Map(
+    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
+  );
+
+  const ownerNetCents = (b: {
+    price?: number | null;
+    cleaning_fee?: number | null;
+    service_fee?: number | null;
+    total_price_cents?: number | null;
+    villa_id?: string | null;
+  }) => {
+    const stayCents =
+      b.price != null && Number(b.price) > 0
+        ? Math.round(Number(b.price) * 100)
+        : (b.total_price_cents ?? 0);
+    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 25;
+    return calculateTransferAmounts(
+      stayCents,
+      Math.round(Number(b.cleaning_fee ?? 0) * 100),
+      Math.round(Number(b.service_fee ?? 0) * 100),
+      rate
+    ).ownerAmountCents;
+  };
+
+  const paidRevenue = revenueDataRaw.filter(
+    (b) => b.payment_status === "paid" || b.payment_status == null
+  );
+
+  const revenueThisMonth = paidRevenue
     .filter((b) => {
       const bd = new Date(b.start_date);
       const now = new Date();
       return bd.getMonth() === now.getMonth() && bd.getFullYear() === now.getFullYear();
     })
-    .reduce((sum, b) => sum + (b.total_price_cents ?? 0), 0);
+    .reduce((sum, b) => sum + ownerNetCents(b), 0);
+
+  const revenueLastMonth = paidRevenue
+    .filter((b) => {
+      const bd = new Date(b.start_date);
+      const now = new Date();
+      const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      return bd.getMonth() === prev.getMonth() && bd.getFullYear() === prev.getFullYear();
+    })
+    .reduce((sum, b) => sum + ownerNetCents(b), 0);
   const revenueFormatted = new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
@@ -199,16 +235,12 @@ export default async function ProprioDashboardPage(props: {
       const m = d.getMonth();
       const y = d.getFullYear();
       const isCurrent = m === currentMonth && y === currentYear;
-      const total = revenueDataRaw
+      const total = paidRevenue
         .filter((b) => {
           const bd = new Date(b.start_date);
-          return (
-            bd.getMonth() === m &&
-            bd.getFullYear() === y &&
-            (b.total_price_cents ?? 0) > 0
-          );
+          return bd.getMonth() === m && bd.getFullYear() === y;
         })
-        .reduce((sum, b) => sum + (b.total_price_cents ?? 0), 0);
+        .reduce((sum, b) => sum + ownerNetCents(b), 0);
       result.push({
         month: monthNames[m],
         revenue: Math.round(total / 100),
@@ -227,9 +259,15 @@ export default async function ProprioDashboardPage(props: {
       label: "Revenus du mois",
       value: revenueThisMonth > 0 ? revenueFormatted : "Aucun revenu ce mois",
       href: "/dashboard/revenus" as const,
-      trend: revenueThisMonth > 0
-        ? { value: 12, positive: true }
-        : undefined,
+      trend:
+        revenueLastMonth > 0
+          ? {
+              value: Math.round(
+                ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100
+              ),
+              positive: revenueThisMonth >= revenueLastMonth,
+            }
+          : undefined,
     },
     {
       icon: CalendarCheck,

@@ -73,8 +73,41 @@ function PasswordPanel({
   const [fieldErrors, setFieldErrors] = useState<{ confirm?: string }>({})
   const [signupSuccess, setSignupSuccess] = useState<"confirm_email" | null>(null)
   const [forgotSuccess, setForgotSuccess] = useState(false)
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
+  const [magicLoading, setMagicLoading] = useState(false)
   const router = useRouter()
   const supabase = getSupabaseBrowser()
+
+  const handleMagicLink = async () => {
+    if (!supabase) {
+      setError("Supabase n'est pas configuré.")
+      return
+    }
+    const cleanEmail = email.trim().toLowerCase()
+    if (!cleanEmail) {
+      setError("Indiquez votre email pour recevoir le lien.")
+      return
+    }
+    setMagicLoading(true)
+    setError(null)
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
+    const next =
+      redirectTo.startsWith("/espace-client") || redirectTo === "/espace-client"
+        ? redirectTo
+        : "/espace-client"
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: cleanEmail,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    })
+    if (otpError) {
+      setError(formatSupabaseAuthMessage(otpError.message))
+    } else {
+      setMagicLinkSent(true)
+    }
+    setMagicLoading(false)
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -456,6 +489,30 @@ function PasswordPanel({
           )}
         </button>
       </form>
+
+      {mode === "login" && (
+        <div className="space-y-3 border-t border-black/10 pt-4">
+          {magicLinkSent ? (
+            <p className="text-center text-sm text-emerald-700">
+              Lien magique envoyé — vérifiez votre boîte mail (même adresse que votre réservation).
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={handleMagicLink}
+              disabled={magicLoading || !email.trim()}
+              className="tap-target inline-flex w-full items-center justify-center gap-2 border border-navy/20 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-colors hover:border-navy disabled:opacity-50"
+            >
+              {magicLoading ? (
+                <Loader2 className="animate-spin" size={16} aria-hidden />
+              ) : (
+                <Send size={16} strokeWidth={1.25} aria-hidden />
+              )}
+              Recevoir un lien magique (espace client)
+            </button>
+          )}
+        </div>
+      )}
 
       {mode === "login" ? (
         <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">

@@ -234,7 +234,8 @@ export default function EspaceClientPage() {
             <div>
               <p className="mb-1 font-display text-lg text-navy">Aucune réservation</p>
               <p className="max-w-xs text-sm text-navy/45">
-                Vous n&apos;avez pas encore de séjour enregistré à cette adresse.
+                Connectez-vous avec la même adresse email que celle utilisée lors de votre réservation.
+                Si besoin, demandez un lien magique depuis la page de connexion.
               </p>
             </div>
             <Link

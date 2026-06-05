@@ -24,6 +24,7 @@ type BookingFormProps = {
   externalStart?: string;
   externalEnd?: string;
   cleaningFeeCents?: number | null;
+  seasonalPrices?: { season: string; start: string; end: string; price: number }[];
 };
 
 export const BookingForm = ({
@@ -35,6 +36,7 @@ export const BookingForm = ({
   externalStart,
   externalEnd,
   cleaningFeeCents,
+  seasonalPrices,
 }: BookingFormProps) => {
   const cleaningFee = (cleaningFeeCents || 0) / 100;
   const { formatPrice } = useLocale();
@@ -82,8 +84,9 @@ export const BookingForm = ({
       startDate: new Date(start),
       endDate: new Date(end),
       basePrice: basePrice,
+      seasonalPrices,
     });
-  }, [start, end, basePrice]);
+  }, [start, end, basePrice, seasonalPrices]);
 
   const isSelectionUnavailable =
     start && end

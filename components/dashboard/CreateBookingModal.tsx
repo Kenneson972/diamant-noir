@@ -61,19 +61,28 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
       return;
     }
 
-    const { error: insertError } = await supabase.from("bookings").insert({
-      villa_id: form.villa_id,
-      guest_name: form.guest_name,
-      guest_email: form.guest_email || null,
-      start_date: form.start_date,
-      end_date: form.end_date,
-      total_price_cents: parseInt(form.total_price_cents) || 0,
-      status: form.status,
-      source: "manual",
+    const res = await fetch("/api/admin/bookings", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        villa_id: form.villa_id,
+        guest_name: form.guest_name,
+        guest_email: form.guest_email || null,
+        start_date: form.start_date,
+        end_date: form.end_date,
+        total_price_cents: parseInt(form.total_price_cents) || 0,
+        status: form.status,
+      }),
     });
 
-    if (insertError) {
-      setError(insertError.message);
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(
+        typeof payload.error === "string"
+          ? payload.error
+          : "Impossible de créer la réservation."
+      );
     } else {
       onCreated();
       onClose();

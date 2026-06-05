@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { User, Search } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -18,7 +18,7 @@ interface TenantRow {
 }
 
 async function getTenants(search?: string): Promise<TenantRow[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = supabaseAdmin();
 
   let profilesQuery = supabase
     .from("profiles")

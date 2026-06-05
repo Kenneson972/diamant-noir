@@ -14,6 +14,17 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — Correctifs audit dashboard (Cursor + Élise)
+
+- **type**: fix | security | api | ui | sql
+- **summary**: Implémentation des P0/P1 audit espaces admin/proprio/tenant : revenus admin via `calculateTransferAmounts`, API bookings admin (POST/PATCH + conflit dates), filtrage payload n8n, RLS staff bookings/requests/reviews/chat, messagerie admin alignée schéma DB, calendrier connecté au formulaire, magic link `/login`, wishlist fix, copilot proprio branché, IDOR booking proprio, revenus net proprio/copilot.
+- **files**: `lib/revenue/booking-revenue.ts`, `app/api/admin/{revenue,bookings,messages}/route.ts`, `supabase/migrations/20260606140000_audit_dashboard_fixes.sql`, pages admin/proprio/tenant, `components/villas/VillaBookingWrapper.tsx`, `lib/auth/server.ts`, `middleware.ts`
+- **why**: Audit consolidé 2026-06-06 — données bloquées RLS, chiffres finance faux, fuites n8n, conversion booking cassée.
+- **impact**: Admin voit réservations/revenus ; création résa sans double-booking ; tenant peut réserver depuis le calendrier ; proprio voit revenus nets cohérents.
+- **verify**: `npm run build` compile diamant-noir (erreur externe MAISON PVL hors repo) ; migration `audit_dashboard_fixes` appliquée Supabase prod.
+
+---
+
 ### 2026-05-28 — Routes API pour les agents n8n + auth Bearer
 
 - **type**: api | security

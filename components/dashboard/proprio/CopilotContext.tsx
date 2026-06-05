@@ -34,7 +34,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
     clearMessages,
     loadContext,
   } = useCopilot({
-    webhookUrl: process.env.NEXT_PUBLIC_COPILOT_WEBHOOK_URL ?? "/api/chatbot-owner",
+    webhookUrl: "/api/dashboard/owner-assistant",
   });
 
   const open = useCallback(() => setIsOpen(true), []);

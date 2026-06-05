@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { BookingForm } from "@/components/BookingForm";
+import { AvailabilityCalendar } from "@/components/booking/AvailabilityCalendar";
 
 type DateRange = {
   start: string;
@@ -23,7 +24,12 @@ const BookingContext = createContext<BookingContextType | null>(null);
 
 export const useBookingDates = () => {
   const ctx = useContext(BookingContext);
-  if (!ctx) return { selectedDates: null as DateRange | null };
+  if (!ctx) {
+    return {
+      selectedDates: null as DateRange | null,
+      handleDatesChange: (_range: DateRange | null) => {},
+    };
+  }
   return ctx;
 };
 
@@ -74,14 +80,34 @@ export const VillaBookingWrapper = ({
  * BookingForm qui lit automatiquement les dates sélectionnées
  * dans le calendrier via le contexte.
  */
-export const ConnectedBookingForm = (props: {
+type BookingFormSharedProps = {
   villaId: string;
   basePrice: number;
   capacity: number;
   checkInTime?: string;
   checkOutTime?: string;
   cleaningFeeCents?: number | null;
-}) => {
+  seasonalPrices?: { season: string; start: string; end: string; price: number }[];
+};
+
+export const ConnectedAvailabilityCalendar = ({ villaId }: { villaId: string }) => {
+  const { handleDatesChange } = useBookingDates();
+  return <AvailabilityCalendar villaId={villaId} onDatesChange={handleDatesChange} />;
+};
+
+export const ConnectedBookingForm = (props: BookingFormSharedProps) => {
+  const { selectedDates } = useBookingDates();
+
+  return (
+    <BookingForm
+      {...props}
+      externalStart={selectedDates?.start}
+      externalEnd={selectedDates?.end}
+    />
+  );
+};
+
+export const ConnectedMobileBookingForm = (props: BookingFormSharedProps) => {
   const { selectedDates } = useBookingDates();
 
   return (

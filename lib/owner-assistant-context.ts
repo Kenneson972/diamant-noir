@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getBookingPriceCents } from "@/lib/utils";
+import { ownerNetCents } from "@/lib/revenue/booking-revenue";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -122,7 +122,7 @@ export async function buildOwnerContextPack(
   const { data: villas, error: villasErr } = await admin
     .from("villas")
     .select(
-      "id, name, slug, is_published, price_per_night, capacity, image_urls, created_at"
+      "id, name, slug, is_published, price_per_night, capacity, commission_rate, image_urls, created_at"
     )
     .eq("owner_id", ownerId)
     .order("created_at", { ascending: false });
@@ -182,7 +182,7 @@ export async function buildOwnerContextPack(
     admin
       .from("bookings")
       .select(
-        "id, villa_id, start_date, end_date, status, payment_status, price, guest_name, created_at"
+        "id, villa_id, start_date, end_date, status, payment_status, price, cleaning_fee, service_fee, total_price_cents, guest_name, created_at"
       )
       .in("villa_id", villaIds)
       .order("start_date", { ascending: true }),
@@ -205,26 +205,31 @@ export async function buildOwnerContextPack(
   // ── Métriques revenus ──
   const paidBookings = bookings.filter((b) => b.payment_status === "paid");
 
-  const totalRevenuePaid = paidBookings.reduce(
-    (sum, b) => sum + (getBookingPriceCents(b) / 100),
-    0
+  const commissionByVilla = new Map(
+    villaList.map((v) => [
+      v.id as string,
+      (v as { commission_rate?: number }).commission_rate ?? 25,
+    ])
   );
 
-  // Revenus mois en cours — filtre sur start_date dans la fenêtre mensuelle
+  const netEuros = (b: (typeof paidBookings)[0]) =>
+    ownerNetCents(b, commissionByVilla.get(String(b.villa_id)) ?? 25) / 100;
+
+  const totalRevenuePaid = paidBookings.reduce((sum, b) => sum + netEuros(b), 0);
+
   const revenueCurrentMonth = paidBookings
     .filter((b) => {
       const d = String(b.start_date ?? "");
       return d >= curMonthStart && d < nextMonthStart;
     })
-    .reduce((sum, b) => sum + (getBookingPriceCents(b) / 100), 0);
+    .reduce((sum, b) => sum + netEuros(b), 0);
 
-  // Revenus mois précédent
   const revenueLastMonth = paidBookings
     .filter((b) => {
       const d = String(b.start_date ?? "");
       return d >= prevMonthStart && d < curMonthStart;
     })
-    .reduce((sum, b) => sum + (getBookingPriceCents(b) / 100), 0);
+    .reduce((sum, b) => sum + netEuros(b), 0);
 
   // ── Upcoming (à partir d'aujourd'hui) ──
   const upcoming = bookings.filter(

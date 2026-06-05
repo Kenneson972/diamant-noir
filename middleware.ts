@@ -31,7 +31,6 @@ const publicPaths = [
   "/api/stripe/connect-onboarding",
   "/api/stripe/connect-verify",
   "/api/contact",
-  "/api/sync-ota",
   "/api/import-airbnb",
   "/api/send-booking-confirmation",
   "/api/notify-admin-booking",

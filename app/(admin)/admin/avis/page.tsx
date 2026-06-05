@@ -10,6 +10,7 @@ export default function AdminAvisPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("pending");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const fetchReviews = async () => {
     if (!supabase) return;
@@ -27,18 +28,26 @@ export default function AdminAvisPage() {
 
   const handleAction = async (review: any, status: string) => {
     if (!supabase) return;
-    await supabase.from("reviews").update({
-      status,
-      updated_at: new Date().toISOString(),
-    }).eq("id", review.id);
+    setActionError(null);
+    const { error: updateError } = await supabase
+      .from("reviews")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", review.id);
 
-    await supabase.from("notifications").insert({
-      user_id: review.guest_id,
-      type: "system",
-      title: status === "approved" ? "Avis approuvé" : "Avis refusé",
-      body: `Votre avis sur "${review.villas?.name ?? "la villa"}" a été ${status === "approved" ? "approuvé et publié" : "refusé"}.`,
-      action_url: "/espace-client",
-    });
+    if (updateError) {
+      setActionError(updateError.message);
+      return;
+    }
+
+    if (review.guest_id) {
+      await supabase.from("notifications").insert({
+        user_id: review.guest_id,
+        type: "system",
+        title: status === "approved" ? "Avis approuvé" : "Avis refusé",
+        body: `Votre avis sur "${review.villas?.name ?? "la villa"}" a été ${status === "approved" ? "approuvé et publié" : "refusé"}.`,
+        action_url: "/espace-client",
+      });
+    }
 
     fetchReviews();
   };
@@ -46,6 +55,11 @@ export default function AdminAvisPage() {
   return (
     <div className="space-y-6">
       <AdminPageIntro title="Avis clients" description="Gérez et modérez les avis post-séjour" />
+      {actionError && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </p>
+      )}
 
       <div className="flex gap-2 flex-wrap">
         {["pending", "approved", "rejected", "all"].map((f) => (

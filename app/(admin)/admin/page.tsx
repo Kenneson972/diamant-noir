@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { Building2, CalendarDays, Users, UserCircle, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut, Percent, TrendingUp } from "lucide-react";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const supabase = await getSupabaseServer();
+  const supabase = supabaseAdmin();
   const today = new Date().toISOString().split("T")[0];
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];

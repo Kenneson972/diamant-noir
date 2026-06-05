@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseServer } from "@/lib/supabase-server";
+import { verifyVillaOwnerOrAdmin } from "@/lib/auth/verify-villa-access";
 import { BookingDetailCard } from "@/components/dashboard/proprio/BookingDetailCard";
 import type { Booking } from "@/types/domain";
 
@@ -14,12 +16,27 @@ export const dynamic = "force-dynamic";
 export default async function BookingDetailPage({ params }: PageProps) {
   const { villaId, bookingId } = await params;
 
-  // Fetch booking and villa concurrently
+  const supabase = await getSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?redirect=/dashboard");
+
+  const allowed = await verifyVillaOwnerOrAdmin(
+    supabaseAdmin(),
+    villaId,
+    user.id,
+    user.email,
+    user.user_metadata?.role as string | undefined
+  );
+  if (!allowed) notFound();
+
   const [bookingResult, villaResult] = await Promise.all([
     supabaseAdmin()
       .from("bookings")
       .select("*")
       .eq("id", bookingId)
+      .eq("villa_id", villaId)
       .single(),
     supabaseAdmin()
       .from("villas")
@@ -39,7 +56,6 @@ export default async function BookingDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
       <Link
         href={`/dashboard/reservations/${villaId}`}
         className="inline-flex items-center gap-1.5 text-sm text-navy/50 transition-colors hover:text-navy"
@@ -48,7 +64,6 @@ export default async function BookingDetailPage({ params }: PageProps) {
         Retour aux réservations
       </Link>
 
-      {/* Detail card */}
       <BookingDetailCard
         booking={typedBooking}
         villaName={villa?.name ?? undefined}

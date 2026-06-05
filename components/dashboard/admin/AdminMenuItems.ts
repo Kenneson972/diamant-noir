@@ -10,6 +10,7 @@ export const adminMenuItems: MenuItem[] = [
   { label: "Villas", href: "/admin/villas", icon: "Building2" },
   { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
   { label: "Clients", href: "/admin/clients", icon: "UserCircle" },
+  { label: "Propriétaires", href: "/admin/proprietaires", icon: "Users" },
   { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
   { label: "Avis", href: "/admin/avis", icon: "Star" },
   { label: "Messagerie", href: "/admin/messagerie", icon: "MessageCircle" },

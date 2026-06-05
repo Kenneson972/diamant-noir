@@ -4,6 +4,7 @@ import { getBookingPriceCents } from "@/lib/utils";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -25,20 +26,30 @@ export async function POST(request: Request) {
 
     const [villasRes, bookingsRes, tasksRes, submissionsRes, otaLogsRes] =
       await Promise.all([
-        supabase.from("villas").select("*"),
+        supabase
+          .from("villas")
+          .select(
+            "id, name, is_published, price_per_night, capacity, location, owner_id"
+          ),
         supabase
           .from("bookings")
-          .select("*")
-          .order("start_date", { ascending: true }),
-        supabase.from("tasks").select("*"),
+          .select(
+            "id, villa_id, start_date, end_date, status, payment_status, guest_name, price, total_price_cents, created_at"
+          )
+          .order("start_date", { ascending: true })
+          .limit(200),
+        supabase
+          .from("tasks")
+          .select("id, villa_id, title, status, due_date, type")
+          .limit(100),
         supabase
           .from("villa_submissions")
-          .select("*")
+          .select("id, status, owner_name, villa_name, created_at, has_photos")
           .order("created_at", { ascending: false })
           .limit(50),
         supabase
           .from("ota_sync_logs")
-          .select("*")
+          .select("id, villa_id, source, error, inserted, created_at")
           .order("created_at", { ascending: false })
           .limit(50),
       ]);
@@ -83,16 +94,12 @@ export async function POST(request: Request) {
       current_date: today.toISOString(),
       today_str: todayStr,
 
-      // Villas
-      villas,
       villas_summary: {
         total: villas.length,
         published: villas.filter((v) => v.is_published).length,
         draft: villas.filter((v) => !v.is_published).length,
       },
 
-      // Réservations
-      bookings,
       bookings_summary: {
         total: bookings.length,
         confirmed: bookings.filter((b) => b.status === "confirmed").length,
@@ -141,8 +148,6 @@ export async function POST(request: Request) {
         monthly_revenue: monthlyRevenue,
       },
 
-      // Tâches
-      tasks,
       tasks_summary: {
         total: tasks.length,
         overdue: tasks.filter(
@@ -156,8 +161,6 @@ export async function POST(request: Request) {
         in_progress: tasks.filter((t) => t.status === "in_progress").length,
       },
 
-      // Soumissions propriétaires
-      submissions,
       submissions_summary: {
         total: submissions.length,
         received: submissions.filter((s) => s.status === "received").length,
