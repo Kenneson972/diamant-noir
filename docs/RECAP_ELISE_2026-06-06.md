@@ -3,7 +3,7 @@
 **Pour** : Elise  
 **Date** : 6 juin 2026  
 **Projet** : `diamant-noir` (conciergerie Kayvila)  
-**Branche** : `main` · dernier commit : `92c993b`
+**Branche** : `main` · dernier commit : `db14c60`
 
 ---
 
@@ -44,6 +44,8 @@ Projet : `wsdawdxucyuyopkpgjij`
 | `4a40b60` | API réservations admin + wishlist + fix embed villas |
 | `61425af` | Annulation réservations (contrainte status) |
 | `92c993b` | Config Vercel HeroUI Pro |
+| `760d60f` | Récap Elise (ce fichier) |
+| `db14c60` | Commission dynamique + drop FK dupliquée |
 
 ---
 
@@ -79,12 +81,12 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 **Mitigation** : checklist QA ci-dessus + commits atomiques (`152f8c6`, `4a40b60`, `61425af`, `92c993b`) pour rollback ciblé.  
 **Recommandation** : Elise valide les 5 parcours checklist avant de considérer la session « stable prod ».
 
-### 2. Commission 25 % hardcodée — **corrigé** (`à venir`)
+### 2. Commission 25 % hardcodée — **corrigé** (`db14c60`)
 - `lib/commission.ts` — taux par villa (`villas.commission_rate`), défaut 25 %
 - `OwnerRevenueTab` — commission par réservation + KPI dynamiques
 - Fallback 25 % si villa sans taux en base
 
-### 3. FK dupliquée `fk_bookings_villa` — **corrigé** (`à venir`)
+### 3. FK dupliquée `fk_bookings_villa` — **corrigé** (`db14c60`)
 - Migration `20260606230000_drop_duplicate_bookings_villa_fk.sql` appliquée prod
 - FK canonique conservée : `bookings_villa_id_fkey` (embed `BOOKING_VILLA_EMBED`)
 
