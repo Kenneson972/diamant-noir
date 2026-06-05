@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "dev:clean": "rm -rf .next && next dev",
     "build": "next build",
     "build:dev": "sh -c 'for p in 3000 3001; do lsof -ti tcp:$p 2>/dev/null | xargs kill -9 2>/dev/null; done; npm run build && npm run dev -- -p 3000'",

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { HomeAudienceProvider } from "@/contexts/HomeAudienceContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { NavigationProgress } from "@/components/layout/NavigationProgress";
 import { resetBodyScrollLock } from "@/lib/bodyScrollLock";
 
 /**
@@ -34,6 +35,7 @@ export function SiteFrame({
 
   return (
     <HomeAudienceProvider>
+      <NavigationProgress />
       <Navbar isDevelopment={isDevelopment} />
       {children}
       <Footer />

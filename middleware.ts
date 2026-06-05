@@ -66,6 +66,14 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-dn-locale", locale);
 
+  // Visiteur anonyme sur page publique : pas d'appel réseau Supabase Auth (getUser = ~100–300 ms/clic)
+  const hasSupabaseAuthCookie = request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("auth"));
+  if (isPublic && !hasSupabaseAuthCookie) {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
   let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {

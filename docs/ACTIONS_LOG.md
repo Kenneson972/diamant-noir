@@ -436,3 +436,12 @@ verify: vérification effectuée
 - **why**: Finitions UX client demandées par Élise — conversion, rétention, partage séjour sécurisé
 - **impact**: Liste villas plus légère (sans Leaflet) ; espace client enrichi ; liens partage expirables 7j
 - **verify**: `npm run build` OK ; migration `booking_shares` à pousser en prod
+
+## 2026-06-06 : Refonte checkout Kayvila + perf navigation dev
+
+- **type**: ui | perf | config
+- **summary**: Refonte `/book` (hero éditorial navy, prefetch villa RSC, `CheckoutPriceSummary`, CTA sticky mobile, politique remboursement Kayvila) ; perf dev (middleware skip auth anonyme, Turbopack, `NavigationProgress`, skeletons) ; CSP `frame-src` OpenStreetMap.
+- **files**: [`components/booking/CheckoutView.tsx`, `components/booking/CheckoutPriceSummary.tsx`, `components/booking/checkout-types.ts`, `app/book/page.tsx`, `app/book/loading.tsx`, `middleware.ts`, `components/layout/NavigationProgress.tsx`, `components/layout/SiteFrame.tsx`, `app/loading.tsx`, `app/globals.css`, `package.json`, `next.config.mjs`]
+- **why**: Checkout hors charte Kayvila (clone Airbnb) ; lenteur navigation dev ; carte OSM bloquée par CSP
+- **impact**: Tunnel réservation aligné marque ; navigation perçue plus fluide en local ; iframe carte villas fonctionnelle
+- **verify**: `npm run build` OK

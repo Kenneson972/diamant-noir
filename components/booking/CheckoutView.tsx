@@ -1,36 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import type { Session } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import {
-  ChevronLeft,
-  Calendar,
-  Users,
-  ShieldCheck,
-  Info,
-  CreditCard,
-  Lock,
-  ArrowRight,
-  Mail,
-  User
-} from "lucide-react";
+import { ChevronLeft, Calendar, Users, ShieldCheck, Mail, User } from "lucide-react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { KayvilaStepper } from "@/components/ui/pro";
+import { KayvilaPressableButton } from "@/components/ui/pro";
+import { CheckoutPriceSummary } from "@/components/booking/CheckoutPriceSummary";
+import type { CheckoutVilla } from "@/components/booking/checkout-types";
 
-interface CheckoutViewProps {
-  villaId: string;
+type CheckoutViewProps = {
+  villa: CheckoutVilla;
   checkin: string;
   checkout: string;
   guestsCount: number;
+};
+
+function formatTripDate(iso: string) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
-export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: CheckoutViewProps) => {
-  const { t } = useLocale();
-  const [villa, setVilla] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+function formatTripDateShort(iso: string) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+}
+
+export function CheckoutView({ villa, checkin, checkout, guestsCount }: CheckoutViewProps) {
+  const { t, formatPrice } = useLocale();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [guestEmail, setGuestEmail] = useState("");
@@ -38,40 +43,50 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const fetchVilla = async () => {
-      const supabase = getSupabaseBrowser();
-      if (!supabase) return;
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setIsLoggedIn(true);
-        setGuestEmail(session.user.email ?? "");
-        setGuestName(session.user.user_metadata?.full_name || "");
-      }
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
+      if (!session?.user) return;
+      setIsLoggedIn(true);
+      setGuestEmail(session.user.email ?? "");
+      setGuestName(session.user.user_metadata?.full_name || "");
+    });
+  }, []);
 
-      const { data, error } = await supabase
-        .from("villas")
-        .select("*")
-        .eq("id", villaId)
-        .single();
+  const priceResult = useMemo(
+    () =>
+      calculatePrice({
+        startDate: new Date(checkin),
+        endDate: new Date(checkout),
+        basePrice: villa.price_per_night,
+      }),
+    [checkin, checkout, villa.price_per_night]
+  );
 
-      if (!error && data) {
-        setVilla(data);
-      }
-      setLoading(false);
-    };
+  const cleaningFee = (villa.cleaning_fee_cents ?? 0) / 100;
+  const serviceFee = Math.round(priceResult.total * 0.05);
+  const totalAmount = priceResult.total + cleaningFee + serviceFee;
+  const nights = priceResult.nights;
 
-    fetchVilla();
-  }, [villaId]);
+  const heroImage = villa.image_url || villa.image_urls?.[0] || "/villa-hero.jpg";
+  const editHref = `/villas/${villa.id}?checkin=${checkin}&checkout=${checkout}&guests=${guestsCount}`;
 
-  const priceResult = villa ? calculatePrice({
-    startDate: new Date(checkin),
-    endDate: new Date(checkout),
-    basePrice: villa.price_per_night
-  }) : null;
+  const houseRules = useMemo(() => {
+    if (villa.checkout_instructions?.trim()) {
+      return villa.checkout_instructions
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+    return [
+      "Arrivée à partir de 17h, départ avant 10h sauf accord conciergerie.",
+      "Respect du voisinage et des équipements de la villa.",
+      "Non-fumeur à l'intérieur. Animaux sur demande préalable.",
+    ];
+  }, [villa.checkout_instructions]);
 
   const handleConfirmBooking = async () => {
-    // Validation email obligatoire
     if (!guestEmail.trim()) {
       setError(t("checkout.email_required"));
       return;
@@ -85,13 +100,11 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
       return;
     }
 
-    // Validation nuit minimum
-    const nights = Math.round(
-      (new Date(checkout).getTime() - new Date(checkin).getTime()) / 86400000
-    );
-    const minNights = villa?.min_nights ?? 1;
+    const minNights = villa.min_nights ?? 1;
     if (nights < minNights) {
-      setError(`Cette villa nécessite un séjour minimum de ${minNights} nuit${minNights > 1 ? "s" : ""}.`);
+      setError(
+        `Cette villa nécessite un séjour minimum de ${minNights} nuit${minNights > 1 ? "s" : ""}.`
+      );
       return;
     }
 
@@ -101,10 +114,10 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
       const response = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          startDate: checkin, 
-          endDate: checkout, 
-          villaId,
+        body: JSON.stringify({
+          startDate: checkin,
+          endDate: checkout,
+          villaId: villa.id,
           guests: guestsCount,
           guestName: guestName.trim(),
           guestEmail: guestEmail.trim(),
@@ -122,275 +135,301 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <div role="status" className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent">
-          <span className="sr-only">Chargement en cours</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!villa) {
-    return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-navy/60">Villa non trouvée</p>
-        <Link href="/villas" className="text-gold underline">
-          Retour au catalogue
-        </Link>
-      </div>
-    );
-  }
-
-  const cleaningFee = ((villa as any)?.cleaning_fee_cents || 0) / 100;
-  const serviceFee = priceResult ? Math.round(priceResult.total * 0.05) : 0;
-  const totalAmount = priceResult ? priceResult.total + cleaningFee + serviceFee : 0;
-
-  const checkoutSteps = [
-    { title: "Dates", description: "Vos dates de séjour" },
-    { title: "Voyageurs", description: "Nombre de personnes" },
-    { title: "Coordonnées", description: "Vos informations" },
-    { title: "Paiement", description: "Stripe sécurisé" },
-  ];
+  const priceSummaryProps = {
+    villa,
+    nights,
+    stayTotal: priceResult.total,
+    cleaningFee,
+    serviceFee,
+    totalAmount,
+    formatPrice,
+  };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-24 sm:pb-12 lg:py-20">
-      <KayvilaStepper steps={checkoutSteps} currentStep={4} className="mb-10 hidden sm:block" />
+    <div className="min-h-dvh bg-offwhite">
+      {/* Hero éditorial compact */}
+      <header className="relative overflow-hidden bg-navy text-white">
+        <Image
+          src={heroImage}
+          alt=""
+          fill
+          className="object-cover opacity-35"
+          sizes="100vw"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/70" aria-hidden />
+        <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-28 sm:px-6 sm:pb-12 sm:pt-32">
+          <Link
+            href={editHref}
+            className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/55 transition-colors hover:text-gold"
+          >
+            <ChevronLeft size={14} aria-hidden />
+            Modifier la sélection
+          </Link>
+          <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.42em] text-gold">
+            Finaliser votre séjour
+          </p>
+          <h1 className="mt-3 max-w-2xl font-display text-3xl font-normal leading-tight sm:text-4xl">
+            {villa.name}
+          </h1>
+          {villa.location ? (
+            <p className="mt-2 font-display text-base italic text-white/55">{villa.location}</p>
+          ) : null}
+          <span className="mt-5 block h-px w-10 bg-gold/60" aria-hidden />
+        </div>
+      </header>
 
-      <div className="mb-12">
-        <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/55 hover:text-navy transition-colors group">
-          <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Modifier la sélection
-        </Link>
-        <h1 className="mt-6 font-display text-4xl text-navy lg:text-5xl">Confirmer et payer</h1>
-      </div>
+      <div className="mx-auto max-w-7xl px-4 pb-28 sm:px-6 sm:pb-16 lg:py-14">
+        {/* Mobile : récap prix en premier */}
+        <div className="mt-8 lg:hidden">
+          <CheckoutPriceSummary {...priceSummaryProps} compact />
+        </div>
 
-      {/* Mobile sticky CTA */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-black/10 bg-white p-4 sm:hidden"
-        style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
-      >
-        <button
-          onClick={handleConfirmBooking}
-          disabled={checkoutLoading}
-          className="w-full bg-navy py-3 text-[11px] font-bold uppercase tracking-[0.3em] text-white transition-colors hover:bg-gold hover:text-navy disabled:opacity-50"
-        >
-          {checkoutLoading ? t("common.loading") : t("checkout.confirm")}
-        </button>
-      </div>
-
-      <div className="grid gap-16 lg:grid-cols-[1fr_400px]">
-        {/* Left Column: Review Trip */}
-        <div className="space-y-12">
-          {/* Your Trip Section */}
-          <section className="space-y-8">
-            <h2 className="text-2xl font-semibold text-navy">Votre voyage</h2>
-            
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="flex items-center justify-between rounded-2xl border border-navy/10 p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 text-gold">
-                    <Calendar size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">Dates</p>
-                    <p className="text-sm font-bold text-navy">
-                      {new Date(checkin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - {new Date(checkout).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-                <Link href={`/villas/${villaId}`} className="text-xs font-bold text-navy underline decoration-gold underline-offset-4">Modifier</Link>
-              </div>
-
-              <div className="flex items-center justify-between rounded-2xl border border-navy/10 p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 text-gold">
-                    <Users size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">Voyageurs</p>
-                    <p className="text-sm font-bold text-navy">{guestsCount} voyageur{guestsCount > 1 ? 's' : ''}</p>
-                  </div>
-                </div>
-                <Link href={`/villas/${villaId}`} className="text-xs font-bold text-navy underline decoration-gold underline-offset-4">Modifier</Link>
-              </div>
-            </div>
-          </section>
-
-          {/* Guest Information */}
-          {!isLoggedIn && (
+        <div className="mt-10 grid gap-12 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-16 xl:grid-cols-[minmax(0,1fr)_400px]">
+          <div className="space-y-12">
+            {/* Séjour */}
             <section className="space-y-6">
-              <h2 className="text-2xl font-semibold text-navy">Vos coordonnées</h2>
-              <p className="text-sm text-navy/50">Ces informations nous servent à vous envoyer la confirmation et à créer votre espace client.</p>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="guestName" className="block text-[10px] font-bold uppercase tracking-widest text-navy/55 mb-2">
-                    Nom complet *
-                  </label>
-                  <div className="relative">
-                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-navy/30" />
-                    <input
-                      id="guestName"
-                      type="text"
-                      value={guestName}
-                      onChange={(e) => setGuestName(e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full rounded-2xl border border-navy/10 bg-white py-4 pl-12 pr-4 text-sm text-navy outline-none transition-all placeholder:text-navy/20 focus:border-gold focus:ring-1 focus:ring-gold"
-                    />
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-navy/35">
+                  Votre séjour
+                </p>
+                <h2 className="mt-2 font-display text-2xl text-navy">Dates et voyageurs</h2>
+              </div>
+
+              <div className="divide-y divide-navy/8 border border-navy/10 bg-white">
+                <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
+                  <div className="flex items-start gap-4">
+                    <Calendar className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
+                        Arrivée — Départ
+                      </p>
+                      <p className="mt-1 text-sm text-navy">
+                        {formatTripDateShort(checkin)} → {formatTripDate(checkout)}
+                      </p>
+                      <p className="mt-0.5 text-xs text-navy/50">
+                        {nights} nuit{nights > 1 ? "s" : ""}
+                        {villa.check_in_time || villa.check_out_time
+                          ? ` · Check-in ${villa.check_in_time ?? "17:00"} · Check-out ${villa.check_out_time ?? "10:00"}`
+                          : null}
+                      </p>
+                    </div>
                   </div>
+                  <Link
+                    href={editHref}
+                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold no-underline hover:text-navy"
+                  >
+                    Modifier
+                  </Link>
                 </div>
-                <div>
-                  <label htmlFor="guestEmail" className="block text-[10px] font-bold uppercase tracking-widest text-navy/55 mb-2">
-                    Adresse email *
-                  </label>
-                  <div className="relative">
-                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-navy/30" />
-                    <input
-                      id="guestEmail"
-                      type="email"
-                      value={guestEmail}
-                      onChange={(e) => setGuestEmail(e.target.value)}
-                      placeholder="john@exemple.com"
-                      autoComplete="email"
-                      className="w-full rounded-2xl border border-navy/10 bg-white py-4 pl-12 pr-4 text-sm text-navy outline-none transition-all placeholder:text-navy/20 focus:border-gold focus:ring-1 focus:ring-gold"
-                    />
+
+                <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
+                  <div className="flex items-start gap-4">
+                    <Users className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
+                        Voyageurs
+                      </p>
+                      <p className="mt-1 text-sm text-navy">
+                        {guestsCount} voyageur{guestsCount > 1 ? "s" : ""}
+                      </p>
+                    </div>
                   </div>
+                  <Link
+                    href={editHref}
+                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold no-underline hover:text-navy"
+                  >
+                    Modifier
+                  </Link>
                 </div>
               </div>
             </section>
-          )}
 
-          <hr className="border-navy/5" />
+            {/* Coordonnées */}
+            {!isLoggedIn && (
+              <section className="space-y-6">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-navy/35">
+                    Contact
+                  </p>
+                  <h2 className="mt-2 font-display text-2xl text-navy">Vos coordonnées</h2>
+                  <p className="mt-2 max-w-lg text-sm text-navy/55">
+                    Pour votre confirmation et l&apos;accès à votre espace client Kayvila.
+                  </p>
+                </div>
 
-          {/* Cancellation Policy */}
-          <section className="space-y-4">
-            <h3 className="text-xl font-semibold text-navy">Politique d'annulation</h3>
-            <div className="flex gap-4">
-              <div className="mt-1 shrink-0 text-gold">
-                <ShieldCheck size={20} />
-              </div>
-              <p className="text-sm leading-relaxed text-navy/70">
-                <span className="font-bold text-navy">Annulation gratuite pendant 48 heures.</span> Après cela, annulez avant le {new Date(new Date(checkin).getTime() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR')} pour obtenir un remboursement intégral, moins les frais de service.
-              </p>
-            </div>
-          </section>
-
-          <hr className="border-navy/5" />
-
-          {/* Ground Rules */}
-          <section className="space-y-4">
-            <h3 className="text-xl font-semibold text-navy">Règles de la maison</h3>
-            <p className="text-sm text-navy/70">Nous vous demandons de suivre ces règles simples pour être un voyageur d'exception :</p>
-            <ul className="space-y-3 text-sm text-navy/70">
-              <li className="flex items-center gap-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-gold" />
-                Suivre les règles de la maison
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-gold" />
-                Traiter le logement comme le vôtre
-              </li>
-            </ul>
-          </section>
-
-          <hr className="border-navy/5" />
-
-          {/* Payment Info */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-navy">Paiement</h3>
-              <div className="flex gap-2">
-                <CreditCard size={20} className="text-navy/20" />
-                <Lock size={20} className="text-navy/20" />
-              </div>
-            </div>
-            <p className="text-xs text-navy/55">
-              En sélectionnant le bouton ci-dessous, j'accepte les <Link href="/terms" className="underline hover:opacity-70 transition-opacity">Règles de la maison</Link>, les <span className="underline">Règles de sécurité pour les expériences</span> et la <span className="underline">Politique de remboursement des voyageurs</span>.
-            </p>
-            
-            {error && (
-              <div className="rounded-xl bg-red-50 p-4 text-xs text-red-500 border border-red-100 flex items-center gap-3">
-                <Info size={16} />
-                {error}
-              </div>
+                <div className="space-y-5 border border-navy/10 bg-white p-5 sm:p-6">
+                  <div>
+                    <label
+                      htmlFor="guestName"
+                      className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45"
+                    >
+                      Nom complet *
+                    </label>
+                    <div className="relative">
+                      <User
+                        size={16}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/30"
+                        aria-hidden
+                      />
+                      <input
+                        id="guestName"
+                        type="text"
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                        placeholder="Marie Dupont"
+                        autoComplete="name"
+                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-sm text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="guestEmail"
+                      className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45"
+                    >
+                      Adresse email *
+                    </label>
+                    <div className="relative">
+                      <Mail
+                        size={16}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/30"
+                        aria-hidden
+                      />
+                      <input
+                        id="guestEmail"
+                        type="email"
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                        placeholder="marie@exemple.fr"
+                        autoComplete="email"
+                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-sm text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
             )}
 
-            <button
-              onClick={handleConfirmBooking}
-              disabled={checkoutLoading}
-              className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-2xl bg-navy py-5 text-[10px] font-bold uppercase tracking-[0.3em] text-white shadow-2xl transition-all hover:bg-gold hover:text-navy disabled:opacity-50 md:w-auto md:px-12"
-            >
-              {checkoutLoading ? (
-                <div role="status" className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent">
-                  <span className="sr-only">Chargement en cours</span>
-                </div>
-              ) : (
-                <>
-                  Confirmer et payer
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-2" />
-                </>
-              )}
-            </button>
-          </section>
-        </div>
-
-        {/* Right Column: Price Summary Sticky */}
-        <div className="relative">
-          <div className="sticky top-32 space-y-6">
-            <div className="rounded-[32px] border border-navy/10 bg-white p-4 sm:p-6 shadow-xl lg:p-8">
-              <div className="flex gap-4 pb-6 border-b border-navy/5">
-                <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-xl">
-                  <Image 
-                    src={villa.image_url || villa.image_urls?.[0] || "/villa-hero.jpg"} 
-                    alt={villa.name} 
-                    fill 
-                    className="object-cover" 
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-navy/55">{villa.location}</p>
-                  <h4 className="font-display text-lg leading-tight text-navy">{villa.name}</h4>
-                  {/* Rating masqué — données non dynamiques */}
+            {/* Annulation */}
+            <section className="space-y-4 border-t border-navy/8 pt-10">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-gold" aria-hidden />
+                <div className="space-y-3">
+                  <h2 className="font-display text-xl text-navy">Politique d&apos;annulation Kayvila</h2>
+                  <ul className="space-y-2 text-sm leading-relaxed text-navy/65">
+                    <li>Plus de 30 jours avant l&apos;arrivée : remboursement intégral</li>
+                    <li>Entre 30 et 14 jours : 50 % du montant du séjour</li>
+                    <li>Entre 14 et 7 jours : 25 % du montant du séjour</li>
+                    <li>Moins de 7 jours avant l&apos;arrivée : aucun remboursement</li>
+                  </ul>
+                  <p className="text-xs text-navy/45">
+                    Détail complet dans nos{" "}
+                    <Link href="/cgv" className="text-gold underline-offset-2 hover:underline">
+                      conditions générales
+                    </Link>
+                    .
+                  </p>
                 </div>
               </div>
+            </section>
 
-              <div className="space-y-4 py-6">
-                <h5 className="text-lg font-semibold text-navy">Détails du prix</h5>
-                <div className="space-y-3 text-sm text-navy/70">
-                  <div className="flex justify-between">
-                    <span>€{villa.price_per_night.toLocaleString()} x {priceResult?.nights} nuits</span>
-                    <span>€{priceResult?.total.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="underline decoration-navy/10 underline-offset-4 cursor-help">Frais de ménage</span>
-                    <span>€{cleaningFee}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="underline decoration-navy/10 underline-offset-4 cursor-help">Frais de service Kayvila</span>
-                    <span>€{serviceFee.toLocaleString()}</span>
-                  </div>
+            {/* Règles */}
+            <section className="space-y-4 border-t border-navy/8 pt-10">
+              <h2 className="font-display text-xl text-navy">Règles de la maison</h2>
+              <ul className="space-y-2 text-sm text-navy/65">
+                {houseRules.map((rule) => (
+                  <li key={rule} className="flex gap-3">
+                    <span className="mt-2 h-px w-3 shrink-0 bg-gold" aria-hidden />
+                    {rule}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Paiement desktop */}
+            <section className="hidden space-y-5 border-t border-navy/8 pt-10 sm:block">
+              <h2 className="font-display text-xl text-navy">Paiement sécurisé</h2>
+              <p className="text-sm text-navy/55">
+                En confirmant, vous acceptez les{" "}
+                <Link href="/terms" className="text-gold underline-offset-2 hover:underline">
+                  conditions du séjour
+                </Link>
+                , nos{" "}
+                <Link href="/cgv" className="text-gold underline-offset-2 hover:underline">
+                  CGV
+                </Link>{" "}
+                et notre{" "}
+                <Link
+                  href="/confidentialite"
+                  className="text-gold underline-offset-2 hover:underline"
+                >
+                  politique de confidentialité
+                </Link>
+                . Redirection vers Stripe pour le règlement.
+              </p>
+
+              {error ? (
+                <div
+                  role="alert"
+                  className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {error}
                 </div>
-              </div>
+              ) : null}
 
-              <div className="flex justify-between border-t border-navy/10 pt-6 text-lg font-bold text-navy">
-                <span>Total (EUR)</span>
-                <span>€{totalAmount.toLocaleString()}</span>
-              </div>
-            </div>
+              <KayvilaPressableButton
+                variant="navy"
+                onClick={handleConfirmBooking}
+                disabled={checkoutLoading}
+                className="max-w-md"
+              >
+                {checkoutLoading ? t("common.loading") : "Confirmer et payer"}
+              </KayvilaPressableButton>
+            </section>
+          </div>
 
-            <div className="flex items-center gap-4 rounded-2xl bg-offwhite p-6 border border-navy/5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gold shadow-sm">
-                <Lock size={18} />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-navy">Paiement Sécurisé</p>
-                <p className="text-[10px] text-navy/55">Données cryptées SSL</p>
-              </div>
+          {/* Desktop récap */}
+          <div className="hidden lg:block">
+            <div className="sticky top-28">
+              <CheckoutPriceSummary {...priceSummaryProps} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile sticky CTA avec total */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-navy/10 bg-white/95 backdrop-blur-sm sm:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
+        {error ? (
+          <div role="alert" className="border-b border-red-100 bg-red-50 px-4 py-2 text-xs text-red-700">
+            {error}
+          </div>
+        ) : null}
+        <div className="flex items-center gap-4 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy/40">Total</p>
+            <p className="font-display text-xl text-navy">{formatPrice(totalAmount)}</p>
+          </div>
+          <KayvilaPressableButton
+            variant="navy"
+            onClick={handleConfirmBooking}
+            disabled={checkoutLoading}
+            className="w-auto min-w-[10rem] shrink-0 px-6 py-3.5"
+          >
+            {checkoutLoading ? "…" : "Payer"}
+          </KayvilaPressableButton>
+        </div>
+        <p className="px-4 pb-3 text-[10px] leading-relaxed text-navy/45">
+          En confirmant, vous acceptez nos{" "}
+          <Link href="/cgv" className="text-gold">
+            CGV
+          </Link>
+          .
+        </p>
+      </div>
     </div>
   );
-};
+}
