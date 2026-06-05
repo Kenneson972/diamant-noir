@@ -75,28 +75,33 @@ export async function GET(
       }
     }
 
-    // 3. Disputes from DB
-    const { data: villas } = await supabase
-      .from("villas")
-      .select("id")
-      .eq("owner_id", id);
-
-    const villaIds = (villas ?? []).map((v) => v.id);
+    // 3. Disputes from DB (table peut ne pas exister encore)
     let disputes: any[] = [];
-
-    if (villaIds.length > 0) {
-      const { data: bookings } = await supabase
-        .from("bookings")
+    try {
+      const { data: villas } = await supabase
+        .from("villas")
         .select("id")
-        .in("villa_id", villaIds);
+        .eq("owner_id", id);
 
-      if (bookings?.length) {
-        const { data: d } = await supabase
-          .from("stripe_disputes")
-          .select("*")
-          .in("booking_id", bookings.map((b) => b.id));
-        disputes = d ?? [];
+      const villaIds = (villas ?? []).map((v) => v.id);
+
+      if (villaIds.length > 0) {
+        const { data: bookings } = await supabase
+          .from("bookings")
+          .select("id")
+          .in("villa_id", villaIds);
+
+        if (bookings?.length) {
+          const { data: d } = await supabase
+            .from("stripe_disputes")
+            .select("*")
+            .in("booking_id", bookings.map((b) => b.id));
+          disputes = d ?? [];
+        }
       }
+    } catch {
+      // Table stripe_disputes pas encore créée — ignoré
+    }
     }
 
     return NextResponse.json({

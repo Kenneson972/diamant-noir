@@ -46,25 +46,29 @@ export async function GET(
       .in("villa_id", (villas ?? []).map((v) => v.id))
       .order("start_date", { ascending: false });
 
-    // 4. Disputes Stripe
+    // 4. Disputes Stripe (table peut ne pas exister encore)
     const villaIds = (villas ?? []).map((v) => v.id);
     let disputes: any[] = [];
-    if (villaIds.length > 0) {
-      const { data: bookingIds } = await supabase
-        .from("bookings")
-        .select("id")
-        .in("villa_id", villaIds);
+    try {
+      if (villaIds.length > 0) {
+        const { data: bookingIds } = await supabase
+          .from("bookings")
+          .select("id")
+          .in("villa_id", villaIds);
 
-      if (bookingIds?.length) {
-        const { data: d } = await supabase
-          .from("stripe_disputes")
-          .select("*")
-          .in(
-            "booking_id",
-            bookingIds.map((b) => b.id)
-          );
-        disputes = d ?? [];
+        if (bookingIds?.length) {
+          const { data: d } = await supabase
+            .from("stripe_disputes")
+            .select("*")
+            .in(
+              "booking_id",
+              bookingIds.map((b) => b.id)
+            );
+          disputes = d ?? [];
+        }
       }
+    } catch {
+      // Table stripe_disputes pas encore créée — ignoré
     }
 
     const totalRevenue = (bookings ?? []).reduce(
