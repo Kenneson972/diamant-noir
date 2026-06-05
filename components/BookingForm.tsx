@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
+import { NumberStepper } from "@heroui-pro/react";
 
 type BookingDate = {
   start_date: string;
@@ -140,17 +141,21 @@ export const BookingForm = ({
             />
           </label>
         </div>
-        <div className="p-3 hover:bg-offwhite transition-colors cursor-pointer">
-          <span className="block text-[10px] font-bold uppercase tracking-wider text-navy">Voyageurs</span>
-          <select 
+        <div className="p-3 hover:bg-offwhite transition-colors">
+          <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-navy">Voyageurs</span>
+          <NumberStepper
+            aria-label="Nombre de voyageurs"
             value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            className="w-full bg-transparent text-sm font-medium focus:outline-none mt-1"
+            onChange={setGuests}
+            minValue={1}
+            maxValue={capacity}
           >
-            {Array.from({ length: capacity }, (_, i) => (
-              <option key={i + 1} value={i + 1}>{i + 1} voyageur{i > 0 ? 's' : ''}</option>
-            ))}
-          </select>
+            <NumberStepper.Group>
+              <NumberStepper.DecrementButton />
+              <NumberStepper.Value />
+              <NumberStepper.IncrementButton />
+            </NumberStepper.Group>
+          </NumberStepper>
         </div>
       </div>
 

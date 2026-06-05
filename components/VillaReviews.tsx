@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { KayvilaRating } from "@/components/ui/pro";
 
 interface Review {
   id: string;
@@ -134,14 +134,8 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
       <h2 className="font-display font-normal text-2xl text-navy mb-2">
         {avgRating.toFixed(1)} · {reviews.length} avis
       </h2>
-      <div className="flex items-center gap-0.5 mb-6">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={16}
-            className={star <= Math.round(avgRating) ? "text-gold fill-gold" : "text-navy/15"}
-          />
-        ))}
+      <div className="mb-6">
+        <KayvilaRating value={avgRating} size="md" />
       </div>
 
       {/* Category bars */}
@@ -167,14 +161,8 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
                 </p>
               </div>
             </div>
-            <div className="flex gap-0.5 mb-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  size={12}
-                  className={star <= review.rating ? "text-gold fill-gold" : "text-navy/10"}
-                />
-              ))}
+            <div className="mb-2">
+              <KayvilaRating value={review.rating} size="sm" />
             </div>
             {review.comment && <p className="text-sm text-navy/60 leading-relaxed">{review.comment}</p>}
           </div>

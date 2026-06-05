@@ -3,7 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { Building2, Home, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
-import { VillaTableRow } from "@/components/dashboard/VillaTableRow";
+import { AdminVillasDataGrid } from "@/components/dashboard/admin/AdminVillasDataGrid";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 
 export const dynamic = "force-dynamic";
 
@@ -290,37 +291,19 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
       </div>
 
       {villas.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-          <Home className="mx-auto h-12 w-12 text-gray-300" />
-          <p className="mt-4 text-sm text-gray-500">
-            Aucune villa trouvée{params.search ? ` pour « ${params.search} »` : ""}.
-          </p>
-        </div>
+        <KayvilaEmptyState
+          icon={<Home className="h-12 w-12" />}
+          title="Aucune villa trouvée"
+          description={
+            params.search
+              ? `Aucun résultat pour « ${params.search} ».`
+              : "Le catalogue est vide pour le moment."
+          }
+          actionLabel="Ajouter une villa"
+          actionHref="/admin/villas/ajouter"
+        />
       ) : (
-        <div className="overflow-hidden rounded-lg border bg-white">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-navy/[0.02]">
-              <tr>
-                <th className="px-4 py-3 font-medium text-navy w-12"></th>
-                <th className="px-4 py-3 font-medium text-navy">Nom</th>
-                <th className="px-4 py-3 font-medium text-navy">Localisation</th>
-                <th className="px-4 py-3 font-medium text-navy">Prix / nuit</th>
-                <th className="px-4 py-3 font-medium text-navy">Capacité</th>
-                <th className="px-4 py-3 font-medium text-navy">Tier</th>
-                <th className="px-4 py-3 font-medium text-navy">Propriétaire</th>
-                <th className="px-4 py-3 font-medium text-navy">Publiée</th>
-                <th className="px-4 py-3 font-medium text-navy">Résa</th>
-                <th className="px-4 py-3 font-medium text-navy">Revenus</th>
-                <th className="px-4 py-3 font-medium text-navy">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {villas.map((villa) => (
-                <VillaTableRow key={villa.id} villa={villa} />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminVillasDataGrid rows={villas} />
       )}
     </div>
   );

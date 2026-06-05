@@ -14,6 +14,15 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — HeroUI Pro premium : wrappers Kayvila + Data Grids Phase 1
+
+- **type**: ui
+- **summary**: Couche `components/ui/pro/` (EmptyState, DataGrid, Widget, Rating) ; migration tableaux admin/proprio vers HeroUI Pro DataGrid (clients, propriétaires, réservations, villas, booking proprio) ; KPI Card HeroUI ; widgets arrivées/départs/occupation admin ; NumberStepper booking ; EmptyState unifié.
+- **files**: `components/ui/pro/*`, `components/dashboard/admin/{AdminClientsDataGrid,AdminOwnersDataGrid,AdminReservationsDataGrid,AdminVillasDataGrid}.tsx`, `components/dashboard/proprio/{KpiCard,BookingList,ProprioBookingDataGrid,EmptyDashboard}.tsx`, `app/(admin)/admin/{page,clients,proprietaires,reservations,villas}/page.tsx`, `components/{VillaReviews,BookingForm}.tsx`
+- **why**: Prompt `cursor-hero-ui-premium.md` — élever dashboards avec composants Pro sans casser identité gold/navy/Playfair.
+- **impact**: Listes admin triables/sélectionnables ; états vides cohérents ; moins de `<table>` custom.
+- **verify**: `npm run build` OK
+
 ### 2026-06-06 — Fix build Tailwind v4 + HeroUI `@apply text-sm`
 
 - **type**: config | fix

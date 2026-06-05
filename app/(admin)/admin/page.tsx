@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Building2, CalendarDays, Users, UserCircle, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut, Percent, TrendingUp } from "lucide-react";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { KayvilaWidget } from "@/components/ui/pro";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -143,11 +144,10 @@ export default async function AdminPage() {
       {/* Arrivées / Départs du jour */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Check-ins du jour */}
-        <div className="rounded-lg border border-emerald/10 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-navy">
-            <LogIn size={18} className="text-emerald-600" />
-            Arrivées du jour
-          </h2>
+        <KayvilaWidget title="Arrivées du jour" className="border-emerald/10">
+          <div className="mb-4 flex items-center gap-2 text-emerald-600">
+            <LogIn size={18} aria-hidden />
+          </div>
           {(checkIns ?? []).length === 0 ? (
             <p className="text-sm text-navy/55">Aucune arrivée aujourd&apos;hui.</p>
           ) : (
@@ -165,14 +165,12 @@ export default async function AdminPage() {
               ))}
             </div>
           )}
-        </div>
+        </KayvilaWidget>
 
-        {/* Check-outs du jour */}
-        <div className="rounded-lg border border-amber/10 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-navy">
-            <LogOut size={18} className="text-amber-600" />
-            Départs du jour
-          </h2>
+        <KayvilaWidget title="Départs du jour" className="border-amber/10">
+          <div className="mb-4 flex items-center gap-2 text-amber-600">
+            <LogOut size={18} aria-hidden />
+          </div>
           {(checkOuts ?? []).length === 0 ? (
             <p className="text-sm text-navy/55">Aucun départ aujourd&apos;hui.</p>
           ) : (
@@ -190,15 +188,13 @@ export default async function AdminPage() {
               ))}
             </div>
           )}
-        </div>
+        </KayvilaWidget>
       </div>
 
-      {/* Taux d'occupation par villa */}
       {allVillas && allVillas.length > 0 && (
-        <div className="rounded-lg border border-navy/5 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-navy">
-            Taux d&apos;occupation — {new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
-          </h2>
+        <KayvilaWidget
+          title={`Taux d'occupation — ${new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}`}
+        >
           <div className="space-y-3">
             {allVillas.map((v: any) => {
               const occupied = occupancyByVilla[v.id] ?? 0;
@@ -220,7 +216,7 @@ export default async function AdminPage() {
               );
             })}
           </div>
-        </div>
+        </KayvilaWidget>
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

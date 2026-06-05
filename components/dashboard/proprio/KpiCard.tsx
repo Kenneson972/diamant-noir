@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { KPI } from "@heroui-pro/react";
 import { cn } from "@/lib/utils";
 
 interface KpiCardProps {
@@ -22,35 +25,46 @@ export function KpiCard({
   trend,
   className,
 }: KpiCardProps) {
+  const numericValue =
+    typeof value === "number"
+      ? value
+      : Number.parseFloat(String(value).replace(/[^\d.,-]/g, "").replace(",", "."));
+
   const content = (
-    <div
+    <KPI
       className={cn(
-        "dashboard-card cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md",
+        "border border-border-subtle bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+        href && "cursor-pointer",
         className
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-1">
-          <span className="dashboard-eyebrow">{label}</span>
-          <span className="font-display text-3xl font-bold text-navy-900">
-            {value}
-          </span>
-          {trend && (
-            <span
-              className={cn(
-                "inline-flex items-center gap-1 text-xs font-medium",
-                trend.positive ? "text-emerald-600" : "text-red-500"
-              )}
-            >
-              {trend.positive ? "↑" : "↓"} {Math.abs(trend.value)}%
-            </span>
-          )}
-        </div>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-900/5">
-          <Icon className="h-5 w-5 text-navy-900/60" aria-hidden />
-        </div>
-      </div>
-    </div>
+      <KPI.Header>
+        <KPI.Icon>
+          <Icon className="size-5 text-navy/60" aria-hidden />
+        </KPI.Icon>
+        <KPI.Title className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted">
+          {label}
+        </KPI.Title>
+      </KPI.Header>
+      <KPI.Content>
+        {Number.isFinite(numericValue) && !String(value).includes("/") && !String(value).includes("%") ? (
+          <KPI.Value
+            value={numericValue}
+            style="decimal"
+            maximumFractionDigits={0}
+            className="font-display text-3xl font-bold text-navy"
+          />
+        ) : (
+          <span className="font-display text-3xl font-bold text-navy">{value}</span>
+        )}
+        {trend ? (
+          <KPI.Trend trend={trend.positive ? "up" : "down"}>
+            {trend.positive ? "+" : "-"}
+            {Math.abs(trend.value)}%
+          </KPI.Trend>
+        ) : null}
+      </KPI.Content>
+    </KPI>
   );
 
   if (href) {

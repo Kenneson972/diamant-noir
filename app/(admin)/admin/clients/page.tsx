@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { User, Search } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { AdminClientsDataGrid } from "@/components/dashboard/admin/AdminClientsDataGrid";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 
 export const metadata: Metadata = {
   title: "Clients — Administration Kayvila",
@@ -52,15 +54,6 @@ async function getTenants(search?: string): Promise<TenantRow[]> {
     ...t,
     bookingCount: countByEmail[t.email] ?? 0,
   }));
-}
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 interface PageProps {
@@ -114,56 +107,17 @@ export default async function AdminClientsPage({ searchParams }: PageProps) {
       )}
 
       {tenants.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-          <User className="mx-auto h-12 w-12 text-gray-300" />
-          <p className="mt-4 text-sm text-gray-500">
-            {search ? `Aucun client trouvé pour « ${search} ».` : "Aucun client inscrit pour le moment."}
-          </p>
-        </div>
+        <KayvilaEmptyState
+          icon={<User />}
+          title={search ? "Aucun client trouvé" : "Aucun client inscrit"}
+          description={
+            search
+              ? `Aucun résultat pour « ${search} ».`
+              : "Les profils locataires apparaîtront ici après inscription."
+          }
+        />
       ) : (
-        <div className="overflow-hidden rounded-lg border bg-white">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-navy/[0.02]">
-              <tr>
-                <th className="px-4 py-3 font-medium text-navy">Nom</th>
-                <th className="px-4 py-3 font-medium text-navy">Email</th>
-                <th className="px-4 py-3 font-medium text-navy">Téléphone</th>
-                <th className="px-4 py-3 font-medium text-navy">Séjours</th>
-                <th className="px-4 py-3 font-medium text-navy">Inscrit le</th>
-                <th className="px-4 py-3 font-medium text-navy">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {tenants.map((tenant) => (
-                <tr key={tenant.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {tenant.full_name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">{tenant.email}</td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {tenant.phone ?? "—"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-medium text-navy">{tenant.bookingCount}</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {formatDate(tenant.created_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href={`/admin/clients/${tenant.id}`}
-                        className="text-sm text-gold hover:text-gold/80 font-medium"
-                      >
-                        Fiche 360°
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminClientsDataGrid rows={tenants} />
       )}
     </div>
   );
