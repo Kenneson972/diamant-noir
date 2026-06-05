@@ -126,12 +126,15 @@ export const syncOTAChannel = async (
     const externalIds = rows.map((r) => r.external_id);
 
     // Supprimer les anciennes réservations de cette source qui ne sont plus dans le flux
-    const { count: deletedCount } = await supabase
+    let deleteQuery = supabase
       .from("bookings")
       .delete({ count: "exact" })
       .eq("villa_id", villaId)
-      .eq("source", channel.source)
-      .not("external_id", "in", `(${externalIds.map((id) => `'${id}'`).join(",")})`);
+      .eq("source", channel.source);
+    if (externalIds.length > 0) {
+      deleteQuery = deleteQuery.not("external_id", "in", externalIds);
+    }
+    const { count: deletedCount } = await deleteQuery;
 
     // Insérer / mettre à jour les réservations actuelles
     const { error } = await supabase

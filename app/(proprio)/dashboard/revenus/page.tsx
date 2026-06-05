@@ -2,6 +2,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { RevenueSummary } from "@/components/dashboard/proprio/RevenueSummary";
+import { calculateTransferAmounts } from "@/lib/stripe/connect";
 
 export const metadata: Metadata = {
   title: "Revenus — Kayvila",
@@ -17,10 +18,13 @@ export default async function RevenusPage() {
 
   const { data: villas } = await supabase
     .from("villas")
-    .select("id")
+    .select("id, commission_rate")
     .eq("owner_id", user!.id);
 
   const villaIds = villas?.map((v) => v.id) ?? [];
+  const commissionByVilla = new Map(
+    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
+  );
 
   const now = new Date();
   const currentMonth = now.getMonth(); // 0-indexed
@@ -32,19 +36,31 @@ export default async function RevenusPage() {
   const { data: bookings } = villaIds.length > 0
     ? await supabase
         .from("bookings")
-        .select("total_price_cents, start_date, status")
+        .select("price, cleaning_fee, service_fee, villa_id, start_date, status")
         .in("villa_id", villaIds)
         .in("status", ["confirmed", "paid"])
         .gte("start_date", sixMonthsAgo)
     : { data: [] };
 
-  // Aggregate by month
+  function ownerNetCents(b: {
+    price?: number | null;
+    cleaning_fee?: number | null;
+    service_fee?: number | null;
+    villa_id?: string | null;
+  }) {
+    const stayCents = Math.round((b.price ?? 0) * 100);
+    const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
+    const serviceCents = Math.round((b.service_fee ?? 0) * 100);
+    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 25;
+    return calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate)
+      .ownerAmountCents;
+  }
+
   const monthMap: Record<number, number> = {};
   for (const b of bookings ?? []) {
     const d = new Date(b.start_date);
     const monthIndex = d.getMonth();
-    const cents = b.total_price_cents ?? 0;
-    monthMap[monthIndex] = (monthMap[monthIndex] ?? 0) + cents;
+    monthMap[monthIndex] = (monthMap[monthIndex] ?? 0) + ownerNetCents(b);
   }
 
   // Build 6-month series (oldest → newest)
@@ -76,7 +92,7 @@ export default async function RevenusPage() {
           <h1 className="font-display text-2xl font-bold text-navy-900">
             Revenus
           </h1>
-          <p className="text-sm text-muted">Suivi de vos revenus locatifs</p>
+          <p className="text-sm text-muted">Reversements nets après commission Kayvila</p>
         </div>
 
         <div className="space-y-6">

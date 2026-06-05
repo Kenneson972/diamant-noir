@@ -27,7 +27,7 @@ export function RevenueSummary({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div className="dashboard-card">
-        <span className="dashboard-eyebrow">Ce mois</span>
+        <span className="dashboard-eyebrow">Reversement net ce mois</span>
         <p className="mt-1 font-display text-2xl font-bold text-navy-900">
           {formatEur(totalMonth)}
         </p>
@@ -42,14 +42,14 @@ export function RevenueSummary({
       </div>
 
       <div className="dashboard-card">
-        <span className="dashboard-eyebrow">Cette année</span>
+        <span className="dashboard-eyebrow">Reversement net (6 mois)</span>
         <p className="mt-1 font-display text-2xl font-bold text-navy-900">
           {formatEur(totalYear)}
         </p>
       </div>
 
       <div className="dashboard-card">
-        <span className="dashboard-eyebrow">Prix moyen / nuit</span>
+        <span className="dashboard-eyebrow">Moyenne mensuelle nette</span>
         <p className="mt-1 font-display text-2xl font-bold text-navy-900">
           {formatEur(averagePerNight)}
         </p>

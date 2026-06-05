@@ -304,3 +304,17 @@ verify: vérification effectuée
 - **why**: Le décodage JWT non vérifié et l'absence d'anti-abus / de fallback étaient des failles bloquantes (P0)
 - **impact**: Auth réellement vérifiée, abus auto-bloqués, dégradation propre si API down ; workflows plus simples (moins de nœuds redondants)
 - **verify**: `JSON.parse` OK sur les 3 fichiers + script de cohérence des connexions (aucune référence orpheline)
+
+## 2026-06-05 : Mega-fix Kayvila (P0 + P1)
+
+- **type**: security
+- **summary**: Lot correctif sécurité, booking, webhooks Stripe, dashboards revenus, résilience emails et tarifs saisonniers.
+  - SQL injection OTA : `.not("external_id", "in", externalIds)` (array Supabase) dans `ota-hub.ts` ; suppression `ical-sync.ts` mort.
+  - CSRF sur `POST /api/booking` ; guards `is_published`, `min_nights`, `guests` + migration `bookings.guests`.
+  - Webhook Stripe : claim idempotent en début de handler + handlers `charge.refunded`, `async_payment_failed`, disputes.
+  - Booking : rollback si échec session Stripe ; emails fire-and-forget à la création ; fetch `seasonal_rates` pour `calculatePrice`.
+  - Dashboards : admin split CA / commission Kayvila / reversement proprios ; proprio reversement net via `calculateTransferAmounts`.
+- **files**: [`lib/ota-hub.ts`, `app/api/booking/route.ts`, `app/api/webhooks/stripe/route.ts`, `app/(admin)/admin/revenus/page.tsx`, `app/(proprio)/dashboard/revenus/page.tsx`, `components/dashboard/proprio/RevenueSummary.tsx`, `components/dashboard/proprio/RevenueChart.tsx`, `supabase/migrations/20260605120000_bookings_guests.sql`, `supabase/migrations/20260605130000_seasonal_rates.sql`, `.env.local.example`]
+- **why**: Fermer les failles P0/P1 du prompt `cursor-mega-fix-2026-06-05.md` avant mise en prod
+- **impact**: Booking plus sûr et fiable ; revenus admin/proprio alignés sur le modèle commission FAQ ; tarifs saisonniers prêts côté table
+- **verify**: `tsc --noEmit`, `npm run build`, `npm run dev`

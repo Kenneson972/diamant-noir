@@ -54,6 +54,9 @@ async function getOwnerConnectAccountId(
 }
 
 export async function POST(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   // Rate limiting : 10 req / 60s par IP
   if (!checkRateLimit(`booking:${ipFromRequest(request)}`, 10, 60_000)) {
     return NextResponse.json({ error: "Trop de requêtes. Réessayez plus tard." }, { status: 429 });
@@ -92,7 +95,7 @@ export async function POST(request: Request) {
     // Fetch villa details for price and name (include owner_id for Stripe Connect)
     const { data: villa, error: villaError } = await supabase
       .from("villas")
-      .select("id, name, price_per_night, capacity, owner_id, cleaning_fee_cents")
+      .select("id, name, price_per_night, capacity, owner_id, cleaning_fee_cents, min_nights, is_published")
       .eq("id", villaId)
       .single();
 
@@ -100,8 +103,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Villa introuvable" }, { status: 404 });
     }
 
+    if (!villa.is_published) {
+      return NextResponse.json({ error: "Villa non disponible" }, { status: 404 });
+    }
+
+    const nights = Math.round(
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000
+    );
+    const minNights = villa.min_nights ?? 1;
+    if (nights < minNights) {
+      return NextResponse.json(
+        {
+          error: `Cette villa nécessite un séjour minimum de ${minNights} nuit${minNights > 1 ? "s" : ""}.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const guestCount = guests ?? 1;
+
     // Validate guests count
-    if (guests && guests > villa.capacity) {
+    if (guestCount > villa.capacity) {
       return NextResponse.json(
         { error: `La capacité maximale est de ${villa.capacity} voyageurs` },
         { status: 400 }
@@ -128,10 +150,21 @@ export async function POST(request: Request) {
       );
     }
 
+    const { data: seasonalRates } = await supabase
+      .from("seasonal_rates")
+      .select("label, start_date, end_date, price_per_night")
+      .eq("villa_id", villaId);
+
     const price = calculatePrice({
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      basePrice: villa.price_per_night
+      basePrice: villa.price_per_night,
+      seasonalPrices: (seasonalRates ?? []).map((r) => ({
+        season: r.label,
+        start: r.start_date.slice(5, 10),
+        end: r.end_date.slice(5, 10),
+        price: r.price_per_night,
+      })),
     });
 
     if (price.total <= 0) {
@@ -199,6 +232,7 @@ export async function POST(request: Request) {
         total_price_cents: totalCents,
         guest_name: guestName || "Client Site Web",
         guest_email: guestEmail || null,
+        guests: guestCount,
       })
       .select()
       .single();
@@ -217,6 +251,8 @@ export async function POST(request: Request) {
       });
     }
 
+    let session: Stripe.Checkout.Session;
+    try {
     // Create or retrieve Stripe Customer
     let customerId: string | undefined;
     if (guestEmail) {
@@ -309,15 +345,42 @@ export async function POST(request: Request) {
       };
     }
 
-    const session = await stripeInstance.checkout.sessions.create(sessionParams);
+    session = await stripeInstance.checkout.sessions.create(sessionParams);
 
     // 4. Link Stripe session ID to the booking
     await supabase
       .from("bookings")
       .update({ stripe_session_id: session.id })
       .eq("id", booking.id);
+    } catch (stripeError) {
+      await supabase
+        .from("bookings")
+        .update({
+          status: "cancelled",
+          payment_status: "failed",
+        })
+        .eq("id", booking.id);
+      throw stripeError;
+    }
 
-    return NextResponse.json({ url: session.url });
+    const apiKey = process.env.API_SECRET_KEY;
+    const authHeaders: Record<string, string> = apiKey
+      ? { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }
+      : { "Content-Type": "application/json" };
+
+    fetch(`${baseUrl}/api/send-booking-confirmation`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({ bookingId: booking.id }),
+    }).catch((err) => console.error("Failed to send booking confirmation:", err));
+
+    fetch(`${baseUrl}/api/notify-admin-booking`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({ bookingId: booking.id }),
+    }).catch((err) => console.error("Failed to notify admin:", err));
+
+    return NextResponse.json({ url: session.url, bookingId: booking.id });
   } catch (error) {
     console.error("Booking error:", error);
     return NextResponse.json(

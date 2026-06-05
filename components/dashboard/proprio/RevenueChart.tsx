@@ -72,7 +72,7 @@ const RechartsInner = dynamic(
                 }}
                 formatter={(value: unknown) => {
                   const v = typeof value === "number" ? value : 0;
-                  return [`${v.toLocaleString("fr-FR")}€`, "Revenu"];
+                  return [`${v.toLocaleString("fr-FR")}€`, "Reversement net"];
                 }}
               />
               <Bar
@@ -118,7 +118,7 @@ export function RevenueChart({ data, hasEnoughHistory }: RevenueChartProps) {
   if (!hasEnoughHistory) {
     return (
       <div className="dashboard-card">
-        <span className="dashboard-eyebrow">REVENUS MENSUELS</span>
+        <span className="dashboard-eyebrow">REVERSEMENTS NETS MENSUELS</span>
         <div className="mt-4 flex h-80 items-center justify-center rounded-lg bg-[#FAF9F6]">
           <p className="text-sm text-muted text-center px-6">
             Historique disponible après 3 mois d&apos;activité
@@ -130,7 +130,7 @@ export function RevenueChart({ data, hasEnoughHistory }: RevenueChartProps) {
 
   return (
     <div className="dashboard-card">
-      <span className="dashboard-eyebrow">REVENUS MENSUELS</span>
+      <span className="dashboard-eyebrow">REVERSEMENTS NETS MENSUELS</span>
       <div className="mt-4 h-80 w-full">
         <RechartsInner data={data} />
       </div>

@@ -37,13 +37,21 @@ export async function POST(request: Request) {
 
   const supabase = supabaseAdmin();
 
-  // ── Idempotence : si déjà traité, on renvoie 200 sans rien faire ──
-  const { data: existing } = await supabase
+  // ── Idempotence atomique : claim l'event avant traitement ──
+  const { data: claimed, error: claimError } = await supabase
     .from("stripe_events_processed")
+    .upsert(
+      { event_id: event.id, event_type: event.type },
+      { onConflict: "event_id", ignoreDuplicates: true }
+    )
     .select("event_id")
-    .eq("event_id", event.id)
     .maybeSingle();
-  if (existing) {
+
+  if (claimError) {
+    console.error("Failed to claim stripe event:", claimError);
+    return NextResponse.json({ error: "Failed to record event" }, { status: 500 });
+  }
+  if (!claimed) {
     return NextResponse.json({ received: true, duplicate: true });
   }
 
@@ -282,11 +290,66 @@ export async function POST(request: Request) {
       });
     }
 
-    // Marquer comme traité (idempotence)
-    await supabase.from("stripe_events_processed").insert({
-      event_id: event.id,
-      event_type: event.type,
-    });
+    if (event.type === "charge.dispute.closed") {
+      const dispute = event.data.object as Stripe.Dispute;
+      await supabase
+        .from("stripe_disputes")
+        .update({ status: dispute.status, resolved_at: new Date().toISOString() })
+        .eq("dispute_id", dispute.id);
+    }
+
+    if (event.type === "charge.dispute.funds_reinstated") {
+      const dispute = event.data.object as Stripe.Dispute;
+      await supabase
+        .from("stripe_disputes")
+        .update({ status: "won" })
+        .eq("dispute_id", dispute.id);
+    }
+
+    if (event.type === "charge.dispute.funds_withdrawn") {
+      const dispute = event.data.object as Stripe.Dispute;
+      await supabase
+        .from("stripe_disputes")
+        .update({ status: "lost" })
+        .eq("dispute_id", dispute.id);
+    }
+
+    if (event.type === "charge.refunded") {
+      const charge = event.data.object as Stripe.Charge;
+      if (charge.payment_intent) {
+        const paymentIntentId =
+          typeof charge.payment_intent === "string"
+            ? charge.payment_intent
+            : charge.payment_intent.id;
+
+        const { data: booking } = await supabase
+          .from("bookings")
+          .select("id")
+          .eq("stripe_payment_intent_id", paymentIntentId)
+          .maybeSingle();
+
+        if (booking) {
+          await supabase
+            .from("bookings")
+            .update({ payment_status: "refunded" })
+            .eq("id", booking.id);
+        }
+      }
+    }
+
+    if (event.type === "checkout.session.async_payment_failed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const bookingId = session.metadata?.bookingId;
+      if (bookingId) {
+        await supabase
+          .from("bookings")
+          .update({
+            status: "cancelled",
+            payment_status: "failed",
+          })
+          .eq("id", bookingId);
+      }
+    }
 
     return NextResponse.json({ received: true });
   } catch (err) {

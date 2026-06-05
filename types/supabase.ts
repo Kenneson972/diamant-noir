@@ -67,6 +67,7 @@ export interface Database {
           source: string;
           guest_name: string | null;
           guest_email: string | null;
+          guests: number;
           price: number;
           total_price_cents: number | null;
           stripe_session_id: string | null;
@@ -74,6 +75,19 @@ export interface Database {
           check_out: string | null;
           checklist_state: Json | null;
           created_at: string;
+        };
+        Insert: Record<string, Json>;
+        Update: Record<string, Json>;
+      };
+      seasonal_rates: {
+        Row: {
+          id: string;
+          villa_id: string | null;
+          label: string;
+          start_date: string;
+          end_date: string;
+          price_per_night: number;
+          created_at: string | null;
         };
         Insert: Record<string, Json>;
         Update: Record<string, Json>;
