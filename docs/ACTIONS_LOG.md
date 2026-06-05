@@ -617,6 +617,15 @@ verify: vérification effectuée
 - **impact**: Cron OTA fonctionnel avec CRON_SECRET Vercel ; pas de résa sans split Connect ; remboursement admin ; proprio configure iCal ; agents n8n ont mémoire DB
 - **verify**: `npm run build` ; tables prod `conversation_memory` / `banned_sessions` / `toxicity_log` créées via `supabase db query --linked`
 
+## 2026-06-06T30:00:00Z : Resend validé en envoi réel (domaine kayvila.com)
+
+- **type**: config
+- **summary**: `.env.local` — `RESEND_FROM_EMAIL=Kayvila <conciergerie@kayvila.com>`, `ADMIN_NOTIFICATION_EMAIL=equipe@kayvila.com` ; tests manuels OK vers equipe@kayvila.com et kenne972@hotmail.fr.
+- **files**: [`.env.local` (local only, gitignored), `docs/logs/2026-06-06.md`, `docs/RECAP_ELISE_2026-06-06.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Valider DNS/domaine Resend avant J-10 et avant copie vars sur Vercel prod
+- **impact**: Chaîne email transactionnelle utilisable ; reste test flux booking Stripe end-to-end
+- **verify**: Resend Logs — ids `8b63ff66…`, `affd4ec5…` ; réception confirmée par Kenneson (Hotmail OK)
+
 ## 2026-06-06T28:00:00Z : Intégration Resend — emails transactionnels Kayvila
 
 - **type**: api

@@ -3,13 +3,13 @@
 **Pour** : Elise  
 **Date** : 6 juin 2026  
 **Projet** : `diamant-noir` (conciergerie Kayvila)  
-**Branche** : `main` · dernier commit : `37f4891`
+**Branche** : `main` · dernier commit : `8368ef2`
 
 ---
 
 ## En bref
 
-Session en **deux vagues** : (1) fiabiliser l’admin + deploy Vercel ; (2) audit responsive mobile + **correctifs pré-livraison J-10** (cron OTA, Stripe Connect, agents n8n, iCal proprio).
+Session en **trois vagues** : (1) admin + deploy Vercel ; (2) pré-livraison J-10 (cron, Connect, iCal) ; (3) **Resend** — intégration code + domaine `kayvila.com` validé + tests envoi OK.
 
 ---
 
@@ -26,6 +26,7 @@ Session en **deux vagues** : (1) fiabiliser l’admin + deploy Vercel ; (2) audi
 | 7 | Cron OTA 401 en prod | Code lisait `CRON_API_KEY` seul ; Vercel envoie `CRON_SECRET` | `37f4891` — `verifyApiKey` dual |
 | 8 | Résa sans split Connect | Pas de garde si proprio non onboardé | `37f4891` — 503 booking |
 | 9 | Agents n8n sans mémoire | Migration `agents_memory` non appliquée prod | `37f4891` — 3 tables créées |
+| 10 | Aucun email transactionnel | n8n non configuré ; pas de `lib/resend` | `8368ef2` — Resend + 6 templates + crons |
 
 ---
 
@@ -55,6 +56,9 @@ Projet : `wsdawdxucyuyopkpgjij`
 | `8e628e4` | docs: prompt vérification pré-livraison J-10 |
 | `a41a0d4` | fix(ui): audit responsive mobile |
 | `37f4891` | fix(pre-livraison): cron, Connect, refund, iCal proprio |
+| `82a2367` | docs: prompt integration Resend (Elise) |
+| `4fa2e56` | docs: récap pré-livraison + CRON_SECRET |
+| `8368ef2` | feat(email): Resend templates, triggers, crons |
 
 ---
 
@@ -69,6 +73,9 @@ Projet : `wsdawdxucyuyopkpgjij`
 - [ ] **Cron OTA** — après redeploy `37f4891`, logs Vercel cron `/api/sync` → 200 (pas 401)
 - [ ] **Booking** — villa avec proprio non Connect → message 503 explicite
 - [ ] **Dashboard proprio** — `/dashboard/villas/[id]` section iCal (ajout URL + sync)
+- [x] **Resend** — domaine `kayvila.com` verified ; test `conciergerie@kayvila.com` → Hotmail OK
+- [ ] **Resend prod Vercel** — 3 vars (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_NOTIFICATION_EMAIL`) + redeploy
+- [ ] **Booking Stripe test** — confirmation voyageur + alerte `equipe@kayvila.com` (templates React Email)
 
 **Compte admin test** : `admin@diamantnoir.com`  
 **Données prod** : 6 réservations, 3 propriétaires, 2 villas liées
@@ -126,6 +133,21 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 
 ---
 
+## Resend — emails transactionnels (`8368ef2`)
+
+| Élément | Détail |
+|---------|--------|
+| Prompt source | `docs/prompts/cursor-resend-integration.md` (Elise `82a2367`) |
+| Expéditeur | `Kayvila <conciergerie@kayvila.com>` |
+| Alertes admin | `equipe@kayvila.com` |
+| Templates | 6 React Email (`emails/`) + `lib/emails/send.ts` |
+| Crons | `/api/send-checkin-reminders` (8h), `/api/send-review-requests` (10h) |
+| Tests 06/06 | ✅ `equipe@kayvila.com` + ✅ `kenne972@hotmail.fr` |
+
+**Vercel** : copier les vars Resend en Production (clé jamais dans le repo).
+
+---
+
 ## Backlog (non bloquant)
 
 - Migrer vues admin `demandes` / `avis` vers API admin dédiée
@@ -141,7 +163,9 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 | Fichier | Contenu |
 |---------|---------|
 | `docs/logs/2026-06-05.md` | Journal technique (admin + responsive) |
-| `docs/logs/2026-06-06.md` | Journal pré-livraison + CRON_SECRET |
+| `docs/logs/2026-06-06.md` | Journal pré-livraison + Resend + tests envoi |
+| `docs/prompts/cursor-resend-integration.md` | Prompt intégration Resend (Elise) |
+| `lib/resend.ts` | Client Resend partagé |
 | `docs/prompts/cursor-verification-pre-livraison.md` | Prompt audit J-10 |
 | `docs/FIX_RESPONSIVE_MOBILE.md` | Fixes mobile Elise |
 | `docs/todo.md` | Todo prochaine session |
@@ -155,8 +179,9 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 ## État fin de session
 
 - Localhost : dev possible (`npm run dev`)
-- Git : **à jour** `origin/main` · `37f4891`
-- Vercel : `HEROUI_AUTH_TOKEN` + **`CRON_SECRET` déjà présent** — redeploy post-`37f4891` pour cron OTA
+- Git : **à jour** `origin/main` · `8368ef2`
+- Vercel : `HEROUI_AUTH_TOKEN`, `CRON_SECRET` ; **ajouter vars Resend** en prod
+- Resend : domaine **kayvila.com** validé ; envoi test OK (local)
 - Supabase prod : tables agents mémoire créées
 
-*Mis à jour — Karibloom / session Cursor 2026-06-06 (soir).*
+*Mis à jour — Karibloom / session Cursor 2026-06-06 (nuit) — Resend validé.*
