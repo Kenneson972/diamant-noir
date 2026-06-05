@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 
 interface VillaPrint {
   name: string;
@@ -28,7 +29,7 @@ export default function LivretPrintPage() {
       const { data: bookingsRaw } = await supabase
         .from("bookings")
         .select("start_date, end_date, villa_id, status")
-        .eq("guest_email", session.user.email)
+        .or(tenantBookingsOrFilter(session.user.id, session.user.email))
         .in("status", ["confirmed", "upcoming"])
         .gt("end_date", new Date().toISOString())
         .order("start_date", { ascending: true })

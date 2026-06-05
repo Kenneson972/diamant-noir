@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { bookingBelongsToTenant } from "@/lib/booking-tenant";
 
 export const runtime = "nodejs";
 
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
     // Charger la réservation
     const { data: booking, error: bookingError } = await admin
       .from("bookings")
-      .select("id, guest_email, status, start_date")
+      .select("id, guest_email, client_user_id, status, start_date")
       .eq("id", bookingId)
       .single();
 
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     // Vérifier que la réservation appartient au locataire connecté
-    if (booking.guest_email !== user.email) {
+    if (!bookingBelongsToTenant(booking, user)) {
       return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
     }
 

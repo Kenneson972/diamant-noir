@@ -17,6 +17,7 @@ import { ReviewForm } from "@/components/espace-client/ReviewForm";
 import { LocalGuide } from "@/components/espace-client/LocalGuide";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 function BookingCardSkeleton() {
@@ -68,7 +69,7 @@ export default function EspaceClientPage() {
       const { data } = await supabase
         .from("bookings")
         .select("id, villa_id, start_date, end_date, status, price, guest_name")
-        .eq("guest_email", email)
+        .or(tenantBookingsOrFilter(session.user.id, email))
         .order("start_date", { ascending: false });
 
       if (!data || data.length === 0) {

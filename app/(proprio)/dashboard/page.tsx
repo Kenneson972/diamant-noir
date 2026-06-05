@@ -1,8 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
-import { CalendarCheck, DollarSign } from "lucide-react";
 import type { Villa } from "@/types/domain";
-import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
+import { KpiRow, type KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { EmptyDashboard } from "@/components/dashboard/proprio/EmptyDashboard";
 import { TodayTimeline } from "@/components/dashboard/proprio/TodayTimeline";
 import { AlertsWidget } from "@/components/dashboard/proprio/AlertsWidget";
@@ -253,9 +252,9 @@ export default async function ProprioDashboardPage(props: {
   const completedMonths = monthlyChartData.filter((d) => !d.isCurrent);
   const hasEnoughHistory = completedMonths.length >= 3;
 
-  const kpiItems = [
+  const kpiItems: KpiItem[] = [
     {
-      icon: DollarSign,
+      icon: "dollarSign",
       label: "Revenus du mois",
       value: revenueThisMonth > 0 ? revenueFormatted : "Aucun revenu ce mois",
       href: "/dashboard/revenus" as const,
@@ -270,7 +269,7 @@ export default async function ProprioDashboardPage(props: {
           : undefined,
     },
     {
-      icon: CalendarCheck,
+      icon: "calendarCheck",
       label: "Réservations à venir",
       value: upcomingBookings.length > 0 ? upcomingBookings.length : "Aucune réservation à venir",
       href: "/dashboard/reservations" as const,

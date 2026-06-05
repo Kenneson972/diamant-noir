@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { CheckinGuide } from "@/components/espace-client/CheckinGuide";
 import { CheckoutInstructions } from "@/components/espace-client/CheckoutInstructions";
@@ -276,7 +277,7 @@ export default function LivretPage() {
       const { data: bookingsRaw } = await supabase
         .from("bookings")
         .select("id, start_date, end_date, villa_id, status")
-        .eq("guest_email", session.user.email)
+        .or(tenantBookingsOrFilter(session.user.id, session.user.email))
         .in("status", ["confirmed", "upcoming"])
         .gt("end_date", new Date().toISOString())
         .order("start_date", { ascending: true })

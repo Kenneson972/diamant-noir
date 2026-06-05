@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
+import {
+  lookupClientUserIdByEmail,
+  resolveBookingGuestEmail,
+} from "@/lib/booking-tenant";
 
 export const runtime = "nodejs";
 
@@ -67,13 +71,21 @@ export async function POST(request: Request) {
       // Lire le statut actuel pour l'historique
       const { data: currentBooking } = await supabase
         .from("bookings")
-        .select("id, status")
+        .select("id, status, guest_email, client_user_id")
         .eq("id", bookingId)
         .single();
 
       const oldStatus = currentBooking?.status || "pending";
 
-      const guestEmail = session.customer_email || session.customer_details?.email || null;
+      const stripeEmail =
+        session.customer_email || session.customer_details?.email || null;
+      const guestEmail = resolveBookingGuestEmail(
+        currentBooking?.guest_email,
+        stripeEmail
+      );
+      const clientUserId =
+        currentBooking?.client_user_id ??
+        (await lookupClientUserIdByEmail(supabase, guestEmail));
 
       // Récupérer le PaymentIntent depuis la session
       let paymentIntentId: string | null = null;
@@ -87,6 +99,7 @@ export async function POST(request: Request) {
         status: "confirmed",
         payment_status: "paid",
         ...(guestEmail && { guest_email: guestEmail }),
+        ...(clientUserId && { client_user_id: clientUserId }),
       };
       if (paymentIntentId) {
         updateData.stripe_payment_intent_id = paymentIntentId;

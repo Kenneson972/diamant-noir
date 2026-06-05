@@ -8,6 +8,7 @@ import { ArrowLeft, Calendar, MapPin, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import { getRefundAmountCents } from "@/lib/refund-policy";
+import { bookingBelongsToTenant } from "@/lib/booking-tenant";
 import { AddToCalendar } from "@/components/booking/AddToCalendar";
 import {
   Alert,
@@ -85,11 +86,9 @@ export default function ReservationDetailPage() {
         return;
       }
 
-      const email = session.user.email;
-
       const { data: bookingRaw, error: bookingError } = await supabase
         .from("bookings")
-        .select("id, villa_id, start_date, end_date, status, price, total_price_cents, guest_name, guest_email")
+        .select("id, villa_id, start_date, end_date, status, price, total_price_cents, guest_name, guest_email, client_user_id")
         .eq("id", params.id as string)
         .single();
 
@@ -99,7 +98,7 @@ export default function ReservationDetailPage() {
         setLoading(false);
         return;
       }
-      if (booking.guest_email !== email) {
+      if (!bookingBelongsToTenant(booking, session.user)) {
         setError("Accès non autorisé.");
         setLoading(false);
         return;

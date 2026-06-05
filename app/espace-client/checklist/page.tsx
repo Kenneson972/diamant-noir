@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { Button, Chip } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
@@ -140,7 +141,7 @@ export default function ChecklistPage() {
       const { data: bookings } = await supabase
         .from("bookings")
         .select("id, start_date, end_date, checklist_state, villa_id, status")
-        .eq("guest_email", session.user.email)
+        .or(tenantBookingsOrFilter(session.user.id, session.user.email))
         .eq("status", "confirmed")
         .gt("end_date", new Date().toISOString().slice(0, 10))
         .order("start_date", { ascending: true })

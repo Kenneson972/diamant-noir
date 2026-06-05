@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { Button } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
@@ -31,7 +32,7 @@ export default function DocumentsPage() {
       const { data } = await supabase
         .from("bookings")
         .select("id, start_date, end_date, villa_id, villas(name)")
-        .eq("guest_email", session.user.email)
+        .or(tenantBookingsOrFilter(session.user.id, session.user.email))
         .eq("status", "confirmed")
         .order("start_date", { ascending: false });
 

@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import { Building2, CalendarDays, Users, UserCircle, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut, Percent, TrendingUp } from "lucide-react";
+import { CalendarDays, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut } from "lucide-react";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { KayvilaWidget } from "@/components/ui/pro";
@@ -122,19 +122,19 @@ export default async function AdminPage() {
       {/* KPIs — Rangée 1 */}
       <KpiRow
         items={[
-          { icon: Building2, label: "Villas", value: villaCount ?? 0 },
-          { icon: CalendarDays, label: "Réservations", value: bookingCount ?? 0 },
-          { icon: TrendingUp, label: "Note moyenne", value: avgRating !== "—" ? `${avgRating}/5` : avgRating },
+          { icon: "building2", label: "Villas", value: villaCount ?? 0 },
+          { icon: "calendarDays", label: "Réservations", value: bookingCount ?? 0 },
+          { icon: "trendingUp", label: "Note moyenne", value: avgRating !== "—" ? `${avgRating}/5` : avgRating },
         ]}
       />
 
       {/* KPIs — Rangée 2 */}
       <KpiRow
         items={[
-          { icon: Users, label: "Propriétaires", value: uniqueOwners },
-          { icon: UserCircle, label: "Clients", value: uniqueClients },
+          { icon: "users", label: "Propriétaires", value: uniqueOwners },
+          { icon: "userCircle", label: "Clients", value: uniqueClients },
           {
-            icon: Percent,
+            icon: "percent",
             label: "Conversion demandes",
             value: `${conversionRate}%`,
           },

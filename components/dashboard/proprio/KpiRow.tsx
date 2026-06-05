@@ -1,8 +1,8 @@
-import type { LucideIcon } from "lucide-react";
 import { KpiCard } from "./KpiCard";
+import type { KpiIconName } from "./kpi-icons";
 
-interface KpiItem {
-  icon: LucideIcon;
+export type KpiItem = {
+  icon: KpiIconName;
   label: string;
   value: string | number;
   href?: string;
@@ -10,7 +10,7 @@ interface KpiItem {
     value: number;
     positive: boolean;
   };
-}
+};
 
 interface KpiRowProps {
   items: KpiItem[];

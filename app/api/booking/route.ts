@@ -6,6 +6,8 @@ import { checkRateLimit, ipFromRequest } from "@/lib/security";
 import { checkCsrf } from "@/lib/security";
 import { BookingRequestSchema } from "@/types/stripe";
 import { calculateTransferAmounts } from "@/lib/stripe/connect";
+import { resolveBookingGuestEmail } from "@/lib/booking-tenant";
+import { getSupabaseServer } from "@/lib/supabase-server";
 
 export const runtime = "nodejs";
 
@@ -76,6 +78,13 @@ export async function POST(request: Request) {
     }
 
     const { startDate, endDate, villaId, guests, guestName, guestEmail, serviceFeePercent } = parsed.data;
+
+    const authClient = await getSupabaseServer();
+    const {
+      data: { user: authUser },
+    } = await authClient.auth.getUser();
+    const linkedGuestEmail = resolveBookingGuestEmail(guestEmail, authUser?.email);
+    const clientUserId = authUser?.id ?? null;
 
     // Validation du format des dates
     const start = new Date(startDate);
@@ -184,18 +193,25 @@ export async function POST(request: Request) {
     const ownerConnectAccountId = await getOwnerConnectAccountId(supabase, villaId);
 
     // Idempotency check: avoid duplicate bookings on double-click
-    if (guestEmail) {
+    if (linkedGuestEmail) {
       const { data: existingBooking } = await supabase
         .from("bookings")
         .select("id, stripe_session_id, status")
         .eq("villa_id", villaId)
         .eq("start_date", startDate)
         .eq("end_date", endDate)
-        .eq("guest_email", guestEmail)
+        .eq("guest_email", linkedGuestEmail)
         .eq("status", "pending")
         .maybeSingle();
 
       if (existingBooking) {
+        if (clientUserId) {
+          await supabase
+            .from("bookings")
+            .update({ client_user_id: clientUserId })
+            .eq("id", existingBooking.id)
+            .is("client_user_id", null);
+        }
         if (existingBooking.stripe_session_id) {
           const stripe = getStripe();
           if (stripe) {
@@ -210,7 +226,7 @@ export async function POST(request: Request) {
           }
         }
         return NextResponse.json({
-          url: `${baseUrl}/success?bookingId=${existingBooking.id}${guestEmail ? `&email=${encodeURIComponent(guestEmail)}` : ""}`,
+          url: `${baseUrl}/success?bookingId=${existingBooking.id}${linkedGuestEmail ? `&email=${encodeURIComponent(linkedGuestEmail)}` : ""}`,
           bookingId: existingBooking.id,
         });
       }
@@ -231,7 +247,8 @@ export async function POST(request: Request) {
         service_fee: serviceFeeCents / 100,
         total_price_cents: totalCents,
         guest_name: guestName || "Client Site Web",
-        guest_email: guestEmail || null,
+        guest_email: linkedGuestEmail,
+        client_user_id: clientUserId,
         guests: guestCount,
       })
       .select()
@@ -255,14 +272,14 @@ export async function POST(request: Request) {
     try {
     // Create or retrieve Stripe Customer
     let customerId: string | undefined;
-    if (guestEmail) {
+    if (linkedGuestEmail) {
       try {
-        const customers = await stripeInstance.customers.list({ email: guestEmail, limit: 1 });
+        const customers = await stripeInstance.customers.list({ email: linkedGuestEmail, limit: 1 });
         if (customers.data.length > 0) {
           customerId = customers.data[0].id;
         } else {
           const customer = await stripeInstance.customers.create({
-            email: guestEmail,
+            email: linkedGuestEmail,
             name: guestName || undefined,
             metadata: { source: "kayvila_booking" },
           });
@@ -285,11 +302,11 @@ export async function POST(request: Request) {
     // 3. Create Stripe Checkout Session avec le total incluant tous les frais
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "payment",
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}${guestEmail ? `&email=${encodeURIComponent(guestEmail)}` : ""}`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}${linkedGuestEmail ? `&email=${encodeURIComponent(linkedGuestEmail)}` : ""}`,
       cancel_url: `${baseUrl}/villas?canceled=true&bookingId=${booking.id}`,
       ...(customerId
         ? { customer: customerId }
-        : { customer_email: guestEmail || undefined }),
+        : { customer_email: linkedGuestEmail || undefined }),
       metadata: {
         bookingId: booking.id,
         villaId: villaId,

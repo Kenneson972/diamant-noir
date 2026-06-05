@@ -482,6 +482,24 @@ verify: vérification effectuée
 - **impact**: Vignettes et liens villa restaurés sur desktop
 - **verify**: `npm run build` OK
 
+## 2026-06-06 : Lien réservation ↔ espace client (client_user_id + email)
+
+- **type**: api | sql | fix
+- **summary**: Colonne `client_user_id` sur `bookings`, RLS case-insensitive, liaison à la création si connecté, préservation `guest_email` au webhook/sync Stripe, requêtes espace client par `or(client_user_id, guest_email)`.
+- **files**: [`lib/booking-tenant.ts`, `app/api/booking/route.ts`, `app/api/webhooks/stripe/route.ts`, `app/api/booking-session/route.ts`, `app/espace-client/**`, `supabase/migrations/20260606180000_booking_client_user_link.sql`]
+- **why**: Réservations payées invisibles dans `/espace-client` (email Stripe ≠ email compte, pas de `user_id`, RLS strict)
+- **impact**: Réservations visibles si même compte ou même email ; backfill réservations existantes
+- **verify**: `npm run build` OK — **appliquer migration Supabase** (`db push` ou SQL dashboard)
+
+## 2026-06-06 : Fix 404 confirmation réservation (booking-session + success polling)
+
+- **type**: api | fix
+- **summary**: `GET /api/booking-session` — sync Stripe si webhook retardé (local), réponse `202 pending` au lieu de `404` ; `/success` poll jusqu'à confirmation.
+- **files**: [`app/api/booking-session/route.ts`, `app/success/page.tsx`]
+- **why**: Après paiement Stripe, la page succès appelait booking-session avant le webhook → 404 « Réservation introuvable »
+- **impact**: Confirmation affichée même sans `stripe listen` en local ; message clair si finalisation lente
+- **verify**: `npm run build` OK
+
 ## 2026-06-06 : Fix contraste texte KayvilaPressableButton (Réserver / booking)
 
 - **type**: ui | fix

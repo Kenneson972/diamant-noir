@@ -34,45 +34,86 @@ function SuccessContent() {
   const [magicError, setMagicError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+      });
+
     const fetchData = async () => {
       const supabase = getSupabaseBrowser();
-      let sessionEmail = "";
 
       if (supabase) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           setIsLoggedIn(true);
-          sessionEmail = session.user.email ?? "";
         }
       }
 
-      // Set guest email from URL param if present (passed from booking API)
-      if (emailParam && !guestEmail) setGuestEmail(emailParam);
+      if (emailParam) setGuestEmail(emailParam);
 
       if (sessionId) {
-        try {
-          const res = await fetch(`/api/booking-session?session_id=${encodeURIComponent(sessionId)}`);
-          if (res.ok) {
-            const json = await res.json();
-            setData(json);
-            // Use guest email from booking if available
-            if (json.booking?.guest_email) setGuestEmail(json.booking.guest_email);
-          } else {
+        const maxAttempts = 20;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          if (cancelled) return;
+          try {
+            const res = await fetch(
+              `/api/booking-session?session_id=${encodeURIComponent(sessionId)}`
+            );
+            const json = await res.json().catch(() => null);
+
+            if (res.ok && json && !json.pending) {
+              setData(json);
+              setLoading(false);
+              return;
+            }
+
+            if (res.status === 202 && json?.pending) {
+              if (attempt < maxAttempts - 1) {
+                await sleep(2000);
+                continue;
+              }
+              setError(
+                "Paiement reçu — finalisation en cours. Consultez votre email ou votre espace client dans quelques minutes."
+              );
+              setLoading(false);
+              return;
+            }
+
+            if (res.status === 404 && attempt < 4) {
+              await sleep(1500);
+              continue;
+            }
+
             throw new Error("Not found");
+          } catch {
+            if (attempt >= maxAttempts - 1) {
+              setError("Réservation introuvable.");
+              setLoading(false);
+              return;
+            }
+            await sleep(2000);
           }
-        } catch {
-          setError("Réservation introuvable.");
         }
-      } else if (bookingId) {
-        setData({ booking: { id: bookingId }, villa: null });
-      } else {
-        setError("Paramètres de confirmation manquants.");
+        return;
       }
+
+      if (bookingId) {
+        setData({ booking: { id: bookingId }, villa: null });
+        setLoading(false);
+        return;
+      }
+
+      setError("Paramètres de confirmation manquants.");
       setLoading(false);
     };
 
     fetchData();
-  }, [sessionId, bookingId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, bookingId, emailParam]);
 
   const handleSendMagicLink = async () => {
     if (!guestEmail) return;

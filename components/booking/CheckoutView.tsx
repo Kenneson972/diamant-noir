@@ -114,6 +114,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
     try {
       const response = await fetch("/api/booking", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           startDate: checkin,

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { RequestForm } from "@/components/espace-client/RequestForm";
@@ -23,7 +24,7 @@ export default function DemandesPage() {
       const { data } = await supabase
         .from("bookings")
         .select("id")
-        .eq("guest_email", session.user.email)
+        .or(tenantBookingsOrFilter(session.user.id, session.user.email))
         .in("status", ["confirmed", "pending"])
         .gt("end_date", new Date().toISOString())
         .order("start_date", { ascending: true })

@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
 import { KPI } from "@heroui-pro/react";
 import { cn } from "@/lib/utils";
+import { resolveKpiIcon, type KpiIconName } from "./kpi-icons";
 
 interface KpiCardProps {
-  icon: LucideIcon;
+  icon: KpiIconName;
   label: string;
   value: string | number;
   href?: string;
@@ -18,13 +18,14 @@ interface KpiCardProps {
 }
 
 export function KpiCard({
-  icon: Icon,
+  icon: iconName,
   label,
   value,
   href,
   trend,
   className,
 }: KpiCardProps) {
+  const Icon = resolveKpiIcon(iconName);
   const numericValue =
     typeof value === "number"
       ? value

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { Home } from "lucide-react";
 import { Chip } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
@@ -68,7 +69,7 @@ export default function MessageriePage() {
       const { data: bookingRaw } = await supabase
         .from("bookings")
         .select("id, start_date, end_date, villa_id, status")
-        .eq("guest_email", email)
+        .or(tenantBookingsOrFilter(session.user.id, email))
         .in("status", ["confirmed", "pending"])
         .gt("end_date", new Date().toISOString())
         .order("start_date", { ascending: true })
