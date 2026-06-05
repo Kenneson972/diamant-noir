@@ -331,3 +331,12 @@ verify: vérification effectuée
 - **why**: `auth.jwt() ->> 'role'` = `authenticated` pour tous — faille RBAC ; proprios bloqués sur create/delete villa
 - **impact**: Seuls les vrais admins passent les policies RLS ; proprios peuvent créer/supprimer leurs villas via API
 - **verify**: migration Supabase MCP OK, grep policies prod 0 résultat mauvais claim, lint routes OK
+
+## 2026-06-06 : Audit espaces dashboard (admin / proprio / tenant)
+
+- **type**: docs
+- **summary**: Rapport d’audit parallèle des 3 espaces dashboard — P0 admin (revenus 20 %, RLS bookings, messagerie, assignee_id), proprio (IDOR, revenus incohérents), tenant (magic link, guest_email).
+- **files**: [`docs/AUDIT_ESPACES_DASHBOARD_2026-06-06.md`]
+- **why**: Tour qualité post mega-fix pour prioriser la roadmap Semaine 1 admin
+- **impact**: Backlog structuré P0/P1/quick wins par page et par espace
+- **verify**: 3 sous-agents explore + vérification manuelle revenus admin et AdminMenuItems
