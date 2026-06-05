@@ -616,3 +616,12 @@ verify: vérification effectuée
 - **why**: Audit `cursor-verification-pre-livraison.md` — gaps P0/P1 avant livraison 16 juin
 - **impact**: Cron OTA fonctionnel avec CRON_SECRET Vercel ; pas de résa sans split Connect ; remboursement admin ; proprio configure iCal ; agents n8n ont mémoire DB
 - **verify**: `npm run build` ; tables prod `conversation_memory` / `banned_sessions` / `toxicity_log` créées via `supabase db query --linked`
+
+## 2026-06-06T26:00:00Z : Docs récap session — pré-livraison + CRON_SECRET
+
+- **type**: docs
+- **summary**: Journal `docs/logs/2026-06-06.md` ; mise à jour `RECAP_ELISE_2026-06-06.md` (commits a41a0d4/37f4891, audit J-10, CRON_SECRET déjà sur Vercel).
+- **files**: [`docs/logs/2026-06-06.md`, `docs/logs/2026-06-05.md`, `docs/RECAP_ELISE_2026-06-06.md`, `docs/ACTIONS_LOG.md`]
+- **why**: Traçabilité handoff Elise — clarifier que CRON_SECRET longue existait, bug était code pre-37f4891
+- **impact**: Équipe / QA ont une source unique pour J-10 sans re-auditer
+- **verify**: fichiers commités sur main

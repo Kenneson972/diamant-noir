@@ -3,14 +3,13 @@
 **Pour** : Elise  
 **Date** : 6 juin 2026  
 **Projet** : `diamant-noir` (conciergerie Kayvila)  
-**Branche** : `main` · dernier commit : `db14c60`
+**Branche** : `main` · dernier commit : `37f4891`
 
 ---
 
 ## En bref
 
-Session focalisée sur **fiabiliser l’admin** et **débloquer le déploiement Vercel**.  
-Les réservations admin, l’annulation, la wishlist et la cohérence Supabase ont été corrigées. Le build prod nécessitait un token HeroUI Pro sur Vercel (configuré par Kenneson).
+Session en **deux vagues** : (1) fiabiliser l’admin + deploy Vercel ; (2) audit responsive mobile + **correctifs pré-livraison J-10** (cron OTA, Stripe Connect, agents n8n, iCal proprio).
 
 ---
 
@@ -23,6 +22,10 @@ Les réservations admin, l’annulation, la wishlist et la cohérence Supabase o
 | 3 | Favoris espace client en 404 | Table `wishlist` absente en prod | Migration + création table prod |
 | 4 | Impossible d’annuler une résa | Contrainte SQL n’autorisait que `pending`/`confirmed` | Migration statuts `cancelled`, `paid`, `refunded` |
 | 5 | Build Vercel en échec | HeroUI Pro : token CI manquant en prod | `HEROUI_AUTH_TOKEN` sur Vercel + config install |
+| 6 | Chatbot mobile : header / z-index | Flex sans `shrink-0`, z-index sous navbar | `a41a0d4` — responsive mobile |
+| 7 | Cron OTA 401 en prod | Code lisait `CRON_API_KEY` seul ; Vercel envoie `CRON_SECRET` | `37f4891` — `verifyApiKey` dual |
+| 8 | Résa sans split Connect | Pas de garde si proprio non onboardé | `37f4891` — 503 booking |
+| 9 | Agents n8n sans mémoire | Migration `agents_memory` non appliquée prod | `37f4891` — 3 tables créées |
 
 ---
 
@@ -33,6 +36,8 @@ Projet : `wsdawdxucyuyopkpgjij`
 1. `20260606200000_admin_supabase_standardize.sql` — rôle admin unifié (`is_staff_admin()`), RLS
 2. `20260606210000_wishlist_table.sql` — table favoris
 3. `20260606220000_bookings_status_source_check.sql` — statuts et sources réservations alignés code
+4. `20260606230000_drop_duplicate_bookings_villa_fk.sql` — FK dupliquée bookings→villas
+5. `20260528_agents_memory.sql` — `conversation_memory`, `banned_sessions`, `toxicity_log` (appliquée via `db query --linked`, hors historique migrations CLI)
 
 ---
 
@@ -46,6 +51,10 @@ Projet : `wsdawdxucyuyopkpgjij`
 | `92c993b` | Config Vercel HeroUI Pro |
 | `760d60f` | Récap Elise (ce fichier) |
 | `db14c60` | Commission dynamique + drop FK dupliquée |
+| `712dc9a` | docs: audit responsive mobile (Elise) |
+| `8e628e4` | docs: prompt vérification pré-livraison J-10 |
+| `a41a0d4` | fix(ui): audit responsive mobile |
+| `37f4891` | fix(pre-livraison): cron, Connect, refund, iCal proprio |
 
 ---
 
@@ -56,6 +65,10 @@ Projet : `wsdawdxucyuyopkpgjij`
 - [ ] `/admin/clients/[id]` — historique réservations du client
 - [ ] `/admin/proprietaires` — villas affichées sur chaque fiche
 - [ ] `/espace-client/favoris` — plus d’erreur 404
+- [ ] **Mobile 390px** — chatbot header visible, FAB au-dessus navbar (`a41a0d4`)
+- [ ] **Cron OTA** — après redeploy `37f4891`, logs Vercel cron `/api/sync` → 200 (pas 401)
+- [ ] **Booking** — villa avec proprio non Connect → message 503 explicite
+- [ ] **Dashboard proprio** — `/dashboard/villas/[id]` section iCal (ajout URL + sync)
 
 **Compte admin test** : `admin@diamantnoir.com`  
 **Données prod** : 6 réservations, 3 propriétaires, 2 villas liées
@@ -92,11 +105,34 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 
 ---
 
+## CRON_SECRET Vercel
+
+- **Déjà configuré** par Kenneson (clé longue — format attendu).
+- Bug corrigé `37f4891` : le code ignorait `CRON_SECRET` et ne lisait que `CRON_API_KEY`.
+- **Action** : redeploy prod ; pas besoin d’ajouter une seconde variable.
+- Villas test sans iCal → `synced: 0` (normal).
+
+---
+
+## Audit pré-livraison (`docs/prompts/cursor-verification-pre-livraison.md`)
+
+| Chantier | État post-`37f4891` |
+|----------|---------------------|
+| OTA Sync | Cron auth OK ; UI iCal proprio ajoutée |
+| Agents IA | Tables mémoire prod ; n8n à activer + env vars |
+| Stripe Connect | Blocage booking + `admin-refund` ; webhooks déjà OK |
+
+**Reste manuel** : `N8N_WEBHOOK_URL`, `N8N_OWNER_WEBHOOK_URL`, import workflows n8n v2.
+
+---
+
 ## Backlog (non bloquant)
 
 - Migrer vues admin `demandes` / `avis` vers API admin dédiée
 - Admin proprio : graphique revenus (UI)
+- UI admin : bouton remboursement (API `POST /api/stripe/admin-refund` prête)
 - Workflows n8n Kayvila — voir `docs/n8n/README.md`
+- Regen `types/supabase.ts` (tables agents mémoire)
 
 ---
 
@@ -104,7 +140,10 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 
 | Fichier | Contenu |
 |---------|---------|
-| `docs/logs/2026-06-05.md` | Journal technique détaillé |
+| `docs/logs/2026-06-05.md` | Journal technique (admin + responsive) |
+| `docs/logs/2026-06-06.md` | Journal pré-livraison + CRON_SECRET |
+| `docs/prompts/cursor-verification-pre-livraison.md` | Prompt audit J-10 |
+| `docs/FIX_RESPONSIVE_MOBILE.md` | Fixes mobile Elise |
 | `docs/todo.md` | Todo prochaine session |
 | `docs/lessons.md` | Leçons (ne pas refaire les mêmes erreurs) |
 | `docs/ACTIONS_LOG.md` | Journal global des actions |
@@ -115,8 +154,9 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 
 ## État fin de session
 
-- Localhost : **arrêté**
-- Git : **à jour** avec `origin/main`
-- Vercel : token HeroUI ajouté — **valider que le deploy passe**
+- Localhost : dev possible (`npm run dev`)
+- Git : **à jour** `origin/main` · `37f4891`
+- Vercel : `HEROUI_AUTH_TOKEN` + **`CRON_SECRET` déjà présent** — redeploy post-`37f4891` pour cron OTA
+- Supabase prod : tables agents mémoire créées
 
-*Rédigé pour handoff équipe — Karibloom / session Cursor 2026-06-06.*
+*Mis à jour — Karibloom / session Cursor 2026-06-06 (soir).*
