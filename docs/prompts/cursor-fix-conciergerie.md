@@ -1,8 +1,8 @@
-# Mega-Prompt Cursor — Corrections critiques Conciergerie Kayvila
+# Mega-Prompt Cursor — Corrections critiques Conciergerie + Admin Kayvila
 
 **Date** : 2026-06-06
 **Projet** : Kayvila Diamant Noir
-**Contexte** : Double audit (état des lieux complet + flow conciergerie). Score scaling actuel : 2/10. Ces corrections sont les vrais problèmes, pas des fantasmes Airbnb.
+**Contexte** : Double audit (flow conciergerie + synchronisation Supabase admin). Les bugs sont réels, vérifiés dans le code et les migrations.
 
 ---
 
@@ -10,9 +10,8 @@
 
 - Pas de contact direct proprio ↔ voyageur
 - Le voyageur parle à Kayvila, Kayvila parle au proprio
-- Le client ne doit JAMAIS voir le nom/l'avatar/l'email du propriétaire
-- L'hôte affiché = "Kayvila Conciergerie"
 - Design Kayvila (Playfair, gold/navy) intouchable
+- VillaHostCard avec infos proprio = CONSERVÉ (décision Ken)
 
 ---
 
@@ -37,60 +36,84 @@ git checkout <commit> -- app/espace-client/livret/page.tsx
 
 ---
 
-## 🔴 BUG P0 — VillaHostCard : remplacer le proprio par Kayvila
+## 🔴 BUG P0 — Table `reviews` cassée : colonnes `status`, `photos`, `guest_id`, `updated_at` supprimées
 
-**Problème** : Le `VillaHostCard` expose le propriétaire (full_name, avatar_url, email, role) au client. C'est un pattern Airbnb, pas conciergerie.
+**Problème** : La migration `20260522_create_reviews.sql` a fait `DROP TABLE reviews CASCADE` puis recréé une table SANS les colonnes `status`, `photos`, `guest_id`, `updated_at`. Résultat : la page Avis et le dashboard sont cassés.
 
-### Fichier : `components/villas/VillaHostCard.tsx`
+### Fichier : `supabase/migrations/20260522_create_reviews.sql`
 
-**Remplacer TOUT le contenu par** :
+**Action** : Ajouter les colonnes manquantes :
+
+```sql
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS photos TEXT[];
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS guest_id UUID REFERENCES auth.users(id);
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+```
+
+### Fichiers impactés à vérifier après migration :
+
+| Fichier | Ligne | Problème résolu |
+|---------|-------|-----------------|
+| `app/(admin)/admin/avis/page.tsx` | 20 | `.select("..., photos, status, guest_id")` fonctionnera |
+| `app/(admin)/admin/avis/page.tsx` | 22 | `.eq("status", filter)` fonctionnera |
+| `app/(admin)/admin/avis/page.tsx` | 35 | `.update({ status, updated_at })` fonctionnera |
+| `app/(admin)/admin/avis/page.tsx` | 43 | `review.guest_id` ne sera plus undefined |
+| `app/(admin)/admin/page.tsx` | 48 | `pendingReviews` compteur fonctionnera |
+| `app/(admin)/admin/page.tsx` | 52 | Note moyenne fonctionnera |
+
+---
+
+## 🔴 BUG P0 — Page détail réservation ABSENTE (404)
+
+**Problème** : `AdminReservationsDataGrid.tsx` ligne 143 fait un lien vers `/admin/reservations/${item.id}` mais le fichier `app/(admin)/admin/reservations/[bookingId]/page.tsx` n'existe pas.
+
+### Fichier à créer : `app/(admin)/admin/reservations/[bookingId]/page.tsx`
 
 ```tsx
-"use client";
+import { supabaseAdmin } from "@/lib/supabase";
+import { notFound } from "next/navigation";
+import { BookingDetailCard } from "@/components/dashboard/admin/BookingDetailCard";
 
-import { ShieldCheck, Phone, Mail } from "lucide-react";
+export default async function AdminBookingDetailPage({ params }: { params: { bookingId: string } }) {
+  const { data: booking } = await supabaseAdmin()
+    .from("bookings")
+    .select("*, villas(name, location), profiles:guest_email(email)")
+    .eq("id", params.bookingId)
+    .single();
 
-export function VillaHostCard() {
+  if (!booking) return notFound();
+
   return (
-    <section className="py-12 border-t border-navy-800">
-      <h2 className="font-playfair text-2xl text-navy mb-6">Votre concierge</h2>
-      <div className="flex items-start gap-4">
-        <div className="w-14 h-14 rounded-full bg-gold flex items-center justify-center">
-          <ShieldCheck className="w-7 h-7 text-navy" />
-        </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-sora text-lg text-navy">Kayvila Conciergerie</span>
-            <span className="inline-flex items-center gap-1 text-xs text-navy bg-gold/10 px-2 py-0.5 rounded-full">
-              <ShieldCheck className="w-3 h-3" />
-              Concierge vérifié
-            </span>
-          </div>
-          <p className="text-sm text-navy-800 mt-1">
-            Équipe locale basée au Diamant, disponible 24/7 pour votre séjour.
-          </p>
-          <div className="flex items-center gap-4 mt-3">
-            <a href="tel:+596XXX" className="flex items-center gap-1 text-sm text-navy hover:text-gold">
-              <Phone className="w-3 h-3" />
-              Appeler
-            </a>
-            <a href="mailto:conciergerie@kayvila.com" className="flex items-center gap-1 text-sm text-navy hover:text-gold">
-              <Mail className="w-3 h-3" />
-              Écrire
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div className="max-w-4xl mx-auto py-8 px-4">
+      <BookingDetailCard booking={booking} />
+    </div>
   );
 }
 ```
 
-### Fichier : `app/villas/[id]/page.tsx`
+---
 
-- Retirer la query join vers `owner:owner_id(...)` (on n'a plus besoin des infos proprio)
-- Retirer `host` du type `VillaDetails`
-- Le `VillaHostCard` ne prend plus de props → `<VillaHostCard />`
+## 🟡 BUG P1 — Réservations vides : vérifier RLS `staff_admin_bookings_select`
+
+**Problème** : La page réservations utilise `getSupabaseBrowser()` (anon key + JWT). Si la migration `20260606140000_audit_dashboard_fixes.sql` n'est pas appliquée ou si `profiles.role` n'est pas `'admin'`, les réservations sont vides.
+
+### À vérifier dans Supabase Dashboard :
+
+1. **La migration est-elle appliquée ?**
+   ```sql
+   SELECT * FROM pg_policies WHERE policyname = 'staff_admin_bookings_select';
+   ```
+   Si pas de résultat → appliquer la migration `20260606140000_audit_dashboard_fixes.sql`.
+
+2. **Le profil admin a-t-il `role = 'admin'` ?**
+   ```sql
+   SELECT id, email, role FROM profiles WHERE email = 'ton-email-admin@kayvila.com';
+   ```
+   Si `role` n'est pas `'admin'` → `UPDATE profiles SET role = 'admin' WHERE email = '...'`.
+
+### Alternative immédiate (quick fix) :
+Remplacer `getSupabaseBrowser()` par `supabaseAdmin()` dans `app/(admin)/admin/reservations/page.tsx` pour bypasser RLS en attendant.
 
 ---
 
