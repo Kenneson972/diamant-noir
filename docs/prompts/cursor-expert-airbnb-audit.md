@@ -85,14 +85,16 @@
 - Gestion sinistre : formulaire → photos → expertise → indemnisation
 - Page : `/dashboard/assurance` avec historique des sinistres
 
-### 5. Messagerie avancée proprio
-**Pourquoi** : Le chatbot actuel est basique. Booking a Pulse App.
+### 5. Messagerie proprio → conciergerie Kayvila
+
+**⚠️ Règle métier Kayvila** : Pas de contact direct proprio ↔ voyageur. Kayvila est une conciergerie, pas une marketplace P2P. Le voyageur parle à Kayvila, Kayvila parle au proprio.
+
 **Spécification** :
-- Chat en temps réel (Supabase Realtime)
-- Templates de messages rapides ("Code WiFi : [auto]", "Check-in : [date]")
-- Traduction automatique (DeepL API)
-- Historique par voyageur, pas juste une liste plate
-- Notifications : badge non lu, email si inactif >4h
+- Le chatbot admin existant fait déjà le lien
+- Améliorer : dashboard admin avec file de messages priorisés par urgence
+- Templates de réponse rapide pour l'équipe Kayvila ("Votre demande a été transmise au propriétaire", "Le proprio confirme que...")
+- Notifications internes : si un message voyageur reste sans réponse >2h → alerte équipe
+- Le proprio reçoit un résumé quotidien par email, pas de chat en direct
 
 ### 6. Co-Host / gestion déléguée
 **Pourquoi** : Airbnb Co-Host Network. Les proprios absents veulent déléguer.
@@ -141,13 +143,15 @@
 - Notification si dates bloquées se libèrent
 - Section "Favoris" dans l'espace client avec statut disponibilité
 
-### 3. Messagerie voyageur avancée
-**Pourquoi** : Le chatbot est bien, mais un vrai chat avec le proprio c'est mieux.
+### 3. Messagerie voyageur → conciergerie Kayvila
+
+**⚠️ Règle métier** : Le voyageur ne contacte jamais le proprio directement. C'est la conciergerie Kayvila qui fait l'intermédiaire.
+
 **Spécification** :
-- Chat direct avec le proprio (après réservation confirmée)
-- Templates : "Demande de check-in anticipé", "Problème avec la clim", "Recommandation restaurant"
-- Partage de photos dans le chat (signalement problème)
-- Traduction automatique
+- Le chatbot existant est la porte d'entrée → escalade vers un humain si besoin
+- File de messages priorisés dans le dashboard admin Kayvila
+- SLA : réponse sous 1h (urgence), 4h (normal)
+- Le voyageur voit "L'équipe Kayvila vous répond" (pas le proprio)
 
 ### 4. Programme fidélité (Kayvila Club)
 **Pourquoi** : Booking Genius, Airbnb n'a rien. Opportunité !
