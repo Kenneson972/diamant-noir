@@ -36,6 +36,9 @@
 | P0-3 | Mutations réservations via browser sans garde serveur | `app/(admin)/admin/reservations/page.tsx`, `components/dashboard/CreateBookingModal.tsx` |
 | P0-4 | Messagerie : schéma + RLS incohérents | `app/(admin)/admin/messagerie/page.tsx`, `20260403120000_espace_client_chat_checklist.sql` |
 | P0-5 | Colonne `assignee_id` absente de la DB | `app/(admin)/admin/demandes/page.tsx`, `20260511_requests.sql` |
+| P0-6 | Webhook n8n reçoit `select("*")` — toutes les colonnes (villas, bookings, tasks, submissions) envoyées à un webhook externe sans filtrage | `app/api/admin/chat/route.ts` |
+| P0-7 | Pas de vérification de conflit de dates dans `CreateBookingModal` — double booking possible | `components/dashboard/CreateBookingModal.tsx` |
+| P0-8 | `supabaseAdmin()` bypass RLS dans 3 pages RSC — défense en profondeur absente | `admin/villas/page.tsx`, `admin/villas/[id]/page.tsx`, `admin/reservations/[bookingId]/page.tsx` |
 
 ---
 
@@ -100,6 +103,8 @@
 
 - **IDOR fiche réservation** : `app/(proprio)/dashboard/reservations/[villaId]/[bookingId]/page.tsx` charge via `supabaseAdmin()` sans vérif ownership.
 - **APIs create/delete-villa** : `supabaseAdmin()` contourne RLS (INSERT admin-only en DB).
+- **Copilot assistant rapporte revenus BRUTS** : `buildOwnerContextPack` dans `lib/owner-assistant-context.ts` utilise `getBookingPriceCents(b) / 100` sans déduire la commission 25%. Le copilot annonce un revenu 33% supérieur à la réalité.
+- **Dashboard accueil = revenus BRUTS** : le KPI « Revenus du mois » et le graphique utilisent `total_price_cents` brut au lieu du net après commission. Seule la page `/revenus` est correcte.
 
 ### P1
 
@@ -134,12 +139,18 @@
 
 - **Magic link absent de `/login`** — uniquement sur `/success` post-paiement.
 - **Liaison booking = `guest_email` exact** — espace vide si email auth ≠ email réservation.
+- **Calendrier déconnecté du formulaire de réservation** : `AvailabilityCalendar` rendu SANS la prop `onDatesChange` dans `app/villas/[id]/page.tsx:466`. L'utilisateur sélectionne ses dates dans le calendrier → le `BookingForm` reste vide → double saisie obligatoire → abandon probable. Bug le plus impactant côté conversion.
+- **Pas de loading state sur le calendrier** : pendant le fetch, toutes les dates apparaissent disponibles. L'utilisateur peut sélectionner des dates déjà réservées.
 
 ### P1
 
 - Partage séjour cassé (token `btoa` faible, `/share` pas public, RLS publique supprimée).
 - Bug wishlist : sync DB inversée dans `contexts/WishlistContext.tsx`.
 - Contenu mock : factures HTML, parrainage sans email, conciergerie hardcodée, chat démo.
+- **Tarifs saisonniers non affichés dans `BookingForm`** : le backend calcule bien via `calculatePrice(seasonalPrices)` mais le composant BookingForm côté fiche villa ne les passe jamais. Le prix affiché peut être incorrect.
+- **Checklist + Profil absents du menu latéral** : `TenantMenuItems.ts` omet ces 2 entrées, accessibles uniquement via liens contextuels.
+- **Double padding** : `DashboardShell` + `EspaceClientShell` cumulent leurs paddings.
+- **Fallback « 4 chambres » trompeur** : `{villa.rooms?.length || 4}` affiche 4 même sans données.
 
 ### Quick wins tenant
 
