@@ -18,3 +18,8 @@ ALTER TABLE stripe_disputes ENABLE ROW LEVEL SECURITY;
 
 -- Index pour lookup par booking
 CREATE INDEX IF NOT EXISTS idx_stripe_disputes_booking_id ON stripe_disputes(booking_id);
+
+DROP POLICY IF EXISTS stripe_disputes_service ON stripe_disputes;
+CREATE POLICY stripe_disputes_service ON stripe_disputes
+  FOR ALL USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
