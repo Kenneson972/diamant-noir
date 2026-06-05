@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getAdminDb } from "@/lib/admin/db";
 import type { Metadata } from "next";
 import {
   Settings,
@@ -49,7 +49,7 @@ function ConfigField({ label, value }: { label: string; value: string }) {
 }
 
 export default async function AdminParametresPage() {
-  const supabase = await getSupabaseServer();
+  const supabase = getAdminDb();
 
   // Charger les stats du site
   const [villasCount, bookingsCount, { count: usersCount }] =

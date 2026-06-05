@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getAdminDb } from "@/lib/admin/db";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -10,19 +10,39 @@ export const metadata: Metadata = { title: "Fiche Client — Administration Kayv
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await getSupabaseServer();
+  const supabase = getAdminDb();
 
-  const [
-    { data: profile },
-    { data: bookings },
-    { data: requests },
-    { data: reviews },
-  ] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", id).single(),
-    supabase.from("bookings").select("id, villa_id, start_date, end_date, status, total_price_cents, guest_name, checklist_state, villas(name)").or(`guest_email.eq.${id}`).order("start_date", { ascending: false }),
-    supabase.from("requests").select("id, type, status, message, admin_response, created_at").eq("guest_id", id).order("created_at", { ascending: false }).limit(50),
-    supabase.from("reviews").select("id, rating, comment, status, created_at, villas(name)").eq("guest_id", id).order("created_at", { ascending: false }),
-  ]);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  const bookingFilter = profile?.email
+    ? `client_user_id.eq.${id},guest_email.eq.${profile.email}`
+    : `client_user_id.eq.${id}`;
+
+  const [{ data: bookings }, { data: requests }, { data: reviews }] =
+    await Promise.all([
+      supabase
+        .from("bookings")
+        .select(
+          "id, villa_id, start_date, end_date, status, total_price_cents, guest_name, checklist_state, villas(name)"
+        )
+        .or(bookingFilter)
+        .order("start_date", { ascending: false }),
+      supabase
+        .from("requests")
+        .select("id, type, status, message, admin_response, created_at")
+        .eq("guest_id", id)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("reviews")
+        .select("id, rating, comment, status, created_at, villas(name)")
+        .eq("guest_id", id)
+        .order("created_at", { ascending: false }),
+    ]);
 
   const guestName = profile?.full_name || (bookings?.[0] as any)?.guest_name || "Client";
 

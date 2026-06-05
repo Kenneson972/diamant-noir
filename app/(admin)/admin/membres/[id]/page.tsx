@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getAdminDb } from "@/lib/admin/db";
 import type { Metadata } from "next";
 import { User } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -13,7 +13,7 @@ export default async function AdminMembrePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const supabase = await getSupabaseServer();
+  const supabase = getAdminDb();
 
   const { id } = await params;
 

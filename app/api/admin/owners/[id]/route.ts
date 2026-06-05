@@ -34,7 +34,7 @@ export async function GET(
     // 2. Villas
     const { data: villas } = await supabase
       .from("villas")
-      .select("id, name, slug, price_per_night, is_published, commission_rate, image_urls, capacity")
+      .select("id, name, price_per_night, is_published, commission_rate, image_urls, capacity")
       .eq("owner_id", id)
       .order("created_at", { ascending: false });
 

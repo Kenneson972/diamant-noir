@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { Users } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 async function getOwners(): Promise<AdminOwnerRow[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = supabaseAdmin();
 
   const { data, error } = await supabase
     .from("admin_owner_summary")

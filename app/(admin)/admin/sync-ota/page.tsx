@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getAdminDb } from "@/lib/admin/db";
 import type { Metadata } from "next";
 import { SyncOtaAdminPage } from "@/components/dashboard/admin/SyncOtaAdminPage";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminSyncOtaPage() {
-  const supabase = await getSupabaseServer();
+  const supabase = getAdminDb();
 
   const { data: villas } = await supabase
     .from("villas")

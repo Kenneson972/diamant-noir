@@ -102,7 +102,6 @@ export async function GET(
     } catch {
       // Table stripe_disputes pas encore créée — ignoré
     }
-    }
 
     return NextResponse.json({
       chargesEnabled,

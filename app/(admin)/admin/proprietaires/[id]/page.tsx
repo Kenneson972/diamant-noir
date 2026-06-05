@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Mail, ShieldOff, Shield } from "lucide-react";
@@ -24,7 +24,7 @@ interface OwnerDetail {
 interface VillaSummary {
   id: string;
   name: string;
-  slug: string;
+  slug: string | null;
   price_per_night: number;
   is_published: boolean;
   commission_rate: number;
@@ -43,7 +43,7 @@ interface BookingSummary {
 }
 
 async function getOwnerDetail(id: string) {
-  const supabase = await getSupabaseServer();
+  const supabase = supabaseAdmin();
 
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -53,11 +53,15 @@ async function getOwnerDetail(id: string) {
 
   if (error || !profile) return null;
 
-  const { data: villas } = await supabase
+  const { data: villas, error: villasError } = await supabase
     .from("villas")
     .select("id, name, slug, price_per_night, is_published, commission_rate, image_urls, capacity")
     .eq("owner_id", id)
     .order("created_at", { ascending: false });
+
+  if (villasError) {
+    console.error("getOwnerDetail villas:", villasError);
+  }
 
   const villaIds = (villas ?? []).map((v) => v.id);
   let bookings: BookingSummary[] = [];

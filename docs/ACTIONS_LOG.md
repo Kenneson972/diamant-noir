@@ -518,6 +518,15 @@ verify: vérification effectuée
 - **impact**: Labels visibles sur fiche villa, `/book`, sticky mobile « Payer »
 - **verify**: `npm run build` OK
 
+## 2026-06-06 : Standardisation lien Supabase admin Kayvila
+
+- **type**: sql | api | config | docs
+- **summary**: Migration `is_staff_admin()` + RLS profiles/villas/seasonal_rates ; pages admin RSC → `getAdminDb()` ; fix fiche client bookings (`client_user_id` + email) ; script `check:schema` ; règle `.cursor/rules/kb-admin-supabase-diamantnoir.mdc`.
+- **files**: [`supabase/migrations/20260606200000_admin_supabase_standardize.sql`, `lib/admin/db.ts`, `app/(admin)/admin/parametres/page.tsx`, `sync-ota/page.tsx`, `membres/[id]/page.tsx`, `clients/[id]/page.tsx`, `scripts/check-supabase-schema.mjs`, `types/supabase.ts`, `.cursor/rules/kb-admin-supabase-diamantnoir.mdc`]
+- **why**: Éviter corrections au cas par cas (slug manquant, villas vides, RLS JWT vs profiles.role, seasonal_rates sans policy)
+- **impact**: Admin fiable via service_role ; composants client couverts par RLS `is_staff_admin()` ; garde-fou drift schema
+- **verify**: Migration appliquée prod MCP ; `npm run build` OK ; `npm run check:schema` signale types incomplets (regen `supabase gen types` recommandé)
+
 ## 2026-06-06 : Refonte design espace client — phases 2 & 3
 
 - **type**: ui
