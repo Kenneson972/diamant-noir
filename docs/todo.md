@@ -28,9 +28,10 @@ Dernier commit : `61425af` · Dev server **arrêté** · Détail : `docs/logs/20
 ## Backlog technique
 
 - [ ] Migrer `demandes` / `avis` admin → `/api/admin/*`
-- [ ] Migration cleanup : drop FK dupliquée `fk_bookings_villa`
+- [x] Drop FK dupliquée `fk_bookings_villa` (migration `20260606230000`)
+- [x] Commission dynamique admin proprio (`lib/commission.ts`)
 - [ ] `npm run check:schema` → regen `types/supabase.ts` si drift
-- [ ] Admin proprio : graph revenus, commission dynamique, suspendre compte (`OwnerRevenueTab` 25% hardcodé)
+- [ ] Admin proprio : graph revenus, suspendre compte
 - [ ] n8n Kayvila — `docs/n8n/README.md`
 
 ## Ancien (à trier / peut être obsolète)

@@ -72,11 +72,28 @@ Commandes utiles : `npm run build` · `npm run check:schema`
 
 ---
 
+## Retour Elise (6 juin — soir)
+
+### 1. Volume de changements en une session
+**Légitime.** Réponse : la session a touché **3 couches distinctes** (RLS Supabase, API admin réservations, deploy Vercel) — pas un refactor monolithique.  
+**Mitigation** : checklist QA ci-dessus + commits atomiques (`152f8c6`, `4a40b60`, `61425af`, `92c993b`) pour rollback ciblé.  
+**Recommandation** : Elise valide les 5 parcours checklist avant de considérer la session « stable prod ».
+
+### 2. Commission 25 % hardcodée — **corrigé** (`à venir`)
+- `lib/commission.ts` — taux par villa (`villas.commission_rate`), défaut 25 %
+- `OwnerRevenueTab` — commission par réservation + KPI dynamiques
+- Fallback 25 % si villa sans taux en base
+
+### 3. FK dupliquée `fk_bookings_villa` — **corrigé** (`à venir`)
+- Migration `20260606230000_drop_duplicate_bookings_villa_fk.sql` appliquée prod
+- FK canonique conservée : `bookings_villa_id_fkey` (embed `BOOKING_VILLA_EMBED`)
+
+---
+
 ## Backlog (non bloquant)
 
 - Migrer vues admin `demandes` / `avis` vers API admin dédiée
-- Nettoyage FK dupliquée `fk_bookings_villa` en base
-- Admin proprio : graphique revenus, commission dynamique (aujourd’hui 25 % en dur)
+- Admin proprio : graphique revenus (UI)
 - Workflows n8n Kayvila — voir `docs/n8n/README.md`
 
 ---

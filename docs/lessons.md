@@ -15,3 +15,5 @@
 - Filtre `?villa=xxx` forcé en « passées » sur `/admin/reservations` (masque les pending).
 - **`bookings_status_check`** : toujours aligner contrainte SQL avec `lib/constants.ts` / UI admin (`cancelled`, `paid`, `refunded`). Vérifier aussi `bookings_source_check` si POST admin utilise `source: "manual"`.
 - **HeroUI Pro sur Vercel** : `@heroui-pro/react` a un postinstall (CDN licence). Sur CI/Vercel, déclarer `HEROUI_AUTH_TOKEN` (token CI/CD du dashboard heroui.pro) dans les env vars Production + Preview. Sans ça : `Can't resolve '@heroui-pro/react'`. Local OK car login CLI `heroui-pro login`.
+- **Commission** : lire `villas.commission_rate` (décimal 0.25) via `lib/commission.ts` — ne pas hardcoder 25 % dans les onglets admin.
+- **FK bookings → villas** : une seule FK (`bookings_villa_id_fkey`). `fk_bookings_villa` dupliquée → PGRST201.

@@ -589,3 +589,12 @@ verify: vérification effectuée
 - **why**: Handoff lisible pour Elise (QA / suivi) sans lire tout le journal technique
 - **impact**: Checklist test + commits + migrations en un seul fichier
 - **verify**: fichier commité et poussé sur `main`
+
+## 2026-06-06T24:00:00Z : Retour Elise — commission dynamique + FK cleanup
+
+- **type**: ui | sql
+- **summary**: `lib/commission.ts` + `OwnerRevenueTab` lit `villas.commission_rate` ; migration drop `fk_bookings_villa` (prod) ; récap Elise mis à jour (réponse volume QA).
+- **files**: [`lib/commission.ts`, `components/dashboard/admin/OwnerRevenueTab.tsx`, `OwnerTabs.tsx`, `OwnerVillasTab.tsx`, `supabase/migrations/20260606230000_drop_duplicate_bookings_villa_fk.sql`, `docs/RECAP_ELISE_2026-06-06.md`]
+- **why**: Quick wins signalés par Elise (25 % hardcodé, FK dupliquée PGRST201)
+- **impact**: Revenus admin proprio alignés DB ; un seul embed FK villas sur bookings
+- **verify**: migration prod MCP ; `npm run build` ; QA `/admin/proprietaires/[id]` onglet Revenus

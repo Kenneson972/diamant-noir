@@ -59,6 +59,7 @@ export function OwnerTabs({ ownerId, profile, villas, bookings, stats }: Props) 
       <Tabs.Panel id="revenus" className="pt-6">
         <OwnerRevenueTab
           ownerId={ownerId}
+          villas={villas}
           bookings={bookings}
           totalRevenueCents={stats.totalRevenueCents}
           totalBookings={stats.totalBookings}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Chip } from "@heroui/react";
 import { ExternalLink, Edit3 } from "lucide-react";
+import { commissionRateLabel } from "@/lib/commission";
 
 interface Props {
   ownerId: string;
@@ -63,7 +64,7 @@ export function OwnerVillasTab({ ownerId, villas }: Props) {
               </div>
               <div className="mt-1 flex items-center gap-4 text-xs text-muted">
                 <span>{villa.price_per_night}€ / nuit</span>
-                <span>{Math.round((villa.commission_rate ?? 0.25) * 100)}% commission</span>
+                <span>{commissionRateLabel(villa.commission_rate)} commission</span>
                 <span>{villa.capacity} voyageurs</span>
               </div>
             </div>
