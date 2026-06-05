@@ -247,7 +247,12 @@ export async function PATCH(request: Request) {
       .eq("id", body.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("[admin/bookings] PATCH failed", error);
+      const hint =
+        error.code === "23514"
+          ? "Statut non autorisé en base — contactez le support."
+          : error.message;
+      return NextResponse.json({ error: hint }, { status: 400 });
     }
 
     await logAdminAction(

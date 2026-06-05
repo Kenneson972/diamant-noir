@@ -553,3 +553,12 @@ verify: vérification effectuée
 - **why**: Poursuite audit espace client — aligner toutes les sous-pages sur le design Kayvila / HeroUI Pro
 - **impact**: Cohérence visuelle sur 8 pages tenant ; empty states Pro ; widgets éditoriaux ; plus de spinners/alertes bricolées
 - **verify**: `npm run build` OK
+
+## 2026-06-06T22:00:00Z : Fix contrainte `bookings_status_check` (annulation admin)
+
+- **type**: sql | api
+- **summary**: Migration élargit `bookings_status_check` (`cancelled`, `paid`, `refunded`) et `bookings_source_check` (`manual`, `ical`, `admin`) ; PATCH admin renvoie erreur 400 lisible sur violation CHECK.
+- **files**: [`supabase/migrations/20260606220000_bookings_status_source_check.sql`, `app/api/admin/bookings/route.ts`]
+- **why**: Annuler/confirmer en admin échouait — DB n'autorisait que `pending`/`confirmed`
+- **impact**: Actions admin réservations (annuler, confirmer, bulk) fonctionnent ; création manuelle `source: manual` OK
+- **verify**: Migration appliquée prod MCP ; test SQL `status=cancelled` OK ; `npm run build` OK
