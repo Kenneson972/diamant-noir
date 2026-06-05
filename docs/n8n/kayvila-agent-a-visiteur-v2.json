@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9));\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '' } }];"
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11));\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '' } }];"
       },
       "id": "a1-init-session",
       "name": "Init Session",
@@ -36,8 +36,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT session_id FROM banned_sessions WHERE session_id = '{{ $json.sessionId }}' LIMIT 1",
-        "options": {}
+        "query": "SELECT session_id FROM banned_sessions WHERE session_id = $1 LIMIT 1",
+        "options": {
+          "queryReplacement": "={{ $json.sessionId }}"
+        }
       },
       "id": "a1-check-banned",
       "name": "Postgres - Check Banned Session",
@@ -118,8 +120,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Init Session').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 20",
-        "options": {}
+        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = $1 ORDER BY created_at ASC LIMIT 20",
+        "options": {
+          "queryReplacement": "={{ $('Init Session').first().json.sessionId }}"
+        }
       },
       "id": "a1-get-memory",
       "name": "Get Long-Term Memory",
@@ -226,7 +230,7 @@
             {
               "id": "a1-tox",
               "leftValue": "={{ ($json.userMessage || '').toLowerCase() }}",
-              "rightValue": "(connard|salope|ta gueule|enculé|fdp|pute|nique|va te faire)",
+              "rightValue": "\\b(connard|salope|ta gueule|enculé|fdp|pute|nique|va te faire)\\b",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -262,8 +266,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO toxicity_log (session_id, message) VALUES ('{{ $('Init Session').first().json.sessionId }}', '{{ ($('Init Session').first().json.message || '').replace(/'/g, \"''\") }}')",
-        "options": {}
+        "query": "INSERT INTO toxicity_log (session_id, message) VALUES ($1, $2)",
+        "options": {
+          "queryReplacement": "={{ [$('Init Session').first().json.sessionId, $('Init Session').first().json.message || ''] }}"
+        }
       },
       "id": "a1-tox-log",
       "name": "Postgres - Log Toxicité",
@@ -285,8 +291,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT COUNT(*) AS count FROM toxicity_log WHERE session_id = '{{ $('Init Session').first().json.sessionId }}' AND created_at > NOW() - INTERVAL '1 hour'",
-        "options": {}
+        "query": "SELECT COUNT(*) AS count FROM toxicity_log WHERE session_id = $1 AND created_at > NOW() - INTERVAL '1 hour'",
+        "options": {
+          "queryReplacement": "={{ $('Init Session').first().json.sessionId }}"
+        }
       },
       "id": "a1-tox-count",
       "name": "Postgres - Compter Toxicité",
@@ -341,8 +349,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO banned_sessions (session_id, reason) VALUES ('{{ $('Init Session').first().json.sessionId }}', 'Auto-ban : 3+ messages toxiques en 1h') ON CONFLICT (session_id) DO NOTHING",
-        "options": {}
+        "query": "INSERT INTO banned_sessions (session_id, reason) VALUES ($1, $2) ON CONFLICT (session_id) DO NOTHING",
+        "options": {
+          "queryReplacement": "={{ [$('Init Session').first().json.sessionId, 'Auto-ban : 3+ messages toxiques en 1h'] }}"
+        }
       },
       "id": "a1-tox-ban",
       "name": "Postgres - Bannir Session",
@@ -393,25 +403,6 @@
         "deepSeekApi": {
           "id": "REPLACE_DEEPSEEK",
           "name": "KAYVILA DEEPSEEK"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "tableName": "conversation_data"
-      },
-      "id": "a1-chat-memory",
-      "name": "Postgres Chat Memory",
-      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
-      "typeVersion": 1.3,
-      "position": [
-        580,
-        0
-      ],
-      "credentials": {
-        "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
         }
       }
     },
@@ -824,17 +815,6 @@
           {
             "node": "AI Agent",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Postgres Chat Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
             "index": 0
           }
         ]

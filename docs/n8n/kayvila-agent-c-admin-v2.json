@@ -272,7 +272,7 @@
       "parameters": {
         "toolDescription": "Liste les soumissions de villas en attente de validation.",
         "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/villa-submissions",
+        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/villa-submissions",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -883,7 +883,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields1",
+            "node": "Préparer Sauvegarde Mémoire",
             "type": "main",
             "index": 0
           }
@@ -928,7 +928,7 @@
         ]
       ]
     },
-    "Edit Fields1": {
+    "Préparer Sauvegarde Mémoire": {
       "main": [
         [
           {
