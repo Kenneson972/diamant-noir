@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { extractToken } from "@/lib/security";
+import { sendBookingConfirmationEmail } from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 
-const BOOKING_CONFIRMATION_WEBHOOK = process.env.BOOKING_CONFIRMATION_WEBHOOK || process.env.N8N_WEBHOOK_URL;
-
 export async function POST(request: Request) {
-  // Protection par API key interne
   const apiKey = process.env.API_SECRET_KEY;
   if (!apiKey) {
     console.error("send-booking-confirmation: API_SECRET_KEY not configured");
@@ -27,7 +25,9 @@ export async function POST(request: Request) {
     const supabase = supabaseAdmin();
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
-      .select("id, villa_id, start_date, end_date, guest_name, guest_email, price, status")
+      .select(
+        "id, villa_id, start_date, end_date, guest_name, guest_email, price, total_price_cents, status"
+      )
       .eq("id", bookingId)
       .single();
 
@@ -41,31 +41,9 @@ export async function POST(request: Request) {
       .eq("id", booking.villa_id)
       .single();
 
-    const payload = {
-      type: "booking_confirmation",
-      bookingId: booking.id,
-      guestName: booking.guest_name,
-      guestEmail: booking.guest_email || undefined,
-      villaName: villa?.name,
-      location: villa?.location,
-      startDate: booking.start_date,
-      endDate: booking.end_date,
-      price: booking.price,
-      status: booking.status,
-    };
+    const result = await sendBookingConfirmationEmail(booking, villa);
 
-    if (BOOKING_CONFIRMATION_WEBHOOK) {
-      const res = await fetch(BOOKING_CONFIRMATION_WEBHOOK, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        console.error("Booking confirmation webhook failed:", res.status);
-      }
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, emailSent: result.sent });
   } catch (error) {
     console.error("Send booking confirmation error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

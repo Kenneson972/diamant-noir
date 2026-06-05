@@ -617,6 +617,15 @@ verify: vérification effectuée
 - **impact**: Cron OTA fonctionnel avec CRON_SECRET Vercel ; pas de résa sans split Connect ; remboursement admin ; proprio configure iCal ; agents n8n ont mémoire DB
 - **verify**: `npm run build` ; tables prod `conversation_memory` / `banned_sessions` / `toxicity_log` créées via `supabase db query --linked`
 
+## 2026-06-06T28:00:00Z : Intégration Resend — emails transactionnels Kayvila
+
+- **type**: api
+- **summary**: `lib/resend.ts` + 6 templates React Email + `lib/emails/send.ts` ; confirmation résa/admin/proprio ; webhook Stripe (Connect, litige) ; crons check-in J-3 et avis J+3.
+- **files**: [`lib/resend.ts`, `lib/emails/`, `emails/`, `app/api/send-booking-confirmation/route.ts`, `app/api/notify-admin-booking/route.ts`, `app/api/send-checkin-reminders/route.ts`, `app/api/send-review-requests/route.ts`, `app/api/webhooks/stripe/route.ts`, `vercel.json`, `.env.local.example`, `package.json`]
+- **why**: Prompt Elise `cursor-resend-integration.md` — 27 événements sans email, n8n non configuré
+- **impact**: Emails Resend directs (n8n fallback silencieux) ; rappels automatiques Vercel cron
+- **verify**: `npm run build` OK
+
 ## 2026-06-06T26:00:00Z : Docs récap session — pré-livraison + CRON_SECRET
 
 - **type**: docs

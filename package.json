@@ -18,6 +18,8 @@
     "@hookform/resolvers": "^5.2.2",
     "@internationalized/date": "^3.12.2",
     "@number-flow/react": "^0.6.0",
+    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.0.8",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.45.5",
     "clsx": "^2.1.1",

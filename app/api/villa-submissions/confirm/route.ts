@@ -1,23 +1,21 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { getResend, isResendConfigured, RESEND_FROM } from "@/lib/resend";
 
 export const runtime = "nodejs";
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request: Request) {
   try {
     await requireAdmin(request);
 
-    if (!resend) {
+    if (!isResendConfigured()) {
       return NextResponse.json({ error: "Resend not configured" }, { status: 500 });
     }
 
     const { name, email, villa_name } = await request.json();
 
-    const { error } = await resend.emails.send({
-      from: "Kayvila <conciergerie@kayvila.com>",
+    const { error } = await getResend().emails.send({
+      from: RESEND_FROM,
       to: [email],
       subject: "Votre demande de conciergerie — Kayvila",
       html: `

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { extractToken } from "@/lib/security";
+import { sendAdminBookingNotificationEmail } from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  // Protection par API key interne
   const apiKey = process.env.API_SECRET_KEY;
   if (!apiKey) {
     console.error("notify-admin-booking: API_SECRET_KEY not configured");
@@ -25,7 +25,9 @@ export async function POST(request: Request) {
     const supabase = supabaseAdmin();
     const { data: booking } = await supabase
       .from("bookings")
-      .select("id, villa_id, start_date, end_date, guest_name, guest_email, price")
+      .select(
+        "id, villa_id, start_date, end_date, guest_name, guest_email, price, total_price_cents"
+      )
       .eq("id", bookingId)
       .single();
 
@@ -39,26 +41,9 @@ export async function POST(request: Request) {
       .eq("id", booking.villa_id)
       .single();
 
-    const notificationUrl = process.env.N8N_WEBHOOK_URL || process.env.ADMIN_NOTIFICATION_WEBHOOK;
-    if (notificationUrl) {
-      await fetch(notificationUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "admin_booking_notification",
-          bookingId: booking.id,
-          guestName: booking.guest_name,
-          guestEmail: booking.guest_email,
-          villaName: villa?.name,
-          location: villa?.location,
-          startDate: booking.start_date,
-          endDate: booking.end_date,
-          price: booking.price,
-        }),
-      }).catch((e) => console.error("Notify admin webhook failed:", e));
-    }
+    const result = await sendAdminBookingNotificationEmail(booking, villa);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, emailSent: result.sent });
   } catch (error) {
     console.error("Notify admin error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

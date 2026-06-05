@@ -5,6 +5,11 @@ import {
   lookupClientUserIdByEmail,
   resolveBookingGuestEmail,
 } from "@/lib/booking-tenant";
+import {
+  sendAdminDisputeAlertEmail,
+  sendOwnerConnectOnboardedEmail,
+  sendOwnerNewBookingEmail,
+} from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 
@@ -150,6 +155,40 @@ export async function POST(request: Request) {
         console.error("Notify admin failed:", e);
       }
 
+      try {
+        const { data: bookingForOwner } = await supabase
+          .from("bookings")
+          .select(
+            "id, villa_id, start_date, end_date, guest_name, price, total_price_cents"
+          )
+          .eq("id", bookingId)
+          .single();
+
+        if (bookingForOwner?.villa_id) {
+          const { data: villaForOwner } = await supabase
+            .from("villas")
+            .select("name, owner_id, commission_rate")
+            .eq("id", bookingForOwner.villa_id)
+            .single();
+
+          if (villaForOwner?.owner_id) {
+            const { data: ownerProfile } = await supabase
+              .from("profiles")
+              .select("email, full_name")
+              .eq("id", villaForOwner.owner_id)
+              .maybeSingle();
+
+            await sendOwnerNewBookingEmail(
+              bookingForOwner,
+              villaForOwner,
+              ownerProfile
+            );
+          }
+        }
+      } catch (e) {
+        console.error("Notify owner booking email failed:", e);
+      }
+
       // ── Créer un compte client automatique si pas déjà inscrit ──
       const clientEmail = guestEmail;
       if (clientEmail) {
@@ -242,15 +281,25 @@ export async function POST(request: Request) {
       if (account.charges_enabled && account.details_submitted) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("id")
+          .select("id, email, full_name, stripe_connect_onboarding_completed")
           .eq("stripe_connect_account_id", account.id)
           .maybeSingle();
 
         if (profile) {
+          const wasCompleted = Boolean(profile.stripe_connect_onboarding_completed);
+
           await supabase
             .from("profiles")
             .update({ stripe_connect_onboarding_completed: true } as any)
             .eq("id", profile.id);
+
+          if (!wasCompleted) {
+            try {
+              await sendOwnerConnectOnboardedEmail(profile);
+            } catch (e) {
+              console.error("Owner connect onboarded email failed:", e);
+            }
+          }
         }
       }
     }
@@ -291,16 +340,62 @@ export async function POST(request: Request) {
 
     if (event.type === "charge.dispute.created") {
       const dispute = event.data.object as Stripe.Dispute;
+      const evidenceDueBy = dispute.evidence_details?.due_by
+        ? new Date(dispute.evidence_details.due_by * 1000).toISOString()
+        : null;
+
       await supabase.from("stripe_disputes").insert({
         dispute_id: dispute.id,
         charge_id: dispute.charge,
         amount_cents: dispute.amount,
         reason: dispute.reason,
         status: dispute.status,
-        evidence_due_by: dispute.evidence_details?.due_by
-          ? new Date(dispute.evidence_details.due_by * 1000).toISOString()
-          : null,
+        evidence_due_by: evidenceDueBy,
       });
+
+      let villaName: string | undefined;
+      try {
+        const chargeId =
+          typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id;
+        if (chargeId) {
+          const charge = await stripe.charges.retrieve(chargeId);
+          const paymentIntentId =
+            typeof charge.payment_intent === "string"
+              ? charge.payment_intent
+              : charge.payment_intent?.id;
+
+          if (paymentIntentId) {
+            const { data: booking } = await supabase
+              .from("bookings")
+              .select("villa_id")
+              .eq("stripe_payment_intent_id", paymentIntentId)
+              .maybeSingle();
+
+            if (booking?.villa_id) {
+              const { data: villa } = await supabase
+                .from("villas")
+                .select("name")
+                .eq("id", booking.villa_id)
+                .maybeSingle();
+              villaName = villa?.name ?? undefined;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Dispute villa lookup failed:", e);
+      }
+
+      try {
+        await sendAdminDisputeAlertEmail({
+          dispute_id: dispute.id,
+          amount_cents: dispute.amount,
+          reason: dispute.reason,
+          evidence_due_by: evidenceDueBy,
+          villaName,
+        });
+      } catch (e) {
+        console.error("Admin dispute alert email failed:", e);
+      }
     }
 
     if (event.type === "charge.dispute.closed") {
