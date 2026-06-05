@@ -7,3 +7,5 @@ export { KayvilaCarousel } from "./kayvila-carousel";
 export type { KayvilaCarouselImage } from "./kayvila-carousel";
 export { KayvilaStepper } from "./kayvila-stepper";
 export type { KayvilaStep } from "./kayvila-stepper";
+export { KayvilaActionBar } from "./kayvila-action-bar";
+export type { KayvilaActionBarAction } from "./kayvila-action-bar";

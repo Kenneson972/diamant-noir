@@ -1,0 +1,160 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Building2,
+  CalendarDays,
+  LayoutDashboard,
+  Search,
+  UserCircle,
+  Users,
+} from "lucide-react";
+import { Command } from "@heroui-pro/react";
+import { getSupabaseBrowser } from "@/lib/supabase";
+import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
+
+const NAV_ICONS: Record<string, React.ReactNode> = {
+  LayoutDashboard: <LayoutDashboard className="size-4" />,
+  Building2: <Building2 className="size-4" />,
+  CalendarDays: <CalendarDays className="size-4" />,
+  UserCircle: <UserCircle className="size-4" />,
+  Users: <Users className="size-4" />,
+};
+
+type SearchBooking = {
+  id: string;
+  guest_name: string | null;
+  villas?: { name: string } | null;
+};
+
+type SearchVilla = {
+  id: string;
+  name: string;
+};
+
+export function AdminCommandPalette() {
+  const router = useRouter();
+  const [isOpen, setOpen] = useState(false);
+  const [bookings, setBookings] = useState<SearchBooking[]>([]);
+  const [villas, setVillas] = useState<SearchVilla[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadData = useCallback(async () => {
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+    setLoading(true);
+    const [{ data: bookingData }, { data: villaData }] = await Promise.all([
+      supabase
+        .from("bookings")
+        .select("id, guest_name, villas(name)")
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabase.from("villas").select("id, name").order("name").limit(12),
+    ]);
+    setBookings(bookingData ?? []);
+    setVillas(villaData ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setOpen((prev) => {
+          if (!prev) void loadData();
+          return !prev;
+        });
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [loadData]);
+
+  const navigate = (href: string) => {
+    setOpen(false);
+    router.push(href);
+  };
+
+  return (
+    <Command>
+      <Command.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (open) void loadData();
+        }}
+      >
+        <Command.Container>
+          <Command.Dialog aria-label="Recherche admin">
+            <Command.InputGroup>
+              <Command.InputGroup.Prefix>
+                <Search className="size-4 text-muted" />
+              </Command.InputGroup.Prefix>
+              <Command.InputGroup.Input placeholder="Rechercher une réservation, villa, page..." />
+              <Command.InputGroup.ClearButton />
+              <Command.InputGroup.Suffix>
+                <kbd className="rounded border border-border-subtle px-1.5 py-0.5 text-[10px] text-muted">
+                  Esc
+                </kbd>
+              </Command.InputGroup.Suffix>
+            </Command.InputGroup>
+            <Command.List>
+              <Command.Group heading="Navigation">
+                {adminMenuItems.map((item) => (
+                  <Command.Item
+                    key={item.href}
+                    textValue={item.label}
+                    onAction={() => navigate(item.href)}
+                  >
+                    {NAV_ICONS[item.icon] ?? <LayoutDashboard className="size-4" />}
+                    <span>{item.label}</span>
+                  </Command.Item>
+                ))}
+              </Command.Group>
+              <Command.Group heading="Réservations récentes">
+                {loading ? (
+                  <Command.Item isDisabled textValue="Chargement">
+                    Chargement…
+                  </Command.Item>
+                ) : (
+                  bookings.map((b) => (
+                    <Command.Item
+                      key={b.id}
+                      textValue={`${b.guest_name ?? "Voyageur"} ${b.villas?.name ?? ""}`}
+                      onAction={() => navigate(`/admin/reservations/${b.id}`)}
+                    >
+                      <CalendarDays className="size-4" />
+                      <span>
+                        {b.guest_name ?? "Voyageur"}
+                        {b.villas?.name ? ` — ${b.villas.name}` : ""}
+                      </span>
+                    </Command.Item>
+                  ))
+                )}
+              </Command.Group>
+              <Command.Group heading="Villas">
+                {villas.map((v) => (
+                  <Command.Item
+                    key={v.id}
+                    textValue={v.name}
+                    onAction={() => navigate(`/admin/villas/${v.id}`)}
+                  >
+                    <Building2 className="size-4" />
+                    <span>{v.name}</span>
+                  </Command.Item>
+                ))}
+              </Command.Group>
+            </Command.List>
+            <Command.Footer className="text-[10px] text-muted">
+              <span>
+                <kbd className="mr-1 rounded border px-1">⌘</kbd>
+                <kbd className="rounded border px-1">K</kbd> pour ouvrir
+              </span>
+            </Command.Footer>
+          </Command.Dialog>
+        </Command.Container>
+      </Command.Backdrop>
+    </Command>
+  );
+}

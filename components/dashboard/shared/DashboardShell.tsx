@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
+import { AdminCommandPalette } from "@/components/dashboard/admin/AdminCommandPalette";
 import type { SidebarMenuItem } from "./DashboardSidebar";
 
 interface DashboardShellProps {
@@ -39,6 +40,7 @@ export function DashboardShell({
 
   return (
     <>
+      {role === "admin" ? <AdminCommandPalette /> : null}
       <a
         href={`#${role}-main`}
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:text-white focus:shadow-lg"

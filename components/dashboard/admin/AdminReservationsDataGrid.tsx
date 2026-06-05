@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
+import type { Selection } from "react-aria-components";
 import { KayvilaDataGrid } from "@/components/ui/pro";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -34,6 +35,8 @@ type AdminReservationsDataGridProps = {
   filter: string;
   onConfirm: (id: string) => void;
   onCancel: (id: string) => void;
+  selectedKeys?: Selection;
+  onSelectionChange?: (keys: Selection) => void;
 };
 
 export function AdminReservationsDataGrid({
@@ -41,6 +44,8 @@ export function AdminReservationsDataGrid({
   filter,
   onConfirm,
   onCancel,
+  selectedKeys,
+  onSelectionChange,
 }: AdminReservationsDataGridProps) {
   const columns: DataGridColumn<AdminBookingRow>[] = [
     {
@@ -170,6 +175,8 @@ export function AdminReservationsDataGrid({
       getRowId={(item) => item.id}
       selectionMode="multiple"
       showSelectionCheckboxes
+      selectedKeys={selectedKeys}
+      onSelectionChange={onSelectionChange}
     />
   );
 }

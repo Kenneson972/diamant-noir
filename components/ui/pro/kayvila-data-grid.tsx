@@ -1,11 +1,14 @@
 "use client";
 
 import type { DataGridColumn, DataGridProps } from "@heroui-pro/react";
+import type { Selection } from "react-aria-components";
 import { DataGrid } from "@heroui-pro/react";
 import { cn } from "@/lib/utils";
 
 type KayvilaDataGridProps<T extends object> = Omit<DataGridProps<T>, "className"> & {
   className?: string;
+  selectedKeys?: Selection;
+  onSelectionChange?: (keys: Selection) => void;
 };
 
 export function KayvilaDataGrid<T extends object>({

@@ -14,6 +14,15 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — HeroUI Pro premium Phase 3 — Kanban, Command, ActionBar, DropZone
+
+- **type**: ui
+- **summary**: Kanban réservations admin (5 colonnes pipeline + drag → PATCH statut), palette commande ⌘K (`AdminCommandPalette`), ActionBar bulk (export CSV, confirmer, annuler), sélection DataGrid ; `VillaImageManager` → HeroUI `DropZone` multi-upload ; vue liste/kanban/calendrier sur `/admin/reservations`.
+- **files**: `components/dashboard/admin/{AdminReservationsKanban,AdminCommandPalette,AdminReservationsDataGrid}.tsx`, `components/ui/pro/{kayvila-action-bar,kayvila-data-grid,index}.ts`, `components/dashboard/shared/DashboardShell.tsx`, `components/dashboard/villa-editor/VillaImageManager.tsx`, `app/(admin)/admin/reservations/page.tsx`
+- **why**: Prompt `cursor-hero-ui-premium.md` phase 3 — productivité admin (pipeline visuel, recherche rapide, actions groupées, upload photos).
+- **impact**: Gestion réservations plus fluide ; navigation admin sans sidebar ; bulk actions sur sélection ; upload villa drag-and-drop.
+- **verify**: `npm run build` OK
+
 ### 2026-06-06 — HeroUI Pro premium Phase 2 — Carousel, HoverCard, Stepper, Rating
 
 - **type**: ui

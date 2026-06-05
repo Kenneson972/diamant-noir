@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropZone } from "@heroui-pro/react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { SortableImage } from "@/components/dashboard/SortableImage";
 
@@ -14,6 +15,9 @@ type VillaImageManagerProps = {
   onError: (msg: string) => void;
 };
 
+const MAX_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+
 export function VillaImageManager({
   imageUrls,
   villaId,
@@ -22,7 +26,6 @@ export function VillaImageManager({
   onError,
 }: VillaImageManagerProps) {
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const moveImage = (index: number, direction: -1 | 1) => {
     const target = index + direction;
@@ -32,51 +35,65 @@ export function VillaImageManager({
     onImagesChange(urls);
   };
 
-  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      onError("L'image ne doit pas dépasser 5 Mo");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-
-    const allowed = ["image/jpeg", "image/png", "image/webp", "image/avif"];
-    if (!allowed.includes(file.type)) {
-      onError("Format accepté : JPEG, PNG, WebP ou AVIF");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-
+  const uploadFiles = async (files: File[]) => {
+    if (files.length === 0) return;
     setUploading(true);
     try {
       const supabase = getSupabaseBrowser();
       if (!supabase) throw new Error("Supabase non disponible");
 
-      const ext = file.name.split(".").pop() || "jpg";
-      const fileName = `${crypto.randomUUID()}.${ext}`;
-      const filePath = `villas/${villaId || "new"}/${fileName}`;
+      const uploaded: string[] = [];
 
-      const { error: upErr } = await supabase.storage
-        .from("villa-images")
-        .upload(filePath, file, { cacheControl: "3600", upsert: false });
+      for (const file of files) {
+        if (file.size > MAX_SIZE) {
+          onError(`« ${file.name} » dépasse 5 Mo`);
+          continue;
+        }
+        if (!ALLOWED_TYPES.includes(file.type)) {
+          onError(`Format non accepté : ${file.name}`);
+          continue;
+        }
 
-      if (upErr) throw upErr;
+        const ext = file.name.split(".").pop() || "jpg";
+        const fileName = `${crypto.randomUUID()}.${ext}`;
+        const filePath = `villas/${villaId || "new"}/${fileName}`;
 
-      const { data: publicUrl } = supabase.storage
-        .from("villa-images")
-        .getPublicUrl(filePath);
+        const { error: upErr } = await supabase.storage
+          .from("villa-images")
+          .upload(filePath, file, { cacheControl: "3600", upsert: false });
 
-      onImagesChange([...imageUrls, publicUrl.publicUrl]);
-      if (imageUrls.length === 0) onMainImageChange(publicUrl.publicUrl);
+        if (upErr) throw upErr;
+
+        const { data: publicUrl } = supabase.storage.from("villa-images").getPublicUrl(filePath);
+        uploaded.push(publicUrl.publicUrl);
+      }
+
+      if (uploaded.length > 0) {
+        const next = [...imageUrls, ...uploaded];
+        onImagesChange(next);
+        if (imageUrls.length === 0) onMainImageChange(uploaded[0]!);
+      }
     } catch (err) {
       onError(err instanceof Error ? err.message : "Upload échoué");
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const handleSelect = (fileList: FileList) => {
+    void uploadFiles(Array.from(fileList));
+  };
+
+  const handleDrop = async (e: {
+    items: Array<{ kind: string; getFile?: () => Promise<File> }>;
+  }) => {
+    const dropped: File[] = [];
+    for (const item of e.items) {
+      if (item.kind === "file" && item.getFile) {
+        dropped.push(await item.getFile());
+      }
+    }
+    void uploadFiles(dropped);
   };
 
   return (
@@ -85,26 +102,29 @@ export function VillaImageManager({
         <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy/50">
           Photos ({imageUrls.length})
         </p>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-        >
-          <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-          {uploading ? "Upload..." : "Ajouter"}
-        </Button>
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/avif"
-        onChange={handleUpload}
-        className="hidden"
-        aria-hidden
-      />
+      <DropZone className="w-full">
+        <DropZone.Area
+          onDrop={handleDrop as never}
+          className="rounded-xl border-2 border-dashed border-navy/15 bg-navy/[0.02] p-6 transition-colors hover:border-gold/50"
+        >
+          <DropZone.Icon className="text-gold" />
+          <DropZone.Label className="font-sora text-sm text-navy">
+            Glissez vos photos ici
+          </DropZone.Label>
+          <DropZone.Description className="text-xs text-muted">
+            JPEG, PNG, WebP ou AVIF — max 5 Mo par fichier
+          </DropZone.Description>
+          <DropZone.Trigger>
+            <Button type="button" size="sm" variant="outline" disabled={uploading}>
+              <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              {uploading ? "Upload..." : "Parcourir"}
+            </Button>
+          </DropZone.Trigger>
+        </DropZone.Area>
+        <DropZone.Input accept="image/jpeg,image/png,image/webp,image/avif" onSelect={handleSelect} />
+      </DropZone>
 
       {imageUrls.length > 0 ? (
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
@@ -126,17 +146,12 @@ export function VillaImageManager({
                 }
               }}
               onRemove={(remUrl) => {
-                const urls = imageUrls.filter((u) => u !== remUrl);
-                onImagesChange(urls);
+                onImagesChange(imageUrls.filter((u) => u !== remUrl));
               }}
             />
           ))}
         </div>
-      ) : (
-        <div className="flex min-h-[120px] items-center justify-center rounded-lg border-2 border-dashed border-navy/10 bg-navy/[0.02] text-[11px] text-navy/55">
-          Aucune photo. Cliquez sur Ajouter pour en uploader.
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }
