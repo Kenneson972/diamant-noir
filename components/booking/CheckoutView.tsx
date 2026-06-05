@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { KayvilaStepper } from "@/components/ui/pro";
 
 interface CheckoutViewProps {
   villaId: string;
@@ -146,8 +147,17 @@ export const CheckoutView = ({ villaId, checkin, checkout, guestsCount }: Checko
   const serviceFee = priceResult ? Math.round(priceResult.total * 0.05) : 0;
   const totalAmount = priceResult ? priceResult.total + cleaningFee + serviceFee : 0;
 
+  const checkoutSteps = [
+    { title: "Dates", description: "Vos dates de séjour" },
+    { title: "Voyageurs", description: "Nombre de personnes" },
+    { title: "Coordonnées", description: "Vos informations" },
+    { title: "Paiement", description: "Stripe sécurisé" },
+  ];
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-24 sm:pb-12 lg:py-20">
+      <KayvilaStepper steps={checkoutSteps} currentStep={4} className="mb-10 hidden sm:block" />
+
       <div className="mb-12">
         <Link href={`/villas/${villaId}`} className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-navy/55 hover:text-navy transition-colors group">
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />

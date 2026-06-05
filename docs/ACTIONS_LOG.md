@@ -14,6 +14,15 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — HeroUI Pro premium Phase 2 — Carousel, HoverCard, Stepper, Rating
+
+- **type**: ui
+- **summary**: `KayvilaCarousel` (galerie mobile VillaGallery), `VillaListingCard` + HoverCard Pro sur `/villas`, `KayvilaStepper` checkout, `ReviewForm` → `KayvilaRating` interactif ; pull prompt Élise Airbnb.
+- **files**: `components/ui/pro/{kayvila-carousel,kayvila-stepper}.tsx`, `components/villas/VillaListingCard.tsx`, `components/{VillaGallery,VillasMapView,booking/CheckoutView,espace-client/ReviewForm}.tsx`
+- **why**: Prompt `cursor-hero-ui-premium.md` phase 2 — UX client premium sans casser mosaïque desktop ni flux booking.
+- **impact**: Preview villa au survol catalogue ; tunnel checkout visualisé ; avis avec étoiles gold HeroUI.
+- **verify**: `npm run build` OK
+
 ### 2026-06-06 — HeroUI Pro premium : wrappers Kayvila + Data Grids Phase 1
 
 - **type**: ui

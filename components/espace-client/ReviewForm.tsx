@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Star, Send } from "lucide-react";
+import { Send } from "lucide-react";
+import { KayvilaRating } from "@/components/ui/pro";
 
 interface ReviewFormProps {
   bookingId: string;
@@ -13,7 +14,6 @@ interface ReviewFormProps {
 export function ReviewForm({ bookingId, villaId, onSuccess }: ReviewFormProps) {
   const supabase = getSupabaseBrowser();
   const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
@@ -58,27 +58,11 @@ export function ReviewForm({ bookingId, villaId, onSuccess }: ReviewFormProps) {
     <form onSubmit={handleSubmit} className="border border-navy/10 bg-white p-4 space-y-3">
       <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50">Donner mon avis</p>
 
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            onClick={() => setRating(star)}
-            onMouseEnter={() => setHover(star)}
-            onMouseLeave={() => setHover(0)}
-            className="text-gold hover:scale-110 transition-transform"
-            aria-label={`${star} étoile${star > 1 ? "s" : ""}`}
-          >
-            <Star
-              size={22}
-              fill={(hover || rating) >= star ? "currentColor" : "none"}
-              strokeWidth={1}
-            />
-          </button>
-        ))}
-        {rating > 0 && (
+      <div className="flex items-center gap-2">
+        <KayvilaRating value={rating} readOnly={false} size="lg" onChange={setRating} />
+        {rating > 0 ? (
           <span className="text-[11px] text-navy/55 ml-1">{rating}/5</span>
-        )}
+        ) : null}
       </div>
 
       <textarea
