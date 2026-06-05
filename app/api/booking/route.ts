@@ -18,7 +18,7 @@ function getStripe(): Stripe | null {
   if (!stripeSecretKey) return null;
   if (!stripeInstance) {
     stripeInstance = new Stripe(stripeSecretKey, {
-      apiVersion: "2025-01-27" as any,
+      apiVersion: "2025-03-31.basil" as any,
     });
   }
   return stripeInstance;
