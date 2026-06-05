@@ -45,7 +45,7 @@ export default function AdminDemandesPage() {
     if (!supabase) return;
     const query = supabase
       .from("requests")
-      .select("id, type, status, message, admin_response, created_at, booking_id, guest_id, assignee_id, bookings(villa_id, villas(name), guest_name, start_date, end_date)")
+      .select("id, type, status, message, admin_response, created_at, booking_id, guest_id, assignee_id, bookings(villa_id, villas!bookings_villa_id_fkey(name), guest_name, start_date, end_date)")
       .order("created_at", { ascending: false });
     if (filter !== "all") query.eq("status", filter);
     const { data } = await query;

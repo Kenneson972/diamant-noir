@@ -54,10 +54,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     if (!supabase) return;
     supabase.auth.getSession().then(async ({ data: { session } }: { data: { session: any } }) => {
       if (!session) return;
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("wishlist")
         .select("villa_id")
         .eq("user_id", session.user.id);
+      if (error) return;
       if (data && data.length > 0) {
         const remoteIds = new Set<string>(data.map((r: { villa_id: string }) => r.villa_id));
         setIds((prev: Set<string>) => {

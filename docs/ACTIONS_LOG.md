@@ -518,6 +518,24 @@ verify: vérification effectuée
 - **impact**: Labels visibles sur fiche villa, `/book`, sticky mobile « Payer »
 - **verify**: `npm run build` OK
 
+## 2026-06-06 : Fix PGRST201 bookings↔villas + table wishlist prod
+
+- **type**: sql | api | fix
+- **summary**: Embed explicite `villas!bookings_villa_id_fkey(name)` (`lib/supabase/embeds.ts`) — corrige 500 `/api/admin/bookings` ; migration `wishlist` appliquée prod ; `WishlistContext` ignore erreur sync.
+- **files**: [`lib/supabase/embeds.ts`, `app/api/admin/bookings/route.ts`, `app/(admin)/admin/page.tsx`, `reservations/page.tsx`, `reservations/[bookingId]/page.tsx`, `clients/[id]/page.tsx`, `demandes/page.tsx`, `AdminCommandPalette.tsx`, `contexts/WishlistContext.tsx`, `supabase/migrations/20260606210000_wishlist_table.sql`]
+- **why**: Double FK `bookings_villa_id_fkey` + `fk_bookings_villa` → PostgREST PGRST201 ; table `wishlist` absente → 404 REST
+- **impact**: `/admin/reservations` affiche les 6 séjours prod ; favoris sync OK
+- **verify**: Logs dev OK ; `npm run build` OK ; migration wishlist MCP prod
+
+## 2026-06-06 : Fix réservations admin vides — API service_role
+
+- **type**: api | fix
+- **summary**: `/admin/reservations` basculé sur `GET /api/admin/bookings` (supabaseAdmin) ; filtres paginés/kanban/calendrier ; message d'erreur visible ; fix filtre `?villa=` (plus forcé en « passées »).
+- **files**: [`app/(admin)/admin/reservations/page.tsx`, `app/api/admin/bookings/route.ts`]
+- **why**: 6 réservations en prod mais liste vide — fetch browser + RLS silencieux
+- **impact**: Admin voit toutes les réservations via API sécurisée
+- **verify**: `npm run build` OK ; 6 rows confirmées en prod SQL
+
 ## 2026-06-06 : Standardisation lien Supabase admin Kayvila
 
 - **type**: sql | api | config | docs

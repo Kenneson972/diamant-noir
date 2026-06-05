@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Selection } from "react-aria-components";
-import { getSupabaseBrowser } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import {
   AdminReservationsDataGrid,
@@ -19,12 +18,31 @@ const PAGE_SIZE = 20;
 
 type ViewMode = "list" | "calendar" | "kanban";
 
+type VillaOption = { id: string; name: string };
+
+async function fetchAdminBookings(params: URLSearchParams) {
+  const res = await fetch(`/api/admin/bookings?${params.toString()}`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(
+      typeof payload.error === "string" ? payload.error : "Chargement impossible."
+    );
+  }
+  return payload as {
+    bookings: AdminBookingRow[];
+    count: number;
+    villas?: VillaOption[];
+  };
+}
+
 export default function AdminReservationsPage() {
-  const supabase = getSupabaseBrowser();
   const [bookings, setBookings] = useState<AdminBookingRow[]>([]);
   const [kanbanBookings, setKanbanBookings] = useState<AdminBookingRow[]>([]);
-  const [allBookings, setAllBookings] = useState<any[]>([]);
-  const [villas, setVillas] = useState<any[]>([]);
+  const [allBookings, setAllBookings] = useState<AdminBookingRow[]>([]);
+  const [villas, setVillas] = useState<VillaOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [kanbanLoading, setKanbanLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -35,106 +53,92 @@ export default function AdminReservationsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   const [actionError, setActionError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const villaParam = params.get("villa");
     if (villaParam) {
       setVillaFilter(villaParam);
-      setFilter("past");
+      setFilter("all");
     }
     const viewParam = params.get("view");
     if (viewParam === "calendar") setView("calendar");
   }, []);
 
-  useEffect(() => {
-    if (!supabase) return;
-    (async () => {
-      const { data } = await supabase.from("villas").select("id, name").order("name");
-      setVillas(data ?? []);
-    })();
-  }, [supabase]);
-
   const fetchBookings = async () => {
-    if (!supabase) return;
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
-    const today = new Date().toISOString().split("T")[0];
+    setLoadError(null);
+    try {
+      const params = new URLSearchParams({
+        scope: "list",
+        filter,
+        page: String(page),
+        pageSize: String(PAGE_SIZE),
+      });
+      if (villaFilter) params.set("villa_id", villaFilter);
 
-    let query = supabase
-      .from("bookings")
-      .select("id, guest_name, guest_email, villa_id, start_date, end_date, total_price_cents, status, villas(name)", {
-        count: "exact",
-      })
-      .order("start_date", { ascending: false })
-      .range(from, to);
-
-    if (filter === "past") {
-      query = query.eq("status", "confirmed").lt("end_date", today);
-    } else if (filter !== "all") {
-      query = query.eq("status", filter);
+      const data = await fetchAdminBookings(params);
+      setBookings(data.bookings ?? []);
+      setTotal(data.count ?? 0);
+      if (data.villas?.length) setVillas(data.villas);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Chargement impossible.");
+      setBookings([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
     }
-    if (villaFilter) query = query.eq("villa_id", villaFilter);
-
-    const { data, count } = await query;
-    setBookings((data as AdminBookingRow[]) ?? []);
-    if (count != null) setTotal(count);
-    setLoading(false);
   };
 
   const fetchKanbanBookings = async () => {
-    if (!supabase) return;
     setKanbanLoading(true);
-    const today = new Date().toISOString().split("T")[0];
+    setLoadError(null);
+    try {
+      const params = new URLSearchParams({
+        scope: "kanban",
+        filter,
+      });
+      if (villaFilter) params.set("villa_id", villaFilter);
 
-    let query = supabase
-      .from("bookings")
-      .select("id, guest_name, guest_email, villa_id, start_date, end_date, total_price_cents, status, villas(name)")
-      .order("start_date", { ascending: false })
-      .limit(200);
-
-    if (filter === "past") {
-      query = query.eq("status", "confirmed").lt("end_date", today);
-    } else if (filter !== "all") {
-      query = query.eq("status", filter);
+      const data = await fetchAdminBookings(params);
+      setKanbanBookings(data.bookings ?? []);
+      if (data.villas?.length) setVillas(data.villas);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Chargement impossible.");
+      setKanbanBookings([]);
+    } finally {
+      setKanbanLoading(false);
     }
-    if (villaFilter) query = query.eq("villa_id", villaFilter);
-
-    const { data } = await query;
-    setKanbanBookings((data as AdminBookingRow[]) ?? []);
-    setKanbanLoading(false);
   };
 
   const fetchAllForCalendar = async () => {
-    if (!supabase) return;
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+    setLoadError(null);
+    try {
+      const params = new URLSearchParams({ scope: "calendar" });
+      if (villaFilter) params.set("villa_id", villaFilter);
 
-    let query = supabase
-      .from("bookings")
-      .select("id, guest_name, villa_id, start_date, end_date, status, villas(name)")
-      .eq("status", "confirmed")
-      .or(`start_date.gte.${monthStart},end_date.gte.${monthStart}`)
-      .order("start_date");
-
-    if (villaFilter) query = query.eq("villa_id", villaFilter);
-
-    const { data } = await query;
-    setAllBookings(data ?? []);
+      const data = await fetchAdminBookings(params);
+      setAllBookings(data.bookings ?? []);
+      if (data.villas?.length) setVillas(data.villas);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Chargement impossible.");
+      setAllBookings([]);
+    }
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchBookings();
     setSelectedKeys(new Set());
-  }, [supabase, page, filter, villaFilter]);
+  }, [page, filter, villaFilter]);
 
   useEffect(() => {
-    fetchAllForCalendar();
-  }, [supabase, villaFilter, view]);
+    if (view === "calendar") fetchAllForCalendar();
+  }, [villaFilter, view]);
 
   useEffect(() => {
     if (view === "kanban") fetchKanbanBookings();
-  }, [supabase, filter, villaFilter, view]);
+  }, [filter, villaFilter, view]);
 
   const handleAction = async (id: string, status: string) => {
     setActionError(null);
@@ -210,6 +214,11 @@ export default function AdminReservationsPage() {
 
   return (
     <div className="space-y-6">
+      {loadError ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {loadError}
+        </p>
+      ) : null}
       {actionError ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {actionError}

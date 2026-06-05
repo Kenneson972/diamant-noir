@@ -5,6 +5,7 @@ import { requireAdmin, AuthError } from "@/lib/auth/server";
 import { hasBookingConflict } from "@/lib/booking/conflict";
 import { logAdminAction } from "@/lib/admin/audit-log";
 import { ipFromRequest } from "@/lib/security";
+import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,39 +25,131 @@ const patchBookingSchema = z.object({
   status: z.enum(["pending", "confirmed", "cancelled", "paid"]),
 });
 
+type AdminBookingListRow = {
+  id: string;
+  villa_id: string | null;
+  start_date: string;
+  end_date: string;
+  status: string;
+  payment_status: string | null;
+  source: string | null;
+  guest_name: string | null;
+  guest_email: string | null;
+  total_price_cents: number | null;
+  price: number | null;
+  villas: { name: string } | null;
+};
+
+function normalizeBookingRows(rows: Record<string, unknown>[]): AdminBookingListRow[] {
+  return rows.map((row) => {
+    const villas = row.villas;
+    const villa =
+      Array.isArray(villas) && villas[0] && typeof villas[0] === "object"
+        ? (villas[0] as { name: string })
+        : villas && typeof villas === "object" && !Array.isArray(villas)
+          ? (villas as { name: string })
+          : null;
+    return { ...row, villas: villa } as AdminBookingListRow;
+  });
+}
+
 /**
- * Toutes les réservations de la plateforme — Agent C (outil kayvila-all-bookings).
- * Auth : Bearer token Supabase d'un compte admin (requireAdmin).
+ * Réservations admin — liste paginée, kanban ou calendrier (service_role).
  */
 export async function GET(request: Request) {
   try {
     await requireAdmin(request);
     const supabase = supabaseAdmin();
+    const { searchParams } = new URL(request.url);
 
-    const [{ data: bookings, error }, { data: villas }] = await Promise.all([
-      supabase
+    const filter = searchParams.get("filter") ?? "all";
+    const villaId = searchParams.get("villa_id");
+    const scope = searchParams.get("scope") ?? "list";
+    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+    const pageSize = Math.min(
+      200,
+      Math.max(1, Number(searchParams.get("pageSize") ?? "20"))
+    );
+    const today = new Date().toISOString().split("T")[0];
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+      .toISOString()
+      .split("T")[0];
+
+    const selectFields = `id, villa_id, start_date, end_date, status, payment_status, source, guest_name, guest_email, total_price_cents, price, ${BOOKING_VILLA_EMBED}`;
+
+    const villasPromise = supabase
+      .from("villas")
+      .select("id, name")
+      .order("name");
+
+    if (scope === "calendar") {
+      let query = supabase
         .from("bookings")
-        .select(
-          "id, villa_id, start_date, end_date, status, payment_status, source, guest_name, total_price_cents, price"
-        )
-        .order("start_date", { ascending: false })
-        .limit(100),
-      supabase.from("villas").select("id, name"),
-    ]);
+        .select(selectFields)
+        .eq("status", "confirmed")
+        .or(`start_date.gte.${monthStart},end_date.gte.${monthStart}`)
+        .order("start_date", { ascending: true });
 
-    if (error) {
-      console.error("[admin/bookings] query failed", error);
+      if (villaId) query = query.eq("villa_id", villaId);
+
+      const [{ data: bookings, error }, { data: villas, error: villasError }] =
+        await Promise.all([query, villasPromise]);
+
+      if (error || villasError) {
+        console.error("[admin/bookings] calendar query failed", error ?? villasError);
+        return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+      }
+
+      return NextResponse.json(
+        {
+          bookings: normalizeBookingRows(
+            (bookings ?? []) as unknown as Record<string, unknown>[]
+          ),
+          count: bookings?.length ?? 0,
+          villas: villas ?? [],
+        },
+        { headers: { "Cache-Control": "no-store" } }
+      );
+    }
+
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let listQuery = supabase
+      .from("bookings")
+      .select(selectFields, scope === "list" ? { count: "exact" } : undefined)
+      .order("start_date", { ascending: false });
+
+    if (filter === "past") {
+      listQuery = listQuery.eq("status", "confirmed").lt("end_date", today);
+    } else if (filter !== "all") {
+      listQuery = listQuery.eq("status", filter);
+    }
+    if (villaId) listQuery = listQuery.eq("villa_id", villaId);
+
+    if (scope === "kanban") {
+      listQuery = listQuery.limit(200);
+    } else {
+      listQuery = listQuery.range(from, to);
+    }
+
+    const [{ data: bookings, error, count }, { data: villas, error: villasError }] =
+      await Promise.all([listQuery, villasPromise]);
+
+    if (error || villasError) {
+      console.error("[admin/bookings] list query failed", error ?? villasError);
       return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
     }
 
-    const nameById = Object.fromEntries((villas ?? []).map((v) => [v.id, v.name]));
-    const rows = (bookings ?? []).map((b) => ({
-      ...b,
-      villa_name: b.villa_id ? nameById[b.villa_id] ?? null : null,
-    }));
-
     return NextResponse.json(
-      { bookings: rows, count: rows.length },
+      {
+        bookings: normalizeBookingRows(
+          (bookings ?? []) as unknown as Record<string, unknown>[]
+        ),
+        count: scope === "list" ? (count ?? 0) : (bookings?.length ?? 0),
+        villas: villas ?? [],
+      },
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {

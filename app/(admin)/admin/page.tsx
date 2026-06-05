@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase";
+import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import type { Metadata } from "next";
 import { CalendarDays, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut } from "lucide-react";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
@@ -43,15 +44,15 @@ export default async function AdminPage() {
     supabase.from("bookings").select("guest_email"),
     supabase.from("requests").select("id, type, status, created_at, bookings(guest_name)").order("created_at", { ascending: false }).limit(5),
     supabase.from("reviews").select("id, rating, created_at, villas(name), bookings(guest_name)").order("created_at", { ascending: false }).limit(5),
-    supabase.from("bookings").select("id, guest_name, villa_id, start_date, status, villas(name)").order("created_at", { ascending: false }).limit(5),
+    supabase.from("bookings").select(`id, guest_name, villa_id, start_date, status, ${BOOKING_VILLA_EMBED}`).order("created_at", { ascending: false }).limit(5),
     supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("reviews").select("*", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("wishlist").select("villa_id"),
     supabase.from("requests").select("*", { count: "exact", head: true }),
     supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "resolved"),
     supabase.from("reviews").select("rating").eq("status", "approved"),
-    supabase.from("bookings").select("id, guest_name, villas(name), start_date, end_date").eq("status", "confirmed").eq("start_date", today),
-    supabase.from("bookings").select("id, guest_name, villas(name), start_date, end_date").eq("status", "confirmed").eq("end_date", today),
+    supabase.from("bookings").select(`id, guest_name, ${BOOKING_VILLA_EMBED}, start_date, end_date`).eq("status", "confirmed").eq("start_date", today),
+    supabase.from("bookings").select(`id, guest_name, ${BOOKING_VILLA_EMBED}, start_date, end_date`).eq("status", "confirmed").eq("end_date", today),
     supabase.from("bookings").select("villa_id, start_date, end_date").eq("status", "confirmed").lte("start_date", monthEnd).gte("end_date", monthStart),
     supabase.from("villas").select("id, name"),
   ]);

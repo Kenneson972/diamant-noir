@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { supabaseAdmin } from "@/lib/supabase";
+import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import { BookingDetailCard } from "@/components/dashboard/proprio/BookingDetailCard";
 import type { Booking } from "@/types/domain";
 
@@ -18,7 +19,7 @@ export default async function AdminBookingDetailPage({ params }: PageProps) {
     supabaseAdmin().from("bookings").select("*").eq("id", bookingId).single(),
     supabaseAdmin()
       .from("bookings")
-      .select("villa_id, villas(name)")
+      .select(`villa_id, ${BOOKING_VILLA_EMBED}`)
       .eq("id", bookingId)
       .single(),
   ]);

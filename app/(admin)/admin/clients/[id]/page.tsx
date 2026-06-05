@@ -1,4 +1,5 @@
 import { getAdminDb } from "@/lib/admin/db";
+import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -27,7 +28,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
       supabase
         .from("bookings")
         .select(
-          "id, villa_id, start_date, end_date, status, total_price_cents, guest_name, checklist_state, villas(name)"
+          `id, villa_id, start_date, end_date, status, total_price_cents, guest_name, checklist_state, ${BOOKING_VILLA_EMBED}`
         )
         .or(bookingFilter)
         .order("start_date", { ascending: false }),

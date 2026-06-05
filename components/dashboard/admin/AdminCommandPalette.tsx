@@ -47,7 +47,7 @@ export function AdminCommandPalette() {
     const [{ data: bookingData }, { data: villaData }] = await Promise.all([
       supabase
         .from("bookings")
-        .select("id, guest_name, villas(name)")
+        .select("id, guest_name, villas!bookings_villa_id_fkey(name)")
         .order("created_at", { ascending: false })
         .limit(12),
       supabase.from("villas").select("id, name").order("name").limit(12),
