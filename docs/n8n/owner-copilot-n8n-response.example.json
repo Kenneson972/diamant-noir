@@ -1,0 +1,7 @@
+{
+  "response": "Bonjour — d’après vos données : 2 villas publiées, 3 évènements aujourd’hui (arrivées et séjours). Vous avez 2 tâches ouvertes sur la villa « Azur ». Souhaitez-vous le détail des réservations à venir ?",
+  "action": "SHOW_STATS",
+  "action_data": {
+    "strategic_alert": null
+  }
+}

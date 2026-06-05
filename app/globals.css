@@ -1,0 +1,395 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  padding: 0;
+  margin: 0;
+  overflow-x: clip;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
+  background-color: #FAFAFA;
+  color: #0A0A0A;
+}
+
+/* Réduit le délai de tap (300ms) sur les contrôles — sans affecter le zoom page */
+button,
+[role="button"],
+[type="submit"],
+[type="button"] {
+  touch-action: manipulation;
+}
+
+/* Dashboard : classes spécifiques pour la sidebar etc. */
+.font-display-dashboard {
+  font-family: var(--font-sora), system-ui, sans-serif;
+}
+
+.font-body-dashboard {
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
+}
+
+/* ── Dashboard layout utilities ──────────────────────────────────────────── */
+
+/* Sidebar — même navy que le thème principal */
+.bg-navy-sidebar {
+  @apply bg-navy;
+}
+
+/* Card standard dashboard */
+.dashboard-card {
+  @apply bg-white border border-border-subtle rounded-xl p-6;
+}
+
+/* Eyebrow dashboard (labels KPI) */
+.dashboard-eyebrow {
+  @apply text-[11px] font-bold uppercase tracking-[0.2em] text-muted;
+}
+
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Rendering optimization for long below-the-fold sections */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
+
+/* Smooth scroll — respecte la préférence de l'utilisateur */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Focus rings accessibles */
+:focus-visible {
+  outline: 2px solid #0A0A0A;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Texte minimum 16px body */
+body { font-size: 16px; line-height: 1.6; }
+
+/* Tap targets minimum 44px */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scroll reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal.reveal-is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .blur-fade-in {
+    animation: none;
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* ── Leaflet map — house pin markers ── */
+.dn-marker svg {
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.2));
+  transition: transform 0.15s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+.dn-marker svg:hover,
+.dn-marker--active svg {
+  transform: scale(1.15) translateY(-2px);
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.35));
+}
+
+/* ── Leaflet map — popup mini-card ── */
+.dn-leaflet-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: #0A0A0A;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+/* Flèche noire assortie au fond de la popup */
+.dn-leaflet-popup .leaflet-popup-tip-container {
+  width: 24px;
+  height: 14px;
+  margin-left: -12px;
+}
+.dn-leaflet-popup .leaflet-popup-tip {
+  width: 14px;
+  height: 14px;
+  background: #0A0A0A;
+  box-shadow: none;
+  border: none;
+  margin: -7px auto 0;
+}
+.dn-leaflet-popup .leaflet-popup-content {
+  margin: 0;
+  width: 220px !important;
+}
+.dn-popup {
+  width: 220px;
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
+}
+.dn-popup__img {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+}
+.dn-popup__body {
+  padding: 12px 14px;
+}
+.dn-popup__name {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFF;
+  line-height: 1.3;
+}
+.dn-popup__loc {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #FFF;
+  opacity: 0.45;
+}
+.dn-popup__price {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #D4AF37;
+}
+.dn-popup__price span {
+  font-size: 11px;
+  font-weight: 400;
+  color: #FFF;
+  opacity: 0.45;
+}
+
+/* Hide leaflet default attribution */
+.leaflet-control-attribution {
+  font-size: 10px !important;
+  opacity: 0.5;
+}
+
+/* ── Dashboard — semantic dot colors ── */
+
+.dot-checkin { @apply bg-emerald-500; }
+.dot-checkout { @apply bg-red-500; }
+.dot-stay { @apply bg-blue-500; }
+.dot-alert-high { @apply text-red-500; }
+.dot-alert-medium { @apply text-amber-500; }
+.dot-alert-low { @apply text-muted; }
+
+/* no-scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Underline animation hover (Le Collectionist style) */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 100%; height: 1px;
+  background: #0A0A0A;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.link-underline:hover::after,
+.link-underline.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Bouton luxury — bordure fine, pas de radius */
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2.5rem;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 44px;
+  cursor: pointer;
+}
+.btn-luxury:hover {
+  background: #0A0A0A;
+  color: #FFF;
+  border-color: #0A0A0A;
+}
+.btn-luxury--white {
+  color: #FFF;
+  border-color: rgba(255,255,255,0.5);
+}
+.btn-luxury--white:hover {
+  background: #FFF;
+  color: #0A0A0A;
+}
+
+/* Card shadows — échelle cohérente */
+.card-shadow-sm  { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 0 rgba(0,0,0,0.04); }
+.card-shadow     { box-shadow: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04); }
+.card-shadow-lg  { box-shadow: 0 12px 40px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05); }
+.card-shadow-xl  { box-shadow: 0 20px 60px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); }
+
+/* Ligne décorative fine */
+.line-luxury {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Eyebrow label raffiné */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #0A0A0A;
+  opacity: 0.55;
+}
+
+/* Blur-fade animation */
+@keyframes blur-fade-in {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0);   }
+}
+.blur-fade-in {
+  animation: blur-fade-in 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+
+/* ── Vague 3 — nouvelles animations ───────────────────────────────────────── */
+
+/* Villa grid — entrée décalée */
+@keyframes stagger-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.stagger-item { opacity: 0; animation: stagger-fade 0.5s ease-out forwards; }
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 60ms; }
+.stagger-item:nth-child(3) { animation-delay: 120ms; }
+.stagger-item:nth-child(4) { animation-delay: 180ms; }
+.stagger-item:nth-child(5) { animation-delay: 240ms; }
+.stagger-item:nth-child(6) { animation-delay: 300ms; }
+
+/* Ligne décorative animée */
+.line-luxury-animated { animation: line-draw 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+/* Entrée modale / lightbox */
+.modal-enter { animation: scale-in 0.25s ease-out forwards; }
+
+/* Chat — Typing indicator dots (ease-out-cubic pour un feel luxe, pas de bounce) */
+@keyframes dn-typing-fade {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 0.85; transform: translateY(-2px); }
+  60% { opacity: 0.85; transform: translateY(-2px); }
+}
+.dn-typing-dot {
+  display: inline-block;
+  animation: dn-typing-fade 1.4s cubic-bezier(0.33, 1, 0.68, 1) infinite;
+}
+
+/* Flèche de scroll — flottement doux */
+@keyframes scrollFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+/* Rebond du chevron */
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.35; }
+  50% { transform: translateY(5px); opacity: 0.7; }
+}
+
+/* reduced-motion : pas de flèche animée */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-\[scrollFloat_3s_ease-in-out_infinite\] {
+    display: none;
+  }
+}
+
+/* Désactiver toutes les nouvelles animations si reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .stagger-item, .line-luxury-animated, .modal-enter, .dn-typing-dot {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* View Transitions API — navigation douce (navigateurs compatibles) */
+@supports (view-transition-name: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.38s;
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    }
+  }
+}
+
+/* ── Respecter prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Désactiver backdrop-filter sur mobile (évite le jank Chrome Android) ── */
+@media (max-width: 768px) {
+  * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
