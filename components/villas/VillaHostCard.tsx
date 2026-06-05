@@ -12,8 +12,8 @@ type VillaHost = {
 function HostAvatar({ name, url }: { name: string; url: string | null }) {
   if (url) {
     return (
-      <div className="w-16 h-16 shrink-0 overflow-hidden border border-navy/10">
-        <Image src={url} alt={name} fill className="w-full h-full object-cover" />
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-navy/10">
+        <Image src={url} alt={name} fill sizes="64px" className="object-cover" />
       </div>
     );
   }

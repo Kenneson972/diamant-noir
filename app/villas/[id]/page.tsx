@@ -159,7 +159,7 @@ function EquipmentCategory({ title, items }: { title: string; items: string[] })
       <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-3">
-            <span className="text-navy/60">{getEquipmentIcon(item)}</span>
+            <span className="text-gold">{getEquipmentIcon(item)}</span>
             <span className="text-sm text-navy/70">{item}</span>
           </div>
         ))}
@@ -384,6 +384,23 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   </div>
                 ))}
               </div>
+              {villa.a_la_carte_services && villa.a_la_carte_services.length > 0 ? (
+                <div className="mt-8 border-t border-navy/8 pt-8">
+                  <h3 className="font-sora text-lg text-navy mb-4">Services à la carte</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {villa.a_la_carte_services.map((service) => (
+                      <div key={service} className="flex items-center gap-2 text-navy/70">
+                        <span className="text-gold">{getEquipmentIcon(service)}</span>
+                        <span className="text-sm font-instrument-sans">{service}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-8 text-sm text-navy/60 border-t border-navy/8 pt-8">
+                  Services disponibles sur demande. Contactez notre conciergerie.
+                </p>
+              )}
             </section>
 
             {/* Concierge Kayvila */}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Star, Check, X } from "lucide-react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 
 export default function AdminAvisPage() {
   const supabase = getSupabaseBrowser();
@@ -73,9 +74,15 @@ export default function AdminAvisPage() {
       {loading ? (
         <p className="text-sm text-navy/55">Chargement...</p>
       ) : reviews.length === 0 ? (
-        <div className="border border-navy/10 bg-white p-12 text-center">
-          <p className="text-sm text-navy/55">Aucun avis.</p>
-        </div>
+        <KayvilaEmptyState
+          icon={<Star className="size-12" />}
+          title="Aucun avis"
+          description={
+            filter === "pending"
+              ? "Aucun avis en attente de modération."
+              : "Les avis clients apparaîtront ici après leurs séjours."
+          }
+        />
       ) : (
         <div className="space-y-4">
           {reviews.map((r) => (

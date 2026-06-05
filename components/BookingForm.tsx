@@ -5,6 +5,7 @@ import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
 import { NumberStepper } from "@heroui-pro/react";
+import { KayvilaPressableButton } from "@/components/ui/pro";
 
 type BookingDate = {
   start_date: string;
@@ -159,14 +160,13 @@ export const BookingForm = ({
         </div>
       </div>
 
-      <button
+      <KayvilaPressableButton
         type="button"
         onClick={handleCheckout}
         disabled={!start || !end || loading || isSelectionUnavailable}
-        className="w-full rounded-xl bg-gold py-4 text-sm font-bold uppercase tracking-widest text-navy transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:grayscale"
       >
         {loading ? "Chargement..." : isSelectionUnavailable ? "Indisponible" : "Réserver"}
-      </button>
+      </KayvilaPressableButton>
 
       {start && end ? (
         <p className="text-center text-xs text-navy/45">

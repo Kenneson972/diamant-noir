@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Kanban, useKanban, useKanbanColumn } from "@heroui-pro/react";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
+import { KayvilaNumberValue } from "@/components/ui/pro";
 import type { AdminBookingRow } from "@/components/dashboard/admin/AdminReservationsDataGrid";
 
 export type KanbanBooking = AdminBookingRow & {
@@ -65,9 +66,12 @@ function BookingKanbanCard({ booking }: { booking: KanbanBooking }) {
       <p className="text-[11px] text-muted">
         {villaName} · {dates}
       </p>
-      <p className="text-xs font-semibold text-gold">
-        {formatCurrency(booking.total_price_cents ?? 0)}
-      </p>
+      <KayvilaNumberValue
+        value={booking.total_price_cents ?? 0}
+        format="currency"
+        cents
+        className="text-xs font-semibold text-gold"
+      />
     </div>
   );
 }

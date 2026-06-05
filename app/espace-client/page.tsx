@@ -6,6 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { BookingCard } from "@/components/espace-client/BookingCard";
 import { TenantAvatar } from "@/components/espace-client/TenantAvatar";
 import { CalendarX, ArrowRight, MessageCircle, BookOpen } from "lucide-react";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 import Link from "next/link";
 import { Skeleton, Card, CardContent, linkAsButtonClasses } from "@/components/espace-client/tenant-ui";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
@@ -228,25 +229,13 @@ export default function EspaceClientPage() {
           <TenantAvatar name={firstName} url={avatarUrl} size="lg" className="border border-navy/10 shrink-0 mt-1" />
         </div>
 
-        <Card className="rounded-none border border-navy/8 bg-white shadow-none">
-          <CardContent className="flex flex-col items-center gap-5 px-8 py-16 text-center">
-            <CalendarX size={40} className="text-navy/15" strokeWidth={1} />
-            <div>
-              <p className="mb-1 font-display text-lg text-navy">Aucune réservation</p>
-              <p className="max-w-xs text-sm text-navy/45">
-                Connectez-vous avec la même adresse email que celle utilisée lors de votre réservation.
-                Si besoin, demandez un lien magique depuis la page de connexion.
-              </p>
-            </div>
-            <Link
-              href="/villas"
-              className={linkAsButtonClasses("outline", "md", "rounded-none border-navy gap-2 no-underline hover:bg-navy hover:text-white")}
-            >
-              Découvrir nos villas
-              <ArrowRight size={12} strokeWidth={1.5} />
-            </Link>
-          </CardContent>
-        </Card>
+        <KayvilaEmptyState
+          icon={<CalendarX className="size-12" strokeWidth={1} />}
+          title="Aucune réservation"
+          description="Connectez-vous avec la même adresse email que celle utilisée lors de votre réservation. Si besoin, demandez un lien magique depuis la page de connexion."
+          actionLabel="Découvrir nos villas"
+          actionHref="/villas"
+        />
 
         <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
           <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">

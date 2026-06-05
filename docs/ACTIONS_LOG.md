@@ -14,6 +14,15 @@ verify: vérification effectuée
 
 ---
 
+### 2026-06-06 — Restauration design Airbnb villa + Phase 4 HeroUI polish
+
+- **type**: ui
+- **summary**: Phase 4 : `KayvilaNumberValue`, `KayvilaPressableButton` (ripple gold), EmptyState sur avis/demandes/messagerie/espace-client/VillaReviews, NumberValue DataGrids, CTA Réserver ripple. Prompt Élise : grille services à la carte dynamique, icônes gold équipements, fix avatar `VillaHostCard`.
+- **files**: `components/ui/pro/{kayvila-number-value,kayvila-pressable-button,index}.ts`, `components/{BookingForm,booking/PriceCalculator,VillaReviews,dashboard/admin/*DataGrid,AdminReservationsKanban,villas/VillaHostCard}.tsx`, `app/{villas/[id],espace-client,(admin)/admin/{avis,demandes,messagerie}}/**`
+- **why**: Clôturer `cursor-hero-ui-premium.md` phase 4 + `cursor-restore-airbnb-villa-design.md` (specs 26 mai).
+- **impact**: Formatage monétaire cohérent ; CTAs booking avec feedback tactile ; listes vides premium ; fiche villa services dynamiques.
+- **verify**: `npm run build` OK
+
 ### 2026-06-06 — HeroUI Pro premium Phase 3 — Kanban, Command, ActionBar, DropZone
 
 - **type**: ui

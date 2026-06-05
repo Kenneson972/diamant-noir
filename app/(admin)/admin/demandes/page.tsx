@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Check, X, MessageCircle, Clock, UserCheck } from "lucide-react";
 import { REQUEST_TYPE_LABELS, REQUEST_STATUS_STYLES } from "@/lib/constants";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 
 function getSlaBadge(createdAt: string) {
   const now = new Date();
@@ -130,9 +131,11 @@ export default function AdminDemandesPage() {
       {loading ? (
         <p className="text-sm text-navy/55">Chargement...</p>
       ) : requests.length === 0 ? (
-        <div className="border border-navy/10 bg-white p-12 text-center">
-          <p className="text-sm text-navy/55">Aucune demande.</p>
-        </div>
+        <KayvilaEmptyState
+          icon={<MessageCircle className="size-12" />}
+          title="Aucune demande"
+          description="Les demandes voyageurs (conciergerie, services) apparaîtront ici."
+        />
       ) : (
         <div className="space-y-4">
           {requests.map((r) => {

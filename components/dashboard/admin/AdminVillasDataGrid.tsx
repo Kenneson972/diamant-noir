@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
 import { Building2, Calendar } from "lucide-react";
-import { KayvilaDataGrid } from "@/components/ui/pro";
+import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
 import { cn } from "@/lib/utils";
 
@@ -78,7 +78,12 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       accessorKey: "price_per_night",
       allowsSorting: true,
       cell: (item) => (
-        <span className="text-navy">{item.price_per_night.toLocaleString("fr-FR")} €</span>
+        <KayvilaNumberValue
+          value={item.price_per_night}
+          format="currency"
+          className="text-navy"
+          suffix=" / nuit"
+        />
       ),
     },
     {

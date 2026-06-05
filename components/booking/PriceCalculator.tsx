@@ -16,6 +16,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Users, ChevronRight } from "lucide-react";
+import { KayvilaPressableButton } from "@/components/ui/pro";
 
 interface PriceCalculatorProps {
   pricePerNight: number;
@@ -170,18 +171,11 @@ export function PriceCalculator({
       )}
 
       {/* CTA */}
-      <button
+      <KayvilaPressableButton
+        variant="navy"
         onClick={handleBook}
         disabled={!calc}
-        className={`
-          w-full flex items-center justify-center gap-2
-          py-4 text-[11px] font-bold uppercase tracking-[0.25em]
-          transition-all duration-300
-          ${calc
-            ? "bg-navy text-white hover:bg-gold hover:text-navy cursor-pointer"
-            : "bg-navy/10 text-navy/30 cursor-not-allowed"
-          }
-        `}
+        className={!calc ? "bg-navy/10 text-navy/30 hover:bg-navy/10 hover:text-navy/30" : undefined}
       >
         {calc ? (
           <>
@@ -192,7 +186,7 @@ export function PriceCalculator({
             <Calendar size={13} /> Choisir les dates
           </>
         )}
-      </button>
+      </KayvilaPressableButton>
 
       {/* Hint discret */}
       {!calc && (

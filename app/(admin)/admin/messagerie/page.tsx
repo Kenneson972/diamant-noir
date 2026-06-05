@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { Send, MessageCircle } from "lucide-react";
+import { KayvilaEmptyState } from "@/components/ui/pro";
 import { timeAgo } from "@/lib/utils";
 
 type ChatRow = {
@@ -108,10 +109,11 @@ export default function AdminMessageriePage() {
       {loading ? (
         <p className="text-sm text-navy/55">Chargement...</p>
       ) : sessions.length === 0 ? (
-        <div className="border border-navy/10 bg-white p-12 text-center">
-          <MessageCircle size={32} className="text-navy/15 mx-auto mb-3" />
-          <p className="text-sm text-navy/55">Aucun message.</p>
-        </div>
+        <KayvilaEmptyState
+          icon={<MessageCircle className="size-12" />}
+          title="Aucun message"
+          description="Les conversations du chatbot et de la messagerie s'afficheront ici."
+        />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
           <aside className="border border-navy/10 bg-white divide-y divide-navy/5 max-h-[60vh] overflow-y-auto">

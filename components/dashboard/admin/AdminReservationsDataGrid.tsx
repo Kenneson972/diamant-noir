@@ -3,9 +3,9 @@
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
 import type { Selection } from "react-aria-components";
-import { KayvilaDataGrid } from "@/components/ui/pro";
+import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export type AdminBookingRow = {
@@ -109,7 +109,12 @@ export function AdminReservationsDataGrid({
       accessorKey: "total_price_cents",
       allowsSorting: true,
       cell: (item) => (
-        <span className="font-medium text-navy">{formatCurrency(item.total_price_cents ?? 0)}</span>
+        <KayvilaNumberValue
+          value={item.total_price_cents ?? 0}
+          format="currency"
+          cents
+          className="font-medium text-navy"
+        />
       ),
     },
     {

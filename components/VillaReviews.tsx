@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { KayvilaRating } from "@/components/ui/pro";
+import { KayvilaEmptyState, KayvilaRating } from "@/components/ui/pro";
+import { MessageSquare } from "lucide-react";
 
 interface Review {
   id: string;
@@ -108,11 +109,11 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
     return (
       <section className="pt-10 border-t border-navy/10">
         <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
-        <div className="border border-navy/10 bg-white p-8 text-center">
-          <p className="text-sm text-navy/50">
-            Aucun avis pour {villaName} pour le moment. Soyez le premier à partager votre expérience.
-          </p>
-        </div>
+        <KayvilaEmptyState
+          icon={<MessageSquare className="size-12" />}
+          title="Aucun avis pour le moment"
+          description={`Soyez le premier à partager votre expérience à ${villaName}.`}
+        />
       </section>
     );
   }

@@ -9,3 +9,5 @@ export { KayvilaStepper } from "./kayvila-stepper";
 export type { KayvilaStep } from "./kayvila-stepper";
 export { KayvilaActionBar } from "./kayvila-action-bar";
 export type { KayvilaActionBarAction } from "./kayvila-action-bar";
+export { KayvilaNumberValue } from "./kayvila-number-value";
+export { KayvilaPressableButton } from "./kayvila-pressable-button";
