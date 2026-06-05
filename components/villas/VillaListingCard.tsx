@@ -30,9 +30,10 @@ function CardImageBlock({
   return (
     <div className="relative aspect-[3/4] overflow-hidden rounded-none">
       <VillaCoverImage
-        src={villa.image}
+        src={pickVillaImageUrl(villa.image, villa.images)}
         alt={villa.name}
         fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
       />
       {villa.tier ? (
@@ -176,10 +177,10 @@ export function VillaListingCard({
       className={cardShell}
     >
       <HoverCard openDelay={200} closeDelay={100}>
-        <HoverCard.Trigger>
+        <HoverCard.Trigger className="!flex w-full min-w-0">
           <Link
             href={href}
-            className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
+            className="block w-full min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
             tabIndex={villa.dimmed ? -1 : 0}
           >
             <CardImageBlock villa={villa} formatPrice={formatPrice} />

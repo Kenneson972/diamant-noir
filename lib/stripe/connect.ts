@@ -1,24 +1,13 @@
-import Stripe from "stripe";
+import { requireStripeServer } from "@/lib/stripe/server";
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
-let stripeInstance: Stripe | null = null;
-function getStripe(): Stripe {
-  if (!stripeInstance) {
-    stripeInstance = new Stripe(stripeSecretKey, {
-      apiVersion: "2025-03-31.basil" as any,
-    });
-  }
-  return stripeInstance;
-}
 
 /**
  * Crée un compte Connect Express pour un propriétaire.
  * Returns { accountId } or throws.
  */
 export async function createConnectAccount(email: string): Promise<{ accountId: string }> {
-  const stripe = getStripe();
+  const stripe = requireStripeServer();
 
   const account = await stripe.accounts.create({
     type: "express",
@@ -41,7 +30,7 @@ export async function createConnectAccount(email: string): Promise<{ accountId: 
  * Returns { url } or throws.
  */
 export async function createOnboardingLink(accountId: string): Promise<{ url: string }> {
-  const stripe = getStripe();
+  const stripe = requireStripeServer();
 
   const accountLink = await stripe.accountLinks.create({
     account: accountId,
@@ -57,7 +46,7 @@ export async function createOnboardingLink(accountId: string): Promise<{ url: st
  * Récupère les infos du compte Connect (statut, charges enabled, etc.)
  */
 export async function getConnectAccount(accountId: string) {
-  const stripe = getStripe();
+  const stripe = requireStripeServer();
   return await stripe.accounts.retrieve(accountId);
 }
 

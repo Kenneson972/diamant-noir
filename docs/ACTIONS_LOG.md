@@ -473,6 +473,24 @@ verify: vérification effectuée
 - **impact**: Rendu plus premium éditorial ; toast partage (plus d'alert) ; widgets Pro cohérents admin
 - **verify**: `npm run build` OK
 
+## 2026-06-06 : Fix images + clic catalogue /villas (HoverCard trigger)
+
+- **type**: ui | fix
+- **summary**: `VillaListingCard` — `HoverCard.Trigger` forcé en `w-full` (le `inline-flex` HeroUI Pro collapsait le bloc image) ; `pickVillaImageUrl` sur la carte.
+- **files**: [`components/villas/VillaListingCard.tsx`]
+- **why**: Images invisibles et cartes non cliquables sur `/villas` (footer visible, image hauteur 0)
+- **impact**: Vignettes et liens villa restaurés sur desktop
+- **verify**: `npm run build` OK
+
+## 2026-06-06 : Fix contraste texte KayvilaPressableButton (Réserver / booking)
+
+- **type**: ui | fix
+- **summary**: `KayvilaPressableButton` — retrait `backgroundColor: gold` sur `PressableFeedback.Ripple` (calque opaque masquait le label) ; label en `z-10` ; `!text-navy` / `!text-white`.
+- **files**: [`components/ui/pro/kayvila-pressable-button.tsx`]
+- **why**: Boutons « Réserver » gold et CTAs checkout illisibles (texte sous le ripple)
+- **impact**: Labels visibles sur fiche villa, `/book`, sticky mobile « Payer »
+- **verify**: `npm run build` OK
+
 ## 2026-06-06 : Refonte design espace client — phases 2 & 3
 
 - **type**: ui
