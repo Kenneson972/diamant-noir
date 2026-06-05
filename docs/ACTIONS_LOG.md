@@ -580,3 +580,12 @@ verify: vérification effectuée
 - **why**: Build Vercel échoue `Can't resolve '@heroui-pro/react'` — postinstall licence sans token CI
 - **impact**: Après ajout env var Vercel + redeploy cache clear, build prod OK
 - **verify**: action manuelle Vercel requise (HEROUI_AUTH_TOKEN) ; build local déjà OK
+
+## 2026-06-06T23:45:00Z : Récap handoff Elise
+
+- **type**: docs
+- **summary**: `docs/RECAP_ELISE_2026-06-06.md` — synthèse session (admin, Supabase, Vercel) pour reprise équipe.
+- **files**: [`docs/RECAP_ELISE_2026-06-06.md`, `docs/logs/2026-06-05.md`]
+- **why**: Handoff lisible pour Elise (QA / suivi) sans lire tout le journal technique
+- **impact**: Checklist test + commits + migrations en un seul fichier
+- **verify**: fichier commité et poussé sur `main`
