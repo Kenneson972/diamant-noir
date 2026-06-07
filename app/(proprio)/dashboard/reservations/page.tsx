@@ -43,7 +43,10 @@ export default async function ProprioReservationsIndexPage() {
           </div>
           <div className="dashboard-card flex flex-col items-center py-12 text-center">
             <CalendarCheck className="mb-4 h-12 w-12 text-muted" />
-            <p className="text-sm text-muted">Aucune villa avec des réservations pour le moment.</p>
+            <p className="text-sm text-muted">Aucune réservation pour le moment.</p>
+            <p className="mt-1 text-xs text-muted">
+              Vos réservations apparaîtront ici dès qu&apos;un voyageur réservera votre villa.
+            </p>
           </div>
         </div>
       </div>
