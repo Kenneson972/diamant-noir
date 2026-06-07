@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { RevenueSummary } from "@/components/dashboard/proprio/RevenueSummary";
@@ -126,6 +127,17 @@ export default async function RevenusPage() {
             Revenus
           </h1>
           <p className="text-sm text-muted">Reversements nets après commission Kayvila</p>
+        </div>
+
+        <div className="flex items-center gap-4 mb-4">
+          <a
+            href={`/api/proprio/releve?month=${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`}
+            download
+            className="inline-flex items-center gap-2 rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-white hover:bg-gold/90"
+          >
+            <Download size={16} />
+            Télécharger le relevé
+          </a>
         </div>
 
         <div className="space-y-6">
