@@ -3,12 +3,25 @@ import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { RevenueSummary } from "@/components/dashboard/proprio/RevenueSummary";
 import { calculateTransferAmounts } from "@/lib/stripe/connect";
+import { getCommissionRate } from "@/lib/revenue/booking-revenue";
+import { BookingTable } from "@/components/dashboard/proprio/BookingTable";
 
 export const metadata: Metadata = {
   title: "Revenus — Kayvila",
 };
 
 const MONTH_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+
+type BookingRow = {
+  id: string;
+  start_date: string;
+  villa_name: string;
+  guest_name: string;
+  gross: number;
+  commission: number;
+  net: number;
+  source: string;
+};
 
 export default async function RevenusPage() {
   const supabase = await getSupabaseServer();
@@ -18,13 +31,14 @@ export default async function RevenusPage() {
 
   const { data: villas } = await supabase
     .from("villas")
-    .select("id, commission_rate")
+    .select("id, name, commission_rate")
     .eq("owner_id", user!.id);
 
   const villaIds = villas?.map((v) => v.id) ?? [];
   const commissionByVilla = new Map(
     (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
   );
+  const villaNameMap = new Map((villas ?? []).map((v) => [v.id, v.name]));
 
   const now = new Date();
   const currentMonth = now.getMonth(); // 0-indexed
@@ -36,11 +50,30 @@ export default async function RevenusPage() {
   const { data: bookings } = villaIds.length > 0
     ? await supabase
         .from("bookings")
-        .select("price, cleaning_fee, service_fee, villa_id, start_date, status")
+        .select("id, price, cleaning_fee, service_fee, villa_id, start_date, guest_name, source, status")
         .in("villa_id", villaIds)
         .in("status", ["confirmed", "paid"])
         .gte("start_date", sixMonthsAgo)
     : { data: [] };
+
+  const bookingRows: BookingRow[] = (bookings ?? []).map((b: any) => {
+    const stayCents = Math.round((b.price ?? 0) * 100);
+    const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
+    const serviceCents = Math.round((b.service_fee ?? 0) * 100);
+    const grossCents = stayCents + cleaningCents + serviceCents;
+    const rate = getCommissionRate(b.source ?? null);
+    const { ownerAmountCents, platformFeeCents } = calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate);
+    return {
+      id: b.id,
+      start_date: b.start_date,
+      villa_name: villaNameMap.get(b.villa_id) ?? '—',
+      guest_name: b.guest_name ?? '—',
+      gross: grossCents,
+      commission: platformFeeCents,
+      net: ownerAmountCents,
+      source: b.source ?? 'direct',
+    };
+  });
 
   function ownerNetCents(b: {
     price?: number | null;
@@ -104,6 +137,8 @@ export default async function RevenusPage() {
           />
 
           <RevenueChart data={monthlyData} hasEnoughHistory={hasEnoughHistory} />
+
+          <BookingTable bookingRows={bookingRows} currentMonth={currentMonth} currentYear={currentYear} />
         </div>
       </div>
     </div>
