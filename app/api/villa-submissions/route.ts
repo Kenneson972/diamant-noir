@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { requireAdmin, requireAuth, AuthError } from "@/lib/auth/server";
+import { requireAdmin, AuthError } from "@/lib/auth/server";
 
 export const runtime = "nodejs";
 
@@ -8,8 +8,6 @@ const VILLA_SUBMISSION_WEBHOOK = process.env.VILLA_SUBMISSION_WEBHOOK || process
 
 export async function POST(request: Request) {
   try {
-    await requireAuth(request);
-
     const body = await request.json();
     const {
       name,
@@ -121,6 +119,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, id: submission.id });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Villa submissions API error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
