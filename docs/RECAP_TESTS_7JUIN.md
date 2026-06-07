@@ -40,6 +40,11 @@ Compte : `admin@diamantnoir.com`
 | `/admin/reservations` | Liste + calendrier | ✅ |
 | `/admin/proprietaires` | Liste proprios | ✅ |
 | `/admin/messagerie` | Chat admin | ✅ |
+| `/admin/clients` | Recherche clients | ✅ |
+| `/admin/avis` | Modération avis | ✅ |
+| `/admin/sync-ota` | Statut synchro OTA | ✅ |
+| `/admin/demandes` | Gestion demandes | ✅ |
+| `/admin/hub-classique` | Interface legacy | ✅ |
 
 ---
 
