@@ -81,14 +81,15 @@ Compte : `proprio1@test.com`
 
 | Section | Pages | Raison |
 |---------|-------|--------|
-| 4. `/book` Réservation | Formulaire + Stripe Checkout | Pas de compte Stripe test |
-| 5. Paiement Stripe | Checkout réel | Pas de clé test configurée |
+| 4. `/book` Réservation | Formulaire + Stripe Checkout | Dates en conflit sur toutes les villas |
+| 5. Paiement Stripe | Checkout réel | Bloqué par conflit de dates |
 | 10. Stripe Connect proprio | Onboarding, vérification | Compte Stripe test requis |
 | 12. Admin Stripe | Remboursement, webhooks | Compte Stripe test requis |
 | 13. Emails Resend | Templates, triggers | Environnement local |
 | 14. Sécurité | CSRF, rate limiting, RLS, JWT | Tests manuels uniquement |
-| `/book` | Réservation formulaire + Stripe | Pas de clé Stripe test |
-| `/villas/comparer` | Comparateur villas | Page non trouvée |
+| `/villas/comparer` | Comparateur villas | 404 (route non créée) |
+
+**Note :** Stripe est bien configuré — l'API booking répond correctement (conflit de dates + blocage proprio non onboardé). Resend PDF API protégée par auth (307 redirect). Les clés `.env.local` sont présentes.
 
 ---
 
