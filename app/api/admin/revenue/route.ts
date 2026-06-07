@@ -5,6 +5,7 @@ import {
   grossCentsFromBooking,
   ownerNetCents,
   platformFeeCents,
+  getCommissionRate,
 } from "@/lib/revenue/booking-revenue";
 
 export const runtime = "nodejs";
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
       admin
         .from("bookings")
         .select(
-          "id, villa_id, start_date, status, payment_status, price, cleaning_fee, service_fee, total_price_cents, villas(name, commission_rate)"
+          "id, villa_id, start_date, status, payment_status, price, cleaning_fee, service_fee, total_price_cents, source, villas(name, commission_rate)"
         )
         .in("status", CONFIRMED_STATUSES)
         .order("start_date", { ascending: false }),
@@ -41,9 +42,9 @@ export async function GET(request: Request) {
     const sumGross = (list: typeof rows) =>
       list.reduce((s, b) => s + grossCentsFromBooking(b), 0);
     const sumPlatform = (list: typeof rows) =>
-      list.reduce((s, b) => s + platformFeeCents(b, rateFor(b)), 0);
+      list.reduce((s, b) => s + platformFeeCents(b, (b as any).source ?? null), 0);
     const sumOwner = (list: typeof rows) =>
-      list.reduce((s, b) => s + ownerNetCents(b, rateFor(b)), 0);
+      list.reduce((s, b) => s + ownerNetCents(b, (b as any).source ?? null), 0);
 
     const monthRows = rows.filter((b) => b.start_date >= monthStart);
     const yearRows = rows.filter((b) => b.start_date >= yearStart);
@@ -82,14 +83,32 @@ export async function GET(request: Request) {
           count: 0,
         };
       }
-      const rate = rateFor(b);
       villaRevenue[vid].gross += grossCentsFromBooking(b);
-      villaRevenue[vid].platform += platformFeeCents(b, rate);
-      villaRevenue[vid].owner += ownerNetCents(b, rate);
+      villaRevenue[vid].platform += platformFeeCents(b, (b as any).source ?? null);
+      villaRevenue[vid].owner += ownerNetCents(b, (b as any).source ?? null);
       villaRevenue[vid].count += 1;
+      if (!(villaRevenue[vid] as any).sourceCounts) (villaRevenue[vid] as any).sourceCounts = {};
+      const src = ((b as any).source) ?? 'direct';
+      (villaRevenue[vid] as any).sourceCounts[src] = ((villaRevenue[vid] as any).sourceCounts[src] ?? 0) + 1;
     }
 
-    const byVilla = Object.values(villaRevenue).sort((a, b) => b.gross - a.gross);
+    const SOURCE_LABELS: Record<string, string> = {
+      airbnb: 'Airbnb', expedia: 'Expedia', trivago: 'Trivago',
+      vrbo: 'Vrbo', booking: 'Booking', ical: 'iCal',
+      direct: 'Direct', manual: 'Manuel', admin: 'Admin',
+    };
+
+    const byVilla = Object.values(villaRevenue)
+      .sort((a, b) => b.gross - a.gross)
+      .map((v) => {
+        const entries = Object.entries((v as any).sourceCounts ?? {}) as [string, number][];
+        const dominantSource = entries.sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'direct';
+        return {
+          ...v,
+          dominantSource: SOURCE_LABELS[dominantSource] ?? dominantSource,
+          commissionRate: getCommissionRate(dominantSource),
+        };
+      });
 
     const { count: totalBookings } = await admin
       .from("bookings")

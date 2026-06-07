@@ -12,6 +12,8 @@ type VillaRow = {
   platform: number;
   owner: number;
   count: number;
+  dominantSource: string;
+  commissionRate: number;
 };
 
 export default function AdminRevenusPage() {
@@ -72,7 +74,7 @@ export default function AdminRevenusPage() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <AdminPageIntro
           title="Revenus"
-          description="CA et commissions via calculateTransferAmounts (25 % séjour + frais)."
+          description="Commission selon canal de réservation (20% OTA · 25% direct)"
         />
         <button
           onClick={exportCSV}
@@ -166,6 +168,8 @@ export default function AdminRevenusPage() {
                   <th className="px-6 py-3 text-right">Commission Kayvila</th>
                   <th className="px-6 py-3 text-right">Reversement</th>
                   <th className="px-6 py-3 text-right">Résas</th>
+                  <th className="px-6 py-3 text-right">Canal maj.</th>
+                  <th className="px-6 py-3 text-right">Taux</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-navy/[0.05]">
@@ -182,6 +186,12 @@ export default function AdminRevenusPage() {
                       {formatCurrency(v.owner)}
                     </td>
                     <td className="px-6 py-3 text-right text-navy/60">{v.count}</td>
+                    <td className="px-6 py-3 text-right text-navy/60 text-xs">{v.dominantSource}</td>
+                    <td className="px-6 py-3 text-right">
+                      <span className={`text-xs font-medium ${v.commissionRate === 20 ? 'text-amber-600' : 'text-navy'}`}>
+                        {v.commissionRate}%
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
