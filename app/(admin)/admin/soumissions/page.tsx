@@ -5,7 +5,7 @@ import {
   Bed, Bath, Car, Trees, Wifi, Clock, MessageSquare,
   Star, Eye, FileText, Globe,
 } from "lucide-react";
-import { AcceptRejectButtons } from "./AcceptRejectButtons";
+import { SubmissionActions } from "./SubmissionActions";
 
 export const dynamic = "force-dynamic";
 
@@ -117,7 +117,7 @@ export default async function AdminSoumissionsPage() {
                   </div>
 
                   {(s.status === "pending" || s.status === "visit_scheduled" || s.status === "call_requested" || s.status === "docs_requested" || s.status === "visited") && (
-                    <AcceptRejectButtons id={s.id} name={s.villa_name || s.name} ownerEmail={s.email} />
+                    <SubmissionActions id={s.id} ownerEmail={s.email} />
                   )}
                   {(s.status === "accepted" || s.status === "rejected") && (
                     <span className="shrink-0 text-[11px] font-medium text-navy/40">Dossier clos</span>
