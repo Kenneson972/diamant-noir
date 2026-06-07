@@ -25,49 +25,37 @@ export default function BookingConfirmationEmail({
   clientAreaUrl,
   emergencyPhone = "+596 96 00 00 00",
   checkInTime = "15h",
-  wifiCode,
 }: BookingConfirmationEmailProps) {
   return (
     <EmailLayout preview={`Confirmation — ${villaName}`}>
-      <Text style={title}>Bonjour {guestName},</Text>
-      <Text>
-        Votre réservation est <strong>confirmée</strong>. Nous avons hâte de vous accueillir en
-        Martinique.
-      </Text>
-      <Text style={boxTitle}>Détails du séjour</Text>
-      <Text>
-        <strong>Villa :</strong> {villaName}
+      <Text style={greeting}>Bonjour {guestName},</Text>
+      <Text style={subtitle}>Votre réservation est confirmée.</Text>
+
+      <Text style={sectionLabel}>Votre séjour</Text>
+      <Text style={details}>
+        {villaName}
         <br />
-        <strong>Arrivée :</strong> {formatDateFr(startDate)}
+        {formatDateFr(startDate)} → {formatDateFr(endDate)}
         <br />
-        <strong>Départ :</strong> {formatDateFr(endDate)}
+        {nights} nuit{nights > 1 ? "s" : ""} · {formatEuros(totalPrice)}
+      </Text>
+
+      <Text style={info}>
+        Check-in à partir de <strong>{checkInTime}</strong> · Check-out avant <strong>11h</strong>
         <br />
-        <strong>Nuits :</strong> {nights}
-        <br />
-        <strong>Total :</strong> {formatEuros(totalPrice)}
-      </Text>
-      <Text>
-        Check-in à partir de <strong>{checkInTime}</strong> · Check-out avant <strong>11h</strong>.
-      </Text>
-      {wifiCode ? (
-        <Text>
-          <strong>Wi-Fi :</strong> {wifiCode}
-        </Text>
-      ) : null}
-      <Text>
-        Retrouvez votre réservation dans votre{" "}
-        <Link href={clientAreaUrl} style={link}>
-          espace client
-        </Link>
-        .
-      </Text>
-      <Text>
         Urgence : <strong>{emergencyPhone}</strong>
       </Text>
+
+      <Link href={clientAreaUrl} style={button}>
+        Accéder à mon espace client
+      </Link>
     </EmailLayout>
   );
 }
 
-const title = { color: "#0a1929", fontSize: "20px", margin: "0 0 16px" };
-const boxTitle = { color: "#d4af37", fontSize: "13px", fontWeight: 700, letterSpacing: "0.08em", margin: "20px 0 8px", textTransform: "uppercase" as const };
-const link = { color: "#0a1929", textDecoration: "underline" };
+const greeting = { color: "#0a1929", fontSize: "22px", margin: "0 0 4px" };
+const subtitle = { color: "#64748b", fontSize: "15px", margin: "0 0 28px" };
+const sectionLabel = { color: "#d4af37", fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", margin: "0 0 8px", textTransform: "uppercase" as const };
+const details = { color: "#0a1929", fontSize: "15px", lineHeight: "1.8", margin: "0 0 16px" };
+const info = { color: "#64748b", fontSize: "13px", lineHeight: "1.7", margin: "0 0 24px" };
+const button = { display: "inline-block", backgroundColor: "#0a1929", color: "#ffffff", padding: "12px 28px", borderRadius: "2px", fontSize: "13px", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" };

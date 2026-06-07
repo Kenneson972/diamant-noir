@@ -2,7 +2,6 @@ import {
   Body,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
@@ -13,7 +12,10 @@ import {
 import type { ReactNode } from "react";
 import { SITE_BRAND_DISPLAY } from "@/data/site-brand";
 
-const EMAIL_BANNER_URL =
+const LOGO_URL =
+  "https://wsdawdxucyuyopkpgjij.supabase.co/storage/v1/object/public/brand/DN3-Photoroom.png";
+
+const FOOTER_BANNER_URL =
   "https://wsdawdxucyuyopkpgjij.supabase.co/storage/v1/object/public/brand/hf_20260607_202403_3eba3c06-74d5-4e1c-8688-324d25b6bfc4.png";
 
 type EmailLayoutProps = {
@@ -28,13 +30,16 @@ export function EmailLayout({ preview, children }: EmailLayoutProps) {
       <Preview>{preview}</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Img src={EMAIL_BANNER_URL} width="100%" alt={SITE_BRAND_DISPLAY} style={banner} />
+          <Section style={header}>
+            <Img src={LOGO_URL} width="120" height="auto" alt={SITE_BRAND_DISPLAY} style={logo} />
+            <Hr style={goldLine} />
+          </Section>
           <Section style={content}>{children}</Section>
-          <Hr style={hr} />
+          <Img src={FOOTER_BANNER_URL} width="100%" alt="" style={banner} />
           <Text style={footer}>
             {SITE_BRAND_DISPLAY} — Conciergerie en Martinique
             <br />
-            Cet email a été envoyé automatiquement. Pour toute question, contactez-nous.
+            <span style={footerMeta}>Cet email a été envoyé automatiquement.</span>
           </Text>
         </Container>
       </Body>
@@ -44,40 +49,55 @@ export function EmailLayout({ preview, children }: EmailLayoutProps) {
 
 const body = {
   backgroundColor: "#fafaf8",
-  fontFamily: "Georgia, 'Playfair Display', serif",
+  fontFamily: "Georgia, serif",
   margin: 0,
-  padding: "24px 0",
+  padding: "32px 0",
 };
 
 const container = {
   backgroundColor: "#ffffff",
   margin: "0 auto",
-  maxWidth: "560px",
+  maxWidth: "520px",
 };
 
-const banner = {
+const header = {
+  padding: "40px 48px 0",
+  textAlign: "center" as const,
+};
+
+const logo = {
   display: "block",
-  width: "100%",
-  maxWidth: "560px",
+  margin: "0 auto",
+};
+
+const goldLine = {
+  borderColor: "#d4af37",
+  borderStyle: "solid" as const,
+  margin: "20px auto 0",
+  width: "40px",
 };
 
 const content = {
   color: "#334155",
   fontSize: "15px",
-  lineHeight: "1.7",
-  padding: "32px 36px 4px",
+  lineHeight: "1.75",
+  padding: "32px 48px 20px",
 };
 
-const hr = {
-  borderColor: "#d4af37",
-  borderStyle: "solid",
-  margin: "24px 36px 0",
+const banner = {
+  display: "block",
+  width: "100%",
 };
 
 const footer = {
+  color: "#64748b",
+  fontSize: "13px",
+  lineHeight: "1.8",
+  padding: "16px 48px 36px",
+  textAlign: "center" as const,
+};
+
+const footerMeta = {
   color: "#94a3b8",
   fontSize: "11px",
-  lineHeight: "1.6",
-  padding: "12px 36px 28px",
-  textAlign: "center" as const,
 };
