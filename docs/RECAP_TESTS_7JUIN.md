@@ -52,6 +52,11 @@ Compte : `locataire@test.com`
 | `/espace-client` | Dashboard, résas à venir | ✅ |
 | `/espace-client/messagerie` | Header visible (scroll fix), welcome message, quick actions, chat input | ✅ |
 | `/espace-client/profil` | Sélecteur indicatif (+596 🇲🇶), 7 codes, placeholder "6 96 XX XX XX", avatar upload, préférences séjour | ✅ |
+| `/espace-client/favoris` | Wishlist | ✅ |
+| `/espace-client/livret` | Livret d'accueil | ✅ |
+| `/espace-client/checklist` | Checklist séjour | ✅ |
+| `/espace-client/conciergerie` | Services conciergerie | ✅ |
+| `/espace-client/demandes` | Demandes spéciales | ✅ |
 
 ---
 
