@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import {
+  ADMIN_NOTIFICATION_EMAIL,
+  getResend,
+  isResendConfigured,
+  RESEND_FROM,
+} from "@/lib/resend";
 
 export const runtime = "nodejs";
 
@@ -88,6 +94,42 @@ export async function POST(request: Request) {
       );
     }
 
+    // Email Resend → admin
+    if (isResendConfigured()) {
+      try {
+        const details = [
+          villa_name && `Villa : ${villa_name}`,
+          villa_location && `Localisation : ${villa_location}`,
+          villa_type && `Type : ${villa_type}`,
+          chambres && `${chambres} ch.`,
+          salles_de_bains && `${salles_de_bains} sdb`,
+          surface && `${surface} m²`,
+        ].filter(Boolean).join(" · ");
+
+        await getResend().emails.send({
+          from: RESEND_FROM,
+          to: [ADMIN_NOTIFICATION_EMAIL],
+          subject: `Nouvelle soumission villa — ${villa_name || name}`,
+          html: `
+            <div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929">
+              <h2 style="font-weight:400;color:#d4af37">Nouvelle soumission villa</h2>
+              <p><strong>Nom :</strong> ${name}</p>
+              <p><strong>Email :</strong> ${email}</p>
+              ${phone ? `<p><strong>Tél. :</strong> ${phone}</p>` : ""}
+              <p style="margin-top:16px"><strong>${villa_name || "Villa"}</strong></p>
+              <p>${details || "—"}</p>
+              ${airbnb_url ? `<p><strong>Airbnb :</strong> <a href="${airbnb_url}">${airbnb_url}</a></p>` : ""}
+              ${message ? `<p style="margin-top:12px;font-style:italic">« ${message} »</p>` : ""}
+              <p style="margin-top:16px;font-size:11px;color:#999">Réf. ${submission.id}</p>
+            </div>
+          `,
+        });
+      } catch (e) {
+        console.error("Villa submission email failed:", e);
+      }
+    }
+
+    // Fallback n8n webhook
     if (VILLA_SUBMISSION_WEBHOOK) {
       try {
         await fetch(VILLA_SUBMISSION_WEBHOOK, {
