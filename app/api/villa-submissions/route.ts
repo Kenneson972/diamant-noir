@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { render } from "@react-email/render";
 import {
   ADMIN_NOTIFICATION_EMAIL,
   getResend,
   isResendConfigured,
   RESEND_FROM,
 } from "@/lib/resend";
+import SubmissionVisitScheduled from "@/emails/submission-visit-scheduled";
+import SubmissionCallRequested from "@/emails/submission-call-requested";
+import SubmissionDocsRequested from "@/emails/submission-docs-requested";
+import SubmissionAccepted from "@/emails/submission-accepted";
+import SubmissionRejected from "@/emails/submission-rejected";
 
 export const runtime = "nodejs";
 
@@ -221,36 +227,45 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Email Resend → proprio selon l'action (utilise owner_email ou l'email de la soumission)
+    // Email Resend → proprio selon l'action
     const recipientEmail = owner_email || submission.email;
     if (isResendConfigured() && recipientEmail) {
       const villaName = submission.villa_name || "votre villa";
-      const emailSubjects: Record<string, string> = {
-        visit_scheduled: `Visite programmée — ${villaName}`,
-        call_requested: `Appel souhaité — ${villaName}`,
-        docs_requested: `Documents demandés — ${villaName}`,
-        accepted: `Bienvenue chez Kayvila ! — ${villaName}`,
-        rejected: `Réponse à votre soumission — ${villaName}`,
+      const ownerName = submission.name || "Propriétaire";
+
+      const templateMap: Record<string, { subject: string; component: any; props: any }> = {
+        visit_scheduled: {
+          subject: `Visite programmée — ${villaName}`,
+          component: SubmissionVisitScheduled,
+          props: { ownerName, villaName, visitDate: visit_date || new Date().toISOString() },
+        },
+        call_requested: {
+          subject: `Appel souhaité — ${villaName}`,
+          component: SubmissionCallRequested,
+          props: { ownerName, villaName },
+        },
+        docs_requested: {
+          subject: `Documents demandés — ${villaName}`,
+          component: SubmissionDocsRequested,
+          props: { ownerName, villaName },
+        },
+        accepted: {
+          subject: `Bienvenue chez Kayvila ! — ${villaName}`,
+          component: SubmissionAccepted,
+          props: { ownerName, villaName },
+        },
+        rejected: {
+          subject: `Réponse à votre soumission — ${villaName}`,
+          component: SubmissionRejected,
+          props: { ownerName, villaName },
+        },
       };
-      const subject = emailSubjects[status] || `Mise à jour — ${villaName}`;
 
-      let html = "";
-      if (status === "visit_scheduled") {
-        const dateStr = visit_date ? new Date(visit_date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "prochainement";
-        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Visite programmée</h2><p>Bonjour ${submission.name},</p><p>Nous passerons visiter <strong>${villaName}</strong> le <strong>${dateStr}</strong>.</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
-      } else if (status === "call_requested") {
-        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Appel souhaité</h2><p>Bonjour ${submission.name},</p><p>Nous souhaiterions échanger avec vous au sujet de <strong>${villaName}</strong>. Pouvez-vous nous appeler au <strong>+596 696 00 00 00</strong> ?</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
-      } else if (status === "docs_requested") {
-        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Documents demandés</h2><p>Bonjour ${submission.name},</p><p>Pour poursuivre l'étude de <strong>${villaName}</strong>, merci de nous transmettre : titre de propriété, diagnostic énergétique, et dernier avis de taxe foncière.</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
-      } else if (status === "accepted") {
-        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Bienvenue chez Kayvila !</h2><p>Bonjour ${submission.name},</p><p>Nous sommes ravis de vous annoncer que <strong>${villaName}</strong> a été acceptée dans notre collection.</p><p>Prochaines étapes :</p><ul><li>Création de votre compte propriétaire</li><li>Onboarding Stripe Connect pour les reversements</li><li>Séance photo professionnelle</li><li>Mise en ligne sur Kayvila et nos partenaires</li></ul><p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/register" style="display:inline-block;padding:12px 24px;background:#d4af37;color:white;text-decoration:none;border-radius:8px;font-weight:bold">Créer mon compte</a></p><p>L'équipe Kayvila</p></div>`;
-      } else if (status === "rejected") {
-        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Réponse à votre soumission</h2><p>Bonjour ${submission.name},</p><p>Nous avons bien étudié votre dossier pour <strong>${villaName}</strong>. Malheureusement, nous ne pouvons pas donner suite pour le moment.</p><p>Nous vous remercions de l'intérêt porté à Kayvila et vous souhaitons une excellente continuation.</p><p>L'équipe Kayvila</p></div>`;
-      }
-
-      if (html) {
+      const tmpl = templateMap[status];
+      if (tmpl) {
         try {
-          await getResend().emails.send({ from: RESEND_FROM, to: [recipientEmail], subject, html });
+          const html = await render(tmpl.component(tmpl.props));
+          await getResend().emails.send({ from: RESEND_FROM, to: [recipientEmail], subject: tmpl.subject, html });
         } catch (e) {
           console.error("Villa submission status email failed:", e);
         }
