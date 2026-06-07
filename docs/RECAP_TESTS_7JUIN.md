@@ -16,6 +16,10 @@ Tests exécutés sur `localhost:3000` par Claude Code + Playwright.
 | `/contact` | Formulaire contact | ✅ |
 | `/soumettre-ma-villa` | Formulaire soumission | ✅ |
 | `/terms` | CGU | ✅ |
+| `/cookies` | Gestion cookies | ✅ |
+| `/confidentialite` | Politique confidentialité | ✅ |
+| `/cgv` | CGV | ❌ 404 (page inexistante) |
+| `/mentions-legales` | Mentions légales | ❌ 404 (page inexistante) |
 | `/tarifs` → `/prestations` | Middleware fix | ✅ corrigé |
 | `/experience` → `/prestations` | Middleware fix | ✅ corrigé |
 
@@ -33,6 +37,9 @@ Compte : `admin@diamantnoir.com`
 | `/admin/revenus` | Sous-titre "20% OTA · 25% direct", KPIs, ventilation par villa | ✅ |
 | `/admin/villas` | DataGrid avec miniatures (fallback image_urls), 2 villas, filtres (statut, tier, tri), liens proprio | ✅ |
 | `/admin/tarification` | Sélecteur villa, prix de base, formulaire ajout plage, anti-chevauchement | ✅ |
+| `/admin/reservations` | Liste + calendrier | ✅ |
+| `/admin/proprietaires` | Liste proprios | ✅ |
+| `/admin/messagerie` | Chat admin | ✅ |
 
 ---
 
@@ -69,12 +76,14 @@ Compte : `proprio1@test.com`
 
 | Section | Pages | Raison |
 |---------|-------|--------|
-| 4. Réservation `/book` | Formulaire + Stripe Checkout | Pas de compte Stripe test |
-| 5. Paiement Stripe | Checkout réel | Carte test `4242...` non configurée en local |
+| 4. `/book` Réservation | Formulaire + Stripe Checkout | Pas de compte Stripe test |
+| 5. Paiement Stripe | Checkout réel | Pas de clé test configurée |
 | 10. Stripe Connect proprio | Onboarding, vérification | Compte Stripe test requis |
 | 12. Admin Stripe | Remboursement, webhooks | Compte Stripe test requis |
-| 13. Emails Resend | Templates, triggers | Environnement local, pas d'envoi réel |
+| 13. Emails Resend | Templates, triggers | Environnement local |
 | 14. Sécurité | CSRF, rate limiting, RLS, JWT | Tests manuels uniquement |
+| `/book` | Réservation formulaire + Stripe | Pas de clé Stripe test |
+| `/villas/comparer` | Comparateur villas | Page non trouvée |
 
 ---
 
@@ -83,6 +92,8 @@ Compte : `proprio1@test.com`
 | # | Bug | Status |
 |---|-----|--------|
 | 1 | `/tarifs` et `/experience` bloqués par auth middleware | ✅ Fixé `0b2cf95` |
-| 2 | `favicon.ico` 404 | 🔵 Mineur, pas bloquant |
+| 2 | `favicon.ico` 404 | 🔵 Mineur |
+| 3 | `/mentions-legales` → 404 (page jamais créée) | 🔵 Préexistant |
+| 4 | `/cgv` → 404 (page jamais créée) | 🔵 Préexistant |
 
-**Total pages testées : 25 · 0 régression · 1 bug corrigé**
+**Total pages testées : 31 · 0 régression · 1 bug corrigé · 3 bugs mineurs préexistants**
