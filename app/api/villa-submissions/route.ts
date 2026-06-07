@@ -66,7 +66,6 @@ export async function POST(request: Request) {
         airbnb_url: airbnb_url || null,
         no_photos: Boolean(no_photos),
         message: message || null,
-        photo_urls: Array.isArray(photo_urls) && photo_urls.length > 0 ? photo_urls : null,
         surface_terrain: surface_terrain || null,
         chambres: chambres || null,
         salles_de_bains: salles_de_bains || null,
