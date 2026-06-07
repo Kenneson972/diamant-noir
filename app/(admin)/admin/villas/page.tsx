@@ -37,7 +37,7 @@ async function getVillas(searchParams: {
 
   let query = supabase
     .from("villas")
-    .select("id, name, location, price_per_night, capacity, collection_tier, owner_id, is_published, image_url");
+    .select("id, name, location, price_per_night, capacity, collection_tier, owner_id, is_published, image_url, image_urls");
 
   // Filtre par statut de publication
   if (searchParams.published === "oui") {

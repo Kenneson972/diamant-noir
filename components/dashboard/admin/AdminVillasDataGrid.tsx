@@ -19,6 +19,7 @@ export type AdminVillaRow = {
   owner_id: string | null;
   is_published: boolean;
   image_url: string | null;
+  image_urls?: string[] | null;
   owner_name: string | null;
   bookingCount: number;
   confirmedRevenue: number;
@@ -40,10 +41,11 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       id: "image",
       header: "",
       width: 56,
-      cell: (item) =>
-        item.image_url ? (
+      cell: (item) => {
+        const imgSrc = item.image_url ?? item.image_urls?.[0];
+        return imgSrc ? (
           <Image
-            src={item.image_url}
+            src={imgSrc}
             alt=""
             width={40}
             height={40}
@@ -53,7 +55,8 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
           <div className="flex h-10 w-10 items-center justify-center rounded bg-navy/5">
             <Building2 className="h-5 w-5 text-navy/20" aria-hidden />
           </div>
-        ),
+        );
+      },
     },
     {
       id: "name",
