@@ -16,6 +16,8 @@ const publicPaths = [
   "/cgv",
   "/confidentialite",
   "/cookies",
+  "/tarifs",
+  "/experience",
   "/soumettre-ma-villa",
   "/success",
   "/update-password",
