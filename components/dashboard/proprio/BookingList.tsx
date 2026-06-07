@@ -4,7 +4,7 @@ import { ProprioBookingDataGrid } from "@/components/dashboard/proprio/ProprioBo
 
 type BookingRow = Pick<
   Booking,
-  "id" | "start_date" | "end_date" | "guest_name" | "status" | "price" | "total_price_cents"
+  "id" | "start_date" | "end_date" | "guest_name" | "status" | "price" | "total_price_cents" | "source" | "payment_status" | "guests"
 >;
 
 interface BookingListProps {

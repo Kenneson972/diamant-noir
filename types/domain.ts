@@ -1,8 +1,8 @@
 /* ─── Enums / Unions ─────────────────────────────────── */
 
 export type BookingStatus = "pending" | "confirmed" | "paid" | "cancelled" | "refunded";
-export type BookingSource = "airbnb" | "direct";
-export type PaymentStatus = "unpaid" | "paid" | "refunded";
+export type BookingSource = "airbnb" | "direct" | "expedia" | "booking" | "vrbo" | "trivago" | "ical" | "manual" | "admin";
+export type PaymentStatus = "unpaid" | "paid" | "refunded" | "partially_refunded" | "failed";
 export type SubmissionStatus = "pending" | "accepted" | "rejected" | "info_requested";
 export type TaskStatus = "pending" | "in_progress" | "completed";
 export type AlertSeverity = "info" | "warning" | "critical";
@@ -103,6 +103,7 @@ export interface Booking {
   source: BookingSource;
   guest_name: string | null;
   guest_email: string | null;
+  guests: number | null;
   /** Prix en euros (legacy, remplacé par total_price_cents) */
   price: number;
   /** Prix en centimes (source de vérité) */

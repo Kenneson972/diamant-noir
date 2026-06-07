@@ -36,7 +36,7 @@ export default async function VillaReservationsPage({ params }: PageProps) {
   const { data: bookings } = await supabaseAdmin()
     .from("bookings")
     .select(
-      "id, start_date, end_date, guest_name, status, price, total_price_cents"
+      "id, start_date, end_date, guest_name, status, price, total_price_cents, source, payment_status, guests"
     )
     .eq("villa_id", villaId)
     .order("start_date", { ascending: false });

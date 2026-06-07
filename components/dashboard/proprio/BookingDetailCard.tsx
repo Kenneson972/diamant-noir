@@ -1,6 +1,7 @@
 import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
+import { getCommissionRate } from "@/lib/revenue/booking-revenue";
 import {
   CalendarDays,
   Building2,
@@ -12,6 +13,9 @@ import {
   Mail,
   Hash,
   Banknote,
+  Users,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
 
 interface BookingDetailCardProps {
@@ -87,6 +91,9 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
   const nights = getNights(booking.start_date, booking.end_date);
   const totalCents = getBookingPriceCents(booking);
   const pricePerNightCents = totalCents > 0 ? Math.round(totalCents / nights) : 0;
+  const commissionRate = getCommissionRate(booking.source);
+  const commissionCents = Math.round(totalCents * (commissionRate / 100));
+  const netCents = totalCents - commissionCents;
 
   return (
     <div className="space-y-6">
@@ -167,6 +174,35 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
               value={formatCurrency(pricePerNightCents)}
             />
           )}
+
+          {/* Voyageurs */}
+          <DetailRow
+            icon={Users}
+            label="Voyageurs"
+            value={(booking as any).guests ? `${(booking as any).guests} personne${(booking as any).guests > 1 ? "s" : ""}` : "—"}
+          />
+
+          {/* Commission Kayvila */}
+          <DetailRow
+            icon={TrendingDown}
+            label={`Commission Kayvila (${commissionRate}%)`}
+            value={
+              <span className="text-amber-700">
+                {formatCurrency(commissionCents)}
+              </span>
+            }
+          />
+
+          {/* Revenu net proprio */}
+          <DetailRow
+            icon={TrendingUp}
+            label="Revenu net propriétaire"
+            value={
+              <span className="font-display text-base font-bold text-emerald-700">
+                {formatCurrency(netCents)}
+              </span>
+            }
+          />
 
           {/* Source */}
           <DetailRow

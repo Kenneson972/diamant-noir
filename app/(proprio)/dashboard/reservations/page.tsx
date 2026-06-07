@@ -57,7 +57,7 @@ export default async function ProprioReservationsIndexPage() {
   const villaIds = villas.map((v) => v.id);
   const { data: allBookings } = await supabaseAdmin()
     .from("bookings")
-    .select("id, villa_id, guest_name, start_date, end_date, status, total_price_cents")
+    .select("id, villa_id, guest_name, start_date, end_date, status, total_price_cents, source, payment_status, guests")
     .in("villa_id", villaIds)
     .order("start_date", { ascending: false });
 
@@ -114,13 +114,15 @@ export default async function ProprioReservationsIndexPage() {
                     .map((booking: any) => {
                       const nights = calcNights(booking.start_date, booking.end_date);
                       const price = formatCurrency(getBookingPriceCents(booking));
+                      const sourceLabel: Record<string, string> = { airbnb: "Airbnb", direct: "Direct", booking: "Booking", vrbo: "Vrbo", expedia: "Expedia", ical: "iCal" };
+                      const pmtLabel: Record<string, string> = { paid: "Payé", unpaid: "En attente", refunded: "Remboursé", partially_refunded: "Remb. partiel" };
                       return (
                         <Link
                           key={booking.id}
                           href={`/dashboard/reservations/${villa.id}/${booking.id}`}
                           className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-navy/[0.04]"
                         >
-                          <span className="w-1/4 font-medium text-navy-900/80">
+                          <span className="w-1/5 font-medium text-navy-900/80">
                             {booking.guest_name}
                           </span>
                           <span className="text-xs text-muted">
@@ -129,6 +131,15 @@ export default async function ProprioReservationsIndexPage() {
                           </span>
                           <span className="text-xs text-navy/60">
                             {nights} nuit{nights > 1 ? "s" : ""} · {price}
+                          </span>
+                          <span className="text-[10px] text-navy/40">
+                            {sourceLabel[booking.source] ?? booking.source ?? "—"}
+                          </span>
+                          <span className={`text-[10px] font-medium ${booking.payment_status === "paid" ? "text-emerald-600" : "text-amber-600"}`}>
+                            {pmtLabel[booking.payment_status] ?? "En attente"}
+                          </span>
+                          <span className="text-[10px] text-navy/40">
+                            {booking.guests ?? "—"} pers.
                           </span>
                           <BookingStatusBadge status={booking.status} />
                         </Link>
