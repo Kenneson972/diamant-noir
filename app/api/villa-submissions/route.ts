@@ -221,8 +221,9 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Email Resend → proprio selon l'action
-    if (isResendConfigured() && owner_email) {
+    // Email Resend → proprio selon l'action (utilise owner_email ou l'email de la soumission)
+    const recipientEmail = owner_email || submission.email;
+    if (isResendConfigured() && recipientEmail) {
       const villaName = submission.villa_name || "votre villa";
       const emailSubjects: Record<string, string> = {
         visit_scheduled: `Visite programmée — ${villaName}`,
@@ -249,7 +250,7 @@ export async function PATCH(request: Request) {
 
       if (html) {
         try {
-          await getResend().emails.send({ from: RESEND_FROM, to: [owner_email], subject, html });
+          await getResend().emails.send({ from: RESEND_FROM, to: [recipientEmail], subject, html });
         } catch (e) {
           console.error("Villa submission status email failed:", e);
         }
