@@ -2,6 +2,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Task } from "@/types/domain";
 import { TaskList } from "@/components/dashboard/proprio/TaskList";
+import { ReportIssueButton } from "@/components/dashboard/proprio/ReportIssueButton";
 
 export const metadata: Metadata = {
   title: "Tâches — Kayvila",
@@ -51,6 +52,12 @@ export default async function TasksPage() {
       <h1 className="font-display text-2xl font-bold text-navy-900">
         Tâches de maintenance
       </h1>
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-sm text-muted">Suivez l&apos;état des maintenances de vos villas.</p>
+        {villas && villas.length > 0 && (
+          <ReportIssueButton villaId={villas[0].id} userId={user!.id} />
+        )}
+      </div>
       <TaskList tasks={typedTasks} villaMap={villaMap} />
     </div>
   );
