@@ -1,118 +1,167 @@
-# Prompt Cursor — Audit Stripe Connect Kayvila (Juin 2026)
+# Audit Stripe Connect Kayvila — 7 Juin 2026
 
-## Contexte
+Kayvila (Diamant Noir) — Plateforme de conciergerie de luxe, Martinique.
 
-Kayvila utilise Stripe Connect Express pour splitter les paiements entre Kayvila et les propriétaires. Le flux : client réserve → checkout Stripe → webhook confirme → transfert automatique vers le compte Connect du proprio.
+## Fichiers audités
 
-Code à auditer : `lib/stripe/connect.ts`, `app/api/webhooks/stripe/route.ts`, `app/api/booking/route.ts`, `app/api/stripe/admin-refund/route.ts`, `app/api/stripe/connect-onboarding/route.ts`, `lib/revenue/booking-revenue.ts`.
+| Fichier | Rôle |
+|---------|------|
+| `lib/stripe/connect.ts` | Création compte Connect, onboarding, `calculateTransferAmounts` |
+| `lib/stripe/server.ts` | Singleton Stripe serveur |
+| `app/api/booking/route.ts` | Création réservation + Checkout Session Stripe |
+| `app/api/webhooks/stripe/route.ts` | Webhooks Stripe (14 events) |
+| `app/api/stripe/connect-onboarding/route.ts` | Onboarding propriétaire Connect Express |
+| `app/api/stripe/connect-verify/route.ts` | Vérification statut onboarding |
+| `app/api/admin/owners/[id]/stripe/route.ts` | Dashboard admin — statut Connect |
+| `app/api/stripe/admin-refund/route.ts` | Remboursement admin |
+| `lib/commission.ts` | Calcul commission (modèle legacy) |
+| `lib/revenue/booking-revenue.ts` | Calcul revenus + `getCommissionRate` |
+
+---
+
+## Architecture
+
+```
+CLIENT WEB → POST /api/booking → Stripe Checkout Session
+                                      │
+                                      ▼
+                              Stripe Webhooks
+                         POST /api/webhooks/stripe
+                                      │
+            ┌─────────────────────────┼─────────────────────────┐
+            │                         │                         │
+   checkout.completed         account.updated          charge.dispute.*
+   → booking=confirmed        → onboarding=ok          → dispute DB + email
+   → emails (guest,           → email proprio          → admin alert
+     admin, owner)
+
+PROPRIO → POST /api/stripe/connect-onboarding → Stripe Express
+        → POST /api/stripe/connect-verify → statut
+        → Webhook account.updated → profile mis à jour
+
+ADMIN → POST /api/stripe/admin-refund → reverse_transfer → audit log
+      → GET /api/admin/owners/[id]/stripe → statut Connect + transfers
+```
 
 ---
 
 ## Points d'audit
 
-### 1. Commission — Taux fixe vs variable
+### 1. Commission — Taux hardcodé à 25%
 
 **Fichier :** `app/api/booking/route.ts:318-323`
 
 ```typescript
 const { platformFeeCents } = calculateTransferAmounts(
-  stayCents, cleaningFeeCents, serviceFeeCents, 25  // ← hardcodé
+  stayCents, cleaningFeeCents, serviceFeeCents,
+  25  // ← HARDCODÉ
 );
 ```
 
-**Question :** Le taux est hardcodé à 25%. Richard veut 20% OTA / 25% Direct. Est-ce que le champ `bookings.source` est renseigné au moment du checkout ? Si oui → passer le bon taux. Si non → le fix doit aussi inclure le renseignement de `source` à la création du booking.
+**Problème :** `getCommissionRate()` (ajoutée le 7 Juin dans `lib/revenue/booking-revenue.ts`) n'est pas utilisée. Toutes les réservations passent à 25%, même les OTA qui devraient être à 20%.
 
-**Vérifier aussi :** `lib/revenue/booking-revenue.ts` — `ownerNetCents()` et `platformFeeCents()` appliquent aussi 25% fixe.
+**Fix :** `import { getCommissionRate } from "@/lib/revenue/booking-revenue";` et remplacer `25` par `getCommissionRate("direct")`. Pour les futurs bookings OTA, passer le `source` dynamiquement.
 
----
-
-### 2. Webhook — Gestion des erreurs non bloquantes
-
-**Fichier :** `app/api/webhooks/stripe/route.ts`
-
-- Ligne 138-156 : `fetch()` pour notifs email/booking — les erreurs sont loggées mais n'empêchent pas le retour 200. ✅ Bon pattern.
-- Ligne 463-467 : Si le handler crash après le claim de l'event, Stripe ne retentera pas (l'event est marqué comme processed). ⚠️ **Risque** : une réservation confirmée dans Stripe mais pas dans Supabase.
-
-**Check :** Ajouter un try/catch autour du traitement métier (après le claim) qui, en cas d'échec, supprime l'entrée dans `stripe_events_processed` pour permettre le retry.
+**Priorité :** 🟡
 
 ---
 
-### 3. Admin Refund — Robustesse
+### 2. Double système de commission
 
-**Fichier :** `app/api/stripe/admin-refund/route.ts`
+**Fichiers :** `lib/commission.ts` et `lib/revenue/booking-revenue.ts`
 
-- Ligne 62-69 : `stripe.refunds.create()` avec `reverse_transfer: true` — ✅ reverse le transfert Connect
-- Ligne 54-56 : Vérifie `payment_status === "refunded"` avant de rembourser — ✅ évite double refund
-- ⚠️ **Manquant** : Pas de vérification que le PaymentIntent est bien `succeeded` avant de tenter le refund. Si le paiement est encore en `processing`, Stripe va rejeter.
+- `lib/commission.ts` : `DEFAULT_COMMISSION_RATE = 0.25`, `normalizeCommissionRate()` — utilisé par `lib/emails/send.ts`
+- `lib/revenue/booking-revenue.ts` : `getCommissionRate()` — 20% OTA / 25% Direct
 
-**Action :** Ajouter un appel `stripe.paymentIntents.retrieve()` avant le refund pour vérifier le statut, et retourner une erreur claire si pas encore `succeeded`.
+Deux sources de vérité pour le taux. Risque de divergence.
 
----
+**Fix :** `lib/commission.ts` doit être réconcilié avec `getCommissionRate()`.
 
-### 4. Booking Session — Sync fallback
-
-**Fichier :** `app/api/booking-session/route.ts`
-
-**Check :** Le commentaire dit "Sync local booking when Stripe Checkout is paid but webhook is delayed". Vérifier que cette route :
-- Vérifie bien le statut du PaymentIntent via l'API Stripe avant de marquer comme payé
-- Ne duplique pas le traitement si le webhook arrive juste après
-- Utilise `stripe_events_processed` pour l'idempotence (ou un autre mécanisme)
+**Priorité :** 🟡
 
 ---
 
-### 5. Connect Onboarding — États de bord
+### 3. Webhook — Rollback si erreur handler
+
+**Fichier :** `app/api/webhooks/stripe/route.ts:50-66`
+
+```typescript
+// Claim atomique avant traitement
+const { data: claimed } = await supabase
+  .from("stripe_events_processed")
+  .upsert({ event_id: event.id, event_type: event.type }, ...)
+  .maybeSingle();
+```
+
+Si le handler crash APRÈS le claim mais AVANT la fin du traitement (ex: timeout, erreur DB), l'event est marqué comme traité mais les updates n'ont pas eu lieu. Stripe ne retentera pas.
+
+**Fix :** Dans le `catch` final (ligne 463-467), supprimer l'entrée dans `stripe_events_processed` avant de retourner 500.
+
+**Priorité :** 🔴
+
+---
+
+### 4. Admin Refund — Vérifier statut PaymentIntent
+
+**Fichier :** `app/api/stripe/admin-refund/route.ts:62-69`
+
+Le refund est tenté sans vérifier que le PaymentIntent est `succeeded`. Si le paiement est encore en `processing`, Stripe rejette silencieusement.
+
+**Fix :** Ajouter `stripe.paymentIntents.retrieve()` avant le refund. Si statut ≠ `succeeded`, retourner erreur 409 "Paiement non finalisé".
+
+**Priorité :** 🟡
+
+---
+
+### 5. Booking route — Idempotence checkout
+
+**Fichier :** `app/api/booking/route.ts:218-244`
+
+✅ **OK** — Lignes 218-244 : vérifie même villa + dates + email + status `pending`. Si une session Stripe existe déjà, retourne l'URL existante. Pas de double création.
+
+---
+
+### 6. Connect Onboarding — Réutilisation compte
 
 **Fichier :** `app/api/stripe/connect-onboarding/route.ts`
 
-**Check :**
-- Si un proprio a déjà un compte Connect mais pas complété (`charges_enabled = false`), l'API crée-t-elle un nouveau compte ou réutilise-t-elle l'existant ?
-- Le `refresh_url` et `return_url` pointent vers `/dashboard` — vérifier que cette page gère correctement les paramètres `?connect=refresh` et `?connect=success`
+✅ **OK** — Ligne 31 : vérifie `stripe_connect_account_id` existant avant de créer un nouveau compte. Ligne 24-29 : retourne `already_onboarded` si déjà complété.
 
 ---
 
-### 6. Double paiement — Idempotence checkout
+### 7. Disputes — booking_id manquant
 
-**Fichier :** `app/api/booking/route.ts`
+**Fichier :** `app/api/webhooks/stripe/route.ts:341-398`
 
-**Check :** Si un utilisateur clique deux fois sur "Payer", deux sessions Stripe sont-elles créées pour la même réservation ? Vérifier :
-- Un garde existe-t-il côté serveur (ex: vérifier que le booking n'est pas déjà `confirmed` ou `paid` avant de créer une session) ?
-- Le `idempotency_key` est-il utilisé dans l'appel à `stripe.checkout.sessions.create()` ?
+`charge.dispute.created` insère dans `stripe_disputes` sans `booking_id`. L'admin n'a aucun lien direct vers la réservation. Pourtant le code essaie de le retrouver (lignes 358-384) pour l'email — mais ne le stocke pas.
 
----
+**Fix :** Ajouter `booking_id` dans l'INSERT `stripe_disputes`. Ajouter la colonne si absente.
 
-### 7. Contentieux (Disputes) — Complétude
-
-**Fichier :** `app/api/webhooks/stripe/route.ts:341-423`
-
-- ✅ `charge.dispute.created` → INSERT dans `stripe_disputes` + email admin
-- ✅ `charge.dispute.closed` → UPDATE statut
-- ✅ `charge.dispute.funds_reinstated` → statut "won"
-- ✅ `charge.dispute.funds_withdrawn` → statut "lost"
-
-**Check :** Le handler `charge.dispute.created` n'enregistre PAS le booking_id dans `stripe_disputes`. Si un litige arrive, l'admin n'a aucun lien direct vers la réservation concernée. Ajouter une colonne `booking_id` à `stripe_disputes` et la peupler lors de la création.
+**Priorité :** 🟡
 
 ---
 
-### 8. Edge cases — Paiements asynchrones
+### 8. Paiements asynchrones — Pas d'historique
 
-**Fichier :** `app/api/webhooks/stripe/route.ts:308-327`
+**Fichier :** `app/api/webhooks/stripe/route.ts:308-317`
 
-- `payment_intent.succeeded` (ligne 308) : met à jour le booking → `paid` + `confirmed`
-- `payment_intent.payment_failed` (ligne 319) : met à jour → `failed`
+`payment_intent.succeeded` met à jour le booking mais n'insère PAS dans `order_status_history`. Perte de traçabilité.
 
-⚠️ **Problème potentiel :** Si `payment_intent.succeeded` arrive APRÈS `checkout.session.completed` (cas normal pour SEPA/SOFORT), le booking est déjà `confirmed`. Le handler ligne 311 vérifie `status === "pending"` — donc OK, pas de double update. Mais il ne log PAS dans `order_status_history`.
+**Fix :** Ajouter l'insertion dans `order_status_history` (comme le fait `checkout.session.completed`).
 
-**Action :** Ajouter l'insertion dans `order_status_history` pour le handler `payment_intent.succeeded`.
+**Priorité :** 🔵
 
 ---
 
-### 9. Remboursement partiel
+### 9. Remboursement partiel vs total
 
-**Fichiers :** `app/api/webhooks/stripe/route.ts:425-446` + `app/api/stripe/admin-refund/route.ts`
+**Fichier :** `app/api/webhooks/stripe/route.ts:425-446`
 
-Le handler `charge.refunded` ne vérifie pas si c'est un refund PARTIEL ou TOTAL. Si Stripe fait un refund partiel, le booking passe en `payment_status: "refunded"` alors que le client a peut-être encore payé une partie.
+`charge.refunded` ne vérifie pas si le refund est partiel ou total. Marque `payment_status: "refunded"` dans les deux cas.
 
-**Action :** Vérifier `charge.amount_refunded === charge.amount` avant de marquer comme `refunded`. Si partiel → nouveau statut `partially_refunded`.
+**Fix :** Vérifier `charge.amount_refunded === charge.amount`. Si partiel → `partially_refunded`. Si total → `refunded`.
+
+**Priorité :** 🟡
 
 ---
 
@@ -120,11 +169,7 @@ Le handler `charge.refunded` ne vérifie pas si c'est un refund PARTIEL ou TOTAL
 
 **Fichier :** `app/api/stripe/admin-refund/route.ts`
 
-- ✅ Auth via `requireAdmin(request)` — protégé par PIN admin
-- ✅ Validation Zod sur le body
-- ✅ Audit log via `logAdminAction()`
-
-✅ RAS, bien sécurisé.
+✅ **OK** — Auth `requireAdmin`, validation Zod, audit log.
 
 ---
 
@@ -132,15 +177,35 @@ Le handler `charge.refunded` ne vérifie pas si c'est un refund PARTIEL ou TOTAL
 
 | # | Priorité | Fichier | Action |
 |---|----------|---------|--------|
-| 1 | 🟡 | `app/api/booking/route.ts` | Remplacer 25% hardcodé par `getCommissionRate(source)` |
-| 2 | 🔴 | `app/api/webhooks/stripe/route.ts` | Rollback `stripe_events_processed` en cas d'erreur handler |
-| 3 | 🟡 | `app/api/stripe/admin-refund/route.ts` | Vérifier statut PaymentIntent avant refund |
-| 4 | ✅ | `app/api/booking-session/route.ts` | ✅ OK — rate limiting, validation ID, sync uniquement si `payment_status=paid`. Pas d'idempotence via `stripe_events_processed` (mineur, webhook normalement plus rapide que le polling). |
-| 5 | ✅ | `app/api/stripe/connect-onboarding/route.ts` | ✅ OK — réutilise compte existant non complété, retourne `already_onboarded` si OK, auth obligatoire. |
-| 6 | ✅ | `app/api/booking/route.ts` | ✅ OK — idempotency check lignes 218-244 (même villa + dates + email + status pending). Retourne l'URL de session existante si double-clic. |
-| 7 | 🟡 | `app/api/webhooks/stripe/route.ts` | Ajouter `booking_id` dans `stripe_disputes` |
-| 8 | 🔵 | `app/api/webhooks/stripe/route.ts` | Ajouter `order_status_history` pour paiements async |
-| 9 | 🟡 | `app/api/webhooks/stripe/route.ts` | Distinguer refund partiel vs total |
+| 1 | 🟡 | `app/api/booking/route.ts:318` | Remplacer 25% par `getCommissionRate("direct")` |
+| 2 | 🟡 | `lib/commission.ts` | Réconcilier avec `getCommissionRate()` |
+| 3 | 🔴 | `app/api/webhooks/stripe/route.ts:463` | Rollback `stripe_events_processed` en cas d'erreur handler |
+| 4 | 🟡 | `app/api/stripe/admin-refund/route.ts:62` | Vérifier statut PaymentIntent avant refund |
+| 5 | 🟡 | `app/api/webhooks/stripe/route.ts:347` | Stocker `booking_id` dans `stripe_disputes` |
+| 6 | 🔵 | `app/api/webhooks/stripe/route.ts:308` | Ajouter `order_status_history` pour paiements async |
+| 7 | 🟡 | `app/api/webhooks/stripe/route.ts:425` | Distinguer refund partiel vs total |
 
-**Total : 9 points audités — 3 ✅ OK, 1 🔴 critique, 4 🟡 important, 1 🔵 mineur.**
-**Actions réelles : 5 points à corriger dans 3 fichiers.**
+**Total : 10 points audités — 3 ✅ OK, 1 🔴 critique, 5 🟡 important, 1 🔵 mineur.**
+**Actions : 7 fixes dans 4 fichiers.**
+
+---
+
+## Variables d'environnement
+
+| Variable | Status | Usage |
+|----------|--------|-------|
+| `STRIPE_SECRET_KEY` | ✅ | Toutes opérations Stripe |
+| `STRIPE_WEBHOOK_SECRET` | ✅ | Signature webhooks |
+| `NEXT_PUBLIC_BASE_URL` | ✅ | URLs redirection |
+| `RESEND_API_KEY` | ✅ | Emails |
+| `API_SECRET_KEY` | ✅ | Auth interne API→API |
+
+## Tables Supabase
+
+| Table | Colonnes clés |
+|-------|--------------|
+| `bookings` | `stripe_session_id`, `stripe_payment_intent_id`, `payment_status`, `source` |
+| `profiles` | `stripe_connect_account_id`, `stripe_connect_onboarding_completed` |
+| `stripe_events_processed` | `event_id`, `event_type` |
+| `stripe_disputes` | `dispute_id`, `charge_id`, `amount_cents`, `reason`, `status`, `booking_id` |
+| `order_status_history` | `booking_id`, `from_status`, `to_status`, `changed_by`, `reason` |
