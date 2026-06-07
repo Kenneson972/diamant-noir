@@ -74,6 +74,7 @@ export function TenantChatbot({
     return getOrCreateSessionId(userId);
   });
   const endRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // ── Load history from Supabase ──────────────────────────────────────────────
   useEffect(() => {
@@ -111,7 +112,9 @@ export function TenantChatbot({
 
   // ── Scroll to bottom on new messages ───────────────────────────────────────
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages, loading]);
 
   // ── Save message to Supabase ────────────────────────────────────────────────
@@ -199,6 +202,7 @@ export function TenantChatbot({
   return (
     <div className="flex h-full flex-col bg-offwhite">
       <div
+        ref={messagesContainerRef}
         className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-4"
         role="log"
         aria-live="polite"
