@@ -13,6 +13,7 @@ import SubmissionCallRequested from "@/emails/submission-call-requested";
 import SubmissionDocsRequested from "@/emails/submission-docs-requested";
 import SubmissionAccepted from "@/emails/submission-accepted";
 import SubmissionRejected from "@/emails/submission-rejected";
+import SubmissionReceived from "@/emails/submission-received";
 
 export const runtime = "nodejs";
 
@@ -132,6 +133,26 @@ export async function POST(request: Request) {
         });
       } catch (e) {
         console.error("Villa submission email failed:", e);
+      }
+    }
+
+    // Email de confirmation → proprio qui a soumis
+    if (isResendConfigured() && email) {
+      try {
+        const html = await render(
+          SubmissionReceived({
+            ownerName: name || "Propriétaire",
+            villaName: villa_name || "votre villa",
+          })
+        );
+        await getResend().emails.send({
+          from: RESEND_FROM,
+          to: [email],
+          subject: `Bien reçu — ${villa_name || "votre villa"} — Kayvila`,
+          html,
+        });
+      } catch (e) {
+        console.error("Submission confirmation email failed:", e);
       }
     }
 
