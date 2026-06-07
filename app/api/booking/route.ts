@@ -6,6 +6,7 @@ import { checkRateLimit, ipFromRequest } from "@/lib/security";
 import { checkCsrf } from "@/lib/security";
 import { BookingRequestSchema } from "@/types/stripe";
 import { calculateTransferAmounts } from "@/lib/stripe/connect";
+import { getCommissionRate } from "@/lib/revenue/booking-revenue";
 import { resolveBookingGuestEmail } from "@/lib/booking-tenant";
 import { getSupabaseServer } from "@/lib/supabase-server";
 
@@ -313,13 +314,13 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Stripe Connect : split conforme FAQ Kayvila ──
-    // Proprio : 75 % du séjour | Kayvila : 25 % séjour + 100 % ménage + 100 % service
+    // ── Stripe Connect : split selon canal (20% OTA · 25% direct) ──
+    const commissionRate = getCommissionRate("direct"); // bookings créés via cette route = directs
     const { platformFeeCents } = calculateTransferAmounts(
       stayCents,
       cleaningFeeCents,
       serviceFeeCents,
-      25
+      commissionRate
     );
 
     // 3. Create Stripe Checkout Session avec le total incluant tous les frais

@@ -1,4 +1,6 @@
-/** Taux par défaut Kayvila (25 %) — fraction décimale 0.25 */
+/** Taux par défaut Kayvila (25 %) — fraction décimale 0.25.
+ *  ⚠️ Pour le calcul différencié OTA (20%) / Direct (25%), utiliser
+ *  `getCommissionRate(source)` depuis `@/lib/revenue/booking-revenue`. */
 export const DEFAULT_COMMISSION_RATE = 0.25;
 
 /**

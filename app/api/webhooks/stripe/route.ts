@@ -308,11 +308,27 @@ export async function POST(request: Request) {
     if (event.type === "payment_intent.succeeded") {
       const pi = event.data.object as Stripe.PaymentIntent;
       if (pi.metadata?.bookingId) {
+        const { data: current } = await supabase
+          .from("bookings")
+          .select("status")
+          .eq("id", pi.metadata.bookingId)
+          .single();
+
         await supabase
           .from("bookings")
           .update({ payment_status: "paid", status: "confirmed" })
           .eq("id", pi.metadata.bookingId)
           .eq("status", "pending");
+
+        if (current && current.status === "pending") {
+          await supabase.from("order_status_history").insert({
+            booking_id: pi.metadata.bookingId,
+            from_status: "pending",
+            to_status: "confirmed",
+            changed_by: "stripe_webhook",
+            reason: "payment_intent.succeeded",
+          });
+        }
       }
     }
 
@@ -344,15 +360,8 @@ export async function POST(request: Request) {
         ? new Date(dispute.evidence_details.due_by * 1000).toISOString()
         : null;
 
-      await supabase.from("stripe_disputes").insert({
-        dispute_id: dispute.id,
-        charge_id: dispute.charge,
-        amount_cents: dispute.amount,
-        reason: dispute.reason,
-        status: dispute.status,
-        evidence_due_by: evidenceDueBy,
-      });
-
+      // Chercher le booking lié avant d'insérer le dispute
+      let bookingId: string | undefined;
       let villaName: string | undefined;
       try {
         const chargeId =
@@ -367,23 +376,36 @@ export async function POST(request: Request) {
           if (paymentIntentId) {
             const { data: booking } = await supabase
               .from("bookings")
-              .select("villa_id")
+              .select("id, villa_id")
               .eq("stripe_payment_intent_id", paymentIntentId)
               .maybeSingle();
 
-            if (booking?.villa_id) {
-              const { data: villa } = await supabase
-                .from("villas")
-                .select("name")
-                .eq("id", booking.villa_id)
-                .maybeSingle();
-              villaName = villa?.name ?? undefined;
+            if (booking) {
+              bookingId = booking.id;
+              if (booking.villa_id) {
+                const { data: villa } = await supabase
+                  .from("villas")
+                  .select("name")
+                  .eq("id", booking.villa_id)
+                  .maybeSingle();
+                villaName = villa?.name ?? undefined;
+              }
             }
           }
         }
       } catch (e) {
-        console.error("Dispute villa lookup failed:", e);
+        console.error("Dispute booking lookup failed:", e);
       }
+
+      await supabase.from("stripe_disputes").insert({
+        dispute_id: dispute.id,
+        charge_id: dispute.charge,
+        booking_id: bookingId ?? null,
+        amount_cents: dispute.amount,
+        reason: dispute.reason,
+        status: dispute.status,
+        evidence_due_by: evidenceDueBy,
+      });
 
       try {
         await sendAdminDisputeAlertEmail({
@@ -437,9 +459,12 @@ export async function POST(request: Request) {
           .maybeSingle();
 
         if (booking) {
+          const isFullRefund = charge.amount_refunded === charge.amount;
           await supabase
             .from("bookings")
-            .update({ payment_status: "refunded" })
+            .update({
+              payment_status: isFullRefund ? "refunded" : "partially_refunded",
+            })
             .eq("id", booking.id);
         }
       }
@@ -461,7 +486,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    // NE PAS marquer comme processed si erreur → Stripe retentera
+    // Rollback le claim pour permettre le retry par Stripe
+    await supabase
+      .from("stripe_events_processed")
+      .delete()
+      .eq("event_id", event.id);
+
     const message = err instanceof Error ? err.message : "Handler error";
     console.error("Stripe webhook handler error:", message);
     return NextResponse.json({ error: `Handler failed: ${message}` }, { status: 500 });

@@ -59,6 +59,14 @@ export async function POST(request: Request) {
       apiVersion: "2025-03-31.basil" as Stripe.StripeConfig["apiVersion"],
     });
 
+    const pi = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+    if (pi.status !== "succeeded") {
+      return NextResponse.json(
+        { error: `Le paiement n'est pas finalisé (statut: ${pi.status}). Remboursement impossible.` },
+        { status: 409 }
+      );
+    }
+
     const refund = await stripe.refunds.create({
       payment_intent: booking.stripe_payment_intent_id,
       reverse_transfer: true,
