@@ -31,7 +31,7 @@ export function EmailLayout({ preview, children }: EmailLayoutProps) {
       <Body style={body}>
         <Container style={container}>
           <Section style={header}>
-            <Img src={LOGO_URL} width="120" height="auto" alt={SITE_BRAND_DISPLAY} style={logo} />
+            <Img src={LOGO_URL} width="80" height="auto" alt={SITE_BRAND_DISPLAY} style={logo} />
             <Hr style={goldLine} />
           </Section>
           <Section style={content}>{children}</Section>
