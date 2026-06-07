@@ -70,33 +70,52 @@ export function SeasonalRatesManager() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("seasonal_rates").insert({
-      villa_id: selectedVilla,
-      label: newRate.label,
-      start_date: newRate.start_date,
-      end_date: newRate.end_date,
-      price_per_night: parseInt(newRate.price_per_night),
+    // Client-side overlap validation
+    const overlap = rates.find((r) =>
+      r.start_date <= newRate.end_date && r.end_date >= newRate.start_date
+    );
+    if (overlap) {
+      const start = new Date(overlap.start_date).toLocaleDateString("fr-FR");
+      const end = new Date(overlap.end_date).toLocaleDateString("fr-FR");
+      setError(`Cette période chevauche une plage existante (${overlap.label} : ${start} – ${end}). Veuillez ajuster les dates.`);
+      setSaving(false);
+      return;
+    }
+
+    const res = await fetch("/api/admin/seasonal-rates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        villa_id: selectedVilla,
+        label: newRate.label,
+        start_date: newRate.start_date,
+        end_date: newRate.end_date,
+        price_per_night: parseInt(newRate.price_per_night),
+      }),
     });
 
-    if (insertError) {
-      setError(insertError.message);
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Erreur lors de l'ajout.");
     } else {
       setNewRate({ label: "", start_date: "", end_date: "", price_per_night: "" });
-      // Recharger les tarifs
-      const { data } = await supabase
+      // Reload rates
+      const { data: fresh } = await supabase!
         .from("seasonal_rates")
         .select("*")
         .eq("villa_id", selectedVilla)
         .order("start_date", { ascending: true });
-      setRates(data ?? []);
+      setRates(fresh ?? []);
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!supabase) return;
-    await supabase.from("seasonal_rates").delete().eq("id", id);
-    setRates((prev) => prev.filter((r) => r.id !== id));
+    const res = await fetch(`/api/admin/seasonal-rates?id=${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setRates((prev) => prev.filter((r) => r.id !== id));
+    }
   };
 
   const selectedVillaData = villas.find((v) => v.id === selectedVilla);
