@@ -21,6 +21,25 @@ interface ProfileFormProps {
   demoMode?: boolean;
 }
 
+const COUNTRY_CODES = [
+  { code: "+596", label: "+596 🇲🇶" },
+  { code: "+33", label: "+33 🇫🇷" },
+  { code: "+1", label: "+1 🇺🇸" },
+  { code: "+44", label: "+44 🇬🇧" },
+  { code: "+49", label: "+49 🇩🇪" },
+  { code: "+39", label: "+39 🇮🇹" },
+  { code: "+34", label: "+34 🇪🇸" },
+];
+
+function extractPhoneParts(fullPhone: string): { countryCode: string; localNumber: string } {
+  for (const { code } of COUNTRY_CODES) {
+    if (fullPhone.startsWith(code)) {
+      return { countryCode: code, localNumber: fullPhone.slice(code.length).trim() };
+    }
+  }
+  return { countryCode: "+596", localNumber: fullPhone };
+}
+
 export function ProfileForm({
   initialName = "",
   initialPhone = "",
@@ -30,7 +49,9 @@ export function ProfileForm({
   demoMode = false,
 }: ProfileFormProps) {
   const [name, setName] = useState(initialName);
-  const [phone, setPhone] = useState(initialPhone);
+  const phoneParts = extractPhoneParts(initialPhone);
+  const [countryCode, setCountryCode] = useState(phoneParts.countryCode);
+  const [localPhone, setLocalPhone] = useState(phoneParts.localNumber);
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -116,7 +137,7 @@ export function ProfileForm({
     setSaved(false);
 
     const { error: updateError } = await supabase.auth.updateUser({
-      data: { full_name: name, phone },
+      data: { full_name: name, phone: `${countryCode}${localPhone}`.trim() },
     });
 
     setLoading(false);
@@ -190,14 +211,27 @@ export function ProfileForm({
       </Field>
 
       <Field id="profile-phone" label="Téléphone">
-        <FieldInput
-          id="profile-phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          disabled={demoMode}
-          placeholder="+596 696 00 00 00"
-        />
+        <div className="flex gap-2">
+          <select
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value)}
+            className="w-28 border border-navy/10 bg-white px-3 py-2.5 text-sm rounded-lg focus:outline-none focus:border-gold/50"
+            aria-label="Indicatif pays"
+          >
+            {COUNTRY_CODES.map(({ code, label }) => (
+              <option key={code} value={code}>{label}</option>
+            ))}
+          </select>
+          <FieldInput
+            id="profile-phone"
+            type="tel"
+            value={localPhone}
+            onChange={(e) => setLocalPhone(e.target.value)}
+            disabled={demoMode}
+            placeholder="6 96 XX XX XX"
+            className="flex-1"
+          />
+        </div>
       </Field>
 
       {error && (
