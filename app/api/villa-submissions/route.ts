@@ -175,7 +175,7 @@ export async function GET(request: Request) {
     const supabase = supabaseAdmin();
     const { data, error } = await supabase
       .from("villa_submissions")
-      .select("id, name, email, phone, villa_name, villa_location, airbnb_url, no_photos, status, created_at, surface_terrain, chambres, salles_de_bains, etages, parking_places, parking_securise, gardien_existant, delai_souhaite, adresse_postale, message, photo_urls")
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -198,18 +198,21 @@ export async function PATCH(request: Request) {
     const supabase = supabaseAdmin();
 
     const body = await request.json();
-    const { id, status } = body;
+    const { id, status, visit_date, owner_email } = body;
     if (!id || !status) {
       return NextResponse.json({ error: "id et status requis" }, { status: 400 });
     }
-    const allowed = ["accepted", "rejected", "info_requested"];
+    const allowed = ["accepted", "rejected", "info_requested", "visit_scheduled", "visited", "call_requested", "docs_requested"];
     if (!allowed.includes(status)) {
       return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
     }
 
+    const updateData: Record<string, any> = { status, updated_at: new Date().toISOString() };
+    if (visit_date) updateData.visit_date = visit_date;
+
     const { data: submission, error } = await supabase
       .from("villa_submissions")
-      .update({ status, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
@@ -218,14 +221,46 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Email Resend → proprio selon l'action
+    if (isResendConfigured() && owner_email) {
+      const villaName = submission.villa_name || "votre villa";
+      const emailSubjects: Record<string, string> = {
+        visit_scheduled: `Visite programmée — ${villaName}`,
+        call_requested: `Appel souhaité — ${villaName}`,
+        docs_requested: `Documents demandés — ${villaName}`,
+        accepted: `Bienvenue chez Kayvila ! — ${villaName}`,
+        rejected: `Réponse à votre soumission — ${villaName}`,
+      };
+      const subject = emailSubjects[status] || `Mise à jour — ${villaName}`;
+
+      let html = "";
+      if (status === "visit_scheduled") {
+        const dateStr = visit_date ? new Date(visit_date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "prochainement";
+        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Visite programmée</h2><p>Bonjour ${submission.name},</p><p>Nous passerons visiter <strong>${villaName}</strong> le <strong>${dateStr}</strong>.</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
+      } else if (status === "call_requested") {
+        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Appel souhaité</h2><p>Bonjour ${submission.name},</p><p>Nous souhaiterions échanger avec vous au sujet de <strong>${villaName}</strong>. Pouvez-vous nous appeler au <strong>+596 696 00 00 00</strong> ?</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
+      } else if (status === "docs_requested") {
+        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Documents demandés</h2><p>Bonjour ${submission.name},</p><p>Pour poursuivre l'étude de <strong>${villaName}</strong>, merci de nous transmettre : titre de propriété, diagnostic énergétique, et dernier avis de taxe foncière.</p><p>À bientôt,<br/>L'équipe Kayvila</p></div>`;
+      } else if (status === "accepted") {
+        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Bienvenue chez Kayvila !</h2><p>Bonjour ${submission.name},</p><p>Nous sommes ravis de vous annoncer que <strong>${villaName}</strong> a été acceptée dans notre collection.</p><p>Prochaines étapes :</p><ul><li>Création de votre compte propriétaire</li><li>Onboarding Stripe Connect pour les reversements</li><li>Séance photo professionnelle</li><li>Mise en ligne sur Kayvila et nos partenaires</li></ul><p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/register" style="display:inline-block;padding:12px 24px;background:#d4af37;color:white;text-decoration:none;border-radius:8px;font-weight:bold">Créer mon compte</a></p><p>L'équipe Kayvila</p></div>`;
+      } else if (status === "rejected") {
+        html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929"><h2 style="font-weight:400;color:#d4af37">Réponse à votre soumission</h2><p>Bonjour ${submission.name},</p><p>Nous avons bien étudié votre dossier pour <strong>${villaName}</strong>. Malheureusement, nous ne pouvons pas donner suite pour le moment.</p><p>Nous vous remercions de l'intérêt porté à Kayvila et vous souhaitons une excellente continuation.</p><p>L'équipe Kayvila</p></div>`;
+      }
+
+      if (html) {
+        try {
+          await getResend().emails.send({ from: RESEND_FROM, to: [owner_email], subject, html });
+        } catch (e) {
+          console.error("Villa submission status email failed:", e);
+        }
+      }
+    }
+
+    // Fallback n8n webhook
     const webhook = process.env.VILLA_SUBMISSION_WEBHOOK || process.env.N8N_WEBHOOK_URL;
     if (webhook) {
       try {
-        await fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "villa_submission_status", id, status, submission }),
-        });
+        await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "villa_submission_status", id, status, submission }) });
       } catch (e) {
         console.error("Villa submission status webhook failed:", e);
       }
