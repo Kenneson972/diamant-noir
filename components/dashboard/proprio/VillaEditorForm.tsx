@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Check, Loader2, Save, Wand2, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { VillaFormFields } from "@/components/dashboard/villa-editor/VillaFormFields";
+import { CANCELLATION_TEMPLATES, type CancellationTemplate } from "@/lib/cancellation-templates";
+import { getSupabaseBrowser } from "@/lib/supabase";
 
 interface VillaEditorFormProps {
   villa: Record<string, unknown>;
@@ -19,6 +21,16 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
   const [importing, setImporting] = useState(false);
   const [importUseAi, setImportUseAi] = useState(false);
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
+  const [cancelTemplate, setCancelTemplate] = useState<CancellationTemplate>(
+    (villa.cancellation_template as CancellationTemplate) ?? 'moderate'
+  );
+  const [cancelNotes, setCancelNotes] = useState<string>(
+    (villa.cancellation_notes as string) ?? ''
+  );
+  const [bookletUploading, setBookletUploading] = useState(false);
+  const [bookletUrl, setBookletUrl] = useState<string | null>(
+    (villa.welcome_booklet_url as string) ?? null
+  );
   const formRef = useRef<Record<string, any>>({});
   const internalPhotosRef = useRef<string[]>(
     Array.isArray(villa.image_urls)
@@ -230,6 +242,10 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
         payload.cancellation_policy = cancelSelect.value;
       }
 
+      // Cancellation template & notes
+      payload.cancellation_template = cancelTemplate;
+      payload.cancellation_notes = cancelNotes.trim() || null;
+
       // Include photos from refs (managed by wrapper components)
       payload.image_urls = photosRef.current;
       payload.image_url = photosRef.current[0] || null;
@@ -260,6 +276,37 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       setSaving(false);
     }
   }, [villa.id, router, showToast]);
+
+  const handleBookletUpload = async (file: File) => {
+    if (file.type !== 'application/pdf') {
+      showToast('error', 'Fichier PDF uniquement');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('error', 'Taille maximum 10 Mo');
+      return;
+    }
+    setBookletUploading(true);
+    const supabase = getSupabaseBrowser();
+    if (!supabase) { setBookletUploading(false); return; }
+
+    const filePath = `${villa.id}/booklet.pdf`;
+    const { error } = await supabase.storage
+      .from('welcome-booklets')
+      .upload(filePath, file, { upsert: true });
+
+    if (error) {
+      showToast('error', 'Erreur lors de l\'upload du livret');
+    } else {
+      setBookletUrl(filePath);
+      await supabase
+        .from('villas')
+        .update({ welcome_booklet_url: filePath })
+        .eq('id', villa.id as string);
+      showToast('success', 'Livret mis à jour');
+    }
+    setBookletUploading(false);
+  };
 
   return (
     <>
@@ -340,6 +387,83 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       <div className="space-y-8">
         <VillaFormFields form={villa} onChange={(key, value) => { formRef.current[key] = value; }} />
       </div>
+
+      {/* Section — Conditions d'annulation */}
+      <section className="rounded-xl border border-navy/10 bg-white p-5">
+        <h3 className="mb-4 text-sm font-semibold text-navy">Conditions d&apos;annulation</h3>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {(Object.entries(CANCELLATION_TEMPLATES) as [CancellationTemplate, typeof CANCELLATION_TEMPLATES[CancellationTemplate]][]).map(([key, tpl]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setCancelTemplate(key)}
+              className={[
+                "rounded-lg border p-3 text-left transition-all",
+                cancelTemplate === key
+                  ? "border-gold/50 bg-gold/[0.08]"
+                  : "border-navy/10 bg-white hover:border-navy/20",
+              ].join(' ')}
+            >
+              <span className="block text-sm font-semibold text-navy">{tpl.label}</span>
+              <span className="mt-0.5 block text-xs text-navy/60">{tpl.summary}</span>
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 rounded-lg bg-offwhite px-3 py-2 text-xs text-navy/70">
+          {CANCELLATION_TEMPLATES[cancelTemplate].full}
+        </p>
+        <div className="mt-3">
+          <label className="block text-xs font-medium text-navy/70 mb-1">
+            Remarques additionnelles (optionnel, max 500 caractères)
+          </label>
+          <textarea
+            value={cancelNotes}
+            onChange={(e) => setCancelNotes(e.target.value.slice(0, 500))}
+            rows={3}
+            className="w-full rounded-lg border border-navy/10 bg-white px-3 py-2 text-sm text-navy focus:border-gold/50 focus:outline-none resize-none"
+            placeholder="Ex. : Remboursement sous 5 jours ouvrés après annulation…"
+          />
+          <p className="mt-1 text-right text-xs text-navy/40">{cancelNotes.length}/500</p>
+        </div>
+      </section>
+
+      {/* Section — Livret d'accueil */}
+      <section className="rounded-xl border border-navy/10 bg-white p-5">
+        <h3 className="mb-4 text-sm font-semibold text-navy">Livret d&apos;accueil</h3>
+        {bookletUrl ? (
+          <div className="flex items-center gap-3 rounded-lg border border-navy/10 bg-offwhite px-4 py-3">
+            <span className="flex-1 text-sm text-navy">📎 booklet.pdf</span>
+            <button
+              type="button"
+              onClick={async () => {
+                const supabase = getSupabaseBrowser();
+                if (!supabase) return;
+                await supabase.storage.from('welcome-booklets').remove([`${villa.id}/booklet.pdf`]);
+                await supabase.from('villas').update({ welcome_booklet_url: null }).eq('id', villa.id as string);
+                setBookletUrl(null);
+              }}
+              className="text-xs text-red-500 hover:underline"
+            >
+              Supprimer
+            </button>
+          </div>
+        ) : (
+          <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-navy/20 py-8 hover:border-gold/40 transition-colors">
+            <span className="text-sm text-navy/50">
+              {bookletUploading ? 'Envoi en cours…' : 'Glissez un PDF ou cliquez (max 10 Mo)'}
+            </span>
+            <input
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleBookletUpload(f);
+              }}
+            />
+          </label>
+        )}
+      </section>
 
       {/* Save button */}
       <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border-subtle bg-white px-6 py-4">
