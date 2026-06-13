@@ -296,6 +296,44 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     <main className="min-h-dvh bg-offwhite pb-24 sm:pb-0">
       <VillaViewTracker villaId={villa.id} />
 
+      {/* JSON-LD Product */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: villa.name,
+            description: villa.description?.slice(0, 200) || "",
+            image: villa.image,
+            ...(villa.location && {
+              productionLocation: {
+                "@type": "Place",
+                name: villa.location,
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: villa.location,
+                  addressCountry: "MQ",
+                },
+              },
+            }),
+            offers: {
+              "@type": "Offer",
+              price: villa.price,
+              priceCurrency: "EUR",
+              availability: "https://schema.org/InStock",
+            },
+            ...(villa.capacity && {
+              additionalProperty: {
+                "@type": "PropertyValue",
+                name: "Capacité",
+                value: villa.capacity,
+              },
+            }),
+          }),
+        }}
+      />
+
       {/* ── Galerie plein largeur ── */}
       <div className="pt-16 md:pt-20">
         <VillaGallery images={villa.images} title={villa.name} />

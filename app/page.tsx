@@ -1,4 +1,5 @@
 import https from "https";
+import type { Metadata } from "next";
 import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
 import { HomeBottomCta } from "@/components/home/HomeBottomCta";
 import { HomeFeaturedAudience, type HomeFeaturedVilla } from "@/components/home/HomeFeaturedAudience";
@@ -8,7 +9,19 @@ import { HomeTrustBand } from "@/components/home/HomeTrustBand";
 import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 import { HeroBackgroundMedia } from "@/components/home/HeroBackgroundMedia";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Kayvila | Conciergerie de luxe en Martinique",
+  description:
+    "Kayvila — Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion locative. Rocher du Diamant, plages du Soleil.",
+  openGraph: {
+    title: "Kayvila | Conciergerie de luxe en Martinique",
+    description:
+      "Villas d'exception, réservation en ligne, entretien et gestion locative en Martinique.",
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
+  },
+};
 
 /** Petit helper pour fetch sans le fetch patched de Next.js */
 function rawFetch(url: string, headers: Record<string, string>): Promise<string> {

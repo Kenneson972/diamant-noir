@@ -2,8 +2,20 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import VillasMapView from "@/components/VillasMapView";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 import { PageHero } from "@/components/marketing/PageHero";
+import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Villas de luxe en Martinique | Kayvila",
+  description:
+    "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de luxe, entretien et gestion locative.",
+  openGraph: {
+    title: "Villas de luxe en Martinique | Kayvila",
+    description:
+      "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de luxe.",
+  },
+};
 
 // Coordonnées par défaut par zone Martinique (fallback si pas de lat/lng en base)
 const COORD_FALLBACKS: Record<string, [number, number]> = {
