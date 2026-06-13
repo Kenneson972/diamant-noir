@@ -204,11 +204,12 @@ export async function POST(req: NextRequest) {
     ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim()
     : user.email ?? "Propriétaire";
 
+  // Appel direct (pas createElement) pour préserver le type DocumentProps attendu par renderToBuffer
   const buffer = await renderToBuffer(
-    React.createElement(RevenuePDF, { rows, period, ownerName })
+    RevenuePDF({ rows, period, ownerName }) as React.ReactElement<import("@react-pdf/renderer").DocumentProps>
   );
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="revenus-kayvila-${period

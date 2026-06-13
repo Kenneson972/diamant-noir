@@ -72,10 +72,10 @@ const OccupancyThresholdChart = dynamic(
                 domain={[0, 100]}
               />
               <Tooltip
-                formatter={(v: unknown, name: string) => [
+                formatter={(v, name) => [
                   `${v}%`,
                   name === "actual" ? "Occupation réelle" : "Seuil min",
-                ]}
+                ] as [string, string]}
                 contentStyle={{
                   borderRadius: 8,
                   border: "1px solid rgba(10,10,10,0.08)",
