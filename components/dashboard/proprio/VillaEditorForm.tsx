@@ -329,7 +329,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       {/* Carte Import Magique OTA */}
       <div className="rounded-[32px] border border-navy/5 bg-white p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-gold">
+          <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
             Import annonce (OTA)
           </h4>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
@@ -468,14 +468,14 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       {/* Save button */}
       <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border-subtle bg-white px-6 py-4">
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted">
+          <p className="text-xs text-navy/60">
             Les modifications seront appliquées immédiatement.
           </p>
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-800 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-lg bg-navy px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy/90 disabled:opacity-50"
           >
             {saving ? (
               <>
