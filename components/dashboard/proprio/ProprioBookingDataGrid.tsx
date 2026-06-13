@@ -39,7 +39,7 @@ function BookingCard({ booking, villaId }: { booking: BookingRow; villaId: strin
         <BookingStatusBadge status={booking.status} />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="text-xs text-navy/60">
+        <p className="text-sm text-navy/60">
           {formatDate(booking.start_date)} → {formatDate(booking.end_date)}
         </p>
         <p className="text-sm font-medium text-navy">
