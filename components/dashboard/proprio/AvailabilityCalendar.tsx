@@ -12,6 +12,7 @@ import {
   isWithinInterval,
   parseISO,
   isEqual,
+  subDays,
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -48,10 +49,11 @@ function getDayStatus(
   if (isBefore(date, today)) return "past";
   const d = startOfDay(date);
   for (const b of bookings) {
+    // end_date est le jour de départ (exclu de la plage occupée, comme la RPC '[)')
     if (
       isWithinInterval(d, {
         start: parseISO(b.start_date),
-        end: parseISO(b.end_date),
+        end: subDays(parseISO(b.end_date), 1),
       })
     )
       return "booked";
@@ -60,7 +62,7 @@ function getDayStatus(
     if (
       isWithinInterval(d, {
         start: parseISO(b.start_date),
-        end: parseISO(b.end_date),
+        end: subDays(parseISO(b.end_date), 1),
       })
     )
       return "blocked";
@@ -166,10 +168,15 @@ export function AvailabilityCalendar({
 
   const handleDeleteBlock = async (blockId: string) => {
     const supabase = getSupabaseBrowser();
-    await supabase
-      ?.from("villa_date_blocks")
+    if (!supabase) return;
+    const { error: deleteErr } = await supabase
+      .from("villa_date_blocks")
       .delete()
       .eq("id", blockId);
+    if (deleteErr) {
+      setError("Erreur lors de la suppression du blocage");
+      return;
+    }
     setBlocks((prev) => prev.filter((b) => b.id !== blockId));
     setEditBlock(null);
   };

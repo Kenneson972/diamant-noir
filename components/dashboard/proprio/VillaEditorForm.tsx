@@ -275,7 +275,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
     } finally {
       setSaving(false);
     }
-  }, [villa.id, router, showToast]);
+  }, [villa.id, router, showToast, cancelTemplate, cancelNotes]);
 
   const handleBookletUpload = async (file: File) => {
     if (file.type !== 'application/pdf') {

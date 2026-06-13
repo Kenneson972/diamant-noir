@@ -125,3 +125,39 @@ CREATE OR REPLACE FUNCTION check_booking_conflict(
     AND daterange(start_date::date, end_date::date, '[)') &&
         daterange(p_start, p_end, '[)');
 $$;
+
+-- ─── 9. Storage bucket pour livrets d'accueil (privé) ────────────────────
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'welcome-booklets',
+  'welcome-booklets',
+  false,
+  10485760, -- 10MB
+  ARRAY['application/pdf']
+)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Owners can upload booklets to their villas"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'welcome-booklets'
+  AND (storage.foldername(name))[1] IN (
+    SELECT id::text FROM villas WHERE owner_id = auth.uid()
+  )
+);
+
+CREATE POLICY "Owners can read their villa booklets"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (
+  bucket_id = 'welcome-booklets'
+  AND (storage.foldername(name))[1] IN (
+    SELECT id::text FROM villas WHERE owner_id = auth.uid()
+  )
+);
+
+CREATE POLICY "Service role can read all booklets"
+ON storage.objects FOR SELECT
+TO service_role
+USING (bucket_id = 'welcome-booklets');
