@@ -26,6 +26,30 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("fr-FR");
 }
 
+function BookingCard({ booking, villaId }: { booking: BookingRow; villaId: string }) {
+  return (
+    <Link
+      href={`/dashboard/reservations/${villaId}/${booking.id}`}
+      className="block rounded-xl border border-navy/10 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-sm font-semibold text-navy">
+          {booking.guest_name ?? "Anonyme"}
+        </span>
+        <BookingStatusBadge status={booking.status} />
+      </div>
+      <div className="mt-2 space-y-1">
+        <p className="text-xs text-navy/60">
+          {formatDate(booking.start_date)} → {formatDate(booking.end_date)}
+        </p>
+        <p className="text-sm font-medium text-navy">
+          {formatCurrency(getBookingPriceCents(booking))}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 type ProprioBookingDataGridProps = {
   bookings: BookingRow[];
   villaId: string;
@@ -117,11 +141,26 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
   ];
 
   return (
-    <KayvilaDataGrid
-      aria-label="Réservations de la villa"
-      columns={columns}
-      data={bookings}
-      getRowId={(item) => item.id}
-    />
+    <>
+      {/* Mobile : cartes empilées */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {bookings.length === 0 ? (
+          <p className="py-8 text-center text-sm text-navy/40">Aucune réservation.</p>
+        ) : (
+          bookings.map((b) => (
+            <BookingCard key={b.id} booking={b} villaId={villaId} />
+          ))
+        )}
+      </div>
+      {/* Desktop : table HeroUI Pro */}
+      <div className="hidden md:block">
+        <KayvilaDataGrid
+          aria-label="Réservations de la villa"
+          columns={columns}
+          data={bookings}
+          getRowId={(item) => item.id}
+        />
+      </div>
+    </>
   );
 }
