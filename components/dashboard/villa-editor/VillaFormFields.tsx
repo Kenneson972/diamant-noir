@@ -104,6 +104,10 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
             <Input id="vf-capacity" type="number" min="1" defaultValue={form.capacity as string || ""} placeholder="6" className="text-sm" />
           </div>
           <div>
+            <FieldLabel htmlFor="vf-bedrooms" label="Chambres" />
+            <input id="vf-bedrooms" type="number" min="0" max="20" step="1" defaultValue={(form.bedrooms ?? 0) as number} placeholder="3" className="w-full rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 placeholder:text-muted/50 focus:border-navy-900/30 focus:outline-none" />
+          </div>
+          <div>
             <FieldLabel htmlFor="vf-bathrooms" label="Salles de bain" />
             <Input id="vf-bathrooms" type="number" min="0" step="1" defaultValue={form.bathrooms_count as string || ""} placeholder="2" className="text-sm" />
           </div>

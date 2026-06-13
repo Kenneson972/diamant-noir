@@ -132,8 +132,8 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       ];
 
       const numberFields: [string, number][] = [
-        ["vf-price", 0], ["vf-capacity", 1], ["vf-bathrooms", 0],
-        ["vf-surface", 0], ["vf-min-nights", 1],
+        ["vf-price", 0], ["vf-capacity", 1], ["vf-bedrooms", 0],
+        ["vf-bathrooms", 0], ["vf-surface", 0], ["vf-min-nights", 1],
       ];
 
       const floatFields = ["vf-latitude", "vf-longitude"];
@@ -163,8 +163,8 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       // Number fields
       const numMap: Record<string, string> = {
         price: "price_per_night", capacity: "capacity",
-        bathrooms: "bathrooms_count", surface: "surface_m2",
-        "min-nights": "min_nights",
+        bedrooms: "bedrooms", bathrooms: "bathrooms_count",
+        surface: "surface_m2", "min-nights": "min_nights",
       };
       numberFields.forEach(([id, def]) => {
         const el = document.getElementById(id) as HTMLInputElement | null;

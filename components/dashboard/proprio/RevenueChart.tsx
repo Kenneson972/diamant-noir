@@ -60,7 +60,7 @@ const RechartsInner = dynamic(
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(v: number) => `${v}€`}
+                tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}K€` : `${v}€`}
               />
               <Tooltip
                 cursor={{ fill: "#0B1D2E", fillOpacity: 0.03 }}
@@ -72,7 +72,10 @@ const RechartsInner = dynamic(
                 }}
                 formatter={(value: unknown) => {
                   const v = typeof value === "number" ? value : 0;
-                  return [`${v.toLocaleString("fr-FR")}€`, "Reversement net"];
+                  const display = v >= 1000
+                    ? `${(v / 1000).toFixed(1)}K€`
+                    : `${v.toLocaleString("fr-FR")}€`;
+                  return [display, "Reversement net"];
                 }}
               />
               <Bar
