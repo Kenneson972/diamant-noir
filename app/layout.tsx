@@ -95,10 +95,13 @@ export default async function RootLayout({
     : DEFAULT_CURRENCY;
 
   return (
-    <html
+      <html
       lang={initialLocale}
       className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
     >
+      <head>
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+      </head>
       <body className="bg-offwhite font-sans">
         <script
           type="application/ld+json"

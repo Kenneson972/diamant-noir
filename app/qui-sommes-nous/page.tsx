@@ -15,9 +15,10 @@ import { PageHero } from "@/components/marketing/PageHero";
 import { ScrollReveal } from "@/components/marketing/ScrollRevealWrapper";
 
 export const metadata = {
-  title: "Qui sommes-nous | Kayvila",
+  title: "Qui sommes-nous",
   description:
     "La mission de Kayvila : conciergerie de luxe, entretien et gestion de villas d'exception en Martinique.",
+  alternates: { canonical: "/qui-sommes-nous" },
 };
 
 const ADN = [

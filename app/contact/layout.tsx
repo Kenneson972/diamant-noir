@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact | Kayvila",
+  title: "Contact",
   description:
     "Contactez Kayvila pour toute question sur nos villas, la conciergerie de luxe en Martinique ou la gestion locative. Par email ou téléphone.",
   openGraph: {
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     description:
       "Contactez Kayvila pour toute question sur nos villas, la conciergerie de luxe en Martinique.",
   },
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

@@ -8,7 +8,8 @@ import { PageHero } from "@/components/marketing/PageHero";
 export const metadata: Metadata = {
   title: "FAQ | Conciergerie Kayvila — Martinique",
   description:
-    "Tout savoir sur notre commission, les services inclus, la gestion dynamique des prix, le pack de démarrage, les reversements et les modalités contractuelles.",
+    "Questions fréquentes sur la conciergerie Kayvila : réservation, annulation, services inclus, gestion locative en Martinique.",
+  alternates: { canonical: "/faq" },
 };
 
 export default function FaqPage() {

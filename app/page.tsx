@@ -21,6 +21,7 @@ export const metadata: Metadata = {
       "Villas d'exception, réservation en ligne, entretien et gestion locative en Martinique.",
     images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
   },
+  alternates: { canonical: "/" },
 };
 
 /** Petit helper pour fetch sans le fetch patched de Next.js */

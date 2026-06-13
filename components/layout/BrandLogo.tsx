@@ -65,7 +65,7 @@ export function BrandLogo({
 
   const decorativeIconHomeLink =
     linkToHome && !showWordmark && Boolean(linkAriaLabel);
-  const imgAlt = showWordmark ? "" : decorativeIconHomeLink ? "" : "Kayvila";
+  const imgAlt = "Kayvila";
 
   const inner = (
     <>
