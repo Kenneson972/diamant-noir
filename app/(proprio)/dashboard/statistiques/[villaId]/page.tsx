@@ -6,6 +6,17 @@ import type { Metadata } from "next";
 import { PerformanceMetrics } from "@/components/dashboard/proprio/PerformanceMetrics";
 import { OccupancyChart } from "@/components/dashboard/proprio/OccupancyChart";
 import { DEFAULT_SEASONS } from "@/data/seasons";
+import { SeasonalStatsSection } from "@/components/dashboard/proprio/SeasonalStatsSection";
+import type { SeasonRow, MonthRow, ThresholdPoint } from "@/components/dashboard/proprio/SeasonalStatsSection";
+import {
+  format as formatDate,
+  parseISO,
+  getDaysInMonth,
+  isWithinInterval,
+  startOfMonth,
+  endOfMonth,
+} from "date-fns";
+import { fr } from "date-fns/locale";
 
 export const metadata: Metadata = {
   title: "Statistiques — Kayvila",
@@ -76,7 +87,7 @@ export default async function StatistiquesVillaPage({ params }: PageProps) {
 
   const { data: bookings } = await supabase
     .from("bookings")
-    .select("start_date, end_date")
+    .select("start_date, end_date, price")
     .eq("villa_id", villaId)
     .eq("status", "confirmed")
     .gte("start_date", twelveMonthsAgo.toISOString().split("T")[0]);
@@ -136,6 +147,111 @@ export default async function StatistiquesVillaPage({ params }: PageProps) {
     return sum + Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)));
   }, 0);
 
+  // ── Seasonal stats computation ───────────────────────────────────────────
+  const { data: seasonsConfig } = await supabase
+    .from("seasons_config")
+    .select("season_type, start_date, end_date, occupancy_threshold")
+    .eq("year", new Date().getFullYear());
+
+  const SEASON_LABELS_MAP: Record<string, string> = {
+    high: "Haute saison",
+    school_holidays: "Vacances scolaires",
+    mid: "Moyenne saison",
+    low: "Basse saison",
+  };
+
+  const nowDate = new Date();
+  const monthly: MonthRow[] = [];
+  const thresholdLine: ThresholdPoint[] = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(nowDate.getFullYear(), nowDate.getMonth() - i, 1);
+    const mStart = startOfMonth(d);
+    const mEnd = endOfMonth(d);
+    const totalDays = getDaysInMonth(d);
+    const mLabel = formatDate(d, "MMM", { locale: fr });
+
+    let nights = 0;
+    let revenue = 0;
+
+    for (const b of bookings ?? []) {
+      const bStart = parseISO(b.start_date);
+      const bEnd = parseISO(b.end_date ?? b.start_date);
+      const overlapStart = bStart < mStart ? mStart : bStart;
+      const overlapEnd = bEnd > mEnd ? mEnd : bEnd;
+      if (overlapEnd > overlapStart) {
+        nights += Math.round(
+          (overlapEnd.getTime() - overlapStart.getTime()) / 86400000
+        );
+      }
+      if (bStart >= mStart && bStart <= mEnd) {
+        // Commission 25% par défaut
+        revenue += ((b as { price?: number }).price ?? 0) * 0.75;
+      }
+    }
+
+    const occupancy = Math.min(100, Math.round((nights / totalDays) * 100));
+
+    const midMonth = new Date(d.getFullYear(), d.getMonth(), 15);
+    const seasonCfg = (seasonsConfig ?? []).find((s) =>
+      isWithinInterval(midMonth, {
+        start: parseISO(s.start_date),
+        end: parseISO(s.end_date),
+      })
+    );
+
+    monthly.push({
+      month: mLabel,
+      monthIndex: d.getMonth(),
+      season: seasonCfg ? SEASON_LABELS_MAP[seasonCfg.season_type] : null,
+      seasonType: seasonCfg?.season_type ?? null,
+      nights,
+      occupancy,
+      netRevenue: Math.round(revenue),
+      avgNightPrice: nights > 0 ? Math.round(revenue / nights) : 0,
+    });
+
+    thresholdLine.push({
+      month: mLabel,
+      actual: occupancy,
+      threshold: seasonCfg?.occupancy_threshold ?? 50,
+    });
+  }
+
+  // Agrégation par saison
+  const seasonalMap: Record<
+    string,
+    { nights: number; revenue: number; type: string; occupancySum: number; count: number }
+  > = {};
+  for (const row of monthly) {
+    if (!row.seasonType) continue;
+    if (!seasonalMap[row.seasonType]) {
+      seasonalMap[row.seasonType] = {
+        nights: 0,
+        revenue: 0,
+        type: row.seasonType,
+        occupancySum: 0,
+        count: 0,
+      };
+    }
+    seasonalMap[row.seasonType].nights += row.nights;
+    seasonalMap[row.seasonType].revenue += row.netRevenue;
+    seasonalMap[row.seasonType].occupancySum += row.occupancy;
+    seasonalMap[row.seasonType].count += 1;
+  }
+
+  const seasonal: SeasonRow[] = Object.entries(seasonalMap).map(
+    ([type, v]) => ({
+      season: SEASON_LABELS_MAP[type] ?? type,
+      type: type as SeasonRow["type"],
+      nights: v.nights,
+      occupancy: Math.round(v.occupancySum / Math.max(1, v.count)),
+      netRevenue: v.revenue,
+      avgNightPrice: v.nights > 0 ? Math.round(v.revenue / v.nights) : 0,
+    })
+  );
+  // ─────────────────────────────────────────────────────────────────────────
+
   return (
     <div className="space-y-6">
       <Link
@@ -161,6 +277,12 @@ export default async function StatistiquesVillaPage({ params }: PageProps) {
         data={occupancyData}
         hasEnoughHistory={hasEnoughHistory}
         seasons={seasons}
+      />
+
+      <SeasonalStatsSection
+        seasonal={seasonal}
+        monthly={monthly}
+        thresholdLine={thresholdLine}
       />
     </div>
   );
