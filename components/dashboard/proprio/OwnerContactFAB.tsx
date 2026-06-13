@@ -100,7 +100,7 @@ export function OwnerContactFAB({ ownerId, villas }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-navy/90"
+        className="fixed bottom-24 right-6 z-40 flex items-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-navy/90"
         aria-label="Contacter Kayvila"
       >
         <Mail size={16} />
