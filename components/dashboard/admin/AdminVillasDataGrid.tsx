@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
-import { Building2, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
+import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
 import { cn } from "@/lib/utils";
 
 export type AdminVillaRow = {
@@ -40,23 +40,13 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     {
       id: "image",
       header: "",
-      width: 56,
-      cell: (item) => {
-        const imgSrc = item.image_url ?? item.image_urls?.[0];
-        return imgSrc ? (
-          <Image
-            src={imgSrc}
-            alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded object-cover"
-          />
-        ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded bg-navy/5">
-            <Building2 className="h-5 w-5 text-navy/20" aria-hidden />
-          </div>
-        );
-      },
+      width: 76,
+      cell: (item) => (
+        <VillaThumb
+          src={item.image_url ?? item.image_urls?.[0]}
+          alt={item.name}
+        />
+      ),
     },
     {
       id: "name",

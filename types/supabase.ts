@@ -98,6 +98,24 @@ export type Database = {
         }
         Relationships: []
       }
+      banned_sessions: {
+        Row: {
+          created_at: string | null
+          reason: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          reason?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          reason?: string | null
+          session_id?: string
+        }
+        Relationships: []
+      }
       booking_shares: {
         Row: {
           booking_id: string
@@ -155,6 +173,7 @@ export type Database = {
           stripe_session_id: string | null
           total_price_cents: number | null
           villa_id: string | null
+          welcome_booklet_sent_at: string | null
         }
         Insert: {
           checklist?: Json | null
@@ -180,6 +199,7 @@ export type Database = {
           stripe_session_id?: string | null
           total_price_cents?: number | null
           villa_id?: string | null
+          welcome_booklet_sent_at?: string | null
         }
         Update: {
           checklist?: Json | null
@@ -205,17 +225,11 @@ export type Database = {
           stripe_session_id?: string | null
           total_price_cents?: number | null
           villa_id?: string | null
+          welcome_booklet_sent_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "bookings_villa_id_fkey"
-            columns: ["villa_id"]
-            isOneToOne: false
-            referencedRelation: "villas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_bookings_villa"
             columns: ["villa_id"]
             isOneToOne: false
             referencedRelation: "villas"
@@ -307,6 +321,30 @@ export type Database = {
           opening_hours?: Json | null
           services?: Json | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      conversation_memory: {
+        Row: {
+          conversation_data: Json
+          created_at: string | null
+          id: number
+          metadata: Json | null
+          session_id: string
+        }
+        Insert: {
+          conversation_data: Json
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          session_id: string
+        }
+        Update: {
+          conversation_data?: Json
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          session_id?: string
         }
         Relationships: []
       }
@@ -472,6 +510,85 @@ export type Database = {
           },
         ]
       }
+      owner_contact_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          owner_id: string
+          resolved_at: string | null
+          subject: string
+          villa_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          owner_id: string
+          resolved_at?: string | null
+          subject: string
+          villa_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          owner_id?: string
+          resolved_at?: string | null
+          subject?: string
+          villa_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "owner_contact_messages_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "villas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      owner_stats_snapshots: {
+        Row: {
+          computed_at: string
+          id: string
+          monthly: Json
+          owner_id: string
+          seasonal: Json
+          threshold_line: Json
+          villa_id: string | null
+          year: number
+        }
+        Insert: {
+          computed_at?: string
+          id?: string
+          monthly?: Json
+          owner_id: string
+          seasonal?: Json
+          threshold_line?: Json
+          villa_id?: string | null
+          year: number
+        }
+        Update: {
+          computed_at?: string
+          id?: string
+          monthly?: Json
+          owner_id?: string
+          seasonal?: Json
+          threshold_line?: Json
+          villa_id?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "owner_stats_snapshots_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "villas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           allergies: string | null
@@ -571,7 +688,10 @@ export type Database = {
           guest_id: string | null
           id: string
           message: string | null
+          priority: string
+          resolved_at: string | null
           status: string
+          taken_at: string | null
           type: string
           updated_at: string
         }
@@ -583,7 +703,10 @@ export type Database = {
           guest_id?: string | null
           id?: string
           message?: string | null
+          priority?: string
+          resolved_at?: string | null
           status?: string
+          taken_at?: string | null
           type: string
           updated_at?: string
         }
@@ -595,7 +718,10 @@ export type Database = {
           guest_id?: string | null
           id?: string
           message?: string | null
+          priority?: string
+          resolved_at?: string | null
           status?: string
+          taken_at?: string | null
           type?: string
           updated_at?: string
         }
@@ -735,6 +861,36 @@ export type Database = {
         }
         Relationships: []
       }
+      seasons_config: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          occupancy_threshold: number
+          season_type: string
+          start_date: string
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          occupancy_threshold: number
+          season_type: string
+          start_date: string
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          occupancy_threshold?: number
+          season_type?: string
+          start_date?: string
+          year?: number
+        }
+        Relationships: []
+      }
       stripe_disputes: {
         Row: {
           amount_cents: number | null
@@ -867,6 +1023,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tasks_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "villas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      toxicity_log: {
+        Row: {
+          created_at: string | null
+          id: number
+          message: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          message?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          message?: string | null
+          session_id?: string
+        }
+        Relationships: []
+      }
+      villa_date_blocks: {
+        Row: {
+          created_at: string
+          created_by: string
+          end_date: string
+          id: string
+          origin: string
+          reason: string | null
+          start_date: string
+          villa_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          end_date: string
+          id?: string
+          origin?: string
+          reason?: string | null
+          start_date: string
+          villa_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          end_date?: string
+          id?: string
+          origin?: string
+          reason?: string | null
+          start_date?: string
+          villa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "villa_date_blocks_villa_id_fkey"
             columns: ["villa_id"]
             isOneToOne: false
             referencedRelation: "villas"
@@ -1031,8 +1249,11 @@ export type Database = {
           amenities: Json | null
           amenities_import_labels: string[] | null
           bathrooms_count: number | null
+          bedrooms: number
           booking_terms: Json | null
+          cancellation_notes: string | null
           cancellation_policy: string | null
+          cancellation_template: string | null
           capacity: number
           check_in_time: string | null
           check_out_time: string | null
@@ -1071,6 +1292,7 @@ export type Database = {
           seasonal_prices: Json | null
           slug: string | null
           surface_m2: number | null
+          welcome_booklet_url: string | null
           wifi_name: string | null
           wifi_password: string | null
         }
@@ -1081,8 +1303,11 @@ export type Database = {
           amenities?: Json | null
           amenities_import_labels?: string[] | null
           bathrooms_count?: number | null
+          bedrooms?: number
           booking_terms?: Json | null
+          cancellation_notes?: string | null
           cancellation_policy?: string | null
+          cancellation_template?: string | null
           capacity?: number
           check_in_time?: string | null
           check_out_time?: string | null
@@ -1121,6 +1346,7 @@ export type Database = {
           seasonal_prices?: Json | null
           slug?: string | null
           surface_m2?: number | null
+          welcome_booklet_url?: string | null
           wifi_name?: string | null
           wifi_password?: string | null
         }
@@ -1131,8 +1357,11 @@ export type Database = {
           amenities?: Json | null
           amenities_import_labels?: string[] | null
           bathrooms_count?: number | null
+          bedrooms?: number
           booking_terms?: Json | null
+          cancellation_notes?: string | null
           cancellation_policy?: string | null
+          cancellation_template?: string | null
           capacity?: number
           check_in_time?: string | null
           check_out_time?: string | null
@@ -1171,10 +1400,40 @@ export type Database = {
           seasonal_prices?: Json | null
           slug?: string | null
           surface_m2?: number | null
+          welcome_booklet_url?: string | null
           wifi_name?: string | null
           wifi_password?: string | null
         }
         Relationships: []
+      }
+      wishlist: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          villa_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          villa_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          villa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "villas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -1220,13 +1479,6 @@ export type Database = {
             referencedRelation: "villas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_bookings_villa"
-            columns: ["villa_id"]
-            isOneToOne: false
-            referencedRelation: "villas"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
@@ -1234,6 +1486,10 @@ export type Database = {
       activate_villa_feeds: {
         Args: { p_platforms: Json; p_villa_id: string }
         Returns: undefined
+      }
+      check_booking_conflict: {
+        Args: { p_end: string; p_start: string; p_villa_id: string }
+        Returns: number
       }
       is_staff_admin: { Args: never; Returns: boolean }
     }
@@ -1271,13 +1527,13 @@ export type Tables<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
         DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+  ? (DefaultSchema["Tables"] &
+      DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
     : never
+  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
@@ -1297,12 +1553,12 @@ export type TablesInsert<
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
     : never
+  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
@@ -1322,12 +1578,12 @@ export type TablesUpdate<
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
     : never
+  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
@@ -1343,8 +1599,8 @@ export type Enums<
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
@@ -1360,8 +1616,8 @@ export type CompositeTypes<
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never
 
 export const Constants = {
   public: {

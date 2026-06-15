@@ -31,6 +31,7 @@ type NotifType =
   | "availability_alert"
   | "system"
   | "request_update"
+  | "request_urgent"
   | "checkin_reminder"
   | "checkout_reminder"
   | "new_message";
@@ -54,6 +55,7 @@ const TYPE_CONFIG: Record<NotifType, { icon: any; color: string; bg: string }> =
   availability_alert: { icon: Bell,         color: "text-orange-500", bg: "bg-orange-50" },
   system:             { icon: Info,           color: "text-navy/60",    bg: "bg-navy/5" },
   request_update:     { icon: MessageCircle,  color: "text-gold",       bg: "bg-gold/10" },
+  request_urgent:     { icon: AlertTriangle,   color: "text-red-500",    bg: "bg-red-50" },
   checkin_reminder:   { icon: Key,            color: "text-emerald-500",bg: "bg-emerald-50" },
   checkout_reminder:  { icon: DoorOpen,       color: "text-amber-500",  bg: "bg-amber-50" },
   new_message:        { icon: MessageCircle,  color: "text-blue-500",   bg: "bg-blue-50" },
@@ -93,11 +95,18 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
       .select("*")
       .order("created_at", { ascending: false })
       .limit(20);
-    if (userId) query = query.eq("user_id", userId);
+    if (role === "admin") {
+      // Les admins voient leurs notifs + les notifs « broadcast » (user_id null,
+      // ex. demandes urgentes voyageurs). Les autres rôles ne voient JAMAIS les null.
+      if (userId) query = query.or(`user_id.eq.${userId},user_id.is.null`);
+      else query = query.is("user_id", null);
+    } else if (userId) {
+      query = query.eq("user_id", userId);
+    }
     const { data } = await query;
     if (data) setNotifications(data as Notification[]);
     setLoading(false);
-  }, [supabase, userId]);
+  }, [supabase, userId, role]);
 
   useEffect(() => {
     fetchNotifications();
@@ -114,6 +123,17 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
         { event: "INSERT", schema: "public", table: "notifications" },
         (payload: any) => {
           const newNotif = payload.new as Notification;
+          const targetUserId = (payload.new as { user_id?: string | null }).user_id ?? null;
+
+          // Le canal Realtime n'est pas filtré côté serveur : on applique ici la
+          // même règle que la requête initiale.
+          //  - admin : ses propres notifs + les broadcasts (user_id null)
+          //  - autres rôles : uniquement leurs propres notifs (jamais les null)
+          const isForMe =
+            role === "admin"
+              ? targetUserId === null || (userId != null && targetUserId === userId)
+              : userId != null && targetUserId === userId;
+          if (!isForMe) return;
 
           // Animation de la cloche
           setAnimating(true);
@@ -138,7 +158,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, [supabase, userId, role]);
 
   // ── Fermer le dropdown au clic extérieur ─────────────────────────────
   useEffect(() => {

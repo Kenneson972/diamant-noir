@@ -184,3 +184,24 @@
 - `app/dashboard/proprio/` était du legacy admin — les parenthèses `(proprio)` font la différence (route group)
 - Toujours vérifier avec `grep` les références avant de supprimer un dossier
 - Ne pas confondre `components/dashboard/proprio/` (composants partagés) avec `app/dashboard/proprio/` (pages legacy)
+
+---
+
+## 2026-06-15 — Corrections Batch (4 vagues, 15 tâches) ✅
+
+### Fait
+- **Spec + Plan superpowers** : `docs/superpowers/specs|plans/2026-06-15-corrections-batch*`
+- **Vague 1 (CSS)** : sidebar `no-scrollbar`, messagerie `min-h-[calc(100dvh-9rem)]` ; header hover + calendrier réservation = déjà OK (aucun changement)
+- **Vague 2** : thumbnail villa 60px (`VillaThumb`), recherche + tri alpha réservations (`useMemo`)
+- **Vague 3** : Vitest installé (dev), mini-carte fiche villa (`VillaDetailMiniMap`), historique résas par villa
+- **Vague 4** : SLA demandes (`lib/sla.ts` + tests, toggle urgent, badges/tri admin, NotificationBell broadcast), blocages `villa_date_blocks` motif+origine + création admin (`AdminVillaBlocks`), champs formulaire villa
+- **Migrations** : `requests` (+priority/taken_at/resolved_at), `villa_date_blocks` (+origin), policy RLS admin sur villa_date_blocks. M2 (villas) annulée car redondante.
+
+### Règles apprises (importantes)
+- **TOUJOURS régénérer/vérifier le schéma Supabase LIVE avant de planifier des colonnes DB.** Le `types/supabase.ts` local était PÉRIMÉ → j'ai planifié `bedrooms_count` et `house_manual_pdf_url` qui dupliquaient `bedrooms` et `welcome_booklet_url` existants. Colonnes ajoutées puis droppées.
+- **Plusieurs "corrections" client étaient des features DÉJÀ présentes** (thumbnail villa à 40px, table "Ventilation par villa") → toujours vérifier l'existant AVANT d'ajouter. Souvent un problème de découvrabilité/taille, pas une feature manquante.
+- **Env vars lues côté client = préfixe `NEXT_PUBLIC_` obligatoire** (page admin demandes est `"use client"` → seuils SLA en `NEXT_PUBLIC_SLA_*`).
+- **`villa_date_blocks`** (PAS `owner_blocks`) stocke les blocages ; `reason` = Motif (existe), RLS `owner_manage_date_blocks` réservée au propriétaire → ajout policy `admin_manage_date_blocks` avec `is_staff_admin()` pour que l'admin puisse bloquer.
+- **`notifications` : `user_id` null = broadcast.** NotificationBell doit filtrer côté client par rôle (admin voit null+own, guest voit own uniquement) — ET garder le handler Realtime (sinon fuite live aux guests). Insert client OK car policy `authenticated_insert with check (true)`.
+- **`is_staff_admin()`** = fonction canonique d'auth admin (service_role OU jwt role admin OU profiles.role='admin') — l'utiliser dans les policies RLS admin.
+- SLA "rappel 6h" = calculé au rendu (badge couleur + tri), pas de cron (respecte NE PAS TOUCHER send-*).

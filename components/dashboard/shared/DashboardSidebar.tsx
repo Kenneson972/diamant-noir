@@ -72,7 +72,7 @@ export function DashboardSidebar({
       </Link>
 
       <nav
-        className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-6"
+        className="no-scrollbar min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-6"
         aria-label={`Navigation ${roleLabel.toLowerCase()}`}
       >
         {menu.map((item) => {

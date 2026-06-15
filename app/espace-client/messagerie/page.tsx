@@ -124,7 +124,7 @@ export default function MessageriePage() {
   }
 
   return (
-    <div className="flex min-h-[min(100dvh,900px)] flex-col">
+    <div className="flex min-h-[calc(100dvh-9rem)] flex-col md:min-h-[calc(100dvh-10rem)]">
       <PageTopbar title="Messagerie" />
 
       {booking ? (

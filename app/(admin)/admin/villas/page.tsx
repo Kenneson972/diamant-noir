@@ -22,6 +22,7 @@ interface VillaRow {
   owner_id: string | null;
   is_published: boolean;
   image_url: string | null;
+  image_urls?: string[] | null;
   owner_name: string | null;
   bookingCount: number;
   confirmedRevenue: number;
