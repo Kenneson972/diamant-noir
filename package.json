@@ -9,7 +9,8 @@
     "build:dev": "sh -c 'for p in 3000 3001; do lsof -ti tcp:$p 2>/dev/null | xargs kill -9 2>/dev/null; done; npm run build && npm run dev -- -p 3000'",
     "start": "next start",
     "lint": "next lint",
-    "check:schema": "node scripts/check-supabase-schema.mjs"
+    "check:schema": "node scripts/check-supabase-schema.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@heroui-pro/react": "^1.0.0-beta.5",
@@ -64,6 +65,7 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.5.4",
-    "vercel": "^53.3.1"
+    "vercel": "^53.3.1",
+    "vitest": "^4.1.9"
   }
 }
