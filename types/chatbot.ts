@@ -293,6 +293,7 @@ export interface ChatbotApiInput {
     villas: VillaContextItem[];
     availableAmenities: string[];
     villaCount: number;
+    conciergerieFacts?: readonly string[];
   };
 
   // Capabilities déclarées (guide le workflow n8n)

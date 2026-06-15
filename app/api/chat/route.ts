@@ -3,6 +3,7 @@ import { sanitizeUserMessage, sanitizeConversationSummary, sanitizeLeadData } fr
 import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chatbot/villa-context";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
+import { CONCIERGERIE_FACTS } from "@/lib/chatbot/conciergerie-context";
 import type {
   ChatbotRequest,
   ChatbotApiInput,
@@ -177,6 +178,7 @@ export async function POST(request: Request) {
       villas,
       availableAmenities,
       villaCount: villas.length,
+      conciergerieFacts: CONCIERGERIE_FACTS,
     },
     capabilities: {
       canVerifyAvailability: true,   // A1 : dispos pré-calculées injectées dans context.villas
