@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Upload } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DropZone } from "@heroui-pro/react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { SortableImage } from "@/components/dashboard/SortableImage";
@@ -117,10 +116,10 @@ export function VillaImageManager({
             JPEG, PNG, WebP ou AVIF — max 5 Mo par fichier
           </DropZone.Description>
           <DropZone.Trigger>
-            <Button type="button" size="sm" variant="outline" disabled={uploading}>
-              <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+            <span className="inline-flex items-center justify-center gap-1.5 rounded-md border border-navy/15 bg-white px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-navy/5 cursor-pointer">
+              <Upload className="h-3.5 w-3.5" aria-hidden />
               {uploading ? "Upload..." : "Parcourir"}
-            </Button>
+            </span>
           </DropZone.Trigger>
         </DropZone.Area>
         <DropZone.Input accept="image/jpeg,image/png,image/webp,image/avif" onSelect={handleSelect} />
