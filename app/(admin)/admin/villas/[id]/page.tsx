@@ -7,6 +7,8 @@ import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/Villa
 import type { VillaPublishChecklistItem } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
 import { AdminVillaEditClient } from "./AdminVillaEditClient";
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
+import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
+import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -88,6 +90,60 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
         {/* Sidebar */}
         <aside className="space-y-4">
           <VillaPublishChecklist items={checklistItems} />
+
+          {/* Mini-map sous la disponibilité */}
+          {villa.latitude != null && villa.longitude != null ? (
+            <div className="rounded-2xl border border-navy/8 bg-white p-4 shadow-sm">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-navy/50">
+                Localisation
+              </h3>
+              <div className="h-[220px] overflow-hidden rounded-xl border border-navy/10 md:h-[280px]">
+                <VillaDetailMiniMap
+                  latitude={villa.latitude}
+                  longitude={villa.longitude}
+                  name={villa.name ?? "Villa"}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {/* Historique des réservations */}
+          {bookings.length > 0 && (() => {
+            const now = new Date().toISOString();
+            const upcoming = bookings.filter((b) => (b.end_date ?? "") >= now);
+            const past = bookings.filter((b) => (b.end_date ?? "") < now);
+            const villaImageSrc =
+              (villa.image_url as string | null) ??
+              (Array.isArray(villa.image_urls)
+                ? (villa.image_urls as string[])[0]
+                : null);
+            return (
+              <div className="rounded-2xl border border-navy/8 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-navy/50">
+                  Historique
+                </h3>
+                <div className="space-y-0.5">
+                  {[...upcoming, ...past].map((b) => (
+                    <div key={b.id} className="flex items-center gap-3 border-b border-navy/8 py-2">
+                      <VillaThumb
+                        src={villaImageSrc}
+                        alt={b.guest_name ?? "Réservation"}
+                        size={48}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm text-navy">{b.guest_name ?? "Client"}</p>
+                        <p className="text-[11px] text-navy/50">
+                          {b.start_date ? new Date(b.start_date).toLocaleDateString("fr-FR") : "—"}{" "}→{" "}
+                          {b.end_date ? new Date(b.end_date).toLocaleDateString("fr-FR") : "—"}
+                        </p>
+                      </div>
+                      <span className="text-[11px] uppercase tracking-wide text-navy/45">{b.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="rounded-2xl border border-navy/8 bg-white p-5 shadow-sm space-y-3">
             <a
