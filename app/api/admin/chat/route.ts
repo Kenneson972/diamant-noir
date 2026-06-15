@@ -6,11 +6,37 @@ import { requireAdmin, AuthError } from "@/lib/auth/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// ─── Rate limiter ──────────────────────────────────────────────────────────────
+const _rateMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 30;
+const RATE_WINDOW = 60_000;
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = _rateMap.get(userId);
+  if (!entry || now > entry.resetAt) {
+    _rateMap.set(userId, { count: 1, resetAt: now + RATE_WINDOW });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 export async function POST(request: Request) {
   try {
-    await requireAdmin(request);
+    const userId = await requireAdmin(request);
+
+    // Rate limiting
+    if (!checkRateLimit(userId)) {
+      return NextResponse.json(
+        { error: "Trop de requêtes. Réessayez dans une minute." },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
 
     const admin = supabaseAdmin();
+    const request_id = crypto.randomUUID();
 
     const body = await request.json();
     const { message, sessionid, history } = body;
@@ -198,7 +224,6 @@ export async function POST(request: Request) {
       process.env.N8N_ADMIN_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
 
     if (!webhookURL) {
-      // Mode démo sans webhook
       return NextResponse.json({
         success: true,
         response: `[MODE DÉMO] ${villas.length} villas · ${tasks.length} tâches · ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui.`,
@@ -209,25 +234,59 @@ export async function POST(request: Request) {
           "Quels check-ins sont prévus cette semaine ?",
           "Y a-t-il des tâches en retard ?",
         ],
+        request_id,
       });
     }
 
-    const webhookRes = await fetch(webhookURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: message.trim(),
-        sessionid,
-        history: history || [],
-        role: "admin",
-        context: contextData,
-        source: "admin_dashboard",
-      }),
-    });
+    // ── Appel n8n avec timeout + fallback ──
+    let webhookRes: Response;
+    try {
+      webhookRes = await fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: message.trim(),
+          sessionid,
+          history: history || [],
+          role: "admin",
+          request_id,
+          context: contextData,
+          source: "admin_dashboard",
+        }),
+        signal: AbortSignal.timeout(20_000),
+      });
+    } catch (fetchErr) {
+      console.error("[admin-chat] webhook fetch error", fetchErr);
+      return NextResponse.json({
+        success: true,
+        response: `[Fallback] Mon analyse est temporairement indisponible.\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui, ${tasks.filter((t) => t.status !== "done" && t.due_date && new Date(t.due_date) < today).length} tâches en retard.`,
+        action: "SHOW_STATS",
+        action_data: contextData,
+        suggested_prompts: [
+          "Quel est mon taux d'occupation ce mois ?",
+          "Y a-t-il des tâches en retard ?",
+        ],
+        request_id,
+        metadata: { source: "local", reason: "n8n_unreachable" },
+      });
+    }
 
-    if (!webhookRes.ok) throw new Error(`Webhook error: ${webhookRes.status}`);
+    if (!webhookRes.ok) {
+      console.error("[admin-chat] webhook status", webhookRes.status);
+      return NextResponse.json({
+        success: true,
+        response: `[Fallback] n8n a rencontré une erreur (${webhookRes.status}).\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui.`,
+        action: "SHOW_STATS",
+        action_data: contextData,
+        suggested_prompts: [
+          "Quel est mon taux d'occupation ce mois ?",
+        ],
+        request_id,
+        metadata: { source: "local", reason: `n8n_status_${webhookRes.status}` },
+      });
+    }
 
-    const data = await webhookRes.json();
+    const data = await webhookRes.json().catch(() => ({}));
 
     // ─── ACTION HANDLERS (l'IA qui agit) ─────────────────────────────────────
     const action = data.action || null;

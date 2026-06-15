@@ -352,11 +352,72 @@ export async function POST(request: Request) {
       });
     }
 
+    // ── ACTION HANDLERS (l'IA qui agit) ──────────────────────────────────────
+    const action = (data.action || "SHOW_STATS") as OwnerAssistantAction;
+    const actionData = data.action_data || {};
+    let actionResult: { success: boolean; error?: string; [key: string]: unknown } | null = null;
+
+    if (action === "CREATE_TASK" && actionData.task) {
+      const task = actionData.task as {
+        villa_id?: string; title?: string; type?: string;
+        due_date?: string; assigned_to?: string;
+      };
+      if (task.villa_id && task.title) {
+        const { data: created, error } = await admin.from("tasks").insert({
+          villa_id: task.villa_id,
+          title: task.title,
+          type: task.type || "other",
+          status: "pending",
+          due_date: task.due_date || null,
+          assigned_to: task.assigned_to || null,
+        }).select("id").single();
+        actionResult = { success: !error, task_id: created?.id, error: error?.message };
+      }
+    }
+
+    if (action === "COMPLETE_TASK" && actionData.task_id) {
+      const { error } = await admin.from("tasks")
+        .update({ status: "done", completed_at: new Date().toISOString() })
+        .eq("id", actionData.task_id);
+      actionResult = { success: !error, error: error?.message };
+    }
+
+    if (action === "BLOCK_DATE" && actionData.block) {
+      const block = actionData.block as {
+        villa_id?: string; start_date?: string; end_date?: string;
+        reason?: string;
+      };
+      if (block.villa_id && block.start_date && block.end_date) {
+        const { data: created, error } = await admin.from("villa_date_blocks").insert({
+          villa_id: block.villa_id,
+          start_date: block.start_date,
+          end_date: block.end_date,
+          reason: block.reason || "Blocage via Copilot",
+          origin: "Kayvila",
+          created_by: user.id,
+        }).select("id").single();
+        actionResult = { success: !error, block_id: created?.id, error: error?.message };
+      }
+    }
+
+    if (action === "UPDATE_BOOKING" && actionData.booking_id) {
+      const updates: Record<string, unknown> = {};
+      if (actionData.status) updates.status = actionData.status;
+      if (actionData.payment_status) updates.payment_status = actionData.payment_status;
+      if (Object.keys(updates).length > 0) {
+        const { error } = await admin.from("bookings")
+          .update(updates)
+          .eq("id", actionData.booking_id);
+        actionResult = { success: !error, error: error?.message };
+      }
+    }
+
     return NextResponse.json({
       success: true,
       response: data.response,
-      action: (data.action || "SHOW_STATS") as OwnerAssistantAction,
-      action_data: data.action_data || { context: statsPayload, strategic_alert },
+      action,
+      action_data: { context: statsPayload, strategic_alert, ...actionData },
+      action_result: actionResult,
       suggested_prompts: Array.isArray(data.suggested_prompts)
         ? data.suggested_prompts
         : DEFAULT_SUGGESTED_PROMPTS,
@@ -364,6 +425,7 @@ export async function POST(request: Request) {
         source: "n8n" as const,
         latency_ms,
         model: data.metadata?.model,
+        request_id,
       },
     });
   } catch (error) {
