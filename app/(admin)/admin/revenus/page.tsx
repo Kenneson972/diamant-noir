@@ -5,6 +5,7 @@ import { TrendingUp, BarChart3, DollarSign, Download, Building2 } from "lucide-r
 import { formatCurrency } from "@/lib/utils";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { revenueByVilla } from "@/lib/revenue/revenue-by-villa";
 
 type VillaRow = {
   name: string;
@@ -148,6 +149,41 @@ export default function AdminRevenusPage() {
         <div className="rounded-lg border bg-white p-8 text-center">
           <BarChart3 className="mx-auto h-10 w-10 text-gray-300" />
           <p className="mt-4 text-sm text-gray-500">Aucune donnée de revenus disponible.</p>
+        </div>
+      )}
+
+      {byVilla.length > 0 && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-3 text-sm font-semibold text-navy flex items-center gap-2">
+            <Building2 size={16} className="text-navy/40" />
+            Revenus par villa
+          </h3>
+          <div className="space-y-0.5">
+            {revenueByVilla(
+              byVilla.map((v) => ({
+                villa_id: v.name,
+                villa_name: v.name,
+                price: 0,
+                cleaning_fee: 0,
+                service_fee: 0,
+                total_price_cents: v.gross,
+              }))
+            ).map((v) => {
+              const match = byVilla.find((b) => b.name === v.villaId);
+              return (
+                <div
+                  key={v.villaId}
+                  className="flex items-center justify-between border-b border-navy/8 py-2 text-sm"
+                >
+                  <span className="text-navy">{v.villaName}</span>
+                  <span className="font-semibold text-navy">
+                    {(v.grossCents / 100).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                    <span className="ml-2 text-[11px] font-normal text-navy/45">{match?.count ?? v.bookingsCount} résa</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
