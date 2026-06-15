@@ -76,6 +76,50 @@ export function AdminVillaForm() {
     const imageUrl = (form.get("image_url") as string)?.trim();
     if (imageUrl) data.image_url = imageUrl;
 
+    const bedroomsRaw = form.get("bedrooms");
+    if (bedroomsRaw && String(bedroomsRaw).trim() !== "")
+      data.bedrooms = Number(bedroomsRaw);
+
+    const bathroomsRaw = form.get("bathrooms_count");
+    if (bathroomsRaw && String(bathroomsRaw).trim() !== "")
+      data.bathrooms_count = Number(bathroomsRaw);
+
+    const houseRules = (form.get("house_rules") as string)?.trim();
+    if (houseRules) data.house_rules = houseRules;
+
+    const safetyInfo = (form.get("safety_info") as string)?.trim();
+    if (safetyInfo) data.safety_info = safetyInfo;
+
+    const cancellationPolicy = (form.get("cancellation_policy") as string)?.trim();
+    if (cancellationPolicy) data.cancellation_policy = cancellationPolicy;
+
+    const cancellationNotes = (form.get("cancellation_notes") as string)?.trim();
+    if (cancellationNotes) data.cancellation_notes = cancellationNotes;
+
+    const equipmentInteriorRaw = (form.get("equipment_interior") as string)?.trim();
+    if (equipmentInteriorRaw)
+      data.equipment_interior = equipmentInteriorRaw
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean);
+
+    const equipmentExteriorRaw = (form.get("equipment_exterior") as string)?.trim();
+    if (equipmentExteriorRaw)
+      data.equipment_exterior = equipmentExteriorRaw
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean);
+
+    const welcomeBookletUrl = (form.get("welcome_booklet_url") as string)?.trim();
+    if (welcomeBookletUrl) data.welcome_booklet_url = welcomeBookletUrl;
+
+    const imageUrlsRaw = (form.get("image_urls") as string)?.trim();
+    if (imageUrlsRaw)
+      data.image_urls = imageUrlsRaw
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean);
+
     try {
       const res = await fetch("/api/dashboard/create-villa", {
         method: "POST",
@@ -303,6 +347,205 @@ export function AdminVillaForm() {
               <label htmlFor="is_published" className="text-sm text-navy/80">
                 Publier immédiatement sur le site
               </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Section : Capacités */}
+        <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm md:p-8">
+          <h2 className="mb-6 font-display-dashboard text-base font-semibold text-navy">
+            Capacités
+          </h2>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="bedrooms"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Nombre de chambres
+              </label>
+              <input
+                id="bedrooms"
+                name="bedrooms"
+                type="number"
+                min="0"
+                step="1"
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="3"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="bathrooms_count"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Nombre de salles de bain
+              </label>
+              <input
+                id="bathrooms_count"
+                name="bathrooms_count"
+                type="number"
+                min="0"
+                step="1"
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="2"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section : Équipements */}
+        <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm md:p-8">
+          <h2 className="mb-6 font-display-dashboard text-base font-semibold text-navy">
+            Équipements
+          </h2>
+          <div className="space-y-5">
+            <div>
+              <label
+                htmlFor="equipment_interior"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Équipements intérieurs (un par ligne)
+              </label>
+              <textarea
+                id="equipment_interior"
+                name="equipment_interior"
+                rows={4}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder={"Climatisation\nPiscine privée\nCuisine équipée"}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="equipment_exterior"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Équipements extérieurs (un par ligne)
+              </label>
+              <textarea
+                id="equipment_exterior"
+                name="equipment_exterior"
+                rows={3}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder={"Terrasse\nBarbecue\nJacuzzi"}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section : Règles & conditions */}
+        <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm md:p-8">
+          <h2 className="mb-6 font-display-dashboard text-base font-semibold text-navy">
+            Règles & conditions
+          </h2>
+          <div className="space-y-5">
+            <div>
+              <label
+                htmlFor="house_rules"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Règlement intérieur{" "}
+                <span className="text-xs font-normal text-navy/50">
+                  — Markdown supporté
+                </span>
+              </label>
+              <textarea
+                id="house_rules"
+                name="house_rules"
+                rows={5}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="Ex. Pas de fêtes, animaux non admis, check-out à 11h…"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="safety_info"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Sécurité et logement{" "}
+                <span className="text-xs font-normal text-navy/50">
+                  — Markdown supporté
+                </span>
+              </label>
+              <textarea
+                id="safety_info"
+                name="safety_info"
+                rows={4}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="Ex. Caméra extérieure, détecteur de fumée, extincteur…"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="cancellation_policy"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Conditions d'annulation{" "}
+                <span className="text-xs font-normal text-navy/50">
+                  — Markdown supporté
+                </span>
+              </label>
+              <textarea
+                id="cancellation_policy"
+                name="cancellation_policy"
+                rows={4}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="Ex. Remboursement intégral si annulation 14 jours avant…"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="cancellation_notes"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Notes d'annulation / lien (optionnel)
+              </label>
+              <input
+                id="cancellation_notes"
+                name="cancellation_notes"
+                type="text"
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="https://… ou note complémentaire"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section : Médias complémentaires */}
+        <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm md:p-8">
+          <h2 className="mb-6 font-display-dashboard text-base font-semibold text-navy">
+            Médias complémentaires
+          </h2>
+          <div className="space-y-5">
+            <div>
+              <label
+                htmlFor="welcome_booklet_url"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Livret d'accueil (URL PDF)
+              </label>
+              <input
+                id="welcome_booklet_url"
+                name="welcome_booklet_url"
+                type="url"
+                className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder="https://…/livret-accueil.pdf"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="image_urls"
+                className="mb-1 block text-sm font-medium text-navy"
+              >
+                Photos (une URL par ligne)
+              </label>
+              <textarea
+                id="image_urls"
+                name="image_urls"
+                rows={4}
+                className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                placeholder={"https://cdn.example.com/photo-1.jpg\nhttps://cdn.example.com/photo-2.jpg"}
+              />
             </div>
           </div>
         </div>
