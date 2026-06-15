@@ -279,13 +279,21 @@
 - **`vitest.config.ts` scopé à `lib/**` + `app/**` `.test.ts`** pour exclure les specs Playwright (`tests/*.spec.ts`). Toujours utiliser `npx vitest run` (pas `npm test`) pour les tests unitaires.
 - **Roadmap Agent C (L5,L7,L8,L10,L6,L11,L12) documentée dans le spec**, non implémentée Phase 1 : manque de données live suffisantes / source / cron. Ces métriques avancées font partie de Phase 2.
 
-### Revue de code finale — correctifs à faire AVANT prod (non encore corrigés)
-- **[Important] Rate limiting absent sur les 2 endpoints publics** `POST /api/chat/pre-book` et `/api/chat/owner-lead`. Non authentifiés (normal = chatbot) mais insèrent ligne DB + notif admin par requête → risque spam / soft-DoS du flux notifs admin (Realtime). Fix : extraire `checkRateLimit`/`getClientIP` (déjà dans `app/api/chat/route.ts`) dans un helper partagé et l'appliquer (~5-10/h par IP).
-- **[Important] `villaId` non validé comme UUID** dans `lib/chatbot/pre-book.ts` → un villaId non-UUID provoque un 500 Postgres au lieu d'un 400. Fix : regex UUID dans `validatePreBook` + idéalement vérifier villa existante/publiée (la route fetch déjà le nom après insert → réordonner pour court-circuiter).
-- **[Important] Incohérence timezone dans `gatherAdminContext`** (`app/api/admin/chat/route.ts`) : `todayStr` en UTC vs `startOfMonth`/`in48h` en `Date` locale → décalage d'un jour possible autour de minuit/fin de mois sur `checkins_today` et revenus mensuels. Fix : tout en arithmétique de dates string UTC (pattern `addDays(d,n)` des fichiers `lib/`). NB : les fonctions pures `owner-alerts.ts` / `admin-assistant-context.ts` sont déjà correctes.
-- **[Mineurs, acceptables]** Set in-memory `_hotLeadNotified` non borné ; caches module-level par-instance en serverless (garantie "1 notif/session" = en fait "par instance") ; `admin/chat/route.ts` = 597 lignes > guideline 500 (extraire action handlers + `buildAdminDemoReply`) ; convention half-open booking (`end_date` = libre) vs block (`end_date` +1 = occupé) à commenter aux call sites.
+## 2026-06-15 (Session 2) — 3 correctifs post-revue + Phase 2 n8n + merge
 
-### Reste à faire (Phase 2 + clôture)
-- **Phase 2 n8n `-v3`** : éditer les 3 JSON dans `docs/n8n/` (Tasks 13-15 du plan). Conserver placeholders, zéro URL en dur. Agent A consomme `context.villas[].availability` + `context.conciergerieFacts` et appelle `/api/chat/pre-book` + `/api/chat/owner-lead`. Agent C : actions destructives = émettre sans `confirm`, attendre « oui », ré-émettre avec `action_data.confirm=true`.
-- **Clôture branche `feat/agents-ia-v3`** : merge/PR (Phase 1 mergeable seule). Voir handoff en tête de `docs/superpowers/plans/2026-06-16-kayvila-agents-ia.md`.
-- **Méthode validée** : exécution via subagent-driven-development (1 subagent/tâche + revue spec + revue qualité) — migrations vérifiées live, modules purs en TDD, intégrations relues par subagent indépendant. À réutiliser.
+### Fait
+- **3 correctifs appliqués** (commit `e54fb0b`) :
+  1. Rate limiting extrait dans `lib/chatbot/rate-limit.ts` (helper partagé `checkRateLimit`/`getClientIP`) et appliqué à `/api/chat/pre-book` + `/api/chat/owner-lead` (10 req/h/IP, cap notifs 50/h)
+  2. UUID villaId validé dans `lib/chatbot/pre-book.ts` (regex UUID) + vérif villa existante/publiée AVANT l'insert (400 au lieu de 500)
+  3. Timezone `gatherAdminContext` standardisée en string UTC : `addDays()` helper, `startOfMonthStr`/`startOfLastMonthStr`/`endOfLastMonthStr`, comparaisons `.slice(0,10)` pour `created_at`, string pour `due_date`
+- **Phase 2 n8n v3** (3 commits) : `kayvila-agent-a-visiteur-v3.json` (bi-tunnel, disponibilités, preBooking/ownerLead), `kayvila-agent-b-proprietaire-v3.json` (push proactif 5 alertes), `kayvila-agent-c-admin-v3.json` (briefing, santé villas, actions confirmées en 2 temps)
+- **Merge fast-forward dans main** + suppression branche `feat/agents-ia-v3`
+- **Push origin main sans les n8n v3** (revertés en attente de déploiement n8n)
+
+### Règles apprises
+- **Extraire le rate limiting dans un helper partagé** dès que 2+ endpoints en ont besoin — ne pas dupliquer
+- **Valider UUID villaId AVANT l'insert DB** — un UUID invalide provoque un 500 Postgres illisible
+- **Standardiser TOUS les calculs de dates sur de l'arithmétique string UTC** — ne jamais mixer `Date()` local et `.toISOString()`
+- **Les n8n JSON v3 doivent rester hors push tant que les placeholders ne sont pas remplis** (VOTRE-DOMAINE, clés API, REPLACE_*)
+- **Les sticky notes n8n sont cosmétiques** — seuls les prompts + data flow comptent fonctionnellement
+- **Méthode validée** : subagent-driven-development (1 subagent/tâche + revue spec + revue qualité) — migrations vérifiées live, modules purs en TDD, intégrations relues. À réutiliser.

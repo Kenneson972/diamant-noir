@@ -150,3 +150,33 @@ Suite à la revue de sécurité / robustesse, les workflows ont été durcis :
 ### Phase 2 — À suivre
 
 Orchestration n8n-v3 : brancher les webhooks, créer les workflows Phase 2, configurer les credentials.
+
+---
+
+## 8. Correctifs post-revue + Phase 2 n8n + Clôture (2026-06-15)
+
+### 3 correctifs appliqués (commit `e54fb0b`)
+
+| # | Correctif | Fichiers | Détail |
+|---|---|---|---|
+| 1 | Rate limiting endpoints publics | `lib/chatbot/rate-limit.ts` (nouveau) + `pre-book/route.ts` + `owner-lead/route.ts` | Helper partagé `checkRateLimit`/`getClientIP`, 10 req/h/IP + cap 50 notifs/h |
+| 2 | UUID villaId + vérif villa | `lib/chatbot/pre-book.ts` + `pre-book/route.ts` | Regex UUID dans `validatePreBook`, vérif villa existante/publiée AVANT insert (400 au lieu de 500) |
+| 3 | Timezone UTC `gatherAdminContext` | `app/api/admin/chat/route.ts` | `addDays()` string UTC, `startOfMonthStr`/`endOfLastMonthStr`, comparaisons `.slice(0,10)` pour `created_at` |
+
+### Phase 2 n8n v3
+
+3 workflows créés (commits `1e7ca68`, `4b52810`, `c9b373f`) :
+
+| Workflow | Nouveautés v3 |
+|---|---|
+| `kayvila-agent-a-visiteur-v3.json` | Bi-tunnel (voyageur + proprio), exploite `context.villas[].availability`, émet `preBooking`/`ownerLead`, faits conciergerie injectés |
+| `kayvila-agent-b-proprietaire-v3.json` | Push proactif des 5 alertes (`calendar_gap`, `overdue_task`, `booking_conflict`, `revenue_delta`, `ota_desync`) en ouverture |
+| `kayvila-agent-c-admin-v3.json` | Briefing quotidien en ouverture, scores santé + occupation par villa, actions destructives en 2 temps (proposition → confirmation avec `confirm: true`) |
+
+> **⚠️ Revertés sur `main`** — à ré-importer dans n8n après remplissage des placeholders (`VOTRE-DOMAINE`, `VOTRE_SUPABASE_ANON_KEY`, `REPLACE_*`).
+
+### Clôture
+
+- **18 commits** sur `feat/agents-ia-v3` → merge fast-forward dans `main` → branche supprimée
+- **35 tests** Vitest verts · tsc propre (4 erreurs pré-existantes a11y.spec.ts) · build OK
+- **Push origin main** sans les n8n v3
