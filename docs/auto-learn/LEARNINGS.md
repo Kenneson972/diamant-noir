@@ -257,3 +257,24 @@
 ### Reste à faire
 - Brancher les 3 workflows N8N (importer JSON → configurer credentials → déployer → récupérer URLs webhook)
 - Ajouter `N8N_TENANT_WEBHOOK_URL`, `N8N_OWNER_WEBHOOK_URL`, `N8N_ADMIN_WEBHOOK_URL` dans Vercel
+
+---
+
+## 2026-06-16 — Agents IA Phase 1 (A bi-tunnel, B alertes, C socle)
+
+### Fait
+- **Agent A bi-tunnel** : A1 dispos pré-calculées (`lib/chatbot/availability.ts` + `canVerifyAvailability=true` dans `villa-context.ts`), A2 pré-booking (`POST /api/chat/pre-book` → table `pre_booking_requests` + notif in-app `pre_booking` + lien `/book` pré-rempli), A3 lead chaud (notif `hot_lead` throttlée par `session_id + villa_id`).
+- **Tunnel proprio** : `POST /api/chat/owner-lead` → notif `owner_lead` + lien `/soumettre-ma-villa` ; faits conciergerie Kayvila injectés dans le contexte système.
+- **Agent B** : `lib/owner-alerts.ts` — 5 alertes calculées live (revenus, occupation, paiements, avis, tâches) fusionnées dans `buildOwnerContextPack`.
+- **Agent C socle** : `lib/admin-assistant-context.ts` (occupation globale, score santé 0-100, alertes actionnables, briefing textuel) + `GET /api/admin/chat` (briefing/occupation/santé/alertes) + `lib/admin-confirm.ts` (confirmation explicite pour actions destructives) + `POST /api/admin/chat`.
+- **2 migrations** : table `pre_booking_requests` ; extension contrainte CHECK `notifications_type_check` (drop + recreate) pour `pre_booking`, `hot_lead`, `owner_lead`, `admin_alert`.
+- **40 tests unitaires** passent (vitest) : availability-gaps ×4, chatbot/availability ×3, pre-book validate ×4, lead-scoring ×4, owner-lead ×4, owner-alerts ×6, admin-assistant-context ×5, admin-confirm ×4, sla ×6.
+
+### Règles apprises
+- **`notifications.type` a une contrainte CHECK figée** → toujours la supprimer + recréer (DROP CONSTRAINT + ADD CONSTRAINT) avant d'insérer un nouveau type. Jamais ALTER seul — PostgreSQL ne supporte pas la modification d'une contrainte CHECK en place.
+- **La colonne de message des notifications est `body` (NOT NULL), PAS `message`.** `title` est aussi NOT NULL. Toujours vérifier le schéma live avec `list_tables` avant d'insérer.
+- **`bookings` n'a PAS de `cancellation_reason`** ; **`profiles` n'a PAS de `last_sign_in`** ; **`villas.seasonal_prices` est un jsonb existant** (ne pas recréer) ; **`tasks.due_date` (date)** existe mais n'était pas inclus dans le select du contexte proprio — à ajouter si besoin.
+- **La page de réservation publique est `app/book/page.tsx`** (params : `villaId`, `checkin`, `checkout`, `guests`) — PAS `/reservation`. Toujours vérifier le routage réel avant de construire un lien de deep link.
+- **Les dispos chatbot se calculent dans `lib/chatbot/villa-context.ts`** (alias `availability.ts` via import), pas dans `api/villas/public`. Ne pas dupliquer la logique.
+- **`vitest.config.ts` scopé à `lib/**` + `app/**` `.test.ts`** pour exclure les specs Playwright (`tests/*.spec.ts`). Toujours utiliser `npx vitest run` (pas `npm test`) pour les tests unitaires.
+- **Roadmap Agent C (L5,L7,L8,L10,L6,L11,L12) documentée dans le spec**, non implémentée Phase 1 : manque de données live suffisantes / source / cron. Ces métriques avancées font partie de Phase 2.

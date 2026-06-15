@@ -95,3 +95,58 @@ Suite à la revue de sécurité / robustesse, les workflows ont été durcis :
 - **Suppression des contextes redondants (B & C)** : `Get Owner Context`, `Get Admin Context`, `Get Villa Submissions` supprimés. L'agent récupère tout via ses outils (source de vérité unique).
 
 > Nouveaux placeholders à remplacer : `https://VOTRE-PROJET-SUPABASE.supabase.co` et `VOTRE_SUPABASE_ANON_KEY` (dans `Code - Auth JWT` des agents B et C).
+
+---
+
+## 7. Phase 1 (code) — Agents IA V3 (2026-06-16)
+
+> Implémentation code pur (Next.js / TypeScript) — sans n8n, sans cron, sans edge functions.
+> Phase 2 (orchestration n8n-v3) suit.
+
+### Agent A — Bi-tunnel visiteur + propriétaire
+
+**Tunnel visiteur (A1 → A2 → A3)**
+
+- **A1 — Dispos pré-calculées** : `lib/chatbot/availability.ts` + flag `canVerifyAvailability: true` injecté dans `lib/chatbot/villa-context.ts`. Le chatbot peut désormais répondre "disponible / indisponible" sans appel réseau supplémentaire.
+- **A2 — Pré-booking** : `POST /api/chat/pre-book` → insert dans table `pre_booking_requests` → notif in-app (type `pre_booking`) + lien `/book?villaId=…&checkin=…&checkout=…&guests=…` pré-rempli renvoyé dans la réponse.
+- **A3 — Lead chaud** : si score de lead ≥ seuil, notif in-app throttlée (type `hot_lead`, dédoublonnée sur `session_id + villa_id`).
+
+**Tunnel propriétaire**
+
+- `POST /api/chat/owner-lead` → notif in-app (type `owner_lead`) avec lien `/soumettre-ma-villa`. Les faits conciergerie Kayvila (commission, services, avantages) sont injectés dans le contexte système via `lib/chatbot/villa-context.ts`.
+
+### Agent B — Alertes propriétaire live
+
+- `lib/owner-alerts.ts` : 5 alertes calculées live (revenus faibles, taux d'occupation, résas sans paiement, avis négatifs, tâches en retard).
+- Fusionnées dans `buildOwnerContextPack` (contexte copilot proprio) — aucun cron, calcul à la demande.
+
+### Agent C — Socle admin
+
+- `lib/admin-assistant-context.ts` : construit le pack contexte admin (taux d'occupation global, score de santé 0-100, alertes actionnables, briefing textuel).
+- `GET /api/admin/chat` : renvoie `{ briefing, occupation, sante, alertes }` — prêt pour le copilot admin.
+- `lib/admin-confirm.ts` : confirmation explicite exigée pour les actions destructives (annuler réservation, bloquer villa, modifier tarifs).
+- `POST /api/admin/chat` : endpoint chat admin complet avec contexte injecté.
+
+### Migrations appliquées
+
+| Migration | Contenu |
+|---|---|
+| `pre_booking_requests` | Table de suivi des demandes de pré-réservation (villa_id, session_id, dates, statut) |
+| Extension `notifications_type_check` | DROP + RECREATE contrainte CHECK pour ajouter `pre_booking`, `hot_lead`, `owner_lead`, `admin_alert` |
+
+### Notifs in-app — règles
+
+- Table `notifications` uniquement (pas d'email, pas de Telegram, pas de push).
+- Colonnes obligatoires : `title` (NOT NULL), `body` (NOT NULL), `user_id` (null = broadcast admin).
+- `user_id = null` → visible par les admins uniquement (filtrage côté `NotificationBell`).
+- Aucun cron. Stripe, emails Resend, edge functions : non touchés.
+
+### Vérifications Phase 1
+
+- `npx vitest run` : 40 tests passent, 0 échec (availability-gaps ×4, chatbot/availability ×3, pre-book validate ×4, lead-scoring ×4, owner-lead ×4, owner-alerts ×6, admin-assistant-context ×5, admin-confirm ×4, lib/sla.test.ts ×6).
+- `npx tsc --noEmit` : 4 erreurs pré-existantes uniquement (`tests/a11y.spec.ts`), zéro erreur nouvelle.
+- `npm run build` : succès. Routes `/api/chat/pre-book`, `/api/chat/owner-lead`, `/api/admin/chat` (GET + POST) présentes.
+
+### Phase 2 — À suivre
+
+Orchestration n8n-v3 : brancher les webhooks, créer les workflows Phase 2, configurer les credentials.
