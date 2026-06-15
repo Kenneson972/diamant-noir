@@ -7,7 +7,7 @@ import { useCopilotContext } from "./CopilotContext";
 import { CopilotMessage } from "./CopilotMessage";
 
 export function CopilotPanel() {
-  const { isOpen, close, messages, isLoading, sendMessage } =
+  const { isOpen, close, messages, isLoading, sendMessage, suggestedPrompts } =
     useCopilotContext();
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -90,6 +90,23 @@ export function CopilotPanel() {
                     <span className="dn-typing-dot h-2 w-2 rounded-full bg-navy-900/40" style={{ animationDelay: "0.3s" }} />
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Suggested prompts */}
+            {!isLoading && suggestedPrompts.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-2">
+                {suggestedPrompts.slice(0, 4).map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    onClick={() => { sendMessage(prompt); }}
+                    disabled={isLoading}
+                    className="rounded-full border border-navy/15 bg-white px-3 py-1.5 text-[11px] text-navy/60 transition-colors hover:border-gold/40 hover:text-navy disabled:opacity-50"
+                  >
+                    {prompt}
+                  </button>
+                ))}
               </div>
             )}
 

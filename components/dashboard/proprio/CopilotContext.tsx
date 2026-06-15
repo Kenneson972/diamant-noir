@@ -20,6 +20,7 @@ interface CopilotContextValue {
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
+  suggestedPrompts: string[];
 }
 
 const CopilotContext = createContext<CopilotContextValue | null>(null);
@@ -33,6 +34,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
     sendMessage,
     clearMessages,
     loadContext,
+    suggestedPrompts,
   } = useCopilot({
     webhookUrl: "/api/dashboard/owner-assistant",
   });
@@ -59,6 +61,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
         isLoading,
         sendMessage,
         clearMessages,
+        suggestedPrompts,
       }}
     >
       {children}

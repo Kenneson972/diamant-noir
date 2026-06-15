@@ -23,6 +23,86 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
+// ─── Mode démo intelligent — analyse la question et répond avec les données réelles ──
+function buildAdminDemoReply(message: string, ctx: Record<string, any>): {
+  text: string;
+  action?: string;
+  suggestions?: string[];
+} {
+  const msg = message.toLowerCase();
+  const vs = ctx.villas_summary || {};
+  const bs = ctx.bookings_summary || {};
+  const ts = ctx.tasks_summary || {};
+  const fin = ctx.finances || {};
+  const sub = ctx.submissions_summary || {};
+  const ota = ctx.ota_health || {};
+
+  // ── Revenus / Finances ──
+  if (/revenu|chiffre|argent|financ|encaiss|mois|€|euro/.test(msg)) {
+    const monthly = (fin.monthly_revenue as any[] || []).map((m: any) =>
+      `• ${m.month} : ${m.revenue.toLocaleString("fr-FR")} €`
+    ).join("\n");
+    return {
+      text: `💰 **Revenus**\n\nTotal encaissé : **${fin.revenue_total?.toLocaleString("fr-FR") || 0} €**\nCe mois : **${fin.revenue_this_month?.toLocaleString("fr-FR") || 0} €**\nLe mois dernier : ${fin.revenue_last_month?.toLocaleString("fr-FR") || 0} €\n\n📊 **6 derniers mois :**\n${monthly}`,
+      action: "SHOW_FINANCES",
+      suggestions: ["Taux d'occupation ce mois ?", "Top 3 villas par revenu ?", "Check-ins de la semaine ?"],
+    };
+  }
+
+  // ── Réservations / Check-ins ──
+  if (/réservation|booking|check.?in|arrivée|client|séjour/.test(msg)) {
+    return {
+      text: `📅 **Réservations**\n\n✅ Confirmées : ${bs.confirmed}\n⏳ En attente : ${bs.pending}\n🟢 Check-ins aujourd'hui : **${bs.checkins_today}**\n📅 Check-ins sous 48h : ${bs.checkins_48h}\n📅 Check-ins sous 7 jours : ${bs.checkins_7d}\n🔴 Check-outs aujourd'hui : ${bs.checkouts_today}`,
+      action: "SHOW_BOOKINGS",
+      suggestions: ["Check-ins de demain ?", "Réservations en attente ?", "Taux de remplissage ?"],
+    };
+  }
+
+  // ── Tâches ──
+  if (/tâche|tache|todo|urgent|retard|maintenance|en cours/.test(msg)) {
+    return {
+      text: `📋 **Tâches**\n\n📊 Total : ${ts.total}\n🔴 En retard : **${ts.overdue}**\n🟡 À faire aujourd'hui : ${ts.due_today}\n⏳ En attente : ${ts.pending}\n🔄 En cours : ${ts.in_progress}`,
+      action: "SHOW_TASKS",
+      suggestions: ["Tâches urgentes ?", "Créer une tâche", "Check-ins du jour ?"],
+    };
+  }
+
+  // ── Villas ──
+  if (/villa|propriété|parc|catalogue|publi/.test(msg)) {
+    return {
+      text: `🏠 **Villas**\n\n📊 ${vs.total} villa(s) au total\n✅ ${vs.published} publiée(s)\n🔒 ${vs.draft} brouillon(s)`,
+      action: "SHOW_VILLAS",
+      suggestions: ["Ajouter une villa", "Villas non publiées ?", "Revenus par villa ?"],
+    };
+  }
+
+  // ── Soumissions ──
+  if (/soumission|candidat|proprio|propriétaire/.test(msg)) {
+    return {
+      text: `📬 **Soumissions**\n\n📊 ${sub.total} soumission(s)\n🆕 Reçues : ${sub.received}\n🔍 En cours : ${sub.in_progress}\n✅ Approuvées : ${sub.approved}\n📸 Besoin de photos : ${sub.needs_photos}`,
+      action: "SHOW_SUBMISSIONS",
+      suggestions: ["Soumissions récentes ?", "Soumissions en cours ?"],
+    };
+  }
+
+  // ── OTA / Sync ──
+  if (/ota|sync|airbnb|booking|synchro|ical|erreur/.test(msg)) {
+    const last = ota.last_sync ? new Date(ota.last_sync).toLocaleString("fr-FR") : "jamais";
+    return {
+      text: `🔄 **Synchronisation OTA**\n\nDernière synchro : ${last}\nCanaux avec erreurs : ${ota.channels_with_errors?.length || 0}\nImportés : ${ota.total_imported_last_sync || 0}`,
+      action: "SHOW_OTA_HEALTH",
+      suggestions: ["Détail des erreurs ?", "Forcer une synchro ?"],
+    };
+  }
+
+  // ── Par défaut : résumé général ──
+  return {
+    text: `👋 Voici votre tableau de bord :\n\n🏠 **${vs.total} villa(s)** (${vs.published} publiée(s))\n📅 **${bs.checkins_today} check-in(s)** aujourd'hui — ${bs.confirmed + bs.pending} résas\n📋 **${ts.overdue} tâche(s)** en retard sur ${ts.total}\n💰 **${fin.revenue_this_month?.toLocaleString("fr-FR") || 0} €** ce mois-ci\n📬 **${sub.received} soumission(s)** en attente\n🔄 Dernière synchro OTA : ${ota.last_sync ? new Date(ota.last_sync).toLocaleDateString("fr-FR") : "jamais"}\n\nQue puis-je faire pour vous ?`,
+    action: "SHOW_STATS",
+    suggestions: ["Check-ins de la semaine ?", "Tâches urgentes ?", "Revenus par villa ?"],
+  };
+}
+
 export async function POST(request: Request) {
   try {
     const userId = await requireAdmin(request);
@@ -224,12 +304,14 @@ export async function POST(request: Request) {
       process.env.N8N_ADMIN_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
 
     if (!webhookURL) {
+      // Mode démo intelligent — répond en français avec les vraies données
+      const demoResponse = buildAdminDemoReply(message.trim(), contextData);
       return NextResponse.json({
         success: true,
-        response: `[MODE DÉMO] ${villas.length} villas · ${tasks.length} tâches · ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui.`,
-        action: "SHOW_STATS",
+        response: demoResponse.text,
+        action: demoResponse.action || "SHOW_STATS",
         action_data: contextData,
-        suggested_prompts: [
+        suggested_prompts: demoResponse.suggestions || [
           "Quel est mon taux d'occupation ce mois ?",
           "Quels check-ins sont prévus cette semaine ?",
           "Y a-t-il des tâches en retard ?",

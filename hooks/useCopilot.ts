@@ -17,6 +17,7 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
       timestamp: Date.now(),
     },
   ]);
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const contextRef = useRef<CopilotContextData | null>(null);
   const messagesRef = useRef<CopilotMessage[]>(messages);
@@ -73,6 +74,13 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
+
+        // Afficher les suggestions si présentes
+        if (data.suggested_prompts && Array.isArray(data.suggested_prompts)) {
+          setSuggestedPrompts(data.suggested_prompts);
+        } else {
+          setSuggestedPrompts([]);
+        }
       } catch {
         const errorMessage: CopilotMessage = {
           id: `error-${Date.now()}`,
@@ -107,5 +115,6 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
     sendMessage,
     clearMessages,
     loadContext,
+    suggestedPrompts,
   };
 }
