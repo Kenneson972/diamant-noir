@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ownerNetCents } from "@/lib/revenue/booking-revenue";
+import { computeOwnerAlerts } from "@/lib/owner-alerts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -177,8 +178,8 @@ export async function buildOwnerContextPack(
     };
   }
 
-  // ── Réservations + tâches en parallèle ──
-  const [bookingsRes, tasksRes] = await Promise.all([
+  // ── Réservations + tâches + blocs + OTA en parallèle ──
+  const [bookingsRes, tasksRes, blocksRes, otaRes] = await Promise.all([
     admin
       .from("bookings")
       .select(
@@ -189,11 +190,14 @@ export async function buildOwnerContextPack(
     // TODO: table tasks non créée par migration — à créer manuellement si nécessaire
     admin
       .from("tasks")
-      .select("id, villa_id, content, status, created_at")
+      .select("id, villa_id, content, status, created_at, due_date")
       .in("villa_id", villaIds)
       .eq("status", "pending")
       .order("created_at", { ascending: false })
       .limit(100),
+    admin.from("villa_date_blocks").select("villa_id, start_date, end_date").in("villa_id", villaIds),
+    admin.from("ota_sync_logs").select("villa_id, created_at, error").in("villa_id", villaIds)
+      .order("created_at", { ascending: false }).limit(100),
   ]);
 
   if (bookingsRes.error) console.error("[owner-context] bookings", bookingsRes.error);
@@ -201,6 +205,8 @@ export async function buildOwnerContextPack(
 
   const bookings = bookingsRes.data ?? [];
   const tasksOpen = tasksRes.data ?? [];
+  const blocks = blocksRes.data ?? [];
+  const otaLogs = otaRes.data ?? [];
 
   // ── Métriques revenus ──
   const paidBookings = bookings.filter((b) => b.payment_status === "paid");
@@ -265,6 +271,35 @@ export async function buildOwnerContextPack(
     return order[a.kind] - order[b.kind];
   });
 
+  const today = todayStr;
+  const computed = computeOwnerAlerts({
+    today,
+    villas: villaList.map((v) => ({ id: String(v.id), name: String(v.name ?? "Villa") })),
+    bookings: bookings.map((b) => ({
+      villa_id: String(b.villa_id), start_date: String(b.start_date),
+      end_date: String(b.end_date), status: String(b.status ?? ""),
+    })),
+    blocks: (blocks as Record<string, unknown>[]).map((b) => ({
+      villa_id: String(b.villa_id), start_date: String(b.start_date), end_date: String(b.end_date),
+    })),
+    tasks: (tasksOpen as Record<string, unknown>[]).map((t) => ({
+      id: String(t.id), villa_id: String(t.villa_id),
+      status: String(t.status ?? ""), due_date: (t.due_date as string) ?? null,
+    })),
+    otaLogs: (otaLogs as Record<string, unknown>[]).map((l) => ({
+      villa_id: String(l.villa_id), created_at: String(l.created_at), error: (l.error as string) ?? null,
+    })),
+    revenueCurrentMonth,
+    revenueLastMonth,
+  });
+
+  const computedRows: OwnerAlertRow[] = computed.map((a, i) => ({
+    id: `computed:${a.type}:${a.villa_id ?? "global"}:${i}`,
+    severity: a.severity, title: a.title, body: a.body,
+    villa_id: a.villa_id, created_at: new Date().toISOString(), read_at: null,
+  }));
+  const mergedAlerts = [...computedRows, ...alertsOnly];
+
   return {
     current_date_iso,
     portfolio: {
@@ -277,7 +312,7 @@ export async function buildOwnerContextPack(
       pending_tasks_count: tasksOpen.length,
     },
     today: todayItems,
-    alerts: alertsOnly as unknown as OwnerAlertRow[],
+    alerts: mergedAlerts as unknown as OwnerAlertRow[],
     villas: villaList as Array<Record<string, unknown>>,
     bookings: bookings as Array<Record<string, unknown>>,
     tasks_open: tasksOpen as Array<Record<string, unknown>>,
