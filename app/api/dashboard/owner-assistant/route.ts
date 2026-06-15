@@ -353,6 +353,9 @@ export async function POST(request: Request) {
     }
 
     // ── ACTION HANDLERS (l'IA qui agit) ──────────────────────────────────────
+    // ⚠️ Toutes les actions sont scopées au propriétaire connecté
+    const ownerVillaIds = new Set((pack.villas as { id?: string }[]).map((v) => v.id));
+
     const action = (data.action || "SHOW_STATS") as OwnerAssistantAction;
     const actionData = data.action_data || {};
     let actionResult: { success: boolean; error?: string; [key: string]: unknown } | null = null;
@@ -362,7 +365,10 @@ export async function POST(request: Request) {
         villa_id?: string; title?: string; type?: string;
         due_date?: string; assigned_to?: string;
       };
-      if (task.villa_id && task.title) {
+      // Vérifier que la villa appartient bien au propriétaire
+      if (!task.villa_id || !ownerVillaIds.has(task.villa_id)) {
+        actionResult = { success: false, error: "Villa non autorisée" };
+      } else if (task.title) {
         const { data: created, error } = await admin.from("tasks").insert({
           villa_id: task.villa_id,
           title: task.title,
@@ -376,10 +382,17 @@ export async function POST(request: Request) {
     }
 
     if (action === "COMPLETE_TASK" && actionData.task_id) {
-      const { error } = await admin.from("tasks")
-        .update({ status: "done", completed_at: new Date().toISOString() })
-        .eq("id", actionData.task_id);
-      actionResult = { success: !error, error: error?.message };
+      // Vérifier que la tâche appartient à une villa du propriétaire
+      const { data: existingTask } = await admin.from("tasks")
+        .select("villa_id").eq("id", actionData.task_id).single();
+      if (!existingTask || !ownerVillaIds.has(existingTask.villa_id)) {
+        actionResult = { success: false, error: "Tâche non autorisée" };
+      } else {
+        const { error } = await admin.from("tasks")
+          .update({ status: "done", completed_at: new Date().toISOString() })
+          .eq("id", actionData.task_id);
+        actionResult = { success: !error, error: error?.message };
+      }
     }
 
     if (action === "BLOCK_DATE" && actionData.block) {
@@ -387,28 +400,20 @@ export async function POST(request: Request) {
         villa_id?: string; start_date?: string; end_date?: string;
         reason?: string;
       };
-      if (block.villa_id && block.start_date && block.end_date) {
+      if (!block.villa_id || !ownerVillaIds.has(block.villa_id)) {
+        actionResult = { success: false, error: "Villa non autorisée" };
+      } else if (block.start_date && block.end_date) {
+        // Le proprio crée toujours avec origin "Proprietaire"
+        // Seul l'admin peut créer avec origin "Kayvila"
         const { data: created, error } = await admin.from("villa_date_blocks").insert({
           villa_id: block.villa_id,
           start_date: block.start_date,
           end_date: block.end_date,
           reason: block.reason || "Blocage via Copilot",
-          origin: "Kayvila",
+          origin: "Proprietaire",
           created_by: user.id,
         }).select("id").single();
         actionResult = { success: !error, block_id: created?.id, error: error?.message };
-      }
-    }
-
-    if (action === "UPDATE_BOOKING" && actionData.booking_id) {
-      const updates: Record<string, unknown> = {};
-      if (actionData.status) updates.status = actionData.status;
-      if (actionData.payment_status) updates.payment_status = actionData.payment_status;
-      if (Object.keys(updates).length > 0) {
-        const { error } = await admin.from("bookings")
-          .update(updates)
-          .eq("id", actionData.booking_id);
-        actionResult = { success: !error, error: error?.message };
       }
     }
 
