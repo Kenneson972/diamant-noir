@@ -10,13 +10,13 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "c1-webhook",
+      "id": "b01ee042-c2f3-4523-b72a-bbca64d7fe83",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1600,
-        0
+        -1920,
+        608
       ],
       "webhookId": "kayvila-admin-webhook"
     },
@@ -24,13 +24,13 @@
       "parameters": {
         "jsCode": "const b = $('Webhook').first().json.body || {};\nconst hdr = $('Webhook').first().json.headers || {};\nconst raw = (b.token || hdr.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const response = await fetch('https://VOTRE-PROJET-SUPABASE.supabase.co/auth/v1/user', {\n    headers: { Authorization: `Bearer ${raw}`, apikey: 'VOTRE_SUPABASE_ANON_KEY' }\n  });\n  if (!response.ok) throw new Error('Token invalid');\n  const user = await response.json();\n  userId = user.id || '';\n  role = (user.user_metadata && user.user_metadata.role) || (user.app_metadata && user.app_metadata.role) || '';\n} catch (e) {}\nconst valid = !!userId && String(role).toLowerCase() === 'admin';\nreturn [{ json: { userId, role, token: raw, sessionId: b.sessionid || ('admin-' + userId), userMessage: b.message || '', valid: valid ? 'true' : 'false' } }];"
       },
-      "id": "c1-auth",
+      "id": "97c96e7e-b589-483f-bcb8-5d1d3baa754a",
       "name": "Code - Auth JWT",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1380,
-        0
+        -1696,
+        608
       ],
       "notes": "⚠️ Vérification JWT via Supabase Auth API. Admin only — rôle métier STRICT 'admin'. Tout autre rôle = refus."
     },
@@ -58,26 +58,26 @@
         },
         "options": {}
       },
-      "id": "c1-if-auth",
+      "id": "50c79dec-ee13-47b6-bcbd-cb224c31bc93",
       "name": "IF - Admin ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -1160,
-        0
+        -1488,
+        608
       ]
     },
     {
       "parameters": {
         "jsCode": "return [{ json: { response: \"Accès refusé. Cette interface est réservée aux administrateurs Kayvila.\", success: false } }];"
       },
-      "id": "c1-refus",
+      "id": "4bb69c1c-1e69-4b5b-8754-153139cf7ab9",
       "name": "Code - Reponse Refus",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -940,
-        200
+        -1264,
+        800
       ]
     },
     {
@@ -86,22 +86,22 @@
         "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Code - Auth JWT').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 50",
         "options": {}
       },
-      "id": "c1-get-memory",
+      "id": "71d87e7e-134b-4763-b813-a3bcd8cbdfb3",
       "name": "Get Long-Term Memory",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        -500,
-        -160
+        -816,
+        448
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -112,13 +112,13 @@
         "jsonBody": "={{ { \"query\": $('Code - Auth JWT').first().json.userMessage, \"entity\": \"admin-global\", \"limit\": 5 } }}",
         "options": {}
       },
-      "id": "c1-gbrain-recall",
+      "id": "96c38e40-807f-42dd-9321-70ae770ff517",
       "name": "gbrain Recall",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -280,
-        -160
+        -608,
+        448
       ],
       "continueOnFail": true
     },
@@ -154,13 +154,13 @@
         },
         "options": {}
       },
-      "id": "c1-edit-fields",
+      "id": "923fb70d-faf5-4dfe-8662-2ac5919066e0",
       "name": "Edit Fields",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -60,
-        -160
+        -384,
+        448
       ]
     },
     {
@@ -169,33 +169,34 @@
         "text": "=Tu es le copilote admin de Kayvila. Tu supervises TOUTES les villas et tous les propriétaires.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nMÉMOIRE SÉMANTIQUE (gbrain — patterns et incidents passés) :\n{{ $json.gbrainContext }}\n\nBRIEFING QUOTIDIEN (L1 — check-ins/outs, soumissions en attente) :\n{{ $json.dailyBriefing }}\n⚠️ OUVRE chaque conversation par ce briefing. Donne les chiffres d'abord.\n\nSANTÉ VILLAS (L3/L4 — occupation + scores) :\n{{ $json.healthScores }}\n⚠️ Utilise ces scores pour comparer les villas entre elles. Identifie celle(s) à risque (score < 50).\n\nOCCUPATION PAR VILLA :\n{{ $json.occupancy }}\n⚠️ Données réelles sur 30 jours glissants. Compare, classe, alerte sur les sous-performances.\n\nMESSAGE FONDATEUR : {{ $json.userMessage }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nTON RÔLE :\n- OUVRIR par le briefing quotidien + les alertes, avant toute question\n- Donner une vue d'ensemble de la plateforme\n- Détecter les problèmes (OTA, impayés, soumissions en attente)\n- Alerter proactivement sur les anomalies\n- Formuler des recommandations actionnables (L2)\n- Ne JAMAIS modifier la base de données sans confirmation explicite\n\nACTIONS DESTRUCTIVES (BLOCK_DATE, UPDATE_BOOKING, UPDATE_SUBMISSION_STATUS) :\n⚠️ RÈGLE STRICTE : émets l'action SANS le champ \"confirm\". Attends que l'utilisateur réponde « oui ». Puis ré-émet avec \"action_data.confirm = true\". La route applique le gating automatiquement.\nExemple 1er message : { \"action\": \"BLOCK_DATE\", \"action_data\": { \"block\": { ... } } }\nExemple 2e message (après « oui ») : { \"action\": \"BLOCK_DATE\", \"action_data\": { \"block\": { ... }, \"confirm\": true } }\n\nSOURCE DE VÉRITÉ : utilise SYSTÉMATIQUEMENT tes outils pour récupérer les données réelles (villas, réservations, soumissions, stats, OTA, propriétaires). Ne jamais inventer un chiffre — appelle l'outil correspondant.\n\nTON TON :\n- Franche et incisive\n- Tutoiement avec le fondateur\n- Pas de blabla — faits et chiffres\n\nCAPACITÉS :\n- Briefing automatique en ouverture de session\n- \"Top 3 villas ce mois ?\" → kayvila-global-stats / kayvila-all-villas\n- \"Y a des soumissions en attente ?\" → kayvila-submissions (liste avec date)\n- \"Problème synchro Airbnb ?\" → kayvila-ota-all (diagnostic par villa)\n- \"Rapport mensuel\" → kayvila-global-stats (revenus, occupancy, problèmes)\n- \"Quel proprio n'a pas payé sa commission ?\" → kayvila-users + kayvila-global-stats\n- Comparaison inter-villas : scores de santé, occupation, revenus\n\nRÈGLES :\n- Alerter, ne pas décider\n- Toujours donner le chiffre ET le contexte\n- Proactivité : signaler les anomalies sans attendre qu'on demande\n- Actions destructives : toujours en deux temps (proposition → confirmation)\n\nOUTILS : kayvila-all-villas, kayvila-all-bookings, kayvila-submissions, kayvila-global-stats, kayvila-ota-all, kayvila-users, postgres-chat-memory",
         "options": {}
       },
-      "id": "c1-agent",
+      "id": "2dd775c8-1aaa-42a9-b6fd-eafb57d64c5e",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        180,
-        -200
+        -208,
+        304
       ]
     },
     {
       "parameters": {
+        "model": "deepseek-v4-pro",
         "options": {
           "temperature": 0.2
         }
       },
-      "id": "c1-deepseek",
+      "id": "c1e38cf8-f712-4c98-ae45-1033805c90f6",
       "name": "DeepSeek Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
       "typeVersion": 1,
       "position": [
-        -20,
-        100
+        -336,
+        704
       ],
       "credentials": {
         "deepSeekApi": {
-          "id": "REPLACE_DEEPSEEK",
-          "name": "KAYVILA DEEPSEEK"
+          "id": "s16Eub8KTcJLPBw5",
+          "name": "KARIBLOOM DEEPSEEK"
         }
       }
     },
@@ -203,195 +204,45 @@
       "parameters": {
         "tableName": "conversation_data"
       },
-      "id": "c1-chat-memory",
+      "id": "a1b0e369-c52c-40eb-bbee-3f23e918b9ff",
       "name": "Postgres Chat Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        120,
-        100
+        -208,
+        704
       ],
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
       }
     },
     {
       "parameters": {
-        "toolDescription": "Liste TOUTES les villas de la plateforme Kayvila.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/villas",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-villas",
-      "name": "kayvila-all-villas",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        260,
-        100
-      ]
-    },
-    {
-      "parameters": {
-        "toolDescription": "Liste TOUTES les réservations de la plateforme.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/bookings",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-bookings",
-      "name": "kayvila-all-bookings",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        400,
-        100
-      ]
-    },
-    {
-      "parameters": {
-        "toolDescription": "Liste les soumissions de villas en attente de validation.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/villa-submissions",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-submissions",
-      "name": "kayvila-submissions",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        540,
-        100
-      ]
-    },
-    {
-      "parameters": {
-        "toolDescription": "Revenus globaux Stripe et statistiques plateforme.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/global-stats",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-stats",
-      "name": "kayvila-global-stats",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        680,
-        100
-      ]
-    },
-    {
-      "parameters": {
-        "toolDescription": "Santé de TOUTES les synchronisations OTA (Airbnb / Booking) de la plateforme.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/ota-status",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-ota",
-      "name": "kayvila-ota-all",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        820,
-        100
-      ]
-    },
-    {
-      "parameters": {
-        "toolDescription": "Liste les utilisateurs / propriétaires de la plateforme.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/admin/owners",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "c1-tool-users",
-      "name": "kayvila-users",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        960,
-        100
-      ]
-    },
-    {
-      "parameters": {
         "jsCode": "const i = $input.first().json;\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: $('Code - Auth JWT').first().json.sessionId, userId: $('Code - Auth JWT').first().json.userId } }];"
       },
-      "id": "c1-format",
+      "id": "8962efbc-d369-4707-acd8-15763fcf9047",
       "name": "FORMAT RESPONSE",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        -200
+        80,
+        400
       ]
     },
     {
       "parameters": {
         "jsCode": "const msg = ($('Code - Auth JWT').first().json.userMessage || '').toLowerCase();\nconst out = ($('AI Agent').first().json.output || '').toLowerCase();\nconst blob = msg + ' ' + out;\nconst criticalKw = ['panne', 'impayé', 'impaye', 'litige', 'erreur', 'échec', 'echec', 'bloqué', 'bloque', 'down', 'critique', 'anomalie', 'conflit'];\nconst submKw = ['soumission', 'submission', 'à valider', 'a valider', 'en attente', 'nouvelle villa', 'validation'];\nconst isCritical = criticalKw.some(k => blob.includes(k));\nconst hasSubmission = submKw.some(k => blob.includes(k));\nreturn [{ json: { isCritical: isCritical ? 'true' : 'false', hasSubmission: hasSubmission ? 'true' : 'false', message: $('Code - Auth JWT').first().json.userMessage, aiOutput: $('AI Agent').first().json.output || '' } }];"
       },
-      "id": "c1-summary",
+      "id": "c946d0ef-8ac3-47ef-8fad-f7253541a5c9",
       "name": "PREPARE SUMMARY PROMPT",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        -460
+        80,
+        144
       ]
     },
     {
@@ -418,13 +269,13 @@
         },
         "options": {}
       },
-      "id": "c1-if-critical",
+      "id": "0ff050be-8a8d-46df-89d2-17e6082a1753",
       "name": "IF - Problème Critique ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        620,
-        -540
+        304,
+        64
       ]
     },
     {
@@ -451,56 +302,14 @@
         },
         "options": {}
       },
-      "id": "c1-if-submission",
+      "id": "f5c8383f-c70f-4e58-8b13-0102017f65e0",
       "name": "IF - Soumission Prioritaire ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        620,
-        -380
+        304,
+        224
       ]
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $vars.TELEGRAM_ADMIN_CHAT_ID || 'REMPLACER_CHAT_ID' }}",
-        "text": "=🚨 Kayvila ADMIN — Problème critique détecté\n\n{{ $json.message }}\n\nAnalyse: {{ $json.aiOutput }}",
-        "additionalFields": {}
-      },
-      "id": "c1-telegram-crit",
-      "name": "Telegram - Alerte Fondateur",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        860,
-        -540
-      ],
-      "credentials": {
-        "telegramApi": {
-          "id": "REPLACE_TELEGRAM",
-          "name": "KAYVILA TELEGRAM"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $vars.TELEGRAM_ADMIN_CHAT_ID || 'REMPLACER_CHAT_ID' }}",
-        "text": "=📋 Kayvila ADMIN — Soumission à valider\n\n{{ $json.message }}",
-        "additionalFields": {}
-      },
-      "id": "c1-telegram-sub",
-      "name": "Telegram - Notif Soumission",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        860,
-        -380
-      ],
-      "credentials": {
-        "telegramApi": {
-          "id": "REPLACE_TELEGRAM",
-          "name": "KAYVILA TELEGRAM"
-        }
-      }
     },
     {
       "parameters": {
@@ -534,13 +343,13 @@
         },
         "options": {}
       },
-      "id": "c1-edit-fields1",
+      "id": "f8640687-a742-409b-802c-7564eed0e98d",
       "name": "Préparer Sauvegarde Mémoire",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        620,
-        -200
+        304,
+        400
       ]
     },
     {
@@ -569,39 +378,20 @@
         },
         "options": {}
       },
-      "id": "c1-save-memory",
+      "id": "02d145c0-e8cd-4e89-bb43-7afa4925bdc9",
       "name": "Save Memory Supabase",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        840,
-        -200
+        528,
+        400
       ],
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://gbrain-kayvila:8080/put_page",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { \"slug\": \"memory/admin-global/\" + new Date().toISOString().replace(/[:.]/g, '-'), \"content\": ($('Code - Auth JWT').first().json.userMessage + ' → ' + $('FORMAT RESPONSE').first().json.response) } }}",
-        "options": {}
       },
-      "id": "c1-gbrain-capture",
-      "name": "gbrain Capture",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1060,
-        -200
-      ],
       "continueOnFail": true
     },
     {
@@ -610,86 +400,31 @@
         "responseBody": "={{ { \"response\": $('FORMAT RESPONSE').first().json.response, \"success\": true } }}",
         "options": {}
       },
-      "id": "c1-respond",
+      "id": "abaad75d-708a-420d-bb8b-1433636ded1a",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1280,
-        -40
+        960,
+        560
       ]
     },
     {
-      "id": "c1-sticky-auth",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -1700,
-        -80
-      ],
-      "parameters": {
-        "content": "### 🔐 Authentification Admin\nJWT → Supabase Auth API → rôle strict 'admin'. Tout autre rôle = refus.",
-        "color": 1
-      }
-    },
-    {
-      "id": "c1-sticky-context",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -580,
-        -280
-      ],
-      "parameters": {
-        "content": "### 🧠 Contexte & Mémoire\nMémoire conversationnelle (LIMIT 50) + gbrain recall admin-global.",
-        "color": 5
-      }
-    },
-    {
-      "id": "c1-sticky-agent",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -100,
-        -280
-      ],
-      "parameters": {
-        "content": "### 🤖 Agent IA Admin\nDeepSeek (temp 0.2) + 6 outils supervision. Ton franc et incisif.",
-        "color": 6
-      }
-    },
-    {
-      "id": "c1-sticky-output",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        320,
-        -480
-      ],
-      "parameters": {
-        "content": "### 📤 Réponse & Sauvegarde\nFORMAT → Sauvegarde Supabase + gbrain Capture → Respond.",
-        "color": 7
-      }
-    },
-    {
-      "id": "c1-sticky-monitoring",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        320,
-        -600
-      ],
       "parameters": {
         "content": "### 🚨 Monitoring Admin\nDouble détection: critique + soumission prioritaire. Telegram ciblé.",
         "color": 3
-      }
+      },
+      "id": "2046f096-fce6-4e71-b362-afeb589de513",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -112
+      ]
     }
   ],
+  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -906,28 +641,6 @@
         ]
       ]
     },
-    "IF - Problème Critique ?": {
-      "main": [
-        [
-          {
-            "node": "Telegram - Alerte Fondateur",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "IF - Soumission Prioritaire ?": {
-      "main": [
-        [
-          {
-            "node": "Telegram - Notif Soumission",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Préparer Sauvegarde Mémoire": {
       "main": [
         [
@@ -943,17 +656,6 @@
       "main": [
         [
           {
-            "node": "gbrain Capture",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "gbrain Capture": {
-      "main": [
-        [
-          {
             "node": "Respond to Webhook",
             "type": "main",
             "index": 0
@@ -962,10 +664,18 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
   },
-  "tags": [],
-  "description": "Copilot admin Kayvila v3 — Briefing quotidien + comparaison santé villas + actions confirmées (gating destructif). Supervision globale: villas, bookings, soumissions, stats, OTA, users. Double alerte Telegram."
+  "versionId": "a8d60110-0698-4693-a9ef-d1a9355c2e02",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "599c124565a8f36fe2fbc8f53114dcc39cdf941dcbdaac98566633b4f8753f55"
+  },
+  "nodeGroups": [],
+  "id": "bZRJoiEpZpqYT3PL",
+  "tags": []
 }

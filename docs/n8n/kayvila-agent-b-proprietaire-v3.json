@@ -10,13 +10,13 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "b1-webhook",
+      "id": "87333379-edc6-40ef-8da7-3f4cccc0f789",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1500,
-        0
+        -1392,
+        352
       ],
       "webhookId": "kayvila-owner-webhook"
     },
@@ -24,13 +24,13 @@
       "parameters": {
         "jsCode": "const b = $('Webhook').first().json.body || {};\nconst hdr = $('Webhook').first().json.headers || {};\nconst raw = (b.token || hdr.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const response = await fetch('https://VOTRE-PROJET-SUPABASE.supabase.co/auth/v1/user', {\n    headers: { Authorization: `Bearer ${raw}`, apikey: 'VOTRE_SUPABASE_ANON_KEY' }\n  });\n  if (!response.ok) throw new Error('Token invalid');\n  const user = await response.json();\n  userId = user.id || '';\n  role = (user.user_metadata && user.user_metadata.role) || (user.app_metadata && user.app_metadata.role) || '';\n} catch (e) {}\nconst valid = !!userId && ['owner', 'proprietaire', 'proprio'].includes(String(role).toLowerCase());\nreturn [{ json: { userId, role, token: raw, sessionId: b.sessionid || ('owner-' + userId), userMessage: b.message || '', valid: valid ? 'true' : 'false' } }];"
       },
-      "id": "b1-auth",
+      "id": "c82495de-546b-478e-8074-3d5e330f5092",
       "name": "Code - Auth JWT",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1280,
-        0
+        -1184,
+        352
       ],
       "notes": "⚠️ Vérification JWT via Supabase Auth API. Rôle métier = user_metadata.role, PAS auth.jwt()->>'role'."
     },
@@ -58,26 +58,26 @@
         },
         "options": {}
       },
-      "id": "b1-if-auth",
+      "id": "ab3b1fb8-d00a-4230-929a-0ca8021de32e",
       "name": "IF - Auth Valide ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -1060,
-        0
+        -960,
+        352
       ]
     },
     {
       "parameters": {
         "jsCode": "return [{ json: { response: \"Accès non autorisé. Reconnecte-toi à ton espace propriétaire Kayvila.\", success: false } }];"
       },
-      "id": "b1-refus",
+      "id": "a80876d4-f9b6-4ef4-b66a-795afbfd83eb",
       "name": "Code - Reponse Refus",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -840,
-        200
+        -736,
+        544
       ]
     },
     {
@@ -86,40 +86,21 @@
         "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Code - Auth JWT').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 30",
         "options": {}
       },
-      "id": "b1-get-memory",
+      "id": "577b7d68-fc70-4a0b-907a-7ed61b1710a4",
       "name": "Get Long-Term Memory",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        -620,
-        -160
+        -512,
+        192
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://gbrain-kayvila:8080/query",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { \"query\": $('Code - Auth JWT').first().json.userMessage, \"entity\": \"owner-\" + $('Code - Auth JWT').first().json.userId, \"limit\": 5 } }}",
-        "options": {}
       },
-      "id": "b1-gbrain-recall",
-      "name": "gbrain Recall",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -400,
-        -160
-      ],
       "continueOnFail": true
     },
     {
@@ -154,13 +135,13 @@
         },
         "options": {}
       },
-      "id": "b1-edit-fields",
+      "id": "6e10987d-885f-4151-933d-712032e59e0c",
       "name": "Edit Fields",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -180,
-        -160
+        -208,
+        192
       ]
     },
     {
@@ -169,33 +150,34 @@
         "text": "=Tu es le copilote d'un propriétaire de villa sur Kayvila.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data || 'Aucun historique' }}\n\nMÉMOIRE SÉMANTIQUE (gbrain — décisions et contexte passés) :\n{{ $json.gbrainContext }}\n\nALERTES PROACTIVES (B1 — 5 types calculés live) :\n{{ $json.alerts }}\n⚠️ OUVRE la conversation en présentant ces alertes au propriétaire avant toute question. Priorise : 🔴 conflits > tâches en retard > trous calendrier > OTA > revenu.\n\nMESSAGE PROPRIÉTAIRE : {{ $json.userMessage }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nSOURCE DE VÉRITÉ : utilise SYSTÉMATIQUEMENT tes outils pour récupérer les données réelles (villas, réservations, stats, tâches, OTA). Ne jamais inventer un chiffre — appelle l'outil correspondant.\n\nTON RÔLE :\n- OUVRIR par les alertes proactives (les 5 types) avant toute question du propriétaire\n- Répondre aux questions business du propriétaire\n- Lui donner des insights sur ses performances\n- L'alerter sur les problèmes (tâches en retard, conflits de réservation)\n- Ne JAMAIS modifier une réservation ou un prix sans confirmation explicite\n\nTON TON :\n- Respectueux et direct\n- Créole bienvenu si le proprio l'utilise\n- Toujours sourcer les chiffres (\"Selon ton dashboard...\")\n\nCAPACITÉS :\n- \"Combien j'ai gagné ce mois-ci ?\" → chiffres + comparer au mois précédent\n- \"Qui arrive cette semaine ?\" → liste des check-ins avec détails\n- \"La villa Corail est dispo en juillet ?\" → vérifier le calendrier\n- \"Tâches en retard ?\" → lister avec priorité\n- \"Comment va la synchro Airbnb ?\" → diagnostiquer\n\nRÈGLES :\n- Ne contacter un client qu'avec validation explicite\n- Ne jamais modifier les prix\n- Alerter proactivement si problème détecté\n\nOUTILS : kayvila-my-villas, kayvila-my-bookings, kayvila-my-stats, kayvila-my-tasks, kayvila-ota-status, postgres-chat-memory",
         "options": {}
       },
-      "id": "b1-agent",
+      "id": "def37d1e-be8a-4b81-b930-6924634e7080",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        60,
-        -200
+        96,
+        16
       ]
     },
     {
       "parameters": {
+        "model": "deepseek-v4-flash",
         "options": {
           "temperature": 0.3
         }
       },
-      "id": "b1-deepseek",
+      "id": "489a3e23-cfc8-4c41-a9cb-fc938873b063",
       "name": "DeepSeek Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
       "typeVersion": 1,
       "position": [
-        -120,
-        80
+        -16,
+        432
       ],
       "credentials": {
         "deepSeekApi": {
-          "id": "REPLACE_DEEPSEEK",
-          "name": "KAYVILA DEEPSEEK"
+          "id": "s16Eub8KTcJLPBw5",
+          "name": "KARIBLOOM DEEPSEEK"
         }
       }
     },
@@ -203,175 +185,45 @@
       "parameters": {
         "tableName": "conversation_data"
       },
-      "id": "b1-chat-memory",
+      "id": "adf225b0-57b0-4ef4-89cd-f2f4759a0877",
       "name": "Postgres Chat Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        20,
-        80
+        128,
+        432
       ],
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
       }
     },
     {
       "parameters": {
-        "toolDescription": "Liste les villas du propriétaire connecté.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/villas",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b1-tool-villas",
-      "name": "kayvila-my-villas",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        160,
-        80
-      ],
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "toolDescription": "Liste les réservations (à venir et récentes) du propriétaire connecté.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/bookings",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b1-tool-bookings",
-      "name": "kayvila-my-bookings",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        300,
-        80
-      ],
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "toolDescription": "Statistiques et revenus mensuels des villas du propriétaire connecté.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/analytics-villas",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b1-tool-stats",
-      "name": "kayvila-my-stats",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        440,
-        80
-      ],
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "toolDescription": "Tâches de maintenance / ménage du propriétaire connecté.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/tasks",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b1-tool-tasks",
-      "name": "kayvila-my-tasks",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        580,
-        80
-      ],
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "toolDescription": "Santé des synchronisations OTA (Airbnb / Booking) des villas du propriétaire.",
-        "method": "GET",
-        "url": "https://VOTRE-DOMAINE-KAYVILA/api/dashboard/ota-status",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b1-tool-ota",
-      "name": "kayvila-ota-status",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
-      "position": [
-        720,
-        80
-      ],
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
         "jsCode": "const i = $input.first().json;\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: $('Code - Auth JWT').first().json.sessionId, userId: $('Code - Auth JWT').first().json.userId } }];"
       },
-      "id": "b1-format",
+      "id": "5ef311e5-ea29-4c74-a613-57447177cccb",
       "name": "FORMAT RESPONSE",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        280,
-        -200
+        448,
+        96
       ]
     },
     {
       "parameters": {
         "jsCode": "const msg = ($('Code - Auth JWT').first().json.userMessage || '').toLowerCase();\nconst urgentKw = ['urgent', 'retard', 'annul', 'conflit', 'problème', 'probleme', 'panne', 'litige', 'check-in', 'checkin', 'aujourd', 'ce soir', 'demain', 'ménage pas fait', 'menage pas fait'];\nconst isUrgent = urgentKw.some(k => msg.includes(k));\nreturn [{ json: { isUrgent: isUrgent ? 'true' : 'false', userId: $('Code - Auth JWT').first().json.userId, message: $('Code - Auth JWT').first().json.userMessage, aiOutput: ($('AI Agent').first().json.output || '') } }];"
       },
-      "id": "b1-summary",
+      "id": "0eba8b02-b88a-4f61-8d16-237d730a1266",
       "name": "PREPARE SUMMARY PROMPT",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        280,
-        -440
+        384,
+        -96
       ]
     },
     {
@@ -398,13 +250,13 @@
         },
         "options": {}
       },
-      "id": "b1-if-urgent",
+      "id": "bd0c79ff-9254-49f2-9cbf-09943ba7e619",
       "name": "IF - Urgent ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        500,
-        -440
+        608,
+        -96
       ]
     },
     {
@@ -413,18 +265,19 @@
         "text": "=⚠️ Kayvila — Demande urgente d'un propriétaire\n\nProprio: {{ $json.userId }}\nMessage: {{ $json.message }}",
         "additionalFields": {}
       },
-      "id": "b1-telegram",
+      "id": "0bb05849-0cf6-452f-bca7-d475ce943590",
       "name": "Telegram - Alerte Proprio",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        720,
-        -440
+        832,
+        -96
       ],
+      "webhookId": "8df10516-bc62-42c3-b70a-cfbb311c25f6",
       "credentials": {
         "telegramApi": {
-          "id": "REPLACE_TELEGRAM",
-          "name": "KAYVILA TELEGRAM"
+          "id": "5TkPTLUYLbLbFcue",
+          "name": "DAL CIELO BOT"
         }
       }
     },
@@ -460,13 +313,13 @@
         },
         "options": {}
       },
-      "id": "b1-edit-fields1",
+      "id": "f0e2be48-540a-404e-8cf8-635381eead96",
       "name": "Préparer Sauvegarde Mémoire",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        500,
-        -200
+        672,
+        144
       ]
     },
     {
@@ -495,39 +348,20 @@
         },
         "options": {}
       },
-      "id": "b1-save-memory",
+      "id": "4727f7fb-3e13-40ce-ab04-4fc3d2afe031",
       "name": "Save Memory Supabase",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        720,
-        -200
+        960,
+        144
       ],
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
       },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://gbrain-kayvila:8080/put_page",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { \"slug\": \"memory/owner-\" + $('Code - Auth JWT').first().json.userId + \"/\" + new Date().toISOString().replace(/[:.]/g, '-'), \"content\": ($('Code - Auth JWT').first().json.userMessage + ' → ' + $('FORMAT RESPONSE').first().json.response) } }}",
-        "options": {}
-      },
-      "id": "b1-gbrain-capture",
-      "name": "gbrain Capture",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        940,
-        -200
-      ],
       "continueOnFail": true
     },
     {
@@ -536,86 +370,31 @@
         "responseBody": "={{ { \"response\": $('FORMAT RESPONSE').first().json.response, \"success\": true } }}",
         "options": {}
       },
-      "id": "b1-respond",
+      "id": "4fd1b26f-e9e1-4589-bacc-2604d2162512",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1160,
-        -40
+        1264,
+        304
       ]
     },
     {
-      "id": "b1-sticky-auth",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -1600,
-        -80
-      ],
-      "parameters": {
-        "content": "### 🔐 Authentification\nJWT → Supabase Auth API → vérification rôle propriétaire. Refus si non autorisé.",
-        "color": 1
-      }
-    },
-    {
-      "id": "b1-sticky-context",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -700,
-        -280
-      ],
-      "parameters": {
-        "content": "### 🧠 Contexte & Mémoire\nMémoire conversationnelle + gbrain recall. continueOnFail sur les deux.",
-        "color": 5
-      }
-    },
-    {
-      "id": "b1-sticky-agent",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -200,
-        -280
-      ],
-      "parameters": {
-        "content": "### 🤖 Agent IA Propriétaire\nDeepSeek (temp 0.3) + 5 outils dashboard. Source de vérité = outils, jamais inventer.",
-        "color": 6
-      }
-    },
-    {
-      "id": "b1-sticky-output",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        200,
-        -480
-      ],
-      "parameters": {
-        "content": "### 📤 Réponse & Sauvegarde\nFORMAT → Sauvegarde Supabase + gbrain Capture → Respond.",
-        "color": 7
-      }
-    },
-    {
-      "id": "b1-sticky-alerts",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        200,
-        -580
-      ],
       "parameters": {
         "content": "### 🚨 Alertes Urgentes\nDétection mots-clés urgents → Telegram. Revoir keywords régulièrement.",
         "color": 3
-      }
+      },
+      "id": "4dc2e1c8-db42-402c-8aaf-33770789af74",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -400
+      ]
     }
   ],
+  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -669,17 +448,6 @@
       ]
     },
     "Get Long-Term Memory": {
-      "main": [
-        [
-          {
-            "node": "gbrain Recall",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "gbrain Recall": {
       "main": [
         [
           {
@@ -794,17 +562,6 @@
         ]
       ]
     },
-    "FORMAT RESPONSE": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "PREPARE SUMMARY PROMPT": {
       "main": [
         [
@@ -827,29 +584,7 @@
         ]
       ]
     },
-    "Edit Fields1": {
-      "main": [
-        [
-          {
-            "node": "Save Memory Supabase",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Save Memory Supabase": {
-      "main": [
-        [
-          {
-            "node": "gbrain Capture",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "gbrain Capture": {
       "main": [
         [
           {
@@ -859,12 +594,42 @@
           }
         ]
       ]
+    },
+    "FORMAT RESPONSE": {
+      "main": [
+        [
+          {
+            "node": "Préparer Sauvegarde Mémoire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer Sauvegarde Mémoire": {
+      "main": [
+        [
+          {
+            "node": "Save Memory Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
   },
-  "tags": [],
-  "description": "Copilot propriétaire Kayvila v3 — Push proactif des 5 alertes (calendar_gap, overdue_task, booking_conflict, revenue_delta, ota_desync). Dashboard business: villas, bookings, stats, tasks, OTA. Alertes Telegram."
+  "versionId": "4582731e-ddcd-4719-aab4-cedaec44971c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "599c124565a8f36fe2fbc8f53114dcc39cdf941dcbdaac98566633b4f8753f55"
+  },
+  "nodeGroups": [],
+  "id": "eNzq0aNQYxEVLOlZ",
+  "tags": []
 }
