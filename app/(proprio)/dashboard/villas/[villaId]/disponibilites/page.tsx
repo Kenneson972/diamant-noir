@@ -30,7 +30,7 @@ export default async function DisponibilitesPage({ params }: Props) {
   const [{ data: blocks }, { data: bookings }] = await Promise.all([
     supabase
       .from("villa_date_blocks")
-      .select("id, start_date, end_date, reason")
+      .select("id, start_date, end_date, reason, origin")
       .eq("villa_id", villaId)
       .gte("end_date", today),
     supabase

@@ -23,6 +23,7 @@ export type DateBlock = {
   start_date: string;
   end_date: string;
   reason: string | null;
+  origin: string | null;
 };
 
 export type BookedRange = {
@@ -151,6 +152,7 @@ export function AvailabilityCalendar({
         start_date: format(modal.start, "yyyy-MM-dd"),
         end_date: format(modal.end, "yyyy-MM-dd"),
         reason: reason.trim() || null,
+        origin: "Propriétaire",
         created_by: userId,
       })
       .select()
@@ -299,13 +301,27 @@ export function AvailabilityCalendar({
                   className="flex items-center justify-between bg-white px-4 py-3 transition-colors hover:bg-offwhite"
                 >
                   <div>
-                    <span className="text-sm font-medium text-navy">
-                      {format(parseISO(block.start_date), "dd/MM/yyyy")} →{" "}
-                      {format(parseISO(block.end_date), "dd/MM/yyyy")}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-navy">
+                        {format(parseISO(block.start_date), "dd/MM/yyyy")} →{" "}
+                        {format(parseISO(block.end_date), "dd/MM/yyyy")}
+                      </span>
+                      {block.origin && (
+                        <span
+                          className={[
+                            "inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                            block.origin === "Kayvila"
+                              ? "bg-gold/15 text-gold"
+                              : "bg-navy/10 text-navy/70",
+                          ].join(" ")}
+                        >
+                          {block.origin}
+                        </span>
+                      )}
+                    </div>
                     {block.reason && (
                       <p className="mt-0.5 text-xs text-navy/50">
-                        {block.reason}
+                        Motif : {block.reason}
                       </p>
                     )}
                   </div>

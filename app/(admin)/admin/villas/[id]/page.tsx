@@ -9,6 +9,7 @@ import { AdminVillaEditClient } from "./AdminVillaEditClient";
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
 import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
+import { AdminVillaBlocks } from "@/components/dashboard/admin/AdminVillaBlocks";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -80,11 +81,13 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
       {/* Layout 2 colonnes */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Colonne principale */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-8">
           <AdminVillaEditClient
             villa={villa as Record<string, unknown>}
             bookings={bookings}
           />
+          {/* Blocages de disponibilités (admin) */}
+          <AdminVillaBlocks villaId={villa.id} />
         </div>
 
         {/* Sidebar */}
