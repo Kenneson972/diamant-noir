@@ -16,6 +16,50 @@
 
 ---
 
+## ⏩ ÉTAT D'AVANCEMENT / HANDOFF (mis à jour 2026-06-16)
+
+> Repris par une autre IA : lire cette section EN PREMIER. Branche `feat/agents-ia-v3`, repo `diamant-noir` (toplevel git = `.../DIAMANTNOIR/diamant-noir`). NON mergée dans `main`.
+
+### ✅ PHASE 1 — TERMINÉE, TESTÉE, COMMITÉE (12/12 tâches)
+Tout est sur la branche `feat/agents-ia-v3`. Vérifs finales passées : **40 tests unitaires Vitest OK**, `npx tsc --noEmit` propre (seules 4 erreurs **pré-existantes** dans `tests/a11y.spec.ts` — dépendance `@axe-core/playwright` manquante, RIEN à voir avec ce travail), `npm run build` OK avec les 3 nouvelles routes.
+
+Commits (du plus ancien au plus récent) :
+- `cf24415` T1 — migration `pre_booking_requests` (appliquée en prod Supabase `wsdawdxucyuyopkpgjij`)
+- `985527c` T2 — migration extension `notifications_type_check` (appliquée) + `NOTIF_TYPE_CONFIG`
+- `baa8e57` T3 — `lib/availability-gaps.ts` (findGaps, partagé B1/C)
+- `ebe890e` T4 — `lib/chatbot/availability.ts` (dispos pré-calculées, cache 5 min)
+- `bf983bd` T5 — branchement dispos dans `villa-context.ts` + `canVerifyAvailability=true`
+- `7bae5a1` T6 — `POST /api/chat/pre-book` + `lib/chatbot/pre-book.ts`
+- `ff40f41` T7 — notif lead chaud (`lib/chatbot/lead-scoring.ts`) dans `chat/route.ts`
+- `74349ee` T8 — `POST /api/chat/owner-lead` + `lib/chatbot/conciergerie-context.ts`
+- `ac22248` T9 — `lib/owner-alerts.ts` (5 alertes) fusionnées dans `buildOwnerContextPack`
+- `0c0d113` T10 — `lib/admin-assistant-context.ts` (occupation, score santé, alertes, briefing)
+- `5785863` T11 — refactor `admin/chat/route.ts` : `gatherAdminContext` + GET + gating confirmation + `lib/admin-confirm.ts`
+- `5c1876f` T12 — vérif globale + `RECAP.md` + `LEARNINGS.md`
+
+**Migrations DB déjà appliquées en prod** (ne pas ré-appliquer) : `pre_booking_requests`, extension `notifications_type_check` (+`pre_booking,hot_lead,owner_lead,admin_alert`).
+
+### 🟡 CORRECTIFS POST-REVUE (recommandés AVANT prod) — non faits
+La revue de code finale (Opus) a relevé 3 points actionnables. Aucun n'est bloquant fonctionnellement, mais #1 est à corriger avant prod :
+
+1. **[Important] Rate limiting absent sur les 2 endpoints publics** `app/api/chat/pre-book/route.ts` et `app/api/chat/owner-lead/route.ts`. Ils sont non authentifiés (normal, c'est le chatbot) et insèrent une ligne DB + une notif admin par requête → risque de spam/soft-DoS du flux de notifs admin. **Fix** : extraire `checkRateLimit`/`getClientIP` (déjà présents dans `app/api/chat/route.ts`) dans un helper partagé (ex. `lib/chatbot/rate-limit.ts`) et l'appliquer aux 2 endpoints (fenêtre serrée, ~5-10/h par IP). Idéalement aussi capper la création de notifs.
+2. **[Important] `villaId` non validé comme UUID** dans `lib/chatbot/pre-book.ts` → un villaId non-UUID provoque un 500 Postgres au lieu d'un 400 propre. **Fix** : ajouter un regex UUID dans `validatePreBook` ; idéalement vérifier que la villa existe/est publiée (la route fetch déjà le nom après l'insert — réordonner pour court-circuiter en 400 si villa absente).
+3. **[Important] Incohérence timezone dans `gatherAdminContext`** (`app/api/admin/chat/route.ts`, calculs `todayStr` UTC vs `startOfMonth`/`in48h` en `Date` locale). Autour de minuit/changement de mois, `checkins_today` et les filtres de revenu mensuel peuvent décaler d'un jour. **Fix** : standardiser sur l'arithmétique de dates en string UTC (le pattern `addDays(d,n)` des fichiers `lib/` est correct, s'en inspirer). NB : les fonctions pures dans `admin-assistant-context.ts` et `owner-alerts.ts` sont déjà correctes — seul le calcul inline de la route est concerné.
+
+Mineurs (acceptables, à commenter) : Set in-memory `_hotLeadNotified` non borné ; caches module-level par-instance (serverless) ; `admin/chat/route.ts` = 597 lignes > guideline 500 (extraire les action handlers + `buildAdminDemoReply` dans `lib/admin-actions.ts`/`lib/admin-demo.ts` si on veut repasser sous la limite) ; conventions half-open booking vs block à commenter aux call sites.
+
+### 🔲 PHASE 2 — n8n `-v3` — RESTE À FAIRE (T13, T14, T15 ci-dessous)
+Édition des 3 workflows JSON dans `docs/n8n/` (suffixe `-v3`). Pas de TDD ; validation = import n8n + test manuel d'un message. **Conserver les placeholders** (`VOTRE-DOMAINE`, `VOTRE_SUPABASE_ANON_KEY`) — zéro URL en dur. Voir Tasks 13-15 plus bas (instructions détaillées).
+Rappels d'intégration pour n8n :
+- Contexte envoyé à l'Agent A : `context.villas[].availability` (dispos) + `context.conciergerieFacts` (faits 25%/5% etc.).
+- Endpoints à appeler depuis n8n (HTTP Request, `continueOnFail:true`) : `{{VOTRE-DOMAINE}}/api/chat/pre-book` et `/api/chat/owner-lead`.
+- Agent C : actions destructives = émettre SANS `confirm`, attendre le « oui », ré-émettre avec `action_data.confirm=true` (la route applique le gating).
+
+### 🔚 CLÔTURE BRANCHE — RESTE À FAIRE
+Après Phase 2 (ou dès maintenant si on merge Phase 1 seule, ce qui est prévu par l'approche ③) : utiliser le skill `superpowers:finishing-a-development-branch` (merge `main` ou PR). Phase 1 est mergeable indépendamment.
+
+---
+
 ## PHASE 1 — Couche code + migrations + tests
 
 ---
@@ -825,7 +869,7 @@ async function notifyHotLeadOnce(sessionId: string, summary: string) {
       user_id: null,
       type: "hot_lead",
       title: "Lead chaud détecté",
-      message: summary.slice(0, 280),
+      body: summary.slice(0, 280),
     });
   } catch (e) {
     console.warn("[api/chat] hot_lead notif", e);
@@ -991,7 +1035,7 @@ export async function POST(request: Request) {
       user_id: null,
       type: "owner_lead",
       title: "Nouveau lead propriétaire",
-      message: `${name ?? email ?? "Propriétaire"} — ${villasCount ?? "?"} villa(s)${location ? `, ${location}` : ""}`,
+      body: `${name ?? email ?? "Propriétaire"} — ${villasCount ?? "?"} villa(s)${location ? `, ${location}` : ""}`,
     });
   } catch (e) {
     console.warn("[owner-lead] notif", e);
