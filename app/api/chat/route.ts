@@ -4,6 +4,7 @@ import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chat
 import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
 import { CONCIERGERIE_FACTS } from "@/lib/chatbot/conciergerie-context";
+import { checkRateLimit, getClientIP } from "@/lib/chatbot/rate-limit";
 import type {
   ChatbotRequest,
   ChatbotApiInput,
@@ -14,27 +15,6 @@ import type {
 } from "@/types/chatbot";
 
 export const runtime = "nodejs";
-
-// Rate limiting simple (en production : utiliser Upstash Redis)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(ip: string, maxRequests = 30, windowMs = 3600000): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-  if (!record || now > record.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-  if (record.count >= maxRequests) return false;
-  record.count++;
-  return true;
-}
-
-function getClientIP(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  return request.headers.get("x-real-ip") || "unknown";
-}
 
 // Réponse de fallback si n8n est indisponible
 function buildFallbackResponse(

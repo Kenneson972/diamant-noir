@@ -14,6 +14,7 @@ export type PreBookResult =
   | { ok: false; error: string };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function validatePreBook(input: Partial<PreBookInput>): PreBookResult {
   const villaId = String(input.villaId ?? "").trim();
@@ -22,6 +23,7 @@ export function validatePreBook(input: Partial<PreBookInput>): PreBookResult {
   const endDate = String(input.endDate ?? "").trim();
 
   if (!villaId) return { ok: false, error: "villaId requis" };
+  if (!UUID_RE.test(villaId)) return { ok: false, error: "villaId invalide (UUID attendu)" };
   if (!EMAIL_RE.test(email)) return { ok: false, error: "email invalide" };
   if (!startDate || !endDate) return { ok: false, error: "dates requises" };
   if (endDate <= startDate) return { ok: false, error: "endDate doit être après startDate" };

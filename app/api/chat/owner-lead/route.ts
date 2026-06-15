@@ -2,10 +2,20 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { validateOwnerLead, buildSubmissionUrl } from "@/lib/chatbot/conciergerie-context";
+import { checkRateLimit, getClientIP } from "@/lib/chatbot/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  // Rate limiting — endpoint public non authentifié
+  const clientIP = getClientIP(request);
+  if (!checkRateLimit(clientIP, 10, 3600000)) {
+    return NextResponse.json(
+      { success: false, error: "Trop de requêtes. Veuillez réessayer plus tard." },
+      { status: 429 }
+    );
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -19,14 +29,22 @@ export async function POST(request: Request) {
   }
   const { villasCount, location, email, name } = v.value;
 
-  // Notif admin (broadcast in-app) — la notif EST la trace, pas de nouvelle table
+  // Notif admin (broadcast in-app) — avec cap à 50 notifs pour éviter le spam
   try {
-    await supabaseAdmin().from("notifications").insert({
-      user_id: null,
-      type: "owner_lead",
-      title: "Nouveau lead propriétaire",
-      body: `${name ?? email ?? "Propriétaire"} — ${villasCount ?? "?"} villa(s)${location ? `, ${location}` : ""}`,
-    });
+    const { count: notifCount } = await supabaseAdmin()
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("type", "owner_lead")
+      .gte("created_at", new Date(Date.now() - 3600000).toISOString());
+
+    if ((notifCount ?? 0) < 50) {
+      await supabaseAdmin().from("notifications").insert({
+        user_id: null,
+        type: "owner_lead",
+        title: "Nouveau lead propriétaire",
+        body: `${name ?? email ?? "Propriétaire"} — ${villasCount ?? "?"} villa(s)${location ? `, ${location}` : ""}`,
+      });
+    }
   } catch (e) {
     console.warn("[owner-lead] notif", e);
   }

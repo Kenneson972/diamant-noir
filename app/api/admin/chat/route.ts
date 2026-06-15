@@ -118,14 +118,29 @@ function buildAdminDemoReply(message: string, ctx: Record<string, any>): {
 }
 
 // ─── DATA GATHERING HELPER ────────────────────────────────────────────────────
+
+/** Ajoute n jours à une date string UTC YYYY-MM-DD. */
+function addDays(d: string, n: number): string {
+  return new Date(Date.parse(d + "T00:00:00Z") + n * 86_400_000).toISOString().slice(0, 10);
+}
+
 async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
-  const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
-  const in48h = new Date(Date.now() + 48 * 3_600_000);
-  const in7d = new Date(Date.now() + 7 * 24 * 3_600_000);
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+  // Tous les calculs en string UTC — cohérent avec todayStr et les colonnes date/timestamptz
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayTs = Date.parse(todayStr + "T00:00:00Z");
+  const today = new Date(todayTs);
+  const in48h = new Date(todayTs + 48 * 3_600_000);
+  const in7d = new Date(todayTs + 7 * 24 * 3_600_000);
+
+  // startOfMonth = YYYY-MM-01 (UTC)
+  const startOfMonthStr = todayStr.slice(0, 8) + "01";
+  // startOfLastMonth = mois précédent, jour 01
+  const [y, m] = todayStr.split("-").map(Number);
+  const prevM = m === 1 ? 12 : m - 1;
+  const prevY = m === 1 ? y - 1 : y;
+  const startOfLastMonthStr = `${prevY}-${String(prevM).padStart(2, "0")}-01`;
+  // endOfLastMonth = startOfMonthStr - 1 jour
+  const endOfLastMonthStr = addDays(startOfMonthStr, -1);
 
   const [villasRes, bookingsRes, tasksRes, submissionsRes, otaLogsRes, blocksRes, reviewsRes] =
     await Promise.all([
@@ -201,7 +216,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
         (b) =>
           b.villa_id === v.id &&
           b.payment_status === "paid" &&
-          new Date(b.created_at) >= startOfMonth
+          (b.created_at as string).slice(0, 10) >= startOfMonthStr
       )
       .reduce((s: number, b) => s + getBookingPriceCents(b) / 100, 0);
     revenueLastMonthByVilla[String(v.id)] = bookings
@@ -209,8 +224,8 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
         (b) =>
           b.villa_id === v.id &&
           b.payment_status === "paid" &&
-          new Date(b.created_at) >= startOfLastMonth &&
-          new Date(b.created_at) <= endOfLastMonth
+          (b.created_at as string).slice(0, 10) >= startOfLastMonthStr &&
+          (b.created_at as string).slice(0, 10) <= endOfLastMonthStr
       )
       .reduce((s: number, b) => s + getBookingPriceCents(b) / 100, 0);
   }
@@ -233,10 +248,10 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
       checkins_today: bookings.filter((b) => b.start_date === todayStr).length,
       checkins_48h: bookings.filter(
         (b) =>
-          new Date(b.start_date) <= in48h && new Date(b.start_date) >= today
+          b.start_date >= todayStr && b.start_date <= addDays(todayStr, 2)
       ).length,
       checkins_7d: bookings.filter(
-        (b) => new Date(b.start_date) <= in7d && new Date(b.start_date) >= today
+        (b) => b.start_date >= todayStr && b.start_date <= addDays(todayStr, 7)
       ).length,
       checkouts_today: bookings.filter((b) => b.end_date === todayStr).length,
     },
@@ -250,15 +265,15 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
         .filter(
           (b) =>
             b.payment_status === "paid" &&
-            new Date(b.created_at) >= startOfMonth
+            (b.created_at as string).slice(0, 10) >= startOfMonthStr
         )
         .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
       revenue_last_month: bookings
         .filter(
           (b) =>
             b.payment_status === "paid" &&
-            new Date(b.created_at) >= startOfLastMonth &&
-            new Date(b.created_at) <= endOfLastMonth
+            (b.created_at as string).slice(0, 10) >= startOfLastMonthStr &&
+            (b.created_at as string).slice(0, 10) <= endOfLastMonthStr
         )
         .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
       pending_payments: bookings.filter(
@@ -278,7 +293,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
       total: tasks.length,
       overdue: tasks.filter(
         (t) =>
-          t.status !== "done" && t.due_date && new Date(t.due_date) < today
+          t.status !== "done" && t.due_date && t.due_date < todayStr
       ).length,
       due_today: tasks.filter(
         (t) => t.status !== "done" && t.due_date === todayStr
@@ -405,7 +420,7 @@ export async function POST(request: Request) {
       console.error("[admin-chat] webhook fetch error", fetchErr);
       return NextResponse.json({
         success: true,
-        response: `[Fallback] Mon analyse est temporairement indisponible.\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui, ${tasks.filter((t) => t.status !== "done" && t.due_date && new Date(t.due_date) < today).length} tâches en retard.`,
+        response: `[Fallback] Mon analyse est temporairement indisponible.\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui, ${tasks.filter((t) => t.status !== "done" && t.due_date && t.due_date < todayStr).length} tâches en retard.`,
         action: "SHOW_STATS",
         action_data: contextData,
         suggested_prompts: [
