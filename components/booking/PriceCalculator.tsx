@@ -98,7 +98,7 @@ export function PriceCalculator({
               setCheckin(e.target.value);
               if (checkout && e.target.value >= checkout) setCheckout("");
             }}
-            className="w-full bg-transparent text-sm text-navy focus:outline-none cursor-pointer"
+            className="w-full bg-transparent text-base text-navy focus:outline-none cursor-pointer"
           />
         </div>
         {/* Départ */}
@@ -111,7 +111,7 @@ export function PriceCalculator({
             min={checkin || today}
             value={checkout}
             onChange={(e) => setCheckout(e.target.value)}
-            className="w-full bg-transparent text-sm text-navy focus:outline-none cursor-pointer"
+            className="w-full bg-transparent text-base text-navy focus:outline-none cursor-pointer"
           />
         </div>
       </div>

@@ -117,7 +117,7 @@ export function AvailabilityAlert({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="votre@email.com"
-              className="w-full border border-navy/12 px-3 py-2.5 text-sm text-navy placeholder-navy/30 focus:outline-none focus:border-gold/60 bg-white transition-colors"
+              className="w-full border border-navy/12 px-3 py-2.5 text-base text-navy placeholder-navy/30 focus:outline-none focus:border-gold/60 bg-white transition-colors"
             />
           </div>
 
@@ -133,7 +133,7 @@ export function AvailabilityAlert({
                 min={today}
                 value={checkin}
                 onChange={(e) => setCheckin(e.target.value)}
-                className="w-full border border-navy/12 px-3 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/60 bg-white transition-colors"
+                className="w-full border border-navy/12 px-3 py-2.5 text-base text-navy focus:outline-none focus:border-gold/60 bg-white transition-colors"
               />
             </div>
             <div>
@@ -146,7 +146,7 @@ export function AvailabilityAlert({
                 min={checkin || today}
                 value={checkout}
                 onChange={(e) => setCheckout(e.target.value)}
-                className="w-full border border-navy/12 px-3 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/60 bg-white transition-colors"
+                className="w-full border border-navy/12 px-3 py-2.5 text-base text-navy focus:outline-none focus:border-gold/60 bg-white transition-colors"
               />
             </div>
           </div>

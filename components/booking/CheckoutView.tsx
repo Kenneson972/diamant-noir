@@ -264,7 +264,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                   <div>
                     <label
                       htmlFor="guestName"
-                      className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-[0.28em] text-navy/45"
                     >
                       Nom complet *
                     </label>
@@ -281,14 +281,14 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                         onChange={(e) => setGuestName(e.target.value)}
                         placeholder="Marie Dupont"
                         autoComplete="name"
-                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-sm text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
+                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-base text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
                       />
                     </div>
                   </div>
                   <div>
                     <label
                       htmlFor="guestEmail"
-                      className="mb-2 block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-[0.28em] text-navy/45"
                     >
                       Adresse email *
                     </label>
@@ -305,7 +305,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                         onChange={(e) => setGuestEmail(e.target.value)}
                         placeholder="marie@exemple.fr"
                         autoComplete="email"
-                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-sm text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
+                        className="w-full border border-navy/12 bg-offwhite py-3.5 pl-11 pr-4 text-base text-navy outline-none transition-colors placeholder:text-navy/25 focus:border-gold focus:ring-1 focus:ring-gold"
                       />
                     </div>
                   </div>
