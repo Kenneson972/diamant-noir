@@ -68,7 +68,7 @@ export default function DocumentsPage() {
       <PageTopbar title="Documents" />
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          eyebrow="Documents"
+          eyebrow="MES DOCUMENTS"
           title="Mes documents"
           description="Contrats, livret d'accueil et factures de séjour."
         />

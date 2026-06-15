@@ -72,7 +72,7 @@ export function DashboardSidebar({
       </Link>
 
       <nav
-        className="no-scrollbar min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-6"
+        className="no-scrollbar min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-6 pb-10"
         aria-label={`Navigation ${roleLabel.toLowerCase()}`}
       >
         {menu.map((item) => {
@@ -106,6 +106,9 @@ export function DashboardSidebar({
           );
         })}
       </nav>
+
+      {/* Indicateur visuel de scroll — dégradé subtil en bas de la nav */}
+      <div className="pointer-events-none relative -mt-8 h-8 shrink-0 bg-gradient-to-t from-navy to-transparent" aria-hidden="true" />
 
       <div className="mt-auto border-t border-white/10 px-4 py-4">
         <div className="rounded-lg bg-white/5 px-3 py-2">

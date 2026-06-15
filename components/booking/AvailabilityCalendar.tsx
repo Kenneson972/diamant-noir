@@ -95,7 +95,7 @@ export const AvailabilityCalendar = ({
       </div>
       <RangeCalendar
         aria-label="Sélection des dates de séjour"
-        className="mx-auto w-full max-w-md [&_.calendar]:w-full [&_.calendar]:max-w-none"
+        className="mx-auto w-full max-w-md overflow-x-auto [&_.calendar]:w-full [&_.calendar]:max-w-none [&_.calendar]:min-w-0"
         firstDayOfWeek={locale.startsWith("en") ? "sun" : "mon"}
         isDateUnavailable={isDateUnavailable}
         isDisabled={loading}

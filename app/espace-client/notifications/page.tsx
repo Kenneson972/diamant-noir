@@ -68,7 +68,7 @@ export default function NotificationsPage() {
       <PageTopbar title="Notifications" />
       <div className="mx-auto max-w-2xl space-y-6">
         <TenantSectionHeader
-          eyebrow="Notifications"
+          eyebrow="MES NOTIFICATIONS"
           title="Mes notifications"
           description={
             unreadCount > 0

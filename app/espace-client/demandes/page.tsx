@@ -71,7 +71,7 @@ export default function DemandesPage() {
       <PageTopbar title="Demandes" section="Espace Client" />
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          eyebrow="Demandes"
+          eyebrow="SERVICES & DEMANDES"
           title="Services & demandes"
           description="Notre équipe traite vos demandes sous 24h en moyenne."
         />
