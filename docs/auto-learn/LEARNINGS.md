@@ -226,3 +226,34 @@
 - **Navigation `page.goto(href)` plus robuste que `click()` + `waitForURL()`** pour les pages admin avec render complexe.
 - **Toujours désactiver `backdrop-filter` sur mobile** (`@media max-width: 768px { * { backdrop-filter: none !important } }`) — évite le jank Chrome Android.
 - **`text-[10px]` accepté pour les badges/eyebrows décoratifs** mais **≥11px pour tout contenu informatif** (titres de section, labels de formulaire).
+
+---
+
+## 2026-06-15 — Chatbots & N8N — Analyse + Améliorations ✅
+
+### Fait
+- **Analyse des 3 workflows N8N existants** dans `docs/n8n/` :
+  - `kayvila-agent-a-visiteur-v2.json` (28 nœuds) : chatbot visiteur, anti-toxicité, mémoire, DeepSeek
+  - `kayvila-agent-b-proprietaire-v2.json` (28 nœuds) : copilot proprio, auth JWT, 5 tools, alertes Telegram
+  - `kayvila-agent-c-admin-v2.json` (31 nœuds) : copilot admin, auth admin, 6 tools, double alerte Telegram
+  - **Qualité : 8-9.5/10** — production-grade, ne manque rien
+- **Amélioration des routes API copilot** :
+  - P0 Admin : rate limit, timeout 20s, fallback graceful avec vraies stats
+  - P0 Proprio : actions IA (CREATE_TASK, COMPLETE_TASK, BLOCK_DATE), scope villa vérifié
+  - BLOCK_DATE proprio : origin "Proprietaire" forcé (admin = "Kayvila")
+  - UPDATE_BOOKING : admin seulement (pas le proprio)
+- **Mode démo intelligent** : `smartReply()` et `buildAdminDemoReply()` — détection mots-clés français, réponses avec données réelles du dashboard (revenus, résas, tâches, villas)
+- **UI CopilotPanel** : affichage des `suggested_prompts` en chips cliquables
+- **Fix button-in-button** : `VillaImageManager.tsx` — DropZone.Trigger + Button → span
+
+### Règles apprises
+- **Les workflows N8N sont dans `docs/n8n/`**, pas dans `N8N CLIENT/`. Chercher au bon endroit avant de recréer.
+- **Les copilots Kayvila suivent le même pattern qu'Elise 13** (Karibloom) : webhook → mémoire → AI Agent → tools → format → alertes.
+- **Proprio < Admin en droits** : BLOCK_DATE proprio = origin "Proprietaire", admin = "Kayvila". UPDATE_BOOKING réservé à l'admin. Toutes les actions proprio sont scopées à `ownerVillaIds`.
+- **Le mode démo (sans N8N) doit quand même être utile** — ne pas juste dire "configurez N8N", mais répondre avec les vraies données du contexte.
+- **N8N ne fait pas les actions, le code les fait.** Le workflow N8N répond avec `action: "BLOCK_DATE"` et c'est la route API qui exécute l'insert dans la DB. Séparation claire : N8N = cerveau, API = bras.
+- **Elise 13 (Karibloom)** a servi de référence : 45 nœuds, anti-toxicité, détection leads, devis, waitlist, Telegram. Les workflows Kayvila sont plus légers (28-31 nœuds) mais couvrent l'essentiel.
+
+### Reste à faire
+- Brancher les 3 workflows N8N (importer JSON → configurer credentials → déployer → récupérer URLs webhook)
+- Ajouter `N8N_TENANT_WEBHOOK_URL`, `N8N_OWNER_WEBHOOK_URL`, `N8N_ADMIN_WEBHOOK_URL` dans Vercel
