@@ -205,3 +205,24 @@
 - **`notifications` : `user_id` null = broadcast.** NotificationBell doit filtrer côté client par rôle (admin voit null+own, guest voit own uniquement) — ET garder le handler Realtime (sinon fuite live aux guests). Insert client OK car policy `authenticated_insert with check (true)`.
 - **`is_staff_admin()`** = fonction canonique d'auth admin (service_role OU jwt role admin OU profiles.role='admin') — l'utiliser dans les policies RLS admin.
 - SLA "rappel 6h" = calculé au rendu (badge couleur + tri), pas de cron (respecte NE PAS TOUCHER send-*).
+
+---
+
+## 2026-06-15 — Post-Audit Richard + Mobile + Playwright ✅
+
+### Fait
+- **3 corrections post-audit Richard** : labels dorés espace client (MES NOTIFICATIONS, SERVICES & DEMANDES, MES DOCUMENTS), indication scroll sidebar (pb-10 + dégradé), calendrier overflow-x-auto
+- **4 fixes mobile P0/P1/P2** : inputs 16px (iOS zoom), footer safe-area-inset-bottom, icônes sociales 44px, selects 44px
+- **6 variables SLA dans Vercel** : `NEXT_PUBLIC_SLA_*` (urgent 2h/24h, standard 8h/48h, remind 6h, warn 75%)
+- **23 tests Playwright** : `tests/e2e/corrections-batch.spec.ts` — couvre les 4 vagues + audit Richard + mobile + responsive
+- **3 comptes de test validés** : admin@diamantnoir.com / proprio1@test.com / locataire@test.com
+
+### Règles apprises
+- **iOS Safari zoome sur tout `<input>` avec font-size < 16px.** Toujours utiliser `text-base` (16px) sur les champs de formulaire, pas `text-sm` (14px). P0 critique.
+- **`safe-area-inset-bottom` sur le footer** — iPhone X+ cache les liens du bas sans ce padding. Toujours `pb-[calc(3rem+env(safe-area-inset-bottom,0px))]`.
+- **HeroUI inputs = pas de `<input type="password">` natif.** Les sélecteurs Playwright doivent utiliser `getByPlaceholder()` ou `getByRole('textbox')`, pas `input[type='password']`.
+- **Tests Playwright parallèles = conflits de session Supabase.** Même compte admin partagé entre workers → race condition. Utiliser `--workers=1` quand on teste avec un seul compte.
+- **`getByRole('link', { name: "Modifier" })` plus fiable que `locator("a[href*='/admin/villas/']")`** pour les grilles HeroUI.
+- **Navigation `page.goto(href)` plus robuste que `click()` + `waitForURL()`** pour les pages admin avec render complexe.
+- **Toujours désactiver `backdrop-filter` sur mobile** (`@media max-width: 768px { * { backdrop-filter: none !important } }`) — évite le jank Chrome Android.
+- **`text-[10px]` accepté pour les badges/eyebrows décoratifs** mais **≥11px pour tout contenu informatif** (titres de section, labels de formulaire).
