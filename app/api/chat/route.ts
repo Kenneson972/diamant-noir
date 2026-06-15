@@ -159,7 +159,7 @@ export async function POST(request: Request) {
       villaCount: villas.length,
     },
     capabilities: {
-      canVerifyAvailability: false,  // V1 : pas de vérification iCal en temps réel
+      canVerifyAvailability: true,   // A1 : dispos pré-calculées injectées dans context.villas
       canCreateBooking: false,       // V1 : pre-booking uniquement
       canSendEmail: false,
     },

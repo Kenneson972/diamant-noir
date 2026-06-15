@@ -150,6 +150,12 @@ export interface VillaContextItem {
   location: string | null;
   amenities: string[];
   image_url: string | null;
+  /** Disponibilités pré-calculées (A1) — absent si non chargé */
+  availability?: {
+    isAvailableNow: boolean;
+    nextAvailableFrom: string | null;
+    bookedRanges: { start: string; end: string }[];
+  };
 }
 
 // ---------------------------------------------------------------------------

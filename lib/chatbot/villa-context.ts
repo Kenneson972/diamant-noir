@@ -28,10 +28,31 @@ export async function getPublishedVillasForChatbot(): Promise<VillaContextItem[]
       console.error("[chatbot/villa-context] Supabase error:", error.message);
       return [];
     }
-
     if (!data || !Array.isArray(data)) return [];
 
-    return data.map(normalizeVilla);
+    const villas = data.map(normalizeVilla);
+
+    // Fusion des disponibilités pré-calculées (A1) — dégrade en silence si indispo
+    try {
+      const { getVillaAvailabilityCached } = await import("./availability");
+      const availMap = await getVillaAvailabilityCached();
+      for (const v of villas) {
+        const a = availMap.get(v.id);
+        if (a) {
+          v.availability = {
+            isAvailableNow: a.isAvailableNow,
+            nextAvailableFrom: a.nextAvailableFrom,
+            bookedRanges: a.bookedRanges,
+          };
+        } else {
+          v.availability = { isAvailableNow: true, nextAvailableFrom: null, bookedRanges: [] };
+        }
+      }
+    } catch (e) {
+      console.warn("[chatbot/villa-context] availability merge skipped:", e);
+    }
+
+    return villas;
   } catch (err) {
     console.error("[chatbot/villa-context] Unexpected error:", err);
     return [];
