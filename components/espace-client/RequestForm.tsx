@@ -22,6 +22,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
   const supabase = getSupabaseBrowser();
   const [type, setType] = useState("early_checkin");
   const [message, setMessage] = useState("");
+  const [urgent, setUrgent] = useState(false);
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -37,6 +38,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
       type,
       message: message.trim(),
       status: "pending",
+      priority: urgent ? "urgent" : "standard",
     });
     if (!error) {
       await supabase.from("notifications").insert({
@@ -46,6 +48,15 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
         body: `Votre demande "${REQUEST_TYPES[type]}" a été transmise à l'équipe Kayvila.`,
         action_url: "/espace-client/demandes",
       });
+      if (urgent) {
+        await supabase.from("notifications").insert({
+          user_id: null,
+          type: "request_urgent",
+          title: "⚡ Demande urgente",
+          body: `Nouvelle demande urgente "${REQUEST_TYPES[type]}" reçue — réponse attendue dans les 24h.`,
+          action_url: "/admin/demandes",
+        });
+      }
       setDone(true);
       onSuccess();
     }
@@ -92,6 +103,13 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
           className="w-full border border-navy/15 bg-white px-4 py-3 text-sm text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold/50 resize-none"
         />
       </div>
+      <label className="mt-3 flex items-start gap-2 text-sm text-navy/80">
+        <input type="checkbox" checked={urgent} onChange={(e) => setUrgent(e.target.checked)} className="mt-0.5 accent-gold" />
+        <span>
+          <span className="inline-flex items-center gap-1 font-medium text-navy">⚡ Demande urgente</span>
+          <span className="block text-[11px] text-navy/50">À cocher si votre besoin est dans les 24h.</span>
+        </span>
+      </label>
       <button
         type="submit"
         disabled={sending || !message.trim()}
