@@ -321,6 +321,47 @@ export async function POST(request: Request) {
       actionResult = { success: !error };
     }
 
+    if (action === "COMPLETE_TASK" && actionData.task_id) {
+      const { error } = await supabase
+        .from("tasks")
+        .update({ status: "done", completed_at: new Date().toISOString() })
+        .eq("id", actionData.task_id);
+      actionResult = { success: !error, error: error?.message };
+    }
+
+    if (action === "BLOCK_DATE" && actionData.block) {
+      const block = actionData.block as {
+        villa_id?: string; start_date?: string; end_date?: string;
+        reason?: string;
+      };
+      if (block.villa_id && block.start_date && block.end_date) {
+        // L'admin crée avec origin "Kayvila"
+        const { data: created, error } = await supabase.from("villa_date_blocks").insert({
+          villa_id: block.villa_id,
+          start_date: block.start_date,
+          end_date: block.end_date,
+          reason: block.reason || "Blocage via Admin Chat",
+          origin: "Kayvila",
+          created_by: userId,
+        }).select("id").single();
+        actionResult = { success: !error, block_id: created?.id, error: error?.message };
+      }
+    }
+
+    if (action === "UPDATE_BOOKING" && actionData.booking_id) {
+      const updates: Record<string, unknown> = {};
+      if (actionData.status) updates.status = actionData.status;
+      if (actionData.payment_status) updates.payment_status = actionData.payment_status;
+      if (actionData.guest_name) updates.guest_name = actionData.guest_name;
+      if (Object.keys(updates).length > 0) {
+        const { error } = await supabase
+          .from("bookings")
+          .update(updates)
+          .eq("id", actionData.booking_id);
+        actionResult = { success: !error, error: error?.message };
+      }
+    }
+
     // Sauvegarder l'échange en base si la table existe
     try {
       await supabase.from("admin_chat_logs").insert([
