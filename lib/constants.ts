@@ -69,4 +69,8 @@ export const NOTIF_TYPE_CONFIG: Record<string, { icon: string; color: string; bg
   checkin_reminder:   { icon: "Key",           color: "text-emerald-500", bg: "bg-emerald-50" },
   checkout_reminder:  { icon: "DoorOpen",      color: "text-amber-500",   bg: "bg-amber-50" },
   new_message:        { icon: "MessageCircle", color: "text-blue-500",    bg: "bg-blue-50" },
+  pre_booking:        { icon: "CalendarClock",  color: "text-gold",        bg: "bg-gold/10" },
+  hot_lead:           { icon: "Flame",          color: "text-red-500",     bg: "bg-red-50" },
+  owner_lead:         { icon: "Handshake",      color: "text-emerald-500", bg: "bg-emerald-50" },
+  admin_alert:        { icon: "ShieldAlert",    color: "text-amber-500",   bg: "bg-amber-50" },
 };
