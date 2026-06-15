@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getBookingPriceCents } from "@/lib/utils";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { requiresConfirmation, buildConfirmationPrompt } from "@/lib/admin-confirm";
+import {
+  computeOccupancyByVilla, computeHealthScores, computeAdminAlerts, buildDailyBriefing,
+  type AdminAnalyticsInput,
+} from "@/lib/admin-assistant-context";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -95,11 +100,238 @@ function buildAdminDemoReply(message: string, ctx: Record<string, any>): {
     };
   }
 
+  // ── Santé / comparaison villas ──
+  if (/santé|sante|score|comparer|comparaison|occupation|performance|meilleure|pire/.test(msg)) {
+    return {
+      text: `📊 Demande la vue détaillée dans le tableau de bord : occupation et score de santé par villa sont calculés en direct.`,
+      action: "SHOW_VILLAS",
+      suggestions: ["Quelle villa est la plus occupée ?", "Quelles villas sont à risque ?"],
+    };
+  }
+
   // ── Par défaut : résumé général ──
   return {
     text: `👋 Voici votre tableau de bord :\n\n🏠 **${vs.total} villa(s)** (${vs.published} publiée(s))\n📅 **${bs.checkins_today} check-in(s)** aujourd'hui — ${bs.confirmed + bs.pending} résas\n📋 **${ts.overdue} tâche(s)** en retard sur ${ts.total}\n💰 **${fin.revenue_this_month?.toLocaleString("fr-FR") || 0} €** ce mois-ci\n📬 **${sub.received} soumission(s)** en attente\n🔄 Dernière synchro OTA : ${ota.last_sync ? new Date(ota.last_sync).toLocaleDateString("fr-FR") : "jamais"}\n\nQue puis-je faire pour vous ?`,
     action: "SHOW_STATS",
     suggestions: ["Check-ins de la semaine ?", "Tâches urgentes ?", "Revenus par villa ?"],
+  };
+}
+
+// ─── DATA GATHERING HELPER ────────────────────────────────────────────────────
+async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
+  const in48h = new Date(Date.now() + 48 * 3_600_000);
+  const in7d = new Date(Date.now() + 7 * 24 * 3_600_000);
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+  const [villasRes, bookingsRes, tasksRes, submissionsRes, otaLogsRes, blocksRes, reviewsRes] =
+    await Promise.all([
+      supabase
+        .from("villas")
+        .select(
+          "id, name, is_published, price_per_night, capacity, location, owner_id"
+        ),
+      supabase
+        .from("bookings")
+        .select(
+          "id, villa_id, start_date, end_date, status, payment_status, guest_name, price, total_price_cents, created_at"
+        )
+        .order("start_date", { ascending: true })
+        .limit(200),
+      supabase
+        .from("tasks")
+        .select("id, villa_id, title, status, due_date, type")
+        .limit(100),
+      supabase
+        .from("villa_submissions")
+        .select("id, status, owner_name, villa_name, created_at, has_photos")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("ota_sync_logs")
+        .select("id, villa_id, source, error, inserted, created_at")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("villa_date_blocks")
+        .select("villa_id, start_date, end_date"),
+      supabase
+        .from("reviews")
+        .select("villa_id, rating, status"),
+    ]);
+
+  const villas = villasRes.data || [];
+  const bookings = bookingsRes.data || [];
+  const tasks = tasksRes.data || [];
+  const submissions = submissionsRes.data || [];
+  const otaLogs = otaLogsRes.data || [];
+  const blocks = blocksRes.data || [];
+  const reviews = reviewsRes.data || [];
+
+  // Revenus des 6 derniers mois
+  const last6Months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    return {
+      label: d.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" }),
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+    };
+  }).reverse();
+
+  const monthlyRevenue = last6Months.map((m) => ({
+    month: m.label,
+    revenue: bookings
+      .filter(
+        (b) =>
+          b.payment_status === "paid" &&
+          (b.created_at as string)?.startsWith(m.key)
+      )
+      .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
+  }));
+
+  // Revenue maps pour AdminAnalyticsInput
+  const revenueByVilla: Record<string, number> = {};
+  const revenueLastMonthByVilla: Record<string, number> = {};
+  for (const v of villas) {
+    revenueByVilla[String(v.id)] = bookings
+      .filter(
+        (b) =>
+          b.villa_id === v.id &&
+          b.payment_status === "paid" &&
+          new Date(b.created_at) >= startOfMonth
+      )
+      .reduce((s: number, b) => s + getBookingPriceCents(b) / 100, 0);
+    revenueLastMonthByVilla[String(v.id)] = bookings
+      .filter(
+        (b) =>
+          b.villa_id === v.id &&
+          b.payment_status === "paid" &&
+          new Date(b.created_at) >= startOfLastMonth &&
+          new Date(b.created_at) <= endOfLastMonth
+      )
+      .reduce((s: number, b) => s + getBookingPriceCents(b) / 100, 0);
+  }
+
+  // ─── CONTEXTE COMPLET ────────────────────────────────────────────────────
+  const contextData = {
+    current_date: today.toISOString(),
+    today_str: todayStr,
+
+    villas_summary: {
+      total: villas.length,
+      published: villas.filter((v) => v.is_published).length,
+      draft: villas.filter((v) => !v.is_published).length,
+    },
+
+    bookings_summary: {
+      total: bookings.length,
+      confirmed: bookings.filter((b) => b.status === "confirmed").length,
+      pending: bookings.filter((b) => b.status === "pending").length,
+      checkins_today: bookings.filter((b) => b.start_date === todayStr).length,
+      checkins_48h: bookings.filter(
+        (b) =>
+          new Date(b.start_date) <= in48h && new Date(b.start_date) >= today
+      ).length,
+      checkins_7d: bookings.filter(
+        (b) => new Date(b.start_date) <= in7d && new Date(b.start_date) >= today
+      ).length,
+      checkouts_today: bookings.filter((b) => b.end_date === todayStr).length,
+    },
+
+    // Finances
+    finances: {
+      revenue_total: bookings
+        .filter((b) => b.payment_status === "paid")
+        .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
+      revenue_this_month: bookings
+        .filter(
+          (b) =>
+            b.payment_status === "paid" &&
+            new Date(b.created_at) >= startOfMonth
+        )
+        .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
+      revenue_last_month: bookings
+        .filter(
+          (b) =>
+            b.payment_status === "paid" &&
+            new Date(b.created_at) >= startOfLastMonth &&
+            new Date(b.created_at) <= endOfLastMonth
+        )
+        .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
+      pending_payments: bookings.filter(
+        (b) => b.payment_status !== "paid" && b.status === "confirmed"
+      ).length,
+      revenue_by_villa: villas.map((v) => ({
+        villa_name: v.name,
+        revenue: bookings
+          .filter((b) => b.villa_id === v.id && b.payment_status === "paid")
+          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
+        bookings_count: bookings.filter((b) => b.villa_id === v.id).length,
+      })),
+      monthly_revenue: monthlyRevenue,
+    },
+
+    tasks_summary: {
+      total: tasks.length,
+      overdue: tasks.filter(
+        (t) =>
+          t.status !== "done" && t.due_date && new Date(t.due_date) < today
+      ).length,
+      due_today: tasks.filter(
+        (t) => t.status !== "done" && t.due_date === todayStr
+      ).length,
+      pending: tasks.filter((t) => t.status === "pending").length,
+      in_progress: tasks.filter((t) => t.status === "in_progress").length,
+    },
+
+    submissions_summary: {
+      total: submissions.length,
+      received: submissions.filter((s) => s.status === "received").length,
+      in_progress: submissions.filter((s) =>
+        ["examining", "visit", "contract"].includes(s.status)
+      ).length,
+      approved: submissions.filter((s) => s.status === "approved").length,
+      needs_photos: submissions.filter((s) => s.has_photos === false).length,
+    },
+
+    // Santé OTA
+    ota_health: {
+      last_sync: otaLogs[0]?.created_at || null,
+      recent_errors: otaLogs
+        .filter((l) => l.error)
+        .slice(0, 5)
+        .map((l) => ({
+          villa_id: l.villa_id,
+          source: l.source,
+          error: l.error,
+          synced_at: l.created_at,
+        })),
+      total_imported_last_sync: otaLogs
+        .filter((l) => !l.error)
+        .slice(0, 10)
+        .reduce((s: number, l) => s + (l.inserted || 0), 0),
+      channels_with_errors: [
+        ...new Set(otaLogs.filter((l) => l.error).map((l) => l.source)),
+      ],
+    },
+  };
+
+  return {
+    contextData,
+    villas,
+    bookings,
+    tasks,
+    submissions,
+    otaLogs,
+    blocks,
+    reviews,
+    revenueByVilla,
+    revenueLastMonthByVilla,
+    today,
+    todayStr,
   };
 }
 
@@ -128,176 +360,8 @@ export async function POST(request: Request) {
     const supabase = admin;
 
     // ─── CONTEXT GATHERING ───────────────────────────────────────────────────
-    // Tout en parallèle pour éviter les waterfalls
-
-    const [villasRes, bookingsRes, tasksRes, submissionsRes, otaLogsRes] =
-      await Promise.all([
-        supabase
-          .from("villas")
-          .select(
-            "id, name, is_published, price_per_night, capacity, location, owner_id"
-          ),
-        supabase
-          .from("bookings")
-          .select(
-            "id, villa_id, start_date, end_date, status, payment_status, guest_name, price, total_price_cents, created_at"
-          )
-          .order("start_date", { ascending: true })
-          .limit(200),
-        supabase
-          .from("tasks")
-          .select("id, villa_id, title, status, due_date, type")
-          .limit(100),
-        supabase
-          .from("villa_submissions")
-          .select("id, status, owner_name, villa_name, created_at, has_photos")
-          .order("created_at", { ascending: false })
-          .limit(50),
-        supabase
-          .from("ota_sync_logs")
-          .select("id, villa_id, source, error, inserted, created_at")
-          .order("created_at", { ascending: false })
-          .limit(50),
-      ]);
-
-    const villas = villasRes.data || [];
-    const bookings = bookingsRes.data || [];
-    const tasks = tasksRes.data || [];
-    const submissions = submissionsRes.data || [];
-    const otaLogs = otaLogsRes.data || [];
-
-    const today = new Date();
-    const todayStr = today.toISOString().slice(0, 10);
-    const in48h = new Date(Date.now() + 48 * 3_600_000);
-    const in7d = new Date(Date.now() + 7 * 24 * 3_600_000);
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-
-    // Revenus des 6 derniers mois
-    const last6Months = Array.from({ length: 6 }, (_, i) => {
-      const d = new Date();
-      d.setMonth(d.getMonth() - i);
-      return {
-        label: d.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" }),
-        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-      };
-    }).reverse();
-
-    const monthlyRevenue = last6Months.map((m) => ({
-      month: m.label,
-      revenue: bookings
-        .filter(
-          (b) =>
-            b.payment_status === "paid" &&
-            (b.created_at as string)?.startsWith(m.key)
-        )
-        .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
-    }));
-
-    // ─── CONTEXTE COMPLET ────────────────────────────────────────────────────
-    const contextData = {
-      current_date: today.toISOString(),
-      today_str: todayStr,
-
-      villas_summary: {
-        total: villas.length,
-        published: villas.filter((v) => v.is_published).length,
-        draft: villas.filter((v) => !v.is_published).length,
-      },
-
-      bookings_summary: {
-        total: bookings.length,
-        confirmed: bookings.filter((b) => b.status === "confirmed").length,
-        pending: bookings.filter((b) => b.status === "pending").length,
-        checkins_today: bookings.filter((b) => b.start_date === todayStr).length,
-        checkins_48h: bookings.filter(
-          (b) =>
-            new Date(b.start_date) <= in48h && new Date(b.start_date) >= today
-        ).length,
-        checkins_7d: bookings.filter(
-          (b) => new Date(b.start_date) <= in7d && new Date(b.start_date) >= today
-        ).length,
-        checkouts_today: bookings.filter((b) => b.end_date === todayStr).length,
-      },
-
-      // Finances
-      finances: {
-        revenue_total: bookings
-          .filter((b) => b.payment_status === "paid")
-          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
-        revenue_this_month: bookings
-          .filter(
-            (b) =>
-              b.payment_status === "paid" &&
-              new Date(b.created_at) >= startOfMonth
-          )
-          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
-        revenue_last_month: bookings
-          .filter(
-            (b) =>
-              b.payment_status === "paid" &&
-              new Date(b.created_at) >= startOfLastMonth &&
-              new Date(b.created_at) <= endOfLastMonth
-          )
-          .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
-        pending_payments: bookings.filter(
-          (b) => b.payment_status !== "paid" && b.status === "confirmed"
-        ).length,
-        revenue_by_villa: villas.map((v) => ({
-          villa_name: v.name,
-          revenue: bookings
-            .filter((b) => b.villa_id === v.id && b.payment_status === "paid")
-            .reduce((s: number, b) => s + (getBookingPriceCents(b) / 100), 0),
-          bookings_count: bookings.filter((b) => b.villa_id === v.id).length,
-        })),
-        monthly_revenue: monthlyRevenue,
-      },
-
-      tasks_summary: {
-        total: tasks.length,
-        overdue: tasks.filter(
-          (t) =>
-            t.status !== "done" && t.due_date && new Date(t.due_date) < today
-        ).length,
-        due_today: tasks.filter(
-          (t) => t.status !== "done" && t.due_date === todayStr
-        ).length,
-        pending: tasks.filter((t) => t.status === "pending").length,
-        in_progress: tasks.filter((t) => t.status === "in_progress").length,
-      },
-
-      submissions_summary: {
-        total: submissions.length,
-        received: submissions.filter((s) => s.status === "received").length,
-        in_progress: submissions.filter((s) =>
-          ["examining", "visit", "contract"].includes(s.status)
-        ).length,
-        approved: submissions.filter((s) => s.status === "approved").length,
-        needs_photos: submissions.filter((s) => s.has_photos === false).length,
-      },
-
-      // Santé OTA
-      ota_health: {
-        last_sync: otaLogs[0]?.created_at || null,
-        recent_errors: otaLogs
-          .filter((l) => l.error)
-          .slice(0, 5)
-          .map((l) => ({
-            villa_id: l.villa_id,
-            source: l.source,
-            error: l.error,
-            synced_at: l.created_at,
-          })),
-        total_imported_last_sync: otaLogs
-          .filter((l) => !l.error)
-          .slice(0, 10)
-          .reduce((s: number, l) => s + (l.inserted || 0), 0),
-        channels_with_errors: [
-          ...new Set(otaLogs.filter((l) => l.error).map((l) => l.source)),
-        ],
-      },
-    };
+    const { contextData, villas, bookings, tasks, submissions, otaLogs, today, todayStr } =
+      await gatherAdminContext(supabase);
 
     // ─── WEBHOOK n8n ─────────────────────────────────────────────────────────
     const webhookURL =
@@ -374,6 +438,19 @@ export async function POST(request: Request) {
     const action = data.action || null;
     const actionData = data.action_data || {};
     let actionResult = null;
+
+    // Garde-fou : actions destructives → confirmation explicite obligatoire
+    if (action && requiresConfirmation(action, actionData)) {
+      return NextResponse.json({
+        success: true,
+        response: data.response || buildConfirmationPrompt(action, actionData),
+        action,
+        action_data: { ...actionData, context: contextData },
+        requires_confirmation: true,
+        confirmation_prompt: buildConfirmationPrompt(action, actionData),
+        suggested_prompts: ["Oui, confirmer", "Annuler"],
+      });
+    }
 
     if (action === "CREATE_TASK" && actionData.task) {
       const { error } = await supabase.from("tasks").insert({
@@ -475,6 +552,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
     console.error("Admin Chat Error:", error);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    await requireAdmin(request);
+    const supabase = supabaseAdmin();
+    const ctx = await gatherAdminContext(supabase);
+    const today = new Date().toISOString().slice(0, 10);
+
+    const analytics: AdminAnalyticsInput = {
+      today,
+      villas: ctx.villas.map((v: any) => ({ id: String(v.id), name: String(v.name ?? "Villa") })),
+      bookings: ctx.bookings.map((b: any) => ({
+        villa_id: String(b.villa_id), start_date: String(b.start_date), end_date: String(b.end_date),
+        status: String(b.status ?? ""), payment_status: String(b.payment_status ?? ""),
+      })),
+      blocks: (ctx.blocks ?? []).map((b: any) => ({
+        villa_id: String(b.villa_id), start_date: String(b.start_date), end_date: String(b.end_date),
+      })),
+      tasks: ctx.tasks.map((t: any) => ({ id: String(t.id), villa_id: String(t.villa_id), status: String(t.status ?? ""), due_date: t.due_date ?? null })),
+      reviews: (ctx.reviews ?? []).map((r: any) => ({ villa_id: String(r.villa_id), rating: Number(r.rating ?? 0), status: String(r.status ?? "") })),
+      submissions: ctx.submissions.map((s: any) => ({ id: String(s.id), status: String(s.status ?? ""), created_at: String(s.created_at), owner_name: s.owner_name, villa_name: s.villa_name })),
+      revenueByVilla: ctx.revenueByVilla ?? {},
+      revenueLastMonthByVilla: ctx.revenueLastMonthByVilla ?? {},
+    };
+
+    return NextResponse.json({
+      success: true,
+      daily_briefing: buildDailyBriefing(analytics),
+      occupancy_by_villa: computeOccupancyByVilla(analytics),
+      health_score_by_villa: computeHealthScores(analytics),
+      admin_alerts: computeAdminAlerts(analytics),
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    console.error("Admin Chat GET Error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
