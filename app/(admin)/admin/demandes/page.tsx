@@ -1,25 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { Check, X, MessageCircle, Clock, UserCheck } from "lucide-react";
 import { REQUEST_TYPE_LABELS, REQUEST_STATUS_STYLES } from "@/lib/constants";
 import { KayvilaEmptyState } from "@/components/ui/pro";
+import { getSlaStatus } from "@/lib/sla";
+import { timeAgo, cn } from "@/lib/utils";
 
-function getSlaBadge(createdAt: string) {
-  const now = new Date();
-  const created = new Date(createdAt);
-  const hours = (now.getTime() - created.getTime()) / 3600000;
-
-  if (hours < 4) {
-    return { label: `${Math.round(hours * 60)} min`, color: "bg-emerald-50 text-emerald-700" };
-  } else if (hours < 24) {
-    return { label: `${Math.round(hours)}h`, color: "bg-amber-50 text-amber-700" };
-  } else {
-    const days = Math.floor(hours / 24);
-    return { label: `${days}j`, color: "bg-red-50 text-red-700" };
-  }
-}
+const SLA_LEVEL_COLOR = {
+  ok: "bg-emerald-50 text-emerald-700",
+  warn: "bg-amber-50 text-amber-700",
+  over: "bg-red-50 text-red-700",
+} as const;
 
 export default function AdminDemandesPage() {
   const supabase = getSupabaseBrowser();
@@ -45,7 +38,7 @@ export default function AdminDemandesPage() {
     if (!supabase) return;
     const query = supabase
       .from("requests")
-      .select("id, type, status, message, admin_response, created_at, booking_id, guest_id, assignee_id, bookings(villa_id, villas!bookings_villa_id_fkey(name), guest_name, start_date, end_date)")
+      .select("id, type, status, message, admin_response, created_at, booking_id, guest_id, assignee_id, priority, taken_at, resolved_at, bookings(villa_id, villas!bookings_villa_id_fkey(name), guest_name, start_date, end_date)")
       .order("created_at", { ascending: false });
     if (filter !== "all") query.eq("status", filter);
     const { data } = await query;
@@ -54,6 +47,17 @@ export default function AdminDemandesPage() {
   };
 
   useEffect(() => { fetchRequests(); }, [supabase, filter]);
+
+  const sortedRequests = useMemo(() => {
+    const rank = (r: any) => {
+      const sla = getSlaStatus({ createdAt: r.created_at, priority: r.priority ?? "standard", resolvedAt: r.resolved_at });
+      if (sla.level === "over") return 0;
+      if (r.priority === "urgent" && !r.resolved_at) return 1;
+      if (sla.level === "warn") return 2;
+      return 3;
+    };
+    return [...requests].sort((a, b) => rank(a) - rank(b) || new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [requests]);
 
   const handleAction = async (id: string, status: string, guestId?: string, requestType?: string) => {
     if (!supabase) return;
@@ -138,8 +142,8 @@ export default function AdminDemandesPage() {
         />
       ) : (
         <div className="space-y-4">
-          {requests.map((r) => {
-            const sla = getSlaBadge(r.created_at);
+          {sortedRequests.map((r) => {
+            const sla = getSlaStatus({ createdAt: r.created_at, priority: r.priority ?? "standard", resolvedAt: r.resolved_at });
             return (
               <div key={r.id} className="border border-navy/10 bg-white p-5">
                 <div className="flex items-start justify-between gap-4 mb-3">
@@ -149,10 +153,15 @@ export default function AdminDemandesPage() {
                       <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${REQUEST_STATUS_STYLES[r.status] ?? "bg-gray-50 text-gray-600"}`}>
                         {r.status === "pending" ? "En attente" : r.status === "in_progress" ? "En cours" : r.status === "resolved" ? "Résolu" : r.status}
                       </span>
+                      {r.priority === "urgent" && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">
+                          ⚡ URGENT
+                        </span>
+                      )}
                       {/* SLA Badge */}
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${sla.color}`}>
+                      <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full", SLA_LEVEL_COLOR[sla.level])}>
                         <Clock size={10} />
-                        {sla.label}
+                        {timeAgo(r.created_at)}
                       </span>
                     </div>
                     <p className="text-sm font-medium text-navy">
