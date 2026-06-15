@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
 import type { Selection } from "react-aria-components";
@@ -47,6 +48,22 @@ export function AdminReservationsDataGrid({
   selectedKeys,
   onSelectionChange,
 }: AdminReservationsDataGridProps) {
+  const [search, setSearch] = useState("");
+
+  const visibleBookings = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return [...rows]
+      .filter((b) => {
+        if (!q) return true;
+        const name = (b.guest_name ?? "").toLowerCase();
+        const ref = String(b.id ?? "").toLowerCase();
+        return name.includes(q) || ref.includes(q);
+      })
+      .sort((a, b) =>
+        (a.guest_name ?? "").localeCompare(b.guest_name ?? "", "fr", { sensitivity: "base" })
+      );
+  }, [rows, search]);
+
   const columns: DataGridColumn<AdminBookingRow>[] = [
     {
       id: "guest_name",
@@ -173,15 +190,25 @@ export function AdminReservationsDataGrid({
   ];
 
   return (
-    <KayvilaDataGrid
-      aria-label="Liste des réservations"
-      columns={columns}
-      data={rows}
-      getRowId={(item) => item.id}
-      selectionMode="multiple"
-      showSelectionCheckboxes
-      selectedKeys={selectedKeys}
-      onSelectionChange={onSelectionChange}
-    />
+    <div>
+      <input
+        type="search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Rechercher par nom client ou n° réservation"
+        className="mb-4 w-full max-w-sm rounded-lg border border-navy/15 bg-white px-3 py-2 text-sm text-navy placeholder:text-navy/40 focus:border-gold focus:outline-none"
+        aria-label="Rechercher une réservation"
+      />
+      <KayvilaDataGrid
+        aria-label="Liste des réservations"
+        columns={columns}
+        data={visibleBookings}
+        getRowId={(item) => item.id}
+        selectionMode="multiple"
+        showSelectionCheckboxes
+        selectedKeys={selectedKeys}
+        onSelectionChange={onSelectionChange}
+      />
+    </div>
   );
 }
