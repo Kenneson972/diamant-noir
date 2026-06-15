@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { sanitizeUserMessage, sanitizeConversationSummary, sanitizeLeadData } from "@/lib/chatbot/sanitize";
 import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chatbot/villa-context";
+import { supabaseAdmin } from "@/lib/supabase";
+import { isHotLead } from "@/lib/chatbot/lead-scoring";
 import type {
   ChatbotRequest,
   ChatbotApiInput,
@@ -90,6 +92,24 @@ function parseN8nResponse(raw: unknown): N8nChatResponse | null {
     warnings: Array.isArray(d.warnings) ? d.warnings : [],
     debug: process.env.NODE_ENV === "development" ? (d.debug as Record<string, unknown>) : undefined,
   };
+}
+
+// Throttle mémoire : 1 notif lead chaud par session
+const _hotLeadNotified = new Set<string>();
+
+async function notifyHotLeadOnce(sessionId: string, summary: string) {
+  if (_hotLeadNotified.has(sessionId)) return;
+  _hotLeadNotified.add(sessionId);
+  try {
+    await supabaseAdmin().from("notifications").insert({
+      user_id: null,
+      type: "hot_lead",
+      title: "Lead chaud détecté",
+      body: summary.slice(0, 280),
+    });
+  } catch (e) {
+    console.warn("[api/chat] hot_lead notif", e);
+  }
 }
 
 export async function POST(request: Request) {
@@ -208,6 +228,14 @@ export async function POST(request: Request) {
       shouldEscalateToHuman: parsed.shouldEscalateToHuman,
       humanHandoffReason: parsed.shouldEscalateToHuman ? parsed.humanHandoffReason : undefined,
     };
+
+    if (isHotLead({
+      leadTemperature: parsed.leadTemperature,
+      qualificationScore: parsed.qualificationScore,
+      knownLeadData: parsed.leadUpdate as Record<string, unknown>,
+    })) {
+      await notifyHotLeadOnce(sessionId, `Session ${sessionId} — ${parsed.reply.slice(0, 120)}`);
+    }
 
     return NextResponse.json(clientResponse);
   } catch (error) {
