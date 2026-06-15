@@ -112,9 +112,9 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
 
           {/* Historique des réservations */}
           {bookings.length > 0 && (() => {
-            const now = new Date().toISOString();
-            const upcoming = bookings.filter((b) => (b.end_date ?? "") >= now);
-            const past = bookings.filter((b) => (b.end_date ?? "") < now);
+            const todayDate = new Date().toISOString().slice(0, 10);
+            const upcoming = bookings.filter((b) => (b.end_date ?? "") >= todayDate);
+            const past = bookings.filter((b) => (b.end_date ?? "") < todayDate);
             const villaImageSrc =
               (villa.image_url as string | null) ??
               (Array.isArray(villa.image_urls)

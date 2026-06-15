@@ -291,7 +291,7 @@ export function AdminVillaForm() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-navy" htmlFor="cleaning_fee_euros">
-                  Frais de menage (EUR)
+                  Frais de ménage (EUR)
                 </label>
                 <input
                   id="cleaning_fee_euros"
@@ -300,9 +300,9 @@ export function AdminVillaForm() {
                   min="0"
                   step="0.01"
                   defaultValue={0}
-                  className="w-full rounded-none border border-gray-300 px-3 py-2 text-sm"
+                  className="w-full rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
                 />
-                <p className="text-[11px] text-navy/55">100 % reverse a Kayvila pour le menage et la blanchisserie</p>
+                <p className="text-[11px] text-navy/55">100 % reversé à Kayvila pour le ménage et la blanchisserie</p>
               </div>
               <div>
                 <label
