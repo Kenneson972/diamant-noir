@@ -688,7 +688,7 @@ export async function POST(request: Request) {
   // 2) Récupérer le nom de la villa (best effort)
   const { data: villa } = await admin
     .from("villas")
-    .select("name, slug")
+    .select("name")
     .eq("id", villaId)
     .maybeSingle();
   const villaName = villa?.name ?? "votre villa";
@@ -703,20 +703,21 @@ export async function POST(request: Request) {
     if (error) console.warn("[pre-book] notif", error.message);
   });
 
-  // 4) Lien pré-rempli vers la page de réservation existante
+  // 4) Lien pré-rempli vers la page de réservation existante (app/book/page.tsx)
+  //    Params confirmés dans le code : villaId, checkin, checkout, guests
   const params = new URLSearchParams({
-    villa: villa?.slug ?? villaId,
-    start: startDate,
-    end: endDate,
+    villaId,
+    checkin: startDate,
+    checkout: endDate,
     guests: String(guests),
   });
-  const bookingUrl = `/reservation?${params.toString()}`;
+  const bookingUrl = `/book?${params.toString()}`;
 
   return NextResponse.json({ success: true, bookingUrl });
 }
 ```
 
-> NOTE : vérifier l'URL réelle de réservation. Si la page diffère de `/reservation`, ajuster `bookingUrl` (chercher : `grep -rl "useSearchParams\|searchParams" app/reservation app/produit 2>/dev/null`). Ne PAS appeler Stripe ni `villa-submissions`.
+> URL CONFIRMÉE : la page de réservation publique est `app/book/page.tsx`, qui lit `searchParams` `villaId`, `checkin`, `checkout`, `guests`. Ne PAS appeler Stripe ni `villa-submissions`.
 
 - [ ] **Step 6 : Vérifier compilation + tests**
 
@@ -1261,6 +1262,8 @@ a) Ajouter le chargement de `villa_date_blocks` et `ota_sync_logs` dans le `Prom
 ```
 et récupérer leurs `.data` (ex. `const blocks = blocksRes.data ?? []; const otaLogs = otaRes.data ?? [];`).
 
+a-bis) **REQUIS** : la requête `tasks` existante sélectionne `id, villa_id, content, status, created_at` mais PAS `due_date`. Ajouter `due_date` au `.select(...)` des tasks — sinon l'alerte `overdue_task` ne se déclenchera jamais. La colonne `tasks.due_date` (type `date`) EXISTE en base (vérifié).
+
 b) Importer en haut :
 ```ts
 import { computeOwnerAlerts } from "@/lib/owner-alerts";
@@ -1302,7 +1305,7 @@ c) Juste avant le `return` final du pack, calculer et fusionner :
 ```
 Puis utiliser `mergedAlerts` à la place de `alertsOnly` dans le `return` du pack (champ `alerts`).
 
-> NOTE : si `tasks` n'a pas de colonne `due_date` (cf. TODO existant ligne ~195), l'alerte `overdue_task` ne se déclenchera pas — non bloquant. Vérifier via `execute_sql` que `tasks.due_date` existe ; sinon adapter la règle (retirer `overdue_task` du calcul owner et le documenter).
+> RÉSOLU : `tasks.due_date` (type `date`) existe en base — l'alerte `overdue_task` fonctionne dès lors que `due_date` est ajouté au `.select(...)` des tasks (cf. step a-bis).
 
 - [ ] **Step 6 : Vérifier compilation**
 
