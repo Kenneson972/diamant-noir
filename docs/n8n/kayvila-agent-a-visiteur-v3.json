@@ -1,5 +1,5 @@
 {
-  "name": "Kayvila \u2014 Agent A v3 \u2014 Chatbot Visiteur Bi-Tunnel",
+  "name": "Kayvila — Agent A v3 — Chatbot Visiteur Bi-Tunnel",
   "nodes": [
     {
       "parameters": {
@@ -10,27 +10,27 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "a1-webhook",
+      "id": "705a1eb0-7563-4c25-9d38-85567aabb032",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1320,
-        0
+        -656,
+        240
       ],
       "webhookId": "kayvila-visitor-webhook"
     },
     {
       "parameters": {
-        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11));\n// Extraction disponibilit\u00e9s (A1) et faits conciergerie du contexte inject\u00e9 par la route Next.js\nconst villas = b.context?.villas || [];\nconst availability = JSON.stringify(villas.map(v => ({ name: v.name, availability: v.availability })));\nconst conciergerieFacts = JSON.stringify(b.context?.conciergerieFacts || []);\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '', availability, conciergerieFacts } }];"
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11));\n// Extraction disponibilités (A1) et faits conciergerie du contexte injecté par la route Next.js\nconst villas = b.context?.villas || [];\nconst availability = JSON.stringify(villas.map(v => ({ name: v.name, availability: v.availability })));\nconst conciergerieFacts = JSON.stringify(b.context?.conciergerieFacts || []);\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '', availability, conciergerieFacts } }];"
       },
-      "id": "a1-init-session",
+      "id": "117e3c82-250c-4f6d-b946-2527da4e7fa8",
       "name": "Init Session",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1100,
-        0
+        -448,
+        240
       ]
     },
     {
@@ -41,34 +41,34 @@
           "queryReplacement": "={{ $json.sessionId }}"
         }
       },
-      "id": "a1-check-banned",
+      "id": "82b8b55a-d584-4d21-8abc-38b077795c76",
       "name": "Postgres - Check Banned Session",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        -880,
-        0
+        -224,
+        240
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
         "jsCode": "const d = $input.first().json || {};\nconst banned = !!(d.session_id || (d[0] && d[0].session_id));\nreturn [{ json: { isBanned: banned ? 'true' : 'false', sessionId: $('Init Session').first().json.sessionId } }];"
       },
-      "id": "a1-code-bancheck",
+      "id": "34f096c3-ce4f-48e6-bcbf-c552c23cef18",
       "name": "Code - Ban Check",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -760,
-        0
+        -96,
+        240
       ]
     },
     {
@@ -95,26 +95,26 @@
         },
         "options": {}
       },
-      "id": "a1-if-banned",
+      "id": "b6f97b6d-8a31-49e3-87b1-5ff5eeeb185d",
       "name": "IF - Session Bannie ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -540,
-        0
+        128,
+        240
       ]
     },
     {
       "parameters": {
-        "jsCode": "return [{ json: { response: \"Cette session a \u00e9t\u00e9 suspendue. Pour toute question, contactez l'\u00e9quipe Kayvila directement.\", success: true } }];"
+        "jsCode": "return [{ json: { response: \"Cette session a été suspendue. Pour toute question, contactez l'équipe Kayvila directement.\", success: true } }];"
       },
-      "id": "a1-code-banned-reply",
+      "id": "953b361c-d2e3-436e-b9a2-9be241dfc04b",
       "name": "Code - Reponse Bannie",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -320,
-        200
+        352,
+        432
       ]
     },
     {
@@ -125,49 +125,49 @@
           "queryReplacement": "={{ $('Init Session').first().json.sessionId }}"
         }
       },
-      "id": "a1-get-memory",
+      "id": "571b58a7-d218-475a-8615-47ef1565a0b6",
       "name": "Get Long-Term Memory",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        -320,
-        -160
+        352,
+        80
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
-        "url": "https://https://kayvila.com/api/villas/public",
+        "url": "https://kayvila.vercel.app/api/villas/public",
         "options": {}
       },
-      "id": "a1-get-catalog",
+      "id": "51709588-cb1d-4bf8-9ecb-419524a49588",
       "name": "Get Villa Catalog",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -100,
-        -160
+        560,
+        80
       ],
       "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "const c = $input.first().json || {};\nconst villas = Array.isArray(c.villas) ? c.villas : (Array.isArray(c) ? c : []);\nif (c.error || villas.length === 0) {\n  return [{ json: { catalog: '[]', catalogFallback: \"\u26a0\ufe0f Le catalogue est momentan\u00e9ment indisponible. Dis au visiteur : 'Notre service est temporairement perturb\u00e9. Tu peux nous contacter directement ou revenir dans quelques minutes.'\" } }];\n}\nreturn [{ json: { catalog: JSON.stringify(villas), catalogFallback: '' } }];"
+        "jsCode": "const c = $input.first().json || {};\nconst villas = Array.isArray(c.villas) ? c.villas : (Array.isArray(c) ? c : []);\nif (c.error || villas.length === 0) {\n  return [{ json: { catalog: '[]', catalogFallback: \"⚠️ Le catalogue est momentanément indisponible. Dis au visiteur : 'Notre service est temporairement perturbé. Tu peux nous contacter directement ou revenir dans quelques minutes.'\" } }];\n}\nreturn [{ json: { catalog: JSON.stringify(villas), catalogFallback: '' } }];"
       },
-      "id": "a1-check-catalog",
-      "name": "Code - V\u00e9rifier Catalogue",
+      "id": "23443868-8440-4fbc-8167-7159b4f3d519",
+      "name": "Code - Vérifier Catalogue",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        120,
-        -360
+        784,
+        -128
       ]
     },
     {
@@ -189,13 +189,13 @@
             {
               "id": "a1-f-cat",
               "name": "catalog",
-              "value": "={{ $('Code - V\u00e9rifier Catalogue').first().json.catalog }}",
+              "value": "={{ $('Code - Vérifier Catalogue').first().json.catalog }}",
               "type": "string"
             },
             {
               "id": "a1-f-fb",
               "name": "catalogFallback",
-              "value": "={{ $('Code - V\u00e9rifier Catalogue').first().json.catalogFallback }}",
+              "value": "={{ $('Code - Vérifier Catalogue').first().json.catalogFallback }}",
               "type": "string"
             },
             {
@@ -220,13 +220,13 @@
         },
         "options": {}
       },
-      "id": "a1-edit-fields",
+      "id": "06886200-0cc6-4641-ad46-e460b52e0aea",
       "name": "Edit Fields",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        120,
-        -160
+        784,
+        80
       ]
     },
     {
@@ -242,7 +242,7 @@
             {
               "id": "a1-tox",
               "leftValue": "={{ ($json.userMessage || '').toLowerCase() }}",
-              "rightValue": "\\b(connard|salope|ta gueule|encul\u00e9|fdp|pute|nique|va te faire)\\b",
+              "rightValue": "\\b(connard|salope|ta gueule|enculé|fdp|pute|nique|va te faire)\\b",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -253,26 +253,26 @@
         },
         "options": {}
       },
-      "id": "a1-if-toxic",
+      "id": "63ffc4d5-67c1-4795-8ba0-df4a3b568630",
       "name": "IF - Toxique ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        340,
-        -160
+        1008,
+        80
       ]
     },
     {
       "parameters": {
-        "jsCode": "const s = $('Init Session').first().json.sessionId;\nreturn [{ json: { response: \"Je ne peux pas continuer cet \u00e9change. Pour \u00e9changer directement, l'\u00e9quipe Kayvila reste \u00e0 ta disposition. Bonne continuation.\", sessionId: s, success: true } }];"
+        "jsCode": "const s = $('Init Session').first().json.sessionId;\nreturn [{ json: { response: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à ta disposition. Bonne continuation.\", sessionId: s, success: true } }];"
       },
-      "id": "a1-code-toxic-reply",
+      "id": "81d8e118-9b09-40f5-8c9d-b56c22cfe24a",
       "name": "Code - Reponse Toxique",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        560,
-        40
+        1248,
+        448
       ]
     },
     {
@@ -283,22 +283,22 @@
           "queryReplacement": "={{ [$('Init Session').first().json.sessionId, $('Init Session').first().json.message || ''] }}"
         }
       },
-      "id": "a1-tox-log",
-      "name": "Postgres - Log Toxicit\u00e9",
+      "id": "27cca565-90be-4f0c-9f18-6ae4e96c4ca3",
+      "name": "Postgres - Log Toxicité",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        780,
-        220
+        1440,
+        464
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -308,22 +308,22 @@
           "queryReplacement": "={{ $('Init Session').first().json.sessionId }}"
         }
       },
-      "id": "a1-tox-count",
-      "name": "Postgres - Compter Toxicit\u00e9",
+      "id": "3120f85c-2da0-4a47-8ed5-d21917add2a5",
+      "name": "Postgres - Compter Toxicité",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1000,
-        220
+        1664,
+        464
       ],
       "alwaysOutputData": true,
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -349,13 +349,13 @@
         },
         "options": {}
       },
-      "id": "a1-tox-if",
-      "name": "IF - Seuil D\u00e9pass\u00e9 ?",
+      "id": "1d2cb469-8c13-45dc-bdda-a5350855b2ab",
+      "name": "IF - Seuil Dépassé ?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1220,
-        220
+        1888,
+        464
       ]
     },
     {
@@ -366,84 +366,70 @@
           "queryReplacement": "={{ [$('Init Session').first().json.sessionId, 'Auto-ban : 3+ messages toxiques en 1h'] }}"
         }
       },
-      "id": "a1-tox-ban",
+      "id": "e926a2ac-c68f-4c34-b650-b560bbb19b41",
       "name": "Postgres - Bannir Session",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1440,
-        220
+        2112,
+        464
       ],
-      "continueOnFail": true,
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Tu es le guide virtuel de Kayvila, plateforme de location de villas de luxe en Martinique.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nCATALOGUE VILLAS (donn\u00e9es r\u00e9elles, ne rien inventer) :\n{{ $json.catalog }}\n{{ $json.catalogFallback }}\n\nMESSAGE VISITEUR : {{ $json.userMessage }}\nCONTEXTE PAGE : {{ $json.context }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nDISPONIBILIT\u00c9S (A1 \u2014 donn\u00e9es r\u00e9elles pr\u00e9-calcul\u00e9es) :\n{{ $json.availability }}\n\u26a0\ufe0f Utilise CES disponibilit\u00e9s pour r\u00e9pondre aux questions de dates. Ne JAMAIS inventer de disponibilit\u00e9.\n\nFAITS CONCIERGERIE (tunnel proprio) :\n{{ $json.conciergerieFacts }}\n\u26a0\ufe0f Si le visiteur est un propri\u00e9taire potentiel, cite ces faits (commission 25%, frais 5%, etc.).\n\nTON R\u00d4LE :\n- Aider les visiteurs \u00e0 trouver la villa parfaite (tunnel voyageur)\n- D\u00e9tecter l'intention \u00ab propri\u00e9taire \u00bb et basculer sur le tunnel acquisition (tunnel proprio)\n- R\u00e9pondre aux questions sur les villas et la Martinique\n- Rediriger vers le formulaire de r\u00e9servation\n\nTUNNEL VOYAGEUR (fin de conversation) :\n- Si le visiteur est pr\u00eat \u00e0 r\u00e9server \u2192 \u00e9mettre un preBooking avec { villaId, email, startDate, endDate, guests }\n- Format de sortie structur\u00e9e : { \"preBooking\": { \"villaId\": \"...\", \"email\": \"...\", \"startDate\": \"...\", \"endDate\": \"...\", \"guests\": 2 } }\n\nTUNNEL PROPRI\u00c9TAIRE (fin de conversation) :\n- Si le visiteur est un propri\u00e9taire qualifi\u00e9 \u2192 \u00e9mettre ownerLead avec { villasCount, location, email, name }\n- Format de sortie structur\u00e9e : { \"ownerLead\": { \"villasCount\": 2, \"location\": \"...\", \"email\": \"...\", \"name\": \"...\" } }\n- Toujours inclure leadTemperature et qualificationScore\n\nTON TON :\n- Chaleureux et fier de la Martinique\n- Tutoiement naturel\n- Pas d'emojis sauf si le visiteur en utilise\n\nR\u00c8GLES ABSOLUES :\n- Ne JAMAIS inventer un prix ou une disponibilit\u00e9\n- Si tu ne sais pas \u2192 \u00ab Je v\u00e9rifie et je te confirme \u00bb\n- Ne parler QUE de Kayvila et de la Martinique\n- Si le visiteur est ind\u00e9cis \u2192 poser 2-3 questions (dates, capacit\u00e9, budget)\n- Rediriger vers le site pour r\u00e9server\n\nOUTILS DISPONIBLES :\n- kayvila-search : chercher des villas par mots-cl\u00e9s (capacit\u00e9, localisation, prix)\n- postgres-chat-memory : te souvenir de la conversation",
+        "text": "=Tu es le guide virtuel de Kayvila, plateforme de location de villas de luxe en Martinique.\n\nHISTORIQUE :\n{{ $('Get Long-Term Memory').first().json.conversation_data }}\n\nCATALOGUE VILLAS (données réelles, ne rien inventer) :\n{{ $json.catalog }}\n{{ $json.catalogFallback }}\n\nMESSAGE VISITEUR : {{ $json.userMessage }}\nCONTEXTE PAGE : {{ $json.context }}\nDATE : {{ new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' }) }}\n\nDISPONIBILITÉS (A1 — données réelles pré-calculées) :\n{{ $json.availability }}\n⚠️ Utilise CES disponibilités pour répondre aux questions de dates. Ne JAMAIS inventer de disponibilité.\n\nFAITS CONCIERGERIE (tunnel proprio) :\n{{ $json.conciergerieFacts }}\n⚠️ Si le visiteur est un propriétaire potentiel, cite ces faits (commission 25%, frais 5%, etc.).\n\nTON RÔLE :\n- Aider les visiteurs à trouver la villa parfaite (tunnel voyageur)\n- Détecter l'intention « propriétaire » et basculer sur le tunnel acquisition (tunnel proprio)\n- Répondre aux questions sur les villas et la Martinique\n- Rediriger vers le formulaire de réservation\n\nTUNNEL VOYAGEUR (fin de conversation) :\n- Si le visiteur est prêt à réserver → émettre un preBooking avec { villaId, email, startDate, endDate, guests }\n- Format de sortie structurée : { \"preBooking\": { \"villaId\": \"...\", \"email\": \"...\", \"startDate\": \"...\", \"endDate\": \"...\", \"guests\": 2 } }\n\nTUNNEL PROPRIÉTAIRE (fin de conversation) :\n- Si le visiteur est un propriétaire qualifié → émettre ownerLead avec { villasCount, location, email, name }\n- Format de sortie structurée : { \"ownerLead\": { \"villasCount\": 2, \"location\": \"...\", \"email\": \"...\", \"name\": \"...\" } }\n- Toujours inclure leadTemperature et qualificationScore\n\nTON TON :\n- Chaleureux et fier de la Martinique\n- Tutoiement naturel\n- Pas d'emojis sauf si le visiteur en utilise\n\nRÈGLES ABSOLUES :\n- Ne JAMAIS inventer un prix ou une disponibilité\n- Si tu ne sais pas → « Je vérifie et je te confirme »\n- Ne parler QUE de Kayvila et de la Martinique\n- Si le visiteur est indécis → poser 2-3 questions (dates, capacité, budget)\n- Rediriger vers le site pour réserver\n\nOUTILS DISPONIBLES :\n- kayvila-search : chercher des villas par mots-clés (capacité, localisation, prix)\n- postgres-chat-memory : te souvenir de la conversation",
         "options": {}
       },
-      "id": "a1-agent",
+      "id": "c958f093-3912-4411-9bb6-153c560f53f2",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        560,
-        -200
+        1152,
+        -80
       ]
     },
     {
       "parameters": {
+        "model": "deepseek-v4-pro",
         "options": {
           "temperature": 0.7
         }
       },
-      "id": "a1-deepseek",
+      "id": "aa2fa650-9c0e-4ee1-997c-354717cb5691",
       "name": "DeepSeek Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
       "typeVersion": 1,
       "position": [
-        440,
-        0
+        1104,
+        240
       ],
       "credentials": {
         "deepSeekApi": {
-          "id": "REPLACE_DEEPSEEK",
-          "name": "KAYVILA DEEPSEEK"
+          "id": "s16Eub8KTcJLPBw5",
+          "name": "KARIBLOOM DEEPSEEK"
         }
       }
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_search\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.com/api/villas/public?search=${query}`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "kayvila_search",
-        "toolDescription": "Cherche des villas Kayvila par crit\u00e8res (capacit\u00e9, localisation, budget). Renvoie le catalogue public filtrable."
+        "jsCode": "const i = $input.first().json;\nconst sid = i.sessionId || $('Edit Fields').first().json.sessionId || '';\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique. Réessaie dans un instant.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: sid } }];"
       },
-      "id": "a1-tool-search",
-      "name": "kayvila_search",
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
-      "position": [
-        720,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "const i = $input.first().json;\nconst sid = i.sessionId || $('Edit Fields').first().json.sessionId || '';\nlet t = i.output || i.text || \"D\u00e9sol\u00e9, je rencontre un souci technique. R\u00e9essaie dans un instant.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '\u2022 ').trim();\nreturn [{ json: { response: t, sessionId: sid } }];"
-      },
-      "id": "a1-format",
+      "id": "480bf9db-7566-4589-8a20-91f1afcb825a",
       "name": "FORMAT RESPONSE",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        780,
-        -200
+        1440,
+        32
       ]
     },
     {
@@ -478,13 +464,13 @@
         },
         "options": {}
       },
-      "id": "a1-edit-fields1",
-      "name": "Pr\u00e9parer Sauvegarde M\u00e9moire",
+      "id": "7c3443d9-3bba-45f1-a2d1-fd22fa9166da",
+      "name": "Préparer Sauvegarde Mémoire",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1000,
-        -200
+        1664,
+        32
       ]
     },
     {
@@ -513,18 +499,18 @@
         },
         "options": {}
       },
-      "id": "a1-save-memory",
+      "id": "65e40d1b-5b48-4158-ab4a-0a65b99d667d",
       "name": "Save Memory Supabase",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
       "position": [
-        1220,
-        -200
+        1888,
+        32
       ],
       "credentials": {
         "postgres": {
-          "id": "REPLACE_SUPABASE_PG",
-          "name": "KAYVILA SUPABASE"
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
         }
       },
       "continueOnFail": true
@@ -535,86 +521,31 @@
         "responseBody": "={{ { \"response\": $json.response || $('FORMAT RESPONSE').first().json.response, \"success\": true } }}",
         "options": {}
       },
-      "id": "a1-respond",
+      "id": "2890e515-6709-4f29-a851-b0be167a8113",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1460,
-        -40
+        2128,
+        192
       ]
     },
     {
-      "id": "a1-sticky-entry",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -1400,
-        -80
-      ],
       "parameters": {
-        "content": "### \ud83d\udeaa Entr\u00e9e & Session\nCr\u00e9ation/validation session + v\u00e9rification ban + auto-ban 3 strikes/1h.",
-        "color": 1
-      }
-    },
-    {
-      "id": "a1-sticky-context",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -340,
-        -440
-      ],
-      "parameters": {
-        "content": "### \ud83e\udde0 Contexte & Catalogue\nM\u00e9moire conversationnelle + catalogue villas + fallback si API down.",
-        "color": 5
-      }
-    },
-    {
-      "id": "a1-sticky-abuse",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        100,
-        -440
-      ],
-      "parameters": {
-        "content": "### \ud83d\udee1\ufe0f Anti-abus\nD\u00e9tection toxicit\u00e9 \u2192 log \u2192 compteur \u2192 auto-ban 3 msg/1h.",
-        "color": 3
-      }
-    },
-    {
-      "id": "a1-sticky-agent",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        300,
-        -300
-      ],
-      "parameters": {
-        "content": "### \ud83e\udd16 Agent IA Visiteur\nDeepSeek + Postgres Chat Memory + kayvila-search. Prompt: guide chaleureux, jamais inventer.",
-        "color": 6
-      }
-    },
-    {
-      "id": "a1-sticky-output",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        700,
-        -440
-      ],
-      "parameters": {
-        "content": "### \ud83d\udce4 R\u00e9ponse & Sauvegarde\nFORMAT \u2192 Sauvegarde Supabase \u2192 Respond. continueOnFail sur Save Memory.",
+        "content": "### 📤 Réponse & Sauvegarde\nFORMAT → Sauvegarde Supabase → Respond. continueOnFail sur Save Memory.",
         "color": 7
-      }
+      },
+      "id": "c313a692-2e45-4130-81f1-7d1a265d8787",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -208
+      ]
     }
   ],
+  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -704,14 +635,14 @@
       "main": [
         [
           {
-            "node": "Code - V\u00e9rifier Catalogue",
+            "node": "Code - Vérifier Catalogue",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code - V\u00e9rifier Catalogue": {
+    "Code - Vérifier Catalogue": {
       "main": [
         [
           {
@@ -760,36 +691,36 @@
             "index": 0
           },
           {
-            "node": "Postgres - Log Toxicit\u00e9",
+            "node": "Postgres - Log Toxicité",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Postgres - Log Toxicit\u00e9": {
+    "Postgres - Log Toxicité": {
       "main": [
         [
           {
-            "node": "Postgres - Compter Toxicit\u00e9",
+            "node": "Postgres - Compter Toxicité",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Postgres - Compter Toxicit\u00e9": {
+    "Postgres - Compter Toxicité": {
       "main": [
         [
           {
-            "node": "IF - Seuil D\u00e9pass\u00e9 ?",
+            "node": "IF - Seuil Dépassé ?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "IF - Seuil D\u00e9pass\u00e9 ?": {
+    "IF - Seuil Dépassé ?": {
       "main": [
         [
           {
@@ -822,28 +753,6 @@
         ]
       ]
     },
-    "kayvila_search": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "FORMAT RESPONSE": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Save Memory Supabase": {
       "main": [
         [
@@ -855,7 +764,18 @@
         ]
       ]
     },
-    "Pr\u00e9parer Sauvegarde M\u00e9moire": {
+    "FORMAT RESPONSE": {
+      "main": [
+        [
+          {
+            "node": "Préparer Sauvegarde Mémoire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer Sauvegarde Mémoire": {
       "main": [
         [
           {
@@ -865,12 +785,31 @@
           }
         ]
       ]
+    },
+    "kayvila_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
   },
-  "tags": [],
-  "description": "Chatbot visiteur Kayvila v3 \u2014 Bi-tunnel (voyageur + proprio). Exploite disponibilit\u00e9s r\u00e9elles (context.villas[].availability), d\u00e9clenche preBooking/ownerLead. D\u00e9tection toxicit\u00e9 + auto-ban."
+  "versionId": "35cac160-2e4e-464a-be9a-3cc60da5e066",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "599c124565a8f36fe2fbc8f53114dcc39cdf941dcbdaac98566633b4f8753f55"
+  },
+  "nodeGroups": [],
+  "id": "xiSB7mej6eH8INfM",
+  "tags": []
 }
