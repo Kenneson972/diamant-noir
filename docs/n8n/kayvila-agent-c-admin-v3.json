@@ -226,7 +226,7 @@
         "toolDescription": "Liste TOUTES les villas de la plateforme Kayvila."
       },
       "id": "c1-tool-villas",
-      "name": "kayvila_all_villas",
+      "name": "allVillas",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -242,7 +242,7 @@
         "toolDescription": "Liste TOUTES les r\u00e9servations de la plateforme."
       },
       "id": "c1-tool-bookings",
-      "name": "kayvila_all_bookings",
+      "name": "allBookings",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -258,7 +258,7 @@
         "toolDescription": "Liste les soumissions de villas en attente de validation."
       },
       "id": "c1-tool-submissions",
-      "name": "kayvila_submissions",
+      "name": "submissions",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -274,7 +274,7 @@
         "toolDescription": "Revenus globaux Stripe et statistiques plateforme."
       },
       "id": "c1-tool-stats",
-      "name": "kayvila_global_stats",
+      "name": "globalStats",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -290,7 +290,7 @@
         "toolDescription": "Sant\u00e9 de TOUTES les synchronisations OTA (Airbnb / Booking) de la plateforme."
       },
       "id": "c1-tool-ota",
-      "name": "kayvila_ota_all",
+      "name": "otaAll",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -306,7 +306,7 @@
         "toolDescription": "Liste les utilisateurs / propri\u00e9taires de la plateforme."
       },
       "id": "c1-tool-users",
-      "name": "kayvila_users",
+      "name": "users",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -759,7 +759,7 @@
         ]
       ]
     },
-    "kayvila_all_villas": {
+    "allVillas": {
       "ai_tool": [
         [
           {
@@ -770,7 +770,7 @@
         ]
       ]
     },
-    "kayvila_all_bookings": {
+    "allBookings": {
       "ai_tool": [
         [
           {
@@ -781,7 +781,7 @@
         ]
       ]
     },
-    "kayvila_submissions": {
+    "submissions": {
       "ai_tool": [
         [
           {
@@ -792,7 +792,7 @@
         ]
       ]
     },
-    "kayvila_global_stats": {
+    "globalStats": {
       "ai_tool": [
         [
           {
@@ -803,7 +803,7 @@
         ]
       ]
     },
-    "kayvila_ota_all": {
+    "otaAll": {
       "ai_tool": [
         [
           {
@@ -814,7 +814,7 @@
         ]
       ]
     },
-    "kayvila_users": {
+    "users": {
       "ai_tool": [
         [
           {
