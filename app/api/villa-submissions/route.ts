@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
-import { escapeHtml } from "@/lib/security";
+import { escapeHtml, checkCsrf, checkRateLimit, ipFromRequest } from "@/lib/security";
+import { villaSubmissionSchema } from "@/lib/schemas";
 import { render } from "@react-email/render";
 import {
   ADMIN_NOTIFICATION_EMAIL,
@@ -22,7 +23,26 @@ const VILLA_SUBMISSION_WEBHOOK = process.env.VILLA_SUBMISSION_WEBHOOK || process
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // CSRF (origin) + rate limit (5 soumissions / heure / IP)
+    const csrf = checkCsrf(request);
+    if (csrf) return csrf;
+    const ip = ipFromRequest(request);
+    if (!checkRateLimit(`villa-submit:${ip}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: "Trop de soumissions. Réessayez dans une heure." },
+        { status: 429 }
+      );
+    }
+
+    const raw = await request.json();
+    const parsed = villaSubmissionSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Données invalides.", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
     const {
       name,
       email,
@@ -46,14 +66,7 @@ export async function POST(request: Request) {
       adresse_postale,
       no_photos,
       photo_urls,
-    } = body;
-
-    if (!name || !email) {
-      return NextResponse.json(
-        { error: "Nom et email sont requis." },
-        { status: 400 }
-      );
-    }
+    } = body as Record<string, any>;
 
     const supabase = supabaseAdmin();
     const { data: submission, error: insertError } = await supabase
