@@ -320,3 +320,20 @@
 - **Élise pilote les workflows n8n** — ne plus toucher aux JSON n8n, elle a la vision d'ensemble. Se concentrer sur le code Next.js.
 - **Deux formulaires villa incompatibles** : création (HTML natif) vs édition (HeroUI riche). À unifier sur `VillaEditorForm`.
 - **`addDays` doit utiliser `d + "T00:00:00Z"`** — sans timezone explicite, `Date.parse` utilise l'heure locale et décale d'un jour.
+
+---
+
+## 2026-06-16 — Campagne Audit Batch — Lot 0 (Triage + Quick-wins P0) ✅
+
+### Fait
+- **Branche** `fix/audit-batch-juin` ; build de référence vert avant toute modif.
+- **npm** : `next ^15.2.4 → 15.2.9`, `node-ical ^0.16.0 → ^0.22.1`, `npm audit fix` (48 → 38 vulns). Type-guard `VEvent` ajouté dans `lib/ota-hub.ts` (forcé par les nouveaux types node-ical 0.22).
+- **CORS** : helper partagé `lib/cors.ts` (+ test vitest), appliqué aux 5 routes (`chat`, `chat/tenant`, `agent/owner-context`, `agent/visitor-context`, `agent/admin-context`). Plus aucun `Access-Control-Allow-Origin: "*"`.
+- **robots.ts** : ajout `/admin/` et `/espace-client/` au disallow.
+- **og-default.jpg** : généré 1200×630 (134 KB) depuis `prestations-hero.png` via sharp.
+
+### Règles apprises (importantes)
+- **FAUX POSITIFS de l'audit SEO** : `app/sitemap.ts` ET `app/robots.ts` existaient déjà et fonctionnent. L'audit demandait de les "créer" → toujours vérifier `app/` avant de scaffolder un sitemap/robots. Seul trou réel : `/admin/` manquait au disallow.
+- **Helper CORS unique `lib/cors.ts`** = source unique des en-têtes ; jamais `*` avec `Authorization`. Origine = `NEXT_PUBLIC_BASE_URL` → `NEXT_PUBLIC_SITE_URL` → `https://kayvila.com`, + `Vary: Origin`.
+- **BLOCAGE Next 15.5.x** : impossible d'atteindre `next ≥15.3` / `node-ical ≥0.23` — le polyfill Temporal (BigInt) de ces versions casse le bundling webpack SSR (conflit zod v4) → `g.BigInt is not a function` en "Collecting page data". Resté à `next 15.2.9` (corrige quand même middleware-bypass + SSRF). Montée à 15.5.x = tâche dédiée (Lot 9) : résoudre BigInt/webpack ou migrer zod.
+- **og image** : `sharp` est dispo transitivement (via next) ; `fit:"cover"` + `position:"centre"` pour un crop propre 1200×630.
