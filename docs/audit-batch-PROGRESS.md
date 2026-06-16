@@ -21,8 +21,8 @@
 | 5 | SEO bloquant+majeur | ✅ FAIT | inline (triage) |
 | 6 | Layout majeurs mobile | ✅ FAIT | inline (triage) |
 | 7 | UX/Visuel polish | ✅ FAIT | inline (triage) |
-| 8 | Mineurs + code mort | ⏭️ **PROCHAIN** | à écrire |
-| 9 | Backlog perf/sec/SEO + montée Next 15.5.x | ⬜ | — |
+| 8 | Mineurs + code mort | ✅ FAIT | inline (triage) |
+| 9 | Backlog perf/sec/SEO + montée Next 15.5.x | ⏭️ **PROCHAIN** | à écrire |
 
 ## Détail réalisé
 
@@ -88,6 +88,13 @@
 - **Reportés (refactors)** : #30 photos proprio inline (VillaImageManagerWrapper), #31 unif iCal sur VillaIcalPanel (admin=PlanningIcalSyncCard), #32 Copilot admin (optionnel).
 - Build ✅ · vitest 48/0 ✅.
 
+### Lot 8 ✅ (commit `0f24c2d`) — code mort + mineurs
+- **Code mort supprimé** : `BookingTable.tsx` (#24/#25 caducs), `VillaAmenitiesEditorWrapper.tsx` (#59). −113 lignes.
+- **Mineurs** : #33 OwnerContactFAB safe-area-inset-bottom · #47 icône Send bouton Envoyer · #48 ProprioBookingDataGrid icône Inbox empty · #50 DashboardSidebar contraste /50→/65 (WCAG AA).
+- **Faux positifs** : #40 RevenueBreakdownTable (overflow-x déjà L63) · #60 NotificationBell + #61 AdminCommandPalette (utilisés, pas morts).
+- **Reporté** : #34 DashboardHeader safe-area-top (risque hauteur header fixe). Autres mineurs cosmétiques (#53–#58, #62, #63, #66) non traités (très faible valeur).
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -96,4 +103,12 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-**Lot 8 — Mineurs + code mort** : 🟢 bugs #33–#52 (modérés) + #53–#66 (mineurs) de `docs/audit-kayvila-complet-2026-06-16.md`. Priorité code mort à supprimer (déjà confirmés jamais importés) : **BookingTable** (#24/#25), **VillaAmenitiesEditorWrapper** (#59), **AdminCommandPalette** (#61) — vérifier #60 NotificationBell (audit dit code mort mais IL est utilisé = faux positif). Reste : safe-area FAB/headers (#33/#34), icônes empty states (#46/#47/#48), contrastes WCAG (#50). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés, incohérences #30/#31/#32, montée Next 15.5.x (Lot 9).
+**Lot 9 — Backlog + montée Next 15.5.x** (dernier lot). Contient surtout des chantiers nécessitant une **décision/validation Kenneson** :
+- **Montée Next 15.5.x** (Sec#3) — ⚠️ BLOCAGE BigInt/webpack (cf section blocages). Investiguer résolution zod v4 / polyfill, ou décider de rester en 15.2.9.
+- **perf#2 cache HTTP** (force-dynamic/noStore) — risque double-booking, valider stratégie.
+- **pagination UI** complète (6 pages) — feature, pas un quick-win.
+- **#9 fusion formulaires admin** (variante admin VillaEditorForm).
+- **Incohérences #30/#31/#32** (photos proprio inline, unif iCal, Copilot admin).
+- **SEO reportés** : JSON-LD LocalBusiness/BreadcrumbList/FAQPage, SearchAction, canonical par page, hreflang.
+
+➡️ **Demander à Kenneson** quelles priorités attaquer (chacun mérite son propre cadrage). Les 8 premiers lots couvrent l'essentiel actionnable bas-risque.
