@@ -20,8 +20,8 @@
 | 4 | Perf critique | ✅ FAIT | inline (triage) |
 | 5 | SEO bloquant+majeur | ✅ FAIT | inline (triage) |
 | 6 | Layout majeurs mobile | ✅ FAIT | inline (triage) |
-| 7 | UX/Visuel polish | ⏭️ **PROCHAIN** | à écrire |
-| 8 | Mineurs + code mort | ⬜ | — |
+| 7 | UX/Visuel polish | ✅ FAIT | inline (triage) |
+| 8 | Mineurs + code mort | ⏭️ **PROCHAIN** | à écrire |
 | 9 | Backlog perf/sec/SEO + montée Next 15.5.x | ⬜ | — |
 
 ## Détail réalisé
@@ -81,6 +81,13 @@
 - **Faux positifs** : #13 Navbar (vitrage conditionnel déjà géré ; transparence seulement sur hero sombre) · #20 CompareBar (`env(safe-area-inset-bottom)` déjà présent L30).
 - Build ✅ · vitest 48/0 ✅.
 
+### Lot 7 ✅ (commit `86e0ea9`) — UX/visuel polish
+- #21 HeroBackgroundMedia (fondu poster→vidéo via videoReady) · #22 AdminVillaBlocks (icône Calendar empty) · #23 Kanban (icône Inbox colonnes vides) · #26 SeasonalRatesManager (Loader2) · #27 CreateBookingModal (transition-colors inputs) · #29 ReportIssueButton (transition textarea).
+- **Faux positif** : #28 Footer (hover déjà L139).
+- **Code mort → Lot 8** : #24/#25 BookingTable (jamais importé).
+- **Reportés (refactors)** : #30 photos proprio inline (VillaImageManagerWrapper), #31 unif iCal sur VillaIcalPanel (admin=PlanningIcalSyncCard), #32 Copilot admin (optionnel).
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -89,4 +96,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-**Lot 7 — UX/Visuel polish** : 🟠 bugs #21–#32 de `docs/audit-kayvila-complet-2026-06-16.md` (HeroBackgroundMedia fondu, empty states icônes #22/#23/#25, BookingTable hover/empty #24/#25, loaders #26, transitions inputs #27/#29, Footer hover #28, incohérences photos/iCal/Copilot admin #30/#31/#32). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés, montée Next 15.5.x (Lot 9).
+**Lot 8 — Mineurs + code mort** : 🟢 bugs #33–#52 (modérés) + #53–#66 (mineurs) de `docs/audit-kayvila-complet-2026-06-16.md`. Priorité code mort à supprimer (déjà confirmés jamais importés) : **BookingTable** (#24/#25), **VillaAmenitiesEditorWrapper** (#59), **AdminCommandPalette** (#61) — vérifier #60 NotificationBell (audit dit code mort mais IL est utilisé = faux positif). Reste : safe-area FAB/headers (#33/#34), icônes empty states (#46/#47/#48), contrastes WCAG (#50). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés, incohérences #30/#31/#32, montée Next 15.5.x (Lot 9).
