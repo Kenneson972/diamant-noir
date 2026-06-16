@@ -426,7 +426,7 @@
         "toolDescription": "Cherche des villas Kayvila par crit\u00e8res (capacit\u00e9, localisation, budget). Renvoie le catalogue public filtrable."
       },
       "id": "a1-tool-search",
-      "name": "kayvila_search",
+      "name": "searchVillas",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -823,7 +823,7 @@
         ]
       ]
     },
-    "kayvila_search": {
+    "searchVillas": {
       "ai_tool": [
         [
           {
