@@ -18,8 +18,8 @@
 | 2 | Bloquants UX 🔴 (mobile) | ✅ FAIT | inline (triage) |
 | 3 | Création villa proprio (#10) | ✅ FAIT | inline (triage) |
 | 4 | Perf critique | ✅ FAIT | inline (triage) |
-| 5 | SEO bloquant+majeur | ⏭️ **PROCHAIN** | à écrire |
-| 6 | Layout majeurs mobile | ⬜ | — |
+| 5 | SEO bloquant+majeur | ✅ FAIT | inline (triage) |
+| 6 | Layout majeurs mobile | ⏭️ **PROCHAIN** | à écrire |
 | 7 | UX/Visuel polish | ⬜ | — |
 | 8 | Mineurs + code mort | ⬜ | — |
 | 9 | Backlog perf/sec/SEO + montée Next 15.5.x | ⬜ | — |
@@ -65,6 +65,17 @@
 - **perf#2 cache HTTP reporté** (force-dynamic/noStore) : risque fraîcheur dispos → double-booking. À traiter avec validation Kenneson.
 - Build ✅ · vitest 48/0 ✅.
 
+### Lot 5 ✅ (commit `c4c9a6f`) — SEO bloquant + majeur
+- **seo#4/#5/#6** (pages `"use client"` → `layout.tsx` serveur) : login + update-password (metadata + `robots: noindex`), comparateur (title/description + canonical, indexable).
+- **seo#7** espace-client : metadata title + noindex.
+- **twitter:card** `summary_large_image` au root (site-wide) + openGraph title/description explicites.
+- **JSON-LD WebSite** ajouté (Organization existait déjà).
+- **noindex** zones privées : admin, dashboard proprio, espace-client.
+- Retrait **meta keywords** obsolètes.
+- **Faux positifs** : seo#1 sitemap, #2 robots, #3 og-default.jpg = **déjà faits au Lot 0**.
+- **Reportés** (besoin data/per-page) : JSON-LD LocalBusiness (NAP via client.config), BreadcrumbList, FAQPage, SearchAction (besoin endpoint recherche fonctionnel), canonical par page publique, hreflang `/en` `/es` (routes inexistantes), hiérarchie headings, alt images.
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -73,4 +84,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-**Lot 5 — SEO bloquant + majeur** : triage des 7 BLOQUANT + 10 MAJEUR de `docs/audit-securite-perf-seo-2026-06-16.md` (§SEO L68+). Backlog grandissant : **pagination UI** (6 pages), **#9** fusion formulaires admin, **perf#2** cache HTTP, **montée Next 15.5.x** (Lot 9, BigInt).
+**Lot 6 — Layout majeurs mobile** : triage des 🟠 MAJEURS layout de `docs/audit-kayvila-complet-2026-06-16.md` (bugs #12–#20 : VillaGallery, Navbar dégradé, VillaCard, HomeServices, VillasMapView, BookingBottomSheet, PageHero, NotificationBell dropdown, CompareBar safe-area). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés (LocalBusiness/Breadcrumb/FAQ/canonical/hreflang), montée Next 15.5.x (Lot 9).
