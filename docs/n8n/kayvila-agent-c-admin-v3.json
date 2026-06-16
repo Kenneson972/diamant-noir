@@ -220,15 +220,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/villas",
-        "sendHeaders": {},
-        "toolDescription": "Liste TOUTES les villas de la plateforme Kayvila."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/villas', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "allVillas",
+        "toolDescription": "Liste toutes les villas de la plateforme"
       },
       "id": "c1-tool-villas",
       "name": "allVillas",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         260,
         100
@@ -236,15 +235,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/bookings",
-        "sendHeaders": {},
-        "toolDescription": "Liste TOUTES les r\u00e9servations de la plateforme."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/bookings', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "allBookings",
+        "toolDescription": "Liste toutes les reservations de la plateforme"
       },
       "id": "c1-tool-bookings",
       "name": "allBookings",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         400,
         100
@@ -252,15 +250,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/villa-submissions",
-        "sendHeaders": {},
-        "toolDescription": "Liste les soumissions de villas en attente de validation."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/villa-submissions', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "submissions",
+        "toolDescription": "Liste les soumissions de villas en attente"
       },
       "id": "c1-tool-submissions",
       "name": "submissions",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         540,
         100
@@ -268,15 +265,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/global-stats",
-        "sendHeaders": {},
-        "toolDescription": "Revenus globaux Stripe et statistiques plateforme."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/global-stats', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "globalStats",
+        "toolDescription": "Revenus globaux et statistiques plateforme"
       },
       "id": "c1-tool-stats",
       "name": "globalStats",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         680,
         100
@@ -284,15 +280,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/ota-status",
-        "sendHeaders": {},
-        "toolDescription": "Sant\u00e9 de TOUTES les synchronisations OTA (Airbnb / Booking) de la plateforme."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/ota-status', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "otaAll",
+        "toolDescription": "Sante de toutes les synchronisations OTA"
       },
       "id": "c1-tool-ota",
       "name": "otaAll",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         820,
         100
@@ -300,15 +295,14 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/admin/owners",
-        "sendHeaders": {},
-        "toolDescription": "Liste les utilisateurs / propri\u00e9taires de la plateforme."
+        "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/owners', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "toolName": "users",
+        "toolDescription": "Liste les utilisateurs proprietaires de la plateforme"
       },
       "id": "c1-tool-users",
       "name": "users",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
       "position": [
         960,
         100
