@@ -25,6 +25,9 @@ const nextConfig = {
       "lucide-react",
       "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-tabs",
+      "leaflet",
+      "shiki",
+      "date-fns",
     ],
   },
   // Désactiver le watching webpack en mode dev pour éviter EMFILE

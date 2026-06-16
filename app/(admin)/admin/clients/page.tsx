@@ -34,7 +34,7 @@ async function getTenants(search?: string): Promise<TenantRow[]> {
     );
   }
 
-  const { data: profiles } = await profilesQuery;
+  const { data: profiles } = await profilesQuery.limit(100);
   const tenants = (profiles ?? []) as TenantRow[];
 
   if (tenants.length === 0) return [];

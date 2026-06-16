@@ -36,7 +36,8 @@ async function getSubmissions() {
   const { data } = await supabase
     .from("villa_submissions")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(100);
   return data ?? [];
 }
 
