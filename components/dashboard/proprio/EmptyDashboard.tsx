@@ -8,9 +8,9 @@ export function EmptyDashboard() {
     <KayvilaEmptyState
       icon={<Home />}
       title="Bienvenue sur votre espace"
-      description="Vous n'avez pas encore de villa. Contactez votre gestionnaire pour configurer votre première propriété."
-      actionLabel="Contacter le gestionnaire"
-      actionHref="/contact"
+      description="Vous n'avez pas encore de villa. Ajoutez votre première propriété pour commencer."
+      actionLabel="Ajouter ma première villa"
+      actionHref="/dashboard/villas/nouvelle"
       className="flex min-h-[60vh] items-center justify-center border-0 bg-transparent p-4"
     />
   );

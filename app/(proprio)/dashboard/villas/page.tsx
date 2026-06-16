@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
@@ -36,9 +38,18 @@ export default async function ProprioVillasPage() {
         <h1 className="font-display text-2xl font-bold text-navy-900">
           Mes Villas
         </h1>
-        <span className="text-sm text-muted">
-          {villas.length} villa{villas.length > 1 ? "s" : ""}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted">
+            {villas.length} villa{villas.length > 1 ? "s" : ""}
+          </span>
+          <Link
+            href="/dashboard/villas/nouvelle"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy/90"
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+            Ajouter une villa
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
