@@ -226,7 +226,7 @@
         "toolDescription": "Liste les villas du propri\u00e9taire connect\u00e9."
       },
       "id": "b1-tool-villas",
-      "name": "myVillas",
+      "name": "kayvila_my_villas",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -243,7 +243,7 @@
         "toolDescription": "Liste les r\u00e9servations (\u00e0 venir et r\u00e9centes) du propri\u00e9taire connect\u00e9."
       },
       "id": "b1-tool-bookings",
-      "name": "myBookings",
+      "name": "kayvila_my_bookings",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -260,7 +260,7 @@
         "toolDescription": "Statistiques et revenus mensuels des villas du propri\u00e9taire connect\u00e9."
       },
       "id": "b1-tool-stats",
-      "name": "myStats",
+      "name": "kayvila_my_stats",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -277,7 +277,7 @@
         "toolDescription": "T\u00e2ches de maintenance / m\u00e9nage du propri\u00e9taire connect\u00e9."
       },
       "id": "b1-tool-tasks",
-      "name": "myTasks",
+      "name": "kayvila_my_tasks",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -294,7 +294,7 @@
         "toolDescription": "Sant\u00e9 des synchronisations OTA (Airbnb / Booking) des villas du propri\u00e9taire."
       },
       "id": "b1-tool-ota",
-      "name": "otaStatus",
+      "name": "kayvila_ota_status",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 2,
       "position": [
@@ -694,7 +694,7 @@
         ]
       ]
     },
-    "myVillas": {
+    "kayvila_my_villas": {
       "ai_tool": [
         [
           {
@@ -705,7 +705,7 @@
         ]
       ]
     },
-    "myBookings": {
+    "kayvila_my_bookings": {
       "ai_tool": [
         [
           {
@@ -716,7 +716,7 @@
         ]
       ]
     },
-    "myStats": {
+    "kayvila_my_stats": {
       "ai_tool": [
         [
           {
@@ -727,7 +727,7 @@
         ]
       ]
     },
-    "myTasks": {
+    "kayvila_my_tasks": {
       "ai_tool": [
         [
           {
@@ -738,7 +738,7 @@
         ]
       ]
     },
-    "otaStatus": {
+    "kayvila_ota_status": {
       "ai_tool": [
         [
           {
