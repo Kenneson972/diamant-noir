@@ -60,12 +60,19 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(siteUrl),
     title: { default: title, template: "%s | Kayvila" },
     description,
-    keywords: ["conciergerie", "luxe", "Martinique", "villa", "réservation", "Kayvila"],
     openGraph: {
       type: "website",
       locale: ogLocale,
       siteName: "Kayvila",
+      title,
+      description,
       images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-default.jpg"],
     },
     alternates: {
       languages: {
@@ -123,6 +130,18 @@ export default async function RootLayout({
                 contactType: "customer service",
                 availableLanguage: ["French", "English", "Spanish"],
               },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Kayvila",
+              url: "https://kayvila.com",
+              inLanguage: ["fr", "en", "es"],
             }),
           }}
         />

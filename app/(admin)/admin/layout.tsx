@@ -6,6 +6,7 @@ import { isStaffAdmin, normalizeRole } from "@/lib/auth/admin-access";
 
 export const metadata = {
   title: "Administration Kayvila",
+  robots: { index: false, follow: false },
 };
 
 export default async function AdminDashboardLayout({

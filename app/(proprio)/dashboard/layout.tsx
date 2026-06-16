@@ -10,6 +10,7 @@ import { OwnerContactFAB } from "@/components/dashboard/proprio/OwnerContactFAB"
 
 export const metadata = {
   title: "Tableau de bord propriétaire",
+  robots: { index: false, follow: false },
 };
 export const dynamic = "force-dynamic";
 
