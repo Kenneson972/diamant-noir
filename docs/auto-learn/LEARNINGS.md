@@ -297,3 +297,26 @@
 - **Les n8n JSON v3 doivent rester hors push tant que les placeholders ne sont pas remplis** (VOTRE-DOMAINE, clés API, REPLACE_*)
 - **Les sticky notes n8n sont cosmétiques** — seuls les prompts + data flow comptent fonctionnellement
 - **Méthode validée** : subagent-driven-development (1 subagent/tâche + revue spec + revue qualité) — migrations vérifiées live, modules purs en TDD, intégrations relues. À réutiliser.
+
+---
+
+## 2026-06-16 — Correctifs UX Richard + Agents IA V3
+
+### Fait
+- **4 correctifs UX** (commits `43257ab`, `4f0cb96`, `872aca5`, `f0b56a2`) :
+  1. Hover header intensifié : fond or 10% + border or + glow doré, transition 300ms
+  2. HeroUI RangeCalendar remplace HeroDatePicker.tsx (368 lignes custom → ~70 lignes HeroUI v3). Popover.Content pour bottom sheet mobile.
+  3. Messagerie proprio pleine hauteur : `h-[500px]` → `min-h-[calc(100dvh-12rem)]`, `max-w-3xl` → `max-w-5xl`
+  4. `VillaImageManager` ajouté au formulaire création villa (déjà dans l'édition)
+- **Audit Élise** : `docs/audit-kayvila-complet-2026-06-16.md` — 69 bugs classés (11 🔴, 28 🟠🟡, 14 🟢, 16 HeroUI)
+- **Agents IA** : Phase 1 + correctifs mergés, Phase 2 n8n v3 mergés, workflows Kayvibot v4 créés (CieloBot 0 outil)
+
+### Règles apprises
+- **HeroUI Popover API** : `placement` et `offset` vont sur `<Popover.Content>`, PAS sur `<Popover>`. `<Popover>` accepte `defaultOpen` et `onOpenChange` uniquement.
+- **Next.js 15 dev vs build** : `next dev` peut afficher "Errors: 1" sans détail et crasher alors que `next build` passe à 0 erreurs. Toujours vérifier avec `next build` avant de paniquer.
+- **`@n8n/n8n-nodes-langchain.toolHttpRequest` incompatible n8n 2.25.7** → `supplyData` vs `execute`. La solution CieloBot (contexte pré-fetché, 0 outil) est plus stable pour la prod.
+- **Subagent-driven development** : lancer 4 subagents en parallèle sur des fichiers indépendants fonctionne. Mais toujours revoir leur travail — le subagent Task 2 a viré le Popover wrapper sans prévenir.
+- **Calendrier mobile** : un date picker custom avec `getBoundingClientRect()` et `position:fixed` est fragile. HeroUI `Popover` natif gère le positionnement + responsive.
+- **Élise pilote les workflows n8n** — ne plus toucher aux JSON n8n, elle a la vision d'ensemble. Se concentrer sur le code Next.js.
+- **Deux formulaires villa incompatibles** : création (HTML natif) vs édition (HeroUI riche). À unifier sur `VillaEditorForm`.
+- **`addDays` doit utiliser `d + "T00:00:00Z"`** — sans timezone explicite, `Date.parse` utilise l'heure locale et décale d'un jour.
