@@ -133,3 +133,16 @@ export function extractToken(request: Request): string | null {
   if (auth.startsWith("Bearer ")) return auth.slice(7);
   return null;
 }
+
+/**
+ * Échappe les caractères HTML dangereux avant interpolation dans un template
+ * email/HTML construit à la main (audit Sec#2 — anti-XSS).
+ */
+export function escapeHtml(input: unknown): string {
+  return String(input ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
