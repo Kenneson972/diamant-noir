@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { corsHeaders } from "@/lib/cors";
 import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chatbot/villa-context";
 import { getVillaAvailabilityCached } from "@/lib/chatbot/availability";
 import { CONCIERGERIE_FACTS } from "@/lib/chatbot/conciergerie-context";
@@ -66,12 +67,5 @@ FORMAT DE RÉPONSE JSON OBLIGATOIRE :
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+  return new NextResponse(null, { status: 200, headers: corsHeaders("GET, OPTIONS") });
 }
