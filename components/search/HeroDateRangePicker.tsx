@@ -44,7 +44,7 @@ export function HeroDateRangePicker({
     >
       <div className="flex w-full flex-row gap-3 sm:w-max sm:gap-6">
         {/* Mois 1 */}
-        <div className="min-w-0 flex-1 sm:w-64 sm:flex-none">
+        <div className="min-w-0 flex-1 rounded-xl bg-white p-1 sm:w-64 sm:flex-none sm:p-0">
           <RangeCalendar.Header>
             <RangeCalendar.NavButton slot="previous" />
             <RangeCalendar.Heading className="flex-none" />
@@ -60,7 +60,7 @@ export function HeroDateRangePicker({
           </RangeCalendar.Grid>
         </div>
         {/* Mois 2 */}
-        <div className="min-w-0 flex-1 sm:w-64 sm:flex-none">
+        <div className="min-w-0 flex-1 rounded-xl bg-white p-1 sm:w-64 sm:flex-none sm:p-0">
           <RangeCalendar.Header>
             <div className="size-6" />
             {/* @ts-expect-error offset supported at runtime, types lag behind v3.0 */}
