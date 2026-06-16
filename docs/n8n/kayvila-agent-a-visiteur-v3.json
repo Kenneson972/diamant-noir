@@ -420,14 +420,15 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_search\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/villas/public?search=${query}`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "kayvila_search",
+        "method": "GET",
+        "url": "https://kayvila.vercel.app/api/villas/public?search=",
+        "sendHeaders": {},
         "toolDescription": "Cherche des villas Kayvila par crit\u00e8res (capacit\u00e9, localisation, budget). Renvoie le catalogue public filtrable."
       },
       "id": "a1-tool-search",
       "name": "kayvila_search",
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 2,
       "position": [
         720,
         0
