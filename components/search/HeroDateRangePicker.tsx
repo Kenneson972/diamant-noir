@@ -30,7 +30,7 @@ export function HeroDateRangePicker({
         : null;
 
   return (
-    <div className="w-full rounded-2xl border border-navy/10 bg-white p-3 text-navy shadow-2xl sm:w-auto sm:p-4">
+    <div className="w-full overflow-x-auto rounded-2xl bg-white p-3 text-navy shadow-2xl ring-1 ring-navy/10 sm:w-auto sm:overflow-visible sm:p-4">
       <RangeCalendar
         aria-label="Dates de séjour"
         value={value}
