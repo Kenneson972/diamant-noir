@@ -155,7 +155,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
 
       {/* Datepicker dropdown */}
       {openPanel === "date" && (
-        <div className="fixed inset-x-4 bottom-4 z-[9999] max-h-[85dvh] overflow-y-auto rounded-2xl sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:mt-2 sm:max-h-none sm:overflow-y-visible sm:rounded-none">
+        <div className="fixed inset-x-4 bottom-4 z-[9999] sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:mt-2">
           <HeroDateRangePicker
             checkin={checkin}
             checkout={checkout}
