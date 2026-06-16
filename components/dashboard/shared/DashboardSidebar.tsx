@@ -91,7 +91,7 @@ export function DashboardSidebar({
               aria-current={active ? "page" : undefined}
             >
               {(() => {
-                const IconComponent = ICON_MAP[item.icon];
+                const IconComponent = ICON_MAP[item.icon] ?? LayoutDashboard;
                 return IconComponent ? (
                   <IconComponent
                     className={cn(
@@ -152,11 +152,11 @@ export function DashboardSidebar({
             onClick={onClose}
             aria-label="Fermer le menu"
           />
-          <aside className="relative flex h-full w-64 max-w-[85vw] flex-col bg-navy text-white shadow-xl">
+          <aside className="relative flex h-full w-64 max-w-[85vw] flex-col bg-navy text-white shadow-xl pt-[env(safe-area-inset-top)]">
             <button
               type="button"
               onClick={onClose}
-              className="absolute right-4 top-4 z-10 rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white"
+              className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white"
               aria-label="Fermer le menu"
             >
               <X size={20} />
