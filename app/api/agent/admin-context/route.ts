@@ -14,17 +14,19 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function addDays(d: string, n: number): string {
-  return new Date(Date.parse(d) + n * 86_400_000).toISOString().slice(0, 10);
+  return new Date(Date.parse(d + "T00:00:00Z") + n * 86_400_000).toISOString().slice(0, 10);
 }
 
 async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
-  const today = new Date().toISOString().slice(0, 10);
-  const todayStr = today;
+  const todayStr = new Date().toISOString().slice(0, 10);
 
-  const startOfMonthStr = todayStr.slice(0, 7) + "-01";
-  const prevMonth = new Date(Date.parse(startOfMonthStr) - 1);
-  const startOfLastMonthStr = prevMonth.toISOString().slice(0, 7) + "-01";
-  const endOfLastMonthStr = todayStr.slice(0, 7) + "-01";
+  // Arithmétique string UTC cohérente — pas de Date() local
+  const startOfMonthStr = todayStr.slice(0, 8) + "01";
+  const [y, m] = todayStr.split("-").map(Number);
+  const prevM = m === 1 ? 12 : m - 1;
+  const prevY = m === 1 ? y - 1 : y;
+  const startOfLastMonthStr = `${prevY}-${String(prevM).padStart(2, "0")}-01`;
+  const endOfLastMonthStr = addDays(startOfMonthStr, -1);
 
   const [
     villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes,
@@ -71,6 +73,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
     monthlyRevenue.push({ month: m, revenue: Math.round(rev * 100) / 100 });
   }
 
+  const today = todayStr; // alias pour compatibilité (ctx.today)
   return {
     villas, bookings, blocks, tasks, submissions, otaLogs, reviews,
     revenueByVilla, revenueLastMonthByVilla, monthlyRevenue,

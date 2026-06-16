@@ -1,0 +1,80 @@
+{
+  "name": "Kayvibot B — Propriétaire (Fusion V4+V3)",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "kayvibot-owner", "responseMode": "responseNode", "options": {} },
+      "id": "b-webhook", "name": "Webhook Trigger", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "kayvibot-owner"
+    },
+    {
+      "parameters": { "assignments": { "assignments": [
+        { "id": "b-s1", "name": "chatInput", "value": "={{ $json.body.chatInput || $json.body.message }}", "type": "string" },
+        { "id": "b-s2", "name": "sessionId", "value": "={{ $json.body.sessionId || ('session-' + Date.now()) }}", "type": "string" },
+        { "id": "b-s3", "name": "userId", "value": "={{ $json.body.userId || $json.body.user_id || '' }}", "type": "string" },
+        { "id": "b-s4", "name": "token", "value": "={{ $json.body.token || $json.headers?.authorization?.replace('Bearer ', '') || '' }}", "type": "string" }
+      ] } },
+      "id": "b-set", "name": "Edit Fields", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [220, 0]
+    },
+    {
+      "parameters": { "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}", "options": { "timeout": 10000 } },
+      "id": "b-fetch", "name": "Fetch Owner Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0], "continueOnFail": true
+    },
+    {
+      "parameters": { "jsCode": "const ctxRes = $('Fetch Owner Context').first().json;\nconst ctx = ctxRes.context || ctxRes || {};\nconst alerts = ctx.alerts || [];\nconst today = ctx.today || [];\n\nreturn {\n  json: {\n    chatInput: $('Edit Fields').first().json.chatInput,\n    sessionId: $('Edit Fields').first().json.sessionId,\n    systemMessage: `Tu es Kayvibot Owner, l'assistant personnel des propriétaires Kayvila. Tu parles français, tu es proactif, direct et utile.\\n\\nTON RÔLE\\n- Analyser les performances du portefeuille du propriétaire\\n- Alerter sur les actions urgentes (check-in/out du jour, tâches en retard, problèmes OTA)\\n- Suggérer des optimisations de prix et de disponibilité\\n- Répondre aux questions sur les réservations, revenus, calendrier\\n- Utiliser tes outils (myVillas, myBookings, myStats, myTasks, otaStatus) pour obtenir des données fraîches à la demande\\n\\nRÈGLES\\n- Répondre en JSON : { \"reply\": \"...\", \"action\": \"reply\"|\"alert\"|\"suggestion\", \"alerts\": [...], \"suggestedPrompts\": [...] }\\n- Utiliser UNIQUEMENT les données du contexte ou des outils — ne rien inventer\\n- Pour les actions sensibles, toujours demander confirmation\\n- Signaler immédiatement les anomalies (OTA désynchronisé, tâches en retard, conflits calendrier)\\n- Toujours inclure des suggestedPrompts pour guider le propriétaire\\n\\n═════════════════════════════\\nCONTEXTE TEMPS RÉEL :\\n⚠️ ${alerts.length} alerte(s) active(s)\\n${JSON.stringify(ctx).slice(0, 3000)}\\n═════════════════════════════`\n  }\n};" },
+      "id": "b-build", "name": "Build Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [660, 0]
+    },
+    {
+      "parameters": { "promptType": "define", "text": "={{ $json.chatInput }}", "options": { "systemMessage": "={{ $json.systemMessage }}" } },
+      "id": "b-agent", "name": "AI Agent DeepSeek", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 3.1, "position": [880, 0]
+    },
+    {
+      "parameters": { "model": { "__rl": true, "value": "deepseek-chat", "mode": "list" }, "options": { "baseURL": "https://api.deepseek.com/v1" } },
+      "id": "b-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [880, 200],
+      "credentials": { "openAiApi": { "id": "DEEPSEEK_CRED", "name": "DeepSeek API" } }
+    },
+    {
+      "parameters": { "toolDescription": "Liste les villas du propriétaire connecté (noms, statuts, prix).", "method": "GET", "url": "https://kayvila.vercel.app/api/dashboard/villas", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "b-tool-villas", "name": "myVillas", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 380]
+    },
+    {
+      "parameters": { "toolDescription": "Liste les réservations (à venir et récentes) du propriétaire.", "method": "GET", "url": "https://kayvila.vercel.app/api/dashboard/bookings", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "b-tool-bookings", "name": "myBookings", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 540]
+    },
+    {
+      "parameters": { "toolDescription": "Statistiques et revenus mensuels des villas du propriétaire.", "method": "GET", "url": "https://kayvila.vercel.app/api/dashboard/analytics-villas", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "b-tool-stats", "name": "myStats", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 700]
+    },
+    {
+      "parameters": { "toolDescription": "Tâches de maintenance / ménage du propriétaire (en cours, en retard).", "method": "GET", "url": "https://kayvila.vercel.app/api/dashboard/tasks", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "b-tool-tasks", "name": "myTasks", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 860]
+    },
+    {
+      "parameters": { "toolDescription": "Santé des synchronisations OTA (Airbnb / Booking) des villas du propriétaire.", "method": "GET", "url": "https://kayvila.vercel.app/api/dashboard/ota-status", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "b-tool-ota", "name": "otaStatus", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 1020]
+    },
+    {
+      "parameters": { "jsCode": "const ai = $input.first().json.output || $input.first().json.text || '';\nlet reply = ai, action = 'reply', alerts = [], prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    reply = p.reply || ai;\n    action = p.action || 'reply';\n    alerts = Array.isArray(p.alerts) ? p.alerts : [];\n    prompts = Array.isArray(p.suggestedPrompts) ? p.suggestedPrompts : [];\n  }\n} catch {}\nreturn { json: { reply, action, alerts, suggestedPrompts: prompts } };" },
+      "id": "b-parse", "name": "Parse Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1100, 0]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify($json) }}", "options": { "responseCode": 200 } },
+      "id": "b-respond", "name": "Respond to Webhook", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
+    "Edit Fields": { "main": [[{ "node": "Fetch Owner Context", "type": "main", "index": 0 }]] },
+    "Fetch Owner Context": { "main": [[{ "node": "Build Context", "type": "main", "index": 0 }]] },
+    "Build Context": { "main": [[{ "node": "AI Agent DeepSeek", "type": "main", "index": 0 }]] },
+    "AI Agent DeepSeek": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
+    "Parse Response": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
+    "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 }]] },
+    "myVillas": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "myBookings": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "myStats": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "myTasks": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "otaStatus": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] }
+  },
+  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "1.0.0-fusion",
+  "meta": { "instanceId": "kayvibot-b-fusion" }, "id": "kayvibot-b-fusion",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }]
+}

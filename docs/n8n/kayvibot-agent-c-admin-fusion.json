@@ -1,0 +1,84 @@
+{
+  "name": "Kayvibot C — Admin (Fusion V4+V3)",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "kayvibot-admin", "responseMode": "responseNode", "options": {} },
+      "id": "c-webhook", "name": "Webhook Trigger", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "kayvibot-admin"
+    },
+    {
+      "parameters": { "assignments": { "assignments": [
+        { "id": "c-s1", "name": "chatInput", "value": "={{ $json.body.chatInput || $json.body.message }}", "type": "string" },
+        { "id": "c-s2", "name": "sessionId", "value": "={{ $json.body.sessionId || ('session-' + Date.now()) }}", "type": "string" },
+        { "id": "c-s3", "name": "token", "value": "={{ $json.body.token || $json.headers?.authorization?.replace('Bearer ', '') || '' }}", "type": "string" }
+      ] } },
+      "id": "c-set", "name": "Edit Fields", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [220, 0]
+    },
+    {
+      "parameters": { "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/admin-context", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $json.token }}" }] }, "options": { "timeout": 15000 } },
+      "id": "c-fetch", "name": "Fetch Admin Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0], "continueOnFail": true
+    },
+    {
+      "parameters": { "jsCode": "const ctxRes = $('Fetch Admin Context').first().json;\nconst ctx = ctxRes.context || ctxRes || {};\nconst analytics = ctxRes.analytics || {};\nconst briefing = analytics.daily_briefing || {};\nconst health = analytics.health_score_by_villa || {};\nconst occupancy = analytics.occupancy_by_villa || {};\nconst alerts = analytics.admin_alerts || [];\n\nreturn {\n  json: {\n    chatInput: $('Edit Fields').first().json.chatInput,\n    sessionId: $('Edit Fields').first().json.sessionId,\n    systemMessage: `Tu es Kayvibot Admin, le copilote intelligent de l'équipe Kayvila. Tu parles français, tu es stratégique, proactif et orienté action.\\n\\nTON RÔLE\\n- Analyser la performance globale (occupation, revenus, santé OTA)\\n- Détecter les anomalies et problèmes urgents\\n- Proposer des actions concrètes (blocage dates, création tâches, relance soumissions)\\n- Comparer les villas entre elles (benchmark interne)\\n- Générer des briefings quotidiens actionnables\\n- Utiliser tes outils (allVillas, allBookings, submissions, globalStats, otaAll, users) pour des données fraîches\\n\\nRÈGLES\\n- Répondre en JSON : { \"response\": \"...\", \"action\": \"SHOW_STATS\"|\"CREATE_TASK\"|\"BLOCK_DATE\"|\"UPDATE_TASK_STATUS\"|\"UPDATE_SUBMISSION_STATUS\"|\"COMPLETE_TASK\"|\"UPDATE_BOOKING\", \"action_data\": {...}, \"suggested_prompts\": [...] }\\n- Pour les actions destructives (BLOCK_DATE, UPDATE_BOOKING), TOUJOURS demander confirmation explicite avant exécution\\n- Action destructive = émettre SANS confirm, attendre le « oui », puis ré-émettre avec action_data.confirm = true\\n- Utiliser UNIQUEMENT les données du contexte ou des outils — ne rien inventer\\n- Prioriser par criticité : OTA > tâches en retard > sous-performance\\n- Toujours proposer 3-5 suggested_prompts actionnables\\n\\n═════════════════════════════\\nBRIEFING : checkins=${briefing.checkins_today||0}, checkouts=${briefing.checkouts_today||0}, soumissions=${briefing.submissions_pending||0}\\nSANTÉ VILLAS : ${JSON.stringify(health).slice(0,500)}\\nOCCUPATION : ${JSON.stringify(occupancy).slice(0,500)}\\n⚠️ ${alerts.length} alerte(s) active(s)\\n═════════════════════════════`\n  }\n};" },
+      "id": "c-build", "name": "Build Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [660, 0]
+    },
+    {
+      "parameters": { "promptType": "define", "text": "={{ $json.chatInput }}", "options": { "systemMessage": "={{ $json.systemMessage }}" } },
+      "id": "c-agent", "name": "AI Agent DeepSeek", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 3.1, "position": [880, 0]
+    },
+    {
+      "parameters": { "model": { "__rl": true, "value": "deepseek-chat", "mode": "list" }, "options": { "baseURL": "https://api.deepseek.com/v1" } },
+      "id": "c-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [880, 200],
+      "credentials": { "openAiApi": { "id": "DEEPSEEK_CRED", "name": "DeepSeek API" } }
+    },
+    {
+      "parameters": { "toolDescription": "Liste TOUTES les villas de la plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/villas", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-villas", "name": "allVillas", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 380]
+    },
+    {
+      "parameters": { "toolDescription": "Liste TOUTES les réservations de la plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/bookings", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-bookings", "name": "allBookings", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 540]
+    },
+    {
+      "parameters": { "toolDescription": "Liste les soumissions de villas en attente de validation (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/villa-submissions", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-submissions", "name": "submissions", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 700]
+    },
+    {
+      "parameters": { "toolDescription": "Statistiques globales, revenus Stripe, KPIs plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/global-stats", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-stats", "name": "globalStats", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 860]
+    },
+    {
+      "parameters": { "toolDescription": "Santé de TOUTES les synchronisations OTA (Airbnb/Booking) de la plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/ota-status", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-ota", "name": "otaAll", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 1020]
+    },
+    {
+      "parameters": { "toolDescription": "Liste les propriétaires / utilisateurs de la plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/owners", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
+      "id": "c-tool-users", "name": "users", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [880, 1180]
+    },
+    {
+      "parameters": { "jsCode": "const ai = $input.first().json.output || $input.first().json.text || '';\nlet response = ai, action = 'SHOW_STATS', prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    response = p.response || p.reply || ai;\n    action = p.action || 'SHOW_STATS';\n    prompts = Array.isArray(p.suggested_prompts) ? p.suggested_prompts : [];\n  }\n} catch {}\nreturn { json: { response, action, action_data: {}, suggested_prompts: prompts } };" },
+      "id": "c-parse", "name": "Parse Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1100, 0]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify($json) }}", "options": { "responseCode": 200 } },
+      "id": "c-respond", "name": "Respond to Webhook", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
+    "Edit Fields": { "main": [[{ "node": "Fetch Admin Context", "type": "main", "index": 0 }]] },
+    "Fetch Admin Context": { "main": [[{ "node": "Build Context", "type": "main", "index": 0 }]] },
+    "Build Context": { "main": [[{ "node": "AI Agent DeepSeek", "type": "main", "index": 0 }]] },
+    "AI Agent DeepSeek": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
+    "Parse Response": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
+    "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 }]] },
+    "allVillas": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "allBookings": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "submissions": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "globalStats": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "otaAll": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "users": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] }
+  },
+  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "1.0.0-fusion",
+  "meta": { "instanceId": "kayvibot-c-fusion" }, "id": "kayvibot-c-fusion",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }]
+}

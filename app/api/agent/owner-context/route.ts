@@ -36,7 +36,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 401 });
   }
 
-  const context = await buildOwnerContextPackCached(resolvedUserId);
+  const admin = supabaseAdmin();
+  const context = await buildOwnerContextPackCached(admin, resolvedUserId);
 
   return NextResponse.json({
     context,
