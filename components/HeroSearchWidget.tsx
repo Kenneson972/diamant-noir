@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Calendar, Users } from "lucide-react";
-import { HeroDatePicker } from "@/components/search/HeroDatePicker";
+import { HeroDateRangePicker } from "@/components/search/HeroDateRangePicker";
 import { HeroGuestPicker } from "@/components/search/HeroGuestPicker";
 
 type HeroSearchWidgetProps = {
@@ -30,14 +30,12 @@ function nightsBetween(a: string, b: string) {
 export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
   const router = useRouter();
   const containerRef = useRef<HTMLFormElement>(null);
-  const datesBtnRef = useRef<HTMLButtonElement>(null);
 
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState(2);
   const [openPanel, setOpenPanel] = useState<"date" | "guests" | null>(null);
 
-  const [datePickerStyle, setDatePickerStyle] = useState<React.CSSProperties>({ position: "fixed", top: 0, left: 0, width: 0, zIndex: 9999 });
 
   const isLight = surface === "light";
 
@@ -51,32 +49,6 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  // Reposition datepicker — flip above button if insufficient space below
-  useEffect(() => {
-    if (openPanel !== "date" || !datesBtnRef.current) return;
-    const reposition = () => {
-      const rect = datesBtnRef.current!.getBoundingClientRect();
-      const w = Math.min(Math.max(rect.width, 300), window.innerWidth - 16);
-      const left = Math.max(8, Math.min(rect.left, window.innerWidth - w - 8));
-      const spaceBelow = window.innerHeight - rect.bottom - 8;
-      const CALENDAR_MIN_HEIGHT = 380;
-      const maxH = `calc(100dvh - 16px)`;
-      if (spaceBelow >= CALENDAR_MIN_HEIGHT) {
-        setDatePickerStyle({ position: "fixed", top: rect.bottom + 4, left, width: w, maxHeight: maxH, overflowY: "auto", zIndex: 9999 });
-      } else {
-        const bottomOffset = window.innerHeight - rect.top + 4;
-        setDatePickerStyle({ position: "fixed", bottom: bottomOffset, top: "auto", left, width: w, maxHeight: maxH, overflowY: "auto", zIndex: 9999 });
-      }
-    };
-    reposition();
-    window.addEventListener("scroll", reposition, true);
-    window.addEventListener("resize", reposition);
-    return () => {
-      window.removeEventListener("scroll", reposition, true);
-      window.removeEventListener("resize", reposition);
-    };
-  }, [openPanel]);
 
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
@@ -113,7 +85,6 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
     >
       {/* Row 1 — Dates */}
       <button
-        ref={datesBtnRef}
         type="button"
         onClick={() => setOpenPanel(openPanel === "date" ? null : "date")}
         className={`tap-target flex items-center gap-3 border-0 bg-transparent px-4 text-left focus:outline-none ${
@@ -182,10 +153,10 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         Rechercher
       </button>
 
-      {/* Datepicker dropdown — fixed position to avoid overflow clip */}
+      {/* Datepicker dropdown */}
       {openPanel === "date" && (
-        <div style={datePickerStyle}>
-          <HeroDatePicker
+        <div className="fixed inset-x-4 bottom-4 z-[9999] sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:mt-2">
+          <HeroDateRangePicker
             checkin={checkin}
             checkout={checkout}
             onChange={(ci, co) => {
@@ -193,7 +164,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
               setCheckout(co);
               if (ci && co) setOpenPanel(null);
             }}
-            onClose={() => setOpenPanel(null)}
+            surface={surface}
           />
         </div>
       )}
