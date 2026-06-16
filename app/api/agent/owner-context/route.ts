@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { corsHeaders } from "@/lib/cors";
 import { supabaseAdmin } from "@/lib/supabase";
 import { buildOwnerContextPackCached } from "@/lib/owner-assistant-context";
 
@@ -59,12 +60,5 @@ RÈGLES
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
+  return new NextResponse(null, { status: 200, headers: corsHeaders("GET, OPTIONS") });
 }

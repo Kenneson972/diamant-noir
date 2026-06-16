@@ -107,7 +107,7 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
         <div
           className={`overflow-y-auto transition-all duration-300 ${
             mapVisible
-              ? "w-full md:w-[58%] lg:w-[62%]"
+              ? "hidden md:block md:w-[58%] lg:w-[62%]"
               : "w-full"
           }`}
         >

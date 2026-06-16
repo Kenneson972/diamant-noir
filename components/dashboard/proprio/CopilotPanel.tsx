@@ -37,7 +37,7 @@ export function CopilotPanel() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/10"
+          className="fixed inset-0 z-40 bg-black/30"
           onClick={close}
           aria-hidden
         />
@@ -46,7 +46,7 @@ export function CopilotPanel() {
       {/* Panel */}
       <aside
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-dvh w-[380px] max-w-[90vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out",
+          "fixed right-0 top-0 z-50 flex h-dvh w-[380px] max-w-[90vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out pt-[env(safe-area-inset-top)]",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
         aria-label="Copilot Diamant"

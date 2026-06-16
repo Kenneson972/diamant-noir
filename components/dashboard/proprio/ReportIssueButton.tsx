@@ -115,7 +115,7 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
                     placeholder="Décrivez le problème rencontré..."
-                    className="w-full border border-navy/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-gold/50"
+                    className="w-full border border-navy/10 rounded-lg px-3 py-2 text-sm resize-none transition-colors focus:outline-none focus:border-gold/50"
                   />
                 </div>
 

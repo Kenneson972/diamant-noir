@@ -52,7 +52,7 @@ export const BookingBottomSheet = ({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex min-h-[48px] min-w-[44px] flex-1 max-w-[min(180px,42vw)] items-center justify-center bg-navy px-2 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy/90"
+        className="flex min-h-[48px] min-w-[44px] flex-1 sm:max-w-[min(180px,42vw)] items-center justify-center bg-navy px-2 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy/90"
         aria-haspopup="dialog"
         aria-expanded={open}
       >

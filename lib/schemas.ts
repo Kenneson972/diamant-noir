@@ -5,8 +5,33 @@
  * Utiliser avec react-hook-form + @hookform/resolvers/zod.
  */
 
-// Schémas de base (sans Zod — compatible avec le projet actuel)
-// Les validations Zod pures seront ajoutées quand Zod sera installé.
+import { z } from "zod";
+
+/** Soumission villa publique (audit Sec#6). Champs optionnels permissifs, name+email requis. */
+export const villaSubmissionSchema = z.object({
+  name: z.string().trim().min(2, "Nom requis"),
+  email: z.string().trim().email("Email invalide"),
+  phone: z.string().trim().optional(),
+  villa_name: z.string().trim().optional(),
+  villa_location: z.string().trim().optional(),
+  villa_type: z.string().trim().optional(),
+  surface: z.union([z.string(), z.number()]).optional(),
+  surface_terrain: z.union([z.string(), z.number()]).optional(),
+  chambres: z.union([z.string(), z.number()]).optional(),
+  salles_de_bains: z.union([z.string(), z.number()]).optional(),
+  etages: z.union([z.string(), z.number()]).optional(),
+  parking_places: z.union([z.string(), z.number()]).optional(),
+  parking_securise: z.boolean().optional(),
+  equipements: z.array(z.string()).optional(),
+  already_listed: z.string().optional(),
+  airbnb_url: z.string().url().optional().or(z.literal("")),
+  message: z.string().optional(),
+  gardien_existant: z.string().optional(),
+  delai_souhaite: z.string().optional(),
+  adresse_postale: z.string().optional(),
+  no_photos: z.boolean().optional(),
+  photo_urls: z.array(z.string()).optional(),
+}).passthrough();
 
 export type LoginFormData = {
   email: string;

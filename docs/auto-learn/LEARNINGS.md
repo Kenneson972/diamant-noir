@@ -320,3 +320,38 @@
 - **Élise pilote les workflows n8n** — ne plus toucher aux JSON n8n, elle a la vision d'ensemble. Se concentrer sur le code Next.js.
 - **Deux formulaires villa incompatibles** : création (HTML natif) vs édition (HeroUI riche). À unifier sur `VillaEditorForm`.
 - **`addDays` doit utiliser `d + "T00:00:00Z"`** — sans timezone explicite, `Date.parse` utilise l'heure locale et décale d'un jour.
+
+---
+
+## 2026-06-16 — Campagne Audit Batch — Lot 0 (Triage + Quick-wins P0) ✅
+
+### Fait
+- **Branche** `fix/audit-batch-juin` ; build de référence vert avant toute modif.
+- **npm** : `next ^15.2.4 → 15.2.9`, `node-ical ^0.16.0 → ^0.22.1`, `npm audit fix` (48 → 38 vulns). Type-guard `VEvent` ajouté dans `lib/ota-hub.ts` (forcé par les nouveaux types node-ical 0.22).
+- **CORS** : helper partagé `lib/cors.ts` (+ test vitest), appliqué aux 5 routes (`chat`, `chat/tenant`, `agent/owner-context`, `agent/visitor-context`, `agent/admin-context`). Plus aucun `Access-Control-Allow-Origin: "*"`.
+- **robots.ts** : ajout `/admin/` et `/espace-client/` au disallow.
+- **og-default.jpg** : généré 1200×630 (134 KB) depuis `prestations-hero.png` via sharp.
+
+### Règles apprises (importantes)
+- **FAUX POSITIFS de l'audit SEO** : `app/sitemap.ts` ET `app/robots.ts` existaient déjà et fonctionnent. L'audit demandait de les "créer" → toujours vérifier `app/` avant de scaffolder un sitemap/robots. Seul trou réel : `/admin/` manquait au disallow.
+- **Helper CORS unique `lib/cors.ts`** = source unique des en-têtes ; jamais `*` avec `Authorization`. Origine = `NEXT_PUBLIC_BASE_URL` → `NEXT_PUBLIC_SITE_URL` → `https://kayvila.com`, + `Vary: Origin`.
+- **BLOCAGE Next 15.5.x** : impossible d'atteindre `next ≥15.3` / `node-ical ≥0.23` — le polyfill Temporal (BigInt) de ces versions casse le bundling webpack SSR (conflit zod v4) → `g.BigInt is not a function` en "Collecting page data". Resté à `next 15.2.9` (corrige quand même middleware-bypass + SSRF). Montée à 15.5.x = tâche dédiée (Lot 9) : résoudre BigInt/webpack ou migrer zod.
+- **og image** : `sharp` est dispo transitivement (via next) ; `fit:"cover"` + `position:"centre"` pour un crop propre 1200×630.
+
+---
+
+## 2026-06-16 — Campagne Audit Batch — Lot 1 (Sécurité HAUTE) ✅
+
+### Fait
+- **escapeHtml** (`lib/security.ts` + test) appliqué à l'email ADMIN de `villa-submissions` (le 2e email proprio utilise déjà React Email = safe). Sec#2.
+- **POST `villa-submissions`** (public) durci : `checkCsrf` + `checkRateLimit("villa-submit:"+ip, 5, 1h)` + `villaSubmissionSchema.safeParse` (zod). Sec#5/6.
+- **`create-villa`** : strip des champs admin-only (`is_published`, `commission_rate`, `collection_tier`, `owner_id`) pour les non-admins ; `owner_id` toujours dérivé de la session. Sec#7.
+- **Sec#8** : `.env.local` + `.env` déjà dans `.gitignore` → pas de pre-commit hook installé (ne pas toucher aux hooks git sans accord). git-secrets reste une reco manuelle.
+- 4 commits (`db0b700`, `9eb3bef`, `dd430eb` + journal), `npx vitest run` 48/0, build vert.
+
+### Règles apprises
+- **Un email construit par template literal = XSS** si données utilisateur interpolées brut → toujours `escapeHtml()`. Préférer React Email (`render()`) qui échappe par défaut.
+- **Les helpers sécurité existent déjà dans `lib/security.ts`** : `checkCsrf`, `checkRateLimit(key,max,windowMs)`, `ipFromRequest`, `withCsrf`, `verifyOrigin`. Ne JAMAIS les recréer — les appliquer. Vérifier `lib/security.ts` avant.
+- **Route POST publique = CSRF (origin) + rate-limit/IP + zod safeParse**, dans cet ordre, tout en haut du handler.
+- **`zod ^4` est installé** (utilisé dans contact/admin routes). `.passthrough()` pour valider name/email+types sans devoir lister toutes les colonnes (Postgres rejette les colonnes inconnues de toute façon).
+- **Escalade de privilège create-villa** : le vrai risque n'est pas les colonnes inconnues (insert échoue) mais les colonnes PRIVILÉGIÉES connues → strip ciblé pour non-admin plutôt qu'un schéma exhaustif fragile.

@@ -17,6 +17,7 @@ type ToastType = "success" | "error" | null;
 
 export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEditorFormProps) {
   const router = useRouter();
+  const isCreate = !villa.id;
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importUseAi, setImportUseAi] = useState(false);
@@ -250,14 +251,16 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       payload.image_urls = photosRef.current;
       payload.image_url = photosRef.current[0] || null;
 
-      const res = await fetch("/api/dashboard/update-villa", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          villaId: villa.id,
-          payload,
-        }),
-      });
+      const res = await fetch(
+        isCreate ? "/api/dashboard/create-villa" : "/api/dashboard/update-villa",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            isCreate ? { payload } : { villaId: villa.id, payload }
+          ),
+        }
+      );
 
       const data = await res.json();
 
@@ -265,8 +268,18 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
         throw new Error(data.error || "Erreur lors de la sauvegarde");
       }
 
-      showToast("success", "Villa mise à jour avec succès");
-      router.refresh();
+      if (isCreate) {
+        const newId = data?.data?.id as string | undefined;
+        showToast("success", "Villa créée avec succès");
+        if (newId) {
+          router.push(`/dashboard/villas/${newId}`);
+        } else {
+          router.refresh();
+        }
+      } else {
+        showToast("success", "Villa mise à jour avec succès");
+        router.refresh();
+      }
     } catch (err) {
       showToast(
         "error",
@@ -275,7 +288,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
     } finally {
       setSaving(false);
     }
-  }, [villa.id, router, showToast, cancelTemplate, cancelNotes]);
+  }, [isCreate, villa.id, router, showToast, cancelTemplate, cancelNotes]);
 
   const handleBookletUpload = async (file: File) => {
     if (file.type !== 'application/pdf') {
@@ -427,7 +440,8 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
         </div>
       </section>
 
-      {/* Section — Livret d'accueil */}
+      {/* Section — Livret d'accueil (édition uniquement : nécessite une villa existante) */}
+      {!isCreate && (
       <section className="rounded-xl border border-navy/10 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-navy">Livret d&apos;accueil</h3>
         {bookletUrl ? (
@@ -464,12 +478,15 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
           </label>
         )}
       </section>
+      )}
 
       {/* Save button */}
       <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border-subtle bg-white px-6 py-4">
         <div className="flex items-center justify-between">
           <p className="text-xs text-navy/60">
-            Les modifications seront appliquées immédiatement.
+            {isCreate
+              ? "La villa sera créée, puis vous pourrez ajouter les photos et le livret."
+              : "Les modifications seront appliquées immédiatement."}
           </p>
           <button
             type="button"
@@ -480,12 +497,12 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
             {saving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                Sauvegarde...
+                {isCreate ? "Création..." : "Sauvegarde..."}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" aria-hidden />
-                Enregistrer les modifications
+                {isCreate ? "Créer la villa" : "Enregistrer les modifications"}
               </>
             )}
           </button>

@@ -94,7 +94,8 @@ export default async function VillasListingPage({
       .from("villas")
       .select("id,name,location,price_per_night,image_url,image_urls,latitude,longitude,capacity,surface_m2,amenities,collection_tier")
       .eq("is_published", true)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(60);
 
     if (!error && data && data.length > 0) {
       villas = data.map((villa) => {

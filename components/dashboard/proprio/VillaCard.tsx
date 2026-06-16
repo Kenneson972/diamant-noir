@@ -45,7 +45,7 @@ export function VillaCard({
       className="group block overflow-hidden rounded-xl border border-border-subtle bg-white shadow-sm transition-all hover:shadow-md"
     >
       {/* Image */}
-      <div className="relative h-[300px] w-full overflow-hidden bg-navy-900/5">
+      <div className="relative h-[200px] sm:h-[260px] md:h-[300px] w-full overflow-hidden bg-navy-900/5">
         {mainPhoto ? (
           <Image
             src={mainPhoto}

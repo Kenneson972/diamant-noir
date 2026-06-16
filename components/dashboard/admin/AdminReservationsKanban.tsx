@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Kanban, useKanban, useKanbanColumn } from "@heroui-pro/react";
+import { Inbox } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { KayvilaNumberValue } from "@/components/ui/pro";
 import type { AdminBookingRow } from "@/components/dashboard/admin/AdminReservationsDataGrid";
@@ -102,7 +103,10 @@ function KanbanColumnBoard({
             dragAndDropHooks={dragAndDropHooks}
             items={items}
             renderEmptyState={() => (
-              <p className="px-2 py-4 text-center text-[11px] text-muted">Aucune réservation</p>
+              <div className="flex flex-col items-center gap-1.5 px-2 py-4 text-center">
+                <Inbox className="h-5 w-5 text-muted opacity-40" aria-hidden />
+                <p className="text-[11px] text-muted">Aucune réservation</p>
+              </div>
             )}
           >
             {(booking) => (

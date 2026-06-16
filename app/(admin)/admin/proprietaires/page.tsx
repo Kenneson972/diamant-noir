@@ -16,7 +16,8 @@ async function getOwners(): Promise<AdminOwnerRow[]> {
   const { data, error } = await supabase
     .from("admin_owner_summary")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(100);
 
   if (error) {
     console.error("Failed to fetch owners:", error);

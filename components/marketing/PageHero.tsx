@@ -34,7 +34,7 @@ export function PageHero({
 }: PageHeroProps) {
   return (
     <section
-      className="relative flex min-h-[42dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-24 md:min-h-[50dvh] md:py-16 md:pt-24 lg:min-h-[min(55vh,520px)]"
+      className="relative flex min-h-[42dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-16 md:min-h-[50dvh] md:py-16 md:pt-24 lg:min-h-[min(55vh,520px)]"
       aria-labelledby="page-hero-title"
     >
       {/* Image de fond */}

@@ -189,7 +189,7 @@ export function HomeServicesSection() {
                 >
                   {/* Image — plein largeur mobile, moitié gauche desktop */}
                   {visual && (
-                    <div className="relative h-[40vw] min-h-[200px] w-full shrink-0 overflow-hidden md:w-1/2 md:h-auto">
+                    <div className="relative h-[35vw] min-h-[160px] w-full shrink-0 overflow-hidden md:w-1/2 md:h-auto">
                       <Image
                         src={visual.src}
                         alt={visual.alt}

@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
  */
 export function HeroBackgroundMedia() {
   const [allowVideo, setAllowVideo] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -47,17 +48,31 @@ export function HeroBackgroundMedia() {
   }
 
   return (
-    <video
-      ref={videoRef}
-      autoPlay
-      muted
-      loop
-      playsInline
-      poster="/villa-hero.jpg"
-      className="absolute inset-0 h-full w-full object-cover opacity-70"
-      aria-hidden
-    >
-      <source src="/hero.webm" type="video/webm" />
-    </video>
+    <div className="absolute inset-0 h-full w-full" aria-hidden>
+      {/* Poster visible jusqu'à ce que la vidéo soit prête — fondu doux poster→vidéo */}
+      <Image
+        src="/villa-hero.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover opacity-70"
+        sizes="100vw"
+      />
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/villa-hero.jpg"
+        onLoadedData={() => setVideoReady(true)}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+          videoReady ? "opacity-70" : "opacity-0"
+        }`}
+        aria-hidden
+      >
+        <source src="/hero.webm" type="video/webm" />
+      </video>
+    </div>
   );
 }

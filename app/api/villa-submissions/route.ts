@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { escapeHtml, checkCsrf, checkRateLimit, ipFromRequest } from "@/lib/security";
+import { villaSubmissionSchema } from "@/lib/schemas";
 import { render } from "@react-email/render";
 import {
   ADMIN_NOTIFICATION_EMAIL,
@@ -21,7 +23,26 @@ const VILLA_SUBMISSION_WEBHOOK = process.env.VILLA_SUBMISSION_WEBHOOK || process
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // CSRF (origin) + rate limit (5 soumissions / heure / IP)
+    const csrf = checkCsrf(request);
+    if (csrf) return csrf;
+    const ip = ipFromRequest(request);
+    if (!checkRateLimit(`villa-submit:${ip}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: "Trop de soumissions. Réessayez dans une heure." },
+        { status: 429 }
+      );
+    }
+
+    const raw = await request.json();
+    const parsed = villaSubmissionSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Données invalides.", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
     const {
       name,
       email,
@@ -45,14 +66,7 @@ export async function POST(request: Request) {
       adresse_postale,
       no_photos,
       photo_urls,
-    } = body;
-
-    if (!name || !email) {
-      return NextResponse.json(
-        { error: "Nom et email sont requis." },
-        { status: 400 }
-      );
-    }
+    } = body as Record<string, any>;
 
     const supabase = supabaseAdmin();
     const { data: submission, error: insertError } = await supabase
@@ -120,13 +134,13 @@ export async function POST(request: Request) {
           html: `
             <div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929">
               <h2 style="font-weight:400;color:#d4af37">Nouvelle soumission villa</h2>
-              <p><strong>Nom :</strong> ${name}</p>
-              <p><strong>Email :</strong> ${email}</p>
-              ${phone ? `<p><strong>Tél. :</strong> ${phone}</p>` : ""}
-              <p style="margin-top:16px"><strong>${villa_name || "Villa"}</strong></p>
-              <p>${details || "—"}</p>
-              ${airbnb_url ? `<p><strong>Airbnb :</strong> <a href="${airbnb_url}">${airbnb_url}</a></p>` : ""}
-              ${message ? `<p style="margin-top:12px;font-style:italic">« ${message} »</p>` : ""}
+              <p><strong>Nom :</strong> ${escapeHtml(name)}</p>
+              <p><strong>Email :</strong> ${escapeHtml(email)}</p>
+              ${phone ? `<p><strong>Tél. :</strong> ${escapeHtml(phone)}</p>` : ""}
+              <p style="margin-top:16px"><strong>${escapeHtml(villa_name || "Villa")}</strong></p>
+              <p>${escapeHtml(details || "—")}</p>
+              ${airbnb_url ? `<p><strong>Airbnb :</strong> <a href="${escapeHtml(airbnb_url)}">${escapeHtml(airbnb_url)}</a></p>` : ""}
+              ${message ? `<p style="margin-top:12px;font-style:italic">« ${escapeHtml(message)} »</p>` : ""}
               <p style="margin-top:16px;font-size:11px;color:#999">Réf. ${submission.id}</p>
             </div>
           `,

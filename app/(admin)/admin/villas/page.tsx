@@ -78,7 +78,7 @@ async function getVillas(searchParams: {
       query = query.order("created_at", { ascending: false });
   }
 
-  const { data } = await query;
+  const { data } = await query.limit(100);
   const villas = data ?? [];
   if (villas.length === 0) return [];
 

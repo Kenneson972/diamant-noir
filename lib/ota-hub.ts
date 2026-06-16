@@ -7,7 +7,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import ical from "node-ical";
+import ical, { type VEvent } from "node-ical";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -107,7 +107,7 @@ export const syncOTAChannel = async (
     const events = await ical.async.fromURL(channel.ical_url);
 
     const rows = Object.values(events)
-      .filter((event) => event.type === "VEVENT")
+      .filter((event): event is VEvent => !!event && event.type === "VEVENT")
       .map((event) => ({
         villa_id: villaId,
         start_date: toDateOnly(event.start as Date),

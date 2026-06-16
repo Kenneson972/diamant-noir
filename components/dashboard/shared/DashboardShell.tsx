@@ -72,7 +72,7 @@ export function DashboardShell({
             className={cn(
               "flex-1",
               fullBleed
-                ? "h-[calc(100dvh-4rem)] overflow-hidden p-0 md:h-[calc(100dvh-4.25rem)]"
+                ? "h-[calc(100dvh-4rem)] overflow-y-auto p-0 md:h-[calc(100dvh-4.25rem)]"
                 : "px-4 py-6 md:px-8 md:py-8"
             )}
           >

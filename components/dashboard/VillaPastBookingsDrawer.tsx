@@ -79,6 +79,7 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
               <p className="text-sm text-navy/55">Aucune r&eacute;servation pass&eacute;e pour cette villa.</p>
             </div>
           ) : (
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-navy/5 text-[10px] font-bold uppercase tracking-[0.15em] text-navy/55">
@@ -117,6 +118,7 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>
