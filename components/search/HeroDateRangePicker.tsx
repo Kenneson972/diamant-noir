@@ -19,8 +19,10 @@ export function HeroDateRangePicker({
   checkin,
   checkout,
   onChange,
+  surface = "dark",
 }: HeroDateRangePickerProps) {
   const now = today(getLocalTimeZone());
+  const isLight = surface === "light";
 
   const value =
     checkin && checkout
@@ -39,17 +41,20 @@ export function HeroDateRangePicker({
       minValue={now}
       firstDayOfWeek="mon"
       visibleDuration={{ months: 2 }}
-      // Sélection en navy (couleur de marque) plutôt que le bleu HeroUI par défaut
       style={{ "--accent": "oklch(0.24 0.05 256)" } as React.CSSProperties}
-      className="w-full rounded-2xl border border-navy/10 bg-white p-4 text-navy shadow-2xl @container-normal sm:w-auto"
+      className={`w-full rounded-2xl border p-4 shadow-2xl sm:w-auto ${
+        isLight
+          ? "border-navy/10 bg-white text-navy"
+          : "border-white/10 bg-navy text-white"
+      }`}
     >
-      <div className="mx-auto flex w-max gap-6">
+      <div className="mx-auto flex w-max flex-col gap-4 sm:flex-row sm:gap-6">
         {/* Mois 1 */}
         <div className="w-64">
           <RangeCalendar.Header>
             <RangeCalendar.NavButton slot="previous" />
             <RangeCalendar.Heading className="flex-none" />
-            <div className="size-6" />
+            <div className="size-6 sm:hidden" />
           </RangeCalendar.Header>
           <RangeCalendar.Grid>
             <RangeCalendar.GridHeader>
@@ -63,7 +68,7 @@ export function HeroDateRangePicker({
         {/* Mois 2 */}
         <div className="w-64">
           <RangeCalendar.Header>
-            <div className="size-6" />
+            <div className="hidden size-6 sm:block" />
             {/* @ts-expect-error offset supported at runtime, types lag behind v3.1.0 */}
             <RangeCalendar.Heading className="flex-none" offset={{ months: 1 }} />
             <RangeCalendar.NavButton slot="next" />
