@@ -16,8 +16,8 @@
 | 0 | Triage + Quick-wins P0 | ✅ FAIT | `plans/2026-06-16-audit-batch-lot0.md` |
 | 1 | Sécurité HAUTE | ✅ FAIT | `plans/2026-06-16-audit-batch-lot1.md` |
 | 2 | Bloquants UX 🔴 (mobile) | ✅ FAIT | inline (triage) |
-| 3 | Unification formulaires villa | ⏭️ **PROCHAIN** | à écrire |
-| 4 | Perf critique | ⬜ | — |
+| 3 | Création villa proprio (#10) | ✅ FAIT | inline (triage) |
+| 4 | Perf critique | ⏭️ **PROCHAIN** | à écrire |
 | 5 | SEO bloquant+majeur | ⬜ | — |
 | 6 | Layout majeurs mobile | ⬜ | — |
 | 7 | UX/Visuel polish | ⬜ | — |
@@ -49,6 +49,15 @@
 - **Faux positifs écartés** : #2 Kanban (wrapper `overflow-x-auto` existe déjà L145) · #5 Chatbot (`max-h-[85dvh]`+fullscreen mobile déjà présents). #4 fait au Lot 1.
 - Build ✅ · vitest 48/0 ✅. Pas de subagent (polish CSS, cf model-routing).
 
+### Lot 3 ✅ (commit `ddf55e7`) — création villa proprio (#10)
+- `VillaEditorForm` : mode création via `!villa.id` → POST `create-villa` (sinon `update-villa`), redirect post-création, livret masqué en création, libellés adaptés.
+- Route `app/(proprio)/dashboard/villas/nouvelle/page.tsx` (VillaEditorForm villa vide).
+- CTA « Ajouter une villa » sur liste proprio + `EmptyDashboard`.
+- Backend déjà prêt (Lot 1) : non-admin → villa **non publiée**, `owner_id` = session. Pas de conflit avec flux soumission.
+- **#8** (VillaImageManager création admin) = **faux positif** : déjà rendu L540 de `AdminVillaForm`.
+- **#9** (fusion `AdminVillaForm` HTML / `VillaEditorForm` HeroUI) = **reporté** (décision Kenneson : #10 d'abord, valeur/risque). Blocage parité : VillaEditorForm n'a pas les contrôles admin (sélecteur propriétaire `/api/admin/owners`, `is_published`, `commission_rate`) → unification admin nécessite variante admin conditionnelle dans VillaFormFields.
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -57,4 +66,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-Écrire le plan **Lot 3 — Unification formulaires villa** (triage d'abord). Couvre audit #8 (VillaImageManager création admin — déjà fait selon notes 16 juin, à re-vérifier), #9 (deux stacks formulaire : `AdminVillaForm` HTML natif vs `VillaEditorForm`+`VillaFormFields` HeroUI → unifier sur `VillaEditorForm`), #10 (route création villa proprio). Lot le plus structurant — bien cadrer avant d'exécuter, possiblement subagent-driven.
+**Lot 4 — Perf critique** : triage des items perf de `docs/audit-securite-perf-seo-2026-06-16.md` (images non optimisées, bundles, requêtes N+1, lazy-loading, etc.). Reste aussi en backlog : **#9** (fusion formulaires admin, lot dédié) et la **montée Next 15.5.x** (Lot 9, blocage BigInt).
