@@ -33,13 +33,20 @@ export const POST = withCsrf(async (request: Request) => {
       user.email
     );
 
+    // Champs réservés à l'admin — un non-admin ne doit pas pouvoir les fixer (Sec#7)
+    const ADMIN_ONLY_FIELDS = ["is_published", "commission_rate", "collection_tier", "owner_id"] as const;
+    if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+      return NextResponse.json({ error: "Payload invalide" }, { status: 400 });
+    }
+
     const insertPayload: Record<string, unknown> = { ...payload };
 
-    if (isAdmin) {
-      if (!insertPayload.owner_id) {
-        insertPayload.owner_id = user.id;
-      }
-    } else {
+    if (!isAdmin) {
+      for (const f of ADMIN_ONLY_FIELDS) delete insertPayload[f];
+    }
+    // owner_id : toujours dérivé de la session (jamais du body pour un non-admin ;
+    // admin peut cibler un autre propriétaire mais défaut = lui-même)
+    if (!isAdmin || !insertPayload.owner_id) {
       insertPayload.owner_id = user.id;
     }
 
