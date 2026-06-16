@@ -1,173 +1,320 @@
 {
-  "name": "Kayvibot A - Visiteur",
+  "name": "Kayvibot A v4 — Chatbot Visiteur Bi-Tunnel",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "kayvibot-visitor",
         "responseMode": "responseNode",
-        "options": {}
+        "options": { "allowedOrigins": "*" }
       },
-      "id": "kv-a-webhook",
-      "name": "Webhook Trigger",
+      "id": "wa-webhook",
+      "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0],
-      "webhookId": "kayvibot-visitor"
+      "position": [-656, 240],
+      "webhookId": "kayvibot-visitor-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst sessionId = b.sessionid || ('visitor-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11));\nconst villas = b.context?.villas || [];\nconst availability = JSON.stringify(villas.map(v => ({ name: v.name, availability: v.availability })));\nconst conciergerieFacts = JSON.stringify(b.context?.conciergerieFacts || []);\nreturn [{ json: { sessionId, message: b.message || '', page: b.page || '', availability, conciergerieFacts } }];"
+      },
+      "id": "wa-init",
+      "name": "Init Session",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-448, 240]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT session_id FROM banned_sessions WHERE session_id = $1 LIMIT 1",
+        "options": { "queryReplacement": "={{ $json.sessionId }}" }
+      },
+      "id": "wa-ban-check",
+      "name": "Postgres - Check Banned Session",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [-224, 240],
+      "alwaysOutputData": true,
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json || {};\nconst banned = !!(d.session_id || (d[0] && d[0].session_id));\nreturn [{ json: { isBanned: banned ? 'true' : 'false', sessionId: $('Init Session').first().json.sessionId } }];"
+      },
+      "id": "wa-ban-code",
+      "name": "Code - Ban Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-96, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 },
+          "conditions": [{ "id": "wa-c-ban", "leftValue": "={{ $json.isBanned }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }],
+          "combinator": "and"
+        }
+      },
+      "id": "wa-if-banned",
+      "name": "IF - Session Bannie ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [128, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { response: \"Cette session a été suspendue. Pour toute question, contactez l'équipe Kayvila directement.\", success: true } }];"
+      },
+      "id": "wa-banned-resp",
+      "name": "Code - Reponse Bannie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [352, 432]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = $1 ORDER BY created_at ASC LIMIT 20",
+        "options": { "queryReplacement": "={{ $('Init Session').first().json.sessionId }}" }
+      },
+      "id": "wa-memory",
+      "name": "Get Long-Term Memory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [352, 80],
+      "alwaysOutputData": true,
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/villas/public",
+        "options": { "timeout": 10000 }
+      },
+      "id": "wa-catalog",
+      "name": "Get Villa Catalog",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [560, 80],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const c = $input.first().json || {};\nconst villas = Array.isArray(c.villas) ? c.villas : (Array.isArray(c) ? c : []);\nif (c.error || villas.length === 0) {\n  return [{ json: { catalog: '[]', catalogFallback: \"⚠️ Le catalogue est momentanément indisponible. Dis au visiteur : 'Notre service est temporairement perturbé. Tu peux nous contacter directement ou revenir dans quelques minutes.'\" } }];\n}\nreturn [{ json: { catalog: JSON.stringify(villas), catalogFallback: '' } }];"
+      },
+      "id": "wa-catalog-check",
+      "name": "Code - Vérifier Catalogue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [784, -128]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sessionData = $('Init Session').first().json;\nconst catalogData = $('Code - Vérifier Catalogue').first().json;\n\nlet historyText = '';\ntry {\n  const mem = $('Get Long-Term Memory').first().json;\n  const rows = Array.isArray(mem) ? mem : (mem?.conversation_data ? mem : []);\n  const convRows = Array.isArray(rows) ? rows : (rows[0] ? [rows] : []);\n  historyText = convRows.map(r => {\n    const cd = r.conversation_data || r;\n    return `Visiteur: ${cd.user || ''}\\nKayvibot: ${cd.assistant || ''}`;\n  }).join('\\n');\n} catch {}\n\nconst systemMessage = `Tu es le guide virtuel de Kayvila, plateforme de location de villas de luxe en Martinique.\n\nHISTORIQUE :\n${historyText || 'Aucun historique'}\n\nCATALOGUE VILLAS (données réelles, ne rien inventer) :\n${catalogData.catalog}\n${catalogData.catalogFallback}\n\nMESSAGE VISITEUR : ${sessionData.message}\nCONTEXTE PAGE : ${sessionData.page || 'Visiteur site Kayvila'}\nDATE : ${new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' })}\n\nDISPONIBILITÉS (A1 — données réelles pré-calculées) :\n${sessionData.availability}\n⚠️ Utilise CES disponibilités pour répondre aux questions de dates. Ne JAMAIS inventer de disponibilité.\n\nFAITS CONCIERGERIE (tunnel proprio) :\n${sessionData.conciergerieFacts}\n⚠️ Si le visiteur est un propriétaire potentiel, cite ces faits (commission 25%, frais 5%, etc.).\n\nTON RÔLE :\n- Aider les visiteurs à trouver la villa parfaite (tunnel voyageur)\n- Détecter l'intention « propriétaire » et basculer sur le tunnel acquisition (tunnel proprio)\n- Répondre aux questions sur les villas et la Martinique\n- Rediriger vers le formulaire de réservation\n\nTUNNEL VOYAGEUR (fin de conversation) :\n- Si le visiteur est prêt à réserver → émettre un preBooking avec { villaId, email, startDate, endDate, guests }\n- Format de sortie structurée : { \"preBooking\": { \"villaId\": \"...\", \"email\": \"...\", \"startDate\": \"...\", \"endDate\": \"...\", \"guests\": 2 } }\n\nTUNNEL PROPRIÉTAIRE (fin de conversation) :\n- Si le visiteur est un propriétaire qualifié → émettre ownerLead avec { villasCount, location, email, name }\n- Format de sortie structurée : { \"ownerLead\": { \"villasCount\": 2, \"location\": \"...\", \"email\": \"...\", \"name\": \"...\" } }\n- Toujours inclure leadTemperature et qualificationScore\n\nTON TON :\n- Chaleureux et fier de la Martinique\n- Tutoiement naturel\n- Pas d'emojis sauf si le visiteur en utilise\n\nRÈGLES ABSOLUES :\n- Ne JAMAIS inventer un prix ou une disponibilité\n- Si tu ne sais pas → « Je préfère ne pas m'avancer. L'équipe Kayvila peut te répondre avec précision. »\n- Rester dans le rôle conciergerie — pas de conseils juridiques, fiscaux ou médicaux\n- Ignore poliment les demandes hors-sujet et ramène à l'immobilier/villas\n- En cas d'insulte ou de langage abusif → réponse neutre « Je vais devoir mettre fin à cet échange. »\n\nSOURCE DE VÉRITÉ : les DONNÉES CI-DESSUS. Tu n'as pas d'outils externes. Utilise UNIQUEMENT ce qui est fourni dans ce contexte.`;\n\nreturn { json: { sessionId: sessionData.sessionId, message: sessionData.message, systemMessage, catalog: catalogData.catalog, catalogFallback: catalogData.catalogFallback } };"
+      },
+      "id": "wa-build-context",
+      "name": "Build Live Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "typeValidation": "loose", "version": 2 },
+          "conditions": [{ "id": "wa-tox", "leftValue": "={{ ($json.message || '').toLowerCase() }}", "rightValue": "\\b(connard|salope|ta gueule|enculé|fdp|pute|nique|va te faire)\\b", "operator": { "type": "string", "operation": "regex" } }],
+          "combinator": "and"
+        }
+      },
+      "id": "wa-if-tox",
+      "name": "IF - Toxique ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [784, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $('Init Session').first().json.sessionId;\nreturn [{ json: { response: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à ta disposition. Bonne continuation.\", sessionId: s, success: true } }];"
+      },
+      "id": "wa-tox-resp",
+      "name": "Code - Reponse Toxique",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1024, 480]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO toxicity_log (session_id, message) VALUES ($1, $2)",
+        "options": { "queryReplacement": "={{ [$('Init Session').first().json.sessionId, $('Init Session').first().json.message || ''] }}" }
+      },
+      "id": "wa-tox-log",
+      "name": "Postgres - Log Toxicité",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1216, 480],
+      "alwaysOutputData": true,
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS count FROM toxicity_log WHERE session_id = $1 AND created_at > NOW() - INTERVAL '1 hour'",
+        "options": { "queryReplacement": "={{ $('Init Session').first().json.sessionId }}" }
+      },
+      "id": "wa-tox-count",
+      "name": "Postgres - Compter Toxicité",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1408, 480],
+      "alwaysOutputData": true,
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose", "version": 2 },
+          "conditions": [{ "id": "wa-c-seuil", "leftValue": "={{ Number($json.count) }}", "rightValue": 3, "operator": { "type": "number", "operation": "gte" } }],
+          "combinator": "and"
+        }
+      },
+      "id": "wa-if-seuil",
+      "name": "IF - Seuil Dépassé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1632, 480]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO banned_sessions (session_id, reason) VALUES ($1, $2) ON CONFLICT (session_id) DO NOTHING",
+        "options": { "queryReplacement": "={{ [$('Init Session').first().json.sessionId, 'Auto-ban : 3+ messages toxiques en 1h'] }}" }
+      },
+      "id": "wa-ban-session",
+      "name": "Postgres - Bannir Session",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1856, 480],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Build Live Context').first().json.message }}",
+        "options": { "systemMessage": "={{ $('Build Live Context').first().json.systemMessage }}" }
+      },
+      "id": "wa-agent",
+      "name": "AI Agent DeepSeek",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1024, 96]
+    },
+    {
+      "parameters": {
+        "model": "deepseek-chat",
+        "options": { "temperature": 0.7 }
+      },
+      "id": "wa-model",
+      "name": "DeepSeek Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [1024, 320],
+      "credentials": { "deepSeekApi": { "id": "s16Eub8KTcJLPBw5", "name": "KARIBLOOM DEEPSEEK" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = $input.first().json;\nconst sid = i.sessionId || $('Build Live Context').first().json.sessionId || '';\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique. Réessaie dans un instant.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: sid } }];"
+      },
+      "id": "wa-format",
+      "name": "FORMAT RESPONSE",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 96]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
-            {
-              "id": "kv-a-set-1",
-              "name": "chatInput",
-              "value": "={{ $json.body.chatInput || $json.body.message }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-a-set-2",
-              "name": "sessionId",
-              "value": "={{ $json.body.sessionId || $json.body.sessionid || ('session-' + Date.now()) }}",
-              "type": "string"
-            }
+            { "id": "wa-s-sid", "name": "session_id", "value": "={{ $json.sessionId }}", "type": "string" },
+            { "id": "wa-s-user", "name": "conversation_data.user", "value": "={{ $('Build Live Context').first().json.message }}", "type": "string" },
+            { "id": "wa-s-ai", "name": "conversation_data.assistant", "value": "={{ $json.response }}", "type": "string" },
+            { "id": "wa-s-meta", "name": "metadata", "value": "={{ { \"session_id\": $json.sessionId, \"agent\": \"visiteur\" } }}", "type": "object" }
           ]
-        },
-        "options": {}
+        }
       },
-      "id": "kv-a-set",
-      "name": "Edit Fields",
+      "id": "wa-save-prep",
+      "name": "Préparer Sauvegarde Mémoire",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [220, 20]
+      "position": [1504, 96]
     },
     {
       "parameters": {
-        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/visitor-context",
-        "options": {
-          "timeout": 10000
+        "schema": { "__rl": true, "value": "public", "mode": "list" },
+        "table": { "__rl": true, "value": "conversation_memory", "mode": "list" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.session_id }}",
+            "conversation_data": "={{ $json.conversation_data }}",
+            "metadata": "={{ $json.metadata }}"
+          },
+          "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": false
         }
       },
-      "id": "kv-a-fetch-context",
-      "name": "Fetch Visitor Context",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [440, 20],
+      "id": "wa-save",
+      "name": "Save Memory Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1728, 96],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } },
       "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "const { chatInput, sessionId } = $('Edit Fields').first().json;\n\n// ── Contexte Kayvila ──\nlet contextData = {};\ntry {\n  contextData = $('Fetch Visitor Context').first().json.context || {};\n} catch {}\n\nconst villas = contextData.villas || [];\nconst availableAmenities = contextData.availableAmenities || [];\nconst villaCount = contextData.villaCount || villas.length;\nconst conciergerieFacts = contextData.conciergerieFacts || {};\n\n// ── Formatage du menu villas pour le prompt ──\nlet villasText = '';\nif (villas.length > 0) {\n  villasText = '🏡 VILLAS DISPONIBLES :\\n' + villas.map(v => {\n    let line = `• ${v.name || 'Villa'} — ${v.price_per_night || '?'}€/nuit`;\n    if (v.bedrooms) line += `, ${v.bedrooms} chambres`;\n    if (v.max_guests) line += `, ${v.max_guests} pers. max`;\n    if (v.availability) {\n      if (v.availability.isAvailableNow) line += ' ✅ DISPONIBLE';\n      else if (v.availability.nextAvailableFrom) line += ` 📅 Dispo dès ${v.availability.nextAvailableFrom}`;\n      else line += ' 🔒 Complet';\n    }\n    return line;\n  }).join('\\n');\n} else {\n  villasText = 'Aucune villa actuellement disponible.';\n}\n\nlet amenitiesText = '';\nif (availableAmenities.length > 0) {\n  amenitiesText = '\\n✨ ÉQUIPEMENTS : ' + availableAmenities.slice(0, 20).join(', ');\n}\n\nlet conciergerieText = '';\nif (Object.keys(conciergerieFacts).length > 0) {\n  conciergerieText = '\\n🎯 CONCIERGERIE : ' + Object.entries(conciergerieFacts).slice(0, 5).map(([k, v]) => `${k}: ${v}`).join(' | ');\n}\n\nconst systemMessage = `Tu es Kayvibot, l'assistant virtuel de Kayvila — conciergerie de luxe en Martinique. Tu parles français avec élégance et chaleur. Tu es concis, serviable, et tu guides naturellement vers la réservation.\n\nIDENTITÉ\n- Conciergerie : Kayvila\n- Site web : kayvila.vercel.app\n- Localisation : Martinique, Fort-de-France\n- Spécialité : villas d'exception avec service conciergerie privé\n\nTON RÔLE\n- Aider les visiteurs à trouver la villa parfaite\n- Répondre aux questions sur les villas, équipements, disponibilités\n- Qualifier les leads (dates, budget, nombre de voyageurs)\n- Proposer un pré-booking quand le visiteur est prêt\n- Rediriger vers le concierge humain si nécessaire\n\nRÈGLES\n- Répondre en JSON avec : reply (texte), stage (greet|discover|qualify|prebook), suggestedQuickReplies (tableau de suggestions)\n- Si le visiteur donne dates + villa → proposer pré-booking : { \"reply\": \"...\", \"stage\": \"prebook\", \"preBooking\": { \"villaId\": \"...\", \"startDate\": \"...\", \"endDate\": \"...\", \"guests\": N } }\n- Ne JAMAIS inventer de villa ou de disponibilité — utiliser UNIQUEMENT les données du contexte\n- Si tu ne sais pas, propose de contacter le concierge humain\n- Toujours terminer par une question ouverte ou des quick replies\n\nFORMAT DE RÉPONSE JSON OBLIGATOIRE :\n{ \"reply\": \"...\", \"stage\": \"...\", \"suggestedQuickReplies\": [...] }\n\n═════════════════════════════\nCONTEXTE TEMPS RÉEL :\n${villasText}${amenitiesText}${conciergerieText}\n═════════════════════════════`;\n\nreturn {\n  json: {\n    chatInput,\n    sessionId,\n    systemMessage,\n    contextData\n  }\n};"
-      },
-      "id": "kv-a-build-context",
-      "name": "Build Live Context",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [660, 0]
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.chatInput }}",
-        "options": {
-          "systemMessage": "={{ $json.systemMessage }}"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [880, 0],
-      "id": "kv-a-agent",
-      "name": "AI Agent DeepSeek"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "deepseek-chat",
-          "mode": "list",
-          "cachedResultName": "deepseek-chat"
-        },
-        "options": {
-          "baseURL": "https://api.deepseek.com/v1"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [880, 200],
-      "id": "kv-a-model",
-      "name": "DeepSeek Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "DEEPSEEK_CRED",
-          "name": "DeepSeek API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const aiResponse =\n  $input.first().json.output ||\n  $input.first().json.message?.content ||\n  $input.first().json.text ||\n  '';\n\nlet reply = aiResponse;\nlet stage = 'reply';\nlet suggestedQuickReplies = [];\n\n// Essayer de parser le JSON\ntry {\n  const parsed = typeof aiResponse === 'string' ? JSON.parse(aiResponse) : aiResponse;\n  if (parsed && typeof parsed === 'object') {\n    reply = parsed.reply || parsed.response || parsed.message || aiResponse;\n    stage = parsed.stage || 'reply';\n    suggestedQuickReplies = Array.isArray(parsed.suggestedQuickReplies) ? parsed.suggestedQuickReplies : [];\n  }\n} catch {\n  // Réponse texte brute — OK\n}\n\nreturn {\n  json: {\n    reply,\n    stage,\n    suggestedQuickReplies,\n    rawResponse: aiResponse\n  }\n};"
-      },
-      "id": "kv-a-parse",
-      "name": "Parse Response",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1100, 0]
-    },
-    {
-      "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
-        "options": {
-          "responseCode": 200
-        }
+        "responseBody": "={{ { \"response\": $json.response || $('FORMAT RESPONSE').first().json.response, \"success\": true } }}"
       },
-      "id": "kv-a-respond",
+      "id": "wa-respond",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [1320, 0]
+      "typeVersion": 1.4,
+      "position": [1968, 192]
     }
   ],
   "connections": {
-    "Webhook Trigger": {
-      "main": [[ { "node": "Edit Fields", "type": "main", "index": 0 } ]]
-    },
-    "Edit Fields": {
-      "main": [[ { "node": "Fetch Visitor Context", "type": "main", "index": 0 } ]]
-    },
-    "Fetch Visitor Context": {
-      "main": [[ { "node": "Build Live Context", "type": "main", "index": 0 } ]]
-    },
-    "Build Live Context": {
-      "main": [[ { "node": "AI Agent DeepSeek", "type": "main", "index": 0 } ]]
-    },
-    "AI Agent DeepSeek": {
-      "main": [[ { "node": "Parse Response", "type": "main", "index": 0 } ]]
-    },
-    "Parse Response": {
-      "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]]
-    },
-    "DeepSeek Chat Model": {
-      "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]]
-    }
+    "Webhook": { "main": [[ { "node": "Init Session", "type": "main", "index": 0 } ]] },
+    "Init Session": { "main": [[ { "node": "Postgres - Check Banned Session", "type": "main", "index": 0 } ]] },
+    "Postgres - Check Banned Session": { "main": [[ { "node": "Code - Ban Check", "type": "main", "index": 0 } ]] },
+    "Code - Ban Check": { "main": [[ { "node": "IF - Session Bannie ?", "type": "main", "index": 0 } ]] },
+    "IF - Session Bannie ?": { "main": [[ { "node": "Code - Reponse Bannie", "type": "main", "index": 0 } ], [ { "node": "Get Long-Term Memory", "type": "main", "index": 0 } ]] },
+    "Code - Reponse Bannie": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] },
+    "Get Long-Term Memory": { "main": [[ { "node": "Get Villa Catalog", "type": "main", "index": 0 } ]] },
+    "Get Villa Catalog": { "main": [[ { "node": "Code - Vérifier Catalogue", "type": "main", "index": 0 } ]] },
+    "Code - Vérifier Catalogue": { "main": [[ { "node": "Build Live Context", "type": "main", "index": 0 } ]] },
+    "Build Live Context": { "main": [[ { "node": "IF - Toxique ?", "type": "main", "index": 0 } ]] },
+    "IF - Toxique ?": { "main": [[ { "node": "Code - Reponse Toxique", "type": "main", "index": 0 } ], [ { "node": "AI Agent DeepSeek", "type": "main", "index": 0 } ]] },
+    "Code - Reponse Toxique": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 }, { "node": "Postgres - Log Toxicité", "type": "main", "index": 0 } ]] },
+    "Postgres - Log Toxicité": { "main": [[ { "node": "Postgres - Compter Toxicité", "type": "main", "index": 0 } ]] },
+    "Postgres - Compter Toxicité": { "main": [[ { "node": "IF - Seuil Dépassé ?", "type": "main", "index": 0 } ]] },
+    "IF - Seuil Dépassé ?": { "main": [[ { "node": "Postgres - Bannir Session", "type": "main", "index": 0 } ]] },
+    "AI Agent DeepSeek": { "main": [[ { "node": "FORMAT RESPONSE", "type": "main", "index": 0 } ]] },
+    "DeepSeek Chat Model": { "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]] },
+    "FORMAT RESPONSE": { "main": [[ { "node": "Préparer Sauvegarde Mémoire", "type": "main", "index": 0 } ]] },
+    "Préparer Sauvegarde Mémoire": { "main": [[ { "node": "Save Memory Supabase", "type": "main", "index": 0 } ]] },
+    "Save Memory Supabase": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] }
   },
   "active": false,
-  "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": true,
-    "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner"
-  },
+  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": false },
   "pinData": {},
-  "versionId": "1.0.0",
-  "meta": {
-    "templateCredsSetupCompleted": false,
-    "instanceId": "kayvibot-a-visitor"
-  },
-  "id": "kayvibot-a-visitor-v4",
-  "tags": [
-    { "name": "Kayvibot" },
-    { "name": "Agent A" }
-  ]
+  "versionId": "v4-prompt-complet",
+  "meta": { "templateCredsSetupCompleted": false, "instanceId": "kayvibot-a-visitor-v4" },
+  "id": "kayvibot-a-visitor-v4-full",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Agent A" }, { "name": "v4" }]
 }

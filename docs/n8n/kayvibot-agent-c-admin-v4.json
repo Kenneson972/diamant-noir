@@ -1,164 +1,140 @@
 {
-  "name": "Kayvibot C - Admin",
+  "name": "Kayvibot C v4 — Copilot Admin Briefing + Actions",
   "nodes": [
     {
+      "parameters": { "httpMethod": "POST", "path": "kayvibot-admin", "responseMode": "responseNode", "options": { "allowedOrigins": "*" } },
+      "id": "wc-webhook", "name": "Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [-1920, 608],
+      "webhookId": "kayvibot-admin-webhook"
+    },
+    {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "kayvibot-admin",
-        "responseMode": "responseNode",
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst hdr = $('Webhook').first().json.headers || {};\nconst raw = (b.token || hdr.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const response = await fetch('{{ $env.SUPABASE_URL || \"https://VOTRE-PROJET-SUPABASE.supabase.co\" }}/auth/v1/user', {\n    headers: { Authorization: `Bearer ${raw}`, apikey: '{{ $env.SUPABASE_ANON_KEY || \"VOTRE_SUPABASE_ANON_KEY\" }}' }\n  });\n  if (!response.ok) throw new Error('Token invalid');\n  const user = await response.json();\n  userId = user.id || '';\n  role = (user.user_metadata && user.user_metadata.role) || (user.app_metadata && user.app_metadata.role) || '';\n} catch (e) {}\nconst valid = !!userId && String(role).toLowerCase() === 'admin';\nreturn [{ json: { userId, role, token: raw, sessionId: b.sessionid || ('admin-' + userId), userMessage: b.message || '', valid: valid ? 'true' : 'false' } }];"
+      },
+      "id": "wc-auth", "name": "Code - Auth JWT", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-1696, 608]
+    },
+    {
+      "parameters": { "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "wc-c-auth", "leftValue": "={{ $json.valid }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" } },
+      "id": "wc-if-admin", "name": "IF - Admin ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [-1488, 608]
+    },
+    {
+      "parameters": { "jsCode": "return [{ json: { response: \"Accès refusé. Cette interface est réservée aux administrateurs Kayvila.\", success: false } }];" },
+      "id": "wc-refus", "name": "Code - Reponse Refus", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-1264, 800]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery", "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Code - Auth JWT').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 50",
         "options": {}
       },
-      "id": "kv-c-webhook",
-      "name": "Webhook Trigger",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [0, 0],
-      "webhookId": "kayvibot-admin"
+      "id": "wc-memory", "name": "Get Long-Term Memory", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [-816, 448],
+      "alwaysOutputData": true, "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }, "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST", "url": "http://gbrain-kayvila:8080/query", "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ { \"query\": $('Code - Auth JWT').first().json.userMessage, \"entity\": \"admin-global\", \"limit\": 5 } }}",
+        "options": { "timeout": 5000 }
+      },
+      "id": "wc-gbrain", "name": "gbrain Recall", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [-608, 448], "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/admin-context",
+        "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true, "specifyHeaders": "keypair",
+        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Code - Auth JWT').first().json.token }}" }] },
+        "options": { "timeout": 15000 }
+      },
+      "id": "wc-fetch", "name": "Fetch Admin Context",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [-384, 448], "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const auth = $('Code - Auth JWT').first().json;\n\nlet historyText = '';\ntry {\n  const mem = $('Get Long-Term Memory').first().json;\n  const rows = Array.isArray(mem) ? mem : (mem?.conversation_data ? mem : []);\n  historyText = (Array.isArray(rows) ? rows : [rows]).map(r => {\n    const cd = r.conversation_data || r;\n    return `Admin: ${cd.user || ''}\\nKayvibot: ${cd.assistant || ''}`;\n  }).join('\\n');\n} catch {}\n\nlet gbrainText = '';\ntry { gbrainText = JSON.stringify($('gbrain Recall').first().json); } catch {}\n\nlet adminData = {};\nlet dailyBriefing = '';\nlet healthScores = '';\nlet occupancy = '';\ntry {\n  const res = $('Fetch Admin Context').first().json;\n  adminData = res.context || {};\n  const analytics = res.analytics || {};\n  dailyBriefing = JSON.stringify(analytics.daily_briefing || '');\n  healthScores = JSON.stringify(analytics.health_score_by_villa || {});\n  occupancy = JSON.stringify(analytics.occupancy_by_villa || {});\n} catch {}\n\nconst systemMessage = `Tu es le copilote admin de Kayvila. Tu supervises TOUTES les villas et tous les propriétaires.\n\nHISTORIQUE :\n${historyText || 'Aucun historique'}\n\nMÉMOIRE SÉMANTIQUE (gbrain — patterns et incidents passés) :\n${gbrainText || 'Aucune'}\n\nDONNÉES COMPLÈTES (villas, bookings, submissions, stats, OTA, users, finances) :\n${JSON.stringify(adminData, null, 2)}\n\nBRIEFING QUOTIDIEN (L1 — check-ins/outs, soumissions en attente) :\n${dailyBriefing}\n⚠️ OUVRE chaque conversation par ce briefing. Donne les chiffres d'abord.\n\nSANTÉ VILLAS (L3/L4 — occupation + scores) :\n${healthScores}\n⚠️ Utilise ces scores pour comparer les villas entre elles. Identifie celle(s) à risque (score < 50).\n\nOCCUPATION PAR VILLA :\n${occupancy}\n⚠️ Données réelles sur 30 jours glissants. Compare, classe, alerte sur les sous-performances.\n\nMESSAGE FONDATEUR : ${auth.userMessage}\nDATE : ${new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' })}\n\nSOURCE DE VÉRITÉ : les DONNÉES CI-DESSUS. Utilise UNIQUEMENT ce qui est fourni dans ce contexte. Tu n'as pas d'outils externes.\n\nTON RÔLE :\n- OUVRIR par le briefing quotidien + les alertes, avant toute question\n- Donner une vue d'ensemble de la plateforme\n- Détecter les problèmes (OTA, impayés, soumissions en attente)\n- Alerter proactivement sur les anomalies\n- Formuler des recommandations actionnables (L2)\n- Ne JAMAIS modifier la base de données sans confirmation explicite\n\nACTIONS DISPONIBLES (émettre en JSON dans ta réponse) :\n- SHOW_STATS : afficher les statistiques\n- CREATE_TASK : { \"action_data\": { \"task\": { \"villa_id\": \"...\", \"title\": \"...\", \"type\": \"...\", \"due_date\": \"...\" } } }\n- BLOCK_DATE : { \"action_data\": { \"block\": { \"villa_id\": \"...\", \"start_date\": \"...\", \"end_date\": \"...\", \"reason\": \"...\" } } }\n- UPDATE_BOOKING : { \"action_data\": { \"booking_id\": \"...\", \"status\": \"...\" } }\n- UPDATE_TASK_STATUS : { \"action_data\": { \"task_id\": \"...\", \"status\": \"...\" } }\n- UPDATE_SUBMISSION_STATUS : { \"action_data\": { \"submission_id\": \"...\", \"status\": \"...\" } }\n- COMPLETE_TASK : { \"action_data\": { \"task_id\": \"...\" } }\n\nACTIONS DESTRUCTIVES (BLOCK_DATE, UPDATE_BOOKING, UPDATE_SUBMISSION_STATUS) :\n⚠️ RÈGLE STRICTE : émets l'action SANS le champ \"confirm\". Attends que l'utilisateur réponde « oui ». Puis ré-émet avec \"action_data.confirm = true\".\nExemple 1er message : { \"action\": \"BLOCK_DATE\", \"action_data\": { \"block\": { ... } } }\nExemple 2e message (après « oui ») : { \"action\": \"BLOCK_DATE\", \"action_data\": { \"block\": { ... }, \"confirm\": true } }\n\nTON TON :\n- Direct, data-driven, exécutif\n- Toujours sourcer les chiffres\n- Alerter sans alarmisme`;\n\nreturn { json: { sessionId: auth.sessionId, userId: auth.userId, userMessage: auth.userMessage, systemMessage } };"
+      },
+      "id": "wc-build", "name": "Build Live Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-160, 448]
+    },
+    {
+      "parameters": { "promptType": "define", "text": "={{ $json.userMessage }}", "options": { "systemMessage": "={{ $json.systemMessage }}" } },
+      "id": "wc-agent", "name": "AI Agent DeepSeek", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 3.1, "position": [64, 304]
+    },
+    {
+      "parameters": { "model": "deepseek-chat", "options": { "temperature": 0.2 } },
+      "id": "wc-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek", "typeVersion": 1, "position": [64, 528],
+      "credentials": { "deepSeekApi": { "id": "s16Eub8KTcJLPBw5", "name": "KARIBLOOM DEEPSEEK" } }
+    },
+    {
+      "parameters": { "tableName": "conversation_data" },
+      "id": "wc-chat-mem", "name": "Postgres Chat Memory", "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat", "typeVersion": 1.3, "position": [64, 720],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = $input.first().json;\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: $('Code - Auth JWT').first().json.sessionId, userId: $('Code - Auth JWT').first().json.userId } }];"
+      },
+      "id": "wc-format", "name": "FORMAT RESPONSE", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [336, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = ($('Code - Auth JWT').first().json.userMessage || '').toLowerCase();\nconst out = ($('AI Agent DeepSeek').first().json.output || '').toLowerCase();\nconst blob = msg + ' ' + out;\nconst criticalKw = ['panne', 'impayé', 'impaye', 'litige', 'erreur', 'échec', 'echec', 'bloqué', 'bloque', 'down', 'critique', 'anomalie', 'conflit'];\nconst submKw = ['soumission', 'submission', 'à valider', 'a valider', 'en attente', 'nouvelle villa', 'validation'];\nconst isCritical = criticalKw.some(k => blob.includes(k));\nconst hasSubmission = submKw.some(k => blob.includes(k));\nreturn [{ json: { isCritical: isCritical ? 'true' : 'false', hasSubmission: hasSubmission ? 'true' : 'false', message: $('Code - Auth JWT').first().json.userMessage, aiOutput: $('AI Agent DeepSeek').first().json.output || '' } }];"
+      },
+      "id": "wc-summary", "name": "PREPARE SUMMARY PROMPT", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [336, 144]
+    },
+    {
+      "parameters": { "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "wc-c-crit", "leftValue": "={{ $json.isCritical }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" } },
+      "id": "wc-if-crit", "name": "IF - Problème Critique ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [560, 64]
+    },
+    {
+      "parameters": { "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "wc-c-sub", "leftValue": "={{ $json.hasSubmission }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" } },
+      "id": "wc-if-sub", "name": "IF - Soumission Prioritaire ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [560, 224]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
-            {
-              "id": "kv-c-set-1",
-              "name": "chatInput",
-              "value": "={{ $json.body.chatInput || $json.body.message }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-c-set-2",
-              "name": "sessionId",
-              "value": "={{ $json.body.sessionId || $json.body.sessionid || ('session-' + Date.now()) }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-c-set-3",
-              "name": "adminToken",
-              "value": "={{ $json.body.adminToken || $json.headers?.authorization?.replace('Bearer ', '') || '' }}",
-              "type": "string"
-            }
+            { "id": "wc-s-sid", "name": "session_id", "value": "={{ $json.sessionId }}", "type": "string" },
+            { "id": "wc-s-user", "name": "conversation_data.user", "value": "={{ $('Code - Auth JWT').first().json.userMessage }}", "type": "string" },
+            { "id": "wc-s-ai", "name": "conversation_data.assistant", "value": "={{ $json.response }}", "type": "string" },
+            { "id": "wc-s-meta", "name": "metadata", "value": "={{ { \"session_id\": $json.sessionId, \"agent\": \"admin\", \"user_id\": $json.userId } }}", "type": "object" }
           ]
-        },
-        "options": {}
-      },
-      "id": "kv-c-set",
-      "name": "Edit Fields",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [220, 20]
-    },
-    {
-      "parameters": {
-        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/admin-context",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendAsQuery": false,
-        "sendHeaders": true,
-        "specifyHeaders": "keypair",
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $json.adminToken }}"
-            }
-          ]
-        },
-        "options": {
-          "timeout": 15000
         }
       },
-      "id": "kv-c-fetch-context",
-      "name": "Fetch Admin Context",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [440, 20],
-      "continueOnFail": true
+      "id": "wc-save-prep", "name": "Préparer Sauvegarde Mémoire", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [560, 400]
     },
     {
       "parameters": {
-        "jsCode": "const { chatInput, sessionId } = $('Edit Fields').first().json;\n\nlet contextData = {};\nlet analytics = {};\nlet fetchError = false;\ntry {\n  const res = $('Fetch Admin Context').first().json;\n  contextData = res.context || {};\n  analytics = res.analytics || {};\n} catch {\n  fetchError = true;\n}\n\nconst briefing = analytics.daily_briefing || '';\nconst healthScores = analytics.health_score_by_villa || {};\nconst occupancy = analytics.occupancy_by_villa || {};\nconst adminAlerts = analytics.admin_alerts || [];\n\nconst systemMessage = `Tu es Kayvibot Admin, le copilote intelligent de l'équipe Kayvila. Tu parles français, tu es stratégique, proactif et orienté action.\n\nTON RÔLE\n- Analyser la performance globale (occupation, revenus, santé OTA)\n- Détecter les anomalies et problèmes urgents\n- Proposer des actions concrètes (blocage dates, création tâches, relance soumissions)\n- Comparer les villas entre elles (benchmark interne)\n- Générer des briefings quotidiens actionnables\n\nRÈGLES\n- Répondre en JSON : { \"response\": \"...\", \"action\": \"SHOW_STATS\"|\"CREATE_TASK\"|\"BLOCK_DATE\"|\"UPDATE_BOOKING\"|\"UPDATE_TASK_STATUS\"|\"UPDATE_SUBMISSION_STATUS\"|\"COMPLETE_TASK\", \"action_data\": {...}, \"suggested_prompts\": [...] }\n- Pour les actions destructives, TOUJOURS demander confirmation explicite avant exécution\n- Utiliser UNIQUEMENT les données du contexte — ne rien inventer\n- Prioriser les alertes par criticité\n\n═════════════════════════════\nCONTEXTE TEMPS RÉEL :\n📊 BRIEFING : ${briefing}\n🏥 SANTÉ VILLAS : ${JSON.stringify(healthScores)}\n📈 OCCUPATION : ${JSON.stringify(occupancy)}\n⚠️ ALERTES : ${JSON.stringify(adminAlerts)}\n📋 DONNÉES COMPLÈTES : ${JSON.stringify(contextData)}\n═════════════════════════════`;\n\nreturn {\n  json: { chatInput, sessionId, systemMessage, contextData, fetchError }\n};"
+        "schema": { "__rl": true, "value": "public", "mode": "list" }, "table": { "__rl": true, "value": "conversation_memory", "mode": "list" },
+        "columns": { "mappingMode": "defineBelow", "value": { "session_id": "={{ $json.session_id }}", "conversation_data": "={{ $json.conversation_data }}", "metadata": "={{ $json.metadata }}" }, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": false }
       },
-      "id": "kv-c-build-context",
-      "name": "Build Live Context",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [660, 0]
+      "id": "wc-save", "name": "Save Memory Supabase", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [784, 400],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }, "continueOnFail": true
     },
     {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.chatInput }}",
-        "options": {
-          "systemMessage": "={{ $json.systemMessage }}"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [880, 0],
-      "id": "kv-c-agent",
-      "name": "AI Agent DeepSeek"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "deepseek-chat",
-          "mode": "list",
-          "cachedResultName": "deepseek-chat"
-        },
-        "options": {
-          "baseURL": "https://api.deepseek.com/v1"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [880, 200],
-      "id": "kv-c-model",
-      "name": "DeepSeek Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "DEEPSEEK_CRED",
-          "name": "DeepSeek API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const aiResponse =\n  $input.first().json.output ||\n  $input.first().json.message?.content ||\n  $input.first().json.text ||\n  '';\n\nlet response = aiResponse;\nlet action = 'SHOW_STATS';\nlet actionData = {};\nlet suggestedPrompts = [];\nlet strategicAlert = null;\n\ntry {\n  const parsed = typeof aiResponse === 'string' ? JSON.parse(aiResponse) : aiResponse;\n  if (parsed && typeof parsed === 'object') {\n    response = parsed.response || parsed.reply || parsed.message || aiResponse;\n    action = parsed.action || 'SHOW_STATS';\n    actionData = parsed.action_data || {};\n    suggestedPrompts = Array.isArray(parsed.suggested_prompts) ? parsed.suggested_prompts : [];\n    strategicAlert = parsed.strategic_alert || null;\n  }\n} catch {}\n\nreturn {\n  json: { response, action, action_data: actionData, suggested_prompts: suggestedPrompts, strategic_alert: strategicAlert }\n};"
-      },
-      "id": "kv-c-parse",
-      "name": "Parse Response",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1100, 0]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
-        "options": { "responseCode": 200 }
-      },
-      "id": "kv-c-respond",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [1320, 0]
+      "parameters": { "respondWith": "json", "responseBody": "={{ { \"response\": $('FORMAT RESPONSE').first().json.response, \"success\": true } }}" },
+      "id": "wc-respond", "name": "Respond to Webhook", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.4, "position": [1216, 560]
     }
   ],
   "connections": {
-    "Webhook Trigger": { "main": [[ { "node": "Edit Fields", "type": "main", "index": 0 } ]] },
-    "Edit Fields": { "main": [[ { "node": "Fetch Admin Context", "type": "main", "index": 0 } ]] },
+    "Webhook": { "main": [[ { "node": "Code - Auth JWT", "type": "main", "index": 0 } ]] },
+    "Code - Auth JWT": { "main": [[ { "node": "IF - Admin ?", "type": "main", "index": 0 } ]] },
+    "IF - Admin ?": { "main": [[ { "node": "Get Long-Term Memory", "type": "main", "index": 0 } ], [ { "node": "Code - Reponse Refus", "type": "main", "index": 0 } ]] },
+    "Code - Reponse Refus": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] },
+    "Get Long-Term Memory": { "main": [[ { "node": "gbrain Recall", "type": "main", "index": 0 } ]] },
+    "gbrain Recall": { "main": [[ { "node": "Fetch Admin Context", "type": "main", "index": 0 } ]] },
     "Fetch Admin Context": { "main": [[ { "node": "Build Live Context", "type": "main", "index": 0 } ]] },
     "Build Live Context": { "main": [[ { "node": "AI Agent DeepSeek", "type": "main", "index": 0 } ]] },
-    "AI Agent DeepSeek": { "main": [[ { "node": "Parse Response", "type": "main", "index": 0 } ]] },
-    "Parse Response": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] },
-    "DeepSeek Chat Model": { "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]] }
+    "AI Agent DeepSeek": { "main": [[ { "node": "FORMAT RESPONSE", "type": "main", "index": 0 }, { "node": "PREPARE SUMMARY PROMPT", "type": "main", "index": 0 } ]] },
+    "DeepSeek Chat Model": { "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]] },
+    "Postgres Chat Memory": { "ai_memory": [[ { "node": "AI Agent DeepSeek", "type": "ai_memory", "index": 0 } ]] },
+    "FORMAT RESPONSE": { "main": [[ { "node": "Préparer Sauvegarde Mémoire", "type": "main", "index": 0 } ]] },
+    "PREPARE SUMMARY PROMPT": { "main": [[ { "node": "IF - Problème Critique ?", "type": "main", "index": 0 }, { "node": "IF - Soumission Prioritaire ?", "type": "main", "index": 0 } ]] },
+    "Préparer Sauvegarde Mémoire": { "main": [[ { "node": "Save Memory Supabase", "type": "main", "index": 0 } ]] },
+    "Save Memory Supabase": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] }
   },
   "active": false,
-  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": true, "timeSavedMode": "fixed", "callerPolicy": "workflowsFromSameOwner" },
+  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": false },
   "pinData": {},
-  "versionId": "1.0.0",
-  "meta": { "templateCredsSetupCompleted": false, "instanceId": "kayvibot-c-admin" },
-  "id": "kayvibot-c-admin-v4",
-  "tags": [{ "name": "Kayvibot" }, { "name": "Agent C" }]
+  "versionId": "v4-prompt-complet",
+  "meta": { "templateCredsSetupCompleted": false, "instanceId": "kayvibot-c-admin-v4" },
+  "id": "kayvibot-c-admin-v4-full",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Agent C" }, { "name": "v4" }]
 }

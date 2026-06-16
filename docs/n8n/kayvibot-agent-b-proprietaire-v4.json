@@ -1,157 +1,146 @@
 {
-  "name": "Kayvibot B - Propriétaire",
+  "name": "Kayvibot B v4 — Copilot Propriétaire Push Alertes",
   "nodes": [
     {
+      "parameters": { "httpMethod": "POST", "path": "kayvibot-owner", "responseMode": "responseNode", "options": { "allowedOrigins": "*" } },
+      "id": "wb-webhook", "name": "Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [-1392, 352],
+      "webhookId": "kayvibot-owner-webhook"
+    },
+    {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "kayvibot-owner",
-        "responseMode": "responseNode",
+        "jsCode": "const b = $('Webhook').first().json.body || {};\nconst hdr = $('Webhook').first().json.headers || {};\nconst raw = (b.token || hdr.authorization || '').replace(/^Bearer\\s+/i, '');\nlet userId = '', role = '';\ntry {\n  const response = await fetch('{{ $env.SUPABASE_URL || \"https://VOTRE-PROJET-SUPABASE.supabase.co\" }}/auth/v1/user', {\n    headers: { Authorization: `Bearer ${raw}`, apikey: '{{ $env.SUPABASE_ANON_KEY || \"VOTRE_SUPABASE_ANON_KEY\" }}' }\n  });\n  if (!response.ok) throw new Error('Token invalid');\n  const user = await response.json();\n  userId = user.id || '';\n  role = (user.user_metadata && user.user_metadata.role) || (user.app_metadata && user.app_metadata.role) || '';\n} catch (e) {}\nconst valid = !!userId && ['owner', 'proprietaire', 'proprio'].includes(String(role).toLowerCase());\nreturn [{ json: { userId, role, token: raw, sessionId: b.sessionid || ('owner-' + userId), userMessage: b.message || '', valid: valid ? 'true' : 'false' } }];"
+      },
+      "id": "wb-auth", "name": "Code - Auth JWT", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-1184, 352]
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "wb-c-auth", "leftValue": "={{ $json.valid }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" }
+      },
+      "id": "wb-if-auth", "name": "IF - Auth Valide ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [-960, 352]
+    },
+    {
+      "parameters": { "jsCode": "return [{ json: { response: \"Accès non autorisé. Reconnecte-toi à ton espace propriétaire Kayvila.\", success: false } }];" },
+      "id": "wb-refus", "name": "Code - Reponse Refus", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-736, 544]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery", "query": "SELECT conversation_data, metadata, created_at FROM conversation_memory WHERE session_id = '{{ $('Code - Auth JWT').first().json.sessionId }}' ORDER BY created_at ASC LIMIT 30",
         "options": {}
       },
-      "id": "kv-b-webhook",
-      "name": "Webhook Trigger",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [0, 0],
-      "webhookId": "kayvibot-owner"
+      "id": "wb-memory", "name": "Get Long-Term Memory", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [-512, 192],
+      "alwaysOutputData": true, "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }, "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST", "url": "http://gbrain-kayvila:8080/query", "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ { \"query\": $('Code - Auth JWT').first().json.userMessage, \"entity\": \"owner-\" + $('Code - Auth JWT').first().json.userId, \"limit\": 5 } }}",
+        "options": { "timeout": 5000 }
+      },
+      "id": "wb-gbrain", "name": "gbrain Recall", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [-288, 192], "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $('Code - Auth JWT').first().json.userId }}&token={{ $('Code - Auth JWT').first().json.token }}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "wb-fetch", "name": "Fetch Owner Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [-64, 192], "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const auth = $('Code - Auth JWT').first().json;\nlet historyText = '';\ntry {\n  const mem = $('Get Long-Term Memory').first().json;\n  const rows = Array.isArray(mem) ? mem : (mem?.conversation_data ? mem : []);\n  historyText = (Array.isArray(rows) ? rows : [rows]).map(r => {\n    const cd = r.conversation_data || r;\n    return `Proprio: ${cd.user || ''}\\nKayvibot: ${cd.assistant || ''}`;\n  }).join('\\n');\n} catch {}\n\nlet gbrainText = '';\ntry { gbrainText = JSON.stringify($('gbrain Recall').first().json); } catch {}\n\nlet ownerContext = {};\ntry { ownerContext = $('Fetch Owner Context').first().json.context || $('Fetch Owner Context').first().json; } catch {}\n\nconst alertes = JSON.stringify(ownerContext.alerts || []);\nconst portfolio = JSON.stringify(ownerContext.portfolio || {});\n\nconst systemMessage = `Tu es le copilote d'un propriétaire de villa sur Kayvila.\n\nHISTORIQUE :\n${historyText || 'Aucun historique'}\n\nMÉMOIRE SÉMANTIQUE (gbrain — décisions et contexte passés) :\n${gbrainText || 'Aucune'}\n\nDONNÉES COMPLÈTES DU PROPRIÉTAIRE (portfolio, villas, bookings, stats, tâches, OTA, alertes) :\n${JSON.stringify(ownerContext, null, 2)}\n\nALERTES PROACTIVES (B1 — 5 types calculés live) :\n${alertes}\n⚠️ OUVRE la conversation en présentant ces alertes au propriétaire avant toute question. Priorise : 🔴 conflits > tâches en retard > trous calendrier > OTA > revenu.\n\nMESSAGE PROPRIÉTAIRE : ${auth.userMessage}\nDATE : ${new Date().toLocaleDateString('fr-FR', { timeZone: 'America/Martinique' })}\n\nSOURCE DE VÉRITÉ : les DONNÉES CI-DESSUS. Tu n'as pas d'outils externes. Utilise UNIQUEMENT ce qui est fourni dans ce contexte.\n\nTON RÔLE :\n- OUVRIR par les alertes proactives (les 5 types) avant toute question du propriétaire\n- Répondre aux questions business du propriétaire\n- Lui donner des insights sur ses performances\n- L'alerter sur les problèmes (tâches en retard, conflits de réservation)\n- Ne JAMAIS modifier une réservation ou un prix sans confirmation explicite\n\nTON TON :\n- Respectueux et direct\n- Créole bienvenu si le proprio l'utilise\n- Toujours sourcer les chiffres (\"Selon ton dashboard...\")\n\nCAPACITÉS :\n- \"Combien j'ai gagné ce mois-ci ?\" → chiffres + comparer au mois précédent\n- \"Qui arrive cette semaine ?\" → liste des check-ins avec détails\n- \"La villa Corail est dispo en juillet ?\" → vérifier le calendrier\n- \"Tâches en retard ?\" → lister avec priorité\n- \"Comment va la synchro Airbnb ?\" → diagnostiquer\n\nRÈGLES :\n- Ne contacter un client qu'avec validation explicite\n- Ne jamais modifier les prix\n- Alerter proactivement si problème détecté`;\n\nreturn { json: { sessionId: auth.sessionId, userId: auth.userId, userMessage: auth.userMessage, systemMessage } };"
+      },
+      "id": "wb-build", "name": "Build Live Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [160, 192]
+    },
+    {
+      "parameters": { "promptType": "define", "text": "={{ $json.userMessage }}", "options": { "systemMessage": "={{ $json.systemMessage }}" } },
+      "id": "wb-agent", "name": "AI Agent DeepSeek", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 3.1, "position": [432, 96]
+    },
+    {
+      "parameters": { "model": "deepseek-chat", "options": { "temperature": 0.3 } },
+      "id": "wb-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek", "typeVersion": 1, "position": [432, 336],
+      "credentials": { "deepSeekApi": { "id": "s16Eub8KTcJLPBw5", "name": "KARIBLOOM DEEPSEEK" } }
+    },
+    {
+      "parameters": { "tableName": "conversation_data" },
+      "id": "wb-chat-mem", "name": "Postgres Chat Memory", "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat", "typeVersion": 1.3, "position": [432, 528],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = $input.first().json;\nlet t = i.output || i.text || \"Désolé, je rencontre un souci technique.\";\nt = t.replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/^[ \\t]*#+[ \\t]+/gm, '').replace(/^[ \\t]*-+[ \\t]+/gm, '• ').trim();\nreturn [{ json: { response: t, sessionId: $('Code - Auth JWT').first().json.sessionId, userId: $('Code - Auth JWT').first().json.userId } }];"
+      },
+      "id": "wb-format", "name": "FORMAT RESPONSE", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [704, 96]
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = ($('Code - Auth JWT').first().json.userMessage || '').toLowerCase();\nconst urgentKw = ['urgent', 'retard', 'annul', 'conflit', 'problème', 'probleme', 'panne', 'litige', 'check-in', 'checkin', 'aujourd', 'ce soir', 'demain', 'ménage pas fait', 'menage pas fait'];\nconst isUrgent = urgentKw.some(k => msg.includes(k));\nreturn [{ json: { isUrgent: isUrgent ? 'true' : 'false', userId: $('Code - Auth JWT').first().json.userId, message: $('Code - Auth JWT').first().json.userMessage, aiOutput: ($('AI Agent DeepSeek').first().json.output || '') } }];"
+      },
+      "id": "wb-summary", "name": "PREPARE SUMMARY PROMPT", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [640, -96]
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "wb-c-urg", "leftValue": "={{ $json.isUrgent }}", "rightValue": "true", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" }
+      },
+      "id": "wb-if-urgent", "name": "IF - Urgent ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [864, -96]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.TELEGRAM_OWNER_CHAT_ID || 'REMPLACER_CHAT_ID' }}",
+        "text": "=⚠️ Kayvila — Demande urgente d'un propriétaire\n\nProprio: {{ $json.userId }}\nMessage: {{ $json.message }}",
+        "additionalFields": {}
+      },
+      "id": "wb-telegram", "name": "Telegram - Alerte Proprio", "type": "n8n-nodes-base.telegram", "typeVersion": 1.2, "position": [1088, -96],
+      "credentials": { "telegramApi": { "id": "5TkPTLUYLbLbFcue", "name": "DAL CIELO BOT" } }
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
-            {
-              "id": "kv-b-set-1",
-              "name": "chatInput",
-              "value": "={{ $json.body.chatInput || $json.body.message }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-b-set-2",
-              "name": "sessionId",
-              "value": "={{ $json.body.sessionId || $json.body.sessionid || ('session-' + Date.now()) }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-b-set-3",
-              "name": "userId",
-              "value": "={{ $json.body.userId || $json.body.user_id || '' }}",
-              "type": "string"
-            },
-            {
-              "id": "kv-b-set-4",
-              "name": "token",
-              "value": "={{ $json.body.token || $json.headers?.authorization?.replace('Bearer ', '') || '' }}",
-              "type": "string"
-            }
+            { "id": "wb-s-sid", "name": "session_id", "value": "={{ $json.sessionId }}", "type": "string" },
+            { "id": "wb-s-user", "name": "conversation_data.user", "value": "={{ $('Code - Auth JWT').first().json.userMessage }}", "type": "string" },
+            { "id": "wb-s-ai", "name": "conversation_data.assistant", "value": "={{ $json.response }}", "type": "string" },
+            { "id": "wb-s-meta", "name": "metadata", "value": "={{ { \"session_id\": $json.sessionId, \"agent\": \"proprietaire\", \"user_id\": $json.userId } }}", "type": "object" }
           ]
-        },
-        "options": {}
-      },
-      "id": "kv-b-set",
-      "name": "Edit Fields",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [220, 20]
-    },
-    {
-      "parameters": {
-        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}",
-        "options": {
-          "timeout": 10000
         }
       },
-      "id": "kv-b-fetch-context",
-      "name": "Fetch Owner Context",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [440, 20],
-      "continueOnFail": true
+      "id": "wb-save-prep", "name": "Préparer Sauvegarde Mémoire", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [928, 144]
     },
     {
       "parameters": {
-        "jsCode": "const { chatInput, sessionId } = $('Edit Fields').first().json;\n\nlet contextData = {};\nlet fetchError = false;\ntry {\n  contextData = $('Fetch Owner Context').first().json.context || $('Fetch Owner Context').first().json;\n} catch {\n  fetchError = true;\n}\n\nconst alertes = contextData.alerts || [];\nconst portfolio = contextData.portfolio || {};\nconst todayItems = contextData.today || [];\nconst alertsCount = alertes.length;\n\nconst systemMessage = `Tu es Kayvibot Owner, l'assistant personnel des propriétaires Kayvila. Tu parles français, tu es proactif, direct et utile.\n\nTON RÔLE\n- Analyser les performances du portefeuille du propriétaire\n- Alerter sur les actions urgentes (check-in/out du jour, tâches en retard, problèmes OTA)\n- Suggérer des optimisations de prix et de disponibilité\n- Répondre aux questions sur les réservations, revenus, calendrier\n\nRÈGLES\n- Répondre en JSON : { \"reply\": \"...\", \"action\": \"reply\"|\"alert\"|\"suggestion\", \"alerts\": [...], \"suggestedPrompts\": [...] }\n- Utiliser UNIQUEMENT les données du contexte fourni — ne rien inventer\n- Pour les actions sensibles, toujours demander confirmation\n- Signaler immédiatement les anomalies\n\n═════════════════════════════\nCONTEXTE TEMPS RÉEL :\n⚠️ ${alertsCount} alerte(s) active(s)\n${JSON.stringify(contextData, null, 2)}\n═════════════════════════════`;\n\nreturn {\n  json: {\n    chatInput,\n    sessionId,\n    systemMessage,\n    contextData,\n    fetchError\n  }\n};"
+        "schema": { "__rl": true, "value": "public", "mode": "list" }, "table": { "__rl": true, "value": "conversation_memory", "mode": "list" },
+        "columns": { "mappingMode": "defineBelow", "value": { "session_id": "={{ $json.session_id }}", "conversation_data": "={{ $json.conversation_data }}", "metadata": "={{ $json.metadata }}" }, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": false }
       },
-      "id": "kv-b-build-context",
-      "name": "Build Live Context",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [660, 0]
+      "id": "wb-save", "name": "Save Memory Supabase", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [1152, 144],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }, "continueOnFail": true
     },
     {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.chatInput }}",
-        "options": {
-          "systemMessage": "={{ $json.systemMessage }}"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [880, 0],
-      "id": "kv-b-agent",
-      "name": "AI Agent DeepSeek"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "deepseek-chat",
-          "mode": "list",
-          "cachedResultName": "deepseek-chat"
-        },
-        "options": {
-          "baseURL": "https://api.deepseek.com/v1"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [880, 200],
-      "id": "kv-b-model",
-      "name": "DeepSeek Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "DEEPSEEK_CRED",
-          "name": "DeepSeek API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const aiResponse =\n  $input.first().json.output ||\n  $input.first().json.message?.content ||\n  $input.first().json.text ||\n  '';\n\nlet reply = aiResponse;\nlet action = 'reply';\nlet alerts = [];\nlet suggestedPrompts = [];\n\ntry {\n  const parsed = typeof aiResponse === 'string' ? JSON.parse(aiResponse) : aiResponse;\n  if (parsed && typeof parsed === 'object') {\n    reply = parsed.reply || parsed.response || parsed.message || aiResponse;\n    action = parsed.action || 'reply';\n    alerts = Array.isArray(parsed.alerts) ? parsed.alerts : [];\n    suggestedPrompts = Array.isArray(parsed.suggestedPrompts) ? parsed.suggestedPrompts : [];\n  }\n} catch {}\n\nreturn {\n  json: { reply, action, alerts, suggestedPrompts }\n};"
-      },
-      "id": "kv-b-parse",
-      "name": "Parse Response",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1100, 0]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
-        "options": { "responseCode": 200 }
-      },
-      "id": "kv-b-respond",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [1320, 0]
+      "parameters": { "respondWith": "json", "responseBody": "={{ { \"response\": $('FORMAT RESPONSE').first().json.response, \"success\": true } }}" },
+      "id": "wb-respond", "name": "Respond to Webhook", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.4, "position": [1376, 352]
     }
   ],
   "connections": {
-    "Webhook Trigger": { "main": [[ { "node": "Edit Fields", "type": "main", "index": 0 } ]] },
-    "Edit Fields": { "main": [[ { "node": "Fetch Owner Context", "type": "main", "index": 0 } ]] },
+    "Webhook": { "main": [[ { "node": "Code - Auth JWT", "type": "main", "index": 0 } ]] },
+    "Code - Auth JWT": { "main": [[ { "node": "IF - Auth Valide ?", "type": "main", "index": 0 } ]] },
+    "IF - Auth Valide ?": { "main": [[ { "node": "Get Long-Term Memory", "type": "main", "index": 0 } ], [ { "node": "Code - Reponse Refus", "type": "main", "index": 0 } ]] },
+    "Code - Reponse Refus": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] },
+    "Get Long-Term Memory": { "main": [[ { "node": "gbrain Recall", "type": "main", "index": 0 } ]] },
+    "gbrain Recall": { "main": [[ { "node": "Fetch Owner Context", "type": "main", "index": 0 } ]] },
     "Fetch Owner Context": { "main": [[ { "node": "Build Live Context", "type": "main", "index": 0 } ]] },
     "Build Live Context": { "main": [[ { "node": "AI Agent DeepSeek", "type": "main", "index": 0 } ]] },
-    "AI Agent DeepSeek": { "main": [[ { "node": "Parse Response", "type": "main", "index": 0 } ]] },
-    "Parse Response": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] },
-    "DeepSeek Chat Model": { "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]] }
+    "AI Agent DeepSeek": { "main": [[ { "node": "FORMAT RESPONSE", "type": "main", "index": 0 }, { "node": "PREPARE SUMMARY PROMPT", "type": "main", "index": 0 } ]] },
+    "DeepSeek Chat Model": { "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]] },
+    "Postgres Chat Memory": { "ai_memory": [[ { "node": "AI Agent DeepSeek", "type": "ai_memory", "index": 0 } ]] },
+    "FORMAT RESPONSE": { "main": [[ { "node": "Préparer Sauvegarde Mémoire", "type": "main", "index": 0 } ]] },
+    "PREPARE SUMMARY PROMPT": { "main": [[ { "node": "IF - Urgent ?", "type": "main", "index": 0 } ]] },
+    "IF - Urgent ?": { "main": [[ { "node": "Telegram - Alerte Proprio", "type": "main", "index": 0 } ]] },
+    "Préparer Sauvegarde Mémoire": { "main": [[ { "node": "Save Memory Supabase", "type": "main", "index": 0 } ]] },
+    "Save Memory Supabase": { "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]] }
   },
   "active": false,
-  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": true, "timeSavedMode": "fixed", "callerPolicy": "workflowsFromSameOwner" },
+  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": false },
   "pinData": {},
-  "versionId": "1.0.0",
-  "meta": { "templateCredsSetupCompleted": false, "instanceId": "kayvibot-b-owner" },
-  "id": "kayvibot-b-owner-v4",
-  "tags": [{ "name": "Kayvibot" }, { "name": "Agent B" }]
+  "versionId": "v4-prompt-complet",
+  "meta": { "templateCredsSetupCompleted": false, "instanceId": "kayvibot-b-owner-v4" },
+  "id": "kayvibot-b-owner-v4-full",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Agent B" }, { "name": "v4" }]
 }
