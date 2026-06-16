@@ -221,7 +221,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/dashboard/villas', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "myVillas"
+        "toolName": "myVillas",
+        "toolDescription": "Liste mes villas"
       },
       "id": "b1-tool-villas",
       "name": "myVillas",
@@ -236,7 +237,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/dashboard/bookings', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "myBookings"
+        "toolName": "myBookings",
+        "toolDescription": "Liste mes reservations"
       },
       "id": "b1-tool-bookings",
       "name": "myBookings",
@@ -251,7 +253,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/dashboard/analytics-villas', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "myStats"
+        "toolName": "myStats",
+        "toolDescription": "Mes statistiques et revenus"
       },
       "id": "b1-tool-stats",
       "name": "myStats",
@@ -266,7 +269,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/dashboard/tasks', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "myTasks"
+        "toolName": "myTasks",
+        "toolDescription": "Mes taches en attente"
       },
       "id": "b1-tool-tasks",
       "name": "myTasks",
@@ -281,7 +285,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/dashboard/ota-status', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "otaStatus"
+        "toolName": "otaStatus",
+        "toolDescription": "Statut de ma synchronisation OTA"
       },
       "id": "b1-tool-ota",
       "name": "otaStatus",

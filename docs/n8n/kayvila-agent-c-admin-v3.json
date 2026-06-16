@@ -221,7 +221,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/villas', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "allVillas"
+        "toolName": "allVillas",
+        "toolDescription": "Liste toutes les villas de la plateforme"
       },
       "id": "c1-tool-villas",
       "name": "allVillas",
@@ -235,7 +236,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/bookings', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "allBookings"
+        "toolName": "allBookings",
+        "toolDescription": "Liste toutes les reservations de la plateforme"
       },
       "id": "c1-tool-bookings",
       "name": "allBookings",
@@ -249,7 +251,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/villa-submissions', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "submissions"
+        "toolName": "submissions",
+        "toolDescription": "Liste les soumissions de villas en attente"
       },
       "id": "c1-tool-submissions",
       "name": "submissions",
@@ -263,7 +266,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/global-stats', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "globalStats"
+        "toolName": "globalStats",
+        "toolDescription": "Revenus globaux et statistiques plateforme"
       },
       "id": "c1-tool-stats",
       "name": "globalStats",
@@ -277,7 +281,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/ota-status', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "otaAll"
+        "toolName": "otaAll",
+        "toolDescription": "Sante de toutes les synchronisations OTA"
       },
       "id": "c1-tool-ota",
       "name": "otaAll",
@@ -291,7 +296,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/admin/owners', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "users"
+        "toolName": "users",
+        "toolDescription": "Liste les utilisateurs proprietaires de la plateforme"
       },
       "id": "c1-tool-users",
       "name": "users",

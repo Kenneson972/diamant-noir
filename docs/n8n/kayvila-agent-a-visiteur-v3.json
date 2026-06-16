@@ -421,7 +421,8 @@
     {
       "parameters": {
         "code": "const response = await fetch('https://kayvila.vercel.app/api/villas/public?search=', { method: 'GET' });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
-        "toolName": "searchVillas"
+        "toolName": "searchVillas",
+        "toolDescription": "Cherche des villas par criteres"
       },
       "id": "a1-tool-search",
       "name": "searchVillas",
