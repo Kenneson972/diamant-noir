@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Minus, Plus } from "lucide-react";
+import { ChevronDown, Minus, Plus, Users } from "lucide-react";
 
 type HeroGuestPickerProps = {
   value: number;
@@ -65,17 +65,18 @@ export function HeroGuestPicker({ value, onChange, surface = "dark" }: HeroGuest
         ref={btnRef}
         type="button"
         onClick={toggle}
-        className={`tap-target flex min-h-[24px] w-full items-center justify-between gap-2 bg-transparent pb-1 text-sm transition-colors focus:outline-none ${
+        className={`tap-target flex min-h-[24px] w-full items-center gap-2 bg-transparent pb-1 text-sm transition-colors focus:outline-none ${
           isLight ? "text-navy" : "text-white"
         }`}
         aria-expanded={open}
         aria-haspopup="true"
       >
+        <Users size={14} className={`shrink-0 ${isLight ? "text-navy/40" : "text-white/40"}`} strokeWidth={1.5} />
         <span>
           {value} voyageur{value > 1 ? "s" : ""}
         </span>
         <ChevronDown
-          className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
+          className={`ml-auto h-3 w-3 shrink-0 transition-transform duration-200 ${
             isLight ? "text-navy/50" : "text-white/40"
           } ${open ? "rotate-180" : ""}`}
           strokeWidth={1.5}
@@ -100,14 +101,9 @@ export function HeroGuestPicker({ value, onChange, surface = "dark" }: HeroGuest
           }`}
         >
           <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className={`text-[11px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-navy" : "text-white"}`}>
-                Voyageurs
-              </p>
-              <p className={`mt-0.5 text-[10px] ${isLight ? "text-navy/55" : "text-white/40"}`}>
-                Adultes et enfants
-              </p>
-            </div>
+            <p className={`text-[10px] ${isLight ? "text-navy/55" : "text-white/40"}`}>
+              Adultes et enfants
+            </p>
             <div className="flex items-center gap-3">
               <button
                 type="button"
