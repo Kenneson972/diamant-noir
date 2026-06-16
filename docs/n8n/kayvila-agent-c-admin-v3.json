@@ -220,7 +220,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_all_villas\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_all_villas\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_all_villas",
         "toolDescription": "Liste TOUTES les villas de la plateforme Kayvila."
       },
@@ -235,7 +235,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_all_bookings\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/bookings`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_all_bookings\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/bookings`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_all_bookings",
         "toolDescription": "Liste TOUTES les r\u00e9servations de la plateforme."
       },
@@ -250,7 +250,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_submissions\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/villa-submissions`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_submissions\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/villa-submissions`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_submissions",
         "toolDescription": "Liste les soumissions de villas en attente de validation."
       },
@@ -265,7 +265,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_global_stats\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/global-stats`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_global_stats\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/global-stats`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_global_stats",
         "toolDescription": "Revenus globaux Stripe et statistiques plateforme."
       },
@@ -280,7 +280,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_ota_all\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/ota-status`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_ota_all\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/ota-status`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_ota_all",
         "toolDescription": "Sant\u00e9 de TOUTES les synchronisations OTA (Airbnb / Booking) de la plateforme."
       },
@@ -295,7 +295,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_users\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/admin/owners`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_users\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/admin/owners`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_users",
         "toolDescription": "Liste les utilisateurs / propri\u00e9taires de la plateforme."
       },

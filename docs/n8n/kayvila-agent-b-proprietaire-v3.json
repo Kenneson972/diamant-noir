@@ -220,7 +220,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_my_villas\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/dashboard/villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_my_villas\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/dashboard/villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_my_villas",
         "toolDescription": "Liste les villas du propri\u00e9taire connect\u00e9."
       },
@@ -236,7 +236,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_my_bookings\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/dashboard/bookings`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_my_bookings\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/dashboard/bookings`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_my_bookings",
         "toolDescription": "Liste les r\u00e9servations (\u00e0 venir et r\u00e9centes) du propri\u00e9taire connect\u00e9."
       },
@@ -252,7 +252,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_my_stats\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/dashboard/analytics-villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_my_stats\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/dashboard/analytics-villas`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_my_stats",
         "toolDescription": "Statistiques et revenus mensuels des villas du propri\u00e9taire connect\u00e9."
       },
@@ -268,7 +268,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_my_tasks\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/dashboard/tasks`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_my_tasks\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/dashboard/tasks`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_my_tasks",
         "toolDescription": "T\u00e2ches de maintenance / m\u00e9nage du propri\u00e9taire connect\u00e9."
       },
@@ -284,7 +284,7 @@
     },
     {
       "parameters": {
-        "code": "// Tool: kayvila_ota_status\nconst query = $input.first().json.query || '';\nconst url = `https://kayvila.vercel.app/api/dashboard/ota-status`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
+        "code": "// Tool: kayvila_ota_status\nconst query = $input.first().json.query || '';\nconst url = `https://https://kayvila.vercel.app/api/dashboard/ota-status`;\nconst headers = {};\n\nconst response = await fetch(url, { method: 'GET', headers });\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nreturn await response.json();",
         "toolName": "kayvila_ota_status",
         "toolDescription": "Sant\u00e9 des synchronisations OTA (Airbnb / Booking) des villas du propri\u00e9taire."
       },
