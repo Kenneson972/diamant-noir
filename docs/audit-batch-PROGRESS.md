@@ -17,8 +17,8 @@
 | 1 | Sécurité HAUTE | ✅ FAIT | `plans/2026-06-16-audit-batch-lot1.md` |
 | 2 | Bloquants UX 🔴 (mobile) | ✅ FAIT | inline (triage) |
 | 3 | Création villa proprio (#10) | ✅ FAIT | inline (triage) |
-| 4 | Perf critique | ⏭️ **PROCHAIN** | à écrire |
-| 5 | SEO bloquant+majeur | ⬜ | — |
+| 4 | Perf critique | ✅ FAIT | inline (triage) |
+| 5 | SEO bloquant+majeur | ⏭️ **PROCHAIN** | à écrire |
 | 6 | Layout majeurs mobile | ⬜ | — |
 | 7 | UX/Visuel polish | ⬜ | — |
 | 8 | Mineurs + code mort | ⬜ | — |
@@ -58,6 +58,13 @@
 - **#9** (fusion `AdminVillaForm` HTML / `VillaEditorForm` HeroUI) = **reporté** (décision Kenneson : #10 d'abord, valeur/risque). Blocage parité : VillaEditorForm n'a pas les contrôles admin (sélecteur propriétaire `/api/admin/owners`, `is_published`, `commission_rate`) → unification admin nécessite variante admin conditionnelle dans VillaFormFields.
 - Build ✅ · vitest 48/0 ✅.
 
+### Lot 4 ✅ (commit `21f91b5`) — perf critique
+- **perf#1 pagination** : `.limit()` de sécurité sur 5 requêtes non bornées — `/villas` (60), admin villas/soumissions/proprietaires/clients (100). Décision Kenneson : limites maintenant, **pagination UI complète reportée** (lot dédié). ⚠️ masque au-delà du cap.
+- **optimizePackageImports** += `leaflet`, `shiki`, `date-fns`.
+- **Faux positifs** : perf#3 skeletons (loading.tsx existent : admin/dashboard/villas/book/root) · `@react-pdf` lazy (server-only, 2 routes API + composant importé serveur, hors bundle client) · N+1 admin villas (déjà `Promise.all([profiles,bookings])`) · recharts (pas une dépendance).
+- **perf#2 cache HTTP reporté** (force-dynamic/noStore) : risque fraîcheur dispos → double-booking. À traiter avec validation Kenneson.
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -66,4 +73,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-**Lot 4 — Perf critique** : triage des items perf de `docs/audit-securite-perf-seo-2026-06-16.md` (images non optimisées, bundles, requêtes N+1, lazy-loading, etc.). Reste aussi en backlog : **#9** (fusion formulaires admin, lot dédié) et la **montée Next 15.5.x** (Lot 9, blocage BigInt).
+**Lot 5 — SEO bloquant + majeur** : triage des 7 BLOQUANT + 10 MAJEUR de `docs/audit-securite-perf-seo-2026-06-16.md` (§SEO L68+). Backlog grandissant : **pagination UI** (6 pages), **#9** fusion formulaires admin, **perf#2** cache HTTP, **montée Next 15.5.x** (Lot 9, BigInt).
