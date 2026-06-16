@@ -1,0 +1,173 @@
+{
+  "name": "Kayvibot A - Visiteur",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kayvibot-visitor",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "kv-a-webhook",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "kayvibot-visitor"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "kv-a-set-1",
+              "name": "chatInput",
+              "value": "={{ $json.body.chatInput || $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "kv-a-set-2",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId || $json.body.sessionid || ('session-' + Date.now()) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "kv-a-set",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 20]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/visitor-context",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "kv-a-fetch-context",
+      "name": "Fetch Visitor Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 20],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const { chatInput, sessionId } = $('Edit Fields').first().json;\n\n// ── Contexte Kayvila ──\nlet contextData = {};\ntry {\n  contextData = $('Fetch Visitor Context').first().json.context || {};\n} catch {}\n\nconst villas = contextData.villas || [];\nconst availableAmenities = contextData.availableAmenities || [];\nconst villaCount = contextData.villaCount || villas.length;\nconst conciergerieFacts = contextData.conciergerieFacts || {};\n\n// ── Formatage du menu villas pour le prompt ──\nlet villasText = '';\nif (villas.length > 0) {\n  villasText = '🏡 VILLAS DISPONIBLES :\\n' + villas.map(v => {\n    let line = `• ${v.name || 'Villa'} — ${v.price_per_night || '?'}€/nuit`;\n    if (v.bedrooms) line += `, ${v.bedrooms} chambres`;\n    if (v.max_guests) line += `, ${v.max_guests} pers. max`;\n    if (v.availability) {\n      if (v.availability.isAvailableNow) line += ' ✅ DISPONIBLE';\n      else if (v.availability.nextAvailableFrom) line += ` 📅 Dispo dès ${v.availability.nextAvailableFrom}`;\n      else line += ' 🔒 Complet';\n    }\n    return line;\n  }).join('\\n');\n} else {\n  villasText = 'Aucune villa actuellement disponible.';\n}\n\nlet amenitiesText = '';\nif (availableAmenities.length > 0) {\n  amenitiesText = '\\n✨ ÉQUIPEMENTS : ' + availableAmenities.slice(0, 20).join(', ');\n}\n\nlet conciergerieText = '';\nif (Object.keys(conciergerieFacts).length > 0) {\n  conciergerieText = '\\n🎯 CONCIERGERIE : ' + Object.entries(conciergerieFacts).slice(0, 5).map(([k, v]) => `${k}: ${v}`).join(' | ');\n}\n\nconst systemMessage = `Tu es Kayvibot, l'assistant virtuel de Kayvila — conciergerie de luxe en Martinique. Tu parles français avec élégance et chaleur. Tu es concis, serviable, et tu guides naturellement vers la réservation.\n\nIDENTITÉ\n- Conciergerie : Kayvila\n- Site web : kayvila.vercel.app\n- Localisation : Martinique, Fort-de-France\n- Spécialité : villas d'exception avec service conciergerie privé\n\nTON RÔLE\n- Aider les visiteurs à trouver la villa parfaite\n- Répondre aux questions sur les villas, équipements, disponibilités\n- Qualifier les leads (dates, budget, nombre de voyageurs)\n- Proposer un pré-booking quand le visiteur est prêt\n- Rediriger vers le concierge humain si nécessaire\n\nRÈGLES\n- Répondre en JSON avec : reply (texte), stage (greet|discover|qualify|prebook), suggestedQuickReplies (tableau de suggestions)\n- Si le visiteur donne dates + villa → proposer pré-booking : { \"reply\": \"...\", \"stage\": \"prebook\", \"preBooking\": { \"villaId\": \"...\", \"startDate\": \"...\", \"endDate\": \"...\", \"guests\": N } }\n- Ne JAMAIS inventer de villa ou de disponibilité — utiliser UNIQUEMENT les données du contexte\n- Si tu ne sais pas, propose de contacter le concierge humain\n- Toujours terminer par une question ouverte ou des quick replies\n\nFORMAT DE RÉPONSE JSON OBLIGATOIRE :\n{ \"reply\": \"...\", \"stage\": \"...\", \"suggestedQuickReplies\": [...] }\n\n═════════════════════════════\nCONTEXTE TEMPS RÉEL :\n${villasText}${amenitiesText}${conciergerieText}\n═════════════════════════════`;\n\nreturn {\n  json: {\n    chatInput,\n    sessionId,\n    systemMessage,\n    contextData\n  }\n};"
+      },
+      "id": "kv-a-build-context",
+      "name": "Build Live Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "={{ $json.systemMessage }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [880, 0],
+      "id": "kv-a-agent",
+      "name": "AI Agent DeepSeek"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "deepseek-chat",
+          "mode": "list",
+          "cachedResultName": "deepseek-chat"
+        },
+        "options": {
+          "baseURL": "https://api.deepseek.com/v1"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [880, 200],
+      "id": "kv-a-model",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DEEPSEEK_CRED",
+          "name": "DeepSeek API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiResponse =\n  $input.first().json.output ||\n  $input.first().json.message?.content ||\n  $input.first().json.text ||\n  '';\n\nlet reply = aiResponse;\nlet stage = 'reply';\nlet suggestedQuickReplies = [];\n\n// Essayer de parser le JSON\ntry {\n  const parsed = typeof aiResponse === 'string' ? JSON.parse(aiResponse) : aiResponse;\n  if (parsed && typeof parsed === 'object') {\n    reply = parsed.reply || parsed.response || parsed.message || aiResponse;\n    stage = parsed.stage || 'reply';\n    suggestedQuickReplies = Array.isArray(parsed.suggestedQuickReplies) ? parsed.suggestedQuickReplies : [];\n  }\n} catch {\n  // Réponse texte brute — OK\n}\n\nreturn {\n  json: {\n    reply,\n    stage,\n    suggestedQuickReplies,\n    rawResponse: aiResponse\n  }\n};"
+      },
+      "id": "kv-a-parse",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "kv-a-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[ { "node": "Edit Fields", "type": "main", "index": 0 } ]]
+    },
+    "Edit Fields": {
+      "main": [[ { "node": "Fetch Visitor Context", "type": "main", "index": 0 } ]]
+    },
+    "Fetch Visitor Context": {
+      "main": [[ { "node": "Build Live Context", "type": "main", "index": 0 } ]]
+    },
+    "Build Live Context": {
+      "main": [[ { "node": "AI Agent DeepSeek", "type": "main", "index": 0 } ]]
+    },
+    "AI Agent DeepSeek": {
+      "main": [[ { "node": "Parse Response", "type": "main", "index": 0 } ]]
+    },
+    "Parse Response": {
+      "main": [[ { "node": "Respond to Webhook", "type": "main", "index": 0 } ]]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [[ { "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 } ]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "pinData": {},
+  "versionId": "1.0.0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "kayvibot-a-visitor"
+  },
+  "id": "kayvibot-a-visitor-v4",
+  "tags": [
+    { "name": "Kayvibot" },
+    { "name": "Agent A" }
+  ]
+}
