@@ -15,8 +15,8 @@
 |-----|-------|------|------|
 | 0 | Triage + Quick-wins P0 | ✅ FAIT | `plans/2026-06-16-audit-batch-lot0.md` |
 | 1 | Sécurité HAUTE | ✅ FAIT | `plans/2026-06-16-audit-batch-lot1.md` |
-| 2 | Bloquants UX 🔴 (mobile) | ⏭️ **PROCHAIN** | à écrire |
-| 3 | Unification formulaires villa | ⬜ | à écrire |
+| 2 | Bloquants UX 🔴 (mobile) | ✅ FAIT | inline (triage) |
+| 3 | Unification formulaires villa | ⏭️ **PROCHAIN** | à écrire |
 | 4 | Perf critique | ⬜ | — |
 | 5 | SEO bloquant+majeur | ⬜ | — |
 | 6 | Layout majeurs mobile | ⬜ | — |
@@ -40,6 +40,15 @@
 - `.env*` déjà gitignored (Sec#8 OK)
 - vitest global : **48/0**
 
+### Lot 2 ✅ (commit `1d6f64c`)
+- #1 DashboardShell : fullBleed `overflow-hidden`→`overflow-y-auto` (clavier mobile)
+- #3 VillaPastBookingsDrawer : wrapper `overflow-x-auto` sur `<table>`
+- #6 CopilotPanel : overlay `bg-black/10`→`/30` (+#43) + `pt-[env(safe-area-inset-top)]`
+- #7 DashboardSidebar : drawer mobile `safe-area-inset-top` + bouton fermeture repositionné
+- #11 DashboardSidebar : `ICON_MAP[...] ?? LayoutDashboard` (fallback)
+- **Faux positifs écartés** : #2 Kanban (wrapper `overflow-x-auto` existe déjà L145) · #5 Chatbot (`max-h-[85dvh]`+fullscreen mobile déjà présents). #4 fait au Lot 1.
+- Build ✅ · vitest 48/0 ✅. Pas de subagent (polish CSS, cf model-routing).
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -48,4 +57,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-Écrire le plan **Lot 2** (triage existant d'abord), puis exécuter en subagent-driven. Lot 2 = mobile → screenshots Playwright 375px obligatoires.
+Écrire le plan **Lot 3 — Unification formulaires villa** (triage d'abord). Couvre audit #8 (VillaImageManager création admin — déjà fait selon notes 16 juin, à re-vérifier), #9 (deux stacks formulaire : `AdminVillaForm` HTML natif vs `VillaEditorForm`+`VillaFormFields` HeroUI → unifier sur `VillaEditorForm`), #10 (route création villa proprio). Lot le plus structurant — bien cadrer avant d'exécuter, possiblement subagent-driven.
