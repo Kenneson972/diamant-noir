@@ -2,7 +2,9 @@
 
 > **Point de reprise.** Lire ce fichier + `docs/auto-learn/LEARNINGS.md` pour reprendre.
 
-**Branche :** `fix/audit-batch-juin` (depuis `main` @ `5f6ecbd`) — **NON poussée** (commits locaux uniquement).
+> ✅ **STATUT 2026-06-16 (fin de session) : Lots 0–8 MERGÉS sur `main`** (PR #2). Fixes post-merge mergés aussi : sitemap build (PR #2), CSP/favicon/pages légales (PR #3), calendar hero HeroUI + fin clipping (PR #4 + `77c78e3`). **Reste uniquement le Lot 9** (backlog — voir « Prochaine action »). Tout est sur `main`, aucune branche en attente.
+
+**Branche :** `fix/audit-batch-juin` (depuis `main` @ `5f6ecbd`) — **MERGÉE sur main** (PR #2).
 **Spec :** `docs/superpowers/specs/2026-06-16-correction-audit-batch-design.md`
 **Périmètre :** 135 items (2 audits) — `docs/audit-kayvila-complet-2026-06-16.md` (69 UX) + `docs/audit-securite-perf-seo-2026-06-16.md` (66 sec/perf/SEO).
 **Stratégie :** risque d'abord · 10 lots · hybride (Opus P0 / subagents Sonnet-Haiku polish) · 1 commit/lot · gate `next build` + mobile + vitest(lib).

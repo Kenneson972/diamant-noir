@@ -355,3 +355,38 @@
 - **Route POST publique = CSRF (origin) + rate-limit/IP + zod safeParse**, dans cet ordre, tout en haut du handler.
 - **`zod ^4` est installé** (utilisé dans contact/admin routes). `.passthrough()` pour valider name/email+types sans devoir lister toutes les colonnes (Postgres rejette les colonnes inconnues de toute façon).
 - **Escalade de privilège create-villa** : le vrai risque n'est pas les colonnes inconnues (insert échoue) mais les colonnes PRIVILÉGIÉES connues → strip ciblé pour non-admin plutôt qu'un schéma exhaustif fragile.
+
+---
+
+## 2026-06-16 — Campagne Audit Batch — Lots 2 à 8 ✅ + fixes post-merge
+
+### Fait (mergé sur `main` via PR #2, #3, #4)
+- **Lot 2** (bloquants UX mobile, `1d6f64c`) : DashboardShell `overflow-hidden`→`overflow-y-auto`, table `overflow-x-auto`, CopilotPanel/sidebar `safe-area-inset-top`, ICON_MAP fallback. FP : #2 Kanban, #5 Chatbot (déjà mitigés).
+- **Lot 3** (création villa proprio, `ddf55e7`) : `VillaEditorForm` mode création via `!villa.id` → POST `create-villa` ; route `/dashboard/villas/nouvelle` ; CTA liste + EmptyDashboard. **Décision Kenneson : #10 d'abord, #9 (fusion AdminVillaForm) reporté**. FP #8 (VillaImageManager déjà rendu).
+- **Lot 4** (perf, `21f91b5`) : `.limit()` de sécurité sur 5 requêtes non bornées (décision : limites maintenant, pagination UI reportée), optimizePackageImports += leaflet/shiki/date-fns. FP nombreux (skeletons existent, @react-pdf server-only, N+1 déjà batché, recharts pas dep). perf#2 cache reporté (risque double-booking).
+- **Lot 5** (SEO, `c4c9a6f`) : metadata pages `"use client"` via `layout.tsx` serveur (login/update-password noindex, comparateur canonical), espace-client noindex, twitter:card root, JSON-LD WebSite, retrait keywords. FP : sitemap/robots/og déjà Lot 0.
+- **Lot 6** (layout mobile, `9176674`) : VillaGallery/VillaCard responsive, VillasMapView liste cachée mobile quand carte visible, PageHero pt-16, NotificationBell max-w. FP : #13 Navbar, #20 CompareBar (déjà gérés).
+- **Lot 7** (UX polish, `86e0ea9`) : fondu HeroBackgroundMedia (videoReady), icônes empty states, Loader2, transitions inputs. FP #28 Footer.
+- **Lot 8** (code mort + mineurs, `0f24c2d`) : suppression `BookingTable` + `VillaAmenitiesEditorWrapper` (−113 l.), FAB safe-area, icône Send/Inbox, contraste WCAG /50→/65. FP : #40 (overflow-x déjà), #60/#61 (utilisés, PAS morts).
+- **Fixes post-merge** : sitemap Supabase paresseux (`6cfc532`), CSP `vercel.live` + favicon `app/icon.svg` + pages `/mentions-legales` & `/cgv` (`1ede870`), calendar hero HeroUI (`f613b43`), fin du clipping hero (`77c78e3`).
+
+### Règles apprises
+- **Audits Élise = beaucoup de faux positifs** (~20 sur 135) → TOUJOURS triager (vérifier le code réel) avant de coder. Causes fréquentes : feature déjà faite, mitigation déjà en place, composant dit "mort" mais utilisé, chemin de fichier approximatif dans l'audit.
+- **Structure du repo : PAS de `src/`** — code à la racine (`components/`, `app/`). Les chemins d'audit sont indicatifs, localiser avec `find`/grep.
+- **Page `"use client"` ne peut pas exporter `metadata`** → créer un `layout.tsx` serveur frère pour les métadonnées + `robots: { index:false }`.
+- **Client Supabase JAMAIS au niveau module** (`createClient(URL!)`) : casse le build (`supabaseUrl is required`) quand l'env manque (previews Vercel). Toujours instancier DANS la fonction + garde + try/catch + fallback. Le build local masque le bug (`.env.local` présent).
+- **HeroUI v3 RangeCalendar (`@heroui/react`)** : respecter l'anatomie officielle — `RangeCalendar.Header` = `Heading` PUIS les `NavButton`, et `<RangeCalendar.Cell date={date} />` AUTO-FERMANT (un children/render-prop écrase le style par défaut → rendu cassé). Couleur de sélection via token `--accent` (oklch). Vérifier la doc via le skill `heroui-react` (`scripts/get_component_docs.mjs`).
+- **Dropdown rogné = `overflow-hidden` sur un ancêtre** (ici la `<section>` hero, pour cadrer la vidéo de fond). Fix sûr : retirer `overflow-hidden` de la section, le mettre sur le wrapper média (déjà borné `inset-0` → 0 changement visuel) pour que le dropdown absolu déborde.
+- **Workflow validé Kenneson** : 1 commit/lot, gate `next build` + `vitest`(lib) à chaque lot, branche dédiée, push → PR → preview Vercel → merge. Suivi vivant dans `docs/audit-batch-PROGRESS.md`.
+- **Décisions produit prises** : proprio peut créer une villa (non publiée, owner_id=session — pas de conflit avec soumission modérée) ; #9 fusion formulaires admin reportée (parité admin : VillaEditorForm manque sélecteur proprio/is_published/commission).
+
+### ⏸️ Point d'arrêt — reprise au Lot 9 (backlog, décisions Kenneson)
+Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer individuellement (Kenneson doit choisir la priorité) :
+1. Montée **Next 15.5.x** — ⚠️ blocage BigInt/webpack/zod v4 (`g.BigInt is not a function`), resté en 15.2.9.
+2. **perf#2 cache HTTP** (force-dynamic/noStore) — risque fraîcheur dispos/double-booking.
+3. **Pagination UI** complète (6 pages, remplace les `.limit()` du Lot 4).
+4. **#9 fusion formulaires admin** (variante admin VillaEditorForm).
+5. **Incohérences #30/#31/#32** (photos proprio inline, unif iCal VillaIcalPanel, Copilot admin).
+6. **SEO avancé** (JSON-LD LocalBusiness/BreadcrumbList/FAQPage, canonical par page, hreflang).
+
+À faire valider hors-dev : textes mentions-légales/CGV (juridique), variables env Supabase sur l'environnement **Preview** Vercel.
