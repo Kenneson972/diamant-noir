@@ -6,7 +6,7 @@ import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import { KayvilaDataGrid } from "@/components/ui/pro";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
-import { Globe, CreditCard, Users } from "lucide-react";
+import { Globe, CreditCard, Users, Inbox } from "lucide-react";
 
 type BookingRow = Pick<
   Booking,
@@ -145,7 +145,10 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       {/* Mobile : cartes empilées */}
       <div className="flex flex-col gap-3 md:hidden">
         {bookings.length === 0 ? (
-          <p className="py-8 text-center text-sm text-navy/40">Aucune réservation.</p>
+          <div className="flex flex-col items-center gap-2 py-8 text-center">
+            <Inbox className="h-7 w-7 text-navy opacity-30" aria-hidden />
+            <p className="text-sm text-navy/40">Aucune réservation.</p>
+          </div>
         ) : (
           bookings.map((b) => (
             <BookingCard key={b.id} booking={b} villaId={villaId} />

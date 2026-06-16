@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 
 const SUBJECTS = [
@@ -100,7 +100,7 @@ export function OwnerContactFAB({ ownerId, villas }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-6 z-40 flex items-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-navy/90"
+        className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-6 z-40 flex items-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-navy/90"
         aria-label="Contacter Kayvila"
       >
         <Mail size={16} />
@@ -196,8 +196,9 @@ export function OwnerContactFAB({ ownerId, villas }: Props) {
                     type="button"
                     onClick={handleSubmit}
                     disabled={sending || message.trim().length < 10}
-                    className="flex-1 rounded-lg bg-navy py-2.5 text-sm font-medium text-white disabled:opacity-50"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-navy py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy/90 disabled:opacity-50"
                   >
+                    <Send size={15} aria-hidden />
                     {sending ? "Envoi…" : "Envoyer"}
                   </button>
                 </div>
