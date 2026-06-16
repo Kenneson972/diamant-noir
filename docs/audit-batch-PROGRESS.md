@@ -19,8 +19,8 @@
 | 3 | Création villa proprio (#10) | ✅ FAIT | inline (triage) |
 | 4 | Perf critique | ✅ FAIT | inline (triage) |
 | 5 | SEO bloquant+majeur | ✅ FAIT | inline (triage) |
-| 6 | Layout majeurs mobile | ⏭️ **PROCHAIN** | à écrire |
-| 7 | UX/Visuel polish | ⬜ | — |
+| 6 | Layout majeurs mobile | ✅ FAIT | inline (triage) |
+| 7 | UX/Visuel polish | ⏭️ **PROCHAIN** | à écrire |
 | 8 | Mineurs + code mort | ⬜ | — |
 | 9 | Backlog perf/sec/SEO + montée Next 15.5.x | ⬜ | — |
 
@@ -76,6 +76,11 @@
 - **Reportés** (besoin data/per-page) : JSON-LD LocalBusiness (NAP via client.config), BreadcrumbList, FAQPage, SearchAction (besoin endpoint recherche fonctionnel), canonical par page publique, hreflang `/en` `/es` (routes inexistantes), hiérarchie headings, alt images.
 - Build ✅ · vitest 48/0 ✅.
 
+### Lot 6 ✅ (commit `9176674`) — layout majeurs mobile
+- #12 VillaGallery `h-[60vh]`→responsive+max-h-600 · #14 VillaCard `h-[300px]`→200/260/300 · #15 HomeServices `h-[40vw]`→`h-[35vw] min-h-160` · #16 VillasMapView : liste `hidden md:block` quand carte visible (fin double-scroll mobile) · #17 BookingBottomSheet cap `max-w` retiré sur mobile · #18 PageHero `pt-24`→`pt-16` mobile · #19 NotificationBell dropdown +`max-w-[calc(100vw-2rem)]`.
+- **Faux positifs** : #13 Navbar (vitrage conditionnel déjà géré ; transparence seulement sur hero sombre) · #20 CompareBar (`env(safe-area-inset-bottom)` déjà présent L30).
+- Build ✅ · vitest 48/0 ✅.
+
 ## ⚠️ Blocages / décisions en attente
 - **Next 15.5.x impossible** (cible audit Sec#3) : next ≥15.3 + node-ical ≥0.23 → polyfill Temporal/BigInt casse webpack SSR (conflit zod v4) `g.BigInt is not a function`. Resté à 15.2.9 (corrige CVE phares). **À traiter au Lot 9** (résoudre BigInt/webpack ou migrer zod). Décision Kenneson attendue si priorité.
 - **Branche non poussée** — à pousser au prochain démarrage (preview Vercel) si Kenneson OK.
@@ -84,4 +89,4 @@
 Bugs audit UX déjà faits : **#4** (messagerie min-h), **#8** (VillaImageManager création), **#64** (hover header), **#65** (HeroDatePicker→RangeCalendar). **#60** (NotificationBell "code mort") = audit périmé, le composant EST utilisé.
 
 ## Prochaine action
-**Lot 6 — Layout majeurs mobile** : triage des 🟠 MAJEURS layout de `docs/audit-kayvila-complet-2026-06-16.md` (bugs #12–#20 : VillaGallery, Navbar dégradé, VillaCard, HomeServices, VillasMapView, BookingBottomSheet, PageHero, NotificationBell dropdown, CompareBar safe-area). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés (LocalBusiness/Breadcrumb/FAQ/canonical/hreflang), montée Next 15.5.x (Lot 9).
+**Lot 7 — UX/Visuel polish** : 🟠 bugs #21–#32 de `docs/audit-kayvila-complet-2026-06-16.md` (HeroBackgroundMedia fondu, empty states icônes #22/#23/#25, BookingTable hover/empty #24/#25, loaders #26, transitions inputs #27/#29, Footer hover #28, incohérences photos/iCal/Copilot admin #30/#31/#32). Backlog : pagination UI, #9 fusion formulaires, perf#2 cache, SEO reportés, montée Next 15.5.x (Lot 9).
