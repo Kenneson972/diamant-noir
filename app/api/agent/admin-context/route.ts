@@ -29,7 +29,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const endOfLastMonthStr = addDays(startOfMonthStr, -1);
 
   const [
-    villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes,
+    villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes, profilesRes,
   ] = await Promise.all([
     supabase.from("villas").select("id,name,price_per_night,seasonal_prices,owner_id,status,cancellation_policy,currency").order("name"),
     supabase.from("bookings").select("*").order("start_date", { ascending: false }).limit(200),
@@ -38,6 +38,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
     supabase.from("villa_submissions").select("*").order("created_at", { ascending: false }),
     supabase.from("ota_sync_logs").select("*").order("created_at", { ascending: false }).limit(30),
     supabase.from("reviews").select("*").order("created_at", { ascending: false }).limit(200),
+    supabase.from("profiles").select("id,role,full_name,email,phone").order("created_at", { ascending: false }),
   ]);
 
   const villas = villasRes.data ?? [];
@@ -47,6 +48,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const submissions = submissionsRes.data ?? [];
   const otaLogs = otaRes.data ?? [];
   const reviews = reviewsRes.data ?? [];
+  const profiles = profilesRes.data ?? [];
 
   const revenueByVilla: Record<string, number> = {};
   const revenueLastMonthByVilla: Record<string, number> = {};
@@ -75,7 +77,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
 
   const today = todayStr; // alias pour compatibilité (ctx.today)
   return {
-    villas, bookings, blocks, tasks, submissions, otaLogs, reviews,
+    villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles,
     revenueByVilla, revenueLastMonthByVilla, monthlyRevenue,
     today, todayStr, startOfMonthStr, startOfLastMonthStr, endOfLastMonthStr,
   };
@@ -142,6 +144,14 @@ export async function GET(request: Request) {
           villa_id: l.villa_id, source: l.source, error: l.error, synced_at: l.created_at,
         })),
         channels_with_errors: [...new Set(ctx.otaLogs.filter((l: any) => l.error).map((l: any) => l.source))],
+      },
+      users_summary: {
+        total_profiles: ctx.profiles.length,
+        owners: ctx.profiles.filter((p: any) => p.role === "owner" || p.role === "proprietaire" || p.role === "proprio").length,
+        admins: ctx.profiles.filter((p: any) => p.role === "admin").length,
+        recent_signups: ctx.profiles.slice(0, 10).map((p: any) => ({
+          id: p.id, full_name: p.full_name, email: p.email, role: p.role,
+        })),
       },
     };
 
