@@ -124,7 +124,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
             <select
               value={form.villa_id}
               onChange={(e) => set("villa_id", e.target.value)}
-              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
               required
             >
               <option value="">Sélectionner une villa...</option>
@@ -145,7 +145,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
                 value={form.guest_name}
                 onChange={(e) => set("guest_name", e.target.value)}
                 placeholder="Jean Dupont"
-                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
                 required
               />
             </div>
@@ -158,7 +158,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
                 value={form.guest_email}
                 onChange={(e) => set("guest_email", e.target.value)}
                 placeholder="jean@exemple.fr"
-                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
               />
             </div>
           </div>
@@ -173,7 +173,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
                 type="date"
                 value={form.start_date}
                 onChange={(e) => set("start_date", e.target.value)}
-                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
                 required
               />
             </div>
@@ -185,7 +185,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
                 type="date"
                 value={form.end_date}
                 onChange={(e) => set("end_date", e.target.value)}
-                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+                className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
                 required
               />
             </div>
@@ -201,7 +201,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
               value={form.total_price_cents ? String(Number(form.total_price_cents) / 100) : ""}
               onChange={(e) => set("total_price_cents", e.target.value ? String(Math.round(parseFloat(e.target.value) * 100)) : "")}
               placeholder="Auto-calculé si vide"
-              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
             />
           </div>
 
@@ -213,7 +213,7 @@ export function CreateBookingModal({ open, onClose, onCreated }: CreateBookingMo
             <select
               value={form.status}
               onChange={(e) => set("status", e.target.value)}
-              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold/50"
+              className="w-full border border-navy/15 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:border-gold/50"
             >
               <option value="confirmed">Confirmée</option>
               <option value="pending">En attente</option>
