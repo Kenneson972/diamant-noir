@@ -6,6 +6,7 @@ import { Loader2, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { VillaImageManager } from "@/components/dashboard/villa-editor/VillaImageManager";
 
 interface OwnerOption {
   id: string;
@@ -19,6 +20,7 @@ export function AdminVillaForm() {
   const [error, setError] = useState<string | null>(null);
   const [owners, setOwners] = useState<OwnerOption[]>([]);
   const [ownersLoading, setOwnersLoading] = useState(true);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -113,12 +115,8 @@ export function AdminVillaForm() {
     const welcomeBookletUrl = (form.get("welcome_booklet_url") as string)?.trim();
     if (welcomeBookletUrl) data.welcome_booklet_url = welcomeBookletUrl;
 
-    const imageUrlsRaw = (form.get("image_urls") as string)?.trim();
-    if (imageUrlsRaw)
-      data.image_urls = imageUrlsRaw
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean);
+    const imageUrlsRaw = imageUrls;
+    if (imageUrlsRaw.length > 0) data.image_urls = imageUrlsRaw;
 
     try {
       const res = await fetch("/api/dashboard/create-villa", {
@@ -533,18 +531,49 @@ export function AdminVillaForm() {
               />
             </div>
             <div>
+              <label className="mb-1 block text-sm font-medium text-navy">
+                Photos de la villa
+              </label>
+              <p className="mb-3 text-xs text-navy/55">
+                Glisse-dépose tes photos ou clique pour les sélectionner. JPG, PNG, WebP — max 10 Mo.
+              </p>
+              <VillaImageManager
+                imageUrls={imageUrls}
+                villaId={undefined}
+                onImagesChange={setImageUrls}
+                onMainImageChange={(url) => {
+                  setImageUrls((prev) => {
+                    if (prev.length === 0) return [url];
+                    const without = prev.filter((u) => u !== url);
+                    return [url, ...without];
+                  });
+                }}
+                onError={(msg) => setError(msg)}
+              />
+            </div>
+            <div>
               <label
                 htmlFor="image_urls"
                 className="mb-1 block text-sm font-medium text-navy"
               >
-                Photos (une URL par ligne)
+                Ou coller des URLs (optionnel)
               </label>
+              <p className="mb-1 text-xs text-navy/55">
+                Une URL par ligne — uniquement si tu ne passes pas par l&apos;upload ci-dessus.
+              </p>
               <textarea
                 id="image_urls"
                 name="image_urls"
-                rows={4}
+                rows={3}
                 className="w-full resize-y rounded-xl border border-navy/10 px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
                 placeholder={"https://cdn.example.com/photo-1.jpg\nhttps://cdn.example.com/photo-2.jpg"}
+                onChange={(e) => {
+                  const urls = e.target.value
+                    .split("\n")
+                    .map((l) => l.trim())
+                    .filter(Boolean);
+                  if (urls.length > 0) setImageUrls(urls);
+                }}
               />
             </div>
           </div>
