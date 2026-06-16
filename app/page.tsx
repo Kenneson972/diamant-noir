@@ -90,7 +90,7 @@ export default async function HomePage() {
     <main className="min-h-dvh bg-offwhite">
       {/* ① Hero */}
       <section
-        className="relative flex min-h-[50dvh] w-full flex-col justify-center overflow-hidden bg-navy pt-24 md:min-h-[60dvh] md:py-12 md:pt-24 lg:min-h-[min(65vh,560px)]"
+        className="relative flex min-h-[50dvh] w-full flex-col justify-center bg-navy pt-24 md:min-h-[60dvh] md:py-12 md:pt-24 lg:min-h-[min(65vh,560px)]"
         aria-labelledby="hero-title"
       >
         <HeroBackgroundMedia />

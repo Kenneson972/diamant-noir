@@ -34,7 +34,7 @@ export function HeroBackgroundMedia() {
 
   if (!allowVideo) {
     return (
-      <div className="absolute inset-0 h-full w-full" aria-hidden>
+      <div className="absolute inset-0 h-full w-full overflow-hidden" aria-hidden>
         <Image
           src="/villa-hero.jpg"
           alt=""
@@ -48,7 +48,7 @@ export function HeroBackgroundMedia() {
   }
 
   return (
-    <div className="absolute inset-0 h-full w-full" aria-hidden>
+    <div className="absolute inset-0 h-full w-full overflow-hidden" aria-hidden>
       {/* Poster visible jusqu'à ce que la vidéo soit prête — fondu doux poster→vidéo */}
       <Image
         src="/villa-hero.jpg"
