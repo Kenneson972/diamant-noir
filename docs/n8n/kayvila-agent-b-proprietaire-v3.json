@@ -226,7 +226,7 @@
       "id": "b1-tool-villas",
       "name": "myVillas",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "typeVersion": 3,
       "position": [
         160,
         80
@@ -241,7 +241,7 @@
       "id": "b1-tool-bookings",
       "name": "myBookings",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "typeVersion": 3,
       "position": [
         300,
         80
@@ -256,7 +256,7 @@
       "id": "b1-tool-stats",
       "name": "myStats",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "typeVersion": 3,
       "position": [
         440,
         80
@@ -271,7 +271,7 @@
       "id": "b1-tool-tasks",
       "name": "myTasks",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "typeVersion": 3,
       "position": [
         580,
         80
@@ -286,7 +286,7 @@
       "id": "b1-tool-ota",
       "name": "otaStatus",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1,
+      "typeVersion": 3,
       "position": [
         720,
         80
