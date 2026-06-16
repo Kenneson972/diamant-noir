@@ -91,7 +91,7 @@ export function OwnerMessaging({ userId }: OwnerMessagingProps) {
   }
 
   return (
-    <div className="dashboard-card flex flex-col h-[500px]">
+    <div className="dashboard-card flex flex-col min-h-[calc(100dvh-12rem)]">
       <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
