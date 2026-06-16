@@ -19,9 +19,7 @@ export function HeroDateRangePicker({
   checkin,
   checkout,
   onChange,
-  surface = "dark",
 }: HeroDateRangePickerProps) {
-  const isLight = surface === "light";
   const now = today(getLocalTimeZone());
 
   const value =
@@ -38,18 +36,15 @@ export function HeroDateRangePicker({
       onChange={(range) => {
         if (range) onChange(toISO(range.start), toISO(range.end));
       }}
-      visibleDuration={{ months: 2 }}
       minValue={now}
       firstDayOfWeek="mon"
-      className={
-        isLight
-          ? "w-full rounded-2xl border border-navy/8 bg-white p-4 shadow-xl sm:w-auto"
-          : "w-full rounded-2xl border border-white/12 bg-[#0A1628] p-4 shadow-xl sm:w-auto"
-      }
+      // Sélection en navy (couleur de marque) plutôt que le bleu HeroUI par défaut
+      style={{ "--accent": "oklch(0.24 0.05 256)" } as React.CSSProperties}
+      className="w-full rounded-2xl border border-navy/10 bg-white p-4 text-navy shadow-2xl sm:w-auto"
     >
-      <RangeCalendar.Header className="pb-3">
-        <RangeCalendar.NavButton slot="previous" />
+      <RangeCalendar.Header>
         <RangeCalendar.Heading />
+        <RangeCalendar.NavButton slot="previous" />
         <RangeCalendar.NavButton slot="next" />
       </RangeCalendar.Header>
       <RangeCalendar.Grid>
@@ -57,11 +52,7 @@ export function HeroDateRangePicker({
           {(day) => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
         </RangeCalendar.GridHeader>
         <RangeCalendar.GridBody>
-          {(date) => (
-            <RangeCalendar.Cell date={date}>
-              {({ formattedDate }) => <>{formattedDate}</>}
-            </RangeCalendar.Cell>
-          )}
+          {(date) => <RangeCalendar.Cell date={date} />}
         </RangeCalendar.GridBody>
       </RangeCalendar.Grid>
     </RangeCalendar>
