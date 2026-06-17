@@ -40,6 +40,8 @@ const publicPaths = [
   "/api/villa-submissions",
   "/api/villa-photo-upload",
   "/api/chat",
+  "/api/agent",
+  "/api/tenant/request-ack",
 ];
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
