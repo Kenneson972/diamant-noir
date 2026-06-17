@@ -390,3 +390,47 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 6. **SEO avancé** (JSON-LD LocalBusiness/BreadcrumbList/FAQPage, canonical par page, hreflang).
 
 À faire valider hors-dev : textes mentions-légales/CGV (juridique), variables env Supabase sur l'environnement **Preview** Vercel.
+
+---
+
+## 2026-06-17 — Header Glow Homepage + Calendrier Widget 2 Mois ✅
+
+### Fait (4 commits mergés main)
+
+- **Calendrier widget 2 mois** :
+  - Desktop (≥640px) : 2 mois côte à côte `visibleDuration={{ months: 2 }}`, grilles dupliquées avec `offset`
+  - Mobile (<640px) : 1 mois, `matchMedia` détecte le breakpoint
+  - Wrapper `bg-white` unique + `ring-1 ring-navy/10` + `shadow-2xl` (fond blanc unifié)
+  - `@ts-expect-error` sur `Heading offset={{ months: 1 }}` (types `@heroui/react@3.1.0` en retard)
+  - `key={months}` forcé sur `RangeCalendar` pour re-render propre au changement de breakpoint
+
+- **Header glow homepage uniquement** :
+  - Liens de nav : `hover:!text-gold` (or #D4AF37) avec `transition-colors duration-300`
+  - Logo : filtre CSS `sepia → hue-rotate(350deg) → saturate(4)` transforme le PNG blanc en or au survol
+  - Conditionné par `pathname === "/"` — n'affecte pas les autres pages
+  - Logo agrandi : `h-11→h-16` selon breakpoint
+
+- **Layout barre recherche** :
+  - Retrait icône `Users` redondante de la row voyageurs
+  - Icône `Users` intégrée dans le bouton picker
+  - Retrait label "VOYAGEURS" dupliqué dans le dropdown `HeroGuestPicker`
+  - `ring-1` remplace `border` (pas de décalage layout)
+
+### Règles apprises
+
+- **`text-shadow` invisible sur texte blanc** — sur fond sombre, `hover:!text-gold` est plus efficace qu'un halo `text-shadow`
+- **`visibleDuration` = prop React, pas CSS** — pas de responsive sans JS. Utiliser `matchMedia` + `key` pour forcer le re-render
+- **`@heroui/react@3.1.0` : `offset` manque dans les types** de `RangeCalendar.Heading` mais fonctionne au runtime (React Aria sous-jacent)
+- **`border` ajoute 1px externe** → `ring-1` (box-shadow interne) évite les décalages dans les flex containers
+- **`BrandLogo` utilise `next/image` (PNG)** — pas de `currentColor`. Pour changer sa couleur → filtre CSS `sepia + hue-rotate + saturate`
+- **Deux icônes + label pour une même info = bruit visuel** — supprimer les doublons, intégrer l'icône dans le composant interactif
+
+### Reste à faire (sous-projets brainstormés, prompt Richard 17 juin)
+
+| # | Tâche | État |
+|---|-------|------|
+| 1 | Header glow homepage | ✅ Fait |
+| 2 | Carte interactive Leaflet fiche villa | À faire |
+| 3 | Demandes : tri ASC + accusé Resend | À faire (timeAgo déjà fait) |
+| 4 | Documents Admin : upload PDF + bucket | À faire |
+| 5 | Documents Proprio : liste lecture seule | À faire |
