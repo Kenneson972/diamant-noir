@@ -334,7 +334,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
           {/* Centre : logo parfaitement centré */}
           <div className="flex justify-center">
-            <span className={isHomepage ? "transition-all duration-300 hover:drop-shadow-[0_0_18px_rgba(212,175,55,0.7)] hover:brightness-110" : ""}>
+            <span className={isHomepage ? "transition-all duration-300 hover:drop-shadow-[0_0_18px_rgba(212,175,55,0.7)] hover:[filter:brightness(0.85)_sepia(0.5)_hue-rotate(350deg)_saturate(4)_drop-shadow(0_0_18px_rgba(212,175,55,0.7))]" : ""}>
             <BrandLogo
               variant={logoVariant}
               size="nav"
