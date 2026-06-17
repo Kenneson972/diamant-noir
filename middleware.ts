@@ -40,6 +40,7 @@ const publicPaths = [
   "/api/villa-submissions",
   "/api/villa-photo-upload",
   "/api/chat",
+  "/api/concierge",
   "/api/agent",
   "/api/tenant/request-ack",
 ];

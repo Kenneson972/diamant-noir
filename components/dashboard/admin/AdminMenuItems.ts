@@ -13,6 +13,7 @@ export const adminMenuItems: MenuItem[] = [
   { label: "Propriétaires", href: "/admin/proprietaires", icon: "Users" },
   { label: "Soumissions", href: "/admin/soumissions", icon: "Home" },
   { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
+  { label: "Concierge IA", href: "/admin/concierge", icon: "Sparkles" },
   { label: "Documents", href: "/admin/documents", icon: "FileText" },
   { label: "Avis", href: "/admin/avis", icon: "Star" },
   { label: "Messagerie", href: "/admin/messagerie", icon: "MessageCircle" },
