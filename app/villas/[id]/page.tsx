@@ -19,6 +19,7 @@ import { VillaAccordionInfo } from "@/components/villas/VillaAccordionInfo";
 import { VillaReviews } from "@/components/VillaReviews";
 import { WishlistButton } from "@/components/villas/WishlistButton";
 import { VillaHostCard } from "@/components/villas/VillaHostCard";
+import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
 
 export const dynamic = "force-dynamic";
 
@@ -379,6 +380,20 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
           </div>
         </div>
       </div>
+
+      {/* ── Carte interactive ── */}
+      {villa.latitude && villa.longitude && (
+        <div className="mx-auto max-w-7xl px-6 pb-4">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55">Emplacement</p>
+          <div className="overflow-hidden rounded-2xl border border-navy/10 shadow-sm">
+            <VillaDetailMiniMap
+              latitude={villa.latitude}
+              longitude={villa.longitude}
+              name={villa.name}
+            />
+          </div>
+        </div>
+      )}
 
       {/* ── Contenu principal ── */}
       <VillaBookingWrapper
