@@ -19,7 +19,7 @@ type BrandLogoProps = {
 
 /** Grille `size="nav"` — exportée pour le placeholder Navbar (dev, anti-hydratation). */
 export const BRAND_LOGO_NAV_ICON_BOX =
-  "h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 lg:h-14 lg:w-14";
+  "h-11 w-11 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16";
 
 const sizeClasses: Record<
   NonNullable<BrandLogoProps["size"]>,
@@ -60,7 +60,7 @@ export function BrandLogo({
       : size === "hero"
         ? "(max-width: 640px) 112px, (max-width: 1024px) 176px, 208px"
         : size === "nav"
-          ? "(max-width: 640px) 40px, (max-width: 768px) 44px, (max-width: 1024px) 48px, 56px"
+          ? "(max-width: 640px) 44px, (max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
           : "(max-width: 768px) 36px, 40px";
 
   const decorativeIconHomeLink =
