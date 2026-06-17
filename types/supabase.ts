@@ -348,6 +348,54 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          created_at: string
+          file_size: number | null
+          file_url: string
+          id: string
+          name: string
+          owner_id: string
+          storage_path: string
+          tags: Json
+        }
+        Insert: {
+          created_at?: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          name: string
+          owner_id: string
+          storage_path?: string
+          tags?: Json
+        }
+        Update: {
+          created_at?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          storage_path?: string
+          tags?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "admin_owner_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -582,6 +630,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "owner_stats_snapshots_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "villas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_booking_requests: {
+        Row: {
+          created_at: string
+          email: string | null
+          end_date: string | null
+          guests: number | null
+          id: string
+          name: string | null
+          session_id: string | null
+          start_date: string | null
+          status: string
+          villa_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          end_date?: string | null
+          guests?: number | null
+          id?: string
+          name?: string | null
+          session_id?: string | null
+          start_date?: string | null
+          status?: string
+          villa_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          end_date?: string | null
+          guests?: number | null
+          id?: string
+          name?: string | null
+          session_id?: string | null
+          start_date?: string | null
+          status?: string
+          villa_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_booking_requests_villa_id_fkey"
             columns: ["villa_id"]
             isOneToOne: false
             referencedRelation: "villas"
@@ -1527,13 +1622,13 @@ export type Tables<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
         DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-      DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
@@ -1553,12 +1648,12 @@ export type TablesInsert<
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
@@ -1578,12 +1673,12 @@ export type TablesUpdate<
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
@@ -1599,8 +1694,8 @@ export type Enums<
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
@@ -1616,8 +1711,8 @@ export type CompositeTypes<
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {
