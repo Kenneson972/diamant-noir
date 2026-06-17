@@ -91,12 +91,17 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $vars.TELEGRAM_OWNER_CHAT_ID || 'REMPLACER_CHAT_ID' }}",
-        "text": "=⚠️ Kayvila — Demande urgente d'un propriétaire\n\nProprio: {{ $('Edit Fields').first().json.userId }}\nMessage: {{ $('Edit Fields').first().json.chatInput }}",
-        "additionalFields": {}
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $vars.RESEND_API_KEY }}" }] },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ from: 'Kayvila <noreply@kayvila.com>', to: [$vars.ADMIN_ALERT_EMAIL || 'admin@kayvila.com'], subject: '⚠️ Kayvila — Demande urgente propriétaire', html: '<p><strong>Propriétaire :</strong> ' + $('Edit Fields').first().json.userId + '</p><p><strong>Message :</strong> ' + $('Edit Fields').first().json.chatInput + '</p>' }) }}",
+        "options": {}
       },
-      "id": "b-telegram", "name": "Telegram - Alerte Proprio", "type": "n8n-nodes-base.telegram", "typeVersion": 1.2, "position": [1760, -400],
-      "credentials": { "telegramApi": { "id": "5TkPTLUYLbLbFcue", "name": "DAL CIELO BOT" } }
+      "id": "b-resend", "name": "Resend - Alerte Proprio", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1760, -400],
+      "continueOnFail": true
     }
   ],
   "connections": {
@@ -114,7 +119,7 @@
     "otaStatus": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
     "Parse Response": { "main": [[{ "node": "Save Memory", "type": "main", "index": 0 }, { "node": "IF - Urgent ?", "type": "main", "index": 0 }]] },
     "Save Memory": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
-    "IF - Urgent ?": { "main": [[{ "node": "Telegram - Alerte Proprio", "type": "main", "index": 0 }]] }
+    "IF - Urgent ?": { "main": [[{ "node": "Resend - Alerte Proprio", "type": "main", "index": 0 }]] }
   },
   "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "2.0.0-fusion",
   "meta": { "instanceId": "kayvibot-b-fusion-v2" }, "id": "kayvibot-b-fusion-v2",
