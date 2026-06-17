@@ -12,4 +12,5 @@ export const proprioMenuItems: MenuItem[] = [
   { label: "Revenus", href: "/dashboard/revenus", icon: "DollarSign" },
   { label: "Tâches", href: "/dashboard/taches", icon: "ClipboardList" },
   { label: "Statistiques", href: "/dashboard/statistiques", icon: "BarChart3" },
+  { label: "Mes documents", href: "/dashboard/documents", icon: "FileText" },
 ];
