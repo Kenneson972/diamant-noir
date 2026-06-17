@@ -34,6 +34,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const [session, setSession] = useState<Session | null>(null);
   const supabase = getSupabaseBrowser();
   const { locale, setLocale, currency, setCurrency, t } = useLocale();
+  const isHomepage = pathname === "/";
 
   const navItems = NAV_KEYS.map(({ href, key }) => ({ href, label: t(key) }));
   const navItemsNoHome = navItems.filter(({ href }) => href !== "/");
@@ -323,7 +324,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
                 <Link
                   key={href}
                   href={href}
-                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor} ${isHomepage ? "transition-colors duration-300 hover:!text-gold" : ""}`}
                 >
                   {label}
                 </Link>
@@ -333,6 +334,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
           {/* Centre : logo parfaitement centré */}
           <div className="flex justify-center">
+            <span className={isHomepage ? "transition-all duration-300 hover:drop-shadow-[0_0_18px_rgba(212,175,55,0.7)] hover:brightness-110" : ""}>
             <BrandLogo
               variant={logoVariant}
               size="nav"
@@ -342,6 +344,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               priority={pathname === "/"}
               className="shrink-0"
             />
+            </span>
           </div>
 
           {/* Droite : nav droite (desktop) + icônes utilitaires + CTA */}
@@ -351,7 +354,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
                 <Link
                   key={href}
                   href={href}
-                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor}`}
+                  className={`text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 ${utilityFocus} ${routeActive(href) ? navLinkActiveColor : navLinkInactiveColor} ${isHomepage ? "transition-colors duration-300 hover:!text-gold" : ""}`}
                 >
                   {label}
                 </Link>
