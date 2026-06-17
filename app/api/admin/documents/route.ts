@@ -58,6 +58,7 @@ export async function POST(request: Request) {
         owner_id: ownerId,
         name: file.name,
         file_url: urlData.publicUrl,
+        storage_path: filePath,
         tags,
         file_size: file.size,
       })
@@ -84,14 +85,14 @@ export async function DELETE(request: Request) {
     const supabase = await getSupabaseServer();
 
     const { id } = await request.json();
-    if (!id) {
+    if (typeof id !== "string" || !id.trim()) {
       return NextResponse.json({ error: "ID requis" }, { status: 400 });
     }
 
-    // Fetch doc to get file path
+    // Fetch doc to get storage path
     const { data: doc, error: fetchError } = await supabase
       .from("documents")
-      .select("file_url")
+      .select("storage_path")
       .eq("id", id)
       .single();
 
@@ -99,12 +100,9 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
     }
 
-    // Extract path from URL
-    const url = new URL(doc.file_url);
-    const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/owner-documents\/(.+)/);
-    if (pathMatch) {
-      const storagePath = decodeURIComponent(pathMatch[1]);
-      await supabase.storage.from("owner-documents").remove([storagePath]);
+    // Delete from storage using stored storage_path
+    if (doc.storage_path) {
+      await supabase.storage.from("owner-documents").remove([doc.storage_path]);
     }
 
     // Delete DB row
