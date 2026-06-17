@@ -41,6 +41,13 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
       priority: urgent ? "urgent" : "standard",
     });
     if (!error) {
+      // Accusé de réception par email
+      fetch("/api/tenant/request-ack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, type }),
+      }).catch(() => {});
+
       await supabase.from("notifications").insert({
         user_id: user.id,
         type: "system",
