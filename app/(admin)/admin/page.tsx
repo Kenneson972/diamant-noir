@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const supabase = supabaseAdmin();
   const today = new Date().toISOString().split("T")[0];
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
@@ -20,6 +19,7 @@ export default async function AdminPage() {
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
   try {
+  const supabase = supabaseAdmin();
   const [
     { count: villaCount },
     { count: bookingCount },
@@ -108,9 +108,15 @@ export default async function AdminPage() {
     .slice(0, 5)
     .map(([id]) => id);
 
-  const { data: topVillas } = topVillaIds.length > 0
-    ? await supabase.from("villas").select("id, name, location, image_url").in("id", topVillaIds)
-    : { data: [] };
+  let topVillasData: { id: string; name: string; location: string | null; image_url: string | null }[] = [];
+  try {
+    if (topVillaIds.length > 0) {
+      const { data } = await supabase.from("villas").select("id, name, location, image_url").in("id", topVillaIds);
+      topVillasData = (data as { id: string; name: string; location: string | null; image_url: string | null }[]) ?? [];
+    }
+  } catch {
+    // non-fatal: on masque juste la section "les plus aimées"
+  }
 
   const fmt = (d: string) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 
@@ -283,11 +289,11 @@ export default async function AdminPage() {
             )}
           </div>
 
-          {topVillas && topVillas.length > 0 && (
+          {topVillasData && topVillasData.length > 0 && (
             <div className="rounded-lg border border-navy/5 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold text-navy">Villas les plus aimées</h2>
               <div className="space-y-2">
-                {topVillas.map((v: any, i: number) => (
+                {topVillasData.map((v: any, i: number) => (
                   <a key={v.id} href={`/admin/villas/${v.id}`} className="flex items-center gap-3 no-underline hover:bg-navy/[0.02] p-1 rounded">
                     <span className="text-[11px] font-bold text-gold w-5">{i + 1}</span>
                     <Heart size={12} className="text-red-400 shrink-0" />
