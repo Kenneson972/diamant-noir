@@ -105,7 +105,7 @@ export default async function RootLayout({
   return (
       <html
       lang={initialLocale}
-      className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
+      className={`${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
     >
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
