@@ -40,13 +40,13 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     {
       id: "image",
       header: "",
-      minWidth: 300,
-      width: 400,
+      width: "2fr",
+      minWidth: 280,
       cell: (item) => (
         <VillaThumb
           src={item.image_url ?? item.image_urls?.[0]}
           alt={item.name}
-          size={200}
+          size={180}
         />
       ),
     },
@@ -57,8 +57,6 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       isRowHeader: true,
       allowsSorting: true,
       pinned: "start",
-      minWidth: 120,
-      width: 200,
       cell: (item) => <span className="font-medium text-navy">{item.name}</span>,
     },
     {
@@ -66,7 +64,6 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       header: "Localisation",
       accessorKey: "location",
       allowsSorting: true,
-      width: 140,
       cell: (item) => <span className="text-muted">{item.location ?? "—"}</span>,
     },
     {
@@ -74,7 +71,6 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       header: "Prix",
       accessorKey: "price_per_night",
       allowsSorting: true,
-      width: 100,
       cell: (item) => (
         <KayvilaNumberValue
           value={item.price_per_night}
@@ -86,14 +82,13 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     },
     {
       id: "capacity",
-      header: "Capacité",
+      header: "Cap.",
       accessorKey: "capacity",
       allowsSorting: true,
       align: "center",
-      width: 90,
       cell: (item) => (
         <span className="text-muted">
-          {item.capacity != null ? `${item.capacity} pers.` : "—"}
+          {item.capacity != null ? `${item.capacity}` : "—"}
         </span>
       ),
     },
@@ -101,7 +96,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       id: "collection_tier",
       header: "Tier",
       accessorKey: "collection_tier",
-      width: 80,
+      width: 70,
       cell: (item) =>
         item.collection_tier ? (
           <span className="text-sm font-medium text-gold">{item.collection_tier}</span>
@@ -111,7 +106,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     },
     {
       id: "owner_name",
-      header: "Propriétaire",
+      header: "Proprio",
       cell: (item) =>
         item.owner_name ? (
           <Link
@@ -126,10 +121,11 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     },
     {
       id: "is_published",
-      header: "Publiée",
+      header: "Pub.",
       accessorKey: "is_published",
       allowsSorting: true,
       align: "center",
+      width: 70,
       cell: (item) => (
         <span
           className={cn(
@@ -147,6 +143,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       accessorKey: "bookingCount",
       allowsSorting: true,
       align: "center",
+      width: 60,
       cell: (item) => (
         <button
           type="button"
@@ -162,6 +159,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       header: "Revenus",
       accessorKey: "confirmedRevenue",
       allowsSorting: true,
+      width: 100,
       cell: (item) => (
         <span className="font-medium text-navy">{formatRevenue(item.confirmedRevenue)}</span>
       ),
@@ -170,7 +168,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       id: "actions",
       header: "Actions",
       pinned: "end",
-      minWidth: 200,
+      width: 220,
       cell: (item) => (
         <div className="flex items-center gap-3">
           <Link href={`/admin/villas/${item.id}`} className="text-sm font-medium text-gold hover:text-gold/80">
