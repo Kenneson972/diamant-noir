@@ -44,7 +44,7 @@ export default async function AdminPage() {
     supabase.from("villas").select("owner_id"),
     supabase.from("bookings").select("guest_email"),
     supabase.from("requests").select("id, type, status, created_at, bookings(guest_name)").order("created_at", { ascending: false }).limit(5),
-    supabase.from("reviews").select("id, rating, created_at, villas(name), bookings(guest_name)").order("created_at", { ascending: false }).limit(5),
+    supabase.from("reviews").select("id, rating, guest_name, created_at, villas(name)").order("created_at", { ascending: false }).limit(5),
     supabase.from("bookings").select(`id, guest_name, villa_id, start_date, status, ${BOOKING_VILLA_EMBED}`).order("created_at", { ascending: false }).limit(5),
     supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("reviews").select("*", { count: "exact", head: true }).eq("status", "pending"),
@@ -254,7 +254,7 @@ export default async function AdminPage() {
               <div key={`rev-${r.id}`} className="flex items-center gap-3 text-sm">
                 <Star size={14} className="text-gold shrink-0" />
                 <span className="flex-1 text-navy/70">
-                  <strong>{r.bookings?.guest_name ?? "Voyageur"}</strong> — {r.rating}/5 sur {r.villas?.name ?? "Villa"}
+                  <strong>{r.guest_name ?? "Voyageur"}</strong> — {r.rating}/5 sur {r.villas?.name ?? "Villa"}
                 </span>
                 <span className="text-[11px] text-navy/30">{fmt(r.created_at)}</span>
               </div>
