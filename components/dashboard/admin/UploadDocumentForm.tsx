@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Upload, Loader2, X } from "lucide-react";
 
 type Owner = { id: string; name: string };
@@ -14,11 +15,10 @@ const TAGS = [
 
 export function UploadDocumentForm({
   owners,
-  onUploaded,
 }: {
   owners: Owner[];
-  onUploaded: () => void;
 }) {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [ownerId, setOwnerId] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -58,7 +58,7 @@ export function UploadDocumentForm({
     setTags([]);
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
-    onUploaded();
+    router.refresh();
   };
 
   return (

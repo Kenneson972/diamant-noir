@@ -94,9 +94,6 @@ export default async function AdminDocumentsPage() {
             id: o.id,
             name: o.full_name ?? o.id,
           }))}
-          onUploaded={() => {
-            // Revalidation handled by Next.js dynamic rendering
-          }}
         />
       </div>
 
