@@ -64,6 +64,7 @@ export function HeroBackgroundMedia() {
         muted
         loop
         playsInline
+        preload="auto"
         poster="/villa-hero.jpg"
         onLoadedData={() => setVideoReady(true)}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
