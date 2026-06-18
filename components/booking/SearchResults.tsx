@@ -121,7 +121,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
       </div>
 
       {/* Résultat count */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" aria-live="polite" aria-atomic="false">
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-navy/55">
           {filteredAndSorted.length} villa{filteredAndSorted.length !== 1 ? "s" : ""}
           {checkin && checkout ? (

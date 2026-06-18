@@ -6,6 +6,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { formatPrice } from "@/lib/i18n";
 import type { VillaMapItem } from "./VillaLeafletMap";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface Props {
   villa: VillaMapItem | null;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function VillaQuickView({ villa, open, onClose }: Props) {
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const trapRef = useFocusTrap(open);
 
   if (!villa) return null;
 
@@ -34,6 +36,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
 
       {/* Drawer */}
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Aperçu rapide — ${villa.name}`}

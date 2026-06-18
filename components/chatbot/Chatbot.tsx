@@ -337,7 +337,7 @@ export const Chatbot = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-offwhite">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-offwhite" aria-live="polite" aria-atomic="false">
             {messages.map((message, index) => (
               <div
                 key={index}

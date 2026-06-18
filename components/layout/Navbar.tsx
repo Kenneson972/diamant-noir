@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { Menu, X, Phone, Mail, User, Sparkles } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -62,6 +63,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   }, [supabase]);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const drawerTrapRef = useFocusTrap<HTMLElement>(menuOpen);
 
   // Scroll lock quand le drawer est ouvert
   useEffect(() => {
@@ -181,6 +183,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
       {/* Panneau latéral — même pattern mobile & desktop */}
       <aside
+        ref={drawerTrapRef}
         id="site-nav-drawer"
         role="dialog"
         aria-modal="true"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type BookingBottomSheetProps = {
   trigger: ReactNode;
@@ -16,6 +17,7 @@ export const BookingBottomSheet = ({
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const trapRef = useFocusTrap(open);
 
   // Empêcher le scroll du body quand ouvert
   useEffect(() => {
@@ -62,6 +64,7 @@ export const BookingBottomSheet = ({
       {/* Overlay + sheet */}
       {open && (
         <div
+          ref={trapRef}
           className="fixed inset-0 z-50 motion-safe:animate-blur-fade"
           role="presentation"
         >
