@@ -20,23 +20,28 @@ export default async function AdminDocumentsPage() {
     const [docsResult, ownersResult] = await Promise.all([
       supabase
         .from("documents")
-        .select("id, name, file_url, tags, file_size, created_at, owner_id, profiles!documents_owner_id_fkey(full_name)")
+        .select("id, name, file_url, tags, file_size, created_at, owner_id")
         .order("created_at", { ascending: false }),
       supabase
         .from("profiles")
         .select("id, full_name")
-        .eq("role", "owner")
         .order("full_name"),
     ]);
 
     documents = docsResult.data ?? [];
     owners = ownersResult.data ?? [];
 
-    if (docsResult.error && !docsResult.data) {
+    if (docsResult.error) {
       error = `Erreur chargement documents: ${docsResult.error.message}`;
     }
   } catch (e) {
     error = e instanceof Error ? e.message : "Erreur inconnue";
+  }
+
+  // Build owner name map (join manuel au lieu de FK Supabase)
+  const ownerNameById: Record<string, string> = {};
+  for (const o of owners as { id: string; full_name: string | null }[]) {
+    if (o.full_name) ownerNameById[o.id] = o.full_name;
   }
 
   if (error) {
@@ -57,17 +62,19 @@ export default async function AdminDocumentsPage() {
   }
 
   const mapped: Doc[] = (documents as Record<string, unknown>[]).map(
-    (d: Record<string, unknown>) => ({
-      id: d.id as string,
-      name: d.name as string,
-      file_url: d.file_url as string,
-      tags: (d.tags as string[]) ?? [],
-      file_size: (d.file_size as number) ?? null,
-      created_at: d.created_at as string,
-      owner: (d as Record<string, unknown>).profiles
-        ? { name: ((d as Record<string, unknown>).profiles as Record<string, unknown>).full_name as string }
-        : null,
-    })
+    (d: Record<string, unknown>) => {
+      const docOwnerId = d.owner_id as string | undefined;
+      const ownerName = docOwnerId ? ownerNameById[docOwnerId] : undefined;
+      return {
+        id: d.id as string,
+        name: d.name as string,
+        file_url: d.file_url as string,
+        tags: (d.tags as string[]) ?? [],
+        file_size: (d.file_size as number) ?? null,
+        created_at: d.created_at as string,
+        owner: ownerName ? { name: ownerName } : null,
+      };
+    }
   );
 
   return (
