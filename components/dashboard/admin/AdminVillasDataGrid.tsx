@@ -40,13 +40,13 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     {
       id: "image",
       header: "",
-      width: 160,
+      width: 280,
       cell: (item) => (
         <VillaThumb
           src={item.image_url ?? item.image_urls?.[0]}
           alt={item.name}
-          width={144}
-          height={81}
+          width={260}
+          height={146}
         />
       ),
     },
