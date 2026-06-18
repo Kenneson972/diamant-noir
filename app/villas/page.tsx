@@ -138,8 +138,26 @@ export default async function VillasListingPage({
     console.error("Supabase fetch error (villas):", err);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Villas de luxe en Martinique",
+    "description": "Collection de villas d'exception gérées par Kayvila en Martinique",
+    "url": "https://kayvila.com/villas",
+    "itemListElement": villas.map((v, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": v.name,
+      "url": `https://kayvila.com/villas/${v.id}`,
+    })),
+  };
+
   return (
     <main className="min-h-dvh bg-offwhite">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Hero ── */}
       <PageHero
         eyebrow={tServer(locale, "villas.subtitle")}

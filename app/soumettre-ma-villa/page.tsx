@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "Confier ma villa — Kayvila Conciergerie",
   description:
     "Confiez votre villa à Kayvila. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 48 h.",
+  alternates: { canonical: "https://kayvila.com/soumettre-ma-villa" },
+  openGraph: {
+    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Confier ma villa à Kayvila" }],
+  },
 };
 
 export default async function SoumettreMaVillaPage() {

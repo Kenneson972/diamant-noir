@@ -82,12 +82,35 @@ async function fetchVillas(): Promise<{
   }
 }
 
+const LOCAL_BUSINESS_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Kayvila",
+  "description": "Conciergerie de villas de luxe en Martinique",
+  "url": "https://kayvila.com",
+  "telephone": "+596 596 00 00 00",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Martinique",
+    "addressCountry": "MQ",
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 14.6415,
+    "longitude": -61.0242,
+  },
+};
+
 export default async function HomePage() {
   const { villas: featuredVillas, error: featuredError, count: featuredCount } =
     await fetchVillas();
 
   return (
     <main className="min-h-dvh bg-offwhite">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCAL_BUSINESS_JSONLD) }}
+      />
       {/* ① Hero */}
       <section
         className="relative flex min-h-[50dvh] w-full flex-col justify-center bg-navy pt-24 md:min-h-[60dvh] md:py-12 md:pt-24 lg:min-h-[min(65vh,560px)]"

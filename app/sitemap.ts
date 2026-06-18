@@ -12,6 +12,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/qui-sommes-nous`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
     { url: `${BASE}/contact`, lastModified: new Date(), priority: 0.5, changeFrequency: "monthly" },
     { url: `${BASE}/faq`, lastModified: new Date(), priority: 0.5, changeFrequency: "monthly" },
+    { url: `${BASE}/villas/comparer`, lastModified: new Date(), priority: 0.5, changeFrequency: "monthly" },
+    { url: `${BASE}/prestations/services/marketing`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
+    { url: `${BASE}/prestations/services/operations`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
+    { url: `${BASE}/prestations/services/voyageurs`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
+    { url: `${BASE}/prestations/services/menage`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
+    { url: `${BASE}/prestations/services/finance`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
   ];
 
   // Pages villas dynamiques — dégradation gracieuse si Supabase est indisponible

@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
       title: `${data.name} — Kayvila`,
       description: (data.description || "").slice(0, 160),
+      alternates: { canonical: `https://kayvila.com/villas/${id}` },
       openGraph: image && baseUrl
         ? { images: [{ url: image.startsWith("http") ? image : `${baseUrl}${image}` }] }
         : undefined,

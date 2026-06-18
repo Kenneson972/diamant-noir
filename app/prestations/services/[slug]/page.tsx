@@ -61,6 +61,7 @@ export async function generateMetadata({
   return {
     title: `${d.title} | Prestations — Kayvila`,
     description: d.metaDescription,
+    alternates: { canonical: `https://kayvila.com/prestations/services/${slug}` },
     openGraph: {
       title: `${d.title} | Kayvila`,
       description: d.metaDescription,

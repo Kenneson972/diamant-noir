@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mise à jour du mot de passe — Kayvila",
-  description: "Définissez un nouveau mot de passe pour votre compte Kayvila.",
+  title: "Réservation confirmée — Kayvila",
+  description: "Votre réservation a été confirmée. Merci pour votre confiance.",
   robots: { index: false, follow: false },
 };
 
-export default function UpdatePasswordLayout({
+export default function SuccessLayout({
   children,
 }: {
   children: React.ReactNode;
