@@ -28,6 +28,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center font-medium transition-all duration-300",
           "focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+          "hover:scale-[1.02] active:scale-[0.98]",
           variants[variant],
           sizes[size],
           className

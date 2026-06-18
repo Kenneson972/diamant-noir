@@ -635,3 +635,18 @@ body { font-size: 16px; line-height: 1.6; }
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/* View Transitions API — navigation fluide entre pages */
+@supports (view-transition-name: root) {
+  ::view-transition-old(root) {
+    animation: 180ms ease-out both fade-out;
+  }
+  ::view-transition-new(root) {
+    animation: 220ms ease-in both animate-fade-in;
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+}
