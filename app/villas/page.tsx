@@ -2,6 +2,8 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import VillasMapView from "@/components/VillasMapView";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 import { PageHero } from "@/components/marketing/PageHero";
+import { cookies } from "next/headers";
+import { tServer } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -81,6 +83,8 @@ export default async function VillasListingPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
   const sp = await searchParams;
   const qCheckin = typeof sp.checkin === "string" ? sp.checkin : "";
   const qCheckout = typeof sp.checkout === "string" ? sp.checkout : "";
@@ -138,8 +142,8 @@ export default async function VillasListingPage({
     <main className="min-h-dvh bg-offwhite">
       {/* ── Hero ── */}
       <PageHero
-        eyebrow="La Sélection"
-        title="Nos Villas de Légende"
+        eyebrow={tServer(locale, "villas.subtitle")}
+        title={tServer(locale, "villas.title")}
         subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune avec son âme, sa vue, son histoire.`}
       >
         <div className="flex items-end justify-center gap-3">

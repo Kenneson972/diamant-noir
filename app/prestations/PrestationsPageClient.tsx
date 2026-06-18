@@ -15,6 +15,7 @@
 
 import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import Link from "next/link";
 import Image from "next/image";
@@ -112,6 +113,7 @@ function reducedMotionClientSnapshot() {
 
 export default function PrestationsPageClient() {
   const router = useRouter();
+  const { t } = useLocale();
 
   // ── Refs ────────────────────────────────────────────────────────────────
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -451,7 +453,7 @@ export default function PrestationsPageClient() {
                     letterSpacing: "0.26em",
                   }}
                 >
-                  Nos Prestations
+                  {t("prestations.title")}
                 </h1>
 
                 <p className="animate-in fade-in slide-in-from-bottom-1 mt-4 m-0 font-display font-normal text-[10px] uppercase tracking-[0.3em] text-white/60 delay-75 duration-700 md:tracking-[0.35em]">
@@ -538,7 +540,7 @@ export default function PrestationsPageClient() {
                     letterSpacing: "0.2em",
                   }}
                 >
-                  Nos Prestations
+                  {t("prestations.title")}
                 </h1>
                 <p className="mt-4 max-w-md font-display text-[10px] uppercase tracking-[0.28em] text-white/65">
                   Gestion complète · Clé en main · Équipe locale

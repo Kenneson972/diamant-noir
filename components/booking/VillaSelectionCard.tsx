@@ -101,7 +101,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
                 par nuit
               </p>
               {totalPrice && (
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold">
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#B8860B]">
                   {formatPrice(totalPrice)} · {dateRange?.nights} nuit{(dateRange?.nights ?? 0) > 1 ? "s" : ""}
                 </p>
               )}
@@ -115,7 +115,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/60">
                 {dateRange.fmtCheckin} → {dateRange.fmtCheckout}
               </span>
-              <span className="ml-auto text-[10px] font-bold uppercase tracking-[0.15em] text-gold">
+              <span className="ml-auto text-[10px] font-bold uppercase tracking-[0.15em] text-[#B8860B]">
                 {dateRange.nights} nuit{dateRange.nights > 1 ? "s" : ""}
               </span>
             </div>

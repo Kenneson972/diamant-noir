@@ -247,6 +247,19 @@ const translations: Record<Locale, Record<string, string>> = {
     "services.maintenance": "Entretien",
     "services.concierge": "Conciergerie",
     "services.from_price": "À partir de",
+
+    // ── Qui sommes-nous ──────────────────────────────────────
+    "about.title": "Notre mission",
+    "about.subtitle": "La conciergerie de villa de luxe en Martinique",
+    "about.intro": "Kayvila accompagne les propriétaires de villas d'exception dans la mise en valeur et la gestion sereine de leur patrimoine.",
+    "about.adn_title": "Notre ADN",
+    "about.cta_villas": "Découvrir nos villas",
+    "about.cta_submit": "Confier ma villa",
+
+    // ── Page Prestations ─────────────────────────────────────
+    "prestations.title": "Nos prestations",
+    "prestations.subtitle": "Des services pensés pour les propriétaires exigeants",
+    "prestations.discover": "Découvrir",
   },
 
   en: {
@@ -472,6 +485,19 @@ const translations: Record<Locale, Record<string, string>> = {
     "services.maintenance": "Maintenance",
     "services.concierge": "Concierge",
     "services.from_price": "From",
+
+    // ── Qui sommes-nous ──────────────────────────────────────
+    "about.title": "Our mission",
+    "about.subtitle": "The luxury villa concierge in Martinique",
+    "about.intro": "Kayvila supports exceptional villa owners in showcasing and serenely managing their property.",
+    "about.adn_title": "Our DNA",
+    "about.cta_villas": "Discover our villas",
+    "about.cta_submit": "Entrust my villa",
+
+    // ── Page Prestations ─────────────────────────────────────
+    "prestations.title": "Our services",
+    "prestations.subtitle": "Services designed for discerning owners",
+    "prestations.discover": "Discover",
   },
 
   es: {
@@ -680,6 +706,19 @@ const translations: Record<Locale, Record<string, string>> = {
     "services.maintenance": "Mantenimiento",
     "services.concierge": "Conserjería",
     "services.from_price": "Desde",
+
+    // ── Qui sommes-nous ──────────────────────────────────────
+    "about.title": "Nuestra misión",
+    "about.subtitle": "La conserjería de villas de lujo en Martinica",
+    "about.intro": "Kayvila acompaña a los propietarios de villas excepcionales en la valorización y gestión serena de su patrimonio.",
+    "about.adn_title": "Nuestro ADN",
+    "about.cta_villas": "Descubrir nuestras villas",
+    "about.cta_submit": "Confiar mi villa",
+
+    // ── Page Prestations ─────────────────────────────────────
+    "prestations.title": "Nuestros servicios",
+    "prestations.subtitle": "Servicios diseñados para propietarios exigentes",
+    "prestations.discover": "Descubrir",
   },
 };
 

@@ -152,7 +152,7 @@ export function BookingSearchBar({
                 {formatDate(checkout) ?? "Choisir une date"}
               </p>
               {nightCount !== null && nightCount > 0 && (
-                <p className="text-[10px] text-gold font-semibold">{nightCount} nuit{nightCount > 1 ? "s" : ""}</p>
+                <p className="text-[10px] text-[#B8860B] font-semibold">{nightCount} nuit{nightCount > 1 ? "s" : ""}</p>
               )}
             </div>
           </div>

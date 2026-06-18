@@ -8,6 +8,7 @@ import {
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
 import { PageHero } from "@/components/marketing/PageHero";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const faqItems = [
   {
@@ -29,6 +30,7 @@ const faqItems = [
 ];
 
 export default function ContactPage() {
+  const { t } = useLocale();
   const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -63,8 +65,8 @@ export default function ContactPage() {
     <LandingShell>
       <PageHero
         eyebrow="Échange & support"
-        title="Contact"
-        subtitle="Une question, une demande spéciale ? Notre équipe et le chatbot Kayvila sont à votre écoute."
+        title={t("contact.title")}
+        subtitle={t("contact.subtitle")}
       />
 
       <LandingSection bg="white">

@@ -219,7 +219,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                   </div>
                   <Link
                     href={editHref}
-                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold no-underline hover:text-navy"
+                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8860B] no-underline hover:text-navy"
                   >
                     Modifier
                   </Link>
@@ -239,7 +239,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                   </div>
                   <Link
                     href={editHref}
-                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold no-underline hover:text-navy"
+                    className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8860B] no-underline hover:text-navy"
                   >
                     Modifier
                   </Link>
@@ -327,7 +327,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                   </ul>
                   <p className="text-xs text-navy/45">
                     Détail complet dans nos{" "}
-                    <Link href="/cgv" className="text-gold underline-offset-2 hover:underline">
+                    <Link href="/cgv" className="text-[#B8860B] underline-offset-2 hover:underline">
                       conditions générales
                     </Link>
                     .
@@ -354,17 +354,17 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
               <h2 className="font-display text-xl text-navy">Paiement sécurisé</h2>
               <p className="text-sm text-navy/55">
                 En confirmant, vous acceptez les{" "}
-                <Link href="/terms" className="text-gold underline-offset-2 hover:underline">
+                <Link href="/terms" className="text-[#B8860B] underline-offset-2 hover:underline">
                   conditions du séjour
                 </Link>
                 , nos{" "}
-                <Link href="/cgv" className="text-gold underline-offset-2 hover:underline">
+                <Link href="/cgv" className="text-[#B8860B] underline-offset-2 hover:underline">
                   CGV
                 </Link>{" "}
                 et notre{" "}
                 <Link
                   href="/confidentialite"
-                  className="text-gold underline-offset-2 hover:underline"
+                  className="text-[#B8860B] underline-offset-2 hover:underline"
                 >
                   politique de confidentialité
                 </Link>
@@ -426,7 +426,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
         </div>
         <p className="px-4 pb-3 text-[10px] leading-relaxed text-navy/45">
           En confirmant, vous acceptez nos{" "}
-          <Link href="/cgv" className="text-gold">
+          <Link href="/cgv" className="text-[#B8860B]">
             CGV
           </Link>
           .

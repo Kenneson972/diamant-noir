@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { LandingShell, LandingSection, LandingBlockTitle } from "@/components/marketing/landing-sections";
 import { CONCIERGERIE_FAQ } from "@/data/conciergerie-faq";
 import { PageHero } from "@/components/marketing/PageHero";
+import { tServer } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "FAQ | Conciergerie Kayvila — Martinique",
@@ -12,13 +14,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faq" },
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
+
   return (
     <LandingShell>
       <PageHero
         eyebrow="FAQ"
-        title="Questions fréquentes"
-        subtitle="Tout ce qu'il faut savoir sur notre conciergerie — commission, services, reversements et bien plus."
+        title={tServer(locale, "faq.title")}
+        subtitle={tServer(locale, "faq.subtitle")}
       />
 
       {/* FAQ */}

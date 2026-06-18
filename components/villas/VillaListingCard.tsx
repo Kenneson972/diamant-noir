@@ -96,7 +96,7 @@ function PreviewBody({
       {villa.amenities.length > 0 ? (
         <p className="mt-2 line-clamp-2 text-sm text-navy/70">{villa.amenities.slice(0, 4).join(" · ")}</p>
       ) : null}
-      <p className="mt-3 font-sora text-sm font-semibold text-gold">
+      <p className="mt-3 font-sora text-sm font-semibold text-[#B8860B]">
         {formatPrice(villa.price)}
         <span className="font-normal text-muted"> / nuit</span>
       </p>

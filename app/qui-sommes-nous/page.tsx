@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ArrowRight, Compass, Gem, Heart, MapPin, Shield, Sparkles } from "lucide-react";
 import {
   LandingShell,
@@ -13,6 +14,7 @@ import {
 } from "@/components/marketing/editorial-blocks";
 import { PageHero } from "@/components/marketing/PageHero";
 import { ScrollReveal } from "@/components/marketing/ScrollRevealWrapper";
+import { tServer } from "@/lib/i18n";
 
 export const metadata = {
   title: "Qui sommes-nous",
@@ -30,13 +32,16 @@ const ADN = [
   { icon: Heart, label: "Confiance & relation" },
 ] as const;
 
-export default function QuiSommesNousPage() {
+export default async function QuiSommesNousPage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
+
   return (
     <LandingShell>
       <PageHero
         eyebrow="Martinique — collection privée"
-        title="Kayvila"
-        subtitle="Une conciergerie de luxe née du désir de révéler les plus belles adresses de l'île — avec la même rigueur qu'une maison de voyage internationale."
+        title={tServer(locale, "about.title")}
+        subtitle={tServer(locale, "about.subtitle")}
         imageSrc="/villa-hero.jpg"
         imageOpacity={0.5}
       />
