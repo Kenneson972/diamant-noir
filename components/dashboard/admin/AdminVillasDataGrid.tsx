@@ -40,12 +40,13 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     {
       id: "image",
       header: "",
-      width: 260,
+      minWidth: 300,
+      width: 400,
       cell: (item) => (
         <VillaThumb
           src={item.image_url ?? item.image_urls?.[0]}
           alt={item.name}
-          size={130}
+          size={200}
         />
       ),
     },
@@ -56,7 +57,8 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       isRowHeader: true,
       allowsSorting: true,
       pinned: "start",
-      minWidth: 160,
+      minWidth: 120,
+      width: 200,
       cell: (item) => <span className="font-medium text-navy">{item.name}</span>,
     },
     {
@@ -64,13 +66,15 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       header: "Localisation",
       accessorKey: "location",
       allowsSorting: true,
+      width: 140,
       cell: (item) => <span className="text-muted">{item.location ?? "—"}</span>,
     },
     {
       id: "price_per_night",
-      header: "Prix / nuit",
+      header: "Prix",
       accessorKey: "price_per_night",
       allowsSorting: true,
+      width: 100,
       cell: (item) => (
         <KayvilaNumberValue
           value={item.price_per_night}
@@ -86,6 +90,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       accessorKey: "capacity",
       allowsSorting: true,
       align: "center",
+      width: 90,
       cell: (item) => (
         <span className="text-muted">
           {item.capacity != null ? `${item.capacity} pers.` : "—"}
@@ -96,6 +101,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       id: "collection_tier",
       header: "Tier",
       accessorKey: "collection_tier",
+      width: 80,
       cell: (item) =>
         item.collection_tier ? (
           <span className="text-sm font-medium text-gold">{item.collection_tier}</span>
@@ -199,7 +205,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
         columns={columns}
         data={rows}
         getRowId={(item) => item.id}
-        rowHeight={146}
+        rowHeight={216}
       />
       {drawerVilla ? (
         <VillaPastBookingsDrawer
