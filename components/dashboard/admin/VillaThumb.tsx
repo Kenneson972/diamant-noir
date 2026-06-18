@@ -5,14 +5,17 @@ import { Building2 } from "lucide-react";
 export function VillaThumb({
   src,
   alt,
+  size = 60,
 }: {
   src?: string | null;
   alt: string;
+  size?: number;
 }) {
   if (!src) {
     return (
       <div
-        className="flex aspect-[16/9] w-full items-center justify-center rounded-md border border-navy/10 bg-offwhite text-navy/30"
+        className="flex items-center justify-center rounded-md border border-navy/10 bg-offwhite text-navy/30"
+        style={{ width: size, height: size }}
         aria-hidden
       >
         <Building2 className="h-5 w-5" />
@@ -20,14 +23,13 @@ export function VillaThumb({
     );
   }
   return (
-    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md border border-navy/10">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        sizes="300px"
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      width={size}
+      height={size}
+      className="rounded-md border border-navy/10 object-cover"
+      style={{ width: size, height: size }}
+    />
   );
 }

@@ -40,11 +40,12 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
     {
       id: "image",
       header: "",
-      width: 300,
+      width: 260,
       cell: (item) => (
         <VillaThumb
           src={item.image_url ?? item.image_urls?.[0]}
           alt={item.name}
+          size={130}
         />
       ),
     },
@@ -198,6 +199,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
         columns={columns}
         data={rows}
         getRowId={(item) => item.id}
+        rowHeight={146}
       />
       {drawerVilla ? (
         <VillaPastBookingsDrawer
