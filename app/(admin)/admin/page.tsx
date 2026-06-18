@@ -19,6 +19,7 @@ export default async function AdminPage() {
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split("T")[0];
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
+  try {
   const [
     { count: villaCount },
     { count: bookingCount },
@@ -301,4 +302,19 @@ export default async function AdminPage() {
       </div>
     </div>
   );
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Erreur inconnue";
+    return (
+      <div className="space-y-8">
+        <AdminPageIntro
+          title="Tableau de bord"
+          description="Vue d'ensemble de l'activité Kayvila : villas, réservations et acteurs."
+        />
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-xl border border-red-200 bg-red-50 px-6 py-12">
+          <p className="text-sm font-semibold text-red-700">Une erreur est survenue</p>
+          <p className="text-xs text-red-500 max-w-md text-center">{msg}</p>
+        </div>
+      </div>
+    );
+  }
 }

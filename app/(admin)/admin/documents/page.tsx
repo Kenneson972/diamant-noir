@@ -12,17 +12,49 @@ export const dynamic = "force-dynamic";
 export default async function AdminDocumentsPage() {
   const supabase = supabaseAdmin();
 
-  const [{ data: documents }, { data: owners }] = await Promise.all([
-    supabase
-      .from("documents")
-      .select("id, name, file_url, tags, file_size, created_at, owner_id, profiles!documents_owner_id_fkey(full_name)")
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("profiles")
-      .select("id, full_name")
-      .eq("role", "owner")
-      .order("full_name"),
-  ]);
+  let documents: unknown[] = [];
+  let owners: unknown[] = [];
+  let error: string | null = null;
+
+  try {
+    const [docsResult, ownersResult] = await Promise.all([
+      supabase
+        .from("documents")
+        .select("id, name, file_url, tags, file_size, created_at, owner_id, profiles!documents_owner_id_fkey(full_name)")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("profiles")
+        .select("id, full_name")
+        .eq("role", "owner")
+        .order("full_name"),
+    ]);
+
+    documents = docsResult.data ?? [];
+    owners = ownersResult.data ?? [];
+
+    if (docsResult.error && !docsResult.data) {
+      error = `Erreur chargement documents: ${docsResult.error.message}`;
+    }
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Erreur inconnue";
+  }
+
+  if (error) {
+    return (
+      <div>
+        <div className="mb-6">
+          <h1 className="font-display text-xl text-navy">Documents</h1>
+          <p className="mt-1 text-[11px] text-navy/50">
+            Gérez les documents partagés avec les propriétaires
+          </p>
+        </div>
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-xl border border-red-200 bg-red-50 px-6 py-12">
+          <p className="text-sm font-semibold text-red-700">Une erreur est survenue</p>
+          <p className="text-xs text-red-500 max-w-md text-center">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   const mapped: Doc[] = (documents ?? []).map(
     (d: Record<string, unknown>) => ({
