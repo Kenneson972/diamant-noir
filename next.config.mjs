@@ -10,6 +10,8 @@ const nextConfig = {
   transpilePackages: ["@heroui-pro/react", "heroui-native-pro"],
   // Compression gzip/brotli pour toutes les réponses
   compress: true,
+  // Désactiver les sourcemaps en production (réduit le bundle JS)
+  productionBrowserSourceMaps: false,
   webpack: (config, { dev }) => {
     if (dev) {
       // Réduire le nombre d'watchers en ignorant node_modules

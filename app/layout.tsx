@@ -110,6 +110,14 @@ export default async function RootLayout({
     >
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        {/* Preload LCP hero poster — évite une cascade de requêtes */}
+        <link rel="preload" as="image" href="/villa-hero.jpg" fetchPriority="high" />
+        {/* Preconnect aux origines critiques */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+        ) : null}
       </head>
       <body className="bg-offwhite font-sans">
         {/* Grain overlay — texture subtile luxe */}
