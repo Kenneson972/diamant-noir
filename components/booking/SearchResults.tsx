@@ -38,7 +38,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
     // Sort
     if (sort === "price_asc") result.sort((a, b) => a.price - b.price);
     else if (sort === "price_desc") result.sort((a, b) => b.price - a.price);
-    else if (sort === "rating") result.sort((a, b) => (b.rating ?? 4.9) - (a.rating ?? 4.9));
+    else if (sort === "rating") result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
     return result;
   }, [initialVillas, guestFilter, sort, guests]);
@@ -193,10 +193,12 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy line-clamp-1">
                       {villa.name}
                     </h3>
-                    <div className="flex shrink-0 items-center gap-1 text-xs text-navy">
-                      <Star size={12} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
-                      <span className="font-medium tabular-nums">{(villa.rating || 4.9).toFixed(1)}</span>
-                    </div>
+                    {villa.rating != null ? (
+                      <div className="flex shrink-0 items-center gap-1 text-xs text-navy">
+                        <Star size={12} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
+                        <span className="font-medium tabular-nums">{villa.rating.toFixed(1)}</span>
+                      </div>
+                    ) : null}
                   </div>
                   <p className="text-sm text-navy/45">{villa.location || "Martinique"}</p>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/50">

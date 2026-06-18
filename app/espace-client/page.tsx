@@ -13,7 +13,6 @@ import { UpcomingStayHero } from "@/components/espace-client/UpcomingStayHero";
 import { TenantQuickLinks } from "@/components/espace-client/TenantQuickLinks";
 import { TenantShareBar } from "@/components/espace-client/TenantShareBar";
 import { RequestList } from "@/components/espace-client/RequestList";
-import { ReviewForm } from "@/components/espace-client/ReviewForm";
 import { LocalGuide } from "@/components/espace-client/LocalGuide";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
@@ -46,7 +45,6 @@ export default function EspaceClientPage() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string | undefined>(undefined);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
   const [similarVillas, setSimilarVillas] = useState<any[]>([]);
   useEffect(() => {
     if (!supabase) {
@@ -101,14 +99,6 @@ export default function EspaceClientPage() {
         setSimilarVillas((similar ?? []) as any[]);
       }
       setLoading(false);
-      // Fetch already-reviewed bookings
-      const { data: existingReviews } = await supabase
-        .from("reviews")
-        .select("booking_id")
-        .eq("guest_id", session.user.id);
-      if (existingReviews) {
-        setReviewedBookingIds(new Set(existingReviews.map((r: any) => r.booking_id)));
-      }
     })();
   }, [supabase]);
 
@@ -276,7 +266,6 @@ export default function EspaceClientPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             {otherBookings.map((booking) => {
               const isPast = new Date(booking.end_date) < new Date();
-              const hasReviewed = reviewedBookingIds.has(booking.id);
               return (
                 <div key={booking.id} className="space-y-3">
                   <BookingCard booking={booking} />
@@ -290,13 +279,6 @@ export default function EspaceClientPage() {
                         Re-réserver
                       </Link>
                     </div>
-                  )}
-                  {isPast && !hasReviewed && (
-                    <ReviewForm
-                      bookingId={booking.id}
-                      villaId={booking.villa_id}
-                      onSuccess={() => setReviewedBookingIds((prev) => new Set([...prev, booking.id]))}
-                    />
                   )}
                 </div>
               );

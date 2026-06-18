@@ -1,11 +1,9 @@
-import { Percent, Moon, Star, MessageSquare } from "lucide-react";
+import { Percent, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PerformanceMetricsProps {
   occupancyRate: number;
   totalNights: number;
-  avgRating: number;
-  totalReviews: number;
   className?: string;
 }
 
@@ -19,16 +17,6 @@ const metrics = [
     icon: Moon,
     label: "Nuits réservées",
     getValue: (p: PerformanceMetricsProps) => p.totalNights,
-  },
-  {
-    icon: Star,
-    label: "Note moyenne",
-    getValue: (p: PerformanceMetricsProps) => `${p.avgRating} / 5`,
-  },
-  {
-    icon: MessageSquare,
-    label: "Avis",
-    getValue: (p: PerformanceMetricsProps) => p.totalReviews,
   },
 ] as const;
 

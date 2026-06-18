@@ -85,12 +85,16 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
             <div className="space-y-2">
               <h3 className="font-display text-2xl text-navy md:text-3xl">{villa.name}</h3>
               <div className="flex flex-wrap items-center gap-2 text-xs text-navy/50">
-                <Star size={14} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
-                <span className="font-medium text-navy tabular-nums">
-                  {(villa.rating ?? 4.9).toFixed(2)}
-                </span>
-                <span className="text-navy/50">·</span>
-                <span className="uppercase tracking-wider">Avis vérifiés</span>
+                {villa.rating != null ? (
+                  <>
+                    <Star size={14} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
+                    <span className="font-medium text-navy tabular-nums">
+                      {villa.rating.toFixed(2)}
+                    </span>
+                    <span className="text-navy/50">·</span>
+                    <span className="uppercase tracking-wider">Avis vérifiés</span>
+                  </>
+                ) : null}
               </div>
             </div>
             <div className="text-left sm:text-right">

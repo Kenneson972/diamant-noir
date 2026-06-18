@@ -2,14 +2,10 @@
 
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-const STATS = [
-  { value: "12", label: "Villas exclusives" },
-  { value: "4.9", label: "Note moyenne" },
-  { value: "7j/7", label: "Équipe disponible" },
-  { value: "< 2h", label: "Temps de réponse" },
-];
+const STATS: { value: string; label: string }[] = [];
 
 export function HomeTrustBand() {
+  if (STATS.length === 0) return null;
   return (
     <section className="border-y border-navy/[0.06] bg-white py-14 px-6 md:py-20">
       <ScrollReveal delay={100}>

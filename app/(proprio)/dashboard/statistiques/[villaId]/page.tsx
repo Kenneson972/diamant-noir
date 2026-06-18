@@ -269,8 +269,6 @@ export default async function StatistiquesVillaPage({ params }: PageProps) {
       <PerformanceMetrics
         occupancyRate={occupancyRate}
         totalNights={totalNights}
-        avgRating={0}
-        totalReviews={0}
       />
 
       <OccupancyChart

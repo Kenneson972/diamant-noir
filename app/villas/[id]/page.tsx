@@ -533,7 +533,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
             {/* 5. Avis des voyageurs */}
             <VillaReviews villaId={villa.id} villaName={villa.name} />
 
-            {/* 5. Découvrez les chambres */}
+            {/* 6. Découvrez les chambres */}
             {villa.rooms && villa.rooms.length > 0 && (
               <section id="chambres" className="pt-10 border-t border-navy/10">
                 <h2 className="font-display font-normal text-2xl text-navy mb-8">{ts(locale, "villa.rooms")}</h2>
