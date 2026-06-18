@@ -10,13 +10,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminDocumentsPage() {
-  const supabase = supabaseAdmin();
-
   let documents: unknown[] = [];
   let owners: unknown[] = [];
   let error: string | null = null;
 
   try {
+    const supabase = supabaseAdmin();
     const [docsResult, ownersResult] = await Promise.all([
       supabase
         .from("documents")
