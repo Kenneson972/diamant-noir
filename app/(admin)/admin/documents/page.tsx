@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminDocumentsPage() {
-  let documents: Record<string, unknown>[] = [];
-  let owners: { id: string; full_name: string | null }[] = [];
-  let fetchError: string | null = null;
+  const supabase = supabaseAdmin();
+
+  let documents: unknown[] = [];
+  let owners: unknown[] = [];
+  let error: string | null = null;
 
   try {
-    const supabase = supabaseAdmin();
-
     const [docsResult, ownersResult] = await Promise.all([
       supabase
         .from("documents")
@@ -29,28 +29,25 @@ export default async function AdminDocumentsPage() {
     ]);
 
     if (docsResult.error) {
-      fetchError = docsResult.error.message;
+      error = `Erreur documents: ${docsResult.error.message}`;
+    } else if (ownersResult.error) {
+      error = `Erreur profiles: ${ownersResult.error.message}`;
     } else {
-      documents = (docsResult.data as Record<string, unknown>[]) ?? [];
-    }
-
-    if (ownersResult.error) {
-      // profiles error is non-fatal — on continue sans noms
-      console.warn("Profiles fetch error:", ownersResult.error.message);
-    } else {
-      owners = (ownersResult.data as { id: string; full_name: string | null }[]) ?? [];
+      documents = docsResult.data ?? [];
+      owners = ownersResult.data ?? [];
     }
   } catch (e) {
-    fetchError = e instanceof Error ? e.message : "Erreur inconnue";
+    console.error("CRITICAL ERROR IN AdminDocumentsPage:", e);
+    error = e instanceof Error ? e.message : "Erreur inconnue";
   }
 
   // Build owner name map (join manuel au lieu de FK Supabase)
   const ownerNameById: Record<string, string> = {};
-  for (const o of owners) {
+  for (const o of owners as { id: string; full_name: string | null }[]) {
     if (o.full_name) ownerNameById[o.id] = o.full_name;
   }
 
-  if (fetchError) {
+  if (error) {
     return (
       <div>
         <div className="mb-6">
@@ -59,33 +56,29 @@ export default async function AdminDocumentsPage() {
             Gérez les documents partagés avec les propriétaires
           </p>
         </div>
-        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-xl border border-amber-200 bg-amber-50 px-6 py-12">
-          <p className="text-sm font-semibold text-amber-800">Fonctionnalité en cours de déploiement</p>
-          <p className="text-xs text-amber-600 max-w-md text-center">
-            La gestion documentaire sera disponible prochainement.
-          </p>
-          <details className="mt-2 text-[10px] text-amber-400">
-            <summary>Détails techniques</summary>
-            <code className="mt-1 block">{fetchError}</code>
-          </details>
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-xl border border-red-200 bg-red-50 px-6 py-12">
+          <p className="text-sm font-semibold text-red-700">Une erreur est survenue (ADMIN_DOCS_DEBUG)</p>
+          <p className="text-xs text-red-500 max-w-md text-center">{error}</p>
         </div>
       </div>
     );
   }
 
-  const mapped: Doc[] = documents.map((d) => {
-    const docOwnerId = d.owner_id as string | undefined;
-    const ownerName = docOwnerId ? ownerNameById[docOwnerId] : undefined;
-    return {
-      id: d.id as string,
-      name: d.name as string,
-      file_url: d.file_url as string,
-      tags: (d.tags as string[]) ?? [],
-      file_size: (d.file_size as number) ?? null,
-      created_at: d.created_at as string,
-      owner: ownerName ? { name: ownerName } : null,
-    };
-  });
+  const mapped: Doc[] = (documents as Record<string, unknown>[]).map(
+    (d: Record<string, unknown>) => {
+      const docOwnerId = d.owner_id as string | undefined;
+      const ownerName = docOwnerId ? ownerNameById[docOwnerId] : undefined;
+      return {
+        id: d.id as string,
+        name: d.name as string,
+        file_url: d.file_url as string,
+        tags: (d.tags as string[]) ?? [],
+        file_size: (d.file_size as number) ?? null,
+        created_at: d.created_at as string,
+        owner: ownerName ? { name: ownerName } : null,
+      };
+    }
+  );
 
   return (
     <div>
