@@ -56,7 +56,7 @@ export default async function AdminDocumentsPage() {
     );
   }
 
-  const mapped: Doc[] = (documents ?? []).map(
+  const mapped: Doc[] = (documents as Record<string, unknown>[]).map(
     (d: Record<string, unknown>) => ({
       id: d.id as string,
       name: d.name as string,
@@ -81,7 +81,7 @@ export default async function AdminDocumentsPage() {
 
       <div className="mb-8">
         <UploadDocumentForm
-          owners={(owners ?? []).map((o: { id: string; full_name: string | null }) => ({
+          owners={(owners as { id: string; full_name: string | null }[]).map((o) => ({
             id: o.id,
             name: o.full_name ?? o.id,
           }))}
