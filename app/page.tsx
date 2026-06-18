@@ -1,4 +1,3 @@
-import https from "https";
 import type { Metadata } from "next";
 import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
 import { HomeBottomCta } from "@/components/home/HomeBottomCta";
@@ -24,23 +23,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-/** Petit helper pour fetch sans le fetch patched de Next.js */
-function rawFetch(url: string, headers: Record<string, string>): Promise<string> {
-  return new Promise((resolve, reject) => {
-    https.get(url, { headers }, (res) => {
-      let body = "";
-      res.on("data", (chunk: string) => (body += chunk));
-      res.on("end", () => {
-        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(body);
-        } else {
-          reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 200)}`));
-        }
-      });
-    }).on("error", reject);
-  });
-}
-
 async function fetchVillas(): Promise<{
   villas: HomeFeaturedVilla[];
   error: string | null;
@@ -55,12 +37,20 @@ async function fetchVillas(): Promise<{
 
   try {
     const apiUrl = `${url}/rest/v1/villas?select=id,name,price_per_night,location,image_url,image_urls,created_at&order=created_at.desc&limit=9`;
-    const body = await rawFetch(apiUrl, {
-      apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
+    const res = await fetch(apiUrl, {
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${anonKey}`,
+      },
+      next: { revalidate: 3600 },
     });
 
-    const villas = JSON.parse(body);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
+    }
+
+    const villas = await res.json();
     const list = (Array.isArray(villas) ? villas : []).map((v: Record<string, unknown>) => ({
       id: v.id as string,
       name: v.name as string,
@@ -77,7 +67,7 @@ async function fetchVillas(): Promise<{
     return { villas: list, error: null, count: list.length };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("Supabase rawFetch error:", msg);
+    console.error("Supabase fetch error:", msg);
     return { villas: [], error: msg, count: 0 };
   }
 }
