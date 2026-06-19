@@ -10,6 +10,7 @@ import {
 export const metadata = {
   title: "Mentions légales",
   description: "Mentions légales du site Kayvila — éditeur, hébergeur et propriété intellectuelle.",
+  alternates: { canonical: "https://kayvila.com/mentions-legales" },
 };
 
 function MentionsLegalesSimple() {

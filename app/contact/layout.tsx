@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description:
       "Contactez Kayvila pour toute question sur nos villas, la conciergerie de luxe en Martinique.",
   },
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: "https://kayvila.com/contact" },
 };
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

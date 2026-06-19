@@ -36,11 +36,9 @@ export const viewport = {
   viewportFit: "cover" as const,
 };
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  "http://localhost:3000";
+const siteUrl = process.env.NODE_ENV === "development"
+  ? "http://localhost:3000"
+  : "https://kayvila.com";
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();
@@ -65,6 +63,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: ogLocale,
       siteName: "Kayvila",
+      url: "https://kayvila.com",
       title,
       description,
       images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
@@ -76,6 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: ["/og-default.jpg"],
     },
     alternates: {
+      canonical: "https://kayvila.com",
       languages: {
         fr: "/",
         en: "/en",

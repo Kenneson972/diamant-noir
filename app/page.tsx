@@ -19,8 +19,10 @@ export const metadata: Metadata = {
     description:
       "Villas d'exception, réservation en ligne, entretien et gestion locative en Martinique.",
     images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
+    url: "https://kayvila.com",
+    type: "website",
   },
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://kayvila.com" },
 };
 
 async function fetchVillas(): Promise<{

@@ -10,6 +10,7 @@ import {
 export const metadata = {
   title: "Conditions générales de vente",
   description: "Conditions générales de vente Kayvila — réservation, paiement et annulation.",
+  alternates: { canonical: "https://kayvila.com/cgv" },
 };
 
 function CgvSimple() {

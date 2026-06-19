@@ -16,8 +16,10 @@ export const metadata: Metadata = {
     title: "Villas de luxe en Martinique | Kayvila",
     description:
       "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de luxe.",
+    url: "https://kayvila.com/villas",
+    type: "website",
   },
-  alternates: { canonical: "/villas" },
+  alternates: { canonical: "https://kayvila.com/villas" },
 };
 
 // Coordonnées par défaut par zone Martinique (fallback si pas de lat/lng en base)
