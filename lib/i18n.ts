@@ -617,6 +617,24 @@ const translations: Record<Locale, Record<string, string>> = {
 	    "villa.questions": "¿Preguntas sobre {{name}}?",
 	    "villa.cta_ready": "¿Listo para la excelencia?",
 
+    // Checkout
+    "checkout.email_required": "Por favor, ingrese su dirección de email",
+    "checkout.invalid_email": "Dirección de email inválida",
+    "checkout.name_required": "Por favor, ingrese su nombre",
+    "checkout.booking_failed": "La reserva ha fallado",
+    "checkout.confirm": "Confirmar reserva",
+    "checkout.title": "Confirmar y pagar",
+    "checkout.change_selection": "Modificar la selección",
+    "checkout.villa_not_found": "Villa no encontrada",
+    "checkout.return_catalog": "Volver al catálogo",
+    // Booking additional
+    "booking.nights": "{{n}} noches",
+    "booking.cleaning": "Gastos de limpieza",
+    "booking.service_fee": "Comisión de servicio Kayvila",
+    "booking.not_charged": "Aún no se le cobrará",
+    "booking.no_overlap": "Villa disponible en estas fechas",
+    "booking.overlap": "Villa ya reservada en estas fechas",
+
     // ── Réservation / Booking ────────────────────────────────
     "booking.title": "Reserva",
     "booking.checkin": "Llegada",

@@ -386,7 +386,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                 disabled={checkoutLoading}
                 className="max-w-md"
               >
-                {checkoutLoading ? t("common.loading") : "Confirmer et payer"}
+                {checkoutLoading ? t("common.loading") : t("checkout.title")}
               </KayvilaPressableButton>
             </section>
           </div>

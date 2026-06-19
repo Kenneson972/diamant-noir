@@ -61,6 +61,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Support des préfixes de langue /en et /es : vérifier si le chemin sans préfixe est public
+  const langPrefixMatch = pathname.match(/^\/(en|es)(\/.*)?$/);
+  if (langPrefixMatch) {
+    const pathWithoutLang = langPrefixMatch[2] || "/";
+    const isLangPublic = publicPaths.some(
+      (p) => pathWithoutLang === p || pathWithoutLang.startsWith(p + "/")
+    );
+    if (isLangPublic) {
+      const localeCookie = request.cookies.get("dn_locale");
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("x-dn-locale", localeCookie?.value ?? langPrefixMatch[1]);
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }
+  }
+
   const isPublic = publicPaths.some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
