@@ -195,9 +195,10 @@ export async function POST(request: Request) {
     }
 
     // Réponse frontend — filtrée et sûre
-    const clientResponse: ChatbotResponse = {
+    const clientResponse: ChatbotResponse & { response: string } = {
       success: true,
       reply: parsed.reply,
+      response: parsed.reply, // alias rétrocompatibilité Chatbot.tsx
       sessionId,
       intent: parsed.intent,
       stage: parsed.stage,
