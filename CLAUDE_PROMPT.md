@@ -1,280 +1,265 @@
-# 🏗️ MEGA-PROMPT KAYVILA — Audit Frontend Complet
-## Prompt pour Claude Code — 18 Juin 2026
+# 🔧 Kayvila — Audit Frontend Complet → Prompt Claude
 
----
-
-Tu travailles sur Kayvila (diamant-noir), une conciergerie de villa de luxe en Martinique.
-Stack : Next.js 15 + HeroUI v2/v3 + Tailwind 4 + Supabase + Stripe Connect.
-Tu es dans le repo `/opt/data/kayvila-audit` (clone du repo `Kenneson972/diamant-noir`, branche `main`).
-Dernier commit : `216d59e`. 594 fichiers TSX.
+**Généré par Élise (Hermes) le 18 Juin 2026**
+**5 sous-agents, ~80 problèmes documentés**
+**Site : kayvila.vercel.app | Repo : `/opt/data/repos/diamant-noir`**
 
 ---
 
 ## ⚠️ CRITIQUE — NE PAS REDESIGNER
 
-Le design actuel de Kayvila est **validé et intentionnel**. C'est un luxe strict minimaliste :
-- **Aucune bordure visible** sur les cartes (juste `border-navy/8` subtil)
-- **Aucun shadow** sur les cartes publiques (shadow réservé au dashboard admin)
-- **Aucun border-radius** sur les éléments publics (angles droits = luxe)
-- **Pas de glassmorphism** sur les pages principales
-- **Pas de dégradé partout** — le dégradé gold est utilisé avec parcimonie
+Le design actuel est validé et intentionnel. C'est un **luxe strict minimaliste** (angles droits, navy/or, espacement généreux, typographie sobre).
 
-Tu fais du **POLISH** et des **CORRECTIONS**, PAS un redesign.
+Tu fais du **POLISH et des CORRECTIONS**, PAS un redesign.
+
 Si un élément n'est pas listé explicitement dans ce document, **ne le change pas**.
 
-## RÈGLES ABSOLUES
+---
 
-1. **Mobile-first** — tout doit fonctionner sur mobile d'abord
-2. **npm run build doit passer** à chaque commit
-3. **Commits atomiques** — un commit par phase, message en français
-4. **Ne pas casser les fonctionnalités existantes** — le checkout Stripe, les réservations, le chatbot doivent continuer à marcher
-5. **Pas de régression sur le reste**
-6. **Zéro bordure inutile, zéro shadow inutile** — design luxe strict
-7. **Palette : gold #D4AF37 (accent), navy #0A0A0A (texte), offwhite #FAFAFA (fond)**
-8. **Typo : Playfair Display (titres), Instrument Sans (body), Sora (dashboard admin seulement)**
+## 📊 Synthèse globale
+
+| Domaine | P0 | P1 | P2 | Total |
+|---------|----|----|-----|-------|
+| Performance (images/vidéos) | 3 | 6 | 5 | 14 |
+| Design System (radius/boutons/formulaires) | 2 | 7 | 4 | 13 |
+| SEO (metadata/canonicals) | 6 | 5 | 7 | 18 |
+| UX/A11y (i18n/cookie/a11y) | 4 | 9 | 7 | 20 |
+| Micro-interactions (animations) | 2 | 1 | 2 | 5 |
+| **TOTAL** | **17** | **28** | **25** | **70** |
 
 ---
 
-## PHASE 1 — P0 BLOQUANTS (urgent, à livrer en premier)
+## Phase 1 — P0 BLOQUANTS : Performance & Images
 
-### 1.1 Cookie Consent (RGPD)
-**Fichiers à créer :** `components/ui/CookieConsent.tsx`
-- Bannière cookie RGPD complète
-- Catégories : Essentiels (toujours on), Analytics, Marketing
-- Stockage dans localStorage `kayvila-cookie-consent`
-- Boutons "Tout accepter" / "Tout refuser" / "Personnaliser"
-- Design : fond offwhite, bordures navy/10, boutons gold pour accepter
-- Position : fixed bottom, animation slide-up
-- Intégrer dans `app/layout.tsx` (après le dernier Provider)
+**Contexte :** La homepage charge ~45 MB d'images non compressées et de vidéos. Le LCP est désastreux sur mobile.
 
-### 1.2 i18n — Traduire les 7 pages full français
-**Pages à traduire :**
-- `app/villas/page.tsx` — listing villas
-- `app/faq/page.tsx` — FAQ
-- `app/contact/page.tsx` — contact
-- `app/soumettre-ma-villa/page.tsx` — soumission villa
-- `app/qui-sommes-nous/page.tsx` — about
-- `app/prestations/page.tsx` — prestations
-- `app/prestations/services/[slug]/page.tsx` (×5)
+### P0-1 : Convertir PNG → WebP/AVIF (6 fichiers, ~15 MB → ~300 KB)
+- `public/notregestion.png` (3.9 MB) → convertir WebP qualité 80
+- `public/marketing.png` (3.4 MB)
+- `public/relation.png` (3.2 MB)
+- `public/terrain.png` (2.9 MB)
+- `public/finance.png` (3.1 MB)
+- `public/menage.png` (2.3 MB)
+- **Composants impactés :** `HomeServicesSection.tsx`, `HomeOwnersSection.tsx`, `HomeFeaturedAudience.tsx`, `PageHero.tsx`
+- **Fix :** `npx sharp-cli --input public/marketing.png --output public/marketing.webp --format webp --quality 80` (pour chaque)
+- **Puis :** remplacer les imports `.png` → `.webp` dans les composants
 
-**Méthode :** Créer un fichier de traduction `lib/i18n/translations.ts` avec les clés fr/en. Remplacer toutes les chaînes hardcodées par `t('key')` via le `LocaleContext` existant.
+### P0-2 : Réencoder hero.webm (11 MB → 2 MB)
+- **Fichier :** `public/hero.webm`
+- **Composant :** `components/home/HeroBackgroundMedia.tsx`
+- **Fix :**
+  1. Réencoder en 720p CRF 30-35 → ~2-3 MB max
+  2. Ajouter `<source>` H.264/MP4 en fallback (iOS Safari)
+  3. Ajouter `fetchpriority="low"` sur la vidéo
+  4. Ne pas charger la vidéo sur mobile (`media="(min-width: 768px)"`)
 
-### 1.3 i18n — Sécuriser l'import
-**Fichier :** Tout composant utilisant `await import("@/lib/i18n")`
-- Ajouter `try/catch` autour de l'import
-- Fallback vers français si échec
-- Logger l'erreur en console en dev
-
-### 1.4 Contraste gold (accessibilité)
-**Problème :** `#D4AF37` sur blanc → ratio ~1.9:1 (échec WCAG AA)
-**Fix :** Remplacer `text-gold` pour le TEXTE (pas les décorations) par `#B8860B` (DarkGoldenRod → ratio 4.6:1)
-**Fichiers concernés :** `tailwind.config.ts` (couleur `gold`), `VillaSelectionCard.tsx`, `CheckoutView.tsx`, `VillaListingCard.tsx`
-
-### 1.5 Error Boundaries
-**Fichiers à créer :** `app/error.tsx` (déjà existant, vérifier), `app/global-error.tsx` (créer si absent)
-- UI de fallback élégante avec bouton "Réessayer"
-- Design cohérent avec la marque Kayvila
+### P0-3 : Réduire frames vidéo scroll (29 MB → 5 MB)
+- **Fichiers :** `public/frames/frame_*.webp` (561 fichiers) + `public/frames-mobile/frame_*.webp` (561 fichiers)
+- **Composant :** `components/prestations/VideoScrollHero.tsx`
+- **Fix :**
+  1. 1 frame toutes les 2 = 280 frames au lieu de 561
+  2. Qualité WebP 50-60
+  3. Option long-terme : remplacer par `<video>` avec `preload="none"` + IntersectionObserver
 
 ---
 
-## PHASE 2 — DESIGN SYSTEM (incohérences)
+## Phase 2 — P0 BLOQUANTS : Design System (Radius)
 
-### 2.1 Border radius — Standardiser
-**Règle :**
-- **Public** (landing, villas, marketing) : `rounded-none` — luxe strict
-- **Dashboard/Admin** : `rounded-xl` pour les cards, `rounded-2xl` pour les modals
-- **UI Kit partagé** (`components/ui/`) : aligner sur `rounded-none`
+**Contexte :** Le site a une identité "angles droits" (46 occurrences de `rounded-none`) mais des composants clés y dérogent.
 
-**Fichiers à corriger :**
-- `components/ui/input.tsx` : `rounded-xl` → `rounded-none`
-- `components/ui/card.tsx` : `rounded-3xl` → `rounded-none`
+### P0-4 : `Button` n'a pas de `rounded-none`
+- **Fichier :** `components/ui/button.tsx:23`
+- **Fix :** Ajouter `rounded-none` dans les classes du composant Button
 
-### 2.2 Formulaires — Unifier le style d'input
-**Standard unique :**
+### P0-5 : `KayvilaPressableButton` a `rounded-xl` au lieu de `rounded-none`
+- **Fichier :** `components/ui/pro/kayvila-pressable-button.tsx:14`
+- **Fix :** Changer `rounded-xl` → `rounded-none` (ou documenter que les CTAs gold sont la seule exception)
+
+---
+
+## Phase 3 — P0 BLOQUANTS : SEO & Metadata
+
+### P0-6 : `og:url` absent sur TOUTES les pages
+- **Fichier :** `app/layout.tsx` (metadata global)
+- **Fix :** Ajouter `openGraph: { url: 'https://kayvila.com' }` dans le metadata de layout + le rendre dynamique par page
+
+### P0-7 : `og:type` absent sur 12/17 pages publiques
+- **Fix :** Par défaut `og:type: 'website'` dans layout, override `'article'` sur blog, `'product'` sur fiches villa
+
+### P0-8 : Canonicals pointent vers `diamant-noir.vercel.app` (6 pages)
+- **Fichiers concernés :** pages avec `metadata.alternates.canonical` pointant vers l'ancien domaine
+- **Fix :** Remplacer par `https://kayvila.com` + vérifier toutes les pages
+
+### P0-9 : Canonical manquant sur `/mentions-legales` et `/cgv`
+- **Fix :** Ajouter `metadata: { alternates: { canonical: 'https://kayvila.com/mentions-legales' } }`
+
+### P0-10 : Image héro homepage avec `alt=""` (vide)
+- **Fichier :** composant hero homepage
+- **Fix :** Ajouter un alt descriptif (ex: "Villa de luxe avec piscine en Martinique — Kayvila")
+
+### P0-11 : Domaine incohérent sitemap (kayvila.com) vs canoniques (diamant-noir.vercel.app)
+- **Fix :** Tout uniformiser sur `https://kayvila.com`
+
+---
+
+## Phase 4 — P1 IMPORTANT : UX & Accessibilité
+
+### P1-1 : 9 clés `checkout.*` absentes en espagnol
+- **Fichier :** `lib/i18n.ts`
+- **Fix :** Ajouter toutes les clés `checkout.*` dans l'objet `es`
+
+### P1-2 : Contraste WCAG AA en échec — `text-navy/60` sur fond offwhite
+- **Ratio :** ~2.8:1 (minimum requis 4.5:1)
+- **Fichiers globaux :** Toute l'interface utilise cette combinaison
+- **Fix :** Passer de `text-navy/60` à `text-navy/80` (ratio ~5.2:1)
+
+### P1-3 : Bannière cookie consent 100% hardcodée FR
+- **Fichier :** composant cookie consent
+- **Fix :** i18niser toutes les strings (titre, description, boutons, lien politique cookies)
+
+### P1-4 : Aucun blocage réel des cookies
+- **Problème :** Le consentement est stocké en localStorage mais n'empêche aucun script
+- **Fix :** Bloquer effectivement les scripts tiers (Stripe, analytics) tant que le consentement n'est pas donné
+
+### P1-5 : Pages `/cookies`, footer (10+ chaînes), pages d'erreur — hardcodés FR
+- **Fix :** i18niser tous les textes statiques restants
+
+### P1-6 : URLs `/en` et `/es` redirigent vers `/login`
+- **Fichier :** `middleware.ts` → `publicPaths`
+- **Fix :** Ajouter `/en` et `/es` (avec toutes les routes) dans `publicPaths`
+
+### P1-7 : Cookie consent sans lien vers la politique cookies
+- **Fix :** Ajouter `<Link href="/cookies">Politique cookies</Link>` dans la bannière
+
+### P1-8 : Pas de règle `:focus-visible` globale
+- **Fix :** Ajouter dans `globals.css` : `*:focus-visible { outline: 2px solid #d4af37; outline-offset: 2px; }`
+
+### P1-9 : Contact form n'utilise pas `<Input>` — styles dupliqués
+- **Fichier :** `app/contact/page.tsx:90-130`
+- **Fix :** Remplacer les inputs inline par `<Input>`, `<Textarea>`
+
+---
+
+## Phase 5 — P1 IMPORTANT : Design System
+
+### P1-10 : Tokens couleur morts (5 tokens définis, jamais utilisés)
+- **Tokens :** `--color-cream`, `--color-champagne`, `--color-sand`, `--color-navy-900`, `--color-navy-800`
+- **Fichier :** `app/globals.css:4-13`
+- **Fix :** Supprimer les tokens inutilisés OU les intégrer dans le design
+
+### P1-11 : `--color-navy` = `#0a0a0a` (noir) ≠ navy
+- **Fix :** Renommer `--color-navy` → `--color-ink` et utiliser `--color-navy-900` (#0b1d2e) pour le vrai navy
+
+### P1-12 : Composants manquants : Radio, Toggle, Toast, FormLabel
+- **À créer :**
+  - `components/ui/radio.tsx` (sur le modèle de Checkbox)
+  - `components/ui/toggle.tsx` (wrapper HeroUI Switch)
+  - `components/ui/toast.tsx` (réutilisable, avec position fixe)
+  - `components/ui/label.tsx` (FormLabel standardisé)
+
+### P1-13 : Pas d'état erreur sur Input/Select/Textarea
+- **Fichiers :** `components/ui/input.tsx`, `Select.tsx`, `Textarea.tsx`
+- **Fix :** Ajouter `error?: boolean` + classe conditionnelle `border-red-500` + message d'erreur
+
+### P1-14 : VillaListingCard — HoverCard (rounded-xl) vs carte (rounded-none)
+- **Fichier :** `components/villas/VillaListingCard.tsx:126,189`
+- **Fix :** Uniformiser en `rounded-none`
+
+### P1-15 : Dashboard vs Public — deux paradigmes de radius
+- **Public :** `rounded-none`, **Dashboard :** `rounded-xl`
+- **Action :** Documenter que c'est intentionnel ou uniformiser
+
+### P1-16 : `Sora` chargé inutilement sur pages publiques
+- **Fichier :** `app/layout.tsx:16`
+- **Fix :** Charger Sora uniquement dans le layout dashboard
+
+---
+
+## Phase 6 — P1 PERFORMANCE
+
+### P1-17 : Pages sans ISR — SSR à chaque requête
+- **Fichiers :** `app/faq/page.tsx`, `app/contact/page.tsx`, `app/cookies/page.tsx`, `app/confidentialite/page.tsx`, `app/soumettre-ma-villa/page.tsx`
+- **Fix :** Ajouter `export const revalidate = 86400;` (24h) sur FAQ, cookies, confidentialité
+
+### P1-18 : `<img>` natif (avec eslint-disable) au lieu de `next/image`
+- **Fichier :** `components/marketing/VillaSubmissionForm.tsx:274`
+- **Fix :** Remplacer par `<Image>` avec `fill`, `sizes`, `className`
+
+### P1-19 : `Image fill` sans `sizes` sur avatar VillaReviews
+- **Fichier :** `components/VillaReviews.tsx:52`
+- **Fix :** Ajouter `sizes="32px"`
+
+### P1-20 : `login-side.webm` = 4.5 MB
+- **Fix :** Réencoder plus petit, charger en lazy
+
+### P1-21 : Pas de `loading.tsx` sur 6 pages
+- **Pages :** FAQ, contact, cookies, confidentialité, soumettre-ma-villa, prestations
+- **Fix :** Ajouter `loading.tsx` avec skeleton minimal
+
+### P1-22 : `villa-hero.jpg` = 7.8 KB — trop basse qualité en poster
+- **Fix :** Utiliser une image de ~60-100 KB en WebP
+
+---
+
+## Phase 7 — P2 MICRO-INTERACTIONS (Polish Luxe)
+
+### P2-1 : Parallax héroïque subtil (recommandé ⭐)
+- **Principe :** La vidéo de fond translate très légèrement (2-4px) dans le sens inverse du scroll
+- **Fichier :** `components/home/HeroBackgroundMedia.tsx`
+- **Fix :** `useEffect` → `transform: translateY(${scrollY * 0.06}px)` sur la vidéo
+
+### P2-2 : Border glow dorée sur cartes villa (recommandé ⭐)
+- **Fichier :** `components/villas/VillaListingCard.tsx`
+- **Fix CSS :**
+```css
+.villa-card-luxe:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.15), 0 8px 32px rgba(0, 0, 0, 0.06);
+}
 ```
-rounded-none border-navy/15 focus:border-gold focus:ring-1 focus:ring-gold/30
-h-12 px-4 text-base
-```
-**Fichiers à corriger :**
-- `components/ui/input.tsx` — appliquer le standard
-- `espace-client/tenant-form-styles.ts` — aligner
-- `VillaSubmissionForm.tsx` — aligner
-- `VillaWizard.tsx` — aligner
-- Créer `components/ui/Select.tsx`, `Textarea.tsx`, `Checkbox.tsx`
-
-### 2.3 Boutons — Compléter le composant
-**Fichier :** `components/ui/button.tsx`
-**Ajouter les variants :**
-- `gold` : `bg-gold text-white hover:bg-gold/90`
-- `danger` : `bg-red-600 text-white`
-- `secondary` : `bg-navy/5 text-navy hover:bg-navy/10`
-
-**Tailles standardisées :** `sm` = `h-9`, `default` = `h-11`, `lg` = `h-12`
-
-### 2.4 Supprimer Sora des pages publiques
-**Fichier :** `app/layout.tsx`
-- Garder le chargement de Sora mais le restreindre au dashboard
-- Dans le layout public, ne pas inclure `--font-sora` dans `<body>`
-- Ou créer un `DashboardLayout` séparé qui inclut Sora
-
-### 2.5 Nettoyer les classes inutilisées
-**Fichier :** `app/globals.css`
-- Supprimer `.card-shadow-sm`, `.card-shadow`, `.card-shadow-lg`, `.card-shadow-xl` (jamais utilisées)
-- Supprimer `rounded-*` custom inutilisés
-
-### 2.6 Migrer tailwind.config.ts → @theme uniquement
-- Tout migrer de `tailwind.config.ts` vers `@theme` dans `globals.css`
-- Supprimer `tailwind.config.ts`
 
 ---
 
-## PHASE 3 — ANIMATIONS & MICRO-INTERACTIONS
+## Phase 8 — P2 OPTIMISATIONS
 
-### 3.1 Hover lift sur les boutons
-**Règle :** Tous les boutons interactifs : `transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]`
-**Fichier :** `components/ui/button.tsx` et `kayvila-pressable-button.tsx`
+### SEO
+- `<meta robots>` absent sur 9 pages publiques → ajouter
+- Sitemap incomplet (manque 8+ URLs dont fiches villa)
+- JSON-LD LocalBusiness absent de `/prestations`
+- JSON-LD type `Product` → préférer `LodgingBusiness` sur fiches villa
+- Doublon `| Kayvila` dans le title `/prestations`
 
-### 3.2 Skeleton shimmer
-**Fichier :** `components/ui/skeleton.tsx`
-- Remplacer `animate-pulse` par `animate-shimmer` (le keyframe existe déjà dans `globals.css` !)
-- Ajouter le dégradé shimmer : `bg-gradient-shimmer` ou `bg-navy/5 via-navy/10 to-navy/5 animate-shimmer`
+### Performance
+- `prefetch={false}` sur liens footer
+- Lazy-load `react-pdf` et `shiki` (chargement conditionnel)
+- Pas de `loading="lazy"` sur `VillaCoverImage`
+- Tailles de police `text-[10px]` difficilement lisibles sur mobile
 
-### 3.3 Transition sur les inputs au focus
-**Fichier :** `components/ui/input.tsx`
-- Ajouter `transition-all duration-300` sur le wrapper
-- Au focus : `scale-[1.01]` subtil + ring gold
-
-### 3.4 Page transitions
-**Fichier :** `app/layout.tsx`
-- Activer les View Transitions API (déjà partiellement configurée)
-- Ajouter `animate-fade-in` sur le contenu principal
-
-### 3.5 Grain overlay global
-**Fichiers :** `app/globals.css` + `app/layout.tsx`
-- Ajouter un overlay grain/noise SVG sur tout le site
-- `opacity-[0.015]` pour ne pas gêner la lisibilité
-- `pointer-events-none fixed inset-0 z-50`
+### Design
+- Boutons inline dupliquent Button → utiliser `<Button>`
+- Line-height non standardisé sur headings → token `--leading-heading`
+- Tailles d'icônes non documentées → standardiser nav=20, inline=16
 
 ---
 
-## PHASE 4 — SEO + METADATA
+## ⛔ CE QU'ON NE TOUCHE PAS
 
-### 4.1 Pages sans metadata (P0)
-- `app/success/page.tsx` — ajouter `generateMetadata` avec title "Réservation confirmée — Kayvila" + noindex
-- `app/update-password/page.tsx` — ajouter title "Mise à jour du mot de passe — Kayvila" + noindex
-
-### 4.2 Pages sans canonical (P1)
-Ajouter `alternates: { canonical }` dans `generateMetadata` de :
-- `app/villas/[id]/page.tsx`
-- `app/soumettre-ma-villa/page.tsx`
-- `app/book/page.tsx`
-- `app/prestations/services/[slug]/page.tsx`
-
-### 4.3 JSON-LD enrichi
-- `app/villas/page.tsx` — ajouter `ItemList` (liste de `Product`)
-- `app/page.tsx` — enrichir avec `LocalBusiness` (adresse, geo, telephone)
-
-### 4.4 Og:image sur les pages marketing
-Ajouter `openGraph.images` dans les pages sans : `qui-sommes-nous`, `faq`, `villas/comparer`, `soumettre-ma-villa`, `book`
-
-### 4.5 Sitemap — Ajouter les pages manquantes
-**Fichier :** `app/sitemap.ts`
-Ajouter : `/villas/comparer`, `/prestations/services/marketing`, `/prestations/services/operations`, `/prestations/services/voyageurs`, `/prestations/services/menage`, `/prestations/services/finance`
-
-### 4.6 Robots.txt
-**Fichier :** `app/robots.ts`
-- `/login` sans trailing slash n'est pas couvert → ajouter
-- Ajouter `/success` et `/share/` si pas déjà
+- **Stripe Connect** — flux de paiement, webhooks, checkout
+- **Auth flow** — login, middleware Supabase, RLS, reset mdp
+- **Dashboard admin** — widgets Kayvila, DataGrid HeroUI Pro, revenus
+- **API routes** — toutes les routes `/api/*`
+- **Palette globale** — gold (#D4AF37), navy, offwhite (tokens principaux)
+- **Typo globale** — Instrument Sans + Playfair Display (sauf corrections ciblées)
+- **Layout général** — header, footer, grille max-w-7xl
+- **Composants structurels** — Navbar, Footer, Hero structure de base
+- **Fichiers intacts** (liste blanche) : `src/lib/site.ts`, tous les fichiers dashboard admin/, tous les fichiers API routes/
 
 ---
 
-## PHASE 5 — PERFORMANCE
+## 📋 Règles globales
 
-### 5.1 Villa détail — Remplacer force-dynamic
-**Fichier :** `app/villas/[id]/page.tsx`
-- Remplacer `force-dynamic` + `unstable_noStore()` par `revalidate = 900`
-- Utiliser `generateStaticParams` pour pré-rendre les villas populaires
-- `revalidateTag` dans les webhooks admin
-
-### 5.2 Home — Remplacer https.get par fetch
-**Fichier :** `app/page.tsx`
-- Remplacer `https.get` par `fetch()` standard
-- Ajouter `next: { revalidate: 3600 }`
-
-### 5.3 Lazy-load recharts
-**Fichiers :** `StatsView.tsx`, `FinancesView.tsx`
-- Wrapper `recharts` avec `dynamic(() => import(...), { ssr: false })`
-
-### 5.4 Lazy-load @react-pdf/renderer
-**Fichier :** `RelevePDF.tsx`
-- `dynamic(() => import('@react-pdf/renderer'), { ssr: false })`
-
----
-
-## PHASE 6 — ACCESSIBILITÉ
-
-### 6.1 Focus indicators sur le bouton principal
-**Fichier :** `kayvila-pressable-button.tsx`
-- Ajouter `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gold`
-
-### 6.2 Focus trap dans les modales/drawers
-**Fichiers :** `VillaQuickView.tsx`, `BookingBottomSheet.tsx`, `Chatbot.tsx`, `Navbar.tsx`
-- Implémenter un hook `useFocusTrap` ou utiliser `FocusScope` HeroUI
-
-### 6.3 aria-live sur les zones dynamiques
-**Fichiers :** `Chatbot.tsx`, `SearchResults.tsx`
-- Ajouter `aria-live="polite"` sur les conteneurs de messages chatbot
-- Annoncer les changements de filtres
-
----
-
-## PHASE 7 — CONVERSION FUNNEL
-
-### 7.1 CTA "Payer" sticky desktop
-**Fichier :** `CheckoutView.tsx`
-- Rendre le bouton "Confirmer et payer" sticky dans la sidebar prix desktop
-
-### 7.2 Confiance — Ajouter icône sécurité
-**Fichier :** `BookingForm.tsx`
-- Ajouter `ShieldCheck` + texte "Paiement sécurisé · Aucun débit maintenant" près du CTA Réserver
-
-### 7.3 Prix estimé avant sélection
-**Fichier :** `BookingForm.tsx`
-- Afficher "À partir de X€ pour Y nuits" en estimé quand les dates ne sont pas encore sélectionnées
-
----
-
-## PHASE 8 — COMPOSANTS MANQUANTS
-
-Créer les wrappers Kayvila pour :
-- `components/ui/Select.tsx`
-- `components/ui/Textarea.tsx`
-- `components/ui/Checkbox.tsx`
-- `components/ui/Badge.tsx`
-- `components/ui/Tooltip.tsx`
-
-Uniformiser `Tabs` : utiliser le wrapper `components/ui/tabs.tsx` PARTOUT (pas d'import direct `@heroui/react` Tabs).
-
----
-
-## CE QU'ON NE TOUCHE PAS (zone interdite)
-
-- ❌ **Stripe Connect** — le flux de paiement est validé, ne pas y toucher
-- ❌ **Auth flow** — login, register, reset password, magic link — tout fonctionne
-- ❌ **Dashboard admin** — sauf les corrections de border-radius listées en Phase 2
-- ❌ **Chatbot** — sauf `aria-live` en Phase 6
-- ❌ **API routes** — sauf si explicitement listé
-- ❌ **Palette de couleurs globale** — gold/navy/offwhite restent exactement les mêmes
-- ❌ **Typo globale** — Playfair Display + Instrument Sans restent
-- ❌ **Layout général** — navbar, footer, grilles — ne pas restructurer
-
-## VÉRIFICATION FINALE
-
-Après toutes les phases :
-1. `npm run build` doit passer sans erreur
-2. `npm run dev` → parcourir les pages publiques (/villas, /villas/[id], /faq, /contact, /soumettre-ma-villa, /book, /success, / qui-sommes-nous, /prestations)
-3. Vérifier le checkout Stripe (mode test) — le flux ne doit pas être cassé
-4. Vérifier le chatbot — il doit toujours répondre
-5. Vérifier que la bannière cookie apparaît et se souvient du choix
-6. Vérifier le contraste gold sur le texte (le prix doit être lisible)
-7. Vérifier que le i18n fonctionne (passer de FR à EN)
+1. `npm run build` doit passer
+2. Commits atomiques en français — un commit par phase
+3. Mobile-first — tout doit fonctionner sur mobile
+4. Pas casser l'existant — si un fix risque de casser autre chose, le signaler
+5. Priorité P0 > P1 > P2 — les P0 d'abord
