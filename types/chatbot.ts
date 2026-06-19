@@ -241,6 +241,21 @@ export interface PreBookingPayload {
   };
 }
 
+/**
+ * Lead propriétaire (double conversion) émis par l'Agent A quand un visiteur
+ * souhaite confier sa villa à Kayvila. Sert au tracking CRM côté /api/chat.
+ */
+export interface OwnerLead {
+  /** Nombre de villas que le propriétaire souhaite confier */
+  villasCount?: number;
+  /** Localisation du / des bien(s) */
+  location?: string;
+  /** Email de contact si fourni */
+  email?: string;
+  /** Nom du propriétaire si fourni */
+  name?: string;
+}
+
 // ---------------------------------------------------------------------------
 // 7. CHATBOT REQUEST — Chatbot.tsx → /api/chat
 // ---------------------------------------------------------------------------
@@ -343,6 +358,9 @@ export interface N8nChatResponse {
 
   /** Payload pré-réservation */
   preBooking?: PreBookingPayload;
+
+  /** Lead propriétaire (double conversion) — tracking CRM, non exposé au frontend */
+  ownerLead?: OwnerLead;
 
   /** CTA à afficher */
   cta?: ChatCta;

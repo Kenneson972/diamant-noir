@@ -4,7 +4,7 @@ import { sanitizeUserMessage, sanitizeConversationSummary, sanitizeLeadData } fr
 import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chatbot/villa-context";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
-import { CONCIERGERIE_FACTS } from "@/lib/chatbot/conciergerie-context";
+import { CONCIERGERIE_FACTS, validateOwnerLead } from "@/lib/chatbot/conciergerie-context";
 import { checkRateLimit, getClientIP } from "@/lib/chatbot/rate-limit";
 import type {
   ChatbotRequest,
@@ -82,6 +82,7 @@ function parseN8nResponse(raw: unknown): N8nChatResponse | null {
     suggestedVillas: Array.isArray(d.suggestedVillas) ? d.suggestedVillas : [],
     comparisonData: d.comparisonData as N8nChatResponse["comparisonData"],
     preBooking: d.preBooking as N8nChatResponse["preBooking"],
+    ownerLead: d.ownerLead as N8nChatResponse["ownerLead"],
     cta: (d.cta as N8nChatResponse["cta"]) || { type: "none" },
     suggestedQuickReplies: Array.isArray(d.suggestedQuickReplies) ? d.suggestedQuickReplies : [],
     shouldEscalateToHuman: d.shouldEscalateToHuman === true,
@@ -106,6 +107,52 @@ async function notifyHotLeadOnce(sessionId: string, summary: string) {
     });
   } catch (e) {
     console.warn("[api/chat] hot_lead notif", e);
+  }
+}
+
+// Throttle mémoire : 1 traitement lead propriétaire par session (évite les doublons
+// quand l'Agent A ré-émet ownerLead à plusieurs messages successifs).
+const _ownerLeadHandled = new Set<string>();
+
+async function handleOwnerLeadOnce(sessionId: string, lead: NonNullable<N8nChatResponse["ownerLead"]>) {
+  if (_ownerLeadHandled.has(sessionId)) return;
+  // Validation : assez d'info pour qualifier le lead ?
+  const v = validateOwnerLead({ ...lead, sessionId });
+  if (!v.ok) return;
+  _ownerLeadHandled.add(sessionId);
+  const { villasCount, location, email, name } = v.value;
+
+  try {
+    // Notif admin in-app (cap anti-spam : 50 notifs owner_lead / heure)
+    const { count } = await supabaseAdmin()
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("type", "owner_lead")
+      .gte("created_at", new Date(Date.now() - 3600000).toISOString());
+
+    if ((count ?? 0) < 50) {
+      await supabaseAdmin().from("notifications").insert({
+        user_id: null,
+        type: "owner_lead",
+        title: "Nouveau lead propriétaire",
+        body: `${name ?? email ?? "Propriétaire"} — ${villasCount ?? "?"} villa(s)${location ? `, ${location}` : ""} (via chatbot)`,
+      });
+    }
+
+    // Pré-enregistrement dans villa_submissions UNIQUEMENT si email présent
+    // (colonne NOT NULL). Sans email on se contente de la notif.
+    if (email) {
+      await supabaseAdmin().from("villa_submissions").insert({
+        email,
+        name: name ?? "Lead chatbot",
+        villa_name: "[Lead chatbot] À qualifier",
+        villa_location: location ?? null,
+        message: `Lead propriétaire capté par le chatbot${villasCount ? ` — ${villasCount} villa(s)` : ""}. À recontacter pour compléter la soumission.`,
+        status: "pending",
+      });
+    }
+  } catch (e) {
+    console.warn("[api/chat] owner_lead", e);
   }
 }
 
@@ -236,6 +283,11 @@ export async function POST(request: Request) {
       knownLeadData: parsed.leadUpdate as Record<string, unknown>,
     })) {
       await notifyHotLeadOnce(sessionId, `Session ${sessionId} — ${parsed.reply.slice(0, 120)}`);
+    }
+
+    // Lead propriétaire (double conversion) — notif admin + pré-enregistrement
+    if (parsed.ownerLead) {
+      await handleOwnerLeadOnce(sessionId, parsed.ownerLead);
     }
 
     return NextResponse.json(clientResponse);
