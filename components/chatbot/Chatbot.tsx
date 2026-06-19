@@ -186,7 +186,10 @@ export const Chatbot = () => {
         },
         body: JSON.stringify({
           message: messageToSend,
-          sessionid: sessionId,
+          sessionId,
+          locale: "fr",
+          currentPage: window.location.pathname,
+          currentStage: "greet",
         }),
       });
 
@@ -195,7 +198,7 @@ export const Chatbot = () => {
       }
 
       const data = await response.json();
-      const chatResponse = data.response || "Désolé, je n'ai pas pu traiter votre demande.";
+      const chatResponse = data.reply || data.response || "Désolé, je n'ai pas pu traiter votre demande.";
 
       setMessages((prev) => [...prev, { role: "assistant", content: chatResponse }]);
 
