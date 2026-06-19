@@ -41,6 +41,21 @@ function buildFallbackResponse(
   };
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/_{2}(.*?)_{2}/g, "$1")
+    .replace(/_(.*?)_/g, "$1")
+    .replace(/^[ \t]*#{1,6}[ \t]+/gm, "")
+    .replace(/^[ \t]*[-*+][ \t]+/gm, "")
+    .replace(/`{1,3}([^`]*)`{1,3}/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^-{3,}$/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 // Extraction et normalisation de la réponse n8n
 // Compatible avec l'ancien format { response/message/... } et le nouveau { reply, intent, ... }
 function parseN8nResponse(raw: unknown): N8nChatResponse | null {
@@ -194,11 +209,13 @@ export async function POST(request: Request) {
       return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "error"));
     }
 
+    const cleanReply = stripMarkdown(parsed.reply);
+
     // Réponse frontend — filtrée et sûre
     const clientResponse: ChatbotResponse & { response: string } = {
       success: true,
-      reply: parsed.reply,
-      response: parsed.reply, // alias rétrocompatibilité Chatbot.tsx
+      reply: cleanReply,
+      response: cleanReply, // alias rétrocompatibilité Chatbot.tsx
       sessionId,
       intent: parsed.intent,
       stage: parsed.stage,

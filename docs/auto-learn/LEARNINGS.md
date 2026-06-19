@@ -2,6 +2,31 @@
 
 ---
 
+## 2026-06-19 — Chatbot Audit Complet (9 bugs)
+
+### Fait
+- **Sprint pré-prod polish** mergé sur main (Task 6 → final review → 3 critical fixes → push)
+- **Admin soumissions** : page détail `/admin/soumissions/[id]` + SubmissionActions avec `router.refresh()`
+- **HoverCard supprimé** de `VillaListingCard.tsx` (modal desktop redondant)
+- **Audit chatbot** : comparatif Dalcielo + Elise → 9 problèmes identifiés, 7 corrigés dans Next.js
+- **2 actions n8n restantes** pour Kenneson (ai_memory + contexte sans emojis)
+
+### Règles apprises
+
+**Architecture chatbot n8n :**
+- Un `@n8n/n8n-nodes-langchain.agent` **sans nœud `ai_memory` branché = stateless** — chaque message est une nouvelle conversation
+- Le nœud "Build Context" ne doit **jamais** injecter d'emojis dans le contexte (ils contaminent les réponses IA)
+- `toolHttpRequest` = nœud tool (`ai_tool`) uniquement, jamais dans la séquence principale
+
+**Chatbot Next.js :**
+- Toujours stripper markdown (`**`, `---`, `##`, `` ` ``) dans `api/chat/route.ts` avant renvoi au client
+- Le prompt système doit **interdire explicitement** emojis et markdown — pas juste "répondre en JSON"
+- `data.suggestedQuickReplies` de l'API doit être **prioritaire** sur les suggestions statiques hardcodées
+- `currentStage` doit être suivi côté client (`useState`) et renvoyé dans chaque requête
+- Branding : l'avatar du chatbot doit matcher le nom du client actuel (K = Kayvila, pas D = Diamant Noir)
+
+---
+
 ## 2026-05-10 — Session Audit + Uniformisation Dashboards
 
 ### Fait

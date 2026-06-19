@@ -8,10 +8,10 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 const QUICK_SUGGESTIONS = {
   default: [
-    "Villas avec piscine 🏊‍♂️",
-    "Tarifs haute saison 💰",
-    "Réserver maintenant 📅",
-    "Services conciergerie ✨",
+    "Découvrir nos villas",
+    "Tarifs et disponibilités",
+    "Services conciergerie",
+    "Contacter l'équipe",
   ],
   booking: [
     "Réserver pour 2 personnes",
@@ -20,7 +20,7 @@ const QUICK_SUGGESTIONS = {
     "Voir les disponibilités",
   ],
   pricing: [
-    "Tarif pour une semaine",
+    "Tarif à la semaine",
     "Tarif pour un weekend",
     "Tarif par nuit",
     "Y a-t-il des réductions ?",
@@ -45,6 +45,7 @@ export const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [quickSuggestions, setQuickSuggestions] = useState<string[]>([]);
+  const [currentStage, setCurrentStage] = useState<string>("greet");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -77,8 +78,8 @@ export const Chatbot = () => {
         {
           role: "assistant" as const,
           content:
-            "Bonjour ! Je suis l'assistante Kayvila 💎\n\n" +
-            "Je suis là pour vous aider à découvrir nos villas d'exception et répondre à toutes vos questions sur les réservations.\n\n" +
+            "Bonjour, bienvenue chez Kayvila.\n\n" +
+            "Je suis votre concierge privé — je suis là pour vous aider à découvrir nos villas d'exception en Martinique et vous accompagner dans votre projet de séjour.\n\n" +
             "Comment puis-je vous aider aujourd'hui ?",
         },
       ];
@@ -189,7 +190,7 @@ export const Chatbot = () => {
           sessionId,
           locale: "fr",
           currentPage: window.location.pathname,
-          currentStage: "greet",
+          currentStage,
         }),
       });
 
@@ -198,18 +199,24 @@ export const Chatbot = () => {
       }
 
       const data = await response.json();
-      const chatResponse = data.reply || data.response || "Désolé, je n'ai pas pu traiter votre demande.";
+      const chatResponse = data.reply || data.response || "Je rencontre une difficulté technique passagère. Veuillez réessayer dans quelques instants.";
 
       setMessages((prev) => [...prev, { role: "assistant", content: chatResponse }]);
 
-      // Suggestions contextuelles
-      const lower = messageToSend.toLowerCase();
-      if (lower.includes("réserver") || lower.includes("disponibilité") || lower.includes("booking")) {
-        setQuickSuggestions(QUICK_SUGGESTIONS.booking);
-      } else if (lower.includes("prix") || lower.includes("tarif") || lower.includes("coût")) {
-        setQuickSuggestions(QUICK_SUGGESTIONS.pricing);
+      if (data.stage) setCurrentStage(data.stage);
+
+      // Utiliser les suggestions de l'IA si disponibles, sinon fallback contextuel
+      if (Array.isArray(data.suggestedQuickReplies) && data.suggestedQuickReplies.length > 0) {
+        setQuickSuggestions(data.suggestedQuickReplies.slice(0, 4));
       } else {
-        setQuickSuggestions(QUICK_SUGGESTIONS.default);
+        const lower = messageToSend.toLowerCase();
+        if (lower.includes("réserver") || lower.includes("disponibilité") || lower.includes("booking")) {
+          setQuickSuggestions(QUICK_SUGGESTIONS.booking);
+        } else if (lower.includes("prix") || lower.includes("tarif") || lower.includes("coût")) {
+          setQuickSuggestions(QUICK_SUGGESTIONS.pricing);
+        } else {
+          setQuickSuggestions(QUICK_SUGGESTIONS.default);
+        }
       }
     } catch (error) {
       console.error("Chat error:", error);
@@ -218,7 +225,7 @@ export const Chatbot = () => {
         {
           role: "assistant",
           content:
-            "Oups, j'ai un petit souci technique 😅\n\nPeux-tu réessayer dans quelques instants ?",
+            "Je rencontre une difficulté technique passagère.\n\nVeuillez réessayer dans quelques instants ou contacter notre équipe directement.",
         },
       ]);
       setQuickSuggestions(QUICK_SUGGESTIONS.default);
@@ -295,7 +302,7 @@ export const Chatbot = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-display text-xl font-bold text-black shadow-lg">
-                  D
+                  K
                 </div>
                 <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400"></span>
               </div>
@@ -348,7 +355,7 @@ export const Chatbot = () => {
               >
                 {message.role === "assistant" && (
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white">
-                    D
+                    K
                   </div>
                 )}
                 <div
