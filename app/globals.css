@@ -636,6 +636,15 @@ body { font-size: 16px; line-height: 1.6; }
   }
 }
 
+/* Kayvila — border glow villa card (kill switch : ENABLE_BORDER_GLOW dans VillaListingCard.tsx) */
+.villa-card-luxe {
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+.villa-card-luxe:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.15), 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
 /* View Transitions API — navigation fluide entre pages */
 @supports (view-transition-name: root) {
   ::view-transition-old(root) {

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+const ENABLE_PARALLAX = true; // mettre false pour désactiver
+
 /**
  * Fond hero : vidéo autoplay (muted + playsInline) avec poster fallback.
  *
@@ -16,6 +18,14 @@ export function HeroBackgroundMedia() {
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    if (!ENABLE_PARALLAX) return;
+    const handler = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
   // Tente l'autoplay au montage — ne gate PAS sur prefers-reduced-motion
   // car iOS active ce flag en Low Power Mode même si l'utilisateur n'a rien demandé.
@@ -56,7 +66,11 @@ export function HeroBackgroundMedia() {
   }, []);
 
   return (
-    <div className="absolute inset-0 h-full w-full overflow-hidden" aria-hidden>
+    <div
+      className="absolute inset-0 h-full w-full overflow-hidden"
+      style={ENABLE_PARALLAX ? { transform: `translateY(${scrollY * 0.06}px)`, willChange: "transform" } : undefined}
+      aria-hidden
+    >
       {/* Poster — toujours présent, la vidéo passe par-dessus si prête */}
       <Image
         src="/villa-hero.jpg"

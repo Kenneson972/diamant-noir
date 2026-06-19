@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+const ENABLE_BORDER_GLOW = true; // mettre false pour désactiver
 import Link from "next/link";
 import { HoverCard, Sheet } from "@heroui-pro/react";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
@@ -124,6 +126,7 @@ export function VillaListingCard({
 
   const cardShell = cn(
     "group relative overflow-hidden rounded-none border border-transparent transition-all duration-200",
+    ENABLE_BORDER_GLOW && "villa-card-luxe",
     villa.dimmed && "opacity-40",
     isHovered
       ? "border-navy/15 shadow-[0_12px_40px_rgba(0,0,0,0.08)] -translate-y-px"
