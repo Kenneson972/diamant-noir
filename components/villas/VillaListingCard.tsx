@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
-const ENABLE_BORDER_GLOW = true; // mettre false pour désactiver
 import Link from "next/link";
 import { HoverCard, Sheet } from "@heroui-pro/react";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
@@ -11,6 +9,8 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl, VILLA_IMAGE_FALLBACK } from "@/lib/villa-image";
+
+const ENABLE_BORDER_GLOW = true; // mettre false pour désactiver
 
 type VillaListingCardProps = {
   villa: VillaMapItem & { dimmed?: boolean };

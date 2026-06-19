@@ -1,0 +1,4537 @@
+{
+  "version": 1,
+  "updatedAt": 1781839753372,
+  "nodeCount": 364,
+  "nodes": {
+    "mem-MEMORY-project": {
+      "id": "mem-MEMORY-project",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-MEMORY-reference": {
+      "id": "mem-MEMORY-reference",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-MEMORY-feedback": {
+      "id": "mem-MEMORY-feedback",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-feedback_design_rules_kayvila----": {
+      "id": "mem-feedback_design_rules_kayvila----",
+      "category": "feedback_design_rules_kayvila",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-feedback_design_rules_kayvila-r-gles-absolues": {
+      "id": "mem-feedback_design_rules_kayvila-r-gles-absolues",
+      "category": "feedback_design_rules_kayvila",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-feedback_design_rules_kayvila-design-context-kayvila--rappel": {
+      "id": "mem-feedback_design_rules_kayvila-design-context-kayvila--rappel",
+      "category": "feedback_design_rules_kayvila",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133074
+    },
+    "mem-feedback_model_routing_subagents----": {
+      "id": "mem-feedback_model_routing_subagents----",
+      "category": "feedback_model_routing_subagents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133075
+    },
+    "mem-feedback_verify_live_schema_before_db----": {
+      "id": "mem-feedback_verify_live_schema_before_db----",
+      "category": "feedback_verify_live_schema_before_db",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133075
+    },
+    "mem-project_diamant_noir_mai2026----": {
+      "id": "mem-project_diamant_noir_mai2026----",
+      "category": "project_diamant_noir_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133075
+    },
+    "mem-project_diamant_noir_mai2026-session-05-juin-2026---mega-fi": {
+      "id": "mem-project_diamant_noir_mai2026-session-05-juin-2026---mega-fi",
+      "category": "project_diamant_noir_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133075
+    },
+    "mem-project_diamant_noir_mai2026-historique--21-28-mai-2026-": {
+      "id": "mem-project_diamant_noir_mai2026-historique--21-28-mai-2026-",
+      "category": "project_diamant_noir_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133075
+    },
+    "mem-project_diamant_noir_redesign----": {
+      "id": "mem-project_diamant_noir_redesign----",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-projet": {
+      "id": "mem-project_diamant_noir_redesign-projet",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-refonte-le-collectionist---ter": {
+      "id": "mem-project_diamant_noir_redesign-refonte-le-collectionist---ter",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-nouveaux-composants-cr--s-par-": {
+      "id": "mem-project_diamant_noir_redesign-nouveaux-composants-cr--s-par-",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-vid-o-hero": {
+      "id": "mem-project_diamant_noir_redesign-vid-o-hero",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-contexte-client": {
+      "id": "mem-project_diamant_noir_redesign-contexte-client",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-ce-qui-n-a-pas-chang-": {
+      "id": "mem-project_diamant_noir_redesign-ce-qui-n-a-pas-chang-",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-espace-client-locataire---term": {
+      "id": "mem-project_diamant_noir_redesign-espace-client-locataire---term",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-dashboard-locataire-premium-v2": {
+      "id": "mem-project_diamant_noir_redesign-dashboard-locataire-premium-v2",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-chatbot-public-v1---termin---2": {
+      "id": "mem-project_diamant_noir_redesign-chatbot-public-v1---termin---2",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-listing-import-enrich---termin": {
+      "id": "mem-project_diamant_noir_redesign-listing-import-enrich---termin",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-unification-home---navbar-conc": {
+      "id": "mem-project_diamant_noir_redesign-unification-home---navbar-conc",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-unification-soumettre-ma-villa": {
+      "id": "mem-project_diamant_noir_redesign-unification-soumettre-ma-villa",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-upload-photos-soumission-villa": {
+      "id": "mem-project_diamant_noir_redesign-upload-photos-soumission-villa",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-mobile-parallax-performance---": {
+      "id": "mem-project_diamant_noir_redesign-mobile-parallax-performance---",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_diamant_noir_redesign-design-audit-impeccable---term": {
+      "id": "mem-project_diamant_noir_redesign-design-audit-impeccable---term",
+      "category": "project_diamant_noir_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit----": {
+      "id": "mem-project_kayvila_15juin2026_postaudit----",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-kayvila---15-juin-2026---post-": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-kayvila---15-juin-2026---post-",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-1--post-audit-richard--3-corre": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-1--post-audit-richard--3-corre",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-2--mobile-responsive--4-fixes-": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-2--mobile-responsive--4-fixes-",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-3--variables-sla-vercel": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-3--variables-sla-vercel",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-4--23-tests-playwright": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-4--23-tests-playwright",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-5--comptes-de-test-valid-s": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-5--comptes-de-test-valid-s",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-6--r-gles-apprises--voir-learn": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-6--r-gles-apprises--voir-learn",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-7--chatbots---n8n---analyse": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-7--chatbots---n8n---analyse",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_15juin2026_postaudit-prochaine--tape": {
+      "id": "mem-project_kayvila_15juin2026_postaudit-prochaine--tape",
+      "category": "project_kayvila_15juin2026_postaudit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_16juin2026_ux_agents----": {
+      "id": "mem-project_kayvila_16juin2026_ux_agents----",
+      "category": "project_kayvila_16juin2026_ux_agents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_16juin2026_ux_agents-correctifs-ux-richard--4-4-mer": {
+      "id": "mem-project_kayvila_16juin2026_ux_agents-correctifs-ux-richard--4-4-mer",
+      "category": "project_kayvila_16juin2026_ux_agents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_16juin2026_ux_agents-agents-ia-v3---termin-": {
+      "id": "mem-project_kayvila_16juin2026_ux_agents-agents-ia-v3---termin-",
+      "category": "project_kayvila_16juin2026_ux_agents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_16juin2026_ux_agents-audit--lise": {
+      "id": "mem-project_kayvila_16juin2026_ux_agents-audit--lise",
+      "category": "project_kayvila_16juin2026_ux_agents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_16juin2026_ux_agents-r-gles-critiques": {
+      "id": "mem-project_kayvila_16juin2026_ux_agents-r-gles-critiques",
+      "category": "project_kayvila_16juin2026_ux_agents",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_7juin2026----": {
+      "id": "mem-project_kayvila_7juin2026----",
+      "category": "project_kayvila_7juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_7juin2026-travail-accompli": {
+      "id": "mem-project_kayvila_7juin2026-travail-accompli",
+      "category": "project_kayvila_7juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026----": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026----",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026-kayvila---agents-ia-v3--2026-0": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026-kayvila---agents-ia-v3--2026-0",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026-r-sultat-final--2026-06-15-": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026-r-sultat-final--2026-06-15-",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026---phase-1---12-12---3-correcti": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026---phase-1---12-12---3-correcti",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026---phase-2---3-workflows-n8n-v3": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026---phase-2---3-workflows-n8n-v3",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_agents_ia_16juin2026-r-gles-apprises": {
+      "id": "mem-project_kayvila_agents_ia_16juin2026-r-gles-apprises",
+      "category": "project_kayvila_agents_ia_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133076
+    },
+    "mem-project_kayvila_audit_batch_16juin2026----": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026----",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-kayvila---campagne-audit-batch": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-kayvila---campagne-audit-batch",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026--tat-au-16-juin--soir----pause": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026--tat-au-16-juin--soir----pause",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026----blocage-cl-": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026----blocage-cl-",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-2----commit--1d6f64c--": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-2----commit--1d6f64c--",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-3----commit--ddf55e7-----c": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-3----commit--ddf55e7-----c",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-4----commit--21f91b5-----p": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-4----commit--21f91b5-----p",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-5----commit--c4c9a6f-----s": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-5----commit--c4c9a6f-----s",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-6----commit--9176674-----l": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-6----commit--9176674-----l",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-7----commit--86e0ea9-----u": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-7----commit--86e0ea9-----u",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-lot-8----commit--0f24c2d-----c": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-lot-8----commit--0f24c2d-----c",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026--tat-global-campagne--au-16-ju": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026--tat-global-campagne--au-16-ju",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_audit_batch_16juin2026-reprise---lot-9--backlog--n-ce": {
+      "id": "mem-project_kayvila_audit_batch_16juin2026-reprise---lot-9--backlog--n-ce",
+      "category": "project_kayvila_audit_batch_16juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_corrections_batch_15juin2026----": {
+      "id": "mem-project_kayvila_corrections_batch_15juin2026----",
+      "category": "project_kayvila_corrections_batch_15juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026----": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026----",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-kayvila---session-2026-06-13--": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-kayvila---session-2026-06-13--",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-ce-qu-on-a-fait--dans-l-ordre-": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-ce-qu-on-a-fait--dans-l-ordre-",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-fixes-post-review--commits--31": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-fixes-post-review--commits--31",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-d-ploiement-supabase--via-mcp-": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-d-ploiement-supabase--via-mcp-",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-fix-build-vercel--commit--0e0a": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-fix-build-vercel--commit--0e0a",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-commits-push-s-sur-origin-main": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-commits-push-s-sur-origin-main",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_proprio_fixes_juin2026-notes-techniques-importantes-p": {
+      "id": "mem-project_kayvila_proprio_fixes_juin2026-notes-techniques-importantes-p",
+      "category": "project_kayvila_proprio_fixes_juin2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_tech_debt----": {
+      "id": "mem-project_kayvila_tech_debt----",
+      "category": "project_kayvila_tech_debt",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_kayvila_tech_debt-dette-technique-----traiter-pr": {
+      "id": "mem-project_kayvila_tech_debt-dette-technique-----traiter-pr",
+      "category": "project_kayvila_tech_debt",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133077
+    },
+    "mem-project_maison_pvl_mai2026----": {
+      "id": "mem-project_maison_pvl_mai2026----",
+      "category": "project_maison_pvl_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_maison_pvl_mai2026--tat-au-2026-06-06--session-fe": {
+      "id": "mem-project_maison_pvl_mai2026--tat-au-2026-06-06--session-fe",
+      "category": "project_maison_pvl_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_maison_pvl_mai2026-secrets-chiffr-s-dans-system-s": {
+      "id": "mem-project_maison_pvl_mai2026-secrets-chiffr-s-dans-system-s",
+      "category": "project_maison_pvl_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_maison_pvl_mai2026-session-2026-05-13-nuit---menu": {
+      "id": "mem-project_maison_pvl_mai2026-session-2026-05-13-nuit---menu",
+      "category": "project_maison_pvl_mai2026",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign----": {
+      "id": "mem-project_pessora_redesign----",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-stack-technique": {
+      "id": "mem-project_pessora_redesign-stack-technique",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-tokens-design-system--src-inde": {
+      "id": "mem-project_pessora_redesign-tokens-design-system--src-inde",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-r-gle-absolue": {
+      "id": "mem-project_pessora_redesign-r-gle-absolue",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-r-gles-impeccable-appliqu-es": {
+      "id": "mem-project_pessora_redesign-r-gles-impeccable-appliqu-es",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-fichiers-cl-s-modifi-s--passe-": {
+      "id": "mem-project_pessora_redesign-fichiers-cl-s-modifi-s--passe-",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-donn-es-produits-r-elles": {
+      "id": "mem-project_pessora_redesign-donn-es-produits-r-elles",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-supabase-schema--events-": {
+      "id": "mem-project_pessora_redesign-supabase-schema--events-",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-project_pessora_redesign-corrections-audit-impeccable--": {
+      "id": "mem-project_pessora_redesign-corrections-audit-impeccable--",
+      "category": "project_pessora_redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-reference_diamant_noir_technique----": {
+      "id": "mem-reference_diamant_noir_technique----",
+      "category": "reference_diamant_noir_technique",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-reference_diamant_noir_technique-supabase": {
+      "id": "mem-reference_diamant_noir_technique-supabase",
+      "category": "reference_diamant_noir_technique",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-reference_diamant_noir_technique-mod-le-commission--depuis-2026": {
+      "id": "mem-reference_diamant_noir_technique-mod-le-commission--depuis-2026",
+      "category": "reference_diamant_noir_technique",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-reference_diamant_noir_technique-frais-de-m-nage": {
+      "id": "mem-reference_diamant_noir_technique-frais-de-m-nage",
+      "category": "reference_diamant_noir_technique",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-MEMORY-memory-index---dal-cielo": {
+      "id": "mem-MEMORY-memory-index---dal-cielo",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133078
+    },
+    "mem-feedback_style----": {
+      "id": "mem-feedback_style----",
+      "category": "feedback_style",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot----": {
+      "id": "mem-project_celiobot----",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot-fichiers-impliqu-s": {
+      "id": "mem-project_celiobot-fichiers-impliqu-s",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot-fonctionnement": {
+      "id": "mem-project_celiobot-fonctionnement",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot-variables-d-env-concern-es": {
+      "id": "mem-project_celiobot-variables-d-env-concern-es",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot--tat-actuel--2026-03-14-": {
+      "id": "mem-project_celiobot--tat-actuel--2026-03-14-",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot-api--api-menu--ajout-e-2026-03": {
+      "id": "mem-project_celiobot-api--api-menu--ajout-e-2026-03",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_celiobot-rate-limiting-chatbot-tsx--c-t": {
+      "id": "mem-project_celiobot-rate-limiting-chatbot-tsx--c-t",
+      "category": "project_celiobot",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_crm_audit----": {
+      "id": "mem-project_crm_audit----",
+      "category": "project_crm_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_crm_audit-crm-clients---fid-lit---2026-0": {
+      "id": "mem-project_crm_audit-crm-clients---fid-lit---2026-0",
+      "category": "project_crm_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_crm_audit-audit-34-am-liorations--score-": {
+      "id": "mem-project_crm_audit-audit-34-am-liorations--score-",
+      "category": "project_crm_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_database----": {
+      "id": "mem-project_database----",
+      "category": "project_database",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_database-migrations--database-supabase-": {
+      "id": "mem-project_database-migrations--database-supabase-",
+      "category": "project_database",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_database-tables-principales": {
+      "id": "mem-project_database-tables-principales",
+      "category": "project_database",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_security----": {
+      "id": "mem-project_security----",
+      "category": "project_security",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_security-critiques": {
+      "id": "mem-project_security-critiques",
+      "category": "project_security",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_security-auth-admin": {
+      "id": "mem-project_security-auth-admin",
+      "category": "project_security",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_security---ne-pas-committer": {
+      "id": "mem-project_security---ne-pas-committer",
+      "category": "project_security",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack----": {
+      "id": "mem-project_stack----",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-stack": {
+      "id": "mem-project_stack-stack",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-pages-principales--12-": {
+      "id": "mem-project_stack-pages-principales--12-",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-routes-api--31-total-": {
+      "id": "mem-project_stack-routes-api--31-total-",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-d-ploiement--2026-03-14-": {
+      "id": "mem-project_stack-d-ploiement--2026-03-14-",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-donn-es-m-tier": {
+      "id": "mem-project_stack-donn-es-m-tier",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-fonctionnalit-s-panier--2026-0": {
+      "id": "mem-project_stack-fonctionnalit-s-panier--2026-0",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-project_stack-palettes-couleurs-brand": {
+      "id": "mem-project_stack-palettes-couleurs-brand",
+      "category": "project_stack",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-user_profile----": {
+      "id": "mem-user_profile----",
+      "category": "user_profile",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133079
+    },
+    "mem-MEMORY----dev-server-diamant-noir--fe": {
+      "id": "mem-MEMORY----dev-server-diamant-noir--fe",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-feedback_dev_server----": {
+      "id": "mem-feedback_dev_server----",
+      "category": "feedback_dev_server",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state----": {
+      "id": "mem-project_diamantnoir_state----",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state-stack": {
+      "id": "mem-project_diamantnoir_state-stack",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state-supabase---points-importants": {
+      "id": "mem-project_diamantnoir_state-supabase---points-importants",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state-pages-principales": {
+      "id": "mem-project_diamantnoir_state-pages-principales",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s": {
+      "id": "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_diamantnoir_state-bugs-r-solus": {
+      "id": "mem-project_diamantnoir_state-bugs-r-solus",
+      "category": "project_diamantnoir_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-MEMORY-memory-index": {
+      "id": "mem-MEMORY-memory-index",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-feedback_ux_before_internals----": {
+      "id": "mem-feedback_ux_before_internals----",
+      "category": "feedback_ux_before_internals",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_auth_fixes----": {
+      "id": "mem-project_auth_fixes----",
+      "category": "project_auth_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_auth_fixes-fixes-appliqu-s": {
+      "id": "mem-project_auth_fixes-fixes-appliqu-s",
+      "category": "project_auth_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133080
+    },
+    "mem-project_hub_admin_unifie----": {
+      "id": "mem-project_hub_admin_unifie----",
+      "category": "project_hub_admin_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_hub_admin_unifie-r-sultat-final": {
+      "id": "mem-project_hub_admin_unifie-r-sultat-final",
+      "category": "project_hub_admin_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_hub_admin_unifie-composants-villa-editor-wir-s-": {
+      "id": "mem-project_hub_admin_unifie-composants-villa-editor-wir-s-",
+      "category": "project_hub_admin_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_hub_admin_unifie-points-techniques-importants": {
+      "id": "mem-project_hub_admin_unifie-points-techniques-importants",
+      "category": "project_hub_admin_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_login_unifie----": {
+      "id": "mem-project_login_unifie----",
+      "category": "project_login_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_login_unifie-termin---session-2026-05-15-16": {
+      "id": "mem-project_login_unifie-termin---session-2026-05-15-16",
+      "category": "project_login_unifie",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect----": {
+      "id": "mem-project_stripe_connect----",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect-d-cision---stripe-connect-expr": {
+      "id": "mem-project_stripe_connect-d-cision---stripe-connect-expr",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect-pourquoi-express-et-pas-autre-": {
+      "id": "mem-project_stripe_connect-pourquoi-express-et-pas-autre-",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect-ce-que-le-g-rant-voulait--et-q": {
+      "id": "mem-project_stripe_connect-ce-que-le-g-rant-voulait--et-q",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect--tat-technique": {
+      "id": "mem-project_stripe_connect--tat-technique",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect-statuts-juridiques-accept-s-pa": {
+      "id": "mem-project_stripe_connect-statuts-juridiques-accept-s-pa",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-project_stripe_connect-note-fiscale": {
+      "id": "mem-project_stripe_connect-note-fiscale",
+      "category": "project_stripe_connect",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-16----": {
+      "id": "mem-session_log_2026-05-16----",
+      "category": "session_log_2026-05-16",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-16-ce-qui-a--t--accompli": {
+      "id": "mem-session_log_2026-05-16-ce-qui-a--t--accompli",
+      "category": "session_log_2026-05-16",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-16-commits-du-jour--ordre-chronol": {
+      "id": "mem-session_log_2026-05-16-commits-du-jour--ordre-chronol",
+      "category": "session_log_2026-05-16",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-16-points-techniques---retenir": {
+      "id": "mem-session_log_2026-05-16-points-techniques---retenir",
+      "category": "session_log_2026-05-16",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-16--tat-du-projet---la-fin-de-ses": {
+      "id": "mem-session_log_2026-05-16--tat-du-projet---la-fin-de-ses",
+      "category": "session_log_2026-05-16",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133081
+    },
+    "mem-session_log_2026-05-17----": {
+      "id": "mem-session_log_2026-05-17----",
+      "category": "session_log_2026-05-17",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-session_log_2026-05-17-contexte": {
+      "id": "mem-session_log_2026-05-17-contexte",
+      "category": "session_log_2026-05-17",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-session_log_2026-05-17-ce-qui-a--t--fait": {
+      "id": "mem-session_log_2026-05-17-ce-qui-a--t--fait",
+      "category": "session_log_2026-05-17",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-session_log_2026-05-17--tat-stripe-connect": {
+      "id": "mem-session_log_2026-05-17--tat-stripe-connect",
+      "category": "session_log_2026-05-17",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-session_log_2026-05-17-aucun-changement-de-code-cette": {
+      "id": "mem-session_log_2026-05-17-aucun-changement-de-code-cette",
+      "category": "session_log_2026-05-17",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-animations_2026-06-10----": {
+      "id": "mem-animations_2026-06-10----",
+      "category": "animations_2026-06-10",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-audit_insforge_2026-06-10----": {
+      "id": "mem-audit_insforge_2026-06-10----",
+      "category": "audit_insforge_2026-06-10",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-audit_suitsupply_2026-06-09----": {
+      "id": "mem-audit_suitsupply_2026-06-09----",
+      "category": "audit_suitsupply_2026-06-09",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-auth_drawer----": {
+      "id": "mem-auth_drawer----",
+      "category": "auth_drawer",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133082
+    },
+    "mem-feedback_design----": {
+      "id": "mem-feedback_design----",
+      "category": "feedback_design",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-feedback_responsive_suitsupply----": {
+      "id": "mem-feedback_responsive_suitsupply----",
+      "category": "feedback_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-migration_colorways----": {
+      "id": "mem-migration_colorways----",
+      "category": "migration_colorways",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-mobile_responsive_skill----": {
+      "id": "mem-mobile_responsive_skill----",
+      "category": "mobile_responsive_skill",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state----": {
+      "id": "mem-project_state----",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state-stack": {
+      "id": "mem-project_state-stack",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state-endpoints-insforge-confirm-s--": {
+      "id": "mem-project_state-endpoints-insforge-confirm-s--",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state-architecture-fichiers-cl-s": {
+      "id": "mem-project_state-architecture-fichiers-cl-s",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state-ce-qui-est-livr-": {
+      "id": "mem-project_state-ce-qui-est-livr-",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_state-ce-qui-reste---faire": {
+      "id": "mem-project_state-ce-qui-reste---faire",
+      "category": "project_state",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_task----": {
+      "id": "mem-project_task----",
+      "category": "project_task",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_task-livr---": {
+      "id": "mem-project_task-livr---",
+      "category": "project_task",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-project_task-reste---faire": {
+      "id": "mem-project_task-reste---faire",
+      "category": "project_task",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133083
+    },
+    "mem-refonte_responsive_suitsupply----": {
+      "id": "mem-refonte_responsive_suitsupply----",
+      "category": "refonte_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_responsive_suitsupply-commits": {
+      "id": "mem-refonte_responsive_suitsupply-commits",
+      "category": "refonte_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_responsive_suitsupply-patterns--tablis----respecter-": {
+      "id": "mem-refonte_responsive_suitsupply-patterns--tablis----respecter-",
+      "category": "refonte_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_responsive_suitsupply-drawers--cartdrawer--filtres-p": {
+      "id": "mem-refonte_responsive_suitsupply-drawers--cartdrawer--filtres-p",
+      "category": "refonte_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_responsive_suitsupply-pages-refondues": {
+      "id": "mem-refonte_responsive_suitsupply-pages-refondues",
+      "category": "refonte_responsive_suitsupply",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin----": {
+      "id": "mem-refonte_ux_admin----",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-d-cisions-de-design-valid-es": {
+      "id": "mem-refonte_ux_admin-d-cisions-de-design-valid-es",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-fichiers-cr--s": {
+      "id": "mem-refonte_ux_admin-fichiers-cr--s",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-fichiers-refondus": {
+      "id": "mem-refonte_ux_admin-fichiers-refondus",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-contraintes-respect-es": {
+      "id": "mem-refonte_ux_admin-contraintes-respect-es",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-validation-technique": {
+      "id": "mem-refonte_ux_admin-validation-technique",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-refonte_ux_admin-astuces-non-obvious---retenir": {
+      "id": "mem-refonte_ux_admin-astuces-non-obvious---retenir",
+      "category": "refonte_ux_admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-retours_pierre_2026-06-10----": {
+      "id": "mem-retours_pierre_2026-06-10----",
+      "category": "retours_pierre_2026-06-10",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-MEMORY----session-2026-06-05---pause-": {
+      "id": "mem-MEMORY----session-2026-06-05---pause-",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133084
+    },
+    "mem-feedback_framer-motion-overflow----": {
+      "id": "mem-feedback_framer-motion-overflow----",
+      "category": "feedback_framer-motion-overflow",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133085
+    },
+    "mem-feedback_git-workflow----": {
+      "id": "mem-feedback_git-workflow----",
+      "category": "feedback_git-workflow",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133085
+    },
+    "mem-feedback_header-kayvilla-style----": {
+      "id": "mem-feedback_header-kayvilla-style----",
+      "category": "feedback_header-kayvilla-style",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133085
+    },
+    "mem-feedback_redundancy-cut----": {
+      "id": "mem-feedback_redundancy-cut----",
+      "category": "feedback_redundancy-cut",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-feedback_vert-sapin-brand----": {
+      "id": "mem-feedback_vert-sapin-brand----",
+      "category": "feedback_vert-sapin-brand",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign----": {
+      "id": "mem-project_index-redesign----",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-header--fixe-kayvilla-style-": {
+      "id": "mem-project_index-redesign-header--fixe-kayvilla-style-",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-css-utilities-section-unifi-es": {
+      "id": "mem-project_index-redesign-css-utilities-section-unifi-es",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-radius-standardis-": {
+      "id": "mem-project_index-redesign-radius-standardis-",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-app-tsx---padding-main-conditi": {
+      "id": "mem-project_index-redesign-app-tsx---padding-main-conditi",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-oraplusteaserstrip": {
+      "id": "mem-project_index-redesign-oraplusteaserstrip",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-10-sections-index--ordre-": {
+      "id": "mem-project_index-redesign-10-sections-index--ordre-",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-minimalisme-texte--2026-05-24-": {
+      "id": "mem-project_index-redesign-minimalisme-texte--2026-05-24-",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_index-redesign-anti-patterns-supprim-s": {
+      "id": "mem-project_index-redesign-anti-patterns-supprim-s",
+      "category": "project_index-redesign",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin----": {
+      "id": "mem-project_pessora-homepage-photo-admin----",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin-ce-qui-a--t--impl-ment-": {
+      "id": "mem-project_pessora-homepage-photo-admin-ce-qui-a--t--impl-ment-",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s": {
+      "id": "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin-photos-manquantes----faire-": {
+      "id": "mem-project_pessora-homepage-photo-admin-photos-manquantes----faire-",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-": {
+      "id": "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_pessora-homepage-photo-admin-header-refonte--2026-05-24-": {
+      "id": "mem-project_pessora-homepage-photo-admin-header-refonte--2026-05-24-",
+      "category": "project_pessora-homepage-photo-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_split-admin-gallery-progress----": {
+      "id": "mem-project_split-admin-gallery-progress----",
+      "category": "project_split-admin-gallery-progress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_split-admin-gallery-progress-ce-qui-a--t--fait--tasks-1-10-": {
+      "id": "mem-project_split-admin-gallery-progress-ce-qui-a--t--fait--tasks-1-10-",
+      "category": "project_split-admin-gallery-progress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-project_split-admin-gallery-progress-bonus---fix-stripe-gamme": {
+      "id": "mem-project_split-admin-gallery-progress-bonus---fix-stripe-gamme",
+      "category": "project_split-admin-gallery-progress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133086
+    },
+    "mem-reference_playwright-mcp----": {
+      "id": "mem-reference_playwright-mcp----",
+      "category": "reference_playwright-mcp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_supabase-admin----": {
+      "id": "mem-reference_supabase-admin----",
+      "category": "reference_supabase-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_supabase-admin-comptes-utilisateurs--au-2026-": {
+      "id": "mem-reference_supabase-admin-comptes-utilisateurs--au-2026-",
+      "category": "reference_supabase-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_supabase-admin-pour-promouvoir-un-compte-en-a": {
+      "id": "mem-reference_supabase-admin-pour-promouvoir-un-compte-en-a",
+      "category": "reference_supabase-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_supabase-admin-tables-cr--es-pour-la-homepage": {
+      "id": "mem-reference_supabase-admin-tables-cr--es-pour-la-homepage",
+      "category": "reference_supabase-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_supabase-admin-buckets-storage": {
+      "id": "mem-reference_supabase-admin-buckets-storage",
+      "category": "reference_supabase-admin",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_taste-skill----": {
+      "id": "mem-reference_taste-skill----",
+      "category": "reference_taste-skill",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-reference_taste-skill-taste-skill--design-taste-fron": {
+      "id": "mem-reference_taste-skill-taste-skill--design-taste-fron",
+      "category": "reference_taste-skill",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-24-menu-fixes----": {
+      "id": "mem-session_2026-05-24-menu-fixes----",
+      "category": "session_2026-05-24-menu-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-25-auto-slug-plus-fixes----": {
+      "id": "mem-session_2026-05-25-auto-slug-plus-fixes----",
+      "category": "session_2026-05-25-auto-slug-plus-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync----": {
+      "id": "mem-session_2026-05-29-phase3-galerie-stripe-sync----",
+      "category": "session_2026-05-29-phase3-galerie-stripe-sync",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-ce-qui-a--t--fait--commits-sur": {
+      "id": "mem-session_2026-05-29-phase3-galerie-stripe-sync-ce-qui-a--t--fait--commits-sur",
+      "category": "session_2026-05-29-phase3-galerie-stripe-sync",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-reste---faire": {
+      "id": "mem-session_2026-05-29-phase3-galerie-stripe-sync-reste---faire",
+      "category": "session_2026-05-29-phase3-galerie-stripe-sync",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-pour-la-prochaine-session": {
+      "id": "mem-session_2026-05-29-phase3-galerie-stripe-sync-pour-la-prochaine-session",
+      "category": "session_2026-05-29-phase3-galerie-stripe-sync",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133087
+    },
+    "mem-session_2026-05-29----": {
+      "id": "mem-session_2026-05-29----",
+      "category": "session_2026-05-29",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-29-session-du-29-30-mai-2026": {
+      "id": "mem-session_2026-05-29-session-du-29-30-mai-2026",
+      "category": "session_2026-05-29",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-30-all-fixes----": {
+      "id": "mem-session_2026-05-30-all-fixes----",
+      "category": "session_2026-05-30-all-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-30-all-fixes-session-du-30-mai-2026---r-sum": {
+      "id": "mem-session_2026-05-30-all-fixes-session-du-30-mai-2026---r-sum",
+      "category": "session_2026-05-30-all-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-30-final----": {
+      "id": "mem-session_2026-05-30-final----",
+      "category": "session_2026-05-30-final",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-30-final--tat-final---30-mai-2026": {
+      "id": "mem-session_2026-05-30-final--tat-final---30-mai-2026",
+      "category": "session_2026-05-30-final",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-31-final----": {
+      "id": "mem-session_2026-05-31-final----",
+      "category": "session_2026-05-31-final",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-05-31-final-r-sum----31-mai-2026": {
+      "id": "mem-session_2026-05-31-final-r-sum----31-mai-2026",
+      "category": "session_2026-05-31-final",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-06-02-separation-bar-gamme----": {
+      "id": "mem-session_2026-06-02-separation-bar-gamme----",
+      "category": "session_2026-06-02-separation-bar-gamme",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133088
+    },
+    "mem-session_2026-06-02-separation-bar-gamme-r-sum----2-juin-2026": {
+      "id": "mem-session_2026-06-02-separation-bar-gamme-r-sum----2-juin-2026",
+      "category": "session_2026-06-02-separation-bar-gamme",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-03-fixes----": {
+      "id": "mem-session_2026-06-03-fixes----",
+      "category": "session_2026-06-03-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-03-fixes-r-sum--complet---3-juin-2026": {
+      "id": "mem-session_2026-06-03-fixes-r-sum--complet---3-juin-2026",
+      "category": "session_2026-06-03-fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-04-finalisation----": {
+      "id": "mem-session_2026-06-04-finalisation----",
+      "category": "session_2026-06-04-finalisation",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-04-finalisation-r-sum----4-juin-2026": {
+      "id": "mem-session_2026-06-04-finalisation-r-sum----4-juin-2026",
+      "category": "session_2026-06-04-finalisation",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-05-pause----": {
+      "id": "mem-session_2026-06-05-pause----",
+      "category": "session_2026-06-05-pause",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-05-pause-derniers-commits--5-juin-2026-": {
+      "id": "mem-session_2026-06-05-pause-derniers-commits--5-juin-2026-",
+      "category": "session_2026-06-05-pause",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session_2026-06-05-pause-checklist-go-live-restante": {
+      "id": "mem-session_2026-06-05-pause-checklist-go-live-restante",
+      "category": "session_2026-06-05-pause",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-MEMORY----client-typography--client-t": {
+      "id": "mem-MEMORY----client-typography--client-t",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-client_typography----": {
+      "id": "mem-client_typography----",
+      "category": "client_typography",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-desktop-layout----": {
+      "id": "mem-desktop-layout----",
+      "category": "desktop-layout",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133089
+    },
+    "mem-session-log----": {
+      "id": "mem-session-log----",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-contexte": {
+      "id": "mem-session-log-contexte",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-1---audit-qualit---202": {
+      "id": "mem-session-log-session-1---audit-qualit---202",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-2---correction-des-11-": {
+      "id": "mem-session-log-session-2---correction-des-11-",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-3---adaptation-mobile-": {
+      "id": "mem-session-log-session-3---adaptation-mobile-",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-4---bug-fix-desktop--2": {
+      "id": "mem-session-log-session-4---bug-fix-desktop--2",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-commandes-utiles": {
+      "id": "mem-session-log-commandes-utiles",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-r-gles-acquises": {
+      "id": "mem-session-log-r-gles-acquises",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-5---audit-responsive-c": {
+      "id": "mem-session-log-session-5---audit-responsive-c",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-session-log-session-6---espace-admin-compl": {
+      "id": "mem-session-log-session-6---espace-admin-compl",
+      "category": "session-log",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-MEMORY----session-26-mai-2026---full-": {
+      "id": "mem-MEMORY----session-26-mai-2026---full-",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-feedback_dotenv_api_env----": {
+      "id": "mem-feedback_dotenv_api_env----",
+      "category": "feedback_dotenv_api_env",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-feedback_language----": {
+      "id": "mem-feedback_language----",
+      "category": "feedback_language",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133090
+    },
+    "mem-feedback_n8n_http_body----": {
+      "id": "mem-feedback_n8n_http_body----",
+      "category": "feedback_n8n_http_body",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-feedback_never_push_without_ask----": {
+      "id": "mem-feedback_never_push_without_ask----",
+      "category": "feedback_never_push_without_ask",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_automatisation_page_audit----": {
+      "id": "mem-project_automatisation_page_audit----",
+      "category": "project_automatisation_page_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_domain----": {
+      "id": "mem-project_domain----",
+      "category": "project_domain",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes----": {
+      "id": "mem-project_elise_n8n_fixes----",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-elise-14-json---fixes-session-": {
+      "id": "mem-project_elise_n8n_fixes-elise-14-json---fixes-session-",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-1---connexions--n-ud-orphe": {
+      "id": "mem-project_elise_n8n_fixes-fix-1---connexions--n-ud-orphe",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-2---syntaxe-js-dans-code--": {
+      "id": "mem-project_elise_n8n_fixes-fix-2---syntaxe-js-dans-code--",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-3---prompt-elise---r-serva": {
+      "id": "mem-project_elise_n8n_fixes-fix-3---prompt-elise---r-serva",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-4---rpc-add-to-waitlist---": {
+      "id": "mem-project_elise_n8n_fixes-fix-4---rpc-add-to-waitlist---",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-5---http-request---capacit": {
+      "id": "mem-project_elise_n8n_fixes-fix-5---http-request---capacit",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes-fix-6---csp--htaccess--product": {
+      "id": "mem-project_elise_n8n_fixes-fix-6---csp--htaccess--product",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_elise_n8n_fixes--tat-final-elise-14-json": {
+      "id": "mem-project_elise_n8n_fixes--tat-final-elise-14-json",
+      "category": "project_elise_n8n_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133091
+    },
+    "mem-project_invite_debug_20260512----": {
+      "id": "mem-project_invite_debug_20260512----",
+      "category": "project_invite_debug_20260512",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_invite_debug_20260512-debug-edge-function-supabase": {
+      "id": "mem-project_invite_debug_20260512-debug-edge-function-supabase",
+      "category": "project_invite_debug_20260512",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_invite_debug_20260512-pi-ge---contrainte-unique---tr": {
+      "id": "mem-project_invite_debug_20260512-pi-ge---contrainte-unique---tr",
+      "category": "project_invite_debug_20260512",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_invite_debug_20260512-flow-d-invitation-complet": {
+      "id": "mem-project_invite_debug_20260512-flow-d-invitation-complet",
+      "category": "project_invite_debug_20260512",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_inprogress----": {
+      "id": "mem-project_karibloom_lot_c_inprogress----",
+      "category": "project_karibloom_lot_c_inprogress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_inprogress-statut---livr---": {
+      "id": "mem-project_karibloom_lot_c_inprogress-statut---livr---",
+      "category": "project_karibloom_lot_c_inprogress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_inprogress-bilan": {
+      "id": "mem-project_karibloom_lot_c_inprogress-bilan",
+      "category": "project_karibloom_lot_c_inprogress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_inprogress-fichiers-cr--s": {
+      "id": "mem-project_karibloom_lot_c_inprogress-fichiers-cr--s",
+      "category": "project_karibloom_lot_c_inprogress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_inprogress-pi-ges-lot-c--pour-lot-d-": {
+      "id": "mem-project_karibloom_lot_c_inprogress-pi-ges-lot-c--pour-lot-d-",
+      "category": "project_karibloom_lot_c_inprogress",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff----": {
+      "id": "mem-project_karibloom_lot_c_kickoff----",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-1--v-rifications-pr-alables--2": {
+      "id": "mem-project_karibloom_lot_c_kickoff-1--v-rifications-pr-alables--2",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-2--lire-la-spec-lot-c-avant-d-": {
+      "id": "mem-project_karibloom_lot_c_kickoff-2--lire-la-spec-lot-c-avant-d-",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-3--livrables-lot-c-attendus--r": {
+      "id": "mem-project_karibloom_lot_c_kickoff-3--livrables-lot-c-attendus--r",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-4--crit-res-d-acceptation-lot-": {
+      "id": "mem-project_karibloom_lot_c_kickoff-4--crit-res-d-acceptation-lot-",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-5--flow-obligatoire": {
+      "id": "mem-project_karibloom_lot_c_kickoff-5--flow-obligatoire",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_lot_c_kickoff-6--pi-ges----viter--le-ons-lot": {
+      "id": "mem-project_karibloom_lot_c_kickoff-6--pi-ges----viter--le-ons-lot",
+      "category": "project_karibloom_lot_c_kickoff",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_karibloom_roadmap----": {
+      "id": "mem-project_karibloom_roadmap----",
+      "category": "project_karibloom_roadmap",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_session_20260512_13----": {
+      "id": "mem-project_session_20260512_13----",
+      "category": "project_session_20260512_13",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_session_20260512_13-gestion-de-compte-client---par": {
+      "id": "mem-project_session_20260512_13-gestion-de-compte-client---par",
+      "category": "project_session_20260512_13",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_session_20260512_13-pages-callback-auth-supabase--": {
+      "id": "mem-project_session_20260512_13-pages-callback-auth-supabase--",
+      "category": "project_session_20260512_13",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133092
+    },
+    "mem-project_session_20260512_13-suppression-membres---refonte-": {
+      "id": "mem-project_session_20260512_13-suppression-membres---refonte-",
+      "category": "project_session_20260512_13",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_afternoon----": {
+      "id": "mem-project_session_20260513_afternoon----",
+      "category": "project_session_20260513_afternoon",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_afternoon-stripe-payment-links--option-c": {
+      "id": "mem-project_session_20260513_afternoon-stripe-payment-links--option-c",
+      "category": "project_session_20260513_afternoon",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_afternoon-audit-mobile--3-passes-": {
+      "id": "mem-project_session_20260513_afternoon-audit-mobile--3-passes-",
+      "category": "project_session_20260513_afternoon",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_afternoon-critique-design--nielsen-22-26": {
+      "id": "mem-project_session_20260513_afternoon-critique-design--nielsen-22-26",
+      "category": "project_session_20260513_afternoon",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_evening----": {
+      "id": "mem-project_session_20260513_evening----",
+      "category": "project_session_20260513_evening",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_evening-corrections-critiques--p1-": {
+      "id": "mem-project_session_20260513_evening-corrections-critiques--p1-",
+      "category": "project_session_20260513_evening",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_evening-am-liorations": {
+      "id": "mem-project_session_20260513_evening-am-liorations",
+      "category": "project_session_20260513_evening",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_evening-plan-v4--non-impl-ment--": {
+      "id": "mem-project_session_20260513_evening-plan-v4--non-impl-ment--",
+      "category": "project_session_20260513_evening",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_full----": {
+      "id": "mem-project_session_20260513_full----",
+      "category": "project_session_20260513_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_full-audit-ux--impeccable-audit----": {
+      "id": "mem-project_session_20260513_full-audit-ux--impeccable-audit----",
+      "category": "project_session_20260513_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_full-critique-design--impeccable-cr": {
+      "id": "mem-project_session_20260513_full-critique-design--impeccable-cr",
+      "category": "project_session_20260513_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_full-project-hub": {
+      "id": "mem-project_session_20260513_full-project-hub",
+      "category": "project_session_20260513_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260513_full-cascade-delete": {
+      "id": "mem-project_session_20260513_full-cascade-delete",
+      "category": "project_session_20260513_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133093
+    },
+    "mem-project_session_20260514----": {
+      "id": "mem-project_session_20260514----",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260514-flux-admin-client": {
+      "id": "mem-project_session_20260514-flux-admin-client",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260514-refonte-espace-client": {
+      "id": "mem-project_session_20260514-refonte-espace-client",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260514-connexion-admin-client": {
+      "id": "mem-project_session_20260514-connexion-admin-client",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260514-aper-u-devis---facture": {
+      "id": "mem-project_session_20260514-aper-u-devis---facture",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260514-audit-technique--2-passes--12-": {
+      "id": "mem-project_session_20260514-audit-technique--2-passes--12-",
+      "category": "project_session_20260514",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_enrollment_clients_projets----": {
+      "id": "mem-project_session_20260515_enrollment_clients_projets----",
+      "category": "project_session_20260515_enrollment_clients_projets",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_enrollment_clients_projets-feature-1---section-unifi-e--c": {
+      "id": "mem-project_session_20260515_enrollment_clients_projets-feature-1---section-unifi-e--c",
+      "category": "project_session_20260515_enrollment_clients_projets",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_enrollment_clients_projets-feature-2---onglet-abonnement-": {
+      "id": "mem-project_session_20260515_enrollment_clients_projets-feature-2---onglet-abonnement-",
+      "category": "project_session_20260515_enrollment_clients_projets",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_enrollment_clients_projets-php---fichiers---d-ployer-sur-": {
+      "id": "mem-project_session_20260515_enrollment_clients_projets-php---fichiers---d-ployer-sur-",
+      "category": "project_session_20260515_enrollment_clients_projets",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures----": {
+      "id": "mem-project_session_20260515_n8n_devis_factures----",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures-bugs-corrig-s": {
+      "id": "mem-project_session_20260515_n8n_devis_factures-bugs-corrig-s",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s": {
+      "id": "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-": {
+      "id": "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-": {
+      "id": "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures-session-suivante--15-mai---sui": {
+      "id": "mem-project_session_20260515_n8n_devis_factures-session-suivante--15-mai---sui",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_n8n_devis_factures---faire-avant-prod": {
+      "id": "mem-project_session_20260515_n8n_devis_factures---faire-avant-prod",
+      "category": "project_session_20260515_n8n_devis_factures",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_pdf_ia_fixes----": {
+      "id": "mem-project_session_20260515_pdf_ia_fixes----",
+      "category": "project_session_20260515_pdf_ia_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s": {
+      "id": "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s",
+      "category": "project_session_20260515_pdf_ia_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s": {
+      "id": "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s",
+      "category": "project_session_20260515_pdf_ia_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260515_pdf_ia_fixes---faire-avant-prod": {
+      "id": "mem-project_session_20260515_pdf_ia_fixes---faire-avant-prod",
+      "category": "project_session_20260515_pdf_ia_fixes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_ai_structure----": {
+      "id": "mem-project_session_20260516_ai_structure----",
+      "category": "project_session_20260516_ai_structure",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_ai_structure-ce-qui-a--t--fait": {
+      "id": "mem-project_session_20260516_ai_structure-ce-qui-a--t--fait",
+      "category": "project_session_20260516_ai_structure",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full----": {
+      "id": "mem-project_session_20260516_full----",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-debug-n8n-devis---upload-bloqu": {
+      "id": "mem-project_session_20260516_full-debug-n8n-devis---upload-bloqu",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-workflow-devis---contenu-pdf": {
+      "id": "mem-project_session_20260516_full-workflow-devis---contenu-pdf",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-frontend---createdevismodal": {
+      "id": "mem-project_session_20260516_full-frontend---createdevismodal",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-frontend---packcardmodern": {
+      "id": "mem-project_session_20260516_full-frontend---packcardmodern",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-frontend---createinvoicemodal-": {
+      "id": "mem-project_session_20260516_full-frontend---createinvoicemodal-",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-backend----api-stripe-payment-": {
+      "id": "mem-project_session_20260516_full-backend----api-stripe-payment-",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-backend----api-devis-ai-struct": {
+      "id": "mem-project_session_20260516_full-backend----api-devis-ai-struct",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-backend----api-invoices-create": {
+      "id": "mem-project_session_20260516_full-backend----api-invoices-create",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-base-de-donn-es": {
+      "id": "mem-project_session_20260516_full-base-de-donn-es",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260516_full-fichiers-modifi-s----d-ployer-": {
+      "id": "mem-project_session_20260516_full-fichiers-modifi-s----d-ployer-",
+      "category": "project_session_20260516_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133094
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp----": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp----",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-session-22-23-mai-2026---audit": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-session-22-23-mai-2026---audit",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-d-ploiement-nouveau-client": {
+      "id": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-d-ploiement-nouveau-client",
+      "category": "project_session_20260522_23_vps_audit_v3_whatsapp",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260523_elise_hermes----": {
+      "id": "mem-project_session_20260523_elise_hermes----",
+      "category": "project_session_20260523_elise_hermes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260523_elise_hermes-chronologie": {
+      "id": "mem-project_session_20260523_elise_hermes-chronologie",
+      "category": "project_session_20260523_elise_hermes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260523_elise_hermes--tat-final---24-mai-2026": {
+      "id": "mem-project_session_20260523_elise_hermes--tat-final---24-mai-2026",
+      "category": "project_session_20260523_elise_hermes",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260524_mini_audit----": {
+      "id": "mem-project_session_20260524_mini_audit----",
+      "category": "project_session_20260524_mini_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260524_mini_audit-actions-de-la-session": {
+      "id": "mem-project_session_20260524_mini_audit-actions-de-la-session",
+      "category": "project_session_20260524_mini_audit",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260526_audit_db----": {
+      "id": "mem-project_session_20260526_audit_db----",
+      "category": "project_session_20260526_audit_db",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260526_audit_db-corrections-appliqu-es": {
+      "id": "mem-project_session_20260526_audit_db-corrections-appliqu-es",
+      "category": "project_session_20260526_audit_db",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260526_audit_db-constats-d-audit--non-corrig-s": {
+      "id": "mem-project_session_20260526_audit_db-constats-d-audit--non-corrig-s",
+      "category": "project_session_20260526_audit_db",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133095
+    },
+    "mem-project_session_20260526_full----": {
+      "id": "mem-project_session_20260526_full----",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-1---pull---build-initial": {
+      "id": "mem-project_session_20260526_full-phase-1---pull---build-initial",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-2---audit-db-supabase---": {
+      "id": "mem-project_session_20260526_full-phase-2---audit-db-supabase---",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-3---fix-magic-link--expi": {
+      "id": "mem-project_session_20260526_full-phase-3---fix-magic-link--expi",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-4---refonte-espace-admin": {
+      "id": "mem-project_session_20260526_full-phase-4---refonte-espace-admin",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-5---refonte-bloom-enroll": {
+      "id": "mem-project_session_20260526_full-phase-5---refonte-bloom-enroll",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-6---code-review--lise---": {
+      "id": "mem-project_session_20260526_full-phase-6---code-review--lise---",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-7---merge-final---d-ploi": {
+      "id": "mem-project_session_20260526_full-phase-7---merge-final---d-ploi",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-phase-8---corrections-post-d-p": {
+      "id": "mem-project_session_20260526_full-phase-8---corrections-post-d-p",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_session_20260526_full-fichiers-cl-s-cr--s-modifi-s": {
+      "id": "mem-project_session_20260526_full-fichiers-cl-s-cr--s-modifi-s",
+      "category": "project_session_20260526_full",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-project_stripe_bloom_integration----": {
+      "id": "mem-project_stripe_bloom_integration----",
+      "category": "project_stripe_bloom_integration",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "mem-reference_hermes_api_key----": {
+      "id": "mem-reference_hermes_api_key----",
+      "category": "reference_hermes_api_key",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781617133096
+    },
+    "insight-1781618825814-pa2h": {
+      "id": "insight-1781618825814-pa2h",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1781618825814
+    }
+  },
+  "edges": [
+    {
+      "sourceId": "mem-MEMORY-project",
+      "targetId": "mem-MEMORY-reference",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-MEMORY-reference",
+      "targetId": "mem-MEMORY-feedback",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-feedback_design_rules_kayvila----",
+      "targetId": "mem-feedback_design_rules_kayvila-r-gles-absolues",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-feedback_design_rules_kayvila-r-gles-absolues",
+      "targetId": "mem-feedback_design_rules_kayvila-design-context-kayvila--rappel",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_mai2026----",
+      "targetId": "mem-project_diamant_noir_mai2026-session-05-juin-2026---mega-fi",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_mai2026-session-05-juin-2026---mega-fi",
+      "targetId": "mem-project_diamant_noir_mai2026-historique--21-28-mai-2026-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign----",
+      "targetId": "mem-project_diamant_noir_redesign-projet",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-projet",
+      "targetId": "mem-project_diamant_noir_redesign-refonte-le-collectionist---ter",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-refonte-le-collectionist---ter",
+      "targetId": "mem-project_diamant_noir_redesign-nouveaux-composants-cr--s-par-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-nouveaux-composants-cr--s-par-",
+      "targetId": "mem-project_diamant_noir_redesign-vid-o-hero",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-vid-o-hero",
+      "targetId": "mem-project_diamant_noir_redesign-contexte-client",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-contexte-client",
+      "targetId": "mem-project_diamant_noir_redesign-ce-qui-n-a-pas-chang-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-ce-qui-n-a-pas-chang-",
+      "targetId": "mem-project_diamant_noir_redesign-espace-client-locataire---term",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-espace-client-locataire---term",
+      "targetId": "mem-project_diamant_noir_redesign-dashboard-locataire-premium-v2",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-dashboard-locataire-premium-v2",
+      "targetId": "mem-project_diamant_noir_redesign-chatbot-public-v1---termin---2",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-chatbot-public-v1---termin---2",
+      "targetId": "mem-project_diamant_noir_redesign-listing-import-enrich---termin",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-listing-import-enrich---termin",
+      "targetId": "mem-project_diamant_noir_redesign-unification-home---navbar-conc",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-unification-home---navbar-conc",
+      "targetId": "mem-project_diamant_noir_redesign-unification-soumettre-ma-villa",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-unification-soumettre-ma-villa",
+      "targetId": "mem-project_diamant_noir_redesign-upload-photos-soumission-villa",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-upload-photos-soumission-villa",
+      "targetId": "mem-project_diamant_noir_redesign-mobile-parallax-performance---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamant_noir_redesign-mobile-parallax-performance---",
+      "targetId": "mem-project_diamant_noir_redesign-design-audit-impeccable---term",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit----",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-kayvila---15-juin-2026---post-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-kayvila---15-juin-2026---post-",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-1--post-audit-richard--3-corre",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-1--post-audit-richard--3-corre",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-2--mobile-responsive--4-fixes-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-2--mobile-responsive--4-fixes-",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-3--variables-sla-vercel",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-3--variables-sla-vercel",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-4--23-tests-playwright",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-4--23-tests-playwright",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-5--comptes-de-test-valid-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-5--comptes-de-test-valid-s",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-6--r-gles-apprises--voir-learn",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-6--r-gles-apprises--voir-learn",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-7--chatbots---n8n---analyse",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_15juin2026_postaudit-7--chatbots---n8n---analyse",
+      "targetId": "mem-project_kayvila_15juin2026_postaudit-prochaine--tape",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_16juin2026_ux_agents----",
+      "targetId": "mem-project_kayvila_16juin2026_ux_agents-correctifs-ux-richard--4-4-mer",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_16juin2026_ux_agents-correctifs-ux-richard--4-4-mer",
+      "targetId": "mem-project_kayvila_16juin2026_ux_agents-agents-ia-v3---termin-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_16juin2026_ux_agents-agents-ia-v3---termin-",
+      "targetId": "mem-project_kayvila_16juin2026_ux_agents-audit--lise",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_16juin2026_ux_agents-audit--lise",
+      "targetId": "mem-project_kayvila_16juin2026_ux_agents-r-gles-critiques",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_7juin2026----",
+      "targetId": "mem-project_kayvila_7juin2026-travail-accompli",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_agents_ia_16juin2026----",
+      "targetId": "mem-project_kayvila_agents_ia_16juin2026-kayvila---agents-ia-v3--2026-0",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_agents_ia_16juin2026-kayvila---agents-ia-v3--2026-0",
+      "targetId": "mem-project_kayvila_agents_ia_16juin2026-r-sultat-final--2026-06-15-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_agents_ia_16juin2026-r-sultat-final--2026-06-15-",
+      "targetId": "mem-project_kayvila_agents_ia_16juin2026---phase-1---12-12---3-correcti",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_agents_ia_16juin2026---phase-1---12-12---3-correcti",
+      "targetId": "mem-project_kayvila_agents_ia_16juin2026---phase-2---3-workflows-n8n-v3",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_agents_ia_16juin2026---phase-2---3-workflows-n8n-v3",
+      "targetId": "mem-project_kayvila_agents_ia_16juin2026-r-gles-apprises",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026----",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-kayvila---campagne-audit-batch",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-kayvila---campagne-audit-batch",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026--tat-au-16-juin--soir----pause",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026--tat-au-16-juin--soir----pause",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026----blocage-cl-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026----blocage-cl-",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-2----commit--1d6f64c--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-2----commit--1d6f64c--",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-3----commit--ddf55e7-----c",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-3----commit--ddf55e7-----c",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-4----commit--21f91b5-----p",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-4----commit--21f91b5-----p",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-5----commit--c4c9a6f-----s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-5----commit--c4c9a6f-----s",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-6----commit--9176674-----l",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-6----commit--9176674-----l",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-7----commit--86e0ea9-----u",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-7----commit--86e0ea9-----u",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-lot-8----commit--0f24c2d-----c",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026-lot-8----commit--0f24c2d-----c",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026--tat-global-campagne--au-16-ju",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_audit_batch_16juin2026--tat-global-campagne--au-16-ju",
+      "targetId": "mem-project_kayvila_audit_batch_16juin2026-reprise---lot-9--backlog--n-ce",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026----",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-kayvila---session-2026-06-13--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-kayvila---session-2026-06-13--",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-ce-qu-on-a-fait--dans-l-ordre-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-ce-qu-on-a-fait--dans-l-ordre-",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-fixes-post-review--commits--31",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-fixes-post-review--commits--31",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-d-ploiement-supabase--via-mcp-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-d-ploiement-supabase--via-mcp-",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-fix-build-vercel--commit--0e0a",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-fix-build-vercel--commit--0e0a",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-commits-push-s-sur-origin-main",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_proprio_fixes_juin2026-commits-push-s-sur-origin-main",
+      "targetId": "mem-project_kayvila_proprio_fixes_juin2026-notes-techniques-importantes-p",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_kayvila_tech_debt----",
+      "targetId": "mem-project_kayvila_tech_debt-dette-technique-----traiter-pr",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_maison_pvl_mai2026----",
+      "targetId": "mem-project_maison_pvl_mai2026--tat-au-2026-06-06--session-fe",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_maison_pvl_mai2026--tat-au-2026-06-06--session-fe",
+      "targetId": "mem-project_maison_pvl_mai2026-secrets-chiffr-s-dans-system-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_maison_pvl_mai2026-secrets-chiffr-s-dans-system-s",
+      "targetId": "mem-project_maison_pvl_mai2026-session-2026-05-13-nuit---menu",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign----",
+      "targetId": "mem-project_pessora_redesign-stack-technique",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-stack-technique",
+      "targetId": "mem-project_pessora_redesign-tokens-design-system--src-inde",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-tokens-design-system--src-inde",
+      "targetId": "mem-project_pessora_redesign-r-gle-absolue",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-r-gle-absolue",
+      "targetId": "mem-project_pessora_redesign-r-gles-impeccable-appliqu-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-r-gles-impeccable-appliqu-es",
+      "targetId": "mem-project_pessora_redesign-fichiers-cl-s-modifi-s--passe-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-fichiers-cl-s-modifi-s--passe-",
+      "targetId": "mem-project_pessora_redesign-donn-es-produits-r-elles",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-donn-es-produits-r-elles",
+      "targetId": "mem-project_pessora_redesign-supabase-schema--events-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora_redesign-supabase-schema--events-",
+      "targetId": "mem-project_pessora_redesign-corrections-audit-impeccable--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_diamant_noir_technique----",
+      "targetId": "mem-reference_diamant_noir_technique-supabase",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_diamant_noir_technique-supabase",
+      "targetId": "mem-reference_diamant_noir_technique-mod-le-commission--depuis-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_diamant_noir_technique-mod-le-commission--depuis-2026",
+      "targetId": "mem-reference_diamant_noir_technique-frais-de-m-nage",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot----",
+      "targetId": "mem-project_celiobot-fichiers-impliqu-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot-fichiers-impliqu-s",
+      "targetId": "mem-project_celiobot-fonctionnement",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot-fonctionnement",
+      "targetId": "mem-project_celiobot-variables-d-env-concern-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot-variables-d-env-concern-es",
+      "targetId": "mem-project_celiobot--tat-actuel--2026-03-14-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot--tat-actuel--2026-03-14-",
+      "targetId": "mem-project_celiobot-api--api-menu--ajout-e-2026-03",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_celiobot-api--api-menu--ajout-e-2026-03",
+      "targetId": "mem-project_celiobot-rate-limiting-chatbot-tsx--c-t",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_crm_audit----",
+      "targetId": "mem-project_crm_audit-crm-clients---fid-lit---2026-0",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_crm_audit-crm-clients---fid-lit---2026-0",
+      "targetId": "mem-project_crm_audit-audit-34-am-liorations--score-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_database----",
+      "targetId": "mem-project_database-migrations--database-supabase-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_database-migrations--database-supabase-",
+      "targetId": "mem-project_database-tables-principales",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_security----",
+      "targetId": "mem-project_security-critiques",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_security-critiques",
+      "targetId": "mem-project_security-auth-admin",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_security-auth-admin",
+      "targetId": "mem-project_security---ne-pas-committer",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack----",
+      "targetId": "mem-project_stack-stack",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-stack",
+      "targetId": "mem-project_stack-pages-principales--12-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-pages-principales--12-",
+      "targetId": "mem-project_stack-routes-api--31-total-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-routes-api--31-total-",
+      "targetId": "mem-project_stack-d-ploiement--2026-03-14-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-d-ploiement--2026-03-14-",
+      "targetId": "mem-project_stack-donn-es-m-tier",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-donn-es-m-tier",
+      "targetId": "mem-project_stack-fonctionnalit-s-panier--2026-0",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stack-fonctionnalit-s-panier--2026-0",
+      "targetId": "mem-project_stack-palettes-couleurs-brand",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state----",
+      "targetId": "mem-project_diamantnoir_state-stack",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state-stack",
+      "targetId": "mem-project_diamantnoir_state-supabase---points-importants",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state-supabase---points-importants",
+      "targetId": "mem-project_diamantnoir_state-pages-principales",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state-pages-principales",
+      "targetId": "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s",
+      "targetId": "mem-project_diamantnoir_state-bugs-r-solus",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_auth_fixes----",
+      "targetId": "mem-project_auth_fixes-fixes-appliqu-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_hub_admin_unifie----",
+      "targetId": "mem-project_hub_admin_unifie-r-sultat-final",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_hub_admin_unifie-r-sultat-final",
+      "targetId": "mem-project_hub_admin_unifie-composants-villa-editor-wir-s-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_hub_admin_unifie-composants-villa-editor-wir-s-",
+      "targetId": "mem-project_hub_admin_unifie-points-techniques-importants",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_login_unifie----",
+      "targetId": "mem-project_login_unifie-termin---session-2026-05-15-16",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect----",
+      "targetId": "mem-project_stripe_connect-d-cision---stripe-connect-expr",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect-d-cision---stripe-connect-expr",
+      "targetId": "mem-project_stripe_connect-pourquoi-express-et-pas-autre-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect-pourquoi-express-et-pas-autre-",
+      "targetId": "mem-project_stripe_connect-ce-que-le-g-rant-voulait--et-q",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect-ce-que-le-g-rant-voulait--et-q",
+      "targetId": "mem-project_stripe_connect--tat-technique",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect--tat-technique",
+      "targetId": "mem-project_stripe_connect-statuts-juridiques-accept-s-pa",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_stripe_connect-statuts-juridiques-accept-s-pa",
+      "targetId": "mem-project_stripe_connect-note-fiscale",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-16----",
+      "targetId": "mem-session_log_2026-05-16-ce-qui-a--t--accompli",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-16-ce-qui-a--t--accompli",
+      "targetId": "mem-session_log_2026-05-16-commits-du-jour--ordre-chronol",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-16-commits-du-jour--ordre-chronol",
+      "targetId": "mem-session_log_2026-05-16-points-techniques---retenir",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-16-points-techniques---retenir",
+      "targetId": "mem-session_log_2026-05-16--tat-du-projet---la-fin-de-ses",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-17----",
+      "targetId": "mem-session_log_2026-05-17-contexte",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-17-contexte",
+      "targetId": "mem-session_log_2026-05-17-ce-qui-a--t--fait",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-17-ce-qui-a--t--fait",
+      "targetId": "mem-session_log_2026-05-17--tat-stripe-connect",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_log_2026-05-17--tat-stripe-connect",
+      "targetId": "mem-session_log_2026-05-17-aucun-changement-de-code-cette",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_state----",
+      "targetId": "mem-project_state-stack",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_state-stack",
+      "targetId": "mem-project_state-endpoints-insforge-confirm-s--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_state-endpoints-insforge-confirm-s--",
+      "targetId": "mem-project_state-architecture-fichiers-cl-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_state-architecture-fichiers-cl-s",
+      "targetId": "mem-project_state-ce-qui-est-livr-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_state-ce-qui-est-livr-",
+      "targetId": "mem-project_state-ce-qui-reste---faire",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_task----",
+      "targetId": "mem-project_task-livr---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_task-livr---",
+      "targetId": "mem-project_task-reste---faire",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_responsive_suitsupply----",
+      "targetId": "mem-refonte_responsive_suitsupply-commits",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_responsive_suitsupply-commits",
+      "targetId": "mem-refonte_responsive_suitsupply-patterns--tablis----respecter-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_responsive_suitsupply-patterns--tablis----respecter-",
+      "targetId": "mem-refonte_responsive_suitsupply-drawers--cartdrawer--filtres-p",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_responsive_suitsupply-drawers--cartdrawer--filtres-p",
+      "targetId": "mem-refonte_responsive_suitsupply-pages-refondues",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin----",
+      "targetId": "mem-refonte_ux_admin-d-cisions-de-design-valid-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-d-cisions-de-design-valid-es",
+      "targetId": "mem-refonte_ux_admin-fichiers-cr--s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-fichiers-cr--s",
+      "targetId": "mem-refonte_ux_admin-fichiers-refondus",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-fichiers-refondus",
+      "targetId": "mem-refonte_ux_admin-contraintes-respect-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-contraintes-respect-es",
+      "targetId": "mem-refonte_ux_admin-validation-technique",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-validation-technique",
+      "targetId": "mem-refonte_ux_admin-astuces-non-obvious---retenir",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign----",
+      "targetId": "mem-project_index-redesign-header--fixe-kayvilla-style-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-header--fixe-kayvilla-style-",
+      "targetId": "mem-project_index-redesign-css-utilities-section-unifi-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-css-utilities-section-unifi-es",
+      "targetId": "mem-project_index-redesign-radius-standardis-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-radius-standardis-",
+      "targetId": "mem-project_index-redesign-app-tsx---padding-main-conditi",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-app-tsx---padding-main-conditi",
+      "targetId": "mem-project_index-redesign-oraplusteaserstrip",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-oraplusteaserstrip",
+      "targetId": "mem-project_index-redesign-10-sections-index--ordre-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-10-sections-index--ordre-",
+      "targetId": "mem-project_index-redesign-minimalisme-texte--2026-05-24-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_index-redesign-minimalisme-texte--2026-05-24-",
+      "targetId": "mem-project_index-redesign-anti-patterns-supprim-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin----",
+      "targetId": "mem-project_pessora-homepage-photo-admin-ce-qui-a--t--impl-ment-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin-ce-qui-a--t--impl-ment-",
+      "targetId": "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s",
+      "targetId": "mem-project_pessora-homepage-photo-admin-photos-manquantes----faire-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin-photos-manquantes----faire-",
+      "targetId": "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-",
+      "targetId": "mem-project_pessora-homepage-photo-admin-header-refonte--2026-05-24-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_split-admin-gallery-progress----",
+      "targetId": "mem-project_split-admin-gallery-progress-ce-qui-a--t--fait--tasks-1-10-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_split-admin-gallery-progress-ce-qui-a--t--fait--tasks-1-10-",
+      "targetId": "mem-project_split-admin-gallery-progress-bonus---fix-stripe-gamme",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_supabase-admin----",
+      "targetId": "mem-reference_supabase-admin-comptes-utilisateurs--au-2026-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_supabase-admin-comptes-utilisateurs--au-2026-",
+      "targetId": "mem-reference_supabase-admin-pour-promouvoir-un-compte-en-a",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_supabase-admin-pour-promouvoir-un-compte-en-a",
+      "targetId": "mem-reference_supabase-admin-tables-cr--es-pour-la-homepage",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_supabase-admin-tables-cr--es-pour-la-homepage",
+      "targetId": "mem-reference_supabase-admin-buckets-storage",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-reference_taste-skill----",
+      "targetId": "mem-reference_taste-skill-taste-skill--design-taste-fron",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-29-phase3-galerie-stripe-sync----",
+      "targetId": "mem-session_2026-05-29-phase3-galerie-stripe-sync-ce-qui-a--t--fait--commits-sur",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-29-phase3-galerie-stripe-sync-ce-qui-a--t--fait--commits-sur",
+      "targetId": "mem-session_2026-05-29-phase3-galerie-stripe-sync-reste---faire",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-29-phase3-galerie-stripe-sync-reste---faire",
+      "targetId": "mem-session_2026-05-29-phase3-galerie-stripe-sync-pour-la-prochaine-session",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-29----",
+      "targetId": "mem-session_2026-05-29-session-du-29-30-mai-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-30-all-fixes----",
+      "targetId": "mem-session_2026-05-30-all-fixes-session-du-30-mai-2026---r-sum",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-30-final----",
+      "targetId": "mem-session_2026-05-30-final--tat-final---30-mai-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-05-31-final----",
+      "targetId": "mem-session_2026-05-31-final-r-sum----31-mai-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-06-02-separation-bar-gamme----",
+      "targetId": "mem-session_2026-06-02-separation-bar-gamme-r-sum----2-juin-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-06-03-fixes----",
+      "targetId": "mem-session_2026-06-03-fixes-r-sum--complet---3-juin-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-06-04-finalisation----",
+      "targetId": "mem-session_2026-06-04-finalisation-r-sum----4-juin-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-06-05-pause----",
+      "targetId": "mem-session_2026-06-05-pause-derniers-commits--5-juin-2026-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session_2026-06-05-pause-derniers-commits--5-juin-2026-",
+      "targetId": "mem-session_2026-06-05-pause-checklist-go-live-restante",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log----",
+      "targetId": "mem-session-log-contexte",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-contexte",
+      "targetId": "mem-session-log-session-1---audit-qualit---202",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-session-1---audit-qualit---202",
+      "targetId": "mem-session-log-session-2---correction-des-11-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-session-2---correction-des-11-",
+      "targetId": "mem-session-log-session-3---adaptation-mobile-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-session-3---adaptation-mobile-",
+      "targetId": "mem-session-log-session-4---bug-fix-desktop--2",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-session-4---bug-fix-desktop--2",
+      "targetId": "mem-session-log-commandes-utiles",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-commandes-utiles",
+      "targetId": "mem-session-log-r-gles-acquises",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-r-gles-acquises",
+      "targetId": "mem-session-log-session-5---audit-responsive-c",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-session-log-session-5---audit-responsive-c",
+      "targetId": "mem-session-log-session-6---espace-admin-compl",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes----",
+      "targetId": "mem-project_elise_n8n_fixes-elise-14-json---fixes-session-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-elise-14-json---fixes-session-",
+      "targetId": "mem-project_elise_n8n_fixes-fix-1---connexions--n-ud-orphe",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-1---connexions--n-ud-orphe",
+      "targetId": "mem-project_elise_n8n_fixes-fix-2---syntaxe-js-dans-code--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-2---syntaxe-js-dans-code--",
+      "targetId": "mem-project_elise_n8n_fixes-fix-3---prompt-elise---r-serva",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-3---prompt-elise---r-serva",
+      "targetId": "mem-project_elise_n8n_fixes-fix-4---rpc-add-to-waitlist---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-4---rpc-add-to-waitlist---",
+      "targetId": "mem-project_elise_n8n_fixes-fix-5---http-request---capacit",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-5---http-request---capacit",
+      "targetId": "mem-project_elise_n8n_fixes-fix-6---csp--htaccess--product",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_elise_n8n_fixes-fix-6---csp--htaccess--product",
+      "targetId": "mem-project_elise_n8n_fixes--tat-final-elise-14-json",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_invite_debug_20260512----",
+      "targetId": "mem-project_invite_debug_20260512-debug-edge-function-supabase",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_invite_debug_20260512-debug-edge-function-supabase",
+      "targetId": "mem-project_invite_debug_20260512-pi-ge---contrainte-unique---tr",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_invite_debug_20260512-pi-ge---contrainte-unique---tr",
+      "targetId": "mem-project_invite_debug_20260512-flow-d-invitation-complet",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_inprogress----",
+      "targetId": "mem-project_karibloom_lot_c_inprogress-statut---livr---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_inprogress-statut---livr---",
+      "targetId": "mem-project_karibloom_lot_c_inprogress-bilan",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_inprogress-bilan",
+      "targetId": "mem-project_karibloom_lot_c_inprogress-fichiers-cr--s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_inprogress-fichiers-cr--s",
+      "targetId": "mem-project_karibloom_lot_c_inprogress-pi-ges-lot-c--pour-lot-d-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff----",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-1--v-rifications-pr-alables--2",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff-1--v-rifications-pr-alables--2",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-2--lire-la-spec-lot-c-avant-d-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff-2--lire-la-spec-lot-c-avant-d-",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-3--livrables-lot-c-attendus--r",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff-3--livrables-lot-c-attendus--r",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-4--crit-res-d-acceptation-lot-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff-4--crit-res-d-acceptation-lot-",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-5--flow-obligatoire",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_karibloom_lot_c_kickoff-5--flow-obligatoire",
+      "targetId": "mem-project_karibloom_lot_c_kickoff-6--pi-ges----viter--le-ons-lot",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260512_13----",
+      "targetId": "mem-project_session_20260512_13-gestion-de-compte-client---par",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260512_13-gestion-de-compte-client---par",
+      "targetId": "mem-project_session_20260512_13-pages-callback-auth-supabase--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260512_13-pages-callback-auth-supabase--",
+      "targetId": "mem-project_session_20260512_13-suppression-membres---refonte-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_afternoon----",
+      "targetId": "mem-project_session_20260513_afternoon-stripe-payment-links--option-c",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_afternoon-stripe-payment-links--option-c",
+      "targetId": "mem-project_session_20260513_afternoon-audit-mobile--3-passes-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_afternoon-audit-mobile--3-passes-",
+      "targetId": "mem-project_session_20260513_afternoon-critique-design--nielsen-22-26",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_evening----",
+      "targetId": "mem-project_session_20260513_evening-corrections-critiques--p1-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_evening-corrections-critiques--p1-",
+      "targetId": "mem-project_session_20260513_evening-am-liorations",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_evening-am-liorations",
+      "targetId": "mem-project_session_20260513_evening-plan-v4--non-impl-ment--",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_full----",
+      "targetId": "mem-project_session_20260513_full-audit-ux--impeccable-audit----",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_full-audit-ux--impeccable-audit----",
+      "targetId": "mem-project_session_20260513_full-critique-design--impeccable-cr",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_full-critique-design--impeccable-cr",
+      "targetId": "mem-project_session_20260513_full-project-hub",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260513_full-project-hub",
+      "targetId": "mem-project_session_20260513_full-cascade-delete",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260514----",
+      "targetId": "mem-project_session_20260514-flux-admin-client",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260514-flux-admin-client",
+      "targetId": "mem-project_session_20260514-refonte-espace-client",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260514-refonte-espace-client",
+      "targetId": "mem-project_session_20260514-connexion-admin-client",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260514-connexion-admin-client",
+      "targetId": "mem-project_session_20260514-aper-u-devis---facture",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260514-aper-u-devis---facture",
+      "targetId": "mem-project_session_20260514-audit-technique--2-passes--12-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_enrollment_clients_projets----",
+      "targetId": "mem-project_session_20260515_enrollment_clients_projets-feature-1---section-unifi-e--c",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_enrollment_clients_projets-feature-1---section-unifi-e--c",
+      "targetId": "mem-project_session_20260515_enrollment_clients_projets-feature-2---onglet-abonnement-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_enrollment_clients_projets-feature-2---onglet-abonnement-",
+      "targetId": "mem-project_session_20260515_enrollment_clients_projets-php---fichiers---d-ployer-sur-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures----",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-bugs-corrig-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-bugs-corrig-s",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-session-suivante--15-mai---sui",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-session-suivante--15-mai---sui",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures---faire-avant-prod",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_pdf_ia_fixes----",
+      "targetId": "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s",
+      "targetId": "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s",
+      "targetId": "mem-project_session_20260515_pdf_ia_fixes---faire-avant-prod",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_ai_structure----",
+      "targetId": "mem-project_session_20260516_ai_structure-ce-qui-a--t--fait",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full----",
+      "targetId": "mem-project_session_20260516_full-debug-n8n-devis---upload-bloqu",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-debug-n8n-devis---upload-bloqu",
+      "targetId": "mem-project_session_20260516_full-workflow-devis---contenu-pdf",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-workflow-devis---contenu-pdf",
+      "targetId": "mem-project_session_20260516_full-frontend---createdevismodal",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-frontend---createdevismodal",
+      "targetId": "mem-project_session_20260516_full-frontend---packcardmodern",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-frontend---packcardmodern",
+      "targetId": "mem-project_session_20260516_full-frontend---createinvoicemodal-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-frontend---createinvoicemodal-",
+      "targetId": "mem-project_session_20260516_full-backend----api-stripe-payment-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-backend----api-stripe-payment-",
+      "targetId": "mem-project_session_20260516_full-backend----api-devis-ai-struct",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-backend----api-devis-ai-struct",
+      "targetId": "mem-project_session_20260516_full-backend----api-invoices-create",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-backend----api-invoices-create",
+      "targetId": "mem-project_session_20260516_full-base-de-donn-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260516_full-base-de-donn-es",
+      "targetId": "mem-project_session_20260516_full-fichiers-modifi-s----d-ployer-",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp----",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-session-22-23-mai-2026---audit",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-session-22-23-mai-2026---audit",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-d-ploiement-nouveau-client",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260523_elise_hermes----",
+      "targetId": "mem-project_session_20260523_elise_hermes-chronologie",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260523_elise_hermes-chronologie",
+      "targetId": "mem-project_session_20260523_elise_hermes--tat-final---24-mai-2026",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260524_mini_audit----",
+      "targetId": "mem-project_session_20260524_mini_audit-actions-de-la-session",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_audit_db----",
+      "targetId": "mem-project_session_20260526_audit_db-corrections-appliqu-es",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_audit_db-corrections-appliqu-es",
+      "targetId": "mem-project_session_20260526_audit_db-constats-d-audit--non-corrig-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full----",
+      "targetId": "mem-project_session_20260526_full-phase-1---pull---build-initial",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-1---pull---build-initial",
+      "targetId": "mem-project_session_20260526_full-phase-2---audit-db-supabase---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-2---audit-db-supabase---",
+      "targetId": "mem-project_session_20260526_full-phase-3---fix-magic-link--expi",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-3---fix-magic-link--expi",
+      "targetId": "mem-project_session_20260526_full-phase-4---refonte-espace-admin",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-4---refonte-espace-admin",
+      "targetId": "mem-project_session_20260526_full-phase-5---refonte-bloom-enroll",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-5---refonte-bloom-enroll",
+      "targetId": "mem-project_session_20260526_full-phase-6---code-review--lise---",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-6---code-review--lise---",
+      "targetId": "mem-project_session_20260526_full-phase-7---merge-final---d-ploi",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-7---merge-final---d-ploi",
+      "targetId": "mem-project_session_20260526_full-phase-8---corrections-post-d-p",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_session_20260526_full-phase-8---corrections-post-d-p",
+      "targetId": "mem-project_session_20260526_full-fichiers-cl-s-cr--s-modifi-s",
+      "type": "temporal",
+      "weight": 0.5
+    },
+    {
+      "sourceId": "mem-project_diamantnoir_state-pages-principales",
+      "targetId": "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s",
+      "type": "similar",
+      "weight": 0.3070539419087137
+    },
+    {
+      "sourceId": "mem-refonte_ux_admin-d-cisions-de-design-valid-es",
+      "targetId": "mem-refonte_ux_admin-fichiers-cr--s",
+      "type": "similar",
+      "weight": 0.315018315018315
+    },
+    {
+      "sourceId": "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s",
+      "targetId": "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-",
+      "type": "similar",
+      "weight": 0.3021978021978022
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-",
+      "type": "similar",
+      "weight": 0.345
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-",
+      "type": "similar",
+      "weight": 0.390625
+    },
+    {
+      "sourceId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-",
+      "targetId": "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-",
+      "type": "similar",
+      "weight": 0.7457627118644068
+    },
+    {
+      "sourceId": "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s",
+      "targetId": "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s",
+      "type": "similar",
+      "weight": 0.34705882352941175
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "type": "similar",
+      "weight": 0.3448275862068966
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel",
+      "type": "similar",
+      "weight": 0.3333333333333333
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs",
+      "type": "similar",
+      "weight": 0.34210526315789475
+    },
+    {
+      "sourceId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel",
+      "targetId": "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs",
+      "type": "similar",
+      "weight": 0.3695652173913043
+    }
+  ],
+  "pageRanks": {
+    "mem-MEMORY-project": 0.0010591758622638657,
+    "mem-MEMORY-reference": 0.0019594754240793997,
+    "mem-MEMORY-feedback": 0.0027247296857428292,
+    "mem-feedback_design_rules_kayvila----": 0.0010591758622638657,
+    "mem-feedback_design_rules_kayvila-r-gles-absolues": 0.0019594754240793997,
+    "mem-feedback_design_rules_kayvila-design-context-kayvila--rappel": 0.0027247296857428292,
+    "mem-feedback_model_routing_subagents----": 0.0010591758622638657,
+    "mem-feedback_verify_live_schema_before_db----": 0.0010591758622638657,
+    "mem-project_diamant_noir_mai2026----": 0.0010591758622638657,
+    "mem-project_diamant_noir_mai2026-session-05-juin-2026---mega-fi": 0.0019594754240793997,
+    "mem-project_diamant_noir_mai2026-historique--21-28-mai-2026-": 0.0027247296857428292,
+    "mem-project_diamant_noir_redesign----": 0.0010591758622638657,
+    "mem-project_diamant_noir_redesign-projet": 0.0019594754240793997,
+    "mem-project_diamant_noir_redesign-refonte-le-collectionist---ter": 0.0027247296857428292,
+    "mem-project_diamant_noir_redesign-nouveaux-composants-cr--s-par-": 0.003375195898419784,
+    "mem-project_diamant_noir_redesign-vid-o-hero": 0.003928091692424774,
+    "mem-project_diamant_noir_redesign-contexte-client": 0.004398052402518538,
+    "mem-project_diamant_noir_redesign-ce-qui-n-a-pas-chang-": 0.004797519245215059,
+    "mem-project_diamant_noir_redesign-espace-client-locataire---term": 0.005137064906971892,
+    "mem-project_diamant_noir_redesign-dashboard-locataire-premium-v2": 0.0054256768023478955,
+    "mem-project_diamant_noir_redesign-chatbot-public-v1---termin---2": 0.005671000089525594,
+    "mem-project_diamant_noir_redesign-listing-import-enrich---termin": 0.005879572971539711,
+    "mem-project_diamant_noir_redesign-unification-home---navbar-conc": 0.006056820259816344,
+    "mem-project_diamant_noir_redesign-unification-soumettre-ma-villa": 0.0062074520908269905,
+    "mem-project_diamant_noir_redesign-upload-photos-soumission-villa": 0.006335510363105854,
+    "mem-project_diamant_noir_redesign-mobile-parallax-performance---": 0.00644430211958363,
+    "mem-project_diamant_noir_redesign-design-audit-impeccable---term": 0.006536789290872727,
+    "mem-project_kayvila_15juin2026_postaudit----": 0.0010591758622638657,
+    "mem-project_kayvila_15juin2026_postaudit-kayvila---15-juin-2026---post-": 0.0019594754240793997,
+    "mem-project_kayvila_15juin2026_postaudit-1--post-audit-richard--3-corre": 0.0027247296857428292,
+    "mem-project_kayvila_15juin2026_postaudit-2--mobile-responsive--4-fixes-": 0.003375195898419784,
+    "mem-project_kayvila_15juin2026_postaudit-3--variables-sla-vercel": 0.003928091692424774,
+    "mem-project_kayvila_15juin2026_postaudit-4--23-tests-playwright": 0.004398052402518538,
+    "mem-project_kayvila_15juin2026_postaudit-5--comptes-de-test-valid-s": 0.004797519245215059,
+    "mem-project_kayvila_15juin2026_postaudit-6--r-gles-apprises--voir-learn": 0.005137064906971892,
+    "mem-project_kayvila_15juin2026_postaudit-7--chatbots---n8n---analyse": 0.0054256768023478955,
+    "mem-project_kayvila_15juin2026_postaudit-prochaine--tape": 0.005671000089525594,
+    "mem-project_kayvila_16juin2026_ux_agents----": 0.0010591758622638657,
+    "mem-project_kayvila_16juin2026_ux_agents-correctifs-ux-richard--4-4-mer": 0.0019594754240793997,
+    "mem-project_kayvila_16juin2026_ux_agents-agents-ia-v3---termin-": 0.0027247296857428292,
+    "mem-project_kayvila_16juin2026_ux_agents-audit--lise": 0.003375195898419784,
+    "mem-project_kayvila_16juin2026_ux_agents-r-gles-critiques": 0.003928091692424774,
+    "mem-project_kayvila_7juin2026----": 0.0010591758622638657,
+    "mem-project_kayvila_7juin2026-travail-accompli": 0.0019594754240793997,
+    "mem-project_kayvila_agents_ia_16juin2026----": 0.0010591758622638657,
+    "mem-project_kayvila_agents_ia_16juin2026-kayvila---agents-ia-v3--2026-0": 0.0019594754240793997,
+    "mem-project_kayvila_agents_ia_16juin2026-r-sultat-final--2026-06-15-": 0.0027247296857428292,
+    "mem-project_kayvila_agents_ia_16juin2026---phase-1---12-12---3-correcti": 0.003375195898419784,
+    "mem-project_kayvila_agents_ia_16juin2026---phase-2---3-workflows-n8n-v3": 0.003928091692424774,
+    "mem-project_kayvila_agents_ia_16juin2026-r-gles-apprises": 0.004398052402518538,
+    "mem-project_kayvila_audit_batch_16juin2026----": 0.0010591758622638657,
+    "mem-project_kayvila_audit_batch_16juin2026-kayvila---campagne-audit-batch": 0.0019594754240793997,
+    "mem-project_kayvila_audit_batch_16juin2026--tat-au-16-juin--soir----pause": 0.0027247296857428292,
+    "mem-project_kayvila_audit_batch_16juin2026----blocage-cl-": 0.003375195898419784,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-2----commit--1d6f64c--": 0.003928091692424774,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-3----commit--ddf55e7-----c": 0.004398052402518538,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-4----commit--21f91b5-----p": 0.004797519245215059,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-5----commit--c4c9a6f-----s": 0.005137064906971892,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-6----commit--9176674-----l": 0.0054256768023478955,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-7----commit--86e0ea9-----u": 0.005671000089525594,
+    "mem-project_kayvila_audit_batch_16juin2026-lot-8----commit--0f24c2d-----c": 0.005879572971539711,
+    "mem-project_kayvila_audit_batch_16juin2026--tat-global-campagne--au-16-ju": 0.006056820259816344,
+    "mem-project_kayvila_audit_batch_16juin2026-reprise---lot-9--backlog--n-ce": 0.0062074520908269905,
+    "mem-project_kayvila_corrections_batch_15juin2026----": 0.0010591758622638657,
+    "mem-project_kayvila_proprio_fixes_juin2026----": 0.0010591758622638657,
+    "mem-project_kayvila_proprio_fixes_juin2026-kayvila---session-2026-06-13--": 0.0019594754240793997,
+    "mem-project_kayvila_proprio_fixes_juin2026-ce-qu-on-a-fait--dans-l-ordre-": 0.0027247296857428292,
+    "mem-project_kayvila_proprio_fixes_juin2026-fixes-post-review--commits--31": 0.003375195898419784,
+    "mem-project_kayvila_proprio_fixes_juin2026-d-ploiement-supabase--via-mcp-": 0.003928091692424774,
+    "mem-project_kayvila_proprio_fixes_juin2026-fix-build-vercel--commit--0e0a": 0.004398052402518538,
+    "mem-project_kayvila_proprio_fixes_juin2026-commits-push-s-sur-origin-main": 0.004797519245215059,
+    "mem-project_kayvila_proprio_fixes_juin2026-notes-techniques-importantes-p": 0.005137064906971892,
+    "mem-project_kayvila_tech_debt----": 0.0010591758622638657,
+    "mem-project_kayvila_tech_debt-dette-technique-----traiter-pr": 0.0019594754240793997,
+    "mem-project_maison_pvl_mai2026----": 0.0010591758622638657,
+    "mem-project_maison_pvl_mai2026--tat-au-2026-06-06--session-fe": 0.0019594754240793997,
+    "mem-project_maison_pvl_mai2026-secrets-chiffr-s-dans-system-s": 0.0027247296857428292,
+    "mem-project_maison_pvl_mai2026-session-2026-05-13-nuit---menu": 0.003375195898419784,
+    "mem-project_pessora_redesign----": 0.0010591758622638657,
+    "mem-project_pessora_redesign-stack-technique": 0.0019594754240793997,
+    "mem-project_pessora_redesign-tokens-design-system--src-inde": 0.0027247296857428292,
+    "mem-project_pessora_redesign-r-gle-absolue": 0.003375195898419784,
+    "mem-project_pessora_redesign-r-gles-impeccable-appliqu-es": 0.003928091692424774,
+    "mem-project_pessora_redesign-fichiers-cl-s-modifi-s--passe-": 0.004398052402518538,
+    "mem-project_pessora_redesign-donn-es-produits-r-elles": 0.004797519245215059,
+    "mem-project_pessora_redesign-supabase-schema--events-": 0.005137064906971892,
+    "mem-project_pessora_redesign-corrections-audit-impeccable--": 0.0054256768023478955,
+    "mem-reference_diamant_noir_technique----": 0.0010591758622638657,
+    "mem-reference_diamant_noir_technique-supabase": 0.0019594754240793997,
+    "mem-reference_diamant_noir_technique-mod-le-commission--depuis-2026": 0.0027247296857428292,
+    "mem-reference_diamant_noir_technique-frais-de-m-nage": 0.003375195898419784,
+    "mem-MEMORY-memory-index---dal-cielo": 0.0010591758622638657,
+    "mem-feedback_style----": 0.0010591758622638657,
+    "mem-project_celiobot----": 0.0010591758622638657,
+    "mem-project_celiobot-fichiers-impliqu-s": 0.0019594754240793997,
+    "mem-project_celiobot-fonctionnement": 0.0027247296857428292,
+    "mem-project_celiobot-variables-d-env-concern-es": 0.003375195898419784,
+    "mem-project_celiobot--tat-actuel--2026-03-14-": 0.003928091692424774,
+    "mem-project_celiobot-api--api-menu--ajout-e-2026-03": 0.004398052402518538,
+    "mem-project_celiobot-rate-limiting-chatbot-tsx--c-t": 0.004797519245215059,
+    "mem-project_crm_audit----": 0.0010591758622638657,
+    "mem-project_crm_audit-crm-clients---fid-lit---2026-0": 0.0019594754240793997,
+    "mem-project_crm_audit-audit-34-am-liorations--score-": 0.0027247296857428292,
+    "mem-project_database----": 0.0010591758622638657,
+    "mem-project_database-migrations--database-supabase-": 0.0019594754240793997,
+    "mem-project_database-tables-principales": 0.0027247296857428292,
+    "mem-project_security----": 0.0010591758622638657,
+    "mem-project_security-critiques": 0.0019594754240793997,
+    "mem-project_security-auth-admin": 0.0027247296857428292,
+    "mem-project_security---ne-pas-committer": 0.003375195898419784,
+    "mem-project_stack----": 0.0010591758622638657,
+    "mem-project_stack-stack": 0.0019594754240793997,
+    "mem-project_stack-pages-principales--12-": 0.0027247296857428292,
+    "mem-project_stack-routes-api--31-total-": 0.003375195898419784,
+    "mem-project_stack-d-ploiement--2026-03-14-": 0.003928091692424774,
+    "mem-project_stack-donn-es-m-tier": 0.004398052402518538,
+    "mem-project_stack-fonctionnalit-s-panier--2026-0": 0.004797519245215059,
+    "mem-project_stack-palettes-couleurs-brand": 0.005137064906971892,
+    "mem-user_profile----": 0.0010591758622638657,
+    "mem-MEMORY----dev-server-diamant-noir--fe": 0.0010591758622638657,
+    "mem-feedback_dev_server----": 0.0010591758622638657,
+    "mem-project_diamantnoir_state----": 0.0010591758622638657,
+    "mem-project_diamantnoir_state-stack": 0.0019594754240793997,
+    "mem-project_diamantnoir_state-supabase---points-importants": 0.0027247296857428292,
+    "mem-project_diamantnoir_state-pages-principales": 0.003375195898419784,
+    "mem-project_diamantnoir_state-composants-cl-s-cr--s-modifi-s": 0.003928091692424774,
+    "mem-project_diamantnoir_state-bugs-r-solus": 0.004398052402518538,
+    "mem-MEMORY-memory-index": 0.0010591758622638657,
+    "mem-feedback_ux_before_internals----": 0.0010591758622638657,
+    "mem-project_auth_fixes----": 0.0010591758622638657,
+    "mem-project_auth_fixes-fixes-appliqu-s": 0.0019594754240793997,
+    "mem-project_hub_admin_unifie----": 0.0010591758622638657,
+    "mem-project_hub_admin_unifie-r-sultat-final": 0.0019594754240793997,
+    "mem-project_hub_admin_unifie-composants-villa-editor-wir-s-": 0.0027247296857428292,
+    "mem-project_hub_admin_unifie-points-techniques-importants": 0.003375195898419784,
+    "mem-project_login_unifie----": 0.0010591758622638657,
+    "mem-project_login_unifie-termin---session-2026-05-15-16": 0.0019594754240793997,
+    "mem-project_stripe_connect----": 0.0010591758622638657,
+    "mem-project_stripe_connect-d-cision---stripe-connect-expr": 0.0019594754240793997,
+    "mem-project_stripe_connect-pourquoi-express-et-pas-autre-": 0.0027247296857428292,
+    "mem-project_stripe_connect-ce-que-le-g-rant-voulait--et-q": 0.003375195898419784,
+    "mem-project_stripe_connect--tat-technique": 0.003928091692424774,
+    "mem-project_stripe_connect-statuts-juridiques-accept-s-pa": 0.004398052402518538,
+    "mem-project_stripe_connect-note-fiscale": 0.004797519245215059,
+    "mem-session_log_2026-05-16----": 0.0010591758622638657,
+    "mem-session_log_2026-05-16-ce-qui-a--t--accompli": 0.0019594754240793997,
+    "mem-session_log_2026-05-16-commits-du-jour--ordre-chronol": 0.0027247296857428292,
+    "mem-session_log_2026-05-16-points-techniques---retenir": 0.003375195898419784,
+    "mem-session_log_2026-05-16--tat-du-projet---la-fin-de-ses": 0.003928091692424774,
+    "mem-session_log_2026-05-17----": 0.0010591758622638657,
+    "mem-session_log_2026-05-17-contexte": 0.0019594754240793997,
+    "mem-session_log_2026-05-17-ce-qui-a--t--fait": 0.0027247296857428292,
+    "mem-session_log_2026-05-17--tat-stripe-connect": 0.003375195898419784,
+    "mem-session_log_2026-05-17-aucun-changement-de-code-cette": 0.003928091692424774,
+    "mem-animations_2026-06-10----": 0.0010591758622638657,
+    "mem-audit_insforge_2026-06-10----": 0.0010591758622638657,
+    "mem-audit_suitsupply_2026-06-09----": 0.0010591758622638657,
+    "mem-auth_drawer----": 0.0010591758622638657,
+    "mem-feedback_design----": 0.0010591758622638657,
+    "mem-feedback_responsive_suitsupply----": 0.0010591758622638657,
+    "mem-migration_colorways----": 0.0010591758622638657,
+    "mem-mobile_responsive_skill----": 0.0010591758622638657,
+    "mem-project_state----": 0.0010591758622638657,
+    "mem-project_state-stack": 0.0019594754240793997,
+    "mem-project_state-endpoints-insforge-confirm-s--": 0.0027247296857428292,
+    "mem-project_state-architecture-fichiers-cl-s": 0.003375195898419784,
+    "mem-project_state-ce-qui-est-livr-": 0.003928091692424774,
+    "mem-project_state-ce-qui-reste---faire": 0.004398052402518538,
+    "mem-project_task----": 0.0010591758622638657,
+    "mem-project_task-livr---": 0.0019594754240793997,
+    "mem-project_task-reste---faire": 0.0027247296857428292,
+    "mem-refonte_responsive_suitsupply----": 0.0010591758622638657,
+    "mem-refonte_responsive_suitsupply-commits": 0.0019594754240793997,
+    "mem-refonte_responsive_suitsupply-patterns--tablis----respecter-": 0.0027247296857428292,
+    "mem-refonte_responsive_suitsupply-drawers--cartdrawer--filtres-p": 0.003375195898419784,
+    "mem-refonte_responsive_suitsupply-pages-refondues": 0.003928091692424774,
+    "mem-refonte_ux_admin----": 0.0010591758622638657,
+    "mem-refonte_ux_admin-d-cisions-de-design-valid-es": 0.0019594754240793997,
+    "mem-refonte_ux_admin-fichiers-cr--s": 0.0027247296857428292,
+    "mem-refonte_ux_admin-fichiers-refondus": 0.003375195898419784,
+    "mem-refonte_ux_admin-contraintes-respect-es": 0.003928091692424774,
+    "mem-refonte_ux_admin-validation-technique": 0.004398052402518538,
+    "mem-refonte_ux_admin-astuces-non-obvious---retenir": 0.004797519245215059,
+    "mem-retours_pierre_2026-06-10----": 0.0010591758622638657,
+    "mem-MEMORY----session-2026-06-05---pause-": 0.0010591758622638657,
+    "mem-feedback_framer-motion-overflow----": 0.0010591758622638657,
+    "mem-feedback_git-workflow----": 0.0010591758622638657,
+    "mem-feedback_header-kayvilla-style----": 0.0010591758622638657,
+    "mem-feedback_redundancy-cut----": 0.0010591758622638657,
+    "mem-feedback_vert-sapin-brand----": 0.0010591758622638657,
+    "mem-project_index-redesign----": 0.0010591758622638657,
+    "mem-project_index-redesign-header--fixe-kayvilla-style-": 0.0019594754240793997,
+    "mem-project_index-redesign-css-utilities-section-unifi-es": 0.0027247296857428292,
+    "mem-project_index-redesign-radius-standardis-": 0.003375195898419784,
+    "mem-project_index-redesign-app-tsx---padding-main-conditi": 0.003928091692424774,
+    "mem-project_index-redesign-oraplusteaserstrip": 0.004398052402518538,
+    "mem-project_index-redesign-10-sections-index--ordre-": 0.004797519245215059,
+    "mem-project_index-redesign-minimalisme-texte--2026-05-24-": 0.005137064906971892,
+    "mem-project_index-redesign-anti-patterns-supprim-s": 0.0054256768023478955,
+    "mem-project_pessora-homepage-photo-admin----": 0.0010591758622638657,
+    "mem-project_pessora-homepage-photo-admin-ce-qui-a--t--impl-ment-": 0.0019594754240793997,
+    "mem-project_pessora-homepage-photo-admin-fichiers-cl-s-cr--s-modifi-s": 0.0027247296857428292,
+    "mem-project_pessora-homepage-photo-admin-photos-manquantes----faire-": 0.0022171858803418246,
+    "mem-project_pessora-homepage-photo-admin-layout-unifi---2026-05-24-": 0.004101793576330046,
+    "mem-project_pessora-homepage-photo-admin-header-refonte--2026-05-24-": 0.004545699178303371,
+    "mem-project_split-admin-gallery-progress----": 0.0010591758622638657,
+    "mem-project_split-admin-gallery-progress-ce-qui-a--t--fait--tasks-1-10-": 0.0019594754240793997,
+    "mem-project_split-admin-gallery-progress-bonus---fix-stripe-gamme": 0.0027247296857428292,
+    "mem-reference_playwright-mcp----": 0.0010591758622638657,
+    "mem-reference_supabase-admin----": 0.0010591758622638657,
+    "mem-reference_supabase-admin-comptes-utilisateurs--au-2026-": 0.0019594754240793997,
+    "mem-reference_supabase-admin-pour-promouvoir-un-compte-en-a": 0.0027247296857428292,
+    "mem-reference_supabase-admin-tables-cr--es-pour-la-homepage": 0.003375195898419784,
+    "mem-reference_supabase-admin-buckets-storage": 0.003928091692424774,
+    "mem-reference_taste-skill----": 0.0010591758622638657,
+    "mem-reference_taste-skill-taste-skill--design-taste-fron": 0.0019594754240793997,
+    "mem-session_2026-05-24-menu-fixes----": 0.0010591758622638657,
+    "mem-session_2026-05-25-auto-slug-plus-fixes----": 0.0010591758622638657,
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync----": 0.0010591758622638657,
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-ce-qui-a--t--fait--commits-sur": 0.0019594754240793997,
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-reste---faire": 0.0027247296857428292,
+    "mem-session_2026-05-29-phase3-galerie-stripe-sync-pour-la-prochaine-session": 0.003375195898419784,
+    "mem-session_2026-05-29----": 0.0010591758622638657,
+    "mem-session_2026-05-29-session-du-29-30-mai-2026": 0.0019594754240793997,
+    "mem-session_2026-05-30-all-fixes----": 0.0010591758622638657,
+    "mem-session_2026-05-30-all-fixes-session-du-30-mai-2026---r-sum": 0.0019594754240793997,
+    "mem-session_2026-05-30-final----": 0.0010591758622638657,
+    "mem-session_2026-05-30-final--tat-final---30-mai-2026": 0.0019594754240793997,
+    "mem-session_2026-05-31-final----": 0.0010591758622638657,
+    "mem-session_2026-05-31-final-r-sum----31-mai-2026": 0.0019594754240793997,
+    "mem-session_2026-06-02-separation-bar-gamme----": 0.0010591758622638657,
+    "mem-session_2026-06-02-separation-bar-gamme-r-sum----2-juin-2026": 0.0019594754240793997,
+    "mem-session_2026-06-03-fixes----": 0.0010591758622638657,
+    "mem-session_2026-06-03-fixes-r-sum--complet---3-juin-2026": 0.0019594754240793997,
+    "mem-session_2026-06-04-finalisation----": 0.0010591758622638657,
+    "mem-session_2026-06-04-finalisation-r-sum----4-juin-2026": 0.0019594754240793997,
+    "mem-session_2026-06-05-pause----": 0.0010591758622638657,
+    "mem-session_2026-06-05-pause-derniers-commits--5-juin-2026-": 0.0019594754240793997,
+    "mem-session_2026-06-05-pause-checklist-go-live-restante": 0.0027247296857428292,
+    "mem-MEMORY----client-typography--client-t": 0.0010591758622638657,
+    "mem-client_typography----": 0.0010591758622638657,
+    "mem-desktop-layout----": 0.0010591758622638657,
+    "mem-session-log----": 0.0010591758622638657,
+    "mem-session-log-contexte": 0.0019594754240793997,
+    "mem-session-log-session-1---audit-qualit---202": 0.0027247296857428292,
+    "mem-session-log-session-2---correction-des-11-": 0.003375195898419784,
+    "mem-session-log-session-3---adaptation-mobile-": 0.003928091692424774,
+    "mem-session-log-session-4---bug-fix-desktop--2": 0.004398052402518538,
+    "mem-session-log-commandes-utiles": 0.004797519245215059,
+    "mem-session-log-r-gles-acquises": 0.005137064906971892,
+    "mem-session-log-session-5---audit-responsive-c": 0.0054256768023478955,
+    "mem-session-log-session-6---espace-admin-compl": 0.005671000089525594,
+    "mem-MEMORY----session-26-mai-2026---full-": 0.0010591758622638657,
+    "mem-feedback_dotenv_api_env----": 0.0010591758622638657,
+    "mem-feedback_language----": 0.0010591758622638657,
+    "mem-feedback_n8n_http_body----": 0.0010591758622638657,
+    "mem-feedback_never_push_without_ask----": 0.0010591758622638657,
+    "mem-project_automatisation_page_audit----": 0.0010591758622638657,
+    "mem-project_domain----": 0.0010591758622638657,
+    "mem-project_elise_n8n_fixes----": 0.0010591758622638657,
+    "mem-project_elise_n8n_fixes-elise-14-json---fixes-session-": 0.0019594754240793997,
+    "mem-project_elise_n8n_fixes-fix-1---connexions--n-ud-orphe": 0.0027247296857428292,
+    "mem-project_elise_n8n_fixes-fix-2---syntaxe-js-dans-code--": 0.003375195898419784,
+    "mem-project_elise_n8n_fixes-fix-3---prompt-elise---r-serva": 0.003928091692424774,
+    "mem-project_elise_n8n_fixes-fix-4---rpc-add-to-waitlist---": 0.004398052402518538,
+    "mem-project_elise_n8n_fixes-fix-5---http-request---capacit": 0.004797519245215059,
+    "mem-project_elise_n8n_fixes-fix-6---csp--htaccess--product": 0.005137064906971892,
+    "mem-project_elise_n8n_fixes--tat-final-elise-14-json": 0.0054256768023478955,
+    "mem-project_invite_debug_20260512----": 0.0010591758622638657,
+    "mem-project_invite_debug_20260512-debug-edge-function-supabase": 0.0019594754240793997,
+    "mem-project_invite_debug_20260512-pi-ge---contrainte-unique---tr": 0.0027247296857428292,
+    "mem-project_invite_debug_20260512-flow-d-invitation-complet": 0.003375195898419784,
+    "mem-project_karibloom_lot_c_inprogress----": 0.0010591758622638657,
+    "mem-project_karibloom_lot_c_inprogress-statut---livr---": 0.0019594754240793997,
+    "mem-project_karibloom_lot_c_inprogress-bilan": 0.0027247296857428292,
+    "mem-project_karibloom_lot_c_inprogress-fichiers-cr--s": 0.003375195898419784,
+    "mem-project_karibloom_lot_c_inprogress-pi-ges-lot-c--pour-lot-d-": 0.003928091692424774,
+    "mem-project_karibloom_lot_c_kickoff----": 0.0010591758622638657,
+    "mem-project_karibloom_lot_c_kickoff-1--v-rifications-pr-alables--2": 0.0019594754240793997,
+    "mem-project_karibloom_lot_c_kickoff-2--lire-la-spec-lot-c-avant-d-": 0.0027247296857428292,
+    "mem-project_karibloom_lot_c_kickoff-3--livrables-lot-c-attendus--r": 0.003375195898419784,
+    "mem-project_karibloom_lot_c_kickoff-4--crit-res-d-acceptation-lot-": 0.003928091692424774,
+    "mem-project_karibloom_lot_c_kickoff-5--flow-obligatoire": 0.004398052402518538,
+    "mem-project_karibloom_lot_c_kickoff-6--pi-ges----viter--le-ons-lot": 0.004797519245215059,
+    "mem-project_karibloom_roadmap----": 0.0010591758622638657,
+    "mem-project_session_20260512_13----": 0.0010591758622638657,
+    "mem-project_session_20260512_13-gestion-de-compte-client---par": 0.0019594754240793997,
+    "mem-project_session_20260512_13-pages-callback-auth-supabase--": 0.0027247296857428292,
+    "mem-project_session_20260512_13-suppression-membres---refonte-": 0.003375195898419784,
+    "mem-project_session_20260513_afternoon----": 0.0010591758622638657,
+    "mem-project_session_20260513_afternoon-stripe-payment-links--option-c": 0.0019594754240793997,
+    "mem-project_session_20260513_afternoon-audit-mobile--3-passes-": 0.0027247296857428292,
+    "mem-project_session_20260513_afternoon-critique-design--nielsen-22-26": 0.003375195898419784,
+    "mem-project_session_20260513_evening----": 0.0010591758622638657,
+    "mem-project_session_20260513_evening-corrections-critiques--p1-": 0.0019594754240793997,
+    "mem-project_session_20260513_evening-am-liorations": 0.0027247296857428292,
+    "mem-project_session_20260513_evening-plan-v4--non-impl-ment--": 0.003375195898419784,
+    "mem-project_session_20260513_full----": 0.0010591758622638657,
+    "mem-project_session_20260513_full-audit-ux--impeccable-audit----": 0.0019594754240793997,
+    "mem-project_session_20260513_full-critique-design--impeccable-cr": 0.0027247296857428292,
+    "mem-project_session_20260513_full-project-hub": 0.003375195898419784,
+    "mem-project_session_20260513_full-cascade-delete": 0.003928091692424774,
+    "mem-project_session_20260514----": 0.0010591758622638657,
+    "mem-project_session_20260514-flux-admin-client": 0.0019594754240793997,
+    "mem-project_session_20260514-refonte-espace-client": 0.0027247296857428292,
+    "mem-project_session_20260514-connexion-admin-client": 0.003375195898419784,
+    "mem-project_session_20260514-aper-u-devis---facture": 0.003928091692424774,
+    "mem-project_session_20260514-audit-technique--2-passes--12-": 0.004398052402518538,
+    "mem-project_session_20260515_enrollment_clients_projets----": 0.0010591758622638657,
+    "mem-project_session_20260515_enrollment_clients_projets-feature-1---section-unifi-e--c": 0.0019594754240793997,
+    "mem-project_session_20260515_enrollment_clients_projets-feature-2---onglet-abonnement-": 0.0027247296857428292,
+    "mem-project_session_20260515_enrollment_clients_projets-php---fichiers---d-ployer-sur-": 0.003375195898419784,
+    "mem-project_session_20260515_n8n_devis_factures----": 0.0010591758622638657,
+    "mem-project_session_20260515_n8n_devis_factures-bugs-corrig-s": 0.0019594754240793997,
+    "mem-project_session_20260515_n8n_devis_factures-fichiers-modifi-s": 0.0027247296857428292,
+    "mem-project_session_20260515_n8n_devis_factures-flux-valid---devis-": 0.002603189219701145,
+    "mem-project_session_20260515_n8n_devis_factures-flux-valid---factures-": 0.004043892948361623,
+    "mem-project_session_20260515_n8n_devis_factures-session-suivante--15-mai---sui": 0.0044964835863750925,
+    "mem-project_session_20260515_n8n_devis_factures---faire-avant-prod": 0.0048811857018752035,
+    "mem-project_session_20260515_pdf_ia_fixes----": 0.0010591758622638657,
+    "mem-project_session_20260515_pdf_ia_fixes-correctifs-appliqu-s": 0.0019594754240793997,
+    "mem-project_session_20260515_pdf_ia_fixes-fichiers-modifi-s": 0.0027247296857428292,
+    "mem-project_session_20260515_pdf_ia_fixes---faire-avant-prod": 0.003375195898419784,
+    "mem-project_session_20260516_ai_structure----": 0.0010591758622638657,
+    "mem-project_session_20260516_ai_structure-ce-qui-a--t--fait": 0.0019594754240793997,
+    "mem-project_session_20260516_full----": 0.0010591758622638657,
+    "mem-project_session_20260516_full-debug-n8n-devis---upload-bloqu": 0.0019594754240793997,
+    "mem-project_session_20260516_full-workflow-devis---contenu-pdf": 0.0027247296857428292,
+    "mem-project_session_20260516_full-frontend---createdevismodal": 0.003375195898419784,
+    "mem-project_session_20260516_full-frontend---packcardmodern": 0.003928091692424774,
+    "mem-project_session_20260516_full-frontend---createinvoicemodal-": 0.004398052402518538,
+    "mem-project_session_20260516_full-backend----api-stripe-payment-": 0.004797519245215059,
+    "mem-project_session_20260516_full-backend----api-devis-ai-struct": 0.005137064906971892,
+    "mem-project_session_20260516_full-backend----api-invoices-create": 0.0054256768023478955,
+    "mem-project_session_20260516_full-base-de-donn-es": 0.005671000089525594,
+    "mem-project_session_20260516_full-fichiers-modifi-s----d-ployer-": 0.005879572971539711,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp----": 0.0010591758622638657,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-session-22-23-mai-2026---audit": 0.0019594754240793997,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-v-rifier-whatsapp": 0.0027247296857428292,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-reset-identit--hermes": 0.003375195898419784,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-dream-cycle-manuel": 0.0029717864157044705,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-logs": 0.004541498686425794,
+    "mem-project_session_20260522_23_vps_audit_v3_whatsapp-d-ploiement-nouveau-client": 0.004919448384870696,
+    "mem-project_session_20260523_elise_hermes----": 0.0010591758622638657,
+    "mem-project_session_20260523_elise_hermes-chronologie": 0.0019594754240793997,
+    "mem-project_session_20260523_elise_hermes--tat-final---24-mai-2026": 0.0027247296857428292,
+    "mem-project_session_20260524_mini_audit----": 0.0010591758622638657,
+    "mem-project_session_20260524_mini_audit-actions-de-la-session": 0.0019594754240793997,
+    "mem-project_session_20260526_audit_db----": 0.0010591758622638657,
+    "mem-project_session_20260526_audit_db-corrections-appliqu-es": 0.0019594754240793997,
+    "mem-project_session_20260526_audit_db-constats-d-audit--non-corrig-s": 0.0027247296857428292,
+    "mem-project_session_20260526_full----": 0.0010591758622638657,
+    "mem-project_session_20260526_full-phase-1---pull---build-initial": 0.0019594754240793997,
+    "mem-project_session_20260526_full-phase-2---audit-db-supabase---": 0.0027247296857428292,
+    "mem-project_session_20260526_full-phase-3---fix-magic-link--expi": 0.003375195898419784,
+    "mem-project_session_20260526_full-phase-4---refonte-espace-admin": 0.003928091692424774,
+    "mem-project_session_20260526_full-phase-5---refonte-bloom-enroll": 0.004398052402518538,
+    "mem-project_session_20260526_full-phase-6---code-review--lise---": 0.004797519245215059,
+    "mem-project_session_20260526_full-phase-7---merge-final---d-ploi": 0.005137064906971892,
+    "mem-project_session_20260526_full-phase-8---corrections-post-d-p": 0.0054256768023478955,
+    "mem-project_session_20260526_full-fichiers-cl-s-cr--s-modifi-s": 0.005671000089525594,
+    "mem-project_stripe_bloom_integration----": 0.0010591758622638657,
+    "mem-reference_hermes_api_key----": 0.0010591758622638657,
+    "insight-1781618825814-pa2h": 0.0010591758622638657
+  }
+}

@@ -425,6 +425,31 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 - **`BrandLogo` utilise `next/image` (PNG)** — pas de `currentColor`. Pour changer sa couleur → filtre CSS `sepia + hue-rotate + saturate`
 - **Deux icônes + label pour une même info = bruit visuel** — supprimer les doublons, intégrer l'icône dans le composant interactif
 
+---
+
+## 2026-06-18 — Audit Frontend Complet (6 phases, subagent-driven) ✅
+
+### Fait (8 commits mergés main)
+
+- **Phase A P0** (`4196e45`) : CookieConsent RGPD (localStorage `kayvila-cookie-consent`, slide-up, 3 catégories), `app/global-error.tsx`, i18n 7 pages marketing (`about.*`, `prestations.*` keys), `text-gold` → `#B8860B` (ratio 4.6:1 WCAG AA) sur textes lisibles
+- **Phase B Design System** (`e93eef9`) : `rounded-none` sur `input.tsx` + `card.tsx`, inputs standard (`h-12 border-navy/15 focus:border-gold`), boutons variants (`gold/danger/secondary`), `sora.variable` retiré du `<html>` (⚠️ casse `.font-display-dashboard` → voir règles), `tailwind.config.ts` supprimé (Tailwind v4 auto-scan), 5 composants UI manquants (`Select/Textarea/Checkbox/Badge/Tooltip`)
+- **Phase C Animations** (`5d291ff`) : `hover:scale-[1.02] active:scale-[0.98]` sur boutons, skeleton shimmer (`animate-shimmer`), grain overlay SVG `opacity-[0.015]`, view transitions `@supports`
+- **Phase D SEO** (`4e79300`) : noindex success/update-password, canonicals, JSON-LD LocalBusiness+ItemList, og:image 5 pages, sitemap +6, robots +3
+- **Phase E Performance** (`8dc9aaa`) : villa `revalidate=900` + `generateStaticParams` (fetch REST direct, PAS `getSupabaseServer()`), home `fetch()` + `revalidate:3600`
+- **Phase F A11y** (`d30a3c4`) : `hooks/useFocusTrap.ts`, focus traps VillaQuickView/BookingBottomSheet/Navbar, `aria-live="polite"` chatbot+SearchResults, trust signal + prix estimatif BookingForm
+- **Compression vidéo revertée** (`7a76efe`) : `hero.webm` 10.5MB compressé → 1.2MB (VP9 CRF=55), jugé "pas beau" par Kenneson → revert immédiat
+
+### Règles apprises
+
+- **`sora.variable` sur `<html>` global = casse le dashboard.** Le retrait du Sora variable de `<html>` supprime `--font-sora` de tout l'arbre → `.font-display-dashboard` retombe sur `system-ui` dans DashboardHeader/DashboardSidebar/AdminVillaForm. Correction : ré-injecter `className={sora.variable}` sur un layout dashboard dédié, PAS sur `<html>`.
+- **`generateStaticParams` ne peut PAS appeler `cookies()` au build time.** Utiliser un `fetch` REST direct vers Supabase (URL + anon key depuis `process.env`) à la place de `getSupabaseServer()`.
+- **Page `"use client"` → metadata via `layout.tsx` frère.** Pattern Next.js recommandé pour les pages client qui ont besoin de metadata (noindex, title…).
+- **Ne jamais compresser un asset vidéo luxe sans validation visuelle.** CRF agressif (55+) réduit la taille mais dégrade la qualité de façon visible. Toujours proposer avant d'appliquer, ne jamais remplacer en prod sans accord Kenneson.
+- **`preload="auto"` sur `<video>` améliore le chargement** sans dégrader la qualité — safe à garder.
+- **`StatsView.tsx`, `FinancesView.tsx`, `RelevePDF.tsx` n'existent pas** dans ce repo — skip silencieux, pas de blocage.
+- **Focus trap avec `document.addEventListener('keydown')`** : querySelectAll au montage, premier/dernier focusable, Tab/Shift+Tab cyclique. S'assurer que le modal est visible quand `active=true` (querySelectorAll vide si `hidden`).
+- **JSON-LD via `<script dangerouslySetInnerHTML>`** est safe pour les structured data (pas du user input) — pattern Next.js standard.
+
 ### Reste à faire (sous-projets brainstormés, prompt Richard 17 juin)
 
 | # | Tâche | État |

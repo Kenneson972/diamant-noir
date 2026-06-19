@@ -22,6 +22,7 @@ export function HeroBackgroundMedia() {
 
   useEffect(() => {
     if (!ENABLE_PARALLAX) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const handler = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
