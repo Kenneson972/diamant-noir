@@ -10,7 +10,7 @@ import { CompareBar } from "@/components/villas/CompareBar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ChatbotDynamic } from "@/components/chatbot/ChatbotDynamic";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, DEFAULT_LOCALE, DEFAULT_CURRENCY, type Locale, type Currency } from "@/lib/i18n";
-import CookieConsent from "@/components/ui/CookieConsent";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -105,30 +105,12 @@ export default async function RootLayout({
   return (
       <html
       lang={initialLocale}
-      className={`${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
-      style={{ viewTransitionName: "root" } as React.CSSProperties}
+      className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
     >
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-        {/* Preload LCP hero poster — évite une cascade de requêtes */}
-        <link rel="preload" as="image" href="/villa-hero.jpg" fetchPriority="high" />
-        {/* Preconnect aux origines critiques */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
-          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-        ) : null}
       </head>
       <body className="bg-offwhite font-sans">
-        {/* Grain overlay — texture subtile luxe */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-50 opacity-[0.015]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-            backgroundSize: "128px 128px",
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -178,11 +160,11 @@ export default async function RootLayout({
               </SiteFrame>
               <ChatbotDynamic />
               <CompareBar />
+              <CookieConsent />
             </CompareProvider>
           </WishlistProvider>
           </AuthProvider>
         </LocaleProvider>
-        <CookieConsent />
       </body>
 
     </html>
