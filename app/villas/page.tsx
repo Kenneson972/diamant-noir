@@ -63,8 +63,8 @@ const FALLBACK_VILLAS: VillaMapItem[] = [
   },
   {
     id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique",
-    price: 900, image: "/notregestion.png", coords: [14.5361, -61.0261],
-    images: ["/notregestion.png", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
+    price: 900, image: "/notregestion.webp", coords: [14.5361, -61.0261],
+    images: ["/notregestion.webp", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
   },
 ];
 

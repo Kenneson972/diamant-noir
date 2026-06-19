@@ -16,7 +16,7 @@ export function HomeOwnersSection() {
         <ScrollReveal className="w-full">
           <div className="relative min-h-[320px] h-full w-full lg:min-h-0 lg:h-full">
             <Image
-              src="/notregestion.png"
+              src="/notregestion.webp"
               alt="Vue aérienne villa de luxe avec piscine à débordement — Votre villa notre gestion Kayvila"
               fill
               className="object-cover object-center"
