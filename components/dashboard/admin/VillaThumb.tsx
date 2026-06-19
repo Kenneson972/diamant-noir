@@ -14,8 +14,8 @@ export function VillaThumb({
   if (!src) {
     return (
       <div
-        className="flex items-center justify-center rounded-md border border-navy/10 bg-offwhite text-navy/30"
-        style={{ width: size, height: size }}
+        className="flex shrink-0 items-center justify-center rounded-md border border-navy/10 bg-offwhite text-navy/30"
+        style={{ width: size, height: size, minWidth: size }}
         aria-hidden
       >
         <Building2 className="h-5 w-5" />
@@ -23,13 +23,17 @@ export function VillaThumb({
     );
   }
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={size}
-      height={size}
-      className="rounded-md border border-navy/10 object-cover"
-      style={{ width: size, height: size }}
-    />
+    <div
+      className="shrink-0 overflow-hidden rounded-md border border-navy/10"
+      style={{ width: size, height: size, minWidth: size }}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        width={size}
+        height={size}
+        className="h-full w-full object-cover"
+      />
+    </div>
   );
 }
