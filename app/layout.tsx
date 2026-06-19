@@ -10,7 +10,7 @@ import { CompareBar } from "@/components/villas/CompareBar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ChatbotDynamic } from "@/components/chatbot/ChatbotDynamic";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, DEFAULT_LOCALE, DEFAULT_CURRENCY, type Locale, type Currency } from "@/lib/i18n";
-import { CookieConsent } from "@/components/ui/CookieConsent";
+import CookieConsent from "@/components/ui/CookieConsent";
 
 const sora = Sora({
   subsets: ["latin"],
