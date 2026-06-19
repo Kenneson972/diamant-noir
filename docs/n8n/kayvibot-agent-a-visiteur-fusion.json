@@ -1,5 +1,5 @@
 {
-  "name": "Kayvibot A — Visiteur (Fusion Améliorée)",
+  "name": "Kayvibot A — Visiteur (Fusion v3 — Dalcielo/Elise)",
   "nodes": [
     {
       "parameters": { "httpMethod": "POST", "path": "kayvibot-visitor", "responseMode": "responseNode", "options": {} },
@@ -41,7 +41,7 @@
       "id": "a-fetch", "name": "Fetch Visitor Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1100, -240], "continueOnFail": true
     },
     {
-      "parameters": { "jsCode": "const ctxItem = $('Fetch Visitor Context').first().json;\nconst ctx = ctxItem.context || ctxItem || {};\nconst chatInput = $('Edit Fields').first().json.chatInput;\nconst sessionId = $('Edit Fields').first().json.sessionId;\nconst villas = ctx.villas || [];\nlet villasText = '';\nif (villas.length > 0) {\n  villasText = '🏡 VILLAS DISPONIBLES :\\n' + villas.map(v => {\n    let line = `• ${v.name || 'Villa'} — ${v.price_per_night || '?'}€/nuit`;\n    if (v.bedrooms) line += `, ${v.bedrooms} ch`;\n    if (v.max_guests) line += `, ${v.max_guests} pers`;\n    if (v.availability) {\n      if (v.availability.isAvailableNow) line += ' ✅ DISPO';\n      else if (v.availability.nextAvailableFrom) line += ` 📅 dès ${v.availability.nextAvailableFrom}`;\n      else line += ' 🔒 Complet';\n    }\n    return line;\n  }).join('\\n');\n} else {\n  villasText = 'Aucune villa disponible actuellement — contactez-nous directement.';\n}\nconst amenitiesText = (ctx.availableAmenities || []).slice(0, 20).join(', ');\n// Utilise le systemPrompt de l'API (source de vérité) + append tunnel proprio + catalogue\nconst basePrompt = ctxItem.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\nTUNNEL PROPRIÉTAIRE — Si le visiteur parle de SA villa ou de revenus locatifs → qualifier et émettre ownerLead :\\n{ \"reply\": \"...\", \"stage\": \"ownerlead\", \"ownerLead\": { \"villasCount\": N, \"location\": \"...\", \"email\": \"...\", \"name\": \"...\" } }\\nFaits à mentionner : commission 25%, frais ménage 5%, accompagnement Kayvila 7j/7.`\n  + `\\n\\n═════════════════════════════\\nCATALOGUE TEMPS RÉEL :\\n${villasText}\\n✨ Équipements : ${amenitiesText}\\n═════════════════════════════`;\n\nreturn { json: { chatInput, sessionId, systemMessage } };" },
+      "parameters": { "jsCode": "const ctxItem = $('Fetch Visitor Context').first().json;\nconst ctx = ctxItem.context || ctxItem || {};\nconst chatInput = $('Edit Fields').first().json.chatInput;\nconst sessionId = $('Edit Fields').first().json.sessionId;\n\n// ── Heure locale Martinique (comme Dalcielo Build Live Context) ──────────────\nconst now = new Date();\nconst mqStr = (opts) => now.toLocaleString('fr-FR', { timeZone: 'America/Martinique', ...opts });\nconst dayName = mqStr({ weekday: 'long' });\nconst timeStr = mqStr({ hour: '2-digit', minute: '2-digit' });\nconst dateStr = mqStr({ day: 'numeric', month: 'long', year: 'numeric' });\nconst timeContext = `Date/heure Martinique : ${dayName} ${dateStr}, ${timeStr}`;\n\n// ── Catalogue villas — TEXTE BRUT, ZÉRO emoji. Champs réels exposés par l'API :\n//    id, name, description, price_per_night, capacity, location, amenities, availability\nconst villas = ctx.villas || [];\nlet villasText = '';\nif (villas.length > 0) {\n  villasText = 'VILLAS DISPONIBLES :\\n' + villas.map(v => {\n    let line = `- ${v.name || 'Villa'} : ${v.price_per_night || '?'} EUR/nuit`;\n    if (v.capacity) line += `, jusqu a ${v.capacity} personnes`;\n    if (v.location) line += `, ${v.location}`;\n    if (v.availability) {\n      if (v.availability.isAvailableNow) line += ' [DISPONIBLE]';\n      else if (v.availability.nextAvailableFrom) line += ` [disponible des ${v.availability.nextAvailableFrom}]`;\n      else line += ' [COMPLET]';\n    }\n    if (v.id) line += ` (ref: ${v.id})`;\n    return line;\n  }).join('\\n');\n} else {\n  villasText = 'Aucune villa disponible actuellement — inviter le visiteur a contacter l equipe directement.';\n}\nconst amenitiesText = (ctx.availableAmenities || []).slice(0, 20).join(', ');\n\n// ── Faits conciergerie (commission, services) — injectés pour répondre avec précision\nconst facts = Array.isArray(ctx.conciergerieFacts) ? ctx.conciergerieFacts : [];\nconst factsText = facts.length ? ('FAITS CONCIERGERIE (source de verite, pour les proprietaires) :\\n' + facts.map(f => `- ${f}`).join('\\n')) : '';\n\nconst SUBMISSION_URL = (process.env.KAYVILA_URL || 'https://kayvila.vercel.app') + '/soumettre-ma-villa';\n\n// Utilise le systemPrompt de l'API (source de vérité) + append tunnel proprio + catalogue\nconst basePrompt = ctxItem.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\nRAPPEL FORMAT : le champ reply doit etre du texte brut, sans markdown ni emoji.`\n  + `\\n\\nPRE-BOOKING (voyageur) : pour remplir preBooking.villaId, utilise la valeur (ref: ...) indiquee apres chaque villa du catalogue. Ne jamais inventer un id.`\n  + `\\n\\nTUNNEL PROPRIETAIRE (DOUBLE CONVERSION) — Si le visiteur est un PROPRIETAIRE (il parle de SA villa, de la confier en gestion, de revenus locatifs, de mise en location de son bien) :\\n1. Reponds a ses questions en t appuyant sur les FAITS CONCIERGERIE ci-dessous (commission, services, pack, reversements).\\n2. Invite-le a soumettre sa villa via le formulaire et INCLUS ce lien complet dans reply (il doit etre cliquable) : ${SUBMISSION_URL}\\n3. Ne JAMAIS proposer une villa du catalogue a un proprietaire — son but est de CONFIER un bien, pas d en louer un.\\n4. Emets ownerLead pour le suivi :\\n{ \"reply\": \"... ${SUBMISSION_URL} ...\", \"stage\": \"ownerlead\", \"ownerLead\": { \"villasCount\": N, \"location\": \"...\", \"email\": \"...\", \"name\": \"...\" }, \"suggestedQuickReplies\": [\"Soumettre ma villa\", \"Quelle est la commission ?\", \"Parler a un conseiller\"] }`\n  + `\\n\\n=============================\\n${timeContext}\\n\\nCATALOGUE TEMPS REEL :\\n${villasText}\\nEquipements proposes : ${amenitiesText}\\n\\n${factsText}\\n=============================`;\n\nreturn { json: { chatInput, sessionId, systemMessage } };" },
       "id": "a-build", "name": "Build Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1320, -240]
     },
     {
@@ -51,7 +51,7 @@
       "id": "a-if-tox", "name": "IF - Toxique ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [1540, -240]
     },
     {
-      "parameters": { "jsCode": "return [{ json: { reply: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à ta disposition.\", stage: \"blocked\", suggestedQuickReplies: [], sessionId: $('Edit Fields').first().json.sessionId } }];" },
+      "parameters": { "jsCode": "return [{ json: { reply: \"Je ne peux pas continuer cet échange. Pour échanger directement, l'équipe Kayvila reste à votre disposition.\", stage: \"blocked\", suggestedQuickReplies: [], sessionId: $('Edit Fields').first().json.sessionId } }];" },
       "id": "a-tox-code", "name": "Code - Reponse Toxique", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1760, 0]
     },
     {
@@ -100,20 +100,16 @@
     },
     {
       "parameters": { "model": { "__rl": true, "value": "deepseek-chat", "mode": "list" }, "options": { "baseURL": "https://api.deepseek.com/v1", "temperature": 0.7 } },
-      "id": "a-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [1760, -680],
+      "id": "a-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [1600, -680],
       "credentials": { "openAiApi": { "id": "DEEPSEEK_CRED", "name": "DeepSeek API" } }
     },
     {
-      "parameters": {
-        "toolDescription": "Cherche des villas Kayvila par mots-clés (capacité, localisation, prix). Renvoie le catalogue public filtrable.",
-        "method": "GET",
-        "url": "https://kayvila.vercel.app/api/villas/public?search={searchValue}",
-        "placeholderDefinitions": { "values": [{ "name": "searchValue", "description": "Mots-clés de recherche : capacité, ville/quartier, fourchette de prix", "type": "string" }] }
-      },
-      "id": "a-tool-search", "name": "searchVillas", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [1760, -280]
+      "parameters": { "sessionIdType": "customKey", "sessionKey": "={{ $('Edit Fields').first().json.sessionId }}", "contextWindowLength": 10 },
+      "id": "a-memory", "name": "Postgres Chat Memory", "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat", "typeVersion": 1.3, "position": [1920, -680],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
     },
     {
-      "parameters": { "jsCode": "const ai = $input.first().json.output || $input.first().json.text || '';\nlet reply = ai, stage = 'reply', quick = [], preBooking = null, ownerLead = null;\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    reply = p.reply || p.response || ai;\n    stage = p.stage || 'reply';\n    quick = Array.isArray(p.suggestedQuickReplies) ? p.suggestedQuickReplies : [];\n    preBooking = p.preBooking || null;\n    ownerLead = p.ownerLead || null;\n  }\n} catch {}\nreturn { json: { reply, stage, suggestedQuickReplies: quick, preBooking, ownerLead, sessionId: $('Edit Fields').first().json.sessionId } };" },
+      "parameters": { "jsCode": "// Strip Markdown intégré (pattern Dalcielo/Elise) — le reply doit être du texte brut\nfunction stripMarkdown(t) {\n  return String(t || '')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '$1')\n    .replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/_{2}(.*?)_{2}/g, '$1')\n    .replace(/_(.*?)_/g, '$1')\n    .replace(/^[ \\t]*#{1,6}[ \\t]+/gm, '')\n    .replace(/^[ \\t]*[-*+][ \\t]+/gm, '')\n    .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')\n    .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, '$1')\n    .replace(/^-{3,}$/gm, '')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\nconst ai = $input.first().json.output || $input.first().json.text || '';\nlet reply = ai, stage = 'reply', quick = [], preBooking = null, ownerLead = null;\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    reply = p.reply || p.response || ai;\n    stage = p.stage || 'reply';\n    quick = Array.isArray(p.suggestedQuickReplies) ? p.suggestedQuickReplies : [];\n    preBooking = p.preBooking || null;\n    ownerLead = p.ownerLead || null;\n  }\n} catch {}\nreply = stripMarkdown(reply);\nreturn { json: { reply, stage, suggestedQuickReplies: quick, preBooking, ownerLead, sessionId: $('Edit Fields').first().json.sessionId } };" },
       "id": "a-parse", "name": "Parse Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1980, -480]
     },
     {
@@ -150,11 +146,11 @@
     "IF - Seuil Dépassé ?": { "main": [[{ "node": "Postgres - Bannir Session", "type": "main", "index": 0 }]] },
     "AI Agent DeepSeek": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
     "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 }]] },
-    "searchVillas": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
+    "Postgres Chat Memory": { "ai_memory": [[{ "node": "AI Agent DeepSeek", "type": "ai_memory", "index": 0 }]] },
     "Parse Response": { "main": [[{ "node": "Save Memory", "type": "main", "index": 0 }]] },
     "Save Memory": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] }
   },
-  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "2.0.0-fusion",
-  "meta": { "instanceId": "kayvibot-a-fusion-v2" }, "id": "kayvibot-a-fusion-v2",
-  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }, { "name": "v2" }]
+  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "3.0.2-fusion",
+  "meta": { "instanceId": "kayvibot-a-fusion-v3" }, "id": "kayvibot-a-fusion-v3",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }, { "name": "v3" }]
 }

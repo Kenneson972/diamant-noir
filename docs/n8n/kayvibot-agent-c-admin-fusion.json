@@ -1,5 +1,5 @@
 {
-  "name": "Kayvibot C — Admin (Fusion Améliorée)",
+  "name": "Kayvibot C — Admin (Fusion v3 — Dalcielo/Elise)",
   "nodes": [
     {
       "parameters": { "httpMethod": "POST", "path": "kayvibot-admin", "responseMode": "responseNode", "options": {} },
@@ -18,7 +18,7 @@
       "id": "c-fetch", "name": "Fetch Admin Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0], "continueOnFail": true
     },
     {
-      "parameters": { "jsCode": "const ctxRes = $('Fetch Admin Context').first().json;\nif (ctxRes.statusCode === 401 || ctxRes.error === 'Unauthorized' || ctxRes.error === 'Forbidden' || ctxRes.error === 'Erreur serveur') {\n  return [{ json: { __unauthorized: true } }];\n}\nconst analytics = ctxRes.analytics || {};\nconst briefing = analytics.daily_briefing || {};\nconst health = analytics.health_score_by_villa || {};\nconst occupancy = analytics.occupancy_by_villa || {};\nconst alerts = analytics.admin_alerts || [];\nconst healthSummary = Object.entries(health).slice(0, 10).map(([k, v]) => `${k}: ${v}`).join(', ');\nconst occupancySummary = Object.entries(occupancy).slice(0, 10).map(([k, v]) => `${k}: ${v}%`).join(', ');\n// Utilise le systemPrompt de l'API (source de vérité) + append briefing live\nconst basePrompt = ctxRes.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\n- Utiliser tes outils (allVillas, allBookings, submissions, globalStats, otaAll, users) pour des données fraîches à la demande`\n  + `\\n\\n═════════════════════════════\\nBRIEFING : checkins=${briefing.checkins_today||0}, checkouts=${briefing.checkouts_today||0}, soumissions=${briefing.submissions_pending||0}\\nSANTÉ VILLAS : ${healthSummary || 'N/A'}\\nOCCUPATION (30j) : ${occupancySummary || 'N/A'}\\n⚠️ ${alerts.length} alerte(s) active(s)\\n═════════════════════════════`;\n\nreturn {\n  json: {\n    chatInput: $('Edit Fields').first().json.chatInput,\n    sessionId: $('Edit Fields').first().json.sessionId,\n    __unauthorized: false,\n    systemMessage\n  }\n};" },
+      "parameters": { "jsCode": "const ctxRes = $('Fetch Admin Context').first().json;\nif (ctxRes.statusCode === 401 || ctxRes.error === 'Unauthorized' || ctxRes.error === 'Forbidden' || ctxRes.error === 'Erreur serveur') {\n  return [{ json: { __unauthorized: true } }];\n}\nconst analytics = ctxRes.analytics || {};\nconst briefing = analytics.daily_briefing || {};\nconst health = analytics.health_score_by_villa || {};\nconst occupancy = analytics.occupancy_by_villa || {};\nconst alerts = analytics.admin_alerts || [];\nconst healthSummary = Object.entries(health).slice(0, 10).map(([k, v]) => `${k}: ${v}`).join(', ');\nconst occupancySummary = Object.entries(occupancy).slice(0, 10).map(([k, v]) => `${k}: ${v}%`).join(', ');\n\n// ── Heure locale Martinique ──────────────────────────────────────────────\nconst now = new Date();\nconst mqStr = (opts) => now.toLocaleString('fr-FR', { timeZone: 'America/Martinique', ...opts });\nconst timeContext = `Date/heure Martinique : ${mqStr({ weekday: 'long' })} ${mqStr({ day: 'numeric', month: 'long', year: 'numeric' })}, ${mqStr({ hour: '2-digit', minute: '2-digit' })}`;\n\n// Utilise le systemPrompt de l'API (source de vérité) + append briefing live\nconst basePrompt = ctxRes.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\nRAPPEL FORMAT : le champ response doit etre du texte brut, sans markdown ni emoji.`\n  + `\\n\\n- Utiliser tes outils (allVillas, allBookings, submissions, globalStats, otaAll, users) pour des donnees fraiches a la demande`\n  + `\\n\\n=============================\\n${timeContext}\\nBRIEFING : checkins=${briefing.checkins_today||0}, checkouts=${briefing.checkouts_today||0}, soumissions=${briefing.submissions_pending||0}\\nSANTE VILLAS : ${healthSummary || 'N/A'}\\nOCCUPATION (30j) : ${occupancySummary || 'N/A'}\\n${alerts.length} alerte(s) active(s)\\n=============================`;\n\nreturn {\n  json: {\n    chatInput: $('Edit Fields').first().json.chatInput,\n    sessionId: $('Edit Fields').first().json.sessionId,\n    __unauthorized: false,\n    systemMessage\n  }\n};" },
       "id": "c-build", "name": "Build Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [660, 0]
     },
     {
@@ -37,8 +37,13 @@
     },
     {
       "parameters": { "model": { "__rl": true, "value": "deepseek-chat", "mode": "list" }, "options": { "baseURL": "https://api.deepseek.com/v1", "temperature": 0.2 } },
-      "id": "c-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [1100, 0],
+      "id": "c-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [940, -40],
       "credentials": { "openAiApi": { "id": "DEEPSEEK_CRED", "name": "DeepSeek API" } }
+    },
+    {
+      "parameters": { "sessionIdType": "customKey", "sessionKey": "={{ $('Edit Fields').first().json.sessionId }}", "contextWindowLength": 10 },
+      "id": "c-memory", "name": "Postgres Chat Memory", "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat", "typeVersion": 1.3, "position": [1260, -40],
+      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
     },
     {
       "parameters": { "toolDescription": "Liste TOUTES les villas de la plateforme (admin).", "method": "GET", "url": "https://kayvila.vercel.app/api/admin/villas", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $('Edit Fields').first().json.token }}" }] } },
@@ -65,7 +70,7 @@
       "id": "c-tool-users", "name": "users", "type": "@n8n/n8n-nodes-langchain.toolHttpRequest", "typeVersion": 1.1, "position": [1100, 1000]
     },
     {
-      "parameters": { "jsCode": "const ai = $input.first().json.output || $input.first().json.text || '';\nlet response = ai, action = 'SHOW_STATS', action_data = {}, prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    response = p.response || p.reply || ai;\n    action = p.action || 'SHOW_STATS';\n    action_data = p.action_data || {};\n    prompts = Array.isArray(p.suggested_prompts) ? p.suggested_prompts : [];\n  }\n} catch {}\nreturn { json: { response, action, action_data, suggested_prompts: prompts, sessionId: $('Edit Fields').first().json.sessionId } };" },
+      "parameters": { "jsCode": "// Strip Markdown intégré (pattern Dalcielo/Elise) — response en texte brut\nfunction stripMarkdown(t) {\n  return String(t || '')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '$1')\n    .replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/_{2}(.*?)_{2}/g, '$1')\n    .replace(/_(.*?)_/g, '$1')\n    .replace(/^[ \\t]*#{1,6}[ \\t]+/gm, '')\n    .replace(/^[ \\t]*[-*+][ \\t]+/gm, '')\n    .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')\n    .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, '$1')\n    .replace(/^-{3,}$/gm, '')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\nconst ai = $input.first().json.output || $input.first().json.text || '';\nlet response = ai, action = 'SHOW_STATS', action_data = {}, prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    response = p.response || p.reply || ai;\n    action = p.action || 'SHOW_STATS';\n    action_data = p.action_data || {};\n    prompts = Array.isArray(p.suggested_prompts) ? p.suggested_prompts : [];\n  }\n} catch {}\nresponse = stripMarkdown(response);\nreturn { json: { response, action, action_data, suggested_prompts: prompts, sessionId: $('Edit Fields').first().json.sessionId } };" },
       "id": "c-parse", "name": "Parse Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1320, -200]
     },
     {
@@ -95,6 +100,7 @@
     "IF - Non Autorisé ?": { "main": [[{ "node": "Respond - Non Autorisé", "type": "main", "index": 0 }], [{ "node": "AI Agent DeepSeek", "type": "main", "index": 0 }]] },
     "AI Agent DeepSeek": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
     "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 }]] },
+    "Postgres Chat Memory": { "ai_memory": [[{ "node": "AI Agent DeepSeek", "type": "ai_memory", "index": 0 }]] },
     "allVillas": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
     "allBookings": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
     "submissions": { "ai_tool": [[{ "node": "AI Agent DeepSeek", "type": "ai_tool", "index": 0 }]] },
@@ -104,7 +110,7 @@
     "Parse Response": { "main": [[{ "node": "Save Memory", "type": "main", "index": 0 }]] },
     "Save Memory": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] }
   },
-  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "2.0.0-fusion",
-  "meta": { "instanceId": "kayvibot-c-fusion-v2" }, "id": "kayvibot-c-fusion-v2",
-  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }, { "name": "v2" }]
+  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "3.0.0-fusion",
+  "meta": { "instanceId": "kayvibot-c-fusion-v3" }, "id": "kayvibot-c-fusion-v3",
+  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }, { "name": "v3" }]
 }
