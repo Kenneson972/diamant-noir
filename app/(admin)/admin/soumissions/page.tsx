@@ -1,9 +1,10 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import Link from "next/link";
 import {
   Home, Mail, Phone, MapPin, Calendar, User, Building2,
   Bed, Bath, Car, Trees, Wifi, Clock, MessageSquare,
-  Star, Eye, FileText, Globe,
+  Star, Eye, FileText, Globe, ExternalLink,
 } from "lucide-react";
 import { SubmissionActions } from "./SubmissionActions";
 
@@ -117,12 +118,20 @@ export default async function AdminSoumissionsPage() {
                     </div>
                   </div>
 
-                  {(s.status === "pending" || s.status === "visit_scheduled" || s.status === "call_requested" || s.status === "docs_requested" || s.status === "visited") && (
-                    <SubmissionActions id={s.id} ownerEmail={s.email} />
-                  )}
-                  {(s.status === "accepted" || s.status === "rejected") && (
-                    <span className="shrink-0 text-[11px] font-medium text-navy/40">Dossier clos</span>
-                  )}
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    <Link
+                      href={`/admin/soumissions/${s.id}`}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-gold hover:underline"
+                    >
+                      <ExternalLink size={11} /> Voir la fiche
+                    </Link>
+                    {(s.status === "pending" || s.status === "visit_scheduled" || s.status === "call_requested" || s.status === "docs_requested" || s.status === "visited") && (
+                      <SubmissionActions id={s.id} ownerEmail={s.email} />
+                    )}
+                    {(s.status === "accepted" || s.status === "rejected") && (
+                      <span className="text-[11px] font-medium text-navy/40">Dossier clos</span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Corps — 4 colonnes */}

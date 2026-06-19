@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { HoverCard, Sheet } from "@heroui-pro/react";
+import { Sheet } from "@heroui-pro/react";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 import { Users, Maximize2 } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -179,21 +179,13 @@ export function VillaListingCard({
       onMouseLeave={() => onHover(null)}
       className={cardShell}
     >
-      <HoverCard openDelay={200} closeDelay={100}>
-        <HoverCard.Trigger className="!flex w-full min-w-0">
-          <Link
-            href={href}
-            className="block w-full min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
-            tabIndex={villa.dimmed ? -1 : 0}
-          >
-            <CardImageBlock villa={villa} formatPrice={formatPrice} />
-          </Link>
-        </HoverCard.Trigger>
-        <HoverCard.Content className="w-80 rounded-xl border border-border-subtle bg-white p-4 shadow-2xl">
-          <HoverCard.Arrow />
-          <PreviewBody villa={villa} formatPrice={formatPrice} href={href} />
-        </HoverCard.Content>
-      </HoverCard>
+      <Link
+        href={href}
+        className="block w-full min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
+        tabIndex={villa.dimmed ? -1 : 0}
+      >
+        <CardImageBlock villa={villa} formatPrice={formatPrice} />
+      </Link>
 
       <CardFooter
         villa={villa}
