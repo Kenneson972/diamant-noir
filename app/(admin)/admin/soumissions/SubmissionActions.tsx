@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, X, Calendar, Phone, FileText } from "lucide-react";
 
 export function SubmissionActions({ id, ownerEmail }: { id: string; ownerEmail: string }) {
+  const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [visitDate, setVisitDate] = useState("");
   const [showPicker, setShowPicker] = useState(false);
@@ -11,9 +13,10 @@ export function SubmissionActions({ id, ownerEmail }: { id: string; ownerEmail: 
 
   const call = async (status: string, extra?: Record<string, any>) => {
     setLoading(status);
-    await fetch("/api/villa-submissions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status, ...extra }) });
+    await fetch("/api/villa-submissions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status, owner_email: ownerEmail, ...extra }) });
     setLoading(null);
     setDone(true);
+    router.refresh();
   };
 
   if (done) return <span className="shrink-0 text-[11px] font-medium text-emerald-700">✓ Traité</span>;
