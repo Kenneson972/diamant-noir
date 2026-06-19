@@ -82,7 +82,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortOption)}
-              className="appearance-none bg-transparent py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/60 focus:outline-none cursor-pointer hover:text-navy transition-colors"
+              className="appearance-none bg-transparent py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy/80 focus:outline-none cursor-pointer hover:text-navy transition-colors"
               aria-label="Trier les villas"
             >
               <option value="default">Tri par défaut</option>

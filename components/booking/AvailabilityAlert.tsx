@@ -75,7 +75,7 @@ export function AvailabilityAlert({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-3.5 border border-navy/15 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/60 hover:text-navy hover:border-navy/30 transition-all duration-200"
+        className="w-full flex items-center justify-center gap-2 py-3.5 border border-navy/15 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/80 hover:text-navy hover:border-navy/30 transition-all duration-200"
       >
         <Bell size={12} strokeWidth={1.8} />
         Me prévenir si ces dates se libèrent

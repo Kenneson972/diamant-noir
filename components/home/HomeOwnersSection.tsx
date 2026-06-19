@@ -38,7 +38,7 @@ export function HomeOwnersSection() {
               notre gestion
             </h2>
             <div className="mt-5 h-px w-8 bg-gold/40" aria-hidden />
-            <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/60">
+            <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/80">
               De la mise en ligne au reversement, nous prenons en charge chaque aspect de votre bien
               avec une équipe locale au Diamant. Vous recevez vos revenus, vos voyageurs sont comblés,
               vous ne gérez rien.

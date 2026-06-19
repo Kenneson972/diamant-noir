@@ -6,7 +6,7 @@ export function HomeBottomCta() {
       <div className="mx-auto max-w-3xl space-y-10">
         <div className="space-y-8">
           <h2 className="font-display text-4xl font-light text-navy md:text-6xl">Prêt pour l&apos;exception ?</h2>
-          <p className="leading-relaxed text-navy/60">
+          <p className="leading-relaxed text-navy/80">
             Kayvila orchestre des séjours d&apos;exception et accompagne les propriétaires exigeants de Martinique — conciergerie, gestion et excellence à chaque étape.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">

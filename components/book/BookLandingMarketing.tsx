@@ -109,9 +109,9 @@ export function BookLandingMarketing({
 
         <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
           <div className="space-y-6 text-center">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60">Une seule vitrine</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/80">Une seule vitrine</p>
             <h2 className="font-display text-2xl text-navy md:text-3xl">Catalogue voyageurs &amp; exigence marque</h2>
-            <p className="text-sm leading-relaxed text-navy/60">
+            <p className="text-sm leading-relaxed text-navy/80">
               La page <span className="font-medium text-navy">Nos villas</span> présente la collection louée par
               Kayvila. Pour intégrer votre bien ou suivre votre exploitation, passez par l&apos;espace propriétaires.
             </p>
@@ -141,7 +141,7 @@ export function BookLandingMarketing({
               <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">
                 Un interlocuteur dédié
               </h2>
-              <p className="text-base font-light leading-relaxed text-navy/60">
+              <p className="text-base font-light leading-relaxed text-navy/80">
                 Pour un projet de mise en location ou le suivi de votre bien, notre équipe répond sur mesure.
               </p>
               <div className="pt-2">
@@ -241,9 +241,9 @@ export function BookLandingMarketing({
 
       <section className="relative z-10 mx-auto max-w-2xl scroll-mt-28 px-5 pb-20 pt-12 sm:px-6 md:pt-16">
         <div className="space-y-6 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60">Un seul catalogue</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/80">Un seul catalogue</p>
           <h2 className="font-display text-2xl text-navy md:text-3xl">Carte, liste et fiches détaillées</h2>
-          <p className="text-sm leading-relaxed text-navy/60">
+          <p className="text-sm leading-relaxed text-navy/80">
             La page <span className="font-medium text-navy">Nos villas</span> regroupe toute la collection. Après votre
             choix, les disponibilités et le paiement se font sur la page de la villa — sans parcourir deux catalogues.
           </p>
@@ -262,7 +262,7 @@ export function BookLandingMarketing({
           <div className="mx-auto max-w-2xl space-y-8 text-center">
             <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />
             <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">Un accompagnement sur mesure</h2>
-            <p className="text-base font-light leading-relaxed text-navy/60">
+            <p className="text-base font-light leading-relaxed text-navy/80">
               Notre conciergerie vous aide à composer votre séjour : transferts, expériences, équipe sur place.
             </p>
             <div className="pt-2">

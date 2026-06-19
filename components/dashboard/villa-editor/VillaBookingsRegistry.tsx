@@ -167,7 +167,7 @@ export function VillaBookingsRegistry({
                         booking.status === "confirmed" ? "bg-emerald-500" : "bg-amber-500"
                       }`}
                     />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-navy/80">
                       {booking.status === "confirmed" ? "Confirmé" : "En attente"}
                     </span>
                   </td>

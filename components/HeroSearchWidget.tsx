@@ -111,7 +111,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
           </div>
           {nNights > 0 && (
             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              isLight ? "bg-navy/5 text-navy/60" : "bg-white/10 text-white/60"
+              isLight ? "bg-navy/5 text-navy/80" : "bg-white/10 text-white/60"
             }`}>
               {nNights} nuit{nNights > 1 ? "s" : ""}
             </span>

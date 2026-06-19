@@ -135,7 +135,7 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="flex-1 rounded-lg border border-navy/10 px-4 py-2 text-sm text-navy/60 hover:bg-gray-50"
+                    className="flex-1 rounded-lg border border-navy/10 px-4 py-2 text-sm text-navy/80 hover:bg-gray-50"
                   >
                     Annuler
                   </button>

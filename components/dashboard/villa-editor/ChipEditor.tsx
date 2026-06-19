@@ -98,7 +98,7 @@ export function ChipEditor({ id, label, items: initialItems, suggestions, onChan
               className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 selected
                   ? "bg-navy text-white"
-                  : "bg-gray-100 text-navy/60 hover:bg-gray-200"
+                  : "bg-gray-100 text-navy/80 hover:bg-gray-200"
               }`}
             >
               {selected && <span className="text-[10px]">✓</span>}

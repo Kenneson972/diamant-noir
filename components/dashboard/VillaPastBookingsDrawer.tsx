@@ -97,12 +97,12 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
                       <span className="text-sm font-medium text-navy">{b.guest_name || "Anonyme"}</span>
                     </td>
                     <td className="py-3 pr-2">
-                      <span className="text-xs text-navy/60">
+                      <span className="text-xs text-navy/80">
                         {formatDate(b.start_date, { day: "numeric", month: "short" })} &ndash; {formatDate(b.end_date, { day: "numeric", month: "short", year: "numeric" })}
                       </span>
                     </td>
                     <td className="py-3 pr-2">
-                      <span className="text-xs text-navy/60">
+                      <span className="text-xs text-navy/80">
                         {Math.round((new Date(b.end_date).getTime() - new Date(b.start_date).getTime()) / 86400000)} n.
                       </span>
                     </td>

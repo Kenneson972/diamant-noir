@@ -101,7 +101,7 @@ export function ReservationCalendar({ bookings, villaFilter }: BookingCalendarPr
             >
               <span
                 className={`inline-flex items-center justify-center w-5 h-5 text-[11px] rounded-full ${
-                  isToday ? "bg-gold text-white font-bold" : "text-navy/60"
+                  isToday ? "bg-gold text-white font-bold" : "text-navy/80"
                 }`}
               >
                 {day}

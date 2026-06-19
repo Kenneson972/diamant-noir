@@ -20,7 +20,7 @@ export default function VillasError({
       <h1 className="font-display text-[clamp(2rem,8vw,3rem)] font-light leading-none text-navy">
         Un incident technique
       </h1>
-      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/60">
+      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/80">
         Nos villas sont momentanément indisponibles. Notre équipe a été informée.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

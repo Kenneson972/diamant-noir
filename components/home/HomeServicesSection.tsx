@@ -117,7 +117,7 @@ export function HomeServicesSection() {
               <br />
               une seule équipe
             </h2>
-            <p className="mt-3 text-xs leading-relaxed text-navy/60 md:text-[15px] md:mt-4">
+            <p className="mt-3 text-xs leading-relaxed text-navy/80 md:text-[15px] md:mt-4">
               Faites défiler pour découvrir chaque pilier — ou cliquez directement sur un service.
             </p>
           </div>
@@ -221,7 +221,7 @@ export function HomeServicesSection() {
                       {service.title}
                     </h3>
 
-                    <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/60 md:mt-3 md:text-[13px]">
+                    <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/80 md:mt-3 md:text-[13px]">
                       {desc}
                     </p>
 

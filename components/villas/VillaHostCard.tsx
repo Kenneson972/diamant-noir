@@ -59,7 +59,7 @@ export function VillaHostCard({
             </span>
           </div>
 
-          <p className="text-sm text-navy/60 leading-relaxed mb-4">{bio}</p>
+          <p className="text-sm text-navy/80 leading-relaxed mb-4">{bio}</p>
 
           <Link
             href="/contact"

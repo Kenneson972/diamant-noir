@@ -612,7 +612,7 @@ export default function PrestationsPageClient() {
                 <h2 className="mt-4 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
                   Cinq piliers,<br />une seule équipe
                 </h2>
-                <p className="mt-4 text-sm leading-relaxed text-navy/60 md:text-[15px]">
+                <p className="mt-4 text-sm leading-relaxed text-navy/80 md:text-[15px]">
                   Chaque pilier est un chapitre à part entière — découvrez leur identité et ce qu'ils incluent.
                 </p>
               </div>
@@ -712,7 +712,7 @@ export default function PrestationsPageClient() {
               <h2 className="mt-4 font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
                 Tout ce qu&apos;il faut savoir
               </h2>
-              <p className="mt-3 text-sm text-navy/60">Consultez notre FAQ ou contactez-nous directement.</p>
+              <p className="mt-3 text-sm text-navy/80">Consultez notre FAQ ou contactez-nous directement.</p>
             </div>
             <div className="mx-auto mt-10 max-w-2xl space-y-0 border-t border-navy/10">
               {FAQ_ITEMS.map(({ q, a }) => (
@@ -721,7 +721,7 @@ export default function PrestationsPageClient() {
                     {q}
                     <span className="shrink-0 text-navy/55 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
                   </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-navy/60">{a}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/80">{a}</p>
                 </details>
               ))}
             </div>
@@ -788,7 +788,7 @@ export default function PrestationsPageClient() {
           <LandingSection bg="offwhite">
             <div className="mx-auto max-w-2xl text-center">
               <div className="mx-auto mb-5 h-px w-8 bg-gold/40" aria-hidden />
-              <p className="text-sm text-navy/60">
+              <p className="text-sm text-navy/80">
                 Consultez notre{" "}
                 <Link href="/faq" className="font-medium text-navy underline-offset-4 hover:underline">
                   FAQ dédiée

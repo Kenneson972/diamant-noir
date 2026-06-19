@@ -70,7 +70,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
     "border-white/18 bg-white/[0.025] hover:border-[#D4AF37] hover:bg-[rgba(212,175,55,0.10)] hover:shadow-[0_0_0_1px_#D4AF37,0_8px_32px_rgba(212,175,55,0.15)] focus-visible:ring-white/22";
   const titleLight = "text-navy";
   const titleDark = "text-white";
-  const iconLight = "text-navy/55 group-hover:text-navy/60";
+  const iconLight = "text-navy/55 group-hover:text-navy/80";
   const iconLight2 = "text-navy/50 group-hover:text-navy/50";
   const iconDark = "text-white/55";
   const iconDark2 = "text-white/50";

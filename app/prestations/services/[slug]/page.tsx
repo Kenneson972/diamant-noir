@@ -198,7 +198,7 @@ export default async function PrestationServicePage({
               Ce que nous incluons
             </h2>
             <div className="mt-4 h-px w-8 bg-gold/40" aria-hidden />
-            <div className="mt-8 space-y-6 text-[13px] leading-relaxed text-navy/60">
+            <div className="mt-8 space-y-6 text-[13px] leading-relaxed text-navy/80">
               {d.items.map(({ title: iTitle, desc }) => (
                 <div key={iTitle} className="flex items-start gap-3">
                   <span className="mt-[5px] block h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden />
@@ -223,7 +223,7 @@ export default async function PrestationServicePage({
       <LandingSection bg="white">
         <div className="mx-auto max-w-2xl text-center">
           <div className="mx-auto mb-6 h-px w-8 bg-gold/40" aria-hidden />
-          <p className="text-[13px] leading-relaxed text-navy/60">
+          <p className="text-[13px] leading-relaxed text-navy/80">
             Prêt à passer à l&apos;étape suivante ? Recevez une estimation gratuite de votre villa
             et découvrez ce que Kayvila peut apporter à votre patrimoine.
           </p>

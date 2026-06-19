@@ -80,7 +80,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-navy/60">
+        <div className="flex items-center gap-2 text-sm text-navy/80">
           <Calendar size={13} strokeWidth={1.25} className="shrink-0 text-gold" aria-hidden />
           <span>
             {new Date(booking.start_date).toLocaleDateString("fr-FR", {

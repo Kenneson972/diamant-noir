@@ -66,7 +66,7 @@ export function FinanceCopilotSection() {
             <div className="divide-y divide-navy/[0.04]">
               {COPILOT_FEATURES.map(({ title, desc }) => (
                 <div key={title} className="py-5 first:pt-0 last:pb-0">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy/60">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy/80">
                     {title}
                   </p>
                   <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-navy/55">

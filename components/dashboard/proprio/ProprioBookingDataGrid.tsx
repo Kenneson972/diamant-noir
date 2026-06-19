@@ -39,7 +39,7 @@ function BookingCard({ booking, villaId }: { booking: BookingRow; villaId: strin
         <BookingStatusBadge status={booking.status} />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="text-sm text-navy/60">
+        <p className="text-sm text-navy/80">
           {formatDate(booking.start_date)} → {formatDate(booking.end_date)}
         </p>
         <p className="text-sm font-medium text-navy">
@@ -100,7 +100,7 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       header: "Source",
       accessorKey: "source",
       cell: (item) => (
-        <span className="inline-flex items-center gap-1 text-xs text-navy/60">
+        <span className="inline-flex items-center gap-1 text-xs text-navy/80">
           <Globe size={11} />
           {SOURCE_LABELS[(item as any).source] ?? (item as any).source ?? "—"}
         </span>
@@ -125,7 +125,7 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       id: "guests",
       header: "Voyageurs",
       cell: (item) => (
-        <span className="inline-flex items-center gap-1 text-xs text-navy/60">
+        <span className="inline-flex items-center gap-1 text-xs text-navy/80">
           <Users size={11} />
           {(item as any).guests ?? "—"}
         </span>

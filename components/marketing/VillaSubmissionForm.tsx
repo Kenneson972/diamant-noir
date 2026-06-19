@@ -183,7 +183,7 @@ export function VillaSubmissionForm() {
             placeholder="https://www.airbnb.fr/rooms/..."
             className="w-full rounded-none border border-navy/20 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none"
           />
-          <p className="mt-1 text-xs text-navy/60">
+          <p className="mt-1 text-xs text-navy/80">
             Collez l&apos;URL de votre annonce Airbnb pour que nous récupérions automatiquement les
             détails et photos.
           </p>

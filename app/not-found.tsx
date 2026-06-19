@@ -15,7 +15,7 @@ export default function NotFound() {
         404
       </h1>
 
-      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/60">
+      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/80">
         Cette page n&rsquo;existe pas ou a été déplacée.
       </p>
 

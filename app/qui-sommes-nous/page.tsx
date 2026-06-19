@@ -125,7 +125,7 @@ export default async function QuiSommesNousPage() {
               Une conciergerie ancrée en Martinique
             </h2>
             <div className="mx-auto mt-4 h-px w-8 bg-gold/40" aria-hidden />
-            <div className="mt-8 space-y-5 text-left text-[13px] leading-relaxed text-navy/60">
+            <div className="mt-8 space-y-5 text-left text-[13px] leading-relaxed text-navy/80">
               <p>
                 Kayvila est née d&apos;une conviction : chaque villa en Martinique possède un potentiel
                 unique, trop souvent sous-exploité par une gestion standardisée. Notre approche est

@@ -160,7 +160,7 @@ function SuccessContent() {
             <span className="text-2xl text-red-400">!</span>
           </div>
           <p className="mb-2 text-lg font-semibold text-navy">Oups</p>
-          <p className="mb-8 text-sm text-navy/60">{error || "Une erreur est survenue."}</p>
+          <p className="mb-8 text-sm text-navy/80">{error || "Une erreur est survenue."}</p>
           <Link
             href="/villas"
             className="inline-flex items-center gap-2 rounded-full bg-navy px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-gold hover:text-navy"
@@ -207,7 +207,7 @@ function SuccessContent() {
           <h1 className="font-display text-3xl text-navy sm:text-4xl">
             Réservation confirmée !
           </h1>
-          <p className="mt-3 text-sm leading-relaxed text-navy/60">
+          <p className="mt-3 text-sm leading-relaxed text-navy/80">
             {isLoggedIn
               ? "Votre séjour est enregistré. Retrouvez tous les détails dans votre espace client."
               : `Un email de confirmation a été envoyé à ${guestEmail || "votre adresse"}.`}
@@ -285,7 +285,7 @@ function SuccessContent() {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-display text-lg text-navy">Créez votre espace client</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-navy/60">
+                  <p className="mt-1 text-sm leading-relaxed text-navy/80">
                     Accédez à vos réservations, factures, livret d&apos;accueil et bien plus depuis
                     votre espace personnel. Un simple lien magique vous suffit.
                   </p>

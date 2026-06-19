@@ -37,7 +37,7 @@ export function HomeValueProps() {
             <p className="mt-2 font-display text-[3rem] font-bold uppercase leading-none tracking-[0.04em] text-navy transition-opacity group-hover:opacity-70 sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem]">
               {word}
             </p>
-            <p className="mx-auto mt-5 max-w-[260px] text-sm leading-relaxed text-navy/60">
+            <p className="mx-auto mt-5 max-w-[260px] text-sm leading-relaxed text-navy/80">
               {body}
             </p>
           </Link>

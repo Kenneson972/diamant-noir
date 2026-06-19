@@ -152,13 +152,13 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                             </p>
                             <div className="space-y-1.5 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-navy/60">Brut HT</span>
+                                <span className="text-navy/80">Brut HT</span>
                                 <span className="text-navy">
                                   {formatEur(row.gross)}
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-navy/60">
+                                <span className="text-navy/80">
                                   Frais ménage
                                 </span>
                                 <span className="text-navy">
@@ -166,7 +166,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-navy/60">
+                                <span className="text-navy/80">
                                   Commission Kayvila ({row.commissionRate}%)
                                 </span>
                                 <span className="text-red-500">
@@ -188,7 +188,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                               </p>
                               <div className="space-y-1.5 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-navy/60">
+                                  <span className="text-navy/80">
                                     ID transfer
                                   </span>
                                   <code className="rounded bg-white px-1 text-xs text-navy/70">
@@ -197,7 +197,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                                 </div>
                                 {row.stripeTransferDate && (
                                   <div className="flex justify-between">
-                                    <span className="text-navy/60">
+                                    <span className="text-navy/80">
                                       Date reversement
                                     </span>
                                     <span className="text-navy">
@@ -207,7 +207,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                                 )}
                                 {row.stripeTransferStatus && (
                                   <div className="flex justify-between">
-                                    <span className="text-navy/60">Statut</span>
+                                    <span className="text-navy/80">Statut</span>
                                     <span className="text-navy">
                                       {PAYMENT_STATUS_LABELS[
                                         row.stripeTransferStatus

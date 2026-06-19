@@ -129,7 +129,7 @@ export default async function ProprioReservationsIndexPage() {
                             {new Date(booking.start_date).toLocaleDateString("fr-FR")} –{" "}
                             {new Date(booking.end_date).toLocaleDateString("fr-FR")}
                           </span>
-                          <span className="text-xs text-navy/60">
+                          <span className="text-xs text-navy/80">
                             {nights} nuit{nights > 1 ? "s" : ""} · {price}
                           </span>
                           <span className="text-[10px] text-navy/40">

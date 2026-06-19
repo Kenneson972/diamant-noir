@@ -191,7 +191,7 @@ export function AvailabilityCalendar({
           onClick={() => setBaseMonth((m) => addMonths(m, -1))}
           className="rounded-lg p-2 hover:bg-navy/5 transition-colors"
         >
-          <ChevronLeft size={18} className="text-navy/60" />
+          <ChevronLeft size={18} className="text-navy/80" />
         </button>
         <span className="text-sm font-medium text-navy capitalize">
           {format(baseMonth, "MMMM yyyy", { locale: fr })}
@@ -200,7 +200,7 @@ export function AvailabilityCalendar({
           onClick={() => setBaseMonth((m) => addMonths(m, 1))}
           className="rounded-lg p-2 hover:bg-navy/5 transition-colors"
         >
-          <ChevronRight size={18} className="text-navy/60" />
+          <ChevronRight size={18} className="text-navy/80" />
         </button>
       </div>
 
@@ -214,7 +214,7 @@ export function AvailabilityCalendar({
         ].map((l) => (
           <span key={l.label} className="flex items-center gap-1.5">
             <span className={`inline-block h-3 w-3 rounded ${l.color}`} />
-            <span className="text-navy/60">{l.label}</span>
+            <span className="text-navy/80">{l.label}</span>
           </span>
         ))}
         {selectStart && (
@@ -390,7 +390,7 @@ export function AvailabilityCalendar({
             <h2 className="text-base font-semibold text-navy">
               Blocage existant
             </h2>
-            <p className="mt-2 text-sm text-navy/60">
+            <p className="mt-2 text-sm text-navy/80">
               {format(parseISO(editBlock.start_date), "dd/MM/yyyy")} →{" "}
               {format(parseISO(editBlock.end_date), "dd/MM/yyyy")}
             </p>

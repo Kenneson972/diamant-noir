@@ -210,7 +210,7 @@ function PasswordPanel({
           <h2 className="font-display text-2xl text-navy">Vérifiez vos emails</h2>
           <span className="block h-px w-10 bg-navy/12" />
         </div>
-        <p className="text-sm leading-relaxed text-navy/60">
+        <p className="text-sm leading-relaxed text-navy/80">
           Un lien de réinitialisation a été envoyé à{" "}
           <span className="font-medium text-navy">{email}</span>.
         </p>
@@ -241,7 +241,7 @@ function PasswordPanel({
           <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-navy/12" />
         </div>
-        <p className="text-sm leading-relaxed text-navy/60">
+        <p className="text-sm leading-relaxed text-navy/80">
           Nous avons envoyé un lien de confirmation à{" "}
           <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour
           activer votre compte, puis vous pourrez vous connecter.

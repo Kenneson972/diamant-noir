@@ -350,7 +350,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
           </div>
         </div>
 
-        <p className="text-xs text-navy/60 leading-relaxed mb-6">
+        <p className="text-xs text-navy/80 leading-relaxed mb-6">
           Collez le lien public de votre fiche (Airbnb, Booking, Abritel, etc.).
           Les métadonnées et le texte de page sont analysés ; optionnellement,
           l'IA complète les champs encore vides.
@@ -418,7 +418,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
               ].join(' ')}
             >
               <span className="block text-sm font-semibold text-navy">{tpl.label}</span>
-              <span className="mt-0.5 block text-xs text-navy/60">{tpl.summary}</span>
+              <span className="mt-0.5 block text-xs text-navy/80">{tpl.summary}</span>
             </button>
           ))}
         </div>
@@ -483,7 +483,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
       {/* Save button */}
       <div className="sticky bottom-0 -mx-6 mt-8 border-t border-border-subtle bg-white px-6 py-4">
         <div className="flex items-center justify-between">
-          <p className="text-xs text-navy/60">
+          <p className="text-xs text-navy/80">
             {isCreate
               ? "La villa sera créée, puis vous pourrez ajouter les photos et le livret."
               : "Les modifications seront appliquées immédiatement."}

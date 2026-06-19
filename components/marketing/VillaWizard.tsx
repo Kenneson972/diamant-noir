@@ -346,7 +346,7 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
           onChange={(e) => onChange({ parking_securise: e.target.checked })}
           className="sr-only"
         />
-        <span className="text-[13px] text-navy/60">Parking privé / sécurisé</span>
+        <span className="text-[13px] text-navy/80">Parking privé / sécurisé</span>
       </label>
 
       {/* Équipements */}
@@ -509,7 +509,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
               className={`border px-4 py-2.5 text-[11px] transition-all duration-200 active:scale-[0.97] ${
                 data.delai_souhaite === r
                   ? "border-gold bg-gold font-bold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
-                  : "border-navy/15 bg-white text-navy/60 hover:border-navy/35"
+                  : "border-navy/15 bg-white text-navy/80 hover:border-navy/35"
               }`}
             >
               {r}
@@ -642,7 +642,7 @@ function Step4({
             />
             <p className="text-sm text-navy/55">
               Glissez vos photos ici ou{" "}
-              <span className="font-semibold text-navy/60 underline underline-offset-2">
+              <span className="font-semibold text-navy/80 underline underline-offset-2">
                 cliquez pour sélectionner
               </span>
             </p>
@@ -729,7 +729,7 @@ function Step4({
           }}
           className="sr-only"
         />
-        <span className="flex items-center gap-2 text-[13px] text-navy/60">
+        <span className="flex items-center gap-2 text-[13px] text-navy/80">
           <ImageOff size={13} aria-hidden />
           Pas de photos — Kayvila s&apos;en charge (état des lieux + photos professionnelles)
         </span>
@@ -754,7 +754,7 @@ function Confirmation({ name }: { name: string }) {
         <h2 className="font-display text-3xl font-normal text-navy">
           Merci, {name || "cher propriétaire"}.
         </h2>
-        <p className="mt-4 text-[15px] leading-relaxed text-navy/60">
+        <p className="mt-4 text-[15px] leading-relaxed text-navy/80">
           Votre dossier a bien été reçu. Notre équipe l&apos;étudiera avec
           attention et vous recontactera sous 48 h ouvrées.
         </p>

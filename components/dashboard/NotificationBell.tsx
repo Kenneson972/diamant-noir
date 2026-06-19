@@ -53,7 +53,7 @@ const TYPE_CONFIG: Record<NotifType, { icon: any; color: string; bg: string }> =
   booking_confirmed:  { icon: CheckCheck,   color: "text-green-500",  bg: "bg-green-50" },
   ical_error:         { icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
   availability_alert: { icon: Bell,         color: "text-orange-500", bg: "bg-orange-50" },
-  system:             { icon: Info,           color: "text-navy/60",    bg: "bg-navy/5" },
+  system:             { icon: Info,           color: "text-navy/80",    bg: "bg-navy/5" },
   request_update:     { icon: MessageCircle,  color: "text-gold",       bg: "bg-gold/10" },
   request_urgent:     { icon: AlertTriangle,   color: "text-red-500",    bg: "bg-red-50" },
   checkin_reminder:   { icon: Key,            color: "text-emerald-500",bg: "bg-emerald-50" },
@@ -320,7 +320,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                         </div>
 
                         {/* Corps */}
-                        <p className="text-[11px] text-navy/60 dark:text-white/55 leading-relaxed line-clamp-2">
+                        <p className="text-[11px] text-navy/80 dark:text-white/55 leading-relaxed line-clamp-2">
                           {notif.body}
                         </p>
 

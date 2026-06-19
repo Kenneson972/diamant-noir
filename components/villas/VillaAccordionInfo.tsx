@@ -60,7 +60,7 @@ export function VillaAccordionInfo({
             <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
               Règlement
             </h4>
-            <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
               {houseRules}
             </p>
           </div>
@@ -70,7 +70,7 @@ export function VillaAccordionInfo({
             <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
               Annulation
             </h4>
-            <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
               {cancellationPolicy}
             </p>
           </div>
@@ -80,7 +80,7 @@ export function VillaAccordionInfo({
             <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
               Sécurité
             </h4>
-            <p className="text-navy/60 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
               {safetyInfo}
             </p>
           </div>

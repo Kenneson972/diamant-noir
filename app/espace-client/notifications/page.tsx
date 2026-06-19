@@ -126,7 +126,7 @@ export default function NotificationsPage() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className={`text-sm ${!notif.is_read ? "font-semibold text-navy" : "text-navy/60"}`}>
+                        <p className={`text-sm ${!notif.is_read ? "font-semibold text-navy" : "text-navy/80"}`}>
                           {notif.title}
                         </p>
                         <p className="mt-0.5 line-clamp-2 text-[11px] text-navy/45">{notif.body}</p>

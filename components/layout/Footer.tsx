@@ -33,7 +33,7 @@ export const Footer = () => {
           {/* Colonne 1 : Logo + description */}
           <div className="flex flex-col items-start gap-4">
             <BrandLogo variant="onLight" size="sm" />
-            <p className="text-sm leading-relaxed text-navy/60">
+            <p className="text-sm leading-relaxed text-navy/80">
               {audience === "proprietaire" ? (
                 "Conciergerie haut de gamme en Martinique : valorisation de biens d'exception et relation voyageurs pour les propriétaires qui exigent sérénité et exigence."
               ) : (
@@ -78,7 +78,7 @@ export const Footer = () => {
           {/* Logo + branding */}
           <div className="mb-8 text-center">
             <BrandLogo variant="onLight" size="sm" />
-            <p className="mt-3 text-xs text-navy/60 max-w-xs mx-auto leading-relaxed">
+            <p className="mt-3 text-xs text-navy/80 max-w-xs mx-auto leading-relaxed">
               {t("footer.branding_desc")}
             </p>
           </div>
@@ -136,7 +136,7 @@ export const Footer = () => {
             <button
               type="button"
               onClick={() => { clearAudience(); router.push("/"); }}
-              className="text-[11px] font-medium uppercase tracking-[0.22em] text-navy/50 underline-offset-4 transition-colors hover:text-navy/60"
+              className="text-[11px] font-medium uppercase tracking-[0.22em] text-navy/50 underline-offset-4 transition-colors hover:text-navy/80"
             >
               Changer de parcours
             </button>

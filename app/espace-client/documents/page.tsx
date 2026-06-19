@@ -128,7 +128,7 @@ export default function DocumentsPage() {
                         variant="outline"
                         size="sm"
                         onPress={() => printInvoice(b)}
-                        className="min-h-[44px] shrink-0 rounded-none border-navy/20 text-[10px] font-bold uppercase tracking-[0.14em] text-navy/60 data-[hover=true]:border-navy data-[hover=true]:text-navy"
+                        className="min-h-[44px] shrink-0 rounded-none border-navy/20 text-[10px] font-bold uppercase tracking-[0.14em] text-navy/80 data-[hover=true]:border-navy data-[hover=true]:text-navy"
                       >
                         <FileText size={14} aria-hidden />
                         Télécharger

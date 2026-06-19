@@ -597,7 +597,7 @@ export function VideoScrollHero() {
               </h2>
 
               {/* Scene context text */}
-              <p className="text-sm leading-relaxed text-navy/60">
+              <p className="text-sm leading-relaxed text-navy/80">
                 {section.scene}
               </p>
 

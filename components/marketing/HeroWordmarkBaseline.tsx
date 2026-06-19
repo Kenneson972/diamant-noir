@@ -31,7 +31,7 @@ export function HeroWordmarkBaseline({
   const tripletWrap = light
     ? "flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-navy/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-navy/45 sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]"
     : "flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 border-b border-white/[0.08] pb-5 text-[7px] font-medium uppercase tracking-[0.38em] text-white/[0.42] sm:gap-x-3.5 sm:text-[8px] sm:tracking-[0.42em] md:gap-x-5 md:tracking-[0.46em]";
-  const tripletWord = light ? "text-navy/60" : "text-white/[0.55]";
+  const tripletWord = light ? "text-navy/80" : "text-white/[0.55]";
   const tripletSep = light ? "select-none font-extralight text-navy/25" : "select-none font-extralight text-white/20";
 
   return (

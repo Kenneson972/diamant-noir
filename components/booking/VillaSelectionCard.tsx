@@ -116,7 +116,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           {dateRange && (
             <div className="flex items-center gap-2 rounded-none border border-gold/20 bg-gold/[0.04] px-4 py-2.5">
               <CalendarDays size={14} strokeWidth={1.25} className="text-gold shrink-0" aria-hidden />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/60">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/80">
                 {dateRange.fmtCheckin} → {dateRange.fmtCheckout}
               </span>
               <span className="ml-auto text-[10px] font-bold uppercase tracking-[0.15em] text-[#B8860B]">
@@ -126,7 +126,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           )}
 
           {/* Description */}
-          <p className="line-clamp-3 text-sm leading-relaxed text-navy/60">
+          <p className="line-clamp-3 text-sm leading-relaxed text-navy/80">
             {villa.description || "Une adresse sélectionnée pour son cadre et son confort."}
           </p>
 

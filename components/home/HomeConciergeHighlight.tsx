@@ -23,7 +23,7 @@ export function HomeConciergeHighlight() {
             <h2 className="font-display text-4xl font-normal text-navy md:text-5xl">
               La conciergerie autrement.
             </h2>
-            <p className="text-[15px] leading-relaxed text-navy/60">
+            <p className="text-[15px] leading-relaxed text-navy/80">
               Bien plus que des gestionnaires — des passionnés ancrés en Martinique qui orchestrent
               chaque séjour avec exigence, de l&apos;annonce au départ du voyageur.
             </p>
@@ -49,7 +49,7 @@ export function HomeConciergeHighlight() {
         <ScrollReveal delay={120}>
           <Link
             href="/prestations"
-            className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/60 underline-offset-8 transition-colors hover:text-navy hover:underline"
+            className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/80 underline-offset-8 transition-colors hover:text-navy hover:underline"
           >
             DÉCOUVRIR LA CONCIERGERIE COMPLÈTE
             <ArrowRight

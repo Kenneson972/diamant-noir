@@ -62,7 +62,7 @@ interface Props {
 
 const CHIP_BASE =
   "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] min-h-[44px] flex items-center transition-colors cursor-pointer";
-const CHIP_OFF = `${CHIP_BASE} border-navy/15 text-navy/60 hover:border-navy/40`;
+const CHIP_OFF = `${CHIP_BASE} border-navy/15 text-navy/80 hover:border-navy/40`;
 const CHIP_ON = `${CHIP_BASE} border-gold bg-gold/[0.08] text-gold`;
 
 type BudgetVal = "<800" | "800-1200" | ">1200";

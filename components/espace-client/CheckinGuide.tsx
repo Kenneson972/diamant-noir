@@ -90,7 +90,7 @@ export function CheckinGuide({
         )}
         <a
           href="tel:+596696000000"
-          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/60 hover:text-navy transition-colors"
+          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/80 hover:text-navy transition-colors"
         >
           <Phone size={14} />
           Problème d&apos;accès ? Appelez-nous

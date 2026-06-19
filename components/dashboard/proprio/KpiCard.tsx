@@ -41,7 +41,7 @@ export function KpiCard({
     >
       <KPI.Header>
         <KPI.Icon>
-          <Icon className="size-5 text-navy/60" aria-hidden />
+          <Icon className="size-5 text-navy/80" aria-hidden />
         </KPI.Icon>
         <KPI.Title className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted">
           {label}

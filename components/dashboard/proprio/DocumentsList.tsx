@@ -39,19 +39,19 @@ export function DocumentsList({ documents }: { documents: Doc[] }) {
       <table className="w-full text-left text-[11px]">
         <thead className="border-b border-navy/10 bg-navy/[0.02]">
           <tr>
-            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/60">
+            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/80">
               Nom
             </th>
-            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/60">
+            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/80">
               Tags
             </th>
-            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/60">
+            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/80">
               Taille
             </th>
-            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/60">
+            <th className="px-4 py-3 font-semibold uppercase tracking-[0.1em] text-navy/80">
               Date
             </th>
-            <th className="px-4 py-3 text-right font-semibold uppercase tracking-[0.1em] text-navy/60">
+            <th className="px-4 py-3 text-right font-semibold uppercase tracking-[0.1em] text-navy/80">
               Action
             </th>
           </tr>
@@ -68,7 +68,7 @@ export function DocumentsList({ documents }: { documents: Doc[] }) {
                   {d.tags.map((t) => (
                     <span
                       key={t}
-                      className="rounded-full border border-navy/10 bg-navy/[0.03] px-2 py-0.5 text-[10px] text-navy/60"
+                      className="rounded-full border border-navy/10 bg-navy/[0.03] px-2 py-0.5 text-[10px] text-navy/80"
                     >
                       {t}
                     </span>

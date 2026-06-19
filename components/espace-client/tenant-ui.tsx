@@ -183,7 +183,7 @@ export function BreadcrumbsRow({
                 {item.label}
               </Link>
             ) : (
-              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/60">{item.label}</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/80">{item.label}</span>
             )}
           </li>
         ))}
@@ -298,7 +298,7 @@ export function TenantAvatarCircle({
   return (
     <div
       className={cn(
-        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy/[0.06] font-bold text-navy/60",
+        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy/[0.06] font-bold text-navy/80",
         box,
         className
       )}

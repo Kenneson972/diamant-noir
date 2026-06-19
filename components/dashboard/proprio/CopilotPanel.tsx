@@ -102,7 +102,7 @@ export function CopilotPanel() {
                     type="button"
                     onClick={() => { sendMessage(prompt); }}
                     disabled={isLoading}
-                    className="rounded-full border border-navy/15 bg-white px-3 py-1.5 text-[11px] text-navy/60 transition-colors hover:border-gold/40 hover:text-navy disabled:opacity-50"
+                    className="rounded-full border border-navy/15 bg-white px-3 py-1.5 text-[11px] text-navy/80 transition-colors hover:border-gold/40 hover:text-navy disabled:opacity-50"
                   >
                     {prompt}
                   </button>

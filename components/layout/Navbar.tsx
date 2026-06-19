@@ -134,7 +134,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const useLightTransparentChrome = !isSolid && !isDarkHeroRoute;
   const navLinkActiveColor = isSolid || useLightTransparentChrome ? "text-navy" : "text-white";
   const navLinkInactiveColor = isSolid || useLightTransparentChrome
-    ? "text-navy/60 hover:text-navy"
+    ? "text-navy/80 hover:text-navy"
     : "text-white/60 hover:text-white";
 
   const routeActive = (href: string) => {

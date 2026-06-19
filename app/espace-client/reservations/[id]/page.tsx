@@ -290,7 +290,7 @@ export default function ReservationDetailPage() {
           <CardContent className="p-5 space-y-4">
             {cancelStep === "idle" && (
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-navy/60">Vous souhaitez annuler cette réservation ?</p>
+                <p className="text-sm text-navy/80">Vous souhaitez annuler cette réservation ?</p>
                 <button
                   type="button"
                   onClick={() => setCancelStep("confirm")}
@@ -307,7 +307,7 @@ export default function ReservationDetailPage() {
                   <AlertTriangle size={16} className="mt-0.5 shrink-0 text-red-500" />
                   <div className="space-y-1">
                     <p className="text-sm font-semibold text-navy">Confirmer l&apos;annulation</p>
-                    <p className="text-xs text-navy/60">
+                    <p className="text-xs text-navy/80">
                       Cette action est irréversible. Votre réservation sera marquée comme annulée.
                     </p>
                     {refundCents !== null ? (
@@ -346,7 +346,7 @@ export default function ReservationDetailPage() {
                     type="button"
                     onClick={() => { setCancelStep("idle"); setCancelError(null); }}
                     disabled={cancelStep === "loading"}
-                    className="inline-flex items-center gap-2 border border-navy/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60 transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
+                    className="inline-flex items-center gap-2 border border-navy/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/80 transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
                   >
                     Conserver
                   </button>
@@ -368,7 +368,7 @@ export default function ReservationDetailPage() {
 
       <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
         <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-navy/60">Un problème ou une question sur votre séjour ?</p>
+          <p className="text-sm text-navy/80">Un problème ou une question sur votre séjour ?</p>
           <Link
             href="/espace-client/messagerie"
             className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-gold no-underline transition-colors hover:text-navy"

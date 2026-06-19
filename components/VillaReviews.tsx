@@ -32,7 +32,7 @@ function CategoryBar({ label, value }: { label: string; value: number }) {
   const pct = Math.round((value / 5) * 100);
   return (
     <div className="flex items-center gap-3">
-      <span className="w-32 shrink-0 text-xs text-navy/60">{label}</span>
+      <span className="w-32 shrink-0 text-xs text-navy/80">{label}</span>
       <div className="flex-1 h-1.5 bg-navy/8">
         <div
           className="h-full bg-navy transition-all duration-500"
@@ -87,7 +87,7 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
       <section className="pt-10 border-t border-navy/10">
         <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
         <div className="border border-navy/10 bg-white p-8 text-center">
-          <p className="text-sm text-navy/60 mb-3">Impossible de charger les avis.</p>
+          <p className="text-sm text-navy/80 mb-3">Impossible de charger les avis.</p>
           <button onClick={fetchReviews} className="text-xs font-bold uppercase tracking-wider text-gold hover:underline">
             Réessayer
           </button>
@@ -165,7 +165,7 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
             <div className="mb-2">
               <KayvilaRating value={review.rating} size="sm" />
             </div>
-            {review.comment && <p className="text-sm text-navy/60 leading-relaxed">{review.comment}</p>}
+            {review.comment && <p className="text-sm text-navy/80 leading-relaxed">{review.comment}</p>}
           </div>
         ))}
       </div>

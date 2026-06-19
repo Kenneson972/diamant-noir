@@ -216,7 +216,7 @@ function CardFooter({
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">{villa.location}</p>
       ) : null}
       <div className="flex items-center justify-between pt-0.5">
-        <p className="text-xs text-navy/60">
+        <p className="text-xs text-navy/80">
           {formatPrice(villa.price)}
           <span className="text-navy/50"> / nuit</span>
         </p>
@@ -224,7 +224,7 @@ function CardFooter({
           type="button"
           onClick={() => onQuickView(villa.id)}
           aria-label={`Aperçu rapide — ${villa.name}`}
-          className="flex min-h-[44px] items-center border border-navy/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60 transition-opacity duration-200 hover:border-gold hover:text-gold sm:opacity-0 sm:group-hover:opacity-100"
+          className="flex min-h-[44px] items-center border border-navy/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/80 transition-opacity duration-200 hover:border-gold hover:text-gold sm:opacity-0 sm:group-hover:opacity-100"
         >
           {previewLabel}
         </button>

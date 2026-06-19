@@ -7,7 +7,7 @@ export function PriceDisplay({ amount, perNight }: { amount: number; perNight?: 
   return (
     <span>
       {formatPrice(amount)}
-      {perNight && <span className="text-navy/60 text-sm font-normal"> / nuit</span>}
+      {perNight && <span className="text-navy/80 text-sm font-normal"> / nuit</span>}
     </span>
   );
 }

@@ -152,7 +152,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               {villa.amenities.slice(0, 4).map((a) => (
                 <span
                   key={a}
-                  className="border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/60"
+                  className="border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/80"
                 >
                   {a}
                 </span>

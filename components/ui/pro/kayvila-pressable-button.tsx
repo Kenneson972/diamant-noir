@@ -11,7 +11,7 @@ type KayvilaPressableButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANT_CLASSES: Record<NonNullable<KayvilaPressableButtonProps["variant"]>, string> = {
   gold:
-    "flex items-center justify-center gap-2 rounded-xl bg-gold text-sm font-bold uppercase tracking-widest !text-navy transition-all duration-300 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-50 disabled:grayscale",
+    "flex items-center justify-center gap-2 rounded-none bg-gold text-sm font-bold uppercase tracking-widest !text-navy transition-all duration-300 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-50 disabled:grayscale",
   navy:
     "flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] bg-navy !text-white transition-all duration-300 hover:bg-gold hover:!text-navy hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gold focus-visible:outline-none disabled:bg-navy/10 disabled:!text-navy/50 disabled:cursor-not-allowed",
 };

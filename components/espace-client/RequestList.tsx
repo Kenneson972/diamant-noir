@@ -42,14 +42,14 @@ export function RequestList({ bookingId, refreshKey }: { bookingId: string; refr
       {requests.map((r) => (
         <div key={r.id} className="border border-navy/10 bg-white p-4">
           <div className="flex items-center justify-between gap-3 mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/60">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/80">
               {REQUEST_TYPE_LABELS[r.type] ?? r.type}
             </span>
             <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${REQUEST_STATUS_STYLES[r.status] ?? REQUEST_STATUS_STYLES.pending}`}>
               {REQUEST_STATUS_LABELS[r.status] ?? r.status}
             </span>
           </div>
-          <p className="text-sm text-navy/60">{r.message}</p>
+          <p className="text-sm text-navy/80">{r.message}</p>
           {r.admin_response && (
             <div className="mt-3 border-t border-navy/5 pt-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold mb-1">Réponse Kayvila</p>

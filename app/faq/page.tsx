@@ -56,7 +56,7 @@ export default async function FaqPage() {
                           aria-hidden
                         />
                       </summary>
-                      <p className="mt-3 pl-1 text-sm leading-relaxed text-navy/60">{a}</p>
+                      <p className="mt-3 pl-1 text-sm leading-relaxed text-navy/80">{a}</p>
                     </details>
                   ))}
                 </div>

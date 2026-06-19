@@ -115,7 +115,7 @@ export const BookingForm = ({
       <div className="flex items-center justify-between pb-4 border-b border-navy/10">
         <div>
           <span className="font-display text-3xl text-navy">{formatPrice(basePrice)}</span>
-          <span className="text-sm text-navy/60 font-medium"> / nuit</span>
+          <span className="text-sm text-navy/80 font-medium"> / nuit</span>
         </div>
       </div>
 
@@ -176,7 +176,7 @@ export const BookingForm = ({
       </p>
 
       {!start && !end && (
-        <p className="text-sm text-navy/60 text-center mt-1">
+        <p className="text-sm text-navy/80 text-center mt-1">
           À partir de <span className="font-semibold text-navy">{formatPrice(basePrice)}</span> / nuit
         </p>
       )}

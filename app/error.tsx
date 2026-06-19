@@ -23,7 +23,7 @@ export default function Error({
         Un incident technique
       </h1>
 
-      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/60">
+      <p className="mt-6 max-w-md font-body text-base leading-relaxed text-navy/80">
         Une erreur est survenue. Notre équipe a été informée.
         <br />
         Vous pouvez réessayer ou revenir à l&rsquo;accueil.

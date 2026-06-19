@@ -71,7 +71,7 @@ export function AgentChat({
                   <button
                     key={p}
                     onClick={() => send(p)}
-                    className="rounded-full border border-navy/10 px-3 py-1.5 text-[10px] text-navy/60 hover:border-gold/30 hover:bg-gold/[0.04] transition-colors"
+                    className="rounded-full border border-navy/10 px-3 py-1.5 text-[10px] text-navy/80 hover:border-gold/30 hover:bg-gold/[0.04] transition-colors"
                   >
                     {p}
                   </button>

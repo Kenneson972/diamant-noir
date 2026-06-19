@@ -41,7 +41,7 @@ export function LocalGuide() {
                   <span className="font-sora text-sm text-navy">{item.name}</span>
                   <span className="shrink-0 text-[10px] uppercase tracking-wider text-navy/45">{item.distance}</span>
                 </div>
-                <p className="mt-1 text-sm text-navy/60">{item.description}</p>
+                <p className="mt-1 text-sm text-navy/80">{item.description}</p>
                 {"price" in item && item.price ? (
                   <span className="mt-2 inline-block text-xs text-gold">{item.price}</span>
                 ) : null}

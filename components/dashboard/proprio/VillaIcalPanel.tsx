@@ -82,7 +82,7 @@ export function VillaIcalPanel({ villaId, icalUrl, otaChannels }: VillaIcalPanel
         <h4 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-navy/55">
           Lien iCal (Airbnb, Booking…)
         </h4>
-        <p className="mb-4 text-xs leading-relaxed text-navy/60">
+        <p className="mb-4 text-xs leading-relaxed text-navy/80">
           Exportez le calendrier depuis votre plateforme OTA et collez l&apos;URL ici pour éviter les
           doubles réservations.
         </p>

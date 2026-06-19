@@ -37,7 +37,7 @@ export function TaskCard({ task, villaName }: TaskCardProps) {
           </div>
 
           {task.description && (
-            <p className="mt-1.5 line-clamp-2 text-sm text-navy/60">
+            <p className="mt-1.5 line-clamp-2 text-sm text-navy/80">
               {task.description}
             </p>
           )}
@@ -51,7 +51,7 @@ export function TaskCard({ task, villaName }: TaskCardProps) {
             )}
 
             {villaName && (
-              <span className="inline-flex items-center gap-1 rounded bg-cream px-1.5 py-0.5 text-navy/60">
+              <span className="inline-flex items-center gap-1 rounded bg-cream px-1.5 py-0.5 text-navy/80">
                 {villaName}
               </span>
             )}
