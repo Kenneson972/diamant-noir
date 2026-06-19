@@ -2,123 +2,550 @@
   "name": "Kayvibot B — Propriétaire (Fusion v4 — Postgres pré-fetch)",
   "nodes": [
     {
-      "parameters": { "httpMethod": "POST", "path": "kayvibot-owner", "responseMode": "responseNode", "options": {} },
-      "id": "b-webhook", "name": "Webhook Trigger", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "kayvibot-owner"
-    },
-    {
-      "parameters": { "assignments": { "assignments": [
-        { "id": "b-s1", "name": "chatInput", "value": "={{ $json.body.chatInput || $json.body.message }}", "type": "string" },
-        { "id": "b-s2", "name": "sessionId", "value": "={{ $json.body.sessionId || ('session-' + Date.now()) }}", "type": "string" },
-        { "id": "b-s3", "name": "userId", "value": "={{ $json.body.userId || $json.body.user_id || '' }}", "type": "string" },
-        { "id": "b-s4", "name": "token", "value": "={{ $json.body.token || $json.headers?.authorization?.replace('Bearer ', '') || '' }}", "type": "string" }
-      ] } },
-      "id": "b-set", "name": "Edit Fields", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [220, 0]
-    },
-    {
-      "parameters": { "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}", "options": { "timeout": 10000 } },
-      "id": "b-fetch", "name": "Fetch Owner Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0], "continueOnFail": true
-    },
-    {
-      "parameters": { "jsCode": "const ctxRes = $('Fetch Owner Context').first().json;\nconst unauthorized = ctxRes.statusCode === 401 || ctxRes.error === 'Unauthorized' || ctxRes.error === 'Forbidden' || ctxRes.error === 'Utilisateur non trouvé' || ctxRes.error === 'userId ou token requis';\nreturn [{ json: { __unauthorized: unauthorized, sessionId: $('Edit Fields').first().json.sessionId, chatInput: $('Edit Fields').first().json.chatInput, userId: $('Edit Fields').first().json.userId } }];" },
-      "id": "b-auth", "name": "Check Auth", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [640, 0]
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kayvibot-owner",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b-webhook",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "kayvibot-owner"
     },
     {
       "parameters": {
-        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict", "version": 1 }, "conditions": [{ "id": "b-c-unauth", "leftValue": "={{ $json.__unauthorized }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }], "combinator": "and" }
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b-s1",
+              "name": "chatInput",
+              "value": "={{ $json.body.chatInput || $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "b-s2",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId || ('session-' + Date.now()) }}",
+              "type": "string"
+            },
+            {
+              "id": "b-s3",
+              "name": "userId",
+              "value": "={{ $json.body.userId || $json.body.user_id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "b-s4",
+              "name": "token",
+              "value": "={{ $json.body.token || $json.headers?.authorization?.replace('Bearer ', '') || '' }}",
+              "type": "string"
+            }
+          ]
+        }
       },
-      "id": "b-if-auth", "name": "IF - Non Autorisé ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [840, 0]
+      "id": "b-set",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
     },
     {
-      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ reply: \"Accès non autorisé. Veuillez vous reconnecter à votre espace propriétaire Kayvila.\", action: \"error\", alerts: [], suggestedPrompts: [] }) }}", "options": { "responseCode": 401 } },
-      "id": "b-resp-unauth", "name": "Respond - Non Autorisé", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1060, 200]
+      "parameters": {
+        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "b-fetch",
+      "name": "Fetch Owner Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctxRes = $('Fetch Owner Context').first().json;\nconst unauthorized = ctxRes.statusCode === 401 || ctxRes.statusCode === 403 || ctxRes.error === 'Unauthorized' || ctxRes.error === 'Forbidden' || ctxRes.error === 'Utilisateur non trouvé' || ctxRes.error === 'token requis';\nreturn [{ json: { __unauthorized: unauthorized, sessionId: $('Edit Fields').first().json.sessionId, chatInput: $('Edit Fields').first().json.chatInput, userId: $('Edit Fields').first().json.userId } }];"
+      },
+      "id": "b-auth",
+      "name": "Check Auth",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "b-c-unauth",
+              "leftValue": "={{ $json.__unauthorized }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "b-if-auth",
+      "name": "IF - Non Autorisé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        840,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: \"Accès non autorisé. Veuillez vous reconnecter à votre espace propriétaire Kayvila.\", action: \"error\", alerts: [], suggestedPrompts: [] }) }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "b-resp-unauth",
+      "name": "Respond - Non Autorisé",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1060,
+        200
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
         "query": "SELECT json_build_object('villas', (SELECT json_agg(v) FROM (SELECT id,name,price_per_night,capacity,location,is_published,created_at FROM villas WHERE owner_id=$1 ORDER BY created_at DESC) v), 'bookings', (SELECT json_agg(b) FROM (SELECT b.id,b.villa_id,b.start_date,b.end_date,b.status,b.guests,b.price,b.total_price_cents FROM bookings b JOIN villas v ON b.villa_id=v.id WHERE v.owner_id=$1 ORDER BY b.start_date DESC LIMIT 50) b), 'tasks', (SELECT json_agg(t) FROM (SELECT id,villa_id,title,status,due_date FROM tasks WHERE villa_id IN (SELECT id FROM villas WHERE owner_id=$1) ORDER BY due_date ASC LIMIT 20) t), 'ota', (SELECT json_agg(o) FROM (SELECT o.villa_id,o.source,o.synced_at,o.error FROM ota_sync_logs o JOIN villas v ON o.villa_id=v.id WHERE v.owner_id=$1 ORDER BY o.synced_at DESC LIMIT 20) o), 'revenue_confirmed_cents', (SELECT COALESCE(SUM(COALESCE(b.total_price_cents,b.price*100)),0) FROM bookings b JOIN villas v ON b.villa_id=v.id WHERE v.owner_id=$1 AND b.status='confirmed')) AS data",
-        "options": { "queryReplacement": "={{ $('Fetch Owner Context').first().json.userId }}" }
+        "options": {
+          "queryReplacement": "={{ $('Fetch Owner Context').first().json.userId }}"
+        }
       },
-      "id": "b-data", "name": "Fetch Owner Data", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [1060, -160],
-      "alwaysOutputData": true, "continueOnFail": true,
-      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
-    },
-    {
-      "parameters": { "jsCode": "const ctxRes = $('Fetch Owner Context').first().json;\nconst ctx = ctxRes.context || {};\nconst alerts = ctx.alerts || [];\nconst dataItem = $('Fetch Owner Data').first().json;\nconst data = (dataItem && dataItem.data) || {};\n\nconst now = new Date();\nconst mqStr = (opts) => now.toLocaleString('fr-FR', { timeZone: 'America/Martinique', ...opts });\nconst timeContext = `Date/heure Martinique : ${mqStr({ weekday: 'long' })} ${mqStr({ day: 'numeric', month: 'long', year: 'numeric' })}, ${mqStr({ hour: '2-digit', minute: '2-digit' })}`;\n\nconst basePrompt = ctxRes.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\nRAPPEL FORMAT : le champ reply doit etre du texte brut, sans markdown ni emoji.`\n  + `\\n\\n=============================\\n${timeContext}\\nALERTES : ${alerts.length} active(s)\\nDONNEES PROPRIETAIRE (temps reel, source Supabase) :\\n${JSON.stringify(data).slice(0, 6000)}\\n=============================`;\n\nreturn { json: { chatInput: $('Edit Fields').first().json.chatInput, sessionId: $('Edit Fields').first().json.sessionId, userId: $('Edit Fields').first().json.userId, systemMessage } };" },
-      "id": "b-build", "name": "Build Context", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1280, -160]
-    },
-    {
-      "parameters": { "promptType": "define", "text": "={{ $json.chatInput }}", "options": { "systemMessage": "={{ $json.systemMessage }}" } },
-      "id": "b-agent", "name": "AI Agent DeepSeek", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 3.1, "position": [1500, -160]
-    },
-    {
-      "parameters": { "model": { "__rl": true, "value": "deepseek-chat", "mode": "list" }, "options": { "baseURL": "https://api.deepseek.com/v1", "temperature": 0.3 } },
-      "id": "b-model", "name": "DeepSeek Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1.3, "position": [1340, 40],
-      "credentials": { "openAiApi": { "id": "DEEPSEEK_CRED", "name": "DeepSeek API" } }
-    },
-    {
-      "parameters": { "sessionIdType": "customKey", "sessionKey": "={{ $('Edit Fields').first().json.sessionId }}", "contextWindowLength": 10 },
-      "id": "b-memory", "name": "Postgres Chat Memory", "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat", "typeVersion": 1.3, "position": [1660, 40],
-      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
-    },
-    {
-      "parameters": { "jsCode": "function stripMarkdown(t) {\n  return String(t || '')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '$1')\n    .replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/_{2}(.*?)_{2}/g, '$1')\n    .replace(/_(.*?)_/g, '$1')\n    .replace(/^[ \\t]*#{1,6}[ \\t]+/gm, '')\n    .replace(/^[ \\t]*[-*+][ \\t]+/gm, '')\n    .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')\n    .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, '$1')\n    .replace(/^-{3,}$/gm, '')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\nconst ai = $input.first().json.output || $input.first().json.text || '';\nlet reply = ai, action = 'reply', alerts = [], prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    reply = p.reply || ai;\n    action = p.action || 'reply';\n    alerts = Array.isArray(p.alerts) ? p.alerts : [];\n    prompts = Array.isArray(p.suggestedPrompts) ? p.suggestedPrompts : [];\n  }\n} catch {}\nreply = stripMarkdown(reply);\nreturn { json: { reply, action, alerts, suggestedPrompts: prompts, sessionId: $('Edit Fields').first().json.sessionId, userId: $('Edit Fields').first().json.userId } };" },
-      "id": "b-parse", "name": "Parse Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1720, -160]
-    },
-    {
-      "parameters": {
-        "schema": { "__rl": true, "value": "public", "mode": "list" },
-        "table": { "__rl": true, "value": "conversation_memory", "mode": "list" },
-        "columns": { "mappingMode": "defineBelow", "value": {
-          "session_id": "={{ $json.sessionId }}",
-          "conversation_data": "={{ { \"user\": $('Edit Fields').first().json.chatInput, \"assistant\": $json.reply } }}",
-          "metadata": "={{ { \"agent\": \"proprietaire\", \"action\": $json.action, \"userId\": $json.userId } }}"
-        }, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": false }
-      },
-      "id": "b-save", "name": "Save Memory", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [1940, -160],
+      "id": "b-data",
+      "name": "Fetch Owner Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1060,
+        -160
+      ],
+      "alwaysOutputData": true,
       "continueOnFail": true,
-      "credentials": { "postgres": { "id": "szSBC134iAZHEyPA", "name": "DIAMANT NOIR" } }
-    },
-    {
-      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify($('Parse Response').first().json) }}", "options": { "responseCode": 200 } },
-      "id": "b-respond", "name": "Respond to Webhook", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [2160, -160]
+      "credentials": {
+        "postgres": {
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
+        }
+      }
     },
     {
       "parameters": {
-        "conditions": { "options": { "caseSensitive": false, "typeValidation": "loose", "version": 2 }, "conditions": [{ "id": "b-urg", "leftValue": "={{ ($('Edit Fields').first().json.chatInput || '').toLowerCase() }}", "rightValue": "\\b(urgent|retard|annul|conflit|probl[eè]me|panne|litige|check-in|checkin|aujourd|ce soir|demain|m[eé]nage pas fait)\\b", "operator": { "type": "string", "operation": "regex" } }], "combinator": "and" }
+        "jsCode": "const ctxRes = $('Fetch Owner Context').first().json;\nconst ctx = ctxRes.context || {};\nconst alerts = ctx.alerts || [];\nconst dataItem = $('Fetch Owner Data').first().json;\nconst data = (dataItem && dataItem.data) || {};\n\nconst now = new Date();\nconst mqStr = (opts) => now.toLocaleString('fr-FR', { timeZone: 'America/Martinique', ...opts });\nconst timeContext = `Date/heure Martinique : ${mqStr({ weekday: 'long' })} ${mqStr({ day: 'numeric', month: 'long', year: 'numeric' })}, ${mqStr({ hour: '2-digit', minute: '2-digit' })}`;\n\nconst basePrompt = ctxRes.systemPrompt || '';\nconst systemMessage = basePrompt\n  + `\\n\\nRAPPEL FORMAT : le champ reply doit etre du texte brut, sans markdown ni emoji.`\n  + `\\n\\n=============================\\n${timeContext}\\nALERTES : ${alerts.length} active(s)\\nDONNEES PROPRIETAIRE (temps reel, source Supabase) :\\n${JSON.stringify(data).slice(0, 6000)}\\n=============================`;\n\nreturn { json: { chatInput: $('Edit Fields').first().json.chatInput, sessionId: $('Edit Fields').first().json.sessionId, userId: $('Edit Fields').first().json.userId, systemMessage } };"
       },
-      "id": "b-if-urg", "name": "IF - Urgent ?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [1940, -380]
+      "id": "b-build",
+      "name": "Build Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "={{ $json.systemMessage }}"
+        }
+      },
+      "id": "b-agent",
+      "name": "AI Agent DeepSeek",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1500,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "deepseek-chat",
+          "mode": "list"
+        },
+        "options": {
+          "baseURL": "https://api.deepseek.com/v1",
+          "temperature": 0.3
+        }
+      },
+      "id": "b-model",
+      "name": "DeepSeek Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1340,
+        40
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "DEEPSEEK_CRED",
+          "name": "DeepSeek API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').first().json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "id": "b-memory",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1660,
+        40
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function stripMarkdown(t) {\n  return String(t || '')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '$1')\n    .replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/_{2}(.*?)_{2}/g, '$1')\n    .replace(/_(.*?)_/g, '$1')\n    .replace(/^[ \\t]*#{1,6}[ \\t]+/gm, '')\n    .replace(/^[ \\t]*[-*+][ \\t]+/gm, '')\n    .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')\n    .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, '$1')\n    .replace(/^-{3,}$/gm, '')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\nconst ai = $input.first().json.output || $input.first().json.text || '';\nlet reply = ai, action = 'reply', alerts = [], prompts = [];\ntry {\n  const p = typeof ai === 'string' ? JSON.parse(ai) : ai;\n  if (p && typeof p === 'object') {\n    reply = p.reply || ai;\n    action = p.action || 'reply';\n    alerts = Array.isArray(p.alerts) ? p.alerts : [];\n    prompts = Array.isArray(p.suggestedPrompts) ? p.suggestedPrompts : [];\n  }\n} catch {}\nreply = stripMarkdown(reply);\nreturn { json: { reply, action, alerts, suggestedPrompts: prompts, sessionId: $('Edit Fields').first().json.sessionId, userId: $('Edit Fields').first().json.userId } };"
+      },
+      "id": "b-parse",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list"
+        },
+        "table": {
+          "__rl": true,
+          "value": "conversation_memory",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.sessionId }}",
+            "conversation_data": "={{ { \"user\": $('Edit Fields').first().json.chatInput, \"assistant\": $json.reply } }}",
+            "metadata": "={{ { \"agent\": \"proprietaire\", \"action\": $json.action, \"userId\": $json.userId } }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "b-save",
+      "name": "Save Memory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1940,
+        -160
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "postgres": {
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Parse Response').first().json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "b-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2160,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b-urg",
+              "leftValue": "={{ ($('Edit Fields').first().json.chatInput || '').toLowerCase() }}",
+              "rightValue": "\\b(urgent|retard|annul|conflit|probl[eè]me|panne|litige|check-in|checkin|aujourd|ce soir|demain|m[eé]nage pas fait)\\b",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "b-if-urg",
+      "name": "IF - Urgent ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1940,
+        -380
+      ]
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.resend.com/emails",
         "sendHeaders": true,
-        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $vars.RESEND_API_KEY }}" }] },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.RESEND_API_KEY }}"
+            }
+          ]
+        },
         "sendBody": true,
         "bodyContentType": "json",
         "jsonBody": "={{ JSON.stringify({ from: 'Kayvila <noreply@kayvila.com>', to: [$vars.ADMIN_ALERT_EMAIL || 'admin@kayvila.com'], subject: 'Kayvila — Demande urgente propriétaire', html: '<p><strong>Propriétaire :</strong> ' + $('Edit Fields').first().json.userId + '</p><p><strong>Message :</strong> ' + $('Edit Fields').first().json.chatInput + '</p>' }) }}",
         "options": {}
       },
-      "id": "b-resend", "name": "Resend - Alerte Proprio", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [2160, -380],
+      "id": "b-resend",
+      "name": "Resend - Alerte Proprio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        -380
+      ],
       "continueOnFail": true
     }
   ],
   "connections": {
-    "Webhook Trigger": { "main": [[{ "node": "Edit Fields", "type": "main", "index": 0 }]] },
-    "Edit Fields": { "main": [[{ "node": "Fetch Owner Context", "type": "main", "index": 0 }]] },
-    "Fetch Owner Context": { "main": [[{ "node": "Check Auth", "type": "main", "index": 0 }]] },
-    "Check Auth": { "main": [[{ "node": "IF - Non Autorisé ?", "type": "main", "index": 0 }]] },
-    "IF - Non Autorisé ?": { "main": [[{ "node": "Respond - Non Autorisé", "type": "main", "index": 0 }], [{ "node": "Fetch Owner Data", "type": "main", "index": 0 }]] },
-    "Fetch Owner Data": { "main": [[{ "node": "Build Context", "type": "main", "index": 0 }]] },
-    "Build Context": { "main": [[{ "node": "AI Agent DeepSeek", "type": "main", "index": 0 }]] },
-    "AI Agent DeepSeek": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
-    "DeepSeek Chat Model": { "ai_languageModel": [[{ "node": "AI Agent DeepSeek", "type": "ai_languageModel", "index": 0 }]] },
-    "Postgres Chat Memory": { "ai_memory": [[{ "node": "AI Agent DeepSeek", "type": "ai_memory", "index": 0 }]] },
-    "Parse Response": { "main": [[{ "node": "Save Memory", "type": "main", "index": 0 }, { "node": "IF - Urgent ?", "type": "main", "index": 0 }]] },
-    "Save Memory": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] },
-    "IF - Urgent ?": { "main": [[{ "node": "Resend - Alerte Proprio", "type": "main", "index": 0 }]] }
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Fetch Owner Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Owner Context": {
+      "main": [
+        [
+          {
+            "node": "Check Auth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Auth": {
+      "main": [
+        [
+          {
+            "node": "IF - Non Autorisé ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Non Autorisé ?": {
+      "main": [
+        [
+          {
+            "node": "Respond - Non Autorisé",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Owner Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Owner Data": {
+      "main": [
+        [
+          {
+            "node": "Build Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Context": {
+      "main": [
+        [
+          {
+            "node": "AI Agent DeepSeek",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent DeepSeek": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent DeepSeek",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent DeepSeek",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          {
+            "node": "Save Memory",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF - Urgent ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Memory": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Urgent ?": {
+      "main": [
+        [
+          {
+            "node": "Resend - Alerte Proprio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "active": false, "settings": { "executionOrder": "v1" }, "pinData": {}, "versionId": "4.0.0-postgres",
-  "meta": { "instanceId": "kayvibot-b-fusion-v4" }, "id": "kayvibot-b-fusion-v4",
-  "tags": [{ "name": "Kayvibot" }, { "name": "Fusion" }, { "name": "v4" }]
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "4.0.0-postgres",
+  "meta": {
+    "instanceId": "kayvibot-b-fusion-v4"
+  },
+  "id": "kayvibot-b-fusion-v4",
+  "tags": [
+    {
+      "name": "Kayvibot"
+    },
+    {
+      "name": "Fusion"
+    },
+    {
+      "name": "v4"
+    }
+  ]
 }

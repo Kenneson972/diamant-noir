@@ -13,31 +13,29 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const userId = searchParams.get("userId");
+  const requestedUserId = searchParams.get("userId");
   const token =
     searchParams.get("token") ||
     request.headers.get("authorization")?.replace("Bearer ", "");
 
-  if (!userId && !token) {
-    return NextResponse.json(
-      { error: "userId ou token requis" },
-      { status: 400 }
-    );
+  if (!token) {
+    return NextResponse.json({ error: "token requis" }, { status: 401 });
   }
 
-  // Résoudre l'utilisateur
-  let resolvedUserId = userId;
-  if (token && !resolvedUserId) {
-    const admin = supabaseAdmin();
-    const { data } = await admin.auth.getUser(token);
-    resolvedUserId = data?.user?.id ?? null;
-  }
+  // Identité dérivée du token uniquement — jamais du query param (anti-IDOR)
+  const admin = supabaseAdmin();
+  const { data: userData } = await admin.auth.getUser(token);
+  const resolvedUserId = userData?.user?.id ?? null;
 
   if (!resolvedUserId) {
     return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 401 });
   }
 
-  const admin = supabaseAdmin();
+  // Si un userId est fourni en query, il DOIT correspondre au token
+  if (requestedUserId && requestedUserId !== resolvedUserId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const context = await buildOwnerContextPackCached(admin, resolvedUserId);
 
   return NextResponse.json({
