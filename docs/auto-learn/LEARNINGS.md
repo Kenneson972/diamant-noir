@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-06-19 (soir) — Migration agents n8n vers pré-fetch Postgres
+
+### Fait
+- **Refonte 3 agents Kayvibot** via brainstorming → spec → plan → subagent-driven (4 commits sur main)
+- Suppression de tous les `ai_tool` (non fonctionnels) → pré-fetch Postgres dans le flux principal (pattern CieloBot)
+- Agent B/C : 1 nœud Postgres consolidé (json_build_object) gaté par l'auth API
+- **Revue finale a rattrapé un IDOR Critical** dans `owner-context` → corrigé (token = seule source d'identité)
+
+### Règles apprises (dures)
+- **Les `ai_tool` n8n échouent chez Kayvila** → ne plus en utiliser. Pré-fetch tout dans le flux principal (HTTP/Postgres) AVANT l'AI Agent, comme CieloBot. L'agent n'a que `ai_languageModel` + `ai_memory`.
+- **Anti-IDOR** : un filtre SQL n8n (`WHERE owner_id=$1`) ne doit JAMAIS utiliser une valeur client. L'identité vient de `getUser(token)` côté API. Une route qui accepte `?userId=` en query SANS le valider contre le token est une faille (cas réel : `owner-context`). Rejet 403 si query userId ≠ token userId.
+- **Nœud Postgres admin (sans filtre)** = doit être sur la branche AUTORISÉE de l'IF (gaté `requireAdmin`), jamais en amont.
+- **Toujours vérifier `information_schema` live avant d'écrire du SQL** (types/supabase.ts périmé) : le spec avait 4 colonnes fausses (check_in, total_price, last_sync_at, status).
+- **Revue finale whole-branch indispensable** même quand les revues par tâche sont clean : l'IDOR venait d'une hypothèse du spec (« userId vérifié ») fausse au niveau cross-fichier, invisible tâche par tâche.
+
+---
+
 ## 2026-06-19 — Chatbot Audit Complet (9 bugs)
 
 ### Fait
