@@ -42,6 +42,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     context,
+    userId: resolvedUserId,
     systemPrompt: `Tu es Kayvibot Owner, l'assistant personnel des propriétaires Kayvila. Tu parles français, tu es proactif, direct et utile.
 
 TON RÔLE
