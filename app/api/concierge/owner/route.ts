@@ -3,6 +3,8 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// L'agent B (owner-context + Postgres + DeepSeek) tourne ~20-22s — laisser la marge
+export const maxDuration = 35;
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +13,10 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
+
+    // Token de session — l'agent B en a besoin pour fetch owner-context (identité dérivée du token, anti-IDOR)
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token ?? "";
 
     const { message } = await request.json();
     if (!message?.trim()) {
@@ -26,20 +32,26 @@ export async function POST(request: Request) {
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20_000);
+    const timeout = setTimeout(() => controller.abort(), 32_000);
 
     try {
       const res = await fetch(webhookURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message.trim(), userId: user.id }),
+        body: JSON.stringify({ message: message.trim(), userId: user.id, token }),
         signal: controller.signal,
       });
       clearTimeout(timeout);
 
       if (!res.ok) throw new Error(`n8n returned ${res.status}`);
       const data = await res.json();
-      return NextResponse.json({ response: data.response ?? data.output ?? JSON.stringify(data), request_id: data.request_id ?? "n8n" });
+      // L'agent B renvoie { reply, ... } (format fusion) ; certains agents renvoient { response } ou { output }
+      const reply =
+        (typeof data.response === "string" && data.response) ||
+        (typeof data.reply === "string" && data.reply) ||
+        (typeof data.output === "string" && data.output) ||
+        "Je n'ai pas pu générer de réponse pour le moment.";
+      return NextResponse.json({ response: reply, request_id: data.request_id ?? "n8n" });
     } catch (fetchErr) {
       clearTimeout(timeout);
       console.error("[concierge-owner] n8n fetch error:", fetchErr);
