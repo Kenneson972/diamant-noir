@@ -2,6 +2,19 @@
 
 ---
 
+## 2026-06-20 (soir) — Design couche proactive Agent B (digest matinal)
+
+### Décidé (spec : `docs/specs/proactive-agent-b.md`)
+- **Agent B proactif** : Schedule Trigger n8n `0 8 * * *` (tz Martinique) → digest chaleureux quotidien par owner, affiché en haut du dashboard proprio. Implémentation **non démarrée** (repris plus tard).
+- **Réutiliser la table `notifications`** (pas de nouvelle table) : elle a déjà `user_id` + `is_read`/`read_at` + RLS service-role + `NotificationBell`. Nouveau type `owner_daily_digest`.
+
+### Règles apprises (dures)
+- **Vérifier la pré-existence AVANT de créer** : la demande disait « table `users` role=owner » + « nouvelle table `proactive_notifications` ». En réalité : rôles dans **`profiles`** (valeur `owner`, pas `proprietaire`/`proprio`), et la table **`notifications` existait déjà** avec `user_id` → mappait 1:1. Toujours interroger le schéma live (Supabase MCP) avant d'écrire migration/UI.
+- **Un cron n'a pas de token utilisateur** : `/api/agent/owner-context` est token-gated (anti-IDOR) → inappelable par un Schedule Trigger. Pattern correct = endpoint interne protégé par secret (`verifyApiKey`/`CRON_API_KEY`, déjà utilisé par `send-checkin-reminders`) qui réutilise `buildOwnerContextPackCached`.
+- **Dédup côté requête, pas côté schéma** : « 1 digest/owner/jour » géré en excluant les owners déjà traités du jour (tz Martinique) dans l'endpoint de contexte → cron idempotent sans index/contrainte ad hoc.
+
+---
+
 ## 2026-06-20 — Publication agents n8n A/B/C (Fusion) via API REST
 
 ### Fait
