@@ -370,6 +370,142 @@
         -380
       ],
       "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ],
+          "triggerTimes": {
+            "hour": 8,
+            "minute": 0
+          }
+        }
+      },
+      "id": "cron-schedule",
+      "name": "Schedule Trigger (8h MQ)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -800,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://kayvila.vercel.app/api/agent/owners-digest-context",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer ea9b643fe13a8ac7c96761dbe4e81d6a88aba5a4818a7a8431601ecf6549e79f"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "cron-fetch-context",
+      "name": "HTTP - Fetch Owners Digest Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "owners",
+        "options": {}
+      },
+      "id": "cron-split",
+      "name": "Split Out - Per Owner",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "text": "=Tu es Kayvibot, l'assistant personnel d'un proprietaire de villa de luxe Kayvila en Martinique. Redige un message PROACTIF et CHALEUREUX (pas un rapport froid) base sur le contexte ci-dessous.\n\nDate/heure Martinique : {{ $json.current_date_iso }}\n\nPORTFOLIO :\n- Villas : {{ $json.portfolio.total_villas }} publiees\n- Revenus du mois : {{ $json.portfolio.revenue_current_month }} EUR\n- Reservations a venir : {{ $json.portfolio.upcoming_bookings_count }}\n- Taches en attente : {{ $json.portfolio.pending_tasks_count }}\n\nAUJOURD'HUI (check-ins/outs) : {{ JSON.stringify($json.today) }}\nALERTES : {{ JSON.stringify($json.alerts) }}\n\nREGLES :\n- TEXTE BRUT uniquement, zero markdown, zero emoji dans le corps sauf pour l'ouverture\n- Ton chaleureux, comme un(e) concierge qui prend des nouvelles\n- RESUMER, pas tout lister : mentionne les check-ins/outs importants, les alertes, et un point positif\n- Si pas de check-in/out aujourd'hui, dis-le avec bonne humeur\n- Mentionne les taches en retard avec bienveillance\n- Termine par \"Bonne journee ! ☀️\" ou equivalent\n\nReponds UNIQUEMENT avec le message (pas de JSON, pas de meta-donnees)."
+      },
+      "id": "cron-llm",
+      "name": "LLM - Generateur de message",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "model": "deepseek-v4-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        560
+      ],
+      "id": "cron-llm-model",
+      "name": "DeepSeek Chat Model (Cron)",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "s16Eub8KTcJLPBw5",
+          "name": "KARIBLOOM DEEPSEEK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list"
+        },
+        "table": {
+          "__rl": true,
+          "value": "notifications",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={ $('cron-split').first().json.owner_id }",
+            "type": "owner_daily_digest",
+            "title": "Votre point du jour",
+            "body": "={{ $json.text }}",
+            "action_url": "/dashboard",
+            "metadata": "={{ JSON.stringify({ source: 'agent_b_cron', date_mq: $json.current_date_iso }) }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "cron-insert",
+      "name": "Postgres - Insert Digest",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        160,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "szSBC134iAZHEyPA",
+          "name": "DIAMANT NOIR"
+        }
+      }
     }
   ],
   "connections": {
@@ -527,11 +663,67 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger (8h MQ)": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Fetch Owners Digest Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - Fetch Owners Digest Context": {
+      "main": [
+        [
+          {
+            "node": "Split Out - Per Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out - Per Owner": {
+      "main": [
+        [
+          {
+            "node": "LLM - Generateur de message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model (Cron)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM - Generateur de message",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM - Generateur de message": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Insert Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/Martinique"
   },
   "pinData": {},
   "versionId": "4.0.0-postgres",
