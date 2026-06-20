@@ -76,7 +76,7 @@ async function fetchVillas(): Promise<{
 
 const LOCAL_BUSINESS_JSONLD = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": ["LocalBusiness", "TravelAgency"],
   "name": "Kayvila",
   "description": "Conciergerie de villas de luxe en Martinique",
   "url": "https://kayvila.com",

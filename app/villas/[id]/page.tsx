@@ -321,40 +321,57 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
     <main className="min-h-dvh bg-offwhite pb-24 sm:pb-0">
       <VillaViewTracker villaId={villa.id} />
 
-      {/* JSON-LD Product */}
+      {/* JSON-LD VacationRental */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Product",
+            "@type": "VacationRental",
             name: villa.name,
             description: villa.description?.slice(0, 200) || "",
             image: villa.image,
             ...(villa.location && {
-              productionLocation: {
-                "@type": "Place",
-                name: villa.location,
-                address: {
-                  "@type": "PostalAddress",
-                  addressLocality: villa.location,
-                  addressCountry: "MQ",
-                },
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: villa.location,
+                addressRegion: "Martinique",
+                addressCountry: "MQ",
+              },
+            }),
+            ...(villa.latitude && villa.longitude && {
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: villa.latitude,
+                longitude: villa.longitude,
+              },
+            }),
+            ...(villa.capacity && {
+              occupancy: {
+                "@type": "QuantitativeValue",
+                maxValue: villa.capacity,
+                unitText: "person",
+              },
+            }),
+            ...(villa.bathrooms && { numberOfBathroomsTotal: villa.bathrooms }),
+            ...(villa.surface && {
+              floorSize: {
+                "@type": "QuantitativeValue",
+                value: villa.surface,
+                unitCode: "MTK",
               },
             }),
             offers: {
               "@type": "Offer",
-              price: villa.price,
               priceCurrency: "EUR",
               availability: "https://schema.org/InStock",
-            },
-            ...(villa.capacity && {
-              additionalProperty: {
-                "@type": "PropertyValue",
-                name: "Capacité",
-                value: villa.capacity,
+              priceSpecification: {
+                "@type": "UnitPriceSpecification",
+                price: villa.price,
+                priceCurrency: "EUR",
+                unitText: "nuit",
               },
-            }),
+            },
           }),
         }}
       />
