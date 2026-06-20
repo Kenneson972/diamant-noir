@@ -353,11 +353,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 unitText: "person",
               },
             }),
-            ...(villa.bathrooms && { numberOfBathroomsTotal: villa.bathrooms }),
-            ...(villa.surface && {
+            ...(villa.bathrooms_count && { numberOfBathroomsTotal: villa.bathrooms_count }),
+            ...(villa.surface_m2 && {
               floorSize: {
                 "@type": "QuantitativeValue",
-                value: villa.surface,
+                value: villa.surface_m2,
                 unitCode: "MTK",
               },
             }),
