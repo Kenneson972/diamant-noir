@@ -9,6 +9,8 @@ import SubmissionRejected from "@/emails/submission-rejected";
 
 export async function updateSubmissionStatus(
   admin: SupabaseClient,
+  // `reason` est réservé au contexte de refus (transmis par le copilot admin) ; il n'est
+  // pas encore exposé dans l'email de refus (template { ownerName, villaName } uniquement).
   params: { id: string; status: "accepted" | "rejected"; reason?: string; visit_date?: string; owner_email?: string },
 ): Promise<{ submission: Record<string, unknown> | null; error?: string }> {
   const { id, status, visit_date, owner_email } = params;
