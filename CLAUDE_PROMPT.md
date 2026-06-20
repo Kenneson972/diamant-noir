@@ -49,42 +49,43 @@ Le design Kayvila est intentionnel. Règles :
 
 ---
 
-## Phase 2 — P0 BLOQUANTS : Tests End-to-End Complets
+## Phase 2 — P0 BLOQUANTS : Tests Playwright End-to-End
 
-Tu vas tester TOUS les flows du site, du client au proprio à l'admin.
+**Tu vas ÉCRIRE ET EXÉCUTER des tests Playwright pour TOUS les flows.** Pas de tests manuels. Du vrai code Playwright qui vérifie que chaque page charge, que chaque flow fonctionne, que les API répondent.
 
-### 2.1 Flow Client (Visiteur → Réservation → Paiement)
-1. Page d'accueil (`/`) : hero, featured villas, CTA
-2. Catalogue villas (`/villas`) : carte Leaflet, filtres
-3. Fiche villa (`/villas/[id]`) : galerie, calendrier, booking form
-4. Booking flow : sélection dates → guests → prix → Stripe Checkout
-5. Page succès (`/success`) : confirmation post-paiement
-6. Contact (`/contact`) : formulaire → email
-7. Chatbot : ouvrir le chatbot, poser une question, vérifier réponse
-8. Inscription/login (`/login`) : créer un compte, se connecter
-9. Espace client : dashboard, réservations, profil, favoris, messagerie, documents, livret
+### 2.1 Setup Playwright
+```bash
+npx playwright install
+```
+Vérifier que `playwright.config.ts` est configuré avec `baseURL: "http://localhost:3000"`
 
-### 2.2 Flow Propriétaire (Dashboard)
-1. Login → dashboard (`/dashboard`)
-2. KPIs, timeline, alertes
-3. Villas : liste, ajout, édition, photos, disponibilités
-4. Réservations : liste, détail, calendrier
-5. Revenus : graphiques, export PDF
-6. Stripe Connect : onboarding, vérification statut
-7. Messages, tâches, concierge IA
-8. Documents
+### 2.2 Tests à écrire — Flow Client (6 tests)
+1. **Accueil** : charger `/`, vérifier hero, featured villas, CTA
+2. **Catalogue** : charger `/villas`, vérifier carte Leaflet, filtres, liste villas
+3. **Fiche villa** : charger `/villas/[id]`, vérifier galerie, calendrier, booking form
+4. **Réservation** : remplir dates → guests → vérifier prix → cliquer Réserver → vérifier redirection Stripe Checkout
+5. **Confirmation** : simuler retour Stripe → charger `/success` → vérifier détails réservation
+6. **Chatbot** : ouvrir le chatbot, taper un message, vérifier réponse
 
-### 2.3 Flow Admin
-1. Login → admin (`/admin`)
-2. Dashboard global : KPIs, checkins, alertes
-3. Villas : data grid, édition, checklist publication
-4. Réservations : data grid, kanban, calendrier, création manuelle
-5. Clients, propriétaires : data grids, fiches détaillées
-6. Soumissions villas : liste, validation/rejet
-7. Revenus plateforme, tarification saisonnière
-8. Paramètres, messagerie, demandes, documents
-9. Concierge IA admin, sync OTA
-10. Palette de commande (⌘K)
+### 2.3 Tests à écrire — Flow Propriétaire (4 tests)
+7. **Login proprio** : se connecter → redirection `/dashboard`
+8. **Dashboard** : vérifier KPIs, timeline, alertes, villas
+9. **Gestion villa** : ajouter/modifier villa, upload photo, calendrier dispos
+10. **Revenus** : charger page revenus, vérifier graphiques, bouton export PDF
+
+### 2.4 Tests à écrire — Flow Admin (5 tests)
+11. **Login admin** : se connecter → redirection `/admin`
+12. **Dashboard admin** : vérifier KPIs, checkins, alertes
+13. **Réservations** : vérifier data grid, kanban, calendrier
+14. **Soumissions** : liste, accepter/refuser une soumission
+15. **Stripe refund** : rembourser une réservation (mode test)
+
+### 2.5 Tests à écrire — API (3 tests)
+16. **POST /api/booking** : créer réservation → vérifier réponse 200 + session Stripe
+17. **GET /api/agent/owner-context** : avec token → vérifier contexte proprio
+18. **POST /api/webhooks/stripe** : simuler `checkout.session.completed` → vérifier booking confirmé
+
+**Total : 18 tests Playwright minimum.**
 
 ---
 
