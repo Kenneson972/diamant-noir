@@ -362,6 +362,9 @@ export async function POST(request: Request) {
           request_id,
           role: "owner",
           owner_id: user.id,
+          // L'agent B fetch /api/agent/owner-context?userId=&token= (identité dérivée du token, anti-IDOR)
+          userId: user.id,
+          token: getBearer(request) ?? "",
           messages_history: Array.isArray(body.messages)
             ? (body.messages as { role: string; content: string }[]).slice(-12)
             : null,
