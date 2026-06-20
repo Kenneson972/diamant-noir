@@ -11,6 +11,8 @@ import {
 } from "@/lib/owner-assistant-types";
 
 export const runtime = "nodejs";
+// L'agent B (owner-context + Postgres + DeepSeek) tourne ~20-22s — laisser la marge
+export const maxDuration = 35;
 
 // ─── Rate limiter in-memory ───────────────────────────────────────────────────
 
@@ -371,7 +373,7 @@ export async function POST(request: Request) {
           context: buildCompactContext(pack),
           source: "owner_dashboard",
         }),
-        signal: AbortSignal.timeout(15_000), // timeout 15s
+        signal: AbortSignal.timeout(30_000), // timeout 30s (agent: owner-context + Postgres + DeepSeek ~20s)
       });
     } catch (fetchErr) {
       console.error("[owner-assistant] webhook fetch error", fetchErr);

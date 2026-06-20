@@ -60,7 +60,16 @@
     },
     {
       "parameters": {
-        "url": "https://kayvila.vercel.app/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}",
+        "url": "https://kayvila.vercel.app/api/agent/owner-context",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.token }}"
+            }
+          ]
+        },
         "options": {
           "timeout": 10000
         }
@@ -193,28 +202,21 @@
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "deepseek-chat",
-          "mode": "list"
-        },
-        "options": {
-          "baseURL": "https://api.deepseek.com/v1",
-          "temperature": 0.3
-        }
+        "model": "deepseek-v4-pro",
+        "options": {}
       },
       "id": "b-model",
       "name": "DeepSeek Chat Model",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
       "position": [
         1340,
         40
       ],
       "credentials": {
-        "openAiApi": {
-          "id": "DEEPSEEK_CRED",
-          "name": "DeepSeek API"
+        "deepSeekApi": {
+          "id": "s16Eub8KTcJLPBw5",
+          "name": "KARIBLOOM DEEPSEEK"
         }
       }
     },
