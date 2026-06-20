@@ -11,8 +11,8 @@
 ### Règles apprises (dures)
 - **Une action IA = 3 maillons à câbler, pas juste le handler** : (1) le **system prompt** de l'agent doit lui apprendre à émettre `action` + `action_data` avec le schéma exact ; (2) le **nœud n8n "Parse Response"** doit TRANSMETTRE `action_data` (il ne passait que reply/action/alerts/suggestedPrompts → action_data droppé) ; (3) le **handler serveur** exécute. Si un seul maillon manque, l'action ne se déclenche jamais ou échoue en silence.
 - **`villas` n'a PAS de colonne `price`, seulement `price_per_night`** (erreur 42703). Mon handler SET_PRICE faisait `.update({ price, price_per_night })` → UPDATE planté → "Modification impossible" générique. Toujours vérifier les colonnes live (REST `select=col` renvoie 42703 si absente) avant d'écrire un UPDATE.
-- **Surfaces de chat proprio en double = bugs en double** : `/dashboard` (copilot section, route `owner-assistant`) ET `/dashboard/concierge` (AgentChat, route `concierge/owner`). On a dû fixer les MÊMES bugs (token forward, parsing reply, timeout) deux fois. → consolider à terme (une seule route owner).
-- **L'agent confirme optimistement** ("C'est fait...") même si l'action échoue côté serveur. La `CopilotActionCard` est la source de vérité. Améliorer : afficher la vraie erreur dans la carte au lieu de "Modification impossible" générique.
+- **Surfaces de chat proprio en double = bugs en double** : `/dashboard` (copilot section) ET `/dashboard/concierge` (AgentChat). On a dû fixer les MÊMES bugs deux fois. → **CONSOLIDÉ** : la page concierge réutilise maintenant `DashboardCopilotChat` (prop `fullHeight`), une seule pipeline `owner-assistant` avec actions. Route `/api/concierge/owner` morte (gardée inoffensive). `AgentChat` reste utilisé par l'admin (`/api/concierge/admin`).
+- **L'agent confirme optimistement** ("C'est fait...") même si l'action échoue côté serveur. La `CopilotActionCard` est la source de vérité. → **AMÉLIORÉ** : la carte affiche désormais la vraie erreur (`result.error`) en détail au lieu du générique "Modification impossible".
 
 ---
 
