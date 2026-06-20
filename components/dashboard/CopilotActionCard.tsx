@@ -52,13 +52,14 @@ function getConfig(
   action: string,
   result: { success: boolean; [key: string]: unknown }
 ): ActionConfig {
+  // En cas d'échec : titre lisible (défini par chaque action) + vraie erreur en détail
   const fail = {
     icon: <XCircle className="h-4 w-4 text-red-500" />,
     title: "",
-    errorTitle: result.error
+    errorTitle: "Action impossible",
+    detail: result.error
       ? String(result.error)
-      : "Action non disponible",
-    detail: "",
+      : "L'action n'a pas pu être effectuée. Vérifiez votre demande et réessayez.",
   };
 
   switch (action) {
