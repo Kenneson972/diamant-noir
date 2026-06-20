@@ -489,6 +489,60 @@ export async function POST(request: Request) {
       }
     }
 
+    if (action === "SET_PRICE" && actionData.price) {
+      const pd = actionData.price as {
+        villa_id?: string;
+        price_per_night?: number;
+        previous_price?: number;
+      };
+      if (!pd.villa_id || !ownerVillaIds.has(pd.villa_id)) {
+        actionResult = { success: false, error: "Villa non autorisée" };
+      } else if (typeof pd.price_per_night === "number" && pd.price_per_night > 0) {
+        // Lire l'ancien prix avant update
+        const { data: before } = await admin
+          .from("villas")
+          .select("price_per_night, name")
+          .eq("id", pd.villa_id)
+          .maybeSingle();
+        const previous = before?.price_per_night ?? null;
+
+        const { data: updated, error } = await admin
+          .from("villas")
+          .update({
+            price: pd.price_per_night,
+            price_per_night: pd.price_per_night,
+          })
+          .eq("id", pd.villa_id)
+          .select("id, name, price_per_night")
+          .single();
+
+        actionResult = {
+          success: !error,
+          villa: updated,
+          previous_price: previous,
+          error: error?.message,
+        };
+      }
+    }
+
+    if (action === "SHOW_BOOKING") {
+      const villaIdList = Array.from(ownerVillaIds);
+      const today = new Date().toISOString().split("T")[0];
+      // Couvre check-ins futurs ET séjours en cours
+      const { data: nextBooking } = await admin
+        .from("bookings")
+        .select("id, guest_name, villa_id, start_date, end_date, status, total_price_cents")
+        .in("villa_id", villaIdList)
+        .or(
+          `start_date.gte.${today},and(start_date.lte.${today},end_date.gte.${today})`
+        )
+        .order("start_date", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      actionResult = { success: true, booking: nextBooking || null };
+    }
+
     return NextResponse.json({
       success: true,
       response: replyText,

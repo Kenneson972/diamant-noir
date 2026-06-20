@@ -18,6 +18,8 @@ export type OwnerAssistantAction =
   | "COMPLETE_TASK"
   | "CREATE_TASK"
   | "BLOCK_DATE"
+  | "SET_PRICE"
+  | "SHOW_BOOKING"
   | "SHOW_BOOKINGS"
   | "CONFIRM"
   | "SHOW_FINANCES"
