@@ -1,6 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
-import type { Villa } from "@/types/domain";
+import type { Villa, BookingStatus } from "@/types/domain";
 import { KpiRow, type KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { EmptyDashboard } from "@/components/dashboard/proprio/EmptyDashboard";
 import { TodayTimeline } from "@/components/dashboard/proprio/TodayTimeline";
@@ -11,6 +11,7 @@ import { StripeConnectButton } from "@/components/dashboard/proprio/StripeConnec
 import { ProactiveNotification } from "@/components/dashboard/ProactiveNotification";
 import { supabaseAdmin } from "@/lib/supabase";
 import { calculateTransferAmounts, getConnectAccount } from "@/lib/stripe/connect";
+import { DashboardCopilotChat } from "@/components/dashboard/DashboardCopilotChat";
 
 function getMonthBounds() {
   const now = new Date();
@@ -21,6 +22,93 @@ function getMonthBounds() {
     .toISOString()
     .split("T")[0];
   return { start, end };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Client Component — render le dashboard avec le chat copilot integre
+// ═══════════════════════════════════════════════════════════════════
+"use client";
+
+type DashboardPageClientProps = {
+  villas: Villa[];
+  villaIds: string[];
+  user: { id: string };
+  isStripeConnected: boolean;
+  connectDone: boolean;
+  kpiItems: KpiItem[];
+  todayEventsList: Array<{
+    kind: "check_in" | "check_out" | "stay";
+    villa_name: string;
+    guest_name: string;
+    start_date: string;
+    end_date: string;
+  }>;
+  alerts: Array<{
+    severity: "high" | "medium" | "low";
+    title: string;
+    body: string | undefined;
+  }>;
+  upcomingBookings: Array<{
+    id: string;
+    villa_id: string;
+    guest_name: string | null;
+    start_date: string;
+    end_date: string;
+    status: BookingStatus;
+  }>;
+  monthlyChartData: Array<{ month: string; revenue: number; isCurrent: boolean }>;
+  hasEnoughHistory: boolean;
+};
+
+function DashboardPageClient(props: DashboardPageClientProps) {
+  const {
+    villas,
+    user,
+    isStripeConnected,
+    connectDone,
+    kpiItems,
+    todayEventsList,
+    alerts,
+    upcomingBookings,
+    monthlyChartData,
+    hasEnoughHistory,
+  } = props;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="font-display text-2xl font-bold text-navy-900">
+          Tableau de bord
+        </h1>
+        <p className="text-sm text-muted">Apercu de votre activite</p>
+      </div>
+
+      {/* Digest proactif du jour */}
+      <ProactiveNotification />
+
+      {/* Banniere Stripe Connect */}
+      <StripeConnectButton
+        ownerId={user.id}
+        isOnboarded={isStripeConnected}
+        connectDone={connectDone}
+      />
+
+      <KpiRow items={kpiItems} cols={2} />
+
+      {/* Copilot Diamant integre */}
+      <DashboardCopilotChat />
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <TodayTimeline events={todayEventsList} />
+        <AlertsWidget alerts={alerts} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <RevenueChart data={monthlyChartData} hasEnoughHistory={hasEnoughHistory} />
+        <UpcomingBookings bookings={upcomingBookings} />
+      </div>
+    </div>
+  );
 }
 
 export default async function ProprioDashboardPage(props: {
@@ -281,38 +369,19 @@ export default async function ProprioDashboardPage(props: {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold text-navy-900">
-          Tableau de bord
-        </h1>
-        <p className="text-sm text-muted">
-          Aperçu de votre activité
-        </p>
-      </div>
-
-      {/* ── Digest proactif du jour ── */}
-      <ProactiveNotification />
-
-      {/* Bannière Stripe Connect */}
-      <StripeConnectButton
-        ownerId={user!.id}
-        isOnboarded={isStripeConnected}
-        connectDone={connectDone}
-      />
-
-      <KpiRow items={kpiItems} cols={2} />
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <TodayTimeline events={todayEventsList} />
-        <AlertsWidget alerts={alerts} />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <RevenueChart data={monthlyChartData} hasEnoughHistory={hasEnoughHistory} />
-        <UpcomingBookings bookings={upcomingBookings} />
-      </div>
-    </div>
+    <DashboardPageClient
+      villas={villas ?? []}
+      villaIds={villaIds}
+      user={{ id: user!.id }}
+      isStripeConnected={isStripeConnected}
+      connectDone={connectDone}
+      kpiItems={kpiItems}
+      todayEventsList={todayEventsList}
+      alerts={alerts}
+      upcomingBookings={upcomingBookings}
+      monthlyChartData={monthlyChartData}
+      hasEnoughHistory={hasEnoughHistory}
+    />
   );
 }
 
