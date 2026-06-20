@@ -8,6 +8,7 @@ import { AlertsWidget } from "@/components/dashboard/proprio/AlertsWidget";
 import { UpcomingBookings } from "@/components/dashboard/proprio/UpcomingBookings";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { StripeConnectButton } from "@/components/dashboard/proprio/StripeConnectButton";
+import { ProactiveNotification } from "@/components/dashboard/ProactiveNotification";
 import { supabaseAdmin } from "@/lib/supabase";
 import { calculateTransferAmounts, getConnectAccount } from "@/lib/stripe/connect";
 
@@ -289,6 +290,9 @@ export default async function ProprioDashboardPage(props: {
           Aperçu de votre activité
         </p>
       </div>
+
+      {/* ── Digest proactif du jour ── */}
+      <ProactiveNotification />
 
       {/* Bannière Stripe Connect */}
       <StripeConnectButton

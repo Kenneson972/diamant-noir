@@ -93,6 +93,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
     let query = supabase
       .from("notifications")
       .select("*")
+      .neq("type", "owner_daily_digest")
       .order("created_at", { ascending: false })
       .limit(20);
     if (role === "admin") {
