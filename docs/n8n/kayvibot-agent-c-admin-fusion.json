@@ -14,7 +14,7 @@
       "id": "c-set", "name": "Edit Fields", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [220, 0]
     },
     {
-      "parameters": { "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/admin-context", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $json.token }}" }] }, "options": { "timeout": 15000 } },
+      "parameters": { "url": "https://kayvila.vercel.app/api/agent/admin-context", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{ $json.token }}" }] }, "options": { "timeout": 15000 } },
       "id": "c-fetch", "name": "Fetch Admin Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0], "continueOnFail": true
     },
     {

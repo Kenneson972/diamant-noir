@@ -60,7 +60,7 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}",
+        "url": "https://kayvila.vercel.app/api/agent/owner-context?userId={{ $json.userId }}&token={{ $json.token }}",
         "options": {
           "timeout": 10000
         }

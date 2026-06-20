@@ -2,6 +2,22 @@
 
 ---
 
+## 2026-06-20 — Publication agents n8n A/B/C (Fusion) via API REST
+
+### Fait
+- **Publié les 3 agents Kayvibot Fusion** sur n8n Cloud via l'API REST publique (clé `X-N8N-API-KEY`, in-session uniquement) : A mis à jour (PUT `xiSB7mej6eH8INfM`), B créé (`q4DAjw1uG19fDfr8`), C créé (`7gtgluMV6cft6H7X`), tous activés.
+- Smoke tests directs des 3 webhooks → 200 + vraies réponses DeepSeek.
+- Vercel : `N8N_OWNER_WEBHOOK_URL` (B) + `N8N_ADMIN_WEBHOOK_URL` (C) renseignées + redéploiement prod (alias `kayvila.vercel.app`).
+
+### Règles apprises (dures)
+- **`process.env` ET `$env` sont BLOQUÉS sur n8n Cloud** → `process is not defined` (Code node) / `access to env vars denied` (expression `{{ $env.X }}`). Les 3 agents fusion avaient `{{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}` dans l'URL du nœud HTTP de contexte → le fetch plantait (continueOnFail) → **contexte vide → "aucune villa disponible"** alors que le catalogue existe. **Bug invisible en smoke test** (HTTP 200, réponse plausible) : seul le test métier ("il y a des villas !") l'a révélé. Fix : URL en dur `https://kayvila.vercel.app` (pas d'expression `=`). Toujours hardcoder, jamais `$env`/`process.env`.
+- **Les JSON fusion exportés référencent un credential DeepSeek placeholder `openAiApi/DEEPSEEK_CRED` (inexistant)**. À l'import, remplacer le nœud LLM par le natif `@n8n/n8n-nodes-langchain.lmChatDeepSeek` relié au credential réel `KARIBLOOM DEEPSEEK` (`s16Eub8KTcJLPBw5`) — config éprouvée de l'agent A live. Aucun secret requis.
+- **Webhook paths stables** : A=`kayvibot-visitor`, B=`kayvibot-owner`, C=`kayvibot-admin`. URL prod = `https://kenneson.app.n8n.cloud/webhook/<path>`.
+- **Import API REST** : POST `/api/v1/workflows` n'accepte que `{name, nodes, connections, settings}` (pas `active`/`id`/`tags`). Activation séparée via POST `/workflows/{id}/activate`.
+- **Vercel env "Sensitive"** : `vercel env pull` les affiche vides (non déchiffrables). Ne pas conclure qu'elles sont vides sans vérifier le type. `vercel env rm` + `env add` les repasse en "Encrypted" (perd le flag sensitive).
+
+---
+
 ## 2026-06-19 (soir) — Migration agents n8n vers pré-fetch Postgres
 
 ### Fait

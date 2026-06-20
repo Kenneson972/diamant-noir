@@ -37,7 +37,7 @@
       "id": "a-resp-banned", "name": "Respond - Session Bannie", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1100, 240]
     },
     {
-      "parameters": { "url": "={{ $env.KAYVILA_URL || 'https://kayvila.vercel.app' }}/api/agent/visitor-context", "options": { "timeout": 10000 } },
+      "parameters": { "url": "https://kayvila.vercel.app/api/agent/visitor-context", "options": { "timeout": 10000 } },
       "id": "a-fetch", "name": "Fetch Visitor Context", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1100, -240], "continueOnFail": true
     },
     {
