@@ -2,6 +2,21 @@
 
 ---
 
+## 2026-06-20 (soir) — Copilot Diamant : section dashboard intégrée + 3 actions
+
+### Fait
+- **Copilot migré de FAB flottant → section dashboard** : CopilotButton + CopilotPanel supprimés, nouveau `DashboardCopilotChat` en pleine largeur sous les KPIs. Plus pro, plus accessible.
+- **3 actions ajoutées** : BLOCK_DATE (déjà codé), SET_PRICE (nouveau — update villas.price_per_night), SHOW_BOOKING (nouveau — prochaine résa + séjours en cours via OR clause).
+- **Split Server/Client** : `DashboardPageClient` (Client Component) reçoit les données du Server Component en props objets simples (⚠️ jamais de callbacks).
+- **CopilotActionCard** : affiche le résultat des actions dans le flux du chat (confirmation ou erreur).
+
+### Règles apprises (dures)
+- **Ne JAMAIS passer de fonction/callback/promesse en props Server→Client** : Next.js App Router rejette les props non-sérialisables. Commentaire ⚠️ dans `page.tsx` pour prévenir.
+- **SHOW_BOOKING doit couvrir les séjours EN COURS** : `start_date.gte.today` seul ne suffit pas — ajouter `or(start_date.lte.today,end_date.gte.today)` pour répondre à "qui est chez moi en ce moment ?".
+- **Le CopilotProvider n'a pas besoin de changer** : retirer juste le Button+Panel suffit. Le contexte/hook/API restent identiques.
+
+---
+
 ## 2026-06-20 (soir) — Implémentation couche proactive Agent B ✅
 
 ### Fait
