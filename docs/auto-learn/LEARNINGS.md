@@ -2,6 +2,26 @@
 
 ---
 
+## 2026-06-20 (soir) — Implémentation couche proactive Agent B ✅
+
+### Fait
+- **9 tâches implémentées** (subagent-driven) : migration `owner_daily_digest` + 2 endpoints API + hook + composant + injection dashboard + exclusion NotificationBell + branche cron n8n (6 nœuds : Schedule Trigger 8h MQ, HTTP fetch, Split per owner, LLM Chain DeepSeek, Postgres INSERT) + test E2E Playwright.
+- **CRON_API_KEY générée** (`ea9b64...`) et ajoutée à Vercel production.
+- **Workflow B déployé** sur n8n Cloud avec les credentials liés automatiquement (nouvelle clé API propriétaire) — build/déploiement Vercel OK.
+- Branche : `worktree-proactive-agent-b` (pushée, non mergée).
+
+### Règles apprises (dures)
+- **API key n8n "public-api" ne peut PAS référencer de credentials sur de nouveaux nœuds** (PUT 400 `You don't have access to the credentials`). Il faut une clé API owner-level (celle de Kenneson). Les credentials existants sur des nœuds pré-existants passent, mais tout nouveau nœud credential-dépendant est rejeté. Contournement : déployer sans creds puis les ajouter dans l'UI, ou utiliser une clé owner.
+- **`n8n-nodes-base.splitOut`** = paramètre `fieldToSplitOut` (pas `sourceData` + `jsonField` comme documenté dans certaines versions).
+- **Sandbox bloque les connexions Postgres directes** (DNS + port 5432) et l'API Supabase Management (403 error 1010) → la migration doit être appliquée manuellement (SQL Editor).
+- **`vercel env add` nécessite `--yes` ET le répertoire lié** (`.vercel/project.json`). Dans un worktree, symlink `.vercel` vers le repo principal.
+
+### ⚠️ Reste à faire (1 étape manuelle)
+- **Appliquer la migration SQL** : ouvrir https://supabase.com/dashboard/project/wsdawdxucyuyopkpgjij/sql/new, coller le contenu de `supabase/migrations/20260620_notifications_owner_daily_digest.sql`, cliquer Run.
+- **Merger `worktree-proactive-agent-b` → `main`** après validation.
+
+---
+
 ## 2026-06-20 (soir) — Design couche proactive Agent B (digest matinal)
 
 ### Décidé (spec : `docs/specs/proactive-agent-b.md`)
