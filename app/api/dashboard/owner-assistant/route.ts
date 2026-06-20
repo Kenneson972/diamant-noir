@@ -398,8 +398,16 @@ export async function POST(request: Request) {
 
     const data = await n8nResponse.json().catch(() => ({}));
 
+    // Les agents n8n renvoient soit `response` (admin) soit `reply` (visiteur/owner)
+    const replyText =
+      typeof data.response === "string" && data.response
+        ? data.response
+        : typeof data.reply === "string" && data.reply
+          ? data.reply
+          : null;
+
     // Validation réponse n8n — si malformée, fallback propre
-    if (!data?.response || typeof data.response !== "string") {
+    if (!replyText) {
       console.error("[owner-assistant] réponse n8n malformée", data);
       return NextResponse.json({
         success: true,
@@ -478,13 +486,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      response: data.response,
+      response: replyText,
       action,
       action_data: { context: statsPayload, strategic_alert, ...actionData },
       action_result: actionResult,
       suggested_prompts: Array.isArray(data.suggested_prompts)
         ? data.suggested_prompts
-        : DEFAULT_SUGGESTED_PROMPTS,
+        : Array.isArray(data.suggestedPrompts)
+          ? data.suggestedPrompts
+          : DEFAULT_SUGGESTED_PROMPTS,
       metadata: {
         source: "n8n" as const,
         latency_ms,
