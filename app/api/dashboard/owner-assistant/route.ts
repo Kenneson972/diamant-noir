@@ -508,10 +508,7 @@ export async function POST(request: Request) {
 
         const { data: updated, error } = await admin
           .from("villas")
-          .update({
-            price: pd.price_per_night,
-            price_per_night: pd.price_per_night,
-          })
+          .update({ price_per_night: pd.price_per_night })
           .eq("id", pd.villa_id)
           .select("id, name, price_per_night")
           .single();
