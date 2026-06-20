@@ -86,6 +86,8 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
           role: "assistant",
           content: data.response || "Je n'ai pas compris votre demande.",
           timestamp: Date.now(),
+          action: data.action,
+          actionResult: data.action_result ?? null,
         };
 
         setMessages((prev) => [...prev, assistantMessage]);

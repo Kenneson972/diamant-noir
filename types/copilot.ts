@@ -3,6 +3,10 @@ export interface CopilotMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: number;
+  /** Action déclenchée par l'assistant (ex: "SET_PRICE", "BLOCK_DATE", "SHOW_BOOKING") */
+  action?: string;
+  /** Résultat de l'action côté serveur */
+  actionResult?: { success: boolean; [key: string]: unknown } | null;
 }
 
 export interface CopilotContextData {
@@ -42,5 +46,7 @@ export interface CopilotResponse {
   response: string;
   action?: string;
   action_data?: Record<string, unknown>;
+  /** Résultat de l'action exécutée côté serveur */
+  action_result?: { success: boolean; [key: string]: unknown } | null;
   suggested_prompts?: string[];
 }

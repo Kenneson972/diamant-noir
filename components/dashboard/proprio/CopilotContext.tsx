@@ -21,6 +21,8 @@ interface CopilotContextValue {
   sendMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
   suggestedPrompts: string[];
+  /** Action result from the most recent assistant message, if any */
+  lastActionResult: { action: string; success: boolean; [key: string]: unknown } | null;
 }
 
 const CopilotContext = createContext<CopilotContextValue | null>(null);
@@ -43,6 +45,13 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
   const close = useCallback(() => setIsOpen(false), []);
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
+  // Compute lastActionResult from the most recent assistant message
+  const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
+  const lastActionResult =
+    lastAssistantMsg?.action
+      ? { action: lastAssistantMsg.action, success: lastAssistantMsg.actionResult?.success ?? false, ...(lastAssistantMsg.actionResult ?? {}) }
+      : null;
+
   // Load context when copilot opens
   useEffect(() => {
     if (isOpen) {
@@ -62,6 +71,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
         sendMessage,
         clearMessages,
         suggestedPrompts,
+        lastActionResult,
       }}
     >
       {children}
