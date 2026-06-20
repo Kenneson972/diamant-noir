@@ -1,265 +1,205 @@
-# 🔧 Kayvila — Audit Frontend Complet → Prompt Claude
+# 🔧 KAYVILA — Mega Prompt Claude — Audit Complet + Publication
 
-**Généré par Élise (Hermes) le 18 Juin 2026**
-**5 sous-agents, ~80 problèmes documentés**
-**Site : kayvila.vercel.app | Repo : `/opt/data/repos/diamant-noir`**
+**Projet** : Kayvila — Conciergerie de luxe en Martinique
+**Repo** : `diamant-noir` (GitHub)
+**Stack** : Next.js 14, HeroUI, Supabase, Stripe Connect, n8n Cloud, Resend, Tailwind CSS 4
+**Dernier commit** : Vérifier avec `git log -1`
+**Fichiers** : ~195 composants TSX, 47 routes API, 70+ pages, 3 workflows n8n
 
 ---
 
 ## ⚠️ CRITIQUE — NE PAS REDESIGNER
 
-Le design actuel est validé et intentionnel. C'est un **luxe strict minimaliste** (angles droits, navy/or, espacement généreux, typographie sobre).
-
-Tu fais du **POLISH et des CORRECTIONS**, PAS un redesign.
-
-Si un élément n'est pas listé explicitement dans ce document, **ne le change pas**.
+Le design Kayvila est intentionnel. Règles :
+- Palette : or (`#d4af37`) / navy (`#0a0a0a`) / offwhite (`#fafafa`) / cream (`#f5f0e8`)
+- Typo : Instrument Sans (body), Playfair Display (titres), Sora (dashboard)
+- Radius : volontairement anguleux (luxe moderne), pas de `rounded-full` sauf chips/badges
+- Bordures : fines, `border-navy/5` à `border-navy/20`, `border-gold/30` pour accents
+- Animations : CSS native + `motion` (ex-Framer Motion), `prefers-reduced-motion` respecté
+- Tu fais du POLISH et des CORRECTIONS, PAS un redesign.
 
 ---
 
-## 📊 Synthèse globale
+## 📊 Synthèse Globale
 
 | Domaine | P0 | P1 | P2 | Total |
-|---------|----|----|-----|-------|
-| Performance (images/vidéos) | 3 | 6 | 5 | 14 |
-| Design System (radius/boutons/formulaires) | 2 | 7 | 4 | 13 |
-| SEO (metadata/canonicals) | 6 | 5 | 7 | 18 |
-| UX/A11y (i18n/cookie/a11y) | 4 | 9 | 7 | 20 |
-| Micro-interactions (animations) | 2 | 1 | 2 | 5 |
-| **TOTAL** | **17** | **28** | **25** | **70** |
+|---------|-----|-----|-----|-------|
+| Build local | 1 | 0 | 0 | 1 |
+| Tests end-to-end | 3 | 2 | 0 | 5 |
+| Agents n8n | 1 | 0 | 0 | 1 |
+| Stripe Connect | 1 | 1 | 0 | 2 |
+| SEO/Metadata | 2 | 1 | 0 | 3 |
+| Formulaires | 1 | 2 | 0 | 3 |
+| Performance | 0 | 2 | 1 | 3 |
+| Accessibilité | 1 | 2 | 0 | 3 |
+| **TOTAL** | **10** | **10** | **1** | **21** |
 
 ---
 
-## Phase 1 — P0 BLOQUANTS : Performance & Images
+## Phase 1 — P0 BLOQUANTS : Build Local & Déploiement
 
-**Contexte :** La homepage charge ~45 MB d'images non compressées et de vidéos. Le LCP est désastreux sur mobile.
+### 1.1 Token HeroUI Pro
+- **Problème** : `@heroui-pro/react` bloque le build local
+- **Fichier** : `.npmrc`, 10 composants (DropZone, Sheet, KPI, Carousel, Stepper, Kanban, Command, Widget, EmptyState, NumberStepper, ActionBar, PressableFeedback, Rating, NumberValue)
+- **Action** : Configurer le token de licence HeroUI Pro en local (`.npmrc` ou `npx heroui-pro login`)
 
-### P0-1 : Convertir PNG → WebP/AVIF (6 fichiers, ~15 MB → ~300 KB)
-- `public/notregestion.png` (3.9 MB) → convertir WebP qualité 80
-- `public/marketing.png` (3.4 MB)
-- `public/relation.png` (3.2 MB)
-- `public/terrain.png` (2.9 MB)
-- `public/finance.png` (3.1 MB)
-- `public/menage.png` (2.3 MB)
-- **Composants impactés :** `HomeServicesSection.tsx`, `HomeOwnersSection.tsx`, `HomeFeaturedAudience.tsx`, `PageHero.tsx`
-- **Fix :** `npx sharp-cli --input public/marketing.png --output public/marketing.webp --format webp --quality 80` (pour chaque)
-- **Puis :** remplacer les imports `.png` → `.webp` dans les composants
-
-### P0-2 : Réencoder hero.webm (11 MB → 2 MB)
-- **Fichier :** `public/hero.webm`
-- **Composant :** `components/home/HeroBackgroundMedia.tsx`
-- **Fix :**
-  1. Réencoder en 720p CRF 30-35 → ~2-3 MB max
-  2. Ajouter `<source>` H.264/MP4 en fallback (iOS Safari)
-  3. Ajouter `fetchpriority="low"` sur la vidéo
-  4. Ne pas charger la vidéo sur mobile (`media="(min-width: 768px)"`)
-
-### P0-3 : Réduire frames vidéo scroll (29 MB → 5 MB)
-- **Fichiers :** `public/frames/frame_*.webp` (561 fichiers) + `public/frames-mobile/frame_*.webp` (561 fichiers)
-- **Composant :** `components/prestations/VideoScrollHero.tsx`
-- **Fix :**
-  1. 1 frame toutes les 2 = 280 frames au lieu de 561
-  2. Qualité WebP 50-60
-  3. Option long-terme : remplacer par `<video>` avec `preload="none"` + IntersectionObserver
+### 1.2 Vérification build Vercel
+- Vérifier que le dernier build Vercel passe (`vercel logs` ou dashboard)
+- Vérifier les variables d'environnement Vercel (Stripe, Supabase, n8n webhooks, Resend)
 
 ---
 
-## Phase 2 — P0 BLOQUANTS : Design System (Radius)
+## Phase 2 — P0 BLOQUANTS : Tests End-to-End Complets
 
-**Contexte :** Le site a une identité "angles droits" (46 occurrences de `rounded-none`) mais des composants clés y dérogent.
+Tu vas tester TOUS les flows du site, du client au proprio à l'admin.
 
-### P0-4 : `Button` n'a pas de `rounded-none`
-- **Fichier :** `components/ui/button.tsx:23`
-- **Fix :** Ajouter `rounded-none` dans les classes du composant Button
+### 2.1 Flow Client (Visiteur → Réservation → Paiement)
+1. Page d'accueil (`/`) : hero, featured villas, CTA
+2. Catalogue villas (`/villas`) : carte Leaflet, filtres
+3. Fiche villa (`/villas/[id]`) : galerie, calendrier, booking form
+4. Booking flow : sélection dates → guests → prix → Stripe Checkout
+5. Page succès (`/success`) : confirmation post-paiement
+6. Contact (`/contact`) : formulaire → email
+7. Chatbot : ouvrir le chatbot, poser une question, vérifier réponse
+8. Inscription/login (`/login`) : créer un compte, se connecter
+9. Espace client : dashboard, réservations, profil, favoris, messagerie, documents, livret
 
-### P0-5 : `KayvilaPressableButton` a `rounded-xl` au lieu de `rounded-none`
-- **Fichier :** `components/ui/pro/kayvila-pressable-button.tsx:14`
-- **Fix :** Changer `rounded-xl` → `rounded-none` (ou documenter que les CTAs gold sont la seule exception)
+### 2.2 Flow Propriétaire (Dashboard)
+1. Login → dashboard (`/dashboard`)
+2. KPIs, timeline, alertes
+3. Villas : liste, ajout, édition, photos, disponibilités
+4. Réservations : liste, détail, calendrier
+5. Revenus : graphiques, export PDF
+6. Stripe Connect : onboarding, vérification statut
+7. Messages, tâches, concierge IA
+8. Documents
 
----
-
-## Phase 3 — P0 BLOQUANTS : SEO & Metadata
-
-### P0-6 : `og:url` absent sur TOUTES les pages
-- **Fichier :** `app/layout.tsx` (metadata global)
-- **Fix :** Ajouter `openGraph: { url: 'https://kayvila.com' }` dans le metadata de layout + le rendre dynamique par page
-
-### P0-7 : `og:type` absent sur 12/17 pages publiques
-- **Fix :** Par défaut `og:type: 'website'` dans layout, override `'article'` sur blog, `'product'` sur fiches villa
-
-### P0-8 : Canonicals pointent vers `diamant-noir.vercel.app` (6 pages)
-- **Fichiers concernés :** pages avec `metadata.alternates.canonical` pointant vers l'ancien domaine
-- **Fix :** Remplacer par `https://kayvila.com` + vérifier toutes les pages
-
-### P0-9 : Canonical manquant sur `/mentions-legales` et `/cgv`
-- **Fix :** Ajouter `metadata: { alternates: { canonical: 'https://kayvila.com/mentions-legales' } }`
-
-### P0-10 : Image héro homepage avec `alt=""` (vide)
-- **Fichier :** composant hero homepage
-- **Fix :** Ajouter un alt descriptif (ex: "Villa de luxe avec piscine en Martinique — Kayvila")
-
-### P0-11 : Domaine incohérent sitemap (kayvila.com) vs canoniques (diamant-noir.vercel.app)
-- **Fix :** Tout uniformiser sur `https://kayvila.com`
-
----
-
-## Phase 4 — P1 IMPORTANT : UX & Accessibilité
-
-### P1-1 : 9 clés `checkout.*` absentes en espagnol
-- **Fichier :** `lib/i18n.ts`
-- **Fix :** Ajouter toutes les clés `checkout.*` dans l'objet `es`
-
-### P1-2 : Contraste WCAG AA en échec — `text-navy/60` sur fond offwhite
-- **Ratio :** ~2.8:1 (minimum requis 4.5:1)
-- **Fichiers globaux :** Toute l'interface utilise cette combinaison
-- **Fix :** Passer de `text-navy/60` à `text-navy/80` (ratio ~5.2:1)
-
-### P1-3 : Bannière cookie consent 100% hardcodée FR
-- **Fichier :** composant cookie consent
-- **Fix :** i18niser toutes les strings (titre, description, boutons, lien politique cookies)
-
-### P1-4 : Aucun blocage réel des cookies
-- **Problème :** Le consentement est stocké en localStorage mais n'empêche aucun script
-- **Fix :** Bloquer effectivement les scripts tiers (Stripe, analytics) tant que le consentement n'est pas donné
-
-### P1-5 : Pages `/cookies`, footer (10+ chaînes), pages d'erreur — hardcodés FR
-- **Fix :** i18niser tous les textes statiques restants
-
-### P1-6 : URLs `/en` et `/es` redirigent vers `/login`
-- **Fichier :** `middleware.ts` → `publicPaths`
-- **Fix :** Ajouter `/en` et `/es` (avec toutes les routes) dans `publicPaths`
-
-### P1-7 : Cookie consent sans lien vers la politique cookies
-- **Fix :** Ajouter `<Link href="/cookies">Politique cookies</Link>` dans la bannière
-
-### P1-8 : Pas de règle `:focus-visible` globale
-- **Fix :** Ajouter dans `globals.css` : `*:focus-visible { outline: 2px solid #d4af37; outline-offset: 2px; }`
-
-### P1-9 : Contact form n'utilise pas `<Input>` — styles dupliqués
-- **Fichier :** `app/contact/page.tsx:90-130`
-- **Fix :** Remplacer les inputs inline par `<Input>`, `<Textarea>`
+### 2.3 Flow Admin
+1. Login → admin (`/admin`)
+2. Dashboard global : KPIs, checkins, alertes
+3. Villas : data grid, édition, checklist publication
+4. Réservations : data grid, kanban, calendrier, création manuelle
+5. Clients, propriétaires : data grids, fiches détaillées
+6. Soumissions villas : liste, validation/rejet
+7. Revenus plateforme, tarification saisonnière
+8. Paramètres, messagerie, demandes, documents
+9. Concierge IA admin, sync OTA
+10. Palette de commande (⌘K)
 
 ---
 
-## Phase 5 — P1 IMPORTANT : Design System
+## Phase 3 — P0 BLOQUANTS : Publication Agents n8n
 
-### P1-10 : Tokens couleur morts (5 tokens définis, jamais utilisés)
-- **Tokens :** `--color-cream`, `--color-champagne`, `--color-sand`, `--color-navy-900`, `--color-navy-800`
-- **Fichier :** `app/globals.css:4-13`
-- **Fix :** Supprimer les tokens inutilisés OU les intégrer dans le design
+### 3.1 Workflows à publier
+Les 3 workflows fusion sont dans `docs/n8n/` :
+- `kayvibot-agent-a-visiteur-fusion.json` (Agent A — Visiteur, 16 nœuds)
+- `kayvibot-agent-b-proprietaire-fusion.json` (Agent B — Propriétaire, 15 nœuds)
+- `kayvibot-agent-c-admin-fusion.json` (Agent C — Admin, 13 nœuds)
 
-### P1-11 : `--color-navy` = `#0a0a0a` (noir) ≠ navy
-- **Fix :** Renommer `--color-navy` → `--color-ink` et utiliser `--color-navy-900` (#0b1d2e) pour le vrai navy
-
-### P1-12 : Composants manquants : Radio, Toggle, Toast, FormLabel
-- **À créer :**
-  - `components/ui/radio.tsx` (sur le modèle de Checkbox)
-  - `components/ui/toggle.tsx` (wrapper HeroUI Switch)
-  - `components/ui/toast.tsx` (réutilisable, avec position fixe)
-  - `components/ui/label.tsx` (FormLabel standardisé)
-
-### P1-13 : Pas d'état erreur sur Input/Select/Textarea
-- **Fichiers :** `components/ui/input.tsx`, `Select.tsx`, `Textarea.tsx`
-- **Fix :** Ajouter `error?: boolean` + classe conditionnelle `border-red-500` + message d'erreur
-
-### P1-14 : VillaListingCard — HoverCard (rounded-xl) vs carte (rounded-none)
-- **Fichier :** `components/villas/VillaListingCard.tsx:126,189`
-- **Fix :** Uniformiser en `rounded-none`
-
-### P1-15 : Dashboard vs Public — deux paradigmes de radius
-- **Public :** `rounded-none`, **Dashboard :** `rounded-xl`
-- **Action :** Documenter que c'est intentionnel ou uniformiser
-
-### P1-16 : `Sora` chargé inutilement sur pages publiques
-- **Fichier :** `app/layout.tsx:16`
-- **Fix :** Charger Sora uniquement dans le layout dashboard
+### 3.2 Actions
+1. Importer chaque workflow dans n8n Cloud
+2. Configurer les credentials : `DIAMANT NOIR` (Postgres), `DeepSeek API`, `RESEND_API_KEY`
+3. Activer les webhooks et récupérer les URLs
+4. Mettre à jour les variables d'environnement Vercel :
+   - `N8N_WEBHOOK_URL` = URL Agent A
+   - `N8N_OWNER_WEBHOOK_URL` = URL Agent B
+   - `N8N_ADMIN_WEBHOOK_URL` = URL Agent C
+   - `N8N_TENANT_WEBHOOK_URL` = URL Agent SAV locataire (si workflow séparé)
+5. Tester chaque agent depuis l'UI correspondante
 
 ---
 
-## Phase 6 — P1 PERFORMANCE
+## Phase 4 — P0 BLOQUANTS : Stripe Connect
 
-### P1-17 : Pages sans ISR — SSR à chaque requête
-- **Fichiers :** `app/faq/page.tsx`, `app/contact/page.tsx`, `app/cookies/page.tsx`, `app/confidentialite/page.tsx`, `app/soumettre-ma-villa/page.tsx`
-- **Fix :** Ajouter `export const revalidate = 86400;` (24h) sur FAQ, cookies, confidentialité
+### 4.1 Vérification mode test
+- Clés Stripe en mode test sur l'environnement de dev/staging
+- Créer un compte Connect test et vérifier le flow onboarding → réservation → paiement → transfert
+- Vérifier les webhooks Stripe (endpoint configuré dans Stripe Dashboard)
 
-### P1-18 : `<img>` natif (avec eslint-disable) au lieu de `next/image`
-- **Fichier :** `components/marketing/VillaSubmissionForm.tsx:274`
-- **Fix :** Remplacer par `<Image>` avec `fill`, `sizes`, `className`
-
-### P1-19 : `Image fill` sans `sizes` sur avatar VillaReviews
-- **Fichier :** `components/VillaReviews.tsx:52`
-- **Fix :** Ajouter `sizes="32px"`
-
-### P1-20 : `login-side.webm` = 4.5 MB
-- **Fix :** Réencoder plus petit, charger en lazy
-
-### P1-21 : Pas de `loading.tsx` sur 6 pages
-- **Pages :** FAQ, contact, cookies, confidentialité, soumettre-ma-villa, prestations
-- **Fix :** Ajouter `loading.tsx` avec skeleton minimal
-
-### P1-22 : `villa-hero.jpg` = 7.8 KB — trop basse qualité en poster
-- **Fix :** Utiliser une image de ~60-100 KB en WebP
+### 4.2 Points de vérification
+- Split correct : 75% proprio / 25% Kayvila (séjour) ; 80% / 20% (OTA)
+- `application_fee_amount` correct
+- `transfer_data.destination` = bon compte Connect
+- Email confirmation après paiement
 
 ---
 
-## Phase 7 — P2 MICRO-INTERACTIONS (Polish Luxe)
+## Phase 5 — P1 IMPORTANT : SEO & Metadata
 
-### P2-1 : Parallax héroïque subtil (recommandé ⭐)
-- **Principe :** La vidéo de fond translate très légèrement (2-4px) dans le sens inverse du scroll
-- **Fichier :** `components/home/HeroBackgroundMedia.tsx`
-- **Fix :** `useEffect` → `transform: translateY(${scrollY * 0.06}px)` sur la vidéo
+### 5.1 Pages sans title/description
+Vérifier TOUTES les pages (70 routes) pour :
+- `<title>` unique et descriptif
+- `<meta name="description">` présent
+- `openGraph` et `twitter:card` sur les pages clés
+- `canonical` URL sur chaque page
+- JSON-LD (schema.org) sur les fiches villa, page accueil
 
-### P2-2 : Border glow dorée sur cartes villa (recommandé ⭐)
-- **Fichier :** `components/villas/VillaListingCard.tsx`
-- **Fix CSS :**
-```css
-.villa-card-luxe:hover {
-  border-color: rgba(212, 175, 55, 0.6);
-  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.15), 0 8px 32px rgba(0, 0, 0, 0.06);
-}
-```
+### 5.2 Sitemap & Robots
+- Vérifier `sitemap.xml` généré (Next.js)
+- Vérifier `robots.txt`
+- Vérifier que les pages admin/dashboard ne sont pas indexées
 
 ---
 
-## Phase 8 — P2 OPTIMISATIONS
+## Phase 6 — P1 IMPORTANT : Formulaires
 
-### SEO
-- `<meta robots>` absent sur 9 pages publiques → ajouter
-- Sitemap incomplet (manque 8+ URLs dont fiches villa)
-- JSON-LD LocalBusiness absent de `/prestations`
-- JSON-LD type `Product` → préférer `LodgingBusiness` sur fiches villa
-- Doublon `| Kayvila` dans le title `/prestations`
+### 6.1 Validation
+- Mettre en place `react-hook-form` + `zod` sur `BookingForm`, `VillaSubmissionForm`, `ContactForm`
+- Ajouter `aria-invalid` et `aria-describedby` sur les champs en erreur
+- Ajouter debounce sur les inputs de recherche
 
-### Performance
-- `prefetch={false}` sur liens footer
-- Lazy-load `react-pdf` et `shiki` (chargement conditionnel)
-- Pas de `loading="lazy"` sur `VillaCoverImage`
-- Tailles de police `text-[10px]` difficilement lisibles sur mobile
-
-### Design
-- Boutons inline dupliquent Button → utiliser `<Button>`
-- Line-height non standardisé sur headings → token `--leading-heading`
-- Tailles d'icônes non documentées → standardiser nav=20, inline=16
+### 6.2 Feedback
+- Standardiser les messages succès/erreur (bannière verte/toast)
+- Vérifier que tous les formulaires ont un état `loading` pendant la soumission
 
 ---
 
-## ⛔ CE QU'ON NE TOUCHE PAS
+## Phase 7 — P1 IMPORTANT : Accessibilité
 
-- **Stripe Connect** — flux de paiement, webhooks, checkout
-- **Auth flow** — login, middleware Supabase, RLS, reset mdp
-- **Dashboard admin** — widgets Kayvila, DataGrid HeroUI Pro, revenus
-- **API routes** — toutes les routes `/api/*`
-- **Palette globale** — gold (#D4AF37), navy, offwhite (tokens principaux)
-- **Typo globale** — Instrument Sans + Playfair Display (sauf corrections ciblées)
-- **Layout général** — header, footer, grille max-w-7xl
-- **Composants structurels** — Navbar, Footer, Hero structure de base
-- **Fichiers intacts** (liste blanche) : `src/lib/site.ts`, tous les fichiers dashboard admin/, tous les fichiers API routes/
+### 7.1 Points à corriger
+- Ajouter `aria-invalid` sur les champs formulaire en erreur
+- Vérifier les contrastes (or sur blanc = potentiellement problématique)
+- Vérifier la navigation au clavier (tab order, focus traps dans modales)
+- Vérifier les labels sur tous les inputs (associés via `htmlFor`/`id`)
+
+### 7.2 Tests
+- `tests/` existants : `espace-client/layout.spec.ts`, `search.spec.ts`
+- Ajouter des tests mobile-first (viewport 375px)
+- Ajouter un test de réservation complète (E2E)
 
 ---
 
-## 📋 Règles globales
+## Phase 8 — P2 POLISH : Performance & Micro-interactions
 
-1. `npm run build` doit passer
-2. Commits atomiques en français — un commit par phase
-3. Mobile-first — tout doit fonctionner sur mobile
-4. Pas casser l'existant — si un fix risque de casser autre chose, le signaler
-5. Priorité P0 > P1 > P2 — les P0 d'abord
+### 8.1 Performance
+- Vérifier `next/image` sur toutes les images (pas de `<img>` nu)
+- Activer ISR sur les pages catalogue (`revalidate`)
+- Vérifier le bundle size (`next build` → analyzer)
+
+### 8.2 Loading states
+- Ajouter des `loading.tsx` sur les segments dashboard qui n'en ont pas
+
+### 8.3 Empty states
+- Standardiser `KayvilaEmptyState` dans les 2-3 cas manuels restants
+
+---
+
+## ⛔ CE QU'ON NE TOUCHE PAS (Zone Interdite)
+
+- Le design system (couleurs, typos, radius, espacement)
+- Les animations CSS (sauf correction de bugs)
+- L'architecture des APIs (sécurité, rate limiting, CSRF)
+- Les webhooks Stripe (sauf test de bout en bout)
+- La configuration Supabase RLS
+- Le middleware RBAC
+
+---
+
+## 📋 Règles Globales
+
+1. Chaque phase est indépendante — tu peux les exécuter dans l'ordre
+2. Fichiers et lignes exacts dans les corrections, pas de descriptions vagues
+3. Après chaque phase, vérifier que le build passe
+4. Ne pas modifier les variables d'environnement Vercel sans prévenir
+5. Les tests E2E se font sur l'environnement de staging/test, PAS en production
+6. Pour les workflows n8n : sauvegarder les URLs de webhook après activation
