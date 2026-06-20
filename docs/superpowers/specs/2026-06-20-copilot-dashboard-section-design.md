@@ -18,6 +18,7 @@ Remplacer le copilot "Diamant" en chatbulle flottante (FAB + slide-in panel) par
 ### Modifications
 - `app/(proprio)/dashboard/layout.tsx` : retirer les imports + rendus de `CopilotButton` et `CopilotPanel`. Garder `CopilotProvider`.
 - `app/(proprio)/dashboard/page.tsx` : le Server Component existant délègue son rendu à un `DashboardPageClient` (nouveau Client Component dans le même dossier ou inline) qui wrappe tout le contenu — pour pouvoir consommer `useCopilotContext()`.
+  - ⚠️ **Piège Server→Client** : ne JAMAIS passer de callback, promesse, ou fonction dans les props du Server Component vers `DashboardPageClient`. Next.js App Router interdit les fonctions non-sérialisables en props Server→Client. Les données sont passées comme objets simples (villages, KPIs, events). Toute logique interactive vit DANS le Client Component.
 
 ### Architecture finale
 ```
@@ -103,14 +104,27 @@ Principe : l'agent DeepSeek détecte l'intention → renvoie `{ reply, action, a
 
 ### B3. SHOW_BOOKING — Détail réservation 🆕
 
-- **Détection agent** : phrases type "ma prochaine réservation", "qui arrive demain", "détail de la résa", "réservation en cours"
+- **Détection agent** : phrases type "ma prochaine réservation", "qui arrive demain", "détail de la résa", "réservation en cours", "qui est chez moi en ce moment"
 - **Handler route** : nouveau bloc `if (action === "SHOW_BOOKING")`
   ```typescript
   if (action === "SHOW_BOOKING") {
     const villaIdList = Array.from(ownerVillaIds);
+    const today = new Date().toISOString().split("T")[0];
+    // Couvre les check-ins futurs ET les séjours en cours
     const { data: nextBooking } = await admin
       .from("bookings")
       .select("id, guest_name, villa_id, start_date, end_date, status, total_price_cents")
+      .in("villa_id", villaIdList)
+      .or(`start_date.gte.${today},and(start_date.lte.${today},end_date.gte.${today})`)
+      .order("start_date", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    actionResult = { success: true, booking: nextBooking || null };
+  }
+  ```
+- **Lecture seule** — aucune écriture
+- **UI** : `CopilotActionCard` affiche la résa (nom voyageur, villa, dates, statut, montant) ou "Aucune réservation à venir"
+- **Cas en cours** : si un séjour est en cours (`start_date <= today AND end_date >= today`), il est remonté même si le check-in est passé. Couvre "qui est chez moi en ce moment ?"
       .in("villa_id", villaIdList)
       .gte("start_date", new Date().toISOString().split("T")[0])
       .order("start_date", { ascending: true })
@@ -160,6 +174,21 @@ Intégrée dans le flux des messages du chat (rendue comme un message assistant 
 | `app/api/dashboard/owner-assistant/route.ts` | Modifier (+SET_PRICE +SHOW_BOOKING) |
 | `components/dashboard/proprio/CopilotButton.tsx` | Supprimer |
 | `components/dashboard/proprio/CopilotPanel.tsx` | Supprimer |
+
+## Note — ProactiveNotification
+
+Le composant `ProactiveNotification` (digest matinal chaleureux, spec `docs/specs/proactive-agent-b.md`, implémenté et déployé sur `main`) est déjà injecté en haut du dashboard, juste sous le titre. Il s'affiche UNIQUEMENT si une notification `owner_daily_digest` non lue existe. Il est complètement indépendant du copilot Diamant — les deux cohabitent dans le même flux :
+
+```
+<h1>Tableau de bord</h1>
+<ProactiveNotification />    ← digest (si présent, puis disparaît après lecture)
+<StripeConnectButton />
+<KpiRow />
+<DashboardCopilotChat />     ← chat permanent
+...
+```
+
+Pas de conflit : le digest est une notification push (n8n cron → DB → carte), le copilot est un outil conversationnel pull (le proprio pose des questions).
 
 ## Règles dures
 - Zéro redesign (or/navy/offwhite, radius anguleux, Instrument/Playfair/Sora)
