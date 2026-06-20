@@ -16,6 +16,11 @@
 - **Import API REST** : POST `/api/v1/workflows` n'accepte que `{name, nodes, connections, settings}` (pas `active`/`id`/`tags`). Activation séparée via POST `/workflows/{id}/activate`.
 - **Vercel env "Sensitive"** : `vercel env pull` les affiche vides (non déchiffrables). Ne pas conclure qu'elles sont vides sans vérifier le type. `vercel env rm` + `env add` les repasse en "Encrypted" (perd le flag sensitive).
 
+### Copilot propriétaire (dashboard) — 3 bugs app trouvés au test E2E
+- **Le hook `useCopilot` n'envoyait aucun `Authorization: Bearer`** → `/api/dashboard/owner-assistant` (getUserFromRequest = Bearer only) répondait **401** → "je n'arrive pas à me connecter". Fix : attacher `Bearer ${session.access_token}` (via `getSupabaseBrowser().auth.getSession()`) sur les fetches. NB : l'admin concierge marche car `requireAdmin`→`getSessionUser` lit le **cookie** d'abord.
+- **Contrat de réponse n8n incohérent** : l'agent B (fusion) renvoie `{ reply }` (format visiteur) mais la route owner-assistant ne lisait que `data.response` (format admin) → fallback permanent "analyse temporairement indisponible" malgré n8n OK (exec success ~9s). Fix : accepter `response || reply` (et `suggested_prompts || suggestedPrompts`).
+- **Un type error casse SILENCIEUSEMENT tous les déploiements** : `villa.bathrooms`/`villa.surface` (au lieu de `bathrooms_count`/`surface_m2`) → `next build` échoue → Vercel garde l'ancien build → les fixes ne partent jamais live alors que `git push` réussit. **Toujours `npx tsc --noEmit` AVANT de pousser** un changement TSX, et vérifier le statut du déploiement (`vercel ls --prod` → Error vs Ready), pas juste l'exit code de la commande.
+
 ---
 
 ## 2026-06-19 (soir) — Migration agents n8n vers pré-fetch Postgres
