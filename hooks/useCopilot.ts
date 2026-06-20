@@ -1,10 +1,23 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { getSupabaseBrowser } from "@/lib/supabase";
 import type { CopilotMessage, CopilotContextData, CopilotResponse } from "@/types/copilot";
 
 interface UseCopilotOptions {
   webhookUrl: string;
+}
+
+/** Header Authorization Bearer depuis la session Supabase courante (sinon vide). */
+async function getAuthHeader(): Promise<Record<string, string>> {
+  const supabase = getSupabaseBrowser();
+  if (!supabase) return {};
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.access_token
+    ? { Authorization: `Bearer ${session.access_token}` }
+    : {};
 }
 
 export function useCopilot({ webhookUrl }: UseCopilotOptions) {
@@ -25,7 +38,9 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
 
   const loadContext = useCallback(async () => {
     try {
-      const res = await fetch("/api/chatbot-owner-context");
+      const res = await fetch("/api/chatbot-owner-context", {
+        headers: { ...(await getAuthHeader()) },
+      });
       if (res.ok) {
         contextRef.current = await res.json();
       }
@@ -51,7 +66,7 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
       try {
         const res = await fetch(webhookUrl, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...(await getAuthHeader()) },
           body: JSON.stringify({
             message: content.trim(),
             context: contextRef.current,
