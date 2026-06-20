@@ -29,8 +29,10 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const startOfLastMonthStr = `${prevY}-${String(prevM).padStart(2, "0")}-01`;
   const endOfLastMonthStr = addDays(startOfMonthStr, -1);
 
+  const sevenDaysAgoStr = addDays(todayStr, -7);
+
   const [
-    villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes, profilesRes,
+    villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes, profilesRes, changesRes,
   ] = await Promise.all([
     supabase.from("villas").select("id,name,price_per_night,seasonal_prices,owner_id,status,cancellation_policy,currency").order("name"),
     supabase.from("bookings").select("*").order("start_date", { ascending: false }).limit(200),
@@ -40,6 +42,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
     supabase.from("ota_sync_logs").select("*").order("created_at", { ascending: false }).limit(30),
     supabase.from("reviews").select("*").order("created_at", { ascending: false }).limit(200),
     supabase.from("profiles").select("id,role,full_name,email,phone").order("created_at", { ascending: false }),
+    supabase.from("villa_changes").select("*").gte("changed_at", `${sevenDaysAgoStr}T00:00:00Z`).order("changed_at", { ascending: false }).limit(100),
   ]);
 
   const villas = villasRes.data ?? [];
@@ -50,6 +53,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const otaLogs = otaRes.data ?? [];
   const reviews = reviewsRes.data ?? [];
   const profiles = profilesRes.data ?? [];
+  const changes = changesRes.data ?? [];
 
   const revenueByVilla: Record<string, number> = {};
   const revenueLastMonthByVilla: Record<string, number> = {};
@@ -78,7 +82,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
 
   const today = todayStr; // alias pour compatibilité (ctx.today)
   return {
-    villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles,
+    villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles, changes,
     revenueByVilla, revenueLastMonthByVilla, monthlyRevenue,
     today, todayStr, startOfMonthStr, startOfLastMonthStr, endOfLastMonthStr,
   };
@@ -154,6 +158,9 @@ export async function GET(request: Request) {
           id: p.id, full_name: p.full_name, email: p.email, role: p.role,
         })),
       },
+      recent_villa_changes: ctx.changes.map((c: any) => ({
+        id: c.id, villa_id: c.villa_id, field: c.field, old_value: c.old_value, new_value: c.new_value, actor: c.actor, changed_at: c.changed_at,
+      })),
     };
 
     return NextResponse.json({
@@ -174,10 +181,16 @@ TON RÔLE
 - Générer des briefings quotidiens actionnables
 
 RÈGLES
-- Répondre en JSON : { "response": "...", "action": "SHOW_STATS"|"CREATE_TASK"|"BLOCK_DATE"|"UPDATE_TASK_STATUS"|"UPDATE_SUBMISSION_STATUS"|"COMPLETE_TASK"|"UPDATE_BOOKING", "action_data": {...}, "suggested_prompts": [...] }
-- Pour les actions destructives (BLOCK_DATE, UPDATE_BOOKING), TOUJOURS demander confirmation explicite avant exécution
+- Répondre en JSON : { "response": "...", "action": "SHOW_STATS"|"SET_PRICE"|"BLOCK_DATE"|"SHOW_BOOKING"|"ACCEPT_SUBMISSION"|"REFUSE_SUBMISSION", "action_data": {...}, "suggested_prompts": [...] }
+- Les actions de **LECTURE** (SHOW_STATS, SHOW_BOOKING) s'exécutent immédiatement
+- Les actions d'**ÉCRITURE** (SET_PRICE, BLOCK_DATE, ACCEPT_SUBMISSION, REFUSE_SUBMISSION) nécessitent une confirmation explicite de l'admin avant exécution. Tu proposes, l'admin confirme.
+- Pour SET_PRICE : action_data.price = { villa_id, price_per_night } — utiliser UNIQUEMENT price_per_night (colonne existante), jamais 'price'
+- Pour BLOCK_DATE : action_data.block = { villa_id, start_date, end_date, reason }
+- Pour SHOW_BOOKING : action_data.booking = { villa_id? } — affiche la prochaine ou celle en cours
+- Pour accepter/refuser soumission : action_data.submission = { submission_id, reason? (refus uniquement) }
+- Signaler proactivement les recent_villa_changes — indiquer quels propriétaires ont modifié leurs prix ou infos villas
 - Utiliser UNIQUEMENT les données du contexte — ne rien inventer
-- Prioriser les alertes par criticité : OTA désynchronisé > tâches en retard > sous-performance
+- Prioriser les alertes par criticité : OTA désynchronisé > tâches en retard > modifications propriétaire récentes > sous-performance
 - Toujours proposer 3-5 suggested_prompts actionnables`,
     });
   } catch (error) {
