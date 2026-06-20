@@ -2,6 +2,20 @@
 
 ---
 
+## 2026-06-20 (nuit) — Câblage actions copilot + fix page concierge ✅
+
+### Fait
+- **Actions copilot fonctionnelles end-to-end** (SET_PRICE, SHOW_BOOKING, BLOCK_DATE) — testées en prod (prix 1500→1700→1500 via le chat, carte + DB cohérents ; SHOW_BOOKING affiche voyageur/dates/montant).
+- **Page "Mon concierge" corrigée** (`/api/concierge/owner`) : forward du token session + parsing `reply` + timeout 32s/maxDuration.
+
+### Règles apprises (dures)
+- **Une action IA = 3 maillons à câbler, pas juste le handler** : (1) le **system prompt** de l'agent doit lui apprendre à émettre `action` + `action_data` avec le schéma exact ; (2) le **nœud n8n "Parse Response"** doit TRANSMETTRE `action_data` (il ne passait que reply/action/alerts/suggestedPrompts → action_data droppé) ; (3) le **handler serveur** exécute. Si un seul maillon manque, l'action ne se déclenche jamais ou échoue en silence.
+- **`villas` n'a PAS de colonne `price`, seulement `price_per_night`** (erreur 42703). Mon handler SET_PRICE faisait `.update({ price, price_per_night })` → UPDATE planté → "Modification impossible" générique. Toujours vérifier les colonnes live (REST `select=col` renvoie 42703 si absente) avant d'écrire un UPDATE.
+- **Surfaces de chat proprio en double = bugs en double** : `/dashboard` (copilot section, route `owner-assistant`) ET `/dashboard/concierge` (AgentChat, route `concierge/owner`). On a dû fixer les MÊMES bugs (token forward, parsing reply, timeout) deux fois. → consolider à terme (une seule route owner).
+- **L'agent confirme optimistement** ("C'est fait...") même si l'action échoue côté serveur. La `CopilotActionCard` est la source de vérité. Améliorer : afficher la vraie erreur dans la carte au lieu de "Modification impossible" générique.
+
+---
+
 ## 2026-06-20 (soir) — Copilot Diamant : section dashboard intégrée + 3 actions ✅
 
 ### Fait
