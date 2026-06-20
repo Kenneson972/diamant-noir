@@ -2,6 +2,17 @@
 
 ---
 
+## 2026-06-20 (nuit) — Admin Copilot Phase 1 (EN COURS, pausé T2/9)
+
+### État
+- Exécution subagent-driven dans `worktree-admin-copilot-phase1`. T1 (migration) ✅ reviewé, T2 (extract `updateSubmissionStatus`) ⏳ commité non-reviewé (`a1c032c`). Reprendre : reviewer T2 puis T3→T9. Détails complets : ledger `sdd/progress.md` + mémoire globale `project_kayvila_admin_copilot_phase1.md`.
+- ⚠️ Migration `supabase/migrations/20260620_admin_copilot_phase1.sql` à appliquer manuellement (SQL Editor, projet `wsdawdxucyuyopkpgjij`).
+
+### Règles apprises (dures)
+- **Le pooler Supabase (PgBouncer transaction mode) casse `SET LOCAL` / variables de session PG** : chaque `.from().update()` du client JS part sur une connexion/transaction distincte → un `set_config('app.actor', ...)` posé avant ne survit pas à la requête suivante. Conséquence : impossible de tagger l'auteur d'une modif via une var de session lue par un trigger. Solution retenue : le trigger attribue la modif au `owner_id` de la ligne (les modifs admin sont tracées séparément dans `admin_action_log`).
+- **Le systemPrompt admin déclarait déjà des actions** (`SHOW_STATS/BLOCK_DATE/UPDATE_SUBMISSION_STATUS/...`) mais rien ne les exécutait (route passthrough + Parse Response droppait `action_data`) — même schéma que B. Pour câbler des actions IA : prompt + passthrough n8n `action_data` + handler route, les 3.
+- **Acceptation de soumission = effets de bord** (email Resend + webhook via `PATCH /api/villa-submissions`) → extraire en lib réutilisable (`updateSubmissionStatus`), ne pas dupliquer.
+
 ## 2026-06-20 (nuit) — Câblage actions copilot + fix page concierge ✅
 
 ### Fait
