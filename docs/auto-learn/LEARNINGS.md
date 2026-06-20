@@ -21,6 +21,11 @@
 - **Contrat de réponse n8n incohérent** : l'agent B (fusion) renvoie `{ reply }` (format visiteur) mais la route owner-assistant ne lisait que `data.response` (format admin) → fallback permanent "analyse temporairement indisponible" malgré n8n OK (exec success ~9s). Fix : accepter `response || reply` (et `suggested_prompts || suggestedPrompts`).
 - **Un type error casse SILENCIEUSEMENT tous les déploiements** : `villa.bathrooms`/`villa.surface` (au lieu de `bathrooms_count`/`surface_m2`) → `next build` échoue → Vercel garde l'ancien build → les fixes ne partent jamais live alors que `git push` réussit. **Toujours `npx tsc --noEmit` AVANT de pousser** un changement TSX, et vérifier le statut du déploiement (`vercel ls --prod` → Error vs Ready), pas juste l'exit code de la commande.
 
+### Agent B "voit pas les données" — debug en cascade (test data réel)
+- **L'app doit envoyer ce que l'agent lit** : owner-assistant envoyait `owner_id`, l'agent B lit `body.userId`/`body.token` → ajouter `userId` + `token` (bearer) au payload webhook.
+- **n8n HTTP node mangle les query params** : `?userId=&token=` → owner-context renvoyait 401 puis 403 (`requestedUserId !== resolvedUserId`) alors qu'un `curl` identique passe en 200. **Solution : auth par HEADER `Authorization: Bearer {{ $json.token }}`, retirer userId/token du query.** Règle générale : pour un nœud HTTP n8n qui appelle une API authentifiée, passer le token par header, jamais par query.
+- **Latence agent vs timeout app** : une fois les vraies données chargées (3 bookings → gros contexte DeepSeek), le run B prend ~22s. L'app coupait à `AbortSignal.timeout(15_000)` → fallback "analyse indisponible". Monter à 30s **ET** ajouter `export const maxDuration = 35` (sinon Vercel tue la fonction serverless avant). Un HTTP 200 en smoke test ne garantit pas que l'UI marche : tester avec de la vraie data et regarder la latence réelle.
+
 ---
 
 ## 2026-06-19 (soir) — Migration agents n8n vers pré-fetch Postgres
