@@ -3,8 +3,6 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItems";
 import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
-import { CopilotButton } from "@/components/dashboard/proprio/CopilotButton";
-import { CopilotPanel } from "@/components/dashboard/proprio/CopilotPanel";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 import { OwnerContactFAB } from "@/components/dashboard/proprio/OwnerContactFAB";
 
@@ -64,8 +62,6 @@ export default async function ProprioDashboardLayout({
       <DashboardShell role="owner" roleLabel="Propriétaire" menu={proprioMenuItems}>
         {children}
       </DashboardShell>
-      <CopilotButton />
-      <CopilotPanel />
       <OwnerContactFAB
         ownerId={user.id}
         villas={ownerVillas ?? []}
