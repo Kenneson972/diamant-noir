@@ -6,7 +6,12 @@ import { useCopilotContext } from "@/components/dashboard/proprio/CopilotContext
 import { CopilotMessage } from "@/components/dashboard/proprio/CopilotMessage";
 import { CopilotActionCard } from "@/components/dashboard/CopilotActionCard";
 
-export function DashboardCopilotChat() {
+export function DashboardCopilotChat({
+  fullHeight = false,
+}: {
+  /** Pleine hauteur (page dédiée) au lieu d'une carte 400px (dashboard) */
+  fullHeight?: boolean;
+}) {
   const {
     messages,
     isLoading,
@@ -34,7 +39,11 @@ export function DashboardCopilotChat() {
   };
 
   return (
-    <div className="rounded-lg border border-navy/10 bg-white shadow-sm">
+    <div
+      className={`rounded-lg border border-navy/10 bg-white shadow-sm ${
+        fullHeight ? "flex h-[calc(100dvh-13rem)] flex-col" : ""
+      }`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-navy/5 px-5 py-3">
         <div className="flex items-center gap-2">
@@ -56,8 +65,8 @@ export function DashboardCopilotChat() {
 
       {/* Messages */}
       <div
-        className="overflow-y-auto px-5 py-4"
-        style={{ maxHeight: 400 }}
+        className={`overflow-y-auto px-5 py-4 ${fullHeight ? "flex-1" : ""}`}
+        style={fullHeight ? undefined : { maxHeight: 400 }}
       >
         {messages.length === 1 && messages[0].role === "assistant" ? (
           /* État vide — message d'accueil */
