@@ -2,18 +2,20 @@
 
 ---
 
-## 2026-06-20 (soir) — Copilot Diamant : section dashboard intégrée + 3 actions
+## 2026-06-20 (soir) — Copilot Diamant : section dashboard intégrée + 3 actions ✅
 
 ### Fait
-- **Copilot migré de FAB flottant → section dashboard** : CopilotButton + CopilotPanel supprimés, nouveau `DashboardCopilotChat` en pleine largeur sous les KPIs. Plus pro, plus accessible.
-- **3 actions ajoutées** : BLOCK_DATE (déjà codé), SET_PRICE (nouveau — update villas.price_per_night), SHOW_BOOKING (nouveau — prochaine résa + séjours en cours via OR clause).
-- **Split Server/Client** : `DashboardPageClient` (Client Component) reçoit les données du Server Component en props objets simples (⚠️ jamais de callbacks).
-- **CopilotActionCard** : affiche le résultat des actions dans le flux du chat (confirmation ou erreur).
+- **Copilot migré de FAB flottant → section dashboard** : CopilotButton + CopilotPanel supprimés, nouveau `DashboardCopilotChat` en pleine largeur sous les KPIs, 8 commits mergés sur main + déployés prod.
+- **3 actions ajoutées** : BLOCK_DATE (déjà codé), SET_PRICE (nouveau — update villas.price_per_night avec lecture du prix précédent), SHOW_BOOKING (nouveau — prochaine résa + séjours en cours via OR clause).
+- **Split Server/Client** : `DashboardPageClient` extrait dans son propre fichier (`components/dashboard/proprio/DashboardPageClient.tsx`), reçoit les données en props objets simples — zéro callback.
+- **CopilotActionCard** : affiche le résultat des actions dans le flux du chat (confirmation ou erreur, icônes lucide-react, gold pour succès / red pour échec).
+- **Tests E2E** : 2 tests Playwright (chat inline affiché + FAB absent) — 2/2 PASS.
 
 ### Règles apprises (dures)
-- **Ne JAMAIS passer de fonction/callback/promesse en props Server→Client** : Next.js App Router rejette les props non-sérialisables. Commentaire ⚠️ dans `page.tsx` pour prévenir.
+- **Ne JAMAIS passer de fonction/callback/promesse en props Server→Client** : Next.js App Router rejette les props non-sérialisables. Commentaire ⚠️ dans `DashboardPageClient.tsx` pour prévenir. Toutes les données passent en objets simples.
+- **`"use client"` dans un Server Component inline = casse Turbopack/Vercel**. Placer la directive après des imports dans le même fichier qu'un Server Component provoque une erreur de build. Solution : extraire le Client Component dans son propre fichier `.tsx` (pattern `DashboardPageClient.tsx`).
 - **SHOW_BOOKING doit couvrir les séjours EN COURS** : `start_date.gte.today` seul ne suffit pas — ajouter `or(start_date.lte.today,end_date.gte.today)` pour répondre à "qui est chez moi en ce moment ?".
-- **Le CopilotProvider n'a pas besoin de changer** : retirer juste le Button+Panel suffit. Le contexte/hook/API restent identiques.
+- **Le CopilotProvider / useCopilot / hook n'ont pas besoin de changer** : retirer juste le Button+Panel + ajouter `lastActionResult` au contexte suffit. L'API reste identique.
 
 ---
 
@@ -23,7 +25,7 @@
 - **9 tâches implémentées** (subagent-driven) : migration `owner_daily_digest` + 2 endpoints API + hook + composant + injection dashboard + exclusion NotificationBell + branche cron n8n (6 nœuds : Schedule Trigger 8h MQ, HTTP fetch, Split per owner, LLM Chain DeepSeek, Postgres INSERT) + test E2E Playwright.
 - **CRON_API_KEY générée** (`ea9b64...`) et ajoutée à Vercel production.
 - **Workflow B déployé** sur n8n Cloud avec les credentials liés automatiquement (nouvelle clé API propriétaire) — build/déploiement Vercel OK.
-- Branche : `worktree-proactive-agent-b` (pushée, non mergée).
+- ✅ Mergé sur `main` + déployé prod.
 
 ### Règles apprises (dures)
 - **API key n8n "public-api" ne peut PAS référencer de credentials sur de nouveaux nœuds** (PUT 400 `You don't have access to the credentials`). Il faut une clé API owner-level (celle de Kenneson). Les credentials existants sur des nœuds pré-existants passent, mais tout nouveau nœud credential-dépendant est rejeté. Contournement : déployer sans creds puis les ajouter dans l'UI, ou utiliser une clé owner.
