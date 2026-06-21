@@ -2,11 +2,20 @@
 
 ---
 
-## 2026-06-20 (nuit) — Admin Copilot Phase 1 ✅ (code terminé, T1→T9)
+## 2026-06-20 (nuit) — Admin Copilot Phase 1 ✅ LIVE + vérifié E2E prod
 
 ### État
-- Exécution subagent-driven dans `worktree-admin-copilot-phase1`. Tâches code T1→T9 terminées + reviewées (ledger `sdd/progress.md`). Migration appliquée ✅ (`villa_changes` + `admin_action_log` + trigger confirmés sur projet `wsdawdxucyuyopkpgjij`).
-- **Reste manuel (outward-facing, non fait par l'agent)** : (1) redéployer le workflow n8n C `7gtgluMV6cft6H7X` avec la clé owner-level (le fichier passe déjà `action_data`, à confirmer en prod) ; (2) merge branche → main + `vercel --prod` ; (3) lancer l'E2E `tests/e2e/admin-copilot.spec.ts` contre l'env déployé + vérifier `villas.price_per_night` MAJ + ligne `admin_action_log` après un Confirmer réel.
+- Subagent-driven dans `worktree-admin-copilot-phase1`, T1→T9 + reviewés + **mergé main + déployé Vercel**. Migration `villa_changes`+`admin_action_log`+trigger live.
+- **Test E2E réel passé** sur https://kayvila.vercel.app/admin/concierge : login admin → "passe la villa à 1900€" → carte Confirmer → Confirmer → `villas.price_per_night` 1500→1900 + ligne `admin_action_log` (SET_PRICE, success=true) → prix restauré à 1500.
+
+### 4 BUGS RUNTIME trouvés AU TEST LIVE (invisibles en revue de code — inter-service) — tous corrigés
+1. **401 auth** (`23c6633`) : `getSessionUser`/`getUserFromRequest` validaient le Bearer via `getSupabaseServer()` (client SSR cookie) qui NE valide PAS un JWT passé en argument → 401 sur tout fetch client d'une route admin. **RÈGLE DURE : pour valider un `Authorization: Bearer` côté route, TOUJOURS `supabaseAdmin().auth.getUser(token)`, jamais `getSupabaseServer()`.** (pattern qui marche = `owner-assistant`)
+2. **token périmé vers n8n** (`3b5396a`) : la route forwardait à n8n `getSupabaseServer().auth.getSession().access_token` (cookie, souvent vide/périmé en route handler) → "Fetch Admin Context" n8n 401 → httpRequest node throw → 500 → fallback "problème technique". **RÈGLE : forwarder le Bearer FRAIS de la requête (`request.headers.authorization`), pas le token de session cookie.** (même bug latent dans `concierge/owner`)
+3. **DeepSeek fuit son raisonnement** (`b664d0d`) : renvoie prose + JSON inline au lieu d'un JSON pur. Prompt durci (JSON brut only) → atténue, insuffisant seul.
+4. **Parse Response n8n** (`cfa44b0` + PUT workflow live `7gtgluMV6cft6H7X`) : faisait `JSON.parse(toutLOutput)` qui échoue sur le préambule → action=SHOW_STATS, jamais SET_PRICE. **FIX QUI DÉBLOQUE : `parseAgent()` extrait le bloc `{...}` par regex avant parse.** Aussi : `stripMarkdown` bouffe les underscores (`action_data`→`actiondata`) → ne striper QUE le champ `response`, jamais le JSON d'action.
+
+### Pour re-tester en CLI (sans navigateur, déterministe)
+Mint token : `POST https://wsdawdxucyuyopkpgjij.supabase.co/auth/v1/token?grant_type=password` (header `apikey`=anon key via Supabase get_publishable_keys) body `{email:admin@diamantnoir.com,password:Admin123!}` → `access_token` → `POST https://kayvila.vercel.app/api/concierge/admin` header `Authorization: Bearer <token>` body `{message:"..."}`. Webhook n8n direct = `https://kenneson.app.n8n.cloud/webhook/kayvibot-admin`.
 
 ### Règles apprises (dures)
 - **Le pooler Supabase (PgBouncer transaction mode) casse `SET LOCAL` / variables de session PG** : chaque `.from().update()` du client JS part sur une connexion/transaction distincte → un `set_config('app.actor', ...)` posé avant ne survit pas à la requête suivante. Conséquence : impossible de tagger l'auteur d'une modif via une var de session lue par un trigger. Solution retenue : le trigger attribue la modif au `owner_id` de la ligne (les modifs admin sont tracées séparément dans `admin_action_log`).
