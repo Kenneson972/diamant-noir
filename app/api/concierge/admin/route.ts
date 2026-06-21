@@ -50,7 +50,8 @@ async function execAction(
     result = { success: false, error: "Action inconnue" };
   }
 
-  await admin.from("admin_action_log").insert({ admin_id: adminId, action, action_data: actionData, result });
+  const { error: logError } = await admin.from("admin_action_log").insert({ admin_id: adminId, action, action_data: actionData, result });
+  if (logError) console.error("[concierge-admin] audit log insert failed", logError);
   return result;
 }
 
