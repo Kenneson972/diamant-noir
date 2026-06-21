@@ -2,6 +2,30 @@
 
 ---
 
+## 2026-06-21 — 3 retours P0 Richard (CGV + hero + chatbot) — ✅ TERMINÉ + mergé local (reste migration + push)
+
+### État (branche `fix/richard-p0-cgv-hero-chatbot`, worktree admin-copilot-phase1)
+- **T1 Case CGV : FAIT** (commits `52fdf71` impl, `d981258` locators+a11y, `ab5af2c` tests déterministes). Migration `bookings` (cgv_accepted_at + cgv_version), `lib/legal.ts` source unique, `LegalModal` maison, checkbox bloquante + garde message, Zod `z.literal(true)` serveur. **8/8 Playwright PASS en parallèle ×2.**
+- **T2 Hero : FAIT** (commits `3b47ee8` impl, `a28e224` test guard). `overflow-hidden` retiré de la `<section>` (`app/page.tsx`), parallax confiné dans une couche interne `h-[120%] -top-[10%]` de `HeroBackgroundMedia`. **6/6 PASS**, régression PROUVÉE (réintroduire overflow-hidden → test #2 rouge).
+- **T3 Chatbot scroll : FAIT + VÉRIFIÉ** (`69215b3` impl, `a03f956` nettoyage). `messagesEndRef.scrollIntoView()` (scrollait `window`) → scroll interne au conteneur (`el.scrollTop = el.scrollHeight`) gardé par `stickToBottomRef` (near-bottom < 80px via `onScroll`) + `focus({preventScroll:true})` + re-focus après fin de chargement (l'attribut `disabled` enlève le focus). **`tests/chatbot-scroll.spec.ts` = 4 passed / 0 skipped ×2** (owner réel proprio1@test.com).
+- **Merge FF sur `main` en LOCAL** (HEAD `a03f956`, non poussé). **Reste : (1) appliquer `supabase/migrations/20260621_bookings_cgv.sql` au SQL Editor (projet wsdawdxucyuyopkpgjij) AVANT le push ; (2) `git push` main → Vercel déploie.**
+
+### Règles dures apprises (reprise — revue finale)
+- **La garde serveur CGV vit dans le SCHÉMA Zod, pas dans le corps de la route** : `cgvAccepted: z.literal(true)` dans `BookingRequestSchema` (`types/stripe.ts`), validé par `safeParse` (`app/api/booking/route.ts` ~ligne 73, renvoie 400 si absent/≠true) AVANT l'insert. Ne pas conclure "pas de garde serveur" en greppant juste la route — vérifier le schéma importé. `cgv_accepted_at`/`cgv_version` sont écrits inconditionnellement car l'insert n'est atteint qu'après le `safeParse`.
+- **Migration sûre = idempotente + nullable** : `ADD COLUMN IF NOT EXISTS ... (nullable)` ne casse pas les lignes existantes (NULL) et est rejouable. MAIS le code qui écrit ces colonnes doit être déployé APRÈS la migration (sinon 42703 colonne inconnue à l'insert prod) → ordre obligatoire : migration → push/deploy.
+- **`npx tsc --noEmit` remonte des erreurs hors-scope** (`tests/a11y.spec.ts` : `@axe-core/playwright` non installé, commit `e3ba57c` Batch8). Avant de paniquer, vérifier que les erreurs touchent des fichiers de la branche courante — sinon elles sont pré-existantes et non bloquantes.
+- **Après suppression d'un usage, vérifier les refs orphelines** : retirer `scrollIntoView` a laissé `messagesEndRef` + sa `<div>` sentinelle morts (déclarés/attachés mais jamais lus). `grep -n "messagesEndRef"` → 2 hits sans lecture = dead code à supprimer.
+
+### Règles dures apprises (cette session)
+- **Worktree git ≠ node_modules** : un worktree n'hérite PAS du `node_modules` ni `.env.local` du repo principal. Solution : `ln -s ../main/node_modules` + `ln -s ../main/.env.local`. **Turbopack CASSE sur un node_modules symlinké** (« Next.js package not found » via la résolution turbopack) → lancer `next dev` SANS `--turbo` (webpack suit les symlinks).
+- **Composant responsive rendu 2× (desktop + mobile) = tests Playwright qui SKIPPENT en silence** : un `data-testid`/role dupliqué dans le DOM → `getByTestId(x).isVisible()` lève en strict mode (2 matches) → s'il est dans `.catch(()=>false)` d'un helper de skip, TOUS les tests UI skippent sans erreur. Cibler l'instance visible : `page.locator('[data-testid="x"]:visible')`. Un test « 8 passed » en `--workers=1` peut donner « 4 passed / 4 skipped » en workers par défaut.
+- **Helper skip-on-missing-data + compile à froid sous workers parallèles = skips non déterministes** : ne pas scraper une page liste (`/villas`) sous charge ; naviguer DIRECTEMENT vers la route cible avec un id connu **env-overridable** (`process.env.TEST_VILLA_ID || "..."`) + `waitFor({state:"visible", timeout:20000})`. Vérifier la non-flakiness en lançant 2× en workers par défaut.
+- **`boundingBox()` n'attrape PAS le clipping `overflow:hidden` d'un ancêtre** (il renvoie les coords de layout, pas le rendu). Pour assurer qu'un élément n'est pas clippé : `await expect(elt).toBeInViewport()` (IntersectionObserver tient compte du clipping des ancêtres). **Prouver qu'un test de régression garde bien le bug** : réintroduire temporairement le bug → le test doit devenir rouge → revert (`git checkout -- file`).
+- **La garde CGV s'exécute APRÈS les validations email/nom** dans `handleConfirmBooking` → un test « valider sans cocher » doit pré-remplir nom + email, sinon il heurte l'erreur email d'abord (pas le message CGV).
+- **Ne jamais killer un process qu'on n'a pas lancé** : `lsof -ti:3000 | xargs kill -9` a tué le dev server du user. Demander avant.
+- **Comptes de test réels** (base prod wsdawdxucyuyopkpgjij) : owner = `proprio1@test.com` / `Test123456!` (role owner, atteint `/dashboard`) ; admin = `admin@diamantnoir.com` / `Admin123!`. `owner@kayvila.com/owner123` N'EXISTE PAS (401). Passer en env `TEST_OWNER_EMAIL`/`TEST_OWNER_PASSWORD` aux tests chatbot.
+- **Repo réel = Next 15.2.9** (pas 16 comme disait le brief Richard). `npm test` = vitest, PAS playwright. Pas de `webServer` auto dans `playwright.config.ts` → un dev server doit déjà tourner sur :3000.
+
 ## 2026-06-20 (nuit) — Admin Copilot Phase 1 ✅ LIVE + vérifié E2E prod
 
 ### État
