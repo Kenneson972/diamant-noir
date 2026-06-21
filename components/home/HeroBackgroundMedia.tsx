@@ -67,45 +67,50 @@ export function HeroBackgroundMedia() {
   }, []);
 
   return (
-    <div
-      className="absolute inset-0 h-full w-full overflow-hidden"
-      style={ENABLE_PARALLAX ? { transform: `translateY(${scrollY * 0.06}px)`, willChange: "transform" } : undefined}
-      aria-hidden
-    >
-      {/* Poster — toujours présent, la vidéo passe par-dessus si prête */}
-      <Image
-        src="/villa-hero.jpg"
-        alt="Villa de luxe avec piscine en Martinique — Kayvila"
-        fill
-        priority
-        className="object-cover opacity-70"
-        sizes="100vw"
-      />
+    <div className="absolute inset-0 h-full w-full overflow-hidden" aria-hidden>
+      <div
+        className="absolute inset-x-0 -top-[10%] h-[120%] w-full"
+        style={
+          ENABLE_PARALLAX
+            ? { transform: `translateY(${scrollY * 0.06}px)`, willChange: "transform" }
+            : undefined
+        }
+      >
+        {/* Poster — toujours présent, la vidéo passe par-dessus si prête */}
+        <Image
+          src="/villa-hero.jpg"
+          alt="Villa de luxe avec piscine en Martinique — Kayvila"
+          fill
+          priority
+          className="object-cover opacity-70"
+          sizes="100vw"
+        />
 
-      {/* Vidéo — masquée si échec autoplay ou prefers-reduced-motion */}
-      {!videoFailed && (
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          // iOS-specific
-          webkit-playsinline="true"
-          x-webkit-airplay="deny"
-          disableRemotePlayback
-          preload="metadata"
-          poster="/villa-hero.jpg"
-          onLoadedData={() => setVideoReady(true)}
-          onError={() => setVideoFailed(true)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-            videoReady ? "opacity-70" : "opacity-0"
-          }`}
-          aria-hidden
-        >
-          <source src="/hero.webm" type="video/webm" />
-        </video>
-      )}
+        {/* Vidéo — masquée si échec autoplay ou prefers-reduced-motion */}
+        {!videoFailed && (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            // iOS-specific
+            webkit-playsinline="true"
+            x-webkit-airplay="deny"
+            disableRemotePlayback
+            preload="metadata"
+            poster="/villa-hero.jpg"
+            onLoadedData={() => setVideoReady(true)}
+            onError={() => setVideoFailed(true)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+              videoReady ? "opacity-70" : "opacity-0"
+            }`}
+            aria-hidden
+          >
+            <source src="/hero.webm" type="video/webm" />
+          </video>
+        )}
+      </div>
     </div>
   );
 }
