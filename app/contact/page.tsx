@@ -64,6 +64,7 @@ export default function ContactPage() {
   return (
     <LandingShell>
       <PageHero
+        imageSrc="/contact-hero.webp"
         eyebrow="Échange & support"
         title={t("contact.title")}
         subtitle={t("contact.subtitle")}

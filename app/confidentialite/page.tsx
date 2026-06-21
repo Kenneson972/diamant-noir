@@ -2,10 +2,10 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  LandingHeroCompact,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 import { ConfidentialiteContent } from "@/components/legal/ConfidentialiteContent";
 import { CONFIDENTIALITE_TEXT } from "@/lib/legal";
 
@@ -39,7 +39,8 @@ export default function ConfidentialitePage() {
 
   return (
     <LandingShell>
-      <LandingHeroCompact
+      <PageHero
+        imageSrc="/confidentialite-hero.webp"
         eyebrow="Confiance & données"
         title="Politique de confidentialité"
         subtitle="Transparence sur l&apos;usage de vos informations personnelles."

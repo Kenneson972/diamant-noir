@@ -59,7 +59,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     ],
     images: {
       sectionIntro: "/marketing.png",
-      sectionDetails: "/marketing.png",
+      sectionDetails: "/marketing.webp",
       sectionIntroAlt: "Piscine villa luxe au coucher du soleil — stratégie marketing locatif",
       sectionDetailsAlt: "Annonce premium optimisée pour villa martiniquaise",
     },
@@ -96,7 +96,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     ],
     images: {
       sectionIntro: "/terrain.png",
-      sectionDetails: "/terrain.png",
+      sectionDetails: "/terrain.webp",
       sectionIntroAlt: "Entrée villa avec boîte à clés sécurisée — accueil check-in",
       sectionDetailsAlt: "Équipe terrain inspectant une villa avant un séjour",
     },
@@ -133,7 +133,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     ],
     images: {
       sectionIntro: "/relation.png",
-      sectionDetails: "/relation.png",
+      sectionDetails: "/relation.webp",
       sectionIntroAlt: "Couple en terrasse face à l'océan — accueil voyageurs Kayvila",
       sectionDetailsAlt: "Communication avec les voyageurs — service réactif 7j/7",
     },
@@ -174,7 +174,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     ],
     images: {
       sectionIntro: "/menage.png",
-      sectionDetails: "/menage.png",
+      sectionDetails: "/menage.webp",
       sectionIntroAlt: "Lit impeccable avec drap blanc et fleur — ménage blanchisserie haut standing",
       sectionDetailsAlt: "Linge de maison préparé aux standards hôteliers",
     },
@@ -211,7 +211,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     ],
     images: {
       sectionIntro: "/finance.png",
-      sectionDetails: "/finance.png",
+      sectionDetails: "/finance.webp",
       sectionIntroAlt: "Bureau terrasse avec MacBook et café — gestion financière sereine",
       sectionDetailsAlt: "Tableau de bord propriétaire — reversements et commissions",
     },

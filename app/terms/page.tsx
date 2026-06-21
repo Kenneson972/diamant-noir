@@ -2,10 +2,10 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  LandingHeroCompact,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 
 export const metadata = {
   title: "Conditions d'utilisation",
@@ -42,7 +42,8 @@ export default function TermsPage() {
 
   return (
     <LandingShell>
-      <LandingHeroCompact
+      <PageHero
+        imageSrc="/terms-hero.webp"
         eyebrow="Cadre légal"
         title={"Conditions d'utilisation"}
         subtitle="Modalités d&apos;usage du site et des services Kayvila."

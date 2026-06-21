@@ -162,6 +162,7 @@ export default async function VillasListingPage({
       />
       {/* ── Hero ── */}
       <PageHero
+        imageSrc="/villas-hero.webp"
         eyebrow={tServer(locale, "villas.subtitle")}
         title={tServer(locale, "villas.title")}
         subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune avec son âme, sa vue, son histoire.`}

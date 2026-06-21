@@ -2,10 +2,10 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  LandingHeroCompact,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 
 export const metadata = {
   title: "Mentions légales",
@@ -52,7 +52,8 @@ export default function MentionsLegalesPage() {
 
   return (
     <LandingShell>
-      <LandingHeroCompact
+      <PageHero
+        imageSrc="/mentions-hero.webp"
         eyebrow="Informations légales"
         title="Mentions légales"
         subtitle="Éditeur, hébergeur et propriété intellectuelle du site Kayvila."

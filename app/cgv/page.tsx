@@ -2,10 +2,10 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  LandingHeroCompact,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 import { CgvContent } from "@/components/legal/CgvContent";
 import { CGV_TEXT } from "@/lib/legal";
 
@@ -40,7 +40,8 @@ export default function CgvPage() {
 
   return (
     <LandingShell>
-      <LandingHeroCompact
+      <PageHero
+        imageSrc="/cgv-hero.webp"
         eyebrow="Conditions"
         title="Conditions générales de vente"
         subtitle="Réservation, paiement et annulation des séjours Kayvila."
