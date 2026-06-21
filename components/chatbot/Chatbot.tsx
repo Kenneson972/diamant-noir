@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { MessageCircle, X, Send, Smile, Maximize2, Minimize2, Sparkles, Headphones, RotateCcw } from "lucide-react";
+import { MessageCircle, X, Send, Smile, Maximize2, Minimize2, Sparkles, Headphones, RotateCcw, CalendarDays, Users } from "lucide-react";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 const QUICK_SUGGESTIONS = {
@@ -40,7 +40,9 @@ const EMOJIS = [
 export const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  type PreBookingCardData = { startDate: string; endDate: string; guests: number; bookingUrl: string };
+  type ChatMessage = { role: "user" | "assistant"; content: string; preBookingCard?: PreBookingCardData; escalated?: boolean };
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -201,7 +203,42 @@ export const Chatbot = () => {
       const data = await response.json();
       const chatResponse = data.reply || data.response || "Je rencontre une difficulté technique passagère. Veuillez réessayer dans quelques instants.";
 
-      setMessages((prev) => [...prev, { role: "assistant", content: chatResponse }]);
+      // Pré-réservation : persister via /api/chat/pre-book (source de vérité du bookingUrl)
+      let preBookingCard: PreBookingCardData | undefined;
+      const pb = data.preBooking;
+      if (pb && pb.villaId && pb.email && pb.startDate && pb.endDate) {
+        try {
+          const pbRes = await fetch("/api/chat/pre-book", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              villaId: pb.villaId,
+              email: pb.email,
+              startDate: pb.startDate,
+              endDate: pb.endDate,
+              guests: pb.guests,
+              name: pb.firstName,
+              sessionId: getOrCreateSessionId(),
+            }),
+          });
+          const pbData = await pbRes.json();
+          if (pbRes.ok && pbData.success && pbData.bookingUrl) {
+            preBookingCard = {
+              startDate: pb.startDate,
+              endDate: pb.endDate,
+              guests: pb.guests,
+              bookingUrl: pbData.bookingUrl,
+            };
+          }
+        } catch (e) {
+          console.warn("pre-book error", e);
+        }
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: chatResponse, preBookingCard, escalated: data.shouldEscalateToHuman === true },
+      ]);
 
       if (data.stage) setCurrentStage(data.stage);
 
@@ -368,6 +405,32 @@ export const Chatbot = () => {
                   <div className="text-sm leading-relaxed font-medium">
                     {renderMessageContent(message.content)}
                   </div>
+                  {message.preBookingCard && (
+                    <div className="mt-3 rounded-xl border border-gold/30 bg-gold/[0.06] p-4">
+                      <p className="text-sm font-semibold text-navy">Réservation proposée</p>
+                      <div className="mt-2 space-y-1.5 text-sm text-navy/70">
+                        <p className="flex items-center gap-2">
+                          <CalendarDays size={15} className="text-gold" />
+                          {message.preBookingCard.startDate} → {message.preBookingCard.endDate}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <Users size={15} className="text-gold" />
+                          {message.preBookingCard.guests} voyageur{message.preBookingCard.guests > 1 ? "s" : ""}
+                        </p>
+                      </div>
+                      <a
+                        href={message.preBookingCard.bookingUrl}
+                        className="mt-3 inline-block rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold/90"
+                      >
+                        Réserver cette villa
+                      </a>
+                    </div>
+                  )}
+                  {message.escalated && (
+                    <p className="mt-3 rounded-lg border border-navy/15 bg-navy/[0.04] px-3 py-2 text-xs text-navy/70">
+                      Notre équipe vous contactera personnellement dans les plus brefs délais.
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
