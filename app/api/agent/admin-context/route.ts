@@ -42,7 +42,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
     supabase.from("ota_sync_logs").select("*").order("created_at", { ascending: false }).limit(30),
     supabase.from("reviews").select("*").order("created_at", { ascending: false }).limit(200),
     supabase.from("profiles").select("id,role,full_name,email,phone").order("created_at", { ascending: false }),
-    supabase.from("villa_changes").select("*").gte("changed_at", `${sevenDaysAgoStr}T00:00:00Z`).order("changed_at", { ascending: false }).limit(100),
+    supabase.from("villa_changes").select("villa_id, owner_id, field, old_value, new_value, changed_at").gte("changed_at", addDays(todayStr, -7)).order("changed_at", { ascending: false }).limit(50),
   ]);
 
   const villas = villasRes.data ?? [];
@@ -83,6 +83,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const today = todayStr; // alias pour compatibilité (ctx.today)
   return {
     villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles, changes,
+    recent_villa_changes: changesRes.data ?? [],
     revenueByVilla, revenueLastMonthByVilla, monthlyRevenue,
     today, todayStr, startOfMonthStr, startOfLastMonthStr, endOfLastMonthStr,
   };
@@ -158,9 +159,7 @@ export async function GET(request: Request) {
           id: p.id, full_name: p.full_name, email: p.email, role: p.role,
         })),
       },
-      recent_villa_changes: ctx.changes.map((c: any) => ({
-        id: c.id, villa_id: c.villa_id, field: c.field, old_value: c.old_value, new_value: c.new_value, actor: c.actor, changed_at: c.changed_at,
-      })),
+      recent_villa_changes: ctx.recent_villa_changes,
     };
 
     return NextResponse.json({
@@ -181,17 +180,25 @@ TON RÔLE
 - Générer des briefings quotidiens actionnables
 
 RÈGLES
-- Répondre en JSON : { "response": "...", "action": "SHOW_STATS"|"SET_PRICE"|"BLOCK_DATE"|"SHOW_BOOKING"|"ACCEPT_SUBMISSION"|"REFUSE_SUBMISSION", "action_data": {...}, "suggested_prompts": [...] }
-- Les actions de **LECTURE** (SHOW_STATS, SHOW_BOOKING) s'exécutent immédiatement
-- Les actions d'**ÉCRITURE** (SET_PRICE, BLOCK_DATE, ACCEPT_SUBMISSION, REFUSE_SUBMISSION) nécessitent une confirmation explicite de l'admin avant exécution. Tu proposes, l'admin confirme.
-- Pour SET_PRICE : action_data.price = { villa_id, price_per_night } — utiliser UNIQUEMENT price_per_night (colonne existante), jamais 'price'
-- Pour BLOCK_DATE : action_data.block = { villa_id, start_date, end_date, reason }
-- Pour SHOW_BOOKING : action_data.booking = { villa_id? } — affiche la prochaine ou celle en cours
-- Pour accepter/refuser soumission : action_data.submission = { submission_id, reason? (refus uniquement) }
-- Signaler proactivement les recent_villa_changes — indiquer quels propriétaires ont modifié leurs prix ou infos villas
-- Utiliser UNIQUEMENT les données du contexte — ne rien inventer
-- Prioriser les alertes par criticité : OTA désynchronisé > tâches en retard > modifications propriétaire récentes > sous-performance
-- Toujours proposer 3-5 suggested_prompts actionnables`,
+- Répondre en JSON : { "response": "...", "action": "...", "action_data": {...}, "suggested_prompts": [...] }
+- Par défaut action = "SHOW_STATS".
+- Utiliser UNIQUEMENT les données du contexte — ne rien inventer.
+- Prioriser les alertes par criticité : OTA désynchronisé > tâches en retard > sous-performance.
+- Toujours proposer 3-5 suggested_prompts actionnables.
+
+SURFAÇAGE PROACTIF
+- Dans recent_villa_changes, signale les modifications faites par les propriétaires (ex : "Le propriétaire de Villa X a changé son prix de 1500 à 2000 €/nuit le JJ/MM"). Mentionne-les si pertinent ou si on te le demande.
+
+ACTIONS EXÉCUTABLES (l'admin confirmera avant exécution — propose, n'exécute jamais toi-même) :
+1) SET_PRICE → action_data = { "price": { "villa_id": "<id>", "price_per_night": <entier €> } }
+2) BLOCK_DATE → action_data = { "block": { "villa_id": "<id>", "start_date": "AAAA-MM-JJ", "end_date": "AAAA-MM-JJ", "reason": "<motif>" } }
+3) SHOW_BOOKING → action = "SHOW_BOOKING", action_data = { "booking": { "villa_id": "<id optionnel>" } } (lecture seule)
+4) UPDATE_SUBMISSION_STATUS → action_data = { "submission": { "submission_id": "<id>", "status": "accepted"|"rejected" } }
+
+RÈGLES ACTIONS (STRICTES) :
+- Utilise TOUJOURS le "id" exact depuis les données (villas, villa_submissions). Ne jamais inventer un id.
+- N'émets une action QUE sur demande explicite (verbe : "passe", "bloque", "accepte", "refuse", "montre"). Une question = action "SHOW_STATS".
+- Une seule action par réponse. Confirme dans "response" ce que l'action va faire.`,
     });
   } catch (error) {
     if (error instanceof AuthError) {
