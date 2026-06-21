@@ -1,6 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
-import { AgentChat } from "@/components/dashboard/shared/AgentChat";
+import { AdminCopilotChat } from "@/components/dashboard/admin/AdminCopilotChat";
 import { isStaffAdmin } from "@/lib/auth/admin-access";
 
 export const dynamic = "force-dynamic";
@@ -25,19 +25,10 @@ export default async function AdminConciergePage() {
       <div className="mb-4">
         <h1 className="font-display text-xl text-navy">Concierge IA</h1>
         <p className="mt-1 text-[11px] text-navy/50">
-          Assistant IA Kayvila — supervision globale, analytics et pilotage
+          Supervision globale — questions et actions (prix, blocage, soumissions)
         </p>
       </div>
-      <AgentChat
-        endpoint="/api/concierge/admin"
-        title="Agent C · Concierge IA Admin"
-        placeholder="Ex : Quel est le taux d'occupation global ?"
-        suggestedPrompts={[
-          "Quel est mon taux d'occupation ce mois ?",
-          "Quels check-ins sont prévus cette semaine ?",
-          "Y a-t-il des tâches en retard ?",
-        ]}
-      />
+      <AdminCopilotChat />
     </div>
   );
 }
