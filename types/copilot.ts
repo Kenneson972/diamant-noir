@@ -7,6 +7,8 @@ export interface CopilotMessage {
   action?: string;
   /** Résultat de l'action côté serveur */
   actionResult?: { success: boolean; [key: string]: unknown } | null;
+  /** Action proposée nécessitant confirmation (admin) */
+  proposedAction?: { action: string; action_data: Record<string, unknown> } | null;
 }
 
 export interface CopilotContextData {
@@ -48,5 +50,6 @@ export interface CopilotResponse {
   action_data?: Record<string, unknown>;
   /** Résultat de l'action exécutée côté serveur */
   action_result?: { success: boolean; [key: string]: unknown } | null;
+  proposed_action?: { action: string; action_data: Record<string, unknown> } | null;
   suggested_prompts?: string[];
 }

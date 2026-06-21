@@ -88,6 +88,7 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
           timestamp: Date.now(),
           action: data.action,
           actionResult: data.action_result ?? null,
+          proposedAction: data.proposed_action ?? null,
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -126,6 +127,36 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
     ]);
   }, []);
 
+  const confirmAction = useCallback(
+    async (action: string, actionData: Record<string, unknown>) => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...(await getAuthHeader()) },
+          body: JSON.stringify({ confirm_action: { action, action_data: actionData } }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const msg: CopilotMessage = {
+            id: `action-${Date.now()}`,
+            role: "assistant",
+            content: "",
+            timestamp: Date.now(),
+            action,
+            actionResult: data.action_result ?? null,
+          };
+          setMessages((prev) => [...prev, msg]);
+        }
+      } catch {
+        // best-effort
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [webhookUrl],
+  );
+
   return {
     messages,
     isLoading,
@@ -133,5 +164,6 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
     clearMessages,
     loadContext,
     suggestedPrompts,
+    confirmAction,
   };
 }
