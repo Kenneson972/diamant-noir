@@ -9,43 +9,63 @@ function isoPlusDays(days: number): string {
 /** Ouvre un checkout réel ; skip si aucune villa publiée. Retourne false si skip. */
 async function gotoCheckout(page: Page): Promise<boolean> {
   await page.goto("/villas");
-  await page.waitForTimeout(2000);
+  await page.waitForSelector("a[href*='/villas/']", { timeout: 8000 }).catch(() => null);
   const href = await page.locator("a[href*='/villas/']").first().getAttribute("href").catch(() => null);
   const id = href?.match(/\/villas\/([^/?#]+)/)?.[1];
   if (!id) return false;
   await page.goto(`/book?villaId=${id}&checkin=${isoPlusDays(30)}&checkout=${isoPlusDays(33)}&guests=2`);
-  const checkbox = page.getByTestId("cgv-checkbox");
+  // Le checkbox CGV est rendu deux fois (desktop + mobile sticky). Cibler l'instance visible uniquement.
+  const checkbox = page.locator('[data-testid="cgv-checkbox"]:visible');
   if (!(await checkbox.isVisible().catch(() => false))) return false;
+  // Pré-remplir nom/email si les champs sont présents (utilisateur non connecté)
+  const nameInput = page.locator("#guestName");
+  if (await nameInput.isVisible().catch(() => false)) {
+    await nameInput.click();
+    await nameInput.fill("Test Visiteur");
+    await nameInput.press("Tab");
+  }
+  const emailInput = page.locator("#guestEmail");
+  if (await emailInput.isVisible().catch(() => false)) {
+    await emailInput.click();
+    await emailInput.fill("test@example.com");
+    await emailInput.press("Tab");
+  }
   return true;
 }
 
 test.describe("Checkout — CGV obligatoire", () => {
   test("la checkbox CGV est décochée par défaut", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    await expect(page.getByTestId("cgv-checkbox")).not.toBeChecked();
+    await expect(page.locator('[data-testid="cgv-checkbox"]:visible')).not.toBeChecked();
   });
 
   test("valider sans cocher affiche le message d'erreur CGV", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    const cta = page.getByRole("button", { name: /payer|réserver|confirmer|finaliser/i }).first();
+    // Cibler le bouton dans la section desktop (hidden sm:block) pour éviter le bouton mobile caché
+    const cta = page.locator('button:visible', { hasText: /Confirmer|payer/i }).first();
+    await cta.scrollIntoViewIfNeeded();
     await cta.click();
-    await expect(page.getByText("Veuillez accepter les CGV pour continuer")).toBeVisible();
+    // L'erreur CGV est rendue dans 2 zones (desktop + mobile sticky). Prendre la première instance visible.
+    await expect(page.locator('[role="alert"]:visible', { hasText: "Veuillez accepter les CGV pour continuer" }).first()).toBeVisible({ timeout: 8000 });
   });
 
   test("cocher les CGV fait disparaître l'erreur (pas de blocage CGV)", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    const cta = page.getByRole("button", { name: /payer|réserver|confirmer|finaliser/i }).first();
+    const cta = page.locator('button:visible', { hasText: /Confirmer|payer/i }).first();
+    await cta.scrollIntoViewIfNeeded();
     await cta.click();
-    await expect(page.getByText("Veuillez accepter les CGV pour continuer")).toBeVisible();
-    await page.getByTestId("cgv-checkbox").check();
+    // L'erreur CGV est rendue dans 2 zones (desktop + mobile sticky). Prendre la première instance visible.
+    const cgvError = page.locator('[role="alert"]:visible', { hasText: "Veuillez accepter les CGV pour continuer" }).first();
+    await expect(cgvError).toBeVisible({ timeout: 8000 });
+    await page.locator('[data-testid="cgv-checkbox"]:visible').check();
     await cta.click();
     // la garde CGV ne doit plus bloquer (un autre message lié au paiement peut apparaître)
-    await expect(page.getByText("Veuillez accepter les CGV pour continuer")).toBeHidden();
+    await expect(page.locator('[role="alert"]', { hasText: "Veuillez accepter les CGV pour continuer" }).first()).toBeHidden({ timeout: 8000 });
   });
 
   test("ouvre puis ferme le modal CGV", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    await page.getByRole("button", { name: "Conditions Générales de Vente" }).click();
+    await page.locator('button:visible', { hasText: "Conditions Générales de Vente" }).first().click();
     const dialog = page.getByRole("dialog", { name: "Conditions Générales de Vente" });
     await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: "Fermer" }).click();
@@ -54,7 +74,7 @@ test.describe("Checkout — CGV obligatoire", () => {
 
   test("ouvre puis ferme le modal Confidentialité", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    await page.getByRole("button", { name: "Politique de confidentialité" }).click();
+    await page.locator('button:visible', { hasText: "Politique de confidentialité" }).first().click();
     const dialog = page.getByRole("dialog", { name: "Politique de confidentialité" });
     await expect(dialog).toBeVisible();
     await page.keyboard.press("Escape");
@@ -63,7 +83,7 @@ test.describe("Checkout — CGV obligatoire", () => {
 
   test("le modal CGV ferme via clic overlay", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    await page.getByRole("button", { name: "Conditions Générales de Vente" }).click();
+    await page.locator('button:visible', { hasText: "Conditions Générales de Vente" }).first().click();
     const dialog = page.getByRole("dialog", { name: "Conditions Générales de Vente" });
     await expect(dialog).toBeVisible();
     await page.mouse.click(5, 5); // coin = overlay
@@ -72,7 +92,7 @@ test.describe("Checkout — CGV obligatoire", () => {
 
   test("la checkbox se coche et se décoche", async ({ page }) => {
     test.skip(!(await gotoCheckout(page)), "Aucune villa publiée");
-    const checkbox = page.getByTestId("cgv-checkbox");
+    const checkbox = page.locator('[data-testid="cgv-checkbox"]:visible');
     await checkbox.check();
     await expect(checkbox).toBeChecked();
     await checkbox.uncheck();

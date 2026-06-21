@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
 interface LegalModalProps {
@@ -11,6 +11,8 @@ interface LegalModalProps {
 }
 
 export function LegalModal({ open, onClose, title, children }: LegalModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -19,6 +21,12 @@ export function LegalModal({ open, onClose, title, children }: LegalModalProps) 
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (open) {
+      dialogRef.current?.focus();
+    }
+  }, [open]);
 
   if (!open) return null;
 
@@ -30,13 +38,15 @@ export function LegalModal({ open, onClose, title, children }: LegalModalProps) 
         aria-hidden="true"
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
-        className="fixed left-1/2 top-1/2 z-[1060] flex max-h-[85dvh] w-[calc(100vw-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col bg-white shadow-2xl"
+        aria-labelledby="legal-modal-title"
+        tabIndex={-1}
+        className="fixed left-1/2 top-1/2 z-[1060] flex max-h-[85dvh] w-[calc(100vw-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col bg-white shadow-2xl outline-none"
       >
         <div className="flex items-center justify-between border-b border-navy/10 px-5 py-4">
-          <h2 className="font-display text-xl text-navy">{title}</h2>
+          <h2 id="legal-modal-title" className="font-display text-xl text-navy">{title}</h2>
           <button
             type="button"
             onClick={onClose}
