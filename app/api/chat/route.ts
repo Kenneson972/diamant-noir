@@ -110,6 +110,31 @@ async function notifyHotLeadOnce(sessionId: string, summary: string) {
   }
 }
 
+// Throttle mémoire : 1 notif escalade humaine par session
+const _handoffNotified = new Set<string>();
+
+async function notifyHandoffOnce(sessionId: string, reason: string | undefined) {
+  if (_handoffNotified.has(sessionId)) return;
+  _handoffNotified.add(sessionId);
+  try {
+    // Cap anti-spam : 50 notifs human_handoff / heure
+    const { count } = await supabaseAdmin()
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("type", "human_handoff")
+      .gte("created_at", new Date(Date.now() - 3600000).toISOString());
+    if ((count ?? 0) >= 50) return;
+    await supabaseAdmin().from("notifications").insert({
+      user_id: null,
+      type: "human_handoff",
+      title: "Demande de contact humain",
+      body: `Session ${sessionId}${reason ? ` — ${reason}` : ""}`.slice(0, 280),
+    });
+  } catch (e) {
+    console.warn("[api/chat] human_handoff notif", e);
+  }
+}
+
 // Throttle mémoire : 1 traitement lead propriétaire par session (évite les doublons
 // quand l'Agent A ré-émet ownerLead à plusieurs messages successifs).
 const _ownerLeadHandled = new Set<string>();
@@ -288,6 +313,10 @@ export async function POST(request: Request) {
     // Lead propriétaire (double conversion) — notif admin + pré-enregistrement
     if (parsed.ownerLead) {
       await handleOwnerLeadOnce(sessionId, parsed.ownerLead);
+    }
+
+    if (parsed.shouldEscalateToHuman) {
+      await notifyHandoffOnce(sessionId, parsed.humanHandoffReason);
     }
 
     return NextResponse.json(clientResponse);
