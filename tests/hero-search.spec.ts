@@ -36,11 +36,16 @@ test.describe("Hero — bloc recherche", () => {
     const cal = page.getByRole("application", { name: /dates de séjour/i });
     await expect(cal).toBeVisible();
     const box = await cal.boundingBox();
-    const vp = page.viewportSize();
     expect(box).not.toBeNull();
     expect(box!.height).toBeGreaterThan(100); // pas écrasé à 0
-    // Le bas du calendrier doit rester dans le viewport (non clippé par overflow-hidden section)
-    expect(box!.y + box!.height).toBeLessThanOrEqual(vp!.height + 1);
+    // La dernière cellule (bas du calendrier) doit être réellement visible.
+    // toBeInViewport() s'appuie sur IntersectionObserver, qui TIENT COMPTE du clipping
+    // par un ancêtre overflow:hidden — contrairement à boundingBox(). C'est l'assertion
+    // qui échouerait si overflow-hidden était réintroduit sur la <section> hero.
+    const enabledDays = cal.locator(
+      "[role='gridcell'] [role='button']:not([aria-disabled='true'])"
+    );
+    await expect(enabledDays.last()).toBeInViewport();
   });
 
   test("sélectionner une plage de dates met à jour le résumé", async ({ page }) => {
