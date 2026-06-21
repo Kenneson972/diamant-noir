@@ -72,13 +72,13 @@ export function HeroBackgroundMedia() {
       style={ENABLE_PARALLAX ? { transform: `translateY(${scrollY * 0.06}px)`, willChange: "transform" } : undefined}
       aria-hidden
     >
-      {/* Poster — toujours présent, la vidéo passe par-dessus si prête */}
+      {/* Poster — visible uniquement si la vidéo ne joue pas */}
       <Image
         src="/villa-hero.jpg"
         alt="Villa de luxe avec piscine en Martinique — Kayvila"
         fill
         priority
-        className="object-cover opacity-70"
+        className={`object-cover transition-opacity duration-500 ${videoReady && !videoFailed ? "opacity-0" : "opacity-70"}`}
         sizes="100vw"
       />
 
