@@ -12,6 +12,22 @@
     {
       "path": "/api/send-review-requests",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/admin-daily-recap",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/pending-submissions",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/admin-weekly-recap",
+      "schedule": "0 13 * * 1"
+    },
+    {
+      "path": "/api/cron/ghost-villas",
+      "schedule": "0 13 * * 5"
     }
   ]
 }
