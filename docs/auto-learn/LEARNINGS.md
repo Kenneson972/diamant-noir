@@ -2,6 +2,21 @@
 
 ---
 
+## 2026-06-21 (suite) — Agent C / Monitoring Proactif Admin — SPEC + PLAN écrits (non implémenté)
+
+### Fait
+- Brainstorm → spec → plan sur branche `feat/agent-c-proactive-monitoring` (`167c21e` spec, `0d7f875` plan). **Pas d'implémentation** (stop sur limite session). Détails : [[project_kayvila_21juin2026_agent_c_proactive]].
+
+### Règles dures apprises
+- **Toujours vérifier ce qui est DÉJÀ livré avant de planifier un prompt Élise** : le prompt demandait "rendre Agent B proactif" alors que l'Agent B proactif est **100% livré + déployé** (owners-digest-context, proactive-notifications, ProactiveNotification.tsx, hook, migration owner_daily_digest, branche cron n8n B). Toute la "priorité 1" était faite. De même la nouvelle soumission villa **emaile déjà l'admin** (`app/api/villa-submissions/route.ts`). Le prompt décrit une intention, pas l'état du repo.
+- **Vercel Cron est déjà la convention de planification du projet** (`vercel.json` : sync/checkin/review) et `verifyApiKey` accepte déjà `CRON_SECRET` (Vercel) en plus de `CRON_API_KEY`. → pour des jobs cron factuels, **préférer Vercel Cron app-side à n8n** : tout in-repo, versionné, testable, pas de dépendance au déploiement n8n d'Élise. Réserver n8n+DeepSeek aux cas qui ont vraiment besoin d'une narration IA (ex. digest proprio chaleureux).
+- **`profiles` n'a AUCUNE date de dernière connexion** : pour "proprio inactif", seule source = `auth.users.last_sign_in_at` via `supabaseAdmin().auth.admin.listUsers()` (paginé) croisé `profiles.role='owner'`. Toujours vérifier le schéma live avant de promettre un détecteur.
+- **Couche email admin déjà typée et centralisée** : `lib/resend.ts` (`getResend`/`RESEND_FROM`/`ADMIN_NOTIFICATION_EMAIL`/`isResendConfigured`) + `lib/emails/send.ts` (senders admin). Réutiliser, ne pas réenvoyer via n8n HTTP.
+- **Pattern détecteur testable** : séparer `decide*(rows, now)` (pur, vitest) de `fetch*(admin)` (réseau) de `route.ts` (coquille auth→helper→email). Email uniquement si signal non vide (jamais de mail "RAS"). Dédup par item via table `proactive_alerts_sent(detector, ref_id, unique)` pour les crons récurrents (toutes les 4h) afin de ne pas re-mailer la même liste.
+- **Consolider les emails** : plusieurs signaux le même jour (lundi) → un seul récap, pas 3-4 mails (UX admin).
+
+---
+
 ## 2026-06-21 (suite) — Agent A « Concierge » (chatbot visiteur) ✅ mergé + déployé (n8n à réimporter par Élise)
 
 ### Fait
