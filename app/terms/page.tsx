@@ -2,7 +2,7 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  LandingHeroCompact,
+  PageHero,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
@@ -42,7 +42,8 @@ export default function TermsPage() {
 
   return (
     <LandingShell>
-      <LandingHeroCompact
+      <PageHero
+        imageSrc="/terms-hero.webp"
         eyebrow="Cadre légal"
         title={"Conditions d'utilisation"}
         subtitle="Modalités d&apos;usage du site et des services Kayvila."

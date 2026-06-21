@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { cookies } from "next/headers";
 import { tServer } from "@/lib/i18n";
 import { VillaWizard } from "@/components/marketing/VillaWizard";
@@ -20,7 +21,11 @@ export default async function SoumettreMaVillaPage() {
   return (
     <main className="min-h-screen bg-offwhite">
       {/* ── Hero strip ── */}
-      <div className="border-b border-black/[0.07] bg-navy px-6 py-16 text-center">
+      <div className="relative border-b border-black/[0.07] bg-navy px-6 py-16 text-center overflow-hidden">
+        <div className="absolute inset-0">
+          <Image src="/soumettre-hero.webp" alt="" fill className="object-cover opacity-35" priority />
+        </div>
+        <div className="relative z-10">
         <span className="mb-4 block text-[10px] font-bold uppercase tracking-[0.4em] text-gold/60">
           Conciergerie propriétaire
         </span>
@@ -30,6 +35,7 @@ export default async function SoumettreMaVillaPage() {
         <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-white/55">
           Un processus simple en 4 étapes. Réponse garantie sous 48 h.
         </p>
+        </div>
       </div>
 
       {/* ── Wizard ── */}

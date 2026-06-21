@@ -24,6 +24,7 @@ export default async function FaqPage() {
   return (
     <LandingShell>
       <PageHero
+        imageSrc="/faq-hero.webp"
         eyebrow="FAQ"
         title={tServer(locale, "faq.title")}
         subtitle={tServer(locale, "faq.subtitle")}
