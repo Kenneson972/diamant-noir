@@ -4,6 +4,7 @@ import { syncAllVillasOTA } from "@/lib/ota-hub";
 import { verifyApiKey } from "@/lib/auth/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { isStaffAdmin } from "@/lib/auth/admin-access";
+import { sendAdminIcalErrorEmail } from "@/lib/emails/admin-proactive";
 
 export const runtime = "nodejs";
 
@@ -53,6 +54,11 @@ export async function GET(request: Request) {
       .flatMap((r) => r.channels)
       .filter((c) => c.error)
       .map((c) => ({ source: c.source, error: c.error }));
+
+    // Email admin pour chaque erreur iCal (fire-and-forget)
+    for (const e of errors.slice(0, 5)) {
+      sendAdminIcalErrorEmail({ villa: e.source, error: e.error ?? "Inconnue" }).catch(() => {});
+    }
 
     return NextResponse.json({
       synced: syncedCount,

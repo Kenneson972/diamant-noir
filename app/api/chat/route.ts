@@ -6,6 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
 import { CONCIERGERIE_FACTS, validateOwnerLead } from "@/lib/chatbot/conciergerie-context";
 import { checkRateLimit, getClientIP } from "@/lib/chatbot/rate-limit";
+import { sendAdminHotLeadEmail } from "@/lib/emails/admin-proactive";
 import type {
   ChatbotRequest,
   ChatbotApiInput,
@@ -105,6 +106,8 @@ async function notifyHotLeadOnce(sessionId: string, summary: string) {
       title: "Lead chaud détecté",
       body: summary.slice(0, 280),
     });
+    // Email admin temps réel (ne pas await pour ne pas ralentir la réponse)
+    sendAdminHotLeadEmail({ summary }).catch((e) => console.warn("[api/chat] hot_lead email", e));
   } catch (e) {
     console.warn("[api/chat] hot_lead notif", e);
   }
