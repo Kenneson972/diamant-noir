@@ -6,17 +6,22 @@ function isoPlusDays(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Ouvre un checkout réel ; skip si aucune villa publiée. Retourne false si skip. */
+// Villa publiée connue (env-overridable). Navigation DIRECTE vers /book : pas de
+// dépendance au scrape de /villas, déterministe même en workers parallèles.
+const TEST_VILLA_ID = process.env.TEST_VILLA_ID || "4ce2e4f4-2101-485c-ba8a-0d76d4dcb99a";
+
+/** Ouvre un checkout réel ; skip si le checkout ne se rend pas. Retourne false si skip. */
 async function gotoCheckout(page: Page): Promise<boolean> {
-  await page.goto("/villas");
-  await page.waitForSelector("a[href*='/villas/']", { timeout: 8000 }).catch(() => null);
-  const href = await page.locator("a[href*='/villas/']").first().getAttribute("href").catch(() => null);
-  const id = href?.match(/\/villas\/([^/?#]+)/)?.[1];
-  if (!id) return false;
-  await page.goto(`/book?villaId=${id}&checkin=${isoPlusDays(30)}&checkout=${isoPlusDays(33)}&guests=2`);
+  await page.goto(
+    `/book?villaId=${TEST_VILLA_ID}&checkin=${isoPlusDays(30)}&checkout=${isoPlusDays(33)}&guests=2`
+  );
   // Le checkbox CGV est rendu deux fois (desktop + mobile sticky). Cibler l'instance visible uniquement.
   const checkbox = page.locator('[data-testid="cgv-checkbox"]:visible');
-  if (!(await checkbox.isVisible().catch(() => false))) return false;
+  const ok = await checkbox
+    .waitFor({ state: "visible", timeout: 20000 })
+    .then(() => true)
+    .catch(() => false);
+  if (!ok) return false;
   // Pré-remplir nom/email si les champs sont présents (utilisateur non connecté)
   const nameInput = page.locator("#guestName");
   if (await nameInput.isVisible().catch(() => false)) {
