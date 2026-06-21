@@ -22,7 +22,6 @@ export function DashboardCopilotChat({
   } = useCopilotContext();
 
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const stickToBottomRef = useRef(true);
@@ -152,8 +151,6 @@ export function DashboardCopilotChat({
                 ))}
               </div>
             )}
-
-            <div ref={messagesEndRef} />
           </div>
         )}
       </div>
