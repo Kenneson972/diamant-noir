@@ -147,9 +147,27 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
             actionResult: data.action_result ?? null,
           };
           setMessages((prev) => [...prev, msg]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `action-err-${Date.now()}`,
+              role: "assistant",
+              content: "L'action n'a pas pu être exécutée. Réessayez.",
+              timestamp: Date.now(),
+            },
+          ]);
         }
       } catch {
-        // best-effort
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `action-err-${Date.now()}`,
+            role: "assistant",
+            content: "L'action n'a pas pu être exécutée. Réessayez.",
+            timestamp: Date.now(),
+          },
+        ]);
       } finally {
         setIsLoading(false);
       }

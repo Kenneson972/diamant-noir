@@ -83,6 +83,7 @@ export async function POST(request: Request) {
     const supabase = await getSupabaseServer();
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
+    if (!token) console.warn("[concierge-admin] token de session vide — admin-context risque d'échouer côté n8n");
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 32_000);

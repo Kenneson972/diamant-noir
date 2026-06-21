@@ -42,7 +42,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
     supabase.from("ota_sync_logs").select("*").order("created_at", { ascending: false }).limit(30),
     supabase.from("reviews").select("*").order("created_at", { ascending: false }).limit(200),
     supabase.from("profiles").select("id,role,full_name,email,phone").order("created_at", { ascending: false }),
-    supabase.from("villa_changes").select("villa_id, owner_id, field, old_value, new_value, changed_at").gte("changed_at", addDays(todayStr, -7)).order("changed_at", { ascending: false }).limit(50),
+    supabase.from("villa_changes").select("villa_id, owner_id, field, old_value, new_value, changed_at").gte("changed_at", sevenDaysAgoStr).order("changed_at", { ascending: false }).limit(50),
   ]);
 
   const villas = villasRes.data ?? [];
@@ -53,7 +53,6 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const otaLogs = otaRes.data ?? [];
   const reviews = reviewsRes.data ?? [];
   const profiles = profilesRes.data ?? [];
-  const changes = changesRes.data ?? [];
 
   const revenueByVilla: Record<string, number> = {};
   const revenueLastMonthByVilla: Record<string, number> = {};
@@ -82,7 +81,7 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
 
   const today = todayStr; // alias pour compatibilité (ctx.today)
   return {
-    villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles, changes,
+    villas, bookings, blocks, tasks, submissions, otaLogs, reviews, profiles,
     recent_villa_changes: changesRes.data ?? [],
     revenueByVilla, revenueLastMonthByVilla, monthlyRevenue,
     today, todayStr, startOfMonthStr, startOfLastMonthStr, endOfLastMonthStr,
