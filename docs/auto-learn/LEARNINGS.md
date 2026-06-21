@@ -2,7 +2,18 @@
 
 ---
 
-## 2026-06-21 (suite) — Agent C / Monitoring Proactif Admin — SPEC + PLAN écrits (non implémenté)
+## 2026-06-21 (suite) — Agent C / Monitoring Proactif Admin — ✅ IMPLÉMENTÉ (executing-plans, 20/20 vitest)
+
+### Fait
+- 8 tâches implémentées en ligne (executing-plans, pas de subagent) : socle dédup+email (3/3) → 4 détecteurs (soumissions>48h, villas fantômes, récap quotidien, récap hebdo CA/anomalie/proprios) → alertes RT hot_lead/ical_error → 4 crons vercel.json. **20/20 vitest, tsc clean.** Branche `feat/agent-c-proactive-monitoring`, 11 commits (3 docs + 8 impl), locale, NON poussée. Reste = migration à appliquer (Supabase MCP déconnecté), finishing branch.
+- Détails : [[project_kayvila_21juin2026_agent_c_proactive]].
+
+### Règles dures apprises (implémentation)
+- **Vitest config = `include: ["lib/**/*.test.ts", "app/**/*.test.ts"]`** — les tests dans `tests/` ne sont PAS ramassés. Placer les tests unitaires à côté des sources (ex. `lib/proactive/ghost-villas.test.ts`).
+- **Pattern détecteur 100% app-side prouvé** : helper pur `decide*(rows, now)` (vitest) + `fetch*(admin)` (réseau) + orchestrateur `run*` (fetch→decide→filterNew→sendEmail→markAlerted) + route.ts coquille `verifyApiKey`/`try/catch`/200. Email uniquement si signal non vide. Zéro n8n.
+- **Email Resend = `getResend().emails.send(...)` via SDK, pas HTTP** — déjà configuré, `RESEND_FROM`/`ADMIN_NOTIFICATION_EMAIL` dans `lib/resend.ts`. Toujours `fire-and-forget` (`.catch()` sans `await`) pour ne pas ralentir l'appelant.
+- **Proprios inactifs = auth.admin API** : `auth.admin.listUsers({page, perPage})` paginé, croisé `profiles.role='owner'`. `last_sign_in_at` null = jamais connecté = inactif. Toujours limiter le nombre de pages (5×100 max ici).
+- **Détecteur récurrent sans dédup = spam** : soumissions>48h (cron 4h) → sans `proactive_alerts_sent`, l'admin recevrait le même email 6×/jour. La table de dédup par `(detector, ref_id)` est le socle.
 
 ### Fait
 - Brainstorm → spec → plan sur branche `feat/agent-c-proactive-monitoring` (`167c21e` spec, `0d7f875` plan). **Pas d'implémentation** (stop sur limite session). Détails : [[project_kayvila_21juin2026_agent_c_proactive]].
