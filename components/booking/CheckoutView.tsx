@@ -12,6 +12,9 @@ import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
 import { CheckoutPriceSummary } from "@/components/booking/CheckoutPriceSummary";
 import type { CheckoutVilla } from "@/components/booking/checkout-types";
+import { LegalModal } from "@/components/legal/LegalModal";
+import { CgvContent } from "@/components/legal/CgvContent";
+import { ConfidentialiteContent } from "@/components/legal/ConfidentialiteContent";
 
 type CheckoutViewProps = {
   villa: CheckoutVilla;
@@ -42,6 +45,8 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
   const [guestEmail, setGuestEmail] = useState("");
   const [guestName, setGuestName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cgvAccepted, setCgvAccepted] = useState(false);
+  const [openLegal, setOpenLegal] = useState<null | "cgv" | "confidentialite">(null);
 
   useEffect(() => {
     const supabase = getSupabaseBrowser();
@@ -109,6 +114,11 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
       return;
     }
 
+    if (!cgvAccepted) {
+      setError("Veuillez accepter les CGV pour continuer");
+      return;
+    }
+
     setCheckoutLoading(true);
     setError(null);
     try {
@@ -123,6 +133,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
           guests: guestsCount,
           guestName: guestName.trim(),
           guestEmail: guestEmail.trim(),
+          cgvAccepted: true,
         }),
       });
       const payload = await response.json();
@@ -146,6 +157,37 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
     totalAmount,
     formatPrice,
   };
+
+  const cgvCheckbox = (
+    <label className="flex cursor-pointer items-start gap-3 text-sm text-navy/70">
+      <input
+        type="checkbox"
+        checked={cgvAccepted}
+        onChange={(e) => setCgvAccepted(e.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 accent-navy"
+        data-testid="cgv-checkbox"
+      />
+      <span>
+        J&apos;ai lu et j&apos;accepte les{" "}
+        <button
+          type="button"
+          onClick={() => setOpenLegal("cgv")}
+          className="text-[#B8860B] underline-offset-2 hover:underline"
+        >
+          Conditions Générales de Vente
+        </button>{" "}
+        et la{" "}
+        <button
+          type="button"
+          onClick={() => setOpenLegal("confidentialite")}
+          className="text-[#B8860B] underline-offset-2 hover:underline"
+        >
+          Politique de confidentialité
+        </button>{" "}
+        de Kayvila Conciergerie.
+      </span>
+    </label>
+  );
 
   return (
     <div className="min-h-dvh bg-offwhite">
@@ -371,6 +413,8 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                 . Redirection vers Stripe pour le règlement.
               </p>
 
+              {cgvCheckbox}
+
               {error ? (
                 <div
                   role="alert"
@@ -410,6 +454,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
             {error}
           </div>
         ) : null}
+        <div className="px-4 pt-3">{cgvCheckbox}</div>
         <div className="flex items-center gap-4 px-4 py-3">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy/40">Total</p>
@@ -432,6 +477,21 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
           .
         </p>
       </div>
+
+      <LegalModal
+        open={openLegal === "cgv"}
+        onClose={() => setOpenLegal(null)}
+        title="Conditions Générales de Vente"
+      >
+        <CgvContent />
+      </LegalModal>
+      <LegalModal
+        open={openLegal === "confidentialite"}
+        onClose={() => setOpenLegal(null)}
+        title="Politique de confidentialité"
+      >
+        <ConfidentialiteContent />
+      </LegalModal>
     </div>
   );
 }

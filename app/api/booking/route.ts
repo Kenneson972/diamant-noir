@@ -9,6 +9,7 @@ import { calculateTransferAmounts } from "@/lib/stripe/connect";
 import { getCommissionRate } from "@/lib/revenue/booking-revenue";
 import { resolveBookingGuestEmail } from "@/lib/booking-tenant";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { CGV_VERSION } from "@/lib/legal";
 
 export const runtime = "nodejs";
 
@@ -274,6 +275,8 @@ export async function POST(request: Request) {
         guest_email: linkedGuestEmail,
         client_user_id: clientUserId,
         guests: guestCount,
+        cgv_accepted_at: new Date().toISOString(),
+        cgv_version: CGV_VERSION,
       })
       .select()
       .single();

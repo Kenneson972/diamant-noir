@@ -6,6 +6,8 @@ import {
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { ConfidentialiteContent } from "@/components/legal/ConfidentialiteContent";
+import { CONFIDENTIALITE_TEXT } from "@/lib/legal";
 
 export const metadata = {
   title: "Politique de confidentialité",
@@ -17,15 +19,7 @@ function ConfidentialiteSimple() {
     <main className="page-px min-h-dvh bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Politique de confidentialité</h1>
-        <p className="mb-6 text-navy/70">
-          Kayvila s&apos;engage à protéger vos données personnelles. Les informations collectées via les
-          formulaires (réservation, contact, soumission villa) sont utilisées uniquement pour traiter vos
-          demandes et améliorer nos services. Nous ne vendons pas vos données à des tiers.
-        </p>
-        <p className="mb-6 text-sm text-navy/80">
-          Conformément au RGPD, vous pouvez demander l&apos;accès, la rectification ou la suppression de vos
-          données en nous contactant.
-        </p>
+        <ConfidentialiteContent />
         <Link href="/contact" className="font-medium text-gold hover:underline">
           Nous contacter
         </Link>
@@ -53,19 +47,12 @@ export default function ConfidentialitePage() {
 
       <LandingSectionNarrow bg="white">
         <LandingBlockTitle eyebrow="Engagement" title="Protection des données" />
-        <p className="text-navy/80 leading-relaxed">
-          Kayvila s&apos;engage à protéger vos données personnelles. Les informations collectées via les
-          formulaires (réservation, contact, soumission villa) sont utilisées uniquement pour traiter vos
-          demandes et améliorer nos services. Nous ne vendons pas vos données à des tiers.
-        </p>
+        <p className="text-navy/80 leading-relaxed">{CONFIDENTIALITE_TEXT.protection}</p>
       </LandingSectionNarrow>
 
       <LandingSectionNarrow bg="offwhite">
         <LandingBlockTitle eyebrow="Vos droits" title="RGPD" />
-        <p className="text-navy/80 leading-relaxed">
-          Conformément au RGPD, vous pouvez demander l&apos;accès, la rectification ou la suppression de vos
-          données en nous contactant.
-        </p>
+        <p className="text-navy/80 leading-relaxed">{CONFIDENTIALITE_TEXT.rgpd}</p>
       </LandingSectionNarrow>
 
       <LandingSectionNarrow bg="white">

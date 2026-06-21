@@ -8,6 +8,7 @@ export const BookingRequestSchema = z.object({
   guestName: z.string().optional(),
   guestEmail: z.string().email("Email invalide").optional().nullable(),
   serviceFeePercent: z.number().min(0).max(100).optional().default(5),
+  cgvAccepted: z.literal(true, { message: "Acceptation des CGV requise" }),
 });
 
 export type BookingRequest = z.infer<typeof BookingRequestSchema>;
