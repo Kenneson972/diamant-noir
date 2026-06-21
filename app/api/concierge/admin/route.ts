@@ -79,11 +79,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ response: "Mode démo : configurez N8N_ADMIN_WEBHOOK_URL.", request_id: "demo" });
     }
 
-    // Token admin pour que l'agent fetch admin-context
+    // Token admin pour que l'agent n8n fetch admin-context.
+    // Priorité au Bearer de la requête (rafraîchi côté client, toujours valide) ;
+    // le token de session cookie peut être périmé en contexte route handler → 401
+    // côté admin-context → le nœud n8n "Fetch Admin Context" throw → 500 → fallback.
+    const authHeader = request.headers.get("authorization") || "";
+    const bearerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
     const supabase = await getSupabaseServer();
     const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token ?? "";
-    if (!token) console.warn("[concierge-admin] token de session vide — admin-context risque d'échouer côté n8n");
+    const token = bearerToken || session?.access_token || "";
+    if (!token) console.warn("[concierge-admin] token vide — admin-context risque d'échouer côté n8n");
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 32_000);
