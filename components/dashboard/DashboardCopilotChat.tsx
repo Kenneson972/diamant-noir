@@ -24,18 +24,33 @@ export function DashboardCopilotChat({
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
+  const hasSentRef = useRef(false);
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll INTERNE au conteneur (jamais window) — n'agit que si l'utilisateur
+  // est déjà collé en bas du chat, pour ne pas faire défiler la page parente.
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const el = messagesContainerRef.current;
+    if (el && stickToBottomRef.current) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages, isLoading, lastActionResult]);
+
+  // Re-focus l'input après la fin du chargement (l'attribut disabled enlève le focus).
+  useEffect(() => {
+    if (!isLoading && hasSentRef.current) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+  }, [isLoading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+    hasSentRef.current = true;
     sendMessage(input);
     setInput("");
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   return (
@@ -65,6 +80,11 @@ export function DashboardCopilotChat({
 
       {/* Messages */}
       <div
+        ref={messagesContainerRef}
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          stickToBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+        }}
         className={`overflow-y-auto px-5 py-4 ${fullHeight ? "flex-1" : ""}`}
         style={fullHeight ? undefined : { maxHeight: 400 }}
       >
