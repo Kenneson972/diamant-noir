@@ -2,7 +2,26 @@
 
 ---
 
-## 2026-06-21 — 3 retours P0 Richard (CGV + hero + chatbot) — ✅ TERMINÉ + mergé local (reste migration + push)
+## 2026-06-21 (suite) — Agent A « Concierge » (chatbot visiteur) ✅ mergé + déployé (n8n à réimporter par Élise)
+
+### Fait
+- Cycle complet brainstorm → spec → plan → **subagent-driven** (4 tâches, chacune reviewée clean, revue finale opus = ready-to-merge). Mergé FF sur main, **poussé, Vercel READY** (`06f88b5`). n8n patché (fichier Downloads + copie repo) **prêt mais pas réimporté** (Élise déploie).
+- T1 migration `human_handoff` (appliquée prod), T2 API `notifyHandoffOnce`, T3 frontend PreBookingCard via `/api/chat/pre-book` + bandeau handoff (3/3 Playwright), T4 n8n persona+9 stages / escalade / mémoire 20.
+
+### Règles dures apprises
+- **TOUJOURS explorer l'existant avant d'exécuter un prompt d'Élise** : le prompt Agent A demandait d'insérer preBooking en base via n8n (section 3) et de "câbler" l'API — mais `/api/chat/route.ts` forwardait DÉJÀ `preBooking`/`ownerLead`/hot-lead, et `/api/chat/pre-book` faisait DÉJÀ insert+villa-publiée+notif-cappée+bookingUrl. La moitié du prompt était déjà codée. Le prompt reflète une intention, pas l'état réel du repo.
+- **Pattern "n8n = cerveau, API = bras"** : ne JAMAIS dupliquer la persistance/notif dans n8n quand une route app la fait déjà. Le frontend, en recevant `preBooking`, POSTe vers `/api/chat/pre-book` (source de vérité du `bookingUrl`) ; n8n ne fait qu'émettre l'intention.
+- **`bookingUrl` vient toujours de la réponse API, jamais reconstruit côté client.**
+- **Aligner les noms de champs sur ce que le consommateur lit déjà** : le prompt émettait `shouldEscalate`, mais `parseN8nResponse` lit `shouldEscalateToHuman` → Parse Response n8n émet `(p.shouldEscalateToHuman ?? p.shouldEscalate)`.
+- **Dette typage à surveiller** : `PreBookingPayload` (types/chatbot.ts) décrit une forme riche `{readyToCreate,missingFields,payload{...}}` alors que le runtime n8n émet du plat `{villaId,email,startDate,endDate,guests,firstName}`. Ça marche car le front lit du JSON non typé, mais le type ment.
+- **Éditer un workflow n8n par script Python à ancres `assert ... in code`** (remplacement de chaînes sur le `jsCode` des nœuds) = fiable et auto-vérifiant ; si une ancre manque → STOP (le JSON a divergé). Ne pas éditer le JSON à la main.
+- **Persona/stages s'injectent dans Build Context AVANT `basePrompt`** (`CONCIERGE + '\n\n' + basePrompt`) ; `basePrompt = ctxItem.systemPrompt` est souvent vide (l'API n'envoie pas de systemPrompt) → sans cet ajout, le bot n'a aucune persona.
+- **Subagent-driven model routing efficace** : haiku pour transcription/migration (code fourni dans le plan), sonnet pour frontend/n8n (intégration/jugement), opus pour la revue finale whole-branch. Toujours spécifier le model explicitement (sinon hérite du plus cher).
+- **Pré-deploy n8n à vérifier** : le modèle `deepseek-v4-pro` est codé dans le JSON d'Élise (node `lmChatDeepSeek`) — vérifier que c'est un model id DeepSeek valide avant import. URL `soumettre-ma-villa` codée en dur dans le prompt (re-patch si elle change).
+
+---
+
+## 2026-06-21 — 3 retours P0 Richard (CGV + hero + chatbot) — ✅ TERMINÉ : migration appliquée + mergé + poussé + Vercel READY (aef7d15)
 
 ### État (branche `fix/richard-p0-cgv-hero-chatbot`, worktree admin-copilot-phase1)
 - **T1 Case CGV : FAIT** (commits `52fdf71` impl, `d981258` locators+a11y, `ab5af2c` tests déterministes). Migration `bookings` (cgv_accepted_at + cgv_version), `lib/legal.ts` source unique, `LegalModal` maison, checkbox bloquante + garde message, Zod `z.literal(true)` serveur. **8/8 Playwright PASS en parallèle ×2.**
