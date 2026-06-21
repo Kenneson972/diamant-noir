@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
 import { isStaffAdmin } from "@/lib/auth/admin-access";
 
 // ─── Token extraction ──────────────────────────────────────────────────────
@@ -15,8 +16,9 @@ export async function getUserFromRequest(request: Request) {
   const token = getBearer(request);
   if (!token) return { user: null };
 
-  const supabase = await getSupabaseServer();
-  const { data, error } = await supabase.auth.getUser(token);
+  // Service-role client : valide un JWT passé explicitement (le client SSR lié
+  // aux cookies ne valide pas correctement un token d'Authorization header).
+  const { data, error } = await supabaseAdmin().auth.getUser(token);
   if (error || !data?.user) return { user: null };
 
   return { user: { id: data.user.id, email: data.user.email } };
@@ -33,7 +35,9 @@ export async function getSessionUser(request: Request): Promise<User | null> {
   const token = getBearer(request);
   if (!token) return null;
 
-  const { data, error } = await supabase.auth.getUser(token);
+  // Service-role client pour valider le Bearer (le client SSR cookie ne valide
+  // pas un JWT passé en argument → 401 sur les fetch client avec Authorization).
+  const { data, error } = await supabaseAdmin().auth.getUser(token);
   if (error || !data?.user) return null;
   return data.user;
 }
