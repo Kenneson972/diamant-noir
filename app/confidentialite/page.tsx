@@ -2,10 +2,10 @@ import Link from "next/link";
 import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
-  PageHero,
   LandingSectionNarrow,
   LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
+import { PageHero } from "@/components/marketing/PageHero";
 
 export const metadata = {
   title: "Politique de confidentialité",
