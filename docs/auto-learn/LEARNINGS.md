@@ -2,16 +2,19 @@
 
 ---
 
-## 2026-06-20 (nuit) — Admin Copilot Phase 1 (EN COURS, pausé T2/9)
+## 2026-06-20 (nuit) — Admin Copilot Phase 1 ✅ (code terminé, T1→T9)
 
 ### État
-- Exécution subagent-driven dans `worktree-admin-copilot-phase1`. T1 (migration) ✅ reviewé, T2 (extract `updateSubmissionStatus`) ⏳ commité non-reviewé (`a1c032c`). Reprendre : reviewer T2 puis T3→T9. Détails complets : ledger `sdd/progress.md` + mémoire globale `project_kayvila_admin_copilot_phase1.md`.
-- ⚠️ Migration `supabase/migrations/20260620_admin_copilot_phase1.sql` à appliquer manuellement (SQL Editor, projet `wsdawdxucyuyopkpgjij`).
+- Exécution subagent-driven dans `worktree-admin-copilot-phase1`. Tâches code T1→T9 terminées + reviewées (ledger `sdd/progress.md`). Migration appliquée ✅ (`villa_changes` + `admin_action_log` + trigger confirmés sur projet `wsdawdxucyuyopkpgjij`).
+- **Reste manuel (outward-facing, non fait par l'agent)** : (1) redéployer le workflow n8n C `7gtgluMV6cft6H7X` avec la clé owner-level (le fichier passe déjà `action_data`, à confirmer en prod) ; (2) merge branche → main + `vercel --prod` ; (3) lancer l'E2E `tests/e2e/admin-copilot.spec.ts` contre l'env déployé + vérifier `villas.price_per_night` MAJ + ligne `admin_action_log` après un Confirmer réel.
 
 ### Règles apprises (dures)
 - **Le pooler Supabase (PgBouncer transaction mode) casse `SET LOCAL` / variables de session PG** : chaque `.from().update()` du client JS part sur une connexion/transaction distincte → un `set_config('app.actor', ...)` posé avant ne survit pas à la requête suivante. Conséquence : impossible de tagger l'auteur d'une modif via une var de session lue par un trigger. Solution retenue : le trigger attribue la modif au `owner_id` de la ligne (les modifs admin sont tracées séparément dans `admin_action_log`).
 - **Le systemPrompt admin déclarait déjà des actions** (`SHOW_STATS/BLOCK_DATE/UPDATE_SUBMISSION_STATUS/...`) mais rien ne les exécutait (route passthrough + Parse Response droppait `action_data`) — même schéma que B. Pour câbler des actions IA : prompt + passthrough n8n `action_data` + handler route, les 3.
 - **Acceptation de soumission = effets de bord** (email Resend + webhook via `PATCH /api/villa-submissions`) → extraire en lib réutilisable (`updateSubmissionStatus`), ne pas dupliquer.
+- **Confirm-before-execute pour toute action ÉCRITURE admin** : l'agent IA ne fait que PROPOSER (`proposed_action`), la route n'exécute qu'après un POST `confirm_action` explicite (clic Confirmer) et logge systématiquement dans `admin_action_log` (succès comme échec de validation). Les actions LECTURE (`SHOW_STATS`/`SHOW_BOOKING`) s'exécutent directement.
+- **Le prompt admin doit enseigner EXACTEMENT les noms d'action + shapes `action_data` que la route parse** (`UPDATE_SUBMISSION_STATUS` + `{submission:{submission_id,status}}`, `SET_PRICE` + `{price:{villa_id,price_per_night}}`, etc.). Un implémenteur qui "réécrit créativement" le bloc RÈGLES (ex. `ACCEPT_SUBMISSION`) casse silencieusement toute la chaîne n8n→route. Coller le bloc verbatim.
+- **Subagent-driven : toujours vérifier la base d'un commit produit par un sous-agent** — un implémenteur a committé sur une base périmée (`9a5852b`) au lieu du HEAD courant → commit danglant hors-branche. La branche n'a pas bougé, récupéré par `git cherry-pick`. Vérifier `git log --oneline -1 <sha>^` après chaque tâche.
 
 ## 2026-06-20 (nuit) — Câblage actions copilot + fix page concierge ✅
 
