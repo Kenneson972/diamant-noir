@@ -530,7 +530,7 @@ function LoginSideVideo() {
           muted
           loop
           playsInline
-          poster="/villa-hero.jpg"
+          preload="auto"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         >
           <source src="/login-side.webm" type="video/webm" />
