@@ -58,16 +58,16 @@ export default function ConciergeriePage() {
 
         <KayvilaTenantWidget title="Nous joindre">
           <div className="divide-y divide-navy/5 -mx-6 -my-5">
-            {CONTACTS.map(({ label, value, sub, href, icon, gold }) => (
+            {CONTACTS.map(({ label, value, sub, href, icon: Icon, gold }) => (
               <a
                 key={label}
                 href={href}
                 className="flex items-center gap-5 px-6 py-5 no-underline transition-colors hover:bg-navy/[0.02] group"
               >
-                {typeof icon === "string" ? (
-                  <KayvilaPngIcon name={icon} size={16} alt="" className={gold ? "shrink-0" : "shrink-0 opacity-25 transition-opacity group-hover:opacity-60"} />
+                {typeof Icon === "string" ? (
+                  <KayvilaPngIcon name={Icon} size={16} alt="" className={gold ? "shrink-0" : "shrink-0 opacity-25 transition-opacity group-hover:opacity-60"} />
                 ) : (
-                  <icon
+                  <Icon
                     size={16}
                     strokeWidth={1.25}
                     className={
