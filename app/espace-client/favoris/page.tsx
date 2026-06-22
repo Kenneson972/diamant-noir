@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Heart, MapPin, ArrowRight } from "lucide-react";
+import { Heart, ArrowRight } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { Spinner } from "@/components/espace-client/tenant-ui";
@@ -101,7 +102,7 @@ export default function FavorisPage() {
                       <h2 className="truncate font-display text-base text-navy">{v.name}</h2>
                       {v.location ? (
                         <p className="mt-0.5 flex items-center gap-1 text-[11px] text-navy/55">
-                          <MapPin size={10} aria-hidden />
+                          <KayvilaPngIcon name="location" size={10} alt="" />
                           {v.location}
                         </p>
                       ) : null}

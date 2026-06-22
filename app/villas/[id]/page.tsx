@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Wifi, Wind, Waves, Flame, TreePine, Car, Utensils, Tv, Shirt, ChefHat, Ship, Heart, UserCheck, Bed, Zap, Dumbbell, Shield, Key, Plane, ShieldCheck, User } from "lucide-react";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 
@@ -152,29 +152,29 @@ const fallbackVilla: VillaDetails = {
   host: null,
 };
 
-const getEquipmentIcon = (label: string) => {
+const getEquipmentIcon = (label: string): KayvilaPngName => {
   const a = label.toLowerCase();
-  if (a.includes("wifi")) return <Wifi size={16} strokeWidth={1} />;
-  if (a.includes("climatisation") || a.includes("clim")) return <Wind size={16} strokeWidth={1} />;
-  if (a.includes("piscine")) return <Waves size={16} strokeWidth={1} />;
-  if (a.includes("jacuzzi")) return <Waves size={16} strokeWidth={1} />;
-  if (a.includes("barbecue") || a.includes("bbq")) return <Flame size={16} strokeWidth={1} />;
-  if (a.includes("jardin") || a.includes("terrasse") || a.includes("extérieur")) return <TreePine size={16} strokeWidth={1} />;
-  if (a.includes("parking") || a.includes("garage")) return <Car size={16} strokeWidth={1} />;
-  if (a.includes("cuisine") || a.includes("réfrigérateur")) return <Utensils size={16} strokeWidth={1} />;
-  if (a.includes("tv") || a.includes("télé") || a.includes("écran")) return <Tv size={16} strokeWidth={1} />;
-  if (a.includes("machine à laver") || a.includes("lave-linge")) return <Shirt size={16} strokeWidth={1} />;
-  if (a.includes("chef") || a.includes("restauration")) return <ChefHat size={16} strokeWidth={1} />;
-  if (a.includes("bateau") || a.includes("nautique") || a.includes("mer") || a.includes("vue") || a.includes("plage")) return <Ship size={16} strokeWidth={1} />;
-  if (a.includes("massage") || a.includes("spa") || a.includes("bien-être")) return <Heart size={16} strokeWidth={1} />;
-  if (a.includes("concierge") || a.includes("accueil") || a.includes("dédié")) return <UserCheck size={16} strokeWidth={1} />;
-  if (a.includes("ménage") || a.includes("draps") || a.includes("serviettes") || a.includes("linge")) return <Bed size={16} strokeWidth={1} />;
-  if (a.includes("borne") || a.includes("ev") || a.includes("électrique")) return <Zap size={16} strokeWidth={1} />;
-  if (a.includes("salle de sport") || a.includes("fitness") || a.includes("gym")) return <Dumbbell size={16} strokeWidth={1} />;
-  if (a.includes("sécurité") || a.includes("alarme") || a.includes("caméra")) return <Shield size={16} strokeWidth={1} />;
-  if (a.includes("clé") || a.includes("autonome") || a.includes("self")) return <Key size={16} strokeWidth={1} />;
-  if (a.includes("transfert") || a.includes("navette") || a.includes("transport")) return <Plane size={16} strokeWidth={1} />;
-  return <Check size={16} strokeWidth={1} />;
+  if (a.includes("wifi")) return "wifi";
+  if (a.includes("climatisation") || a.includes("clim")) return "ac";
+  if (a.includes("piscine")) return "pool";
+  if (a.includes("jacuzzi")) return "pool";
+  if (a.includes("barbecue") || a.includes("bbq")) return "fireplace";
+  if (a.includes("jardin") || a.includes("terrasse") || a.includes("extérieur")) return "tree";
+  if (a.includes("parking") || a.includes("garage")) return "car";
+  if (a.includes("cuisine") || a.includes("réfrigérateur")) return "kitchen";
+  if (a.includes("tv") || a.includes("télé") || a.includes("écran")) return "tv";
+  if (a.includes("machine à laver") || a.includes("lave-linge")) return "wash";
+  if (a.includes("chef") || a.includes("restauration")) return "chef";
+  if (a.includes("bateau") || a.includes("nautique") || a.includes("mer") || a.includes("vue") || a.includes("plage")) return "boat";
+  if (a.includes("massage") || a.includes("spa") || a.includes("bien-être")) return "heart";
+  if (a.includes("concierge") || a.includes("accueil") || a.includes("dédié")) return "users";
+  if (a.includes("ménage") || a.includes("draps") || a.includes("serviettes") || a.includes("linge")) return "bed";
+  if (a.includes("borne") || a.includes("ev") || a.includes("électrique")) return "car";
+  if (a.includes("salle de sport") || a.includes("fitness") || a.includes("gym")) return "gym";
+  if (a.includes("sécurité") || a.includes("alarme") || a.includes("caméra")) return "shield-check";
+  if (a.includes("clé") || a.includes("autonome") || a.includes("self")) return "key";
+  if (a.includes("transfert") || a.includes("navette") || a.includes("transport")) return "plane";
+  return "check-circle";
 };
 
 function EquipmentCategory({ title, items }: { title: string; items: string[] }) {
@@ -185,7 +185,7 @@ function EquipmentCategory({ title, items }: { title: string; items: string[] })
       <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-3">
-            <span className="text-gold">{getEquipmentIcon(item)}</span>
+            <KayvilaPngIcon name={getEquipmentIcon(item)} size={16} alt="" />
             <span className="text-sm text-navy/70">{item}</span>
           </div>
         ))}
@@ -502,7 +502,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <h2 className="font-display font-normal text-2xl text-navy mb-8">{ts(locale, "villa.concierge")}</h2>
               <div className="flex flex-col sm:flex-row gap-6 items-start border border-navy/10 bg-white p-6">
                 <div className="w-16 h-16 shrink-0 bg-gold/20 flex items-center justify-center">
-                  <User size={28} className="text-gold" strokeWidth={1} />
+                  <KayvilaPngIcon name="users" size={28} alt="" />
                 </div>
                 <div>
                   <h3 className="font-display text-xl text-navy mb-1">{ts(locale, "villa.team")}</h3>
@@ -566,11 +566,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                       </div>
                       <div className="sm:w-2/3 space-y-2">
                         <p className="text-navy/70 text-sm flex items-center gap-2">
-                          <Bed size={16} className="text-gold" />
+                          <KayvilaPngIcon name="bed" size={16} alt="" />
                           {room.description || "1 Lit double King Size"}
                         </p>
                         <p className="text-navy/50 text-sm flex items-center gap-2">
-                          <Wind size={16} /> Climatisation
+                          <KayvilaPngIcon name="ac" size={16} alt="" /> Climatisation
                         </p>
                       </div>
                     </div>
@@ -692,7 +692,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               
               <div className="p-8 bg-navy/5 rounded-none border border-navy/15 flex flex-col items-center text-center gap-3">
                 <div className="w-10 h-10 rounded-none bg-gold/20 flex items-center justify-center text-gold">
-                  <ShieldCheck size={20} />
+                  <KayvilaPngIcon name="shield-check" size={20} alt="" />
                 </div>
                 <h4 className="font-display text-lg text-navy">{ts(locale, "villa.excellence")}</h4>
                 <p className="text-xs text-navy/80 leading-relaxed">

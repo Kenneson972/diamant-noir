@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ArrowUp, Sparkles, RotateCcw } from "lucide-react";
+import { ArrowUp, RotateCcw } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useCopilotContext } from "@/components/dashboard/proprio/CopilotContext";
 import { CopilotMessage } from "@/components/dashboard/proprio/CopilotMessage";
 import { CopilotActionCard } from "@/components/dashboard/CopilotActionCard";
@@ -61,7 +62,7 @@ export function DashboardCopilotChat({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-navy/5 px-5 py-3">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-gold" aria-hidden />
+          <KayvilaPngIcon name="sparkle" size={16} alt="" />
           <span className="font-display text-sm font-semibold text-navy">
             Diamant — Votre copilot Kayvila
           </span>
@@ -90,7 +91,7 @@ export function DashboardCopilotChat({
         {messages.length === 1 && messages[0].role === "assistant" ? (
           /* État vide — message d'accueil */
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Sparkles className="mb-3 h-8 w-8 text-gold/40" aria-hidden />
+            <KayvilaPngIcon name="sparkle" size={32} alt="" className="mb-3 opacity-40" />
             <p className="text-[13px] leading-relaxed text-navy/60">
               Bonjour, je suis Diamant, votre copilot Kayvila.
               <br />
@@ -107,7 +108,7 @@ export function DashboardCopilotChat({
             {isLoading && (
               <div className="flex gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-900">
-                  <Sparkles className="h-4 w-4 text-white" aria-hidden />
+                  <KayvilaPngIcon name="sparkle" size={16} alt="" invert />
                 </div>
                 <div className="rounded-bl-sm rounded-xl bg-cream p-3">
                   <div className="flex gap-1.5">

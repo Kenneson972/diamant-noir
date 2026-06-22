@@ -1,10 +1,12 @@
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { KayvilaTenantWidget } from "@/components/ui/pro";
-import { Phone, Mail, Clock, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 
-const CONTACTS = [
+const CONTACTS: { label: string; value: string; sub: string; href: string; icon: LucideIcon | KayvilaPngName; gold: boolean }[] = [
   {
     label: "Urgences 24h/24",
     value: "+596 696 00 00 00",
@@ -18,7 +20,7 @@ const CONTACTS = [
     value: "+596 696 00 00 00",
     sub: "Lun – Sam, 8h – 20h",
     href: "tel:+596696000000",
-    icon: Phone,
+    icon: "phone",
     gold: false,
   },
   {
@@ -26,7 +28,7 @@ const CONTACTS = [
     value: "contact@kayvila.com",
     sub: "Réponse sous 24h",
     href: "mailto:contact@kayvila.com",
-    icon: Mail,
+    icon: "mail",
     gold: false,
   },
 ];
@@ -56,20 +58,24 @@ export default function ConciergeriePage() {
 
         <KayvilaTenantWidget title="Nous joindre">
           <div className="divide-y divide-navy/5 -mx-6 -my-5">
-            {CONTACTS.map(({ label, value, sub, href, icon: Icon, gold }) => (
+            {CONTACTS.map(({ label, value, sub, href, icon, gold }) => (
               <a
                 key={label}
                 href={href}
                 className="flex items-center gap-5 px-6 py-5 no-underline transition-colors hover:bg-navy/[0.02] group"
               >
-                <Icon
-                  size={16}
-                  strokeWidth={1.25}
-                  className={
-                    gold ? "shrink-0 text-gold" : "shrink-0 text-navy/25 transition-colors group-hover:text-gold/60"
-                  }
-                  aria-hidden
-                />
+                {typeof icon === "string" ? (
+                  <KayvilaPngIcon name={icon} size={16} alt="" className={gold ? "shrink-0" : "shrink-0 opacity-25 transition-opacity group-hover:opacity-60"} />
+                ) : (
+                  <icon
+                    size={16}
+                    strokeWidth={1.25}
+                    className={
+                      gold ? "shrink-0 text-gold" : "shrink-0 text-navy/25 transition-colors group-hover:text-gold/60"
+                    }
+                    aria-hidden
+                  />
+                )}
                 <div className="min-w-0 flex-1">
                   <p className={`mb-0.5 text-[9px] font-bold uppercase tracking-[0.28em] ${gold ? "text-gold" : "text-navy/55"}`}>
                     {label}
@@ -84,7 +90,7 @@ export default function ConciergeriePage() {
 
         <KayvilaTenantWidget
           title="Horaires"
-          action={<Clock size={13} strokeWidth={1.25} className="text-navy/25" aria-hidden />}
+          action={<KayvilaPngIcon name="clock" size={13} alt="" className="opacity-25" />}
         >
           <div className="divide-y divide-navy/5">
             {HOURS.map(({ day, hours }) => (

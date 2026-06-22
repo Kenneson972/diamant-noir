@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, TrendingDown, Euro, Clock, BarChart2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import {
   BarChart,
   Bar,
@@ -41,7 +41,7 @@ export function FinancesView({ data }: { data: any }) {
           <p className="text-sm text-white/40">Données en temps réel · compte propriétaire</p>
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-gold/20 bg-gold/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold">
-          <Euro size={14} /> Vue financière
+          <KayvilaPngIcon name="euro" size={14} alt="" /> Vue financière
         </div>
       </div>
 
@@ -63,7 +63,7 @@ export function FinancesView({ data }: { data: any }) {
                     : "bg-rose-400/10 text-rose-400"
                 }`}
               >
-                {delta >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                {delta >= 0 ? <KayvilaPngIcon name="trending-up" size={10} alt="" /> : <KayvilaPngIcon name="trend-down" size={10} alt="" />}
                 {delta > 0 ? "+" : ""}
                 {delta}%
               </span>
@@ -77,7 +77,7 @@ export function FinancesView({ data }: { data: any }) {
         <div className="rounded-3xl border border-amber-400/10 bg-amber-400/5 p-6 transition-all hover:border-amber-400/20">
           <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-amber-400/60">Paiements en attente</p>
           <div className="flex items-center gap-2">
-            <Clock size={18} className="text-amber-400" />
+            <KayvilaPngIcon name="clock" size={18} alt="" />
             <p className="font-display text-2xl text-amber-400">{pendingPayments}</p>
           </div>
         </div>
@@ -87,10 +87,10 @@ export function FinancesView({ data }: { data: any }) {
       {monthlyRevenue.length > 0 && (
         <div className="group relative overflow-hidden rounded-[40px] border border-white/5 bg-[#0D0D14] p-10">
           <div className="absolute right-0 top-0 p-8 opacity-10 transition-opacity group-hover:opacity-20">
-            <BarChart2 size={100} className="text-gold" />
+            <KayvilaPngIcon name="chart" size={100} alt="" className="opacity-10 transition-opacity group-hover:opacity-20" />
           </div>
           <h4 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
-            <TrendingUp size={14} /> Revenus sur 6 mois
+            <KayvilaPngIcon name="trending-up" size={14} alt="" /> Revenus sur 6 mois
           </h4>
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">

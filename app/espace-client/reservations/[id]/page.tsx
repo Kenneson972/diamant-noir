@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { WelcomeBook } from "@/components/espace-client/WelcomeBook";
-import { ArrowLeft, Calendar, MapPin, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import { getRefundAmountCents } from "@/lib/refund-policy";
@@ -222,7 +223,7 @@ export default function ReservationDetailPage() {
           <div className="grid gap-6 text-sm sm:grid-cols-3">
             {/* Dates */}
             <div className="flex items-start gap-3">
-              <Calendar size={14} strokeWidth={1.25} className="mt-0.5 shrink-0 text-gold" />
+              <KayvilaPngIcon name="calendar" size={14} alt="" className="mt-0.5 shrink-0" />
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Dates</p>
                 <p className="text-navy">
@@ -249,7 +250,7 @@ export default function ReservationDetailPage() {
             {/* Location */}
             {villa?.location && (
               <div className="flex items-start gap-3">
-                <MapPin size={14} strokeWidth={1.25} className="mt-0.5 shrink-0 text-gold" />
+                <KayvilaPngIcon name="location" size={14} alt="" className="mt-0.5 shrink-0" />
                 <div>
                   <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
                   <p className="text-navy">{villa.location}</p>

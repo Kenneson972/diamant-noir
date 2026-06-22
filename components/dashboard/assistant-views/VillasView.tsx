@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { MapPin, Users, Star, ArrowRight, LayoutGrid } from "lucide-react";
+import { ArrowRight, LayoutGrid } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export function VillasView({ data }: { data: any }) {
   const villas = data?.rawVillas || [];
@@ -59,11 +60,11 @@ export function VillasView({ data }: { data: any }) {
               
               <div className="flex items-center gap-6 text-xs text-white/40 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <MapPin size={14} className="text-gold" />
+                  <KayvilaPngIcon name="location" size={14} alt="" />
                   {villa.location}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Users size={14} className="text-gold" />
+                  <KayvilaPngIcon name="users" size={14} alt="" />
                   {villa.capacity} voyageurs
                 </div>
                 <div className="flex items-center gap-1.5 text-white/80 font-bold">

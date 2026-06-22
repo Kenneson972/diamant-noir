@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Users, BedDouble, ArrowRight, CalendarDays } from "lucide-react";
+import { BedDouble, ArrowRight } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatPrice } from "@/lib/i18n";
 
 interface VillaProps {
@@ -87,7 +88,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
               <div className="flex flex-wrap items-center gap-2 text-xs text-navy/50">
                 {villa.rating != null ? (
                   <>
-                    <Star size={14} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
+                    <KayvilaPngIcon name="star" size={14} alt="" className="shrink-0" />
                     <span className="font-medium text-navy tabular-nums">
                       {villa.rating.toFixed(2)}
                     </span>
@@ -115,7 +116,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           {/* Date range badge */}
           {dateRange && (
             <div className="flex items-center gap-2 rounded-none border border-gold/20 bg-gold/[0.04] px-4 py-2.5">
-              <CalendarDays size={14} strokeWidth={1.25} className="text-gold shrink-0" aria-hidden />
+              <KayvilaPngIcon name="calendar" size={14} alt="" className="text-gold shrink-0" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/80">
                 {dateRange.fmtCheckin} → {dateRange.fmtCheckout}
               </span>
@@ -133,7 +134,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           {/* Specs */}
           <div className="flex flex-col gap-3 xs:flex-row xs:gap-8 border-y border-black/6 py-5">
             <div className="flex items-center gap-2 text-navy/80">
-              <Users size={18} strokeWidth={1.25} className="text-navy/50" aria-hidden />
+              <KayvilaPngIcon name="users" size={18} alt="" className="opacity-50" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {villa.capacity} voyageurs
               </span>

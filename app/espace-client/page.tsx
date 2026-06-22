@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BookingCard } from "@/components/espace-client/BookingCard";
-import { CalendarX, ArrowRight, MessageCircle, BookOpen } from "lucide-react";
+import { CalendarX, ArrowRight, MessageCircle } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import Link from "next/link";
 import { Skeleton } from "@/components/espace-client/tenant-ui";
@@ -347,10 +348,11 @@ export default function EspaceClientPage() {
             href="/espace-client/profil"
             className="group flex min-h-[88px] items-center gap-4 px-2 py-4 no-underline transition-colors hover:bg-gold/[0.03]"
           >
-            <BookOpen
+            <KayvilaPngIcon
+              name="book"
               size={18}
-              strokeWidth={1}
-              className="shrink-0 text-navy/20 transition-colors group-hover:text-gold/70"
+              alt=""
+              className="shrink-0 opacity-20 transition-opacity group-hover:opacity-70"
               aria-hidden
             />
             <div className="min-w-0 flex-1">

@@ -4,7 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import type { Session } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import { ChevronLeft, Calendar, Users, ShieldCheck, Mail, User } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { calculatePrice } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { KayvilaPressableButton } from "@/components/ui/pro";
@@ -243,7 +244,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
               <div className="divide-y divide-navy/8 border border-navy/10 bg-white">
                 <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
                   <div className="flex items-start gap-4">
-                    <Calendar className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+                    <KayvilaPngIcon name="calendar" size={16} alt="" className="mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
                         Arrivée — Départ
@@ -269,7 +270,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
 
                 <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
                   <div className="flex items-start gap-4">
-                    <Users className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+                    <KayvilaPngIcon name="users" size={16} alt="" className="mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
                         Voyageurs
@@ -311,10 +312,11 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                       Nom complet *
                     </label>
                     <div className="relative">
-                      <User
+                      <KayvilaPngIcon
+                        name="users"
                         size={16}
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/30"
-                        aria-hidden
+                        alt=""
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
                       />
                       <input
                         id="guestName"
@@ -335,10 +337,11 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                       Adresse email *
                     </label>
                     <div className="relative">
-                      <Mail
+                      <KayvilaPngIcon
+                        name="mail"
                         size={16}
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-navy/30"
-                        aria-hidden
+                        alt=""
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
                       />
                       <input
                         id="guestEmail"
@@ -358,7 +361,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
             {/* Annulation */}
             <section className="space-y-4 border-t border-navy/8 pt-10">
               <div className="flex items-start gap-3">
-                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-gold" aria-hidden />
+                <KayvilaPngIcon name="shield-check" size={20} alt="" className="mt-0.5 shrink-0" />
                 <div className="space-y-3">
                   <h2 className="font-display text-xl text-navy">Politique d&apos;annulation Kayvila</h2>
                   <ul className="space-y-2 text-sm leading-relaxed text-navy/65">

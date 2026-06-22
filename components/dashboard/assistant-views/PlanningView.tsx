@@ -1,6 +1,7 @@
 "use client";
 
-import { Calendar, ArrowRight, LogIn, LogOut, Home } from "lucide-react";
+import { ArrowRight, LogIn, LogOut } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type BookingEvent = {
   kind: string;
@@ -51,7 +52,7 @@ export function PlanningView({ data }: { data: any }) {
           <p className="text-sm text-white/40">Check-ins, séjours & départs à venir</p>
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-          <Calendar size={14} /> Semaine glissante
+          <KayvilaPngIcon name="calendar" size={14} alt="" /> Semaine glissante
         </div>
       </div>
 
@@ -75,7 +76,7 @@ export function PlanningView({ data }: { data: any }) {
       {today.length > 0 && (
         <div className="rounded-3xl border border-white/10 bg-[#0D0D14] p-6">
           <h4 className="mb-4 flex items-center gap-2 font-display text-lg text-white">
-            <Calendar className="text-gold" size={18} /> Aujourd&apos;hui
+            <KayvilaPngIcon name="calendar" size={18} alt="" className="text-gold" /> Aujourd&apos;hui
           </h4>
           <ul className="space-y-3">
             {today.map((t, i) => {
@@ -128,7 +129,7 @@ export function PlanningView({ data }: { data: any }) {
 
       {upcoming.length === 0 && today.length === 0 && (
         <div className="rounded-3xl border border-white/5 bg-[#0D0D14] p-10 text-center">
-          <Calendar size={36} className="mx-auto mb-4 text-white/20" />
+          <KayvilaPngIcon name="calendar" size={36} alt="" className="mx-auto mb-4 opacity-20" />
           <p className="text-sm text-white/40">Aucun mouvement prévu dans les 7 prochains jours.</p>
         </div>
       )}

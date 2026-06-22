@@ -1,6 +1,7 @@
 "use client";
 
-import { Calendar as CalendarIcon, Clock, CreditCard, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export function BookingsView({ data }: { data: any }) {
   const bookings = data?.rawBookings || [];
@@ -14,7 +15,7 @@ export function BookingsView({ data }: { data: any }) {
           <p className="text-white/40 text-sm">Gestion des flux clients</p>
         </div>
         <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-gold border border-white/10">
-          <CalendarIcon size={24} />
+          <KayvilaPngIcon name="calendar" size={24} alt="" />
         </div>
       </div>
 
@@ -46,7 +47,7 @@ export function BookingsView({ data }: { data: any }) {
                   </td>
                   <td className="p-6">
                     <div className="flex items-center gap-2 text-white/60 text-sm">
-                      <Clock size={14} className="text-gold" />
+                      <KayvilaPngIcon name="clock" size={14} alt="" />
                       {new Date(b.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} 
                       <ChevronRight size={12} />
                       {new Date(b.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
@@ -56,7 +57,7 @@ export function BookingsView({ data }: { data: any }) {
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
                       b.payment_status === 'paid' ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
                     }`}>
-                      <CreditCard size={10} />
+                      <KayvilaPngIcon name="credit-card" size={10} alt="" />
                       {b.payment_status === 'paid' ? 'Encaissé' : 'Attente'}
                     </span>
                   </td>
