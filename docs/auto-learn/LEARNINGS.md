@@ -683,3 +683,28 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 | 3 | Demandes : tri ASC + accusé Resend | À faire (timeAgo déjà fait) |
 | 4 | Documents Admin : upload PDF + bucket | À faire |
 | 5 | Documents Proprio : liste lecture seule | À faire |
+
+---
+
+## 2026-06-21 (soir) — Session DeepSeek + Supabase MCP reconnecté
+
+### Fait
+- **Agent C pushé** : les 9 commits Agent C (`8496f6c`→`7eb8f0a`) étaient restés en local depuis la session du 21 juin (Supabase MCP déconnecté). Pushés sur `origin/main` + Vercel déployé.
+- **Migration `proactive_alerts_sent`** appliquée sur Supabase prod (wsdawdxucyuyopkpgjij) via MCP reconnecté.
+- **RLS `n8n_chat_histories`** activé — bloque tout accès client, n8n continue via `service_role` (bypass RLS).
+- **Crons migrés Vercel → pg_cron Supabase** : 7 jobs (`sync-ical`, `send-checkin-reminders`, `send-review-requests`, `pending-submissions`, `admin-daily-recap`, `admin-weekly-recap`, `ghost-villas`) via `pg_cron` + `pg_net` → `GET /api/cron/*` (Vercel). `CRON_API_KEY` dans Supabase Vault + Vercel env vars. Test E2E `succeeded`.
+- **Hero MP4 iOS Safari** : conversion `hero.webm→hero.mp4` (H.264/AAC), ajout `<source>` MP4 avant WebM dans `HeroBackgroundMedia.tsx`.
+- **Infos juridiques** : JSON-LD homepage + Mentions légales mis à jour avec SIREN 106394489, SIRET, TVA FR32106394489, capital 1000€, RCS Fort-de-France, adresse Palmène Saint-Esprit, gérant Richard GELARD-THOMACHOT.
+- **Commit final** : `fix(hero): ajout fallback MP4` + `fix(cron): pending-submissions */4h→quotidien` + migration pg_cron + nettoyage vercel.json + fix légal. Total : 5 nouveaux commits sur main.
+
+### Détails
+- [[project_kayvila_21juin2026_agent_c_proactive]] — mis à jour avec statut final.
+
+### Règles dures apprises
+- **DeepSeek supporte les MCP** — contrairement à ce qu'on pensait, les MCP tournent en local via Claude Code et sont accessibles à tous les modèles. Le Supabase MCP a fonctionné sans problème sous DeepSeek.
+- **Vercel Hobby = 1 cron/jour max** — `0 */4 * * *` (toutes les 4h) est rejeté. Alternative gratuite : `pg_cron` Supabase + `pg_net` → API routes Vercel. Pattern : `cron.schedule('name', '0 */4 * * *', $$ SELECT net.http_post(url:='...', headers:='...'::jsonb, body:='{}'::jsonb) $$)`.
+- **pg_cron + pg_net = Vercel Cron killer gratuit** : activer les extensions (`CREATE EXTENSION`), stocker la clé API dans Vault, créer les jobs avec `net.http_post`. Vérifier avec `cron.job` et `cron.job_run_details`. Test E2E : `cron.schedule('test', '*/1 * * * *', ...)` puis `cron.unschedule('test')`.
+- **iOS Safari ne décode pas WebM** — toujours fournir un fallback MP4 (H.264 + AAC, `ffmpeg -i input.webm -c:v libx264 -c:a aac -movflags +faststart output.mp4`). Mettre la source MP4 en premier, le navigateur prend le premier format supporté.
+- **`vault.create_secret(valeur, nom, description)`** — l'ordre des paramètres est valeur d'abord, puis nom. Pas l'inverse.
+- **`cron.job_run_details` utilise `jobid` (FK integer), pas `jobname`** — joindre avec `cron.job` pour avoir le nom lisible.
+- **Vérifier `origin/main` avant d'affirmer qu'un push a été fait** — les 9 commits Agent C étaient listés dans `git log` local (merged via branche supprimée) mais jamais poussés. Utiliser `git log origin/main` pour confirmer.
