@@ -77,20 +77,25 @@ async function fetchVillas(): Promise<{
 const LOCAL_BUSINESS_JSONLD = {
   "@context": "https://schema.org",
   "@type": ["LocalBusiness", "TravelAgency"],
-  "name": "Kayvila",
-  "description": "Conciergerie de villas de luxe en Martinique",
+  "name": "Kayvila Conciergerie",
+  "description": "Conciergerie de villas de luxe en Martinique — accueil voyageurs, entretien, ménage, piscine, jardin, création et optimisation d'annonces, photos, revenue management",
   "url": "https://kayvila.com",
-  "telephone": "+596 596 00 00 00",
+  "telephone": "+596 696 00 00 00",
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "Martinique",
+    "streetAddress": "Quartier Palmène",
+    "addressLocality": "Saint-Esprit",
+    "postalCode": "97270",
     "addressCountry": "MQ",
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": 14.6415,
-    "longitude": -61.0242,
+    "latitude": 14.5531,
+    "longitude": -60.9219,
   },
+  "vatID": "FR32106394489",
+  "taxID": "FR32106394489",
+  "foundingDate": "2026-06-19",
 };
 
 export default async function HomePage() {
