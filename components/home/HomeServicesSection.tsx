@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -204,6 +205,12 @@ export function HomeServicesSection() {
                   {/* Texte — en dessous sur mobile, moitié droite desktop */}
                   <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-6 sm:py-8 md:px-10 md:py-12 lg:px-14">
                     <div className="mb-3 flex items-center gap-3 md:mb-4">
+                      <KayvilaPngIcon
+                        name={`pilier-${service.id}` as KayvilaPngName}
+                        size={36}
+                        alt=""
+                        className="shrink-0"
+                      />
                       <span
                         aria-hidden
                         className="font-display text-[11px] font-bold tracking-[0.15em] text-gold/50"
