@@ -54,13 +54,13 @@ export function EditorialServiceGrid({
         ) : null}
         <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 lg:gap-x-12">
-          {items.map(({ icon, label }, index) => (
+          {items.map(({ icon: Icon, label }, index) => (
             <ScrollReveal key={label} delay={index * 80}>
             <div className="flex flex-col items-start border-t border-navy/10 pt-8">
-              {typeof icon === "string" ? (
-                <KayvilaPngIcon name={icon} size={28} alt="" />
+              {typeof Icon === "string" ? (
+                <KayvilaPngIcon name={Icon} size={28} alt="" />
               ) : (
-                <icon className="h-7 w-7 text-gold" strokeWidth={1} aria-hidden />
+                <Icon className="h-7 w-7 text-gold" strokeWidth={1} aria-hidden />
               )}
               <span className="mt-5 text-[10px] font-bold uppercase tracking-[0.22em] text-navy leading-snug">
                 {label}
