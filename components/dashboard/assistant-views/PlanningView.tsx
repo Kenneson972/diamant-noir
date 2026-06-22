@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, LogIn, LogOut } from "lucide-react";
+import { ArrowRight, LogIn, LogOut, Home } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type BookingEvent = {
