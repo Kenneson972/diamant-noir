@@ -19,16 +19,9 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Clock,
-  Shield,
-  Star,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS, type ScrollSection } from "@/data/prestations-scroll-sections";
 import {
   LandingShell,
@@ -62,10 +55,10 @@ function scrollSectionVerticalClasses(v: ScrollSection["vertical"] | undefined) 
 
 // ─── Données page (hub — détail : /prestations/services/[slug]) ───────────────
 
-const REASSURANCES: { icon: LucideIcon; text: string }[] = [
-  { icon: Shield, text: "Pas d'exclusivité obligatoire" },
-  { icon: Clock, text: "Réponse sous 48h garantie" },
-  { icon: Star, text: "Estimation gratuite et sans engagement" },
+const REASSURANCES: { icon: KayvilaPngName; text: string }[] = [
+  { icon: "shield-check", text: "Pas d'exclusivité obligatoire" },
+  { icon: "clock", text: "Réponse sous 48h garantie" },
+  { icon: "star", text: "Estimation gratuite et sans engagement" },
 ];
 
 const FAQ_ITEMS: { q: string; a: string }[] = [
@@ -742,9 +735,9 @@ export default function PrestationsPageClient() {
                   avec exigence — et transformez votre villa en une expérience mémorable.
                 </p>
                 <ul className="space-y-4">
-                  {REASSURANCES.map(({ icon: Icon, text }) => (
+                  {REASSURANCES.map(({ icon, text }) => (
                     <li key={text} className="flex items-center gap-4">
-                      <Icon size={18} strokeWidth={1.25} className="shrink-0 text-gold" aria-hidden />
+                      <KayvilaPngIcon name={icon} size={22} alt="" className="shrink-0" />
                       <span className="text-[13px] font-semibold text-navy/75">{text}</span>
                     </li>
                   ))}

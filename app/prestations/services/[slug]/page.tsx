@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Home, Landmark, MessageCircle, Sparkles, TrendingUp, type LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
   LandingSection,
@@ -15,12 +16,12 @@ import {
   type ServiceSlug,
 } from "@/data/prestations-service-details";
 
-const SERVICE_ICONS: Record<ServiceSlug, LucideIcon> = {
-  marketing: TrendingUp,
-  operations: Home,
-  voyageurs: MessageCircle,
-  menage: Sparkles,
-  finance: Landmark,
+const SERVICE_ICONS: Record<ServiceSlug, KayvilaPngName> = {
+  marketing: "pilier-marketing",
+  operations: "pilier-operations",
+  voyageurs: "pilier-voyageurs",
+  menage: "pilier-menage",
+  finance: "pilier-finance",
 };
 
 const SERVICE_CONTEXT: Record<ServiceSlug, { intro: string }> = {
@@ -79,7 +80,7 @@ export default async function PrestationServicePage({
   if (!isServiceSlug(slug)) notFound();
 
   const d = SERVICE_DETAILS[slug];
-  const Icon = SERVICE_ICONS[slug];
+  const iconName = SERVICE_ICONS[slug];
   const ctx = SERVICE_CONTEXT[slug];
 
   return (
@@ -122,7 +123,7 @@ export default async function PrestationServicePage({
         <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-10 md:px-12 md:pb-14">
           <div className="mx-auto max-w-5xl">
             <div className="mb-3 flex items-center gap-2.5">
-              <Icon size={13} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
+              <KayvilaPngIcon name={iconName} size={20} invert alt="" className="shrink-0" />
               <p className="text-[9px] font-bold uppercase tracking-[0.48em] text-gold/90">
                 {d.eyebrow}
               </p>
