@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 
 
 /** Bloc éditorial centré — gros intertitre + textes (section « La conciergerie autrement ») */
@@ -32,7 +33,7 @@ export function EditorialIntro({
   );
 }
 
-/** Grille de services type « best-sellers » — icône + label court */
+/** Grille de services type « best-sellers » — icône Lucide ou PNG Kayvila + label court */
 export function EditorialServiceGrid({
   eyebrow,
   title,
@@ -42,7 +43,7 @@ export function EditorialServiceGrid({
   eyebrow: string;
   title: string;
   subtitle?: string;
-  items: { icon: LucideIcon; label: string }[];
+  items: { icon: LucideIcon | KayvilaPngName; label: string }[];
 }) {
   return (
     <section className="bg-offwhite px-5 py-20 sm:px-6 md:py-28 lg:py-32">
@@ -53,10 +54,14 @@ export function EditorialServiceGrid({
         ) : null}
         <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 lg:gap-x-12">
-          {items.map(({ icon: Icon, label }, index) => (
+          {items.map(({ icon, label }, index) => (
             <ScrollReveal key={label} delay={index * 80}>
             <div className="flex flex-col items-start border-t border-navy/10 pt-8">
-              <Icon className="h-7 w-7 text-gold" strokeWidth={1} aria-hidden />
+              {typeof icon === "string" ? (
+                <KayvilaPngIcon name={icon} size={28} alt="" />
+              ) : (
+                <icon className="h-7 w-7 text-gold" strokeWidth={1} aria-hidden />
+              )}
               <span className="mt-5 text-[10px] font-bold uppercase tracking-[0.22em] text-navy leading-snug">
                 {label}
               </span>

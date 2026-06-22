@@ -202,7 +202,7 @@ export default async function PrestationServicePage({
             <div className="mt-8 space-y-6 text-[13px] leading-relaxed text-navy/80">
               {d.items.map(({ title: iTitle, desc }) => (
                 <div key={iTitle} className="flex items-start gap-3">
-                  <span className="mt-[5px] block h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden />
+                  <KayvilaPngIcon name="check-circle" size={20} alt="" className="mt-[1px] shrink-0" />
                   <div>
                     <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-navy">
                       {iTitle}

@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { Car, UtensilsCrossed, Anchor, ShoppingBag, Sparkles, Calendar, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-const SERVICES = [
-  { icon: Car, label: "Transferts & accueil" },
-  { icon: UtensilsCrossed, label: "Chef & art de la table" },
-  { icon: Anchor, label: "Nautisme & escapades" },
-  { icon: ShoppingBag, label: "Courses & bienvenue" },
-  { icon: Sparkles, label: "Entretien & linge" },
-  { icon: Calendar, label: "Pilotage des séjours" },
-] as const;
+const SERVICES: { icon: KayvilaPngName; label: string }[] = [
+  { icon: "car", label: "Transferts & accueil" },
+  { icon: "chef", label: "Chef & art de la table" },
+  { icon: "anchor", label: "Nautisme & escapades" },
+  { icon: "shopping-bag", label: "Courses & bienvenue" },
+  { icon: "sparkle", label: "Entretien & linge" },
+  { icon: "calendar", label: "Pilotage des séjours" },
+];
 
 export function HomeConciergeHighlight() {
   return (
@@ -31,14 +32,14 @@ export function HomeConciergeHighlight() {
         </ScrollReveal>
 
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:gap-8">
-          {SERVICES.map(({ icon: Icon, label }, i) => (
+          {SERVICES.map(({ icon, label }, i) => (
             <ScrollReveal key={label} delay={i * 60}>
               <div className="flex items-start gap-4">
-                <Icon
+                <KayvilaPngIcon
+                  name={icon}
                   size={20}
-                  strokeWidth={1.25}
-                  className="mt-0.5 shrink-0 text-navy/30"
-                  aria-hidden
+                  alt=""
+                  className="mt-0.5 shrink-0 opacity-30"
                 />
                 <span className="text-[13px] leading-snug text-navy/70">{label}</span>
               </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ArrowRight, Compass, Gem, Heart, MapPin, Shield, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import type { KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
   LandingSection,
@@ -26,14 +27,14 @@ export const metadata = {
   },
 };
 
-const ADN = [
-  { icon: Shield, label: "Exigence & discrétion" },
-  { icon: Gem, label: "Patrimoine & valeur" },
-  { icon: MapPin, label: "Ancrage martiniquais" },
-  { icon: Compass, label: "Ouverture sur l'île" },
-  { icon: Sparkles, label: "Détail & finition" },
-  { icon: Heart, label: "Confiance & relation" },
-] as const;
+const ADN: { icon: KayvilaPngName; label: string }[] = [
+  { icon: "shield-check", label: "Exigence & discrétion" },
+  { icon: "gem", label: "Patrimoine & valeur" },
+  { icon: "location", label: "Ancrage martiniquais" },
+  { icon: "compass", label: "Ouverture sur l'île" },
+  { icon: "sparkle", label: "Détail & finition" },
+  { icon: "heart", label: "Confiance & relation" },
+];
 
 export default async function QuiSommesNousPage() {
   const cookieStore = await cookies();
