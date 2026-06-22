@@ -56,7 +56,7 @@ test.describe("@live-stripe Flow complet Stripe test", () => {
     await page.waitForURL("**/success?session_id=*", { timeout: 30000 });
 
     // 9. Verifier confirmation
-    await expect(page.locator("text=Reservation confirmee")).toBeVisible({
+    await expect(page.locator("text=Réservation confirmée")).toBeVisible({
       timeout: 10000,
     });
   });
