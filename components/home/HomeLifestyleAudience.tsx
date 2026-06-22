@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, ShieldCheck } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export function HomeLifestyleAudience() {
   return (
@@ -25,14 +25,14 @@ export function HomeLifestyleAudience() {
           <div className="grid gap-12 sm:grid-cols-2">
             <ScrollReveal delay={0}>
               <div className="space-y-4">
-                <ShieldCheck className="text-white opacity-40" size={24} strokeWidth={1} />
+                <KayvilaPngIcon name="shield-check" size={32} invert className="opacity-50" />
                 <h3 className="font-bold">Confidentialité Totale</h3>
                 <p className="text-sm text-white/40">Accès privés et discrétion absolue pour votre sérénité.</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={150}>
               <div className="space-y-4">
-                <Calendar className="text-white opacity-40" size={24} strokeWidth={1} />
+                <KayvilaPngIcon name="calendar" size={32} invert className="opacity-50" />
                 <h3 className="font-bold">Services Sur-Mesure</h3>
                 <p className="text-sm text-white/40">Chefs, chauffeurs et excursions privées à la demande.</p>
               </div>

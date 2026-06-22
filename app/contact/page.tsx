@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MessageCircle, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
   LandingSection,
@@ -154,7 +155,7 @@ export default function ContactPage() {
               id="faq"
               className="mb-3 flex items-center gap-3 font-display text-2xl text-navy md:text-3xl"
             >
-              <MessageCircle size={26} strokeWidth={1} className="shrink-0 text-gold" aria-hidden />
+              <KayvilaPngIcon name="message" size={28} alt="" className="shrink-0" />
               Questions fréquentes
             </h2>
             <span className="mb-10 block h-px w-12 bg-gold" aria-hidden />
@@ -186,7 +187,7 @@ export default function ContactPage() {
               ))}
             </div>
             <p className="mt-8 flex items-start gap-2 text-sm text-navy/80">
-              <Mail size={18} strokeWidth={1} className="mt-0.5 shrink-0 text-gold" aria-hidden />
+              <KayvilaPngIcon name="mail" size={20} alt="" className="mt-0.5 shrink-0" />
               Le chatbot Kayvila répond aussi 24/7 depuis le coin inférieur droit.
             </p>
           </div>
