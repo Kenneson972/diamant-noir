@@ -15,7 +15,19 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "chromium",
+      name: "mocked",
+      testMatch: [
+        "tests/stripe-checkout-mocked.spec.ts",
+        "tests/cgv-checkout.spec.ts",
+        "tests/booking.spec.ts",
+      ],
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "live-stripe",
+      testMatch: ["tests/stripe-checkout-live.spec.ts"],
+      retries: 1,
+      timeout: 60000,
       use: { ...devices["Desktop Chrome"] },
     },
   ],
