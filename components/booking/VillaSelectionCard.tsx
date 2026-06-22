@@ -88,7 +88,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
               <div className="flex flex-wrap items-center gap-2 text-xs text-navy/50">
                 {villa.rating != null ? (
                   <>
-                    <KayvilaPngIcon name="star" size={14} alt="" className="shrink-0" />
+                    <KayvilaPngIcon name="star" size={18} alt="" className="shrink-0" />
                     <span className="font-medium text-navy tabular-nums">
                       {villa.rating.toFixed(2)}
                     </span>
@@ -116,7 +116,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           {/* Date range badge */}
           {dateRange && (
             <div className="flex items-center gap-2 rounded-none border border-gold/20 bg-gold/[0.04] px-4 py-2.5">
-              <KayvilaPngIcon name="calendar" size={14} alt="" className="text-gold shrink-0" />
+              <KayvilaPngIcon name="calendar" size={18} alt="" className="text-gold shrink-0" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy/80">
                 {dateRange.fmtCheckin} → {dateRange.fmtCheckout}
               </span>

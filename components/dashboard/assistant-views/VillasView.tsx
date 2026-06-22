@@ -60,11 +60,11 @@ export function VillasView({ data }: { data: any }) {
               
               <div className="flex items-center gap-6 text-xs text-white/40 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <KayvilaPngIcon name="location" size={14} alt="" />
+                  <KayvilaPngIcon name="location" size={18} alt="" />
                   {villa.location}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <KayvilaPngIcon name="users" size={14} alt="" />
+                  <KayvilaPngIcon name="users" size={18} alt="" />
                   {villa.capacity} voyageurs
                 </div>
                 <div className="flex items-center gap-1.5 text-white/80 font-bold">

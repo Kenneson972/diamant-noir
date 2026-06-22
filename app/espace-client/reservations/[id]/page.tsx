@@ -223,7 +223,7 @@ export default function ReservationDetailPage() {
           <div className="grid gap-6 text-sm sm:grid-cols-3">
             {/* Dates */}
             <div className="flex items-start gap-3">
-              <KayvilaPngIcon name="calendar" size={14} alt="" className="mt-0.5 shrink-0" />
+              <KayvilaPngIcon name="calendar" size={18} alt="" className="mt-0.5 shrink-0" />
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Dates</p>
                 <p className="text-navy">
@@ -250,7 +250,7 @@ export default function ReservationDetailPage() {
             {/* Location */}
             {villa?.location && (
               <div className="flex items-start gap-3">
-                <KayvilaPngIcon name="location" size={14} alt="" className="mt-0.5 shrink-0" />
+                <KayvilaPngIcon name="location" size={18} alt="" className="mt-0.5 shrink-0" />
                 <div>
                   <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
                   <p className="text-navy">{villa.location}</p>

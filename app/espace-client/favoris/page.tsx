@@ -102,7 +102,7 @@ export default function FavorisPage() {
                       <h2 className="truncate font-display text-base text-navy">{v.name}</h2>
                       {v.location ? (
                         <p className="mt-0.5 flex items-center gap-1 text-[11px] text-navy/55">
-                          <KayvilaPngIcon name="location" size={10} alt="" />
+                          <KayvilaPngIcon name="location" size={16} alt="" />
                           {v.location}
                         </p>
                       ) : null}

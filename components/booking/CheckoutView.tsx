@@ -244,7 +244,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
               <div className="divide-y divide-navy/8 border border-navy/10 bg-white">
                 <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
                   <div className="flex items-start gap-4">
-                    <KayvilaPngIcon name="calendar" size={16} alt="" className="mt-0.5 shrink-0" />
+                    <KayvilaPngIcon name="calendar" size={20} alt="" className="mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
                         Arrivée — Départ
@@ -270,7 +270,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
 
                 <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
                   <div className="flex items-start gap-4">
-                    <KayvilaPngIcon name="users" size={16} alt="" className="mt-0.5 shrink-0" />
+                    <KayvilaPngIcon name="users" size={20} alt="" className="mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
                         Voyageurs
@@ -314,7 +314,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                     <div className="relative">
                       <KayvilaPngIcon
                         name="users"
-                        size={16}
+                        size={20}
                         alt=""
                         className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
                       />
@@ -339,7 +339,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                     <div className="relative">
                       <KayvilaPngIcon
                         name="mail"
-                        size={16}
+                        size={20}
                         alt=""
                         className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
                       />

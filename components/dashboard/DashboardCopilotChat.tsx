@@ -62,7 +62,7 @@ export function DashboardCopilotChat({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-navy/5 px-5 py-3">
         <div className="flex items-center gap-2">
-          <KayvilaPngIcon name="sparkle" size={16} alt="" />
+          <KayvilaPngIcon name="sparkle" size={20} alt="" />
           <span className="font-display text-sm font-semibold text-navy">
             Diamant — Votre copilot Kayvila
           </span>

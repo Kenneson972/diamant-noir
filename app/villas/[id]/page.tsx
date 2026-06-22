@@ -185,7 +185,7 @@ function EquipmentCategory({ title, items }: { title: string; items: string[] })
       <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-3">
-            <KayvilaPngIcon name={getEquipmentIcon(item)} size={16} alt="" />
+            <KayvilaPngIcon name={getEquipmentIcon(item)} size={20} alt="" />
             <span className="text-sm text-navy/70">{item}</span>
           </div>
         ))}
@@ -566,11 +566,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                       </div>
                       <div className="sm:w-2/3 space-y-2">
                         <p className="text-navy/70 text-sm flex items-center gap-2">
-                          <KayvilaPngIcon name="bed" size={16} alt="" />
+                          <KayvilaPngIcon name="bed" size={20} alt="" />
                           {room.description || "1 Lit double King Size"}
                         </p>
                         <p className="text-navy/50 text-sm flex items-center gap-2">
-                          <KayvilaPngIcon name="ac" size={16} alt="" /> Climatisation
+                          <KayvilaPngIcon name="ac" size={20} alt="" /> Climatisation
                         </p>
                       </div>
                     </div>
