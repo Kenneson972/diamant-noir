@@ -2,6 +2,28 @@
 
 ---
 
+## 2026-06-21 (nuit) — Intégration pack d'icônes PNG Kayvila (Higgsfield)
+
+### Fait
+- 26 icônes PNG monoline copiées/renommées kebab-case dans `public/brand/icons-png/` (les `hf_*.png` bruts ignorés).
+- Composant `components/icons/KayvilaPngIcon.tsx` (next/image, lazy-load, prop `invert` pour fond sombre). ⚠️ La map fournie dans le prompt user avait une typo (`"key":"key"ssage"`) — reconstruite proprement.
+- **5 surfaces branchées + déployées** : homepage 5 cartes piliers (`pilier-*` @36), contact (`message`/`mail`), prestations réassurances (`shield-check`/`clock`/`star` @22), hero détail service (`pilier-*` @20 invert), check-in locataire (`clock`/`location`/`phone`).
+- **Audit complet écrit** : `docs/audit-icones-png-kayvila.md` — liste tous les emplacements à pousser + icônes manquantes à générer.
+
+### Règles dures apprises
+- **PNG raster ~1024px = net à ≥16px, flou en dessous.** Garder lucide (vecteur) pour les icônes <14px (tableaux, mini-chips, puces). Seuil de bascule = ~16px.
+- **Fond sombre → prop `invert`** (icône noire → blanche). Fond clair → telle quelle. Sur accent or existant, le PNG noir perd le doré — décision user : OK pour passer au noir.
+- **Le pack de 26 icônes couvre ~18 concepts** → beaucoup de clusters mélangent des icônes non-couvertes (Wifi, équipements villa, Bot, Gem, Compass, TrendingUp, Car…). Pour un cluster mixte : soit tout lucide (cohérence), soit faire évoluer le composant pour accepter `KayvilaPngName | LucideIcon`.
+- **Garder lucide pour les contrôles UI** : chevrons, X, burger, loaders, flèches de nav, Heart interactif (état rempli/vide), Eye/EyeOff toggle.
+- **Composant partagé qui rend des icônes** (`EditorialServiceGrid`, `SERVICE_ICONS`, `REASSURANCES`) : changer le type de données (`LucideIcon` → `KayvilaPngName`) + le rendu en une fois, vérifier qu'aucune ref lucide ne devient morte (sinon lint casse).
+- **Build local cassé (préexistant)** : `npm run build` crashe `TypeError: Cannot read properties of undefined (reading 'length')` AVANT compilation, même sur HEAD vierge. Vercel build OK. → valider via `tsc --noEmit` + déploiement Vercel, pas via build local.
+- **RTK proxy mange `grep -hn` et le résumé lint** : pour du grep brut multi-fichiers, passer par `rtk proxy grep`/`rtk proxy rg`. Pour voir une vraie erreur lint, lancer `rtk proxy npx eslint <fichiers>`.
+
+### Reste (prochaine session — voir `docs/audit-icones-png-kayvila.md`)
+- Générer le pack d'icônes manquantes (équipements villa + concepts gem/compass/anchor/bot…) via Higgsfield, mêmes specs (monoline noir, fond transparent, ~1024px).
+- Brancher : banc ADN « à propos » (28px, cité par Kenneson), puces « Ce que nous incluons » des 5 pages piliers → `check-circle`, fiche villa équipements, espace client + dashboard assistant-views.
+- Kenneson a trouvé le rendu « timide » : pousser plus loin une fois les icônes manquantes générées.
+
 ## 2026-06-21 (suite) — Agent C / Monitoring Proactif Admin — ✅ IMPLÉMENTÉ (executing-plans, 20/20 vitest)
 
 ### Fait
