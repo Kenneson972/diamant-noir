@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string; size?: number }>> = {
   LayoutDashboard, CalendarDays, UserCircle,
   DollarSign, Settings, Zap, Inbox, LayoutGrid,
   FileText, ClipboardList, BarChart3, Gift,
@@ -32,11 +32,11 @@ function SidebarIcon({ name, className }: { name: string; className?: string }) 
   };
   const pngName = pngIconMap[name];
   if (pngName) {
-    return <KayvilaPngIcon name={pngName as any} size={24} alt="" invert className={className} />;
+    return <KayvilaPngIcon name={pngName as any} size={28} alt="" invert className={className} />;
   }
   const LucideComponent = ICON_MAP[name] ?? LayoutDashboard;
   return LucideComponent ? (
-    <LucideComponent className={className} />
+    <LucideComponent size={26} className={className} />
   ) : null;
 }
 
