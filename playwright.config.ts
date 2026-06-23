@@ -30,5 +30,11 @@ export default defineConfig({
       timeout: 60000,
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "audit",
+      testMatch: ["tests/audit-icons.spec.ts"],
+      timeout: 120000,
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
 });
