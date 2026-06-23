@@ -72,7 +72,7 @@ function renderIcon(icon: string) {
   };
   const pngName = pngIcons[icon];
   if (pngName) {
-    return <KayvilaPngIcon name={pngName as any} size={14} alt="" className="shrink-0" />;
+    return <KayvilaPngIcon name={pngName as any} size={18} alt="" className="shrink-0" />;
   }
   return null;
 }
@@ -191,7 +191,7 @@ export default async function AdminSoumissionsPage() {
                       {delai && <InfoBadge icon="clock" value={`Délai : ${delai}`} />}
                       {s.airbnb_url && (
                         <a href={s.airbnb_url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-xs text-gold hover:underline">
-                          <KayvilaPngIcon name="star" size={14} alt="" /> Lien Airbnb ↗
+                          <KayvilaPngIcon name="star" size={18} alt="" /> Lien Airbnb ↗
                         </a>
                       )}
                       {s.platforms && typeof s.platforms === "object" && (
@@ -233,7 +233,7 @@ export default async function AdminSoumissionsPage() {
                   <div className="border-t border-navy/5 px-6 py-3">
                     {s.message && (
                       <p className="text-sm text-navy/60 italic">
-                        <KayvilaPngIcon name="message" size={14} alt="" className="inline mr-1" />
+                        <KayvilaPngIcon name="message" size={18} alt="" className="inline mr-1" />
                         « {s.message} »
                       </p>
                     )}

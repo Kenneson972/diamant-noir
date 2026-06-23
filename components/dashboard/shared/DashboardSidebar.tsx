@@ -32,7 +32,7 @@ function SidebarIcon({ name, className }: { name: string; className?: string }) 
   };
   const pngName = pngIconMap[name];
   if (pngName) {
-    return <KayvilaPngIcon name={pngName as any} size={20} alt="" className={className} />;
+    return <KayvilaPngIcon name={pngName as any} size={24} alt="" invert className={className} />;
   }
   const LucideComponent = ICON_MAP[name] ?? LayoutDashboard;
   return LucideComponent ? (

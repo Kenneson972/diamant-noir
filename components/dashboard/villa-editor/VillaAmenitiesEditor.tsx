@@ -21,7 +21,7 @@ export function AmenityImportTag({ className = "" }: { className?: string }) {
     <span
       className={`inline-flex items-center gap-0.5 rounded-md bg-emerald-600/12 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-800 ${className}`}
     >
-      <KayvilaPngIcon name="sparkle" size={14} alt="" />
+      <KayvilaPngIcon name="sparkle" size={18} alt="" />
       Import
     </span>
   );
@@ -82,7 +82,7 @@ export function VillaAmenitiesEditor({
                     : "border-border-subtle text-muted hover:border-navy-900/20 hover:text-navy-900/80"
                 }`}
               >
-                {isActive && <KayvilaPngIcon name="check-circle" size={14} alt="" />}
+                {isActive && <KayvilaPngIcon name="check-circle" size={18} alt="" />}
                 {label}
                 {isImported && <AmenityImportTag />}
               </button>

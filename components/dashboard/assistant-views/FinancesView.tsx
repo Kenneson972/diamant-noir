@@ -63,7 +63,7 @@ export function FinancesView({ data }: { data: any }) {
                     : "bg-rose-400/10 text-rose-400"
                 }`}
               >
-                {delta >= 0 ? <KayvilaPngIcon name="trending-up" size={16} alt="" /> : <KayvilaPngIcon name="trend-down" size={16} alt="" />}
+                {delta >= 0 ? <KayvilaPngIcon name="trending-up" size={20} alt="" /> : <KayvilaPngIcon name="trend-down" size={20} alt="" />}
                 {delta > 0 ? "+" : ""}
                 {delta}%
               </span>

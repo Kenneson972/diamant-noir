@@ -157,7 +157,7 @@ export function VillaBookingsRegistry({
                         booking.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                       }`}
                     >
-                      <KayvilaPngIcon name="credit-card" size={14} alt="" />
+                      <KayvilaPngIcon name="credit-card" size={18} alt="" />
                       {booking.payment_status === "paid" ? "Payé" : "À payer"}
                     </span>
                   </td>

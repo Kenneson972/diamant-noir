@@ -57,7 +57,7 @@ export function BookingsView({ data }: { data: any }) {
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[8px] font-bold uppercase tracking-widest ${
                       b.payment_status === 'paid' ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
                     }`}>
-                      <KayvilaPngIcon name="credit-card" size={14} alt="" />
+                      <KayvilaPngIcon name="credit-card" size={18} alt="" />
                       {b.payment_status === 'paid' ? 'Encaissé' : 'Attente'}
                     </span>
                   </td>

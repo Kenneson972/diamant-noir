@@ -345,7 +345,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                             )}
                             {notif.metadata?.ai_recommendation === "auto_review" && (
                               <span className="flex items-center gap-0.5 text-[10px] text-green-600">
-                                <KayvilaPngIcon name="sparkle" size={14} alt="" /> Dossier fort
+                                <KayvilaPngIcon name="sparkle" size={18} alt="" /> Dossier fort
                               </span>
                             )}
                           </div>
