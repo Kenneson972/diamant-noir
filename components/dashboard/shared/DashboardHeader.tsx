@@ -3,6 +3,24 @@
 import { useMemo } from "react";
 import { Menu } from "lucide-react";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import type { SidebarMenuItem } from "./DashboardSidebar";
+
+function findBreadcrumb(
+  menu: SidebarMenuItem[],
+  pathname: string
+): { parent?: string; current: string } | null {
+  for (const item of menu) {
+    if (item.children?.length) {
+      const child = item.children.find((c) => pathname.startsWith(c.href));
+      if (child) return { parent: item.label, current: child.label };
+    }
+    const match = item.exact
+      ? pathname === item.href
+      : item.href !== "#" && pathname.startsWith(item.href);
+    if (match) return { current: item.label };
+  }
+  return null;
+}
 
 interface DashboardHeaderProps {
   roleLabel: string;
@@ -10,6 +28,8 @@ interface DashboardHeaderProps {
   onToggleSidebar: () => void;
   userId?: string;
   role?: "admin" | "owner" | "tenant";
+  menu?: SidebarMenuItem[];
+  pathname?: string;
 }
 
 export function DashboardHeader({
@@ -18,15 +38,19 @@ export function DashboardHeader({
   onToggleSidebar,
   userId,
   role,
+  menu = [],
+  pathname = "",
 }: DashboardHeaderProps) {
-  const today = useMemo(() => {
-    return new Date().toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }, []);
+  const today = useMemo(
+    () =>
+      new Date().toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+    []
+  );
 
   const isoDate = useMemo(
     () => new Date().toISOString().split("T")[0] ?? "",
@@ -34,6 +58,11 @@ export function DashboardHeader({
   );
 
   const initial = (displayName[0] ?? "?").toUpperCase();
+
+  const breadcrumb = useMemo(
+    () => findBreadcrumb(menu, pathname),
+    [menu, pathname]
+  );
 
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-navy/[0.08] bg-white/95 px-4 backdrop-blur-md md:h-[4.25rem] md:px-8">
@@ -50,11 +79,24 @@ export function DashboardHeader({
           <p className="font-display-dashboard text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
             {roleLabel}
           </p>
-          <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">
-            Kayvila
-          </p>
+          {breadcrumb ? (
+            <p className="hidden min-w-0 items-baseline gap-1.5 font-display-dashboard text-sm text-navy/50 md:flex">
+              {breadcrumb.parent && (
+                <>
+                  <span>{breadcrumb.parent}</span>
+                  <span className="text-navy/30">/</span>
+                </>
+              )}
+              <span className="font-semibold text-navy">{breadcrumb.current}</span>
+            </p>
+          ) : (
+            <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">
+              Kayvila
+            </p>
+          )}
         </div>
       </div>
+
       <div className="flex items-center gap-3 md:gap-5">
         <time
           dateTime={isoDate}
