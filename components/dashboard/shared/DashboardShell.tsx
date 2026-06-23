@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,8 @@ import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { AdminCommandPalette } from "@/components/dashboard/admin/AdminCommandPalette";
 import type { SidebarMenuItem } from "./DashboardSidebar";
+
+const SIDEBAR_STORAGE_KEY = "kayvila-sidebar-collapsed";
 
 interface DashboardShellProps {
   role: "admin" | "owner" | "tenant";
@@ -23,9 +25,24 @@ export function DashboardShell({
   children,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const { user, signOut } = useAuth();
+
+  // Init depuis localStorage (SSR-safe : useEffect uniquement côté client)
+  useEffect(() => {
+    const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+    if (saved === "true") setCollapsed(true);
+  }, []);
+
+  const handleToggleCollapsed = () => {
+    setCollapsed((v) => {
+      const next = !v;
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next));
+      return next;
+    });
+  };
 
   const displayName =
     user?.user_metadata?.full_name ?? user?.email ?? roleLabel;
@@ -35,8 +52,6 @@ export function DashboardShell({
     await signOut();
     router.push("/");
   };
-
-  const fullBleed = false;
 
   return (
     <>
@@ -58,23 +73,27 @@ export function DashboardShell({
           onSignOut={handleSignOut}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          collapsed={collapsed}
+          onToggleCollapsed={handleToggleCollapsed}
         />
-        <div className="flex min-h-dvh flex-col md:pl-64">
+        <div
+          className={cn(
+            "flex min-h-dvh flex-col transition-[padding] duration-300",
+            collapsed ? "md:pl-16" : "md:pl-64"
+          )}
+        >
           <DashboardHeader
             roleLabel={roleLabel}
             displayName={displayName}
             onToggleSidebar={() => setSidebarOpen((v) => !v)}
             userId={user?.id}
             role={role}
+            menu={menu}
+            pathname={pathname}
           />
           <main
             id={`${role}-main`}
-            className={cn(
-              "flex-1",
-              fullBleed
-                ? "h-[calc(100dvh-4rem)] overflow-y-auto p-0 md:h-[calc(100dvh-4.25rem)]"
-                : "px-4 py-6 md:px-8 md:py-8"
-            )}
+            className="flex-1 px-4 py-6 md:px-8 md:py-8"
           >
             {children}
           </main>
