@@ -45,6 +45,9 @@ export interface SidebarMenuItem {
   href: string;
   icon: string;
   exact?: boolean;
+  badge?: number;        // count live, masqué si 0
+  group?: string;        // heading de section (ex. "GESTION")
+  children?: SidebarMenuItem[];  // sous-items, niveau 1 uniquement
 }
 
 interface DashboardSidebarProps {
