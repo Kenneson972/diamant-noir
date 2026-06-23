@@ -5,6 +5,7 @@ import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItem
 import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 import { OwnerContactFAB } from "@/components/dashboard/proprio/OwnerContactFAB";
+import type { SidebarMenuItem } from "@/components/dashboard/shared/DashboardSidebar";
 
 export const metadata = {
   title: "Tableau de bord propriétaire",
@@ -43,29 +44,49 @@ export default async function ProprioDashboardLayout({
     user.user_metadata?.role as string | undefined,
     user.email
   );
-
-  if (adminUser) {
-    redirect("/admin");
-  }
+  if (adminUser) redirect("/admin");
 
   const ownerUser = isOwnerRole(
     profile?.role,
     user.user_metadata?.role as string | undefined
   );
+  if (!ownerUser) redirect("/espace-client");
 
-  if (!ownerUser) {
-    redirect("/espace-client");
-  }
+  // Fetch badge counts
+  const ownerVillaIds = (ownerVillas ?? []).map((v) => v.id);
+
+  const [reservations, taches] =
+    ownerVillaIds.length > 0
+      ? await Promise.all([
+          supabase
+            .from("bookings")
+            .select("id", { count: "exact", head: true })
+            .in("villa_id", ownerVillaIds)
+            .eq("status", "pending"),
+          supabase
+            .from("tasks")
+            .select("id", { count: "exact", head: true })
+            .in("villa_id", ownerVillaIds)
+            .neq("status", "done"),
+        ])
+      : ([{ count: 0 }, { count: 0 }] as const);
+
+  const badgeMap: Record<string, number> = {
+    "/dashboard/reservations": reservations.count ?? 0,
+    "/dashboard/taches": taches.count ?? 0,
+  };
+
+  const menuWithBadges: SidebarMenuItem[] = proprioMenuItems.map((item) => ({
+    ...item,
+    badge: badgeMap[item.href] ?? item.badge,
+  }));
 
   return (
     <CopilotProvider>
-      <DashboardShell role="owner" roleLabel="Propriétaire" menu={proprioMenuItems}>
+      <DashboardShell role="owner" roleLabel="Propriétaire" menu={menuWithBadges}>
         {children}
       </DashboardShell>
-      <OwnerContactFAB
-        ownerId={user.id}
-        villas={ownerVillas ?? []}
-      />
+      <OwnerContactFAB ownerId={user.id} villas={ownerVillas ?? []} />
     </CopilotProvider>
   );
 }
