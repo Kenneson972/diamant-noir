@@ -45,6 +45,23 @@ function MentionsLegalesSimple() {
           Toute reproduction sans autorisation préalable est interdite.
         </p>
 
+        <h2 className="mb-2 mt-6 font-display text-lg text-navy">Médiation de la consommation</h2>
+        <p className="mb-1 text-navy/70">
+          Conformément aux dispositions du Code de la consommation concernant le processus de médiation
+          des litiges de la consommation, après nous avoir sollicités et à défaut de réponse vous
+          satisfaisant, vous avez la possibilité de recourir gratuitement à une procédure de médiation
+          de la consommation auprès de :
+        </p>
+        <p className="mb-1 text-navy/70 font-medium">CM2C</p>
+        <p className="mb-1 text-navy/70">49 rue de Ponthieu — 75 008 PARIS</p>
+        <p className="mb-1 text-navy/70">
+          Tél : 01 89 47 00 14 — Site :{' '}
+          <a href="https://www.cm2c.net/declarer-un-litige.php" className="text-gold underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+            www.cm2c.net
+          </a>
+        </p>
+        <p className="mb-6 text-navy/70">Email : litiges@cm2c.net</p>
+
         <Link href="/contact" className="font-medium text-gold hover:underline">
           Nous contacter
         </Link>
@@ -108,6 +125,25 @@ export default function MentionsLegalesPage() {
           de Kayvila ou de ses partenaires et est protégé par le droit d&apos;auteur. Toute reproduction sans
           autorisation préalable est interdite.
         </p>
+      </LandingSectionNarrow>
+
+      <LandingSectionNarrow bg="white">
+        <LandingBlockTitle eyebrow="Litiges" title="Médiation de la consommation" />
+        <p className="mb-1 text-navy/80 leading-relaxed">
+          Conformément aux dispositions du Code de la consommation concernant le processus de médiation
+          des litiges de la consommation, après nous avoir sollicités et à défaut de réponse vous
+          satisfaisant, vous avez la possibilité de recourir gratuitement à une procédure de médiation
+          de la consommation auprès de :
+        </p>
+        <p className="mb-1 text-navy/80 leading-relaxed font-medium">CM2C</p>
+        <p className="mb-1 text-navy/80 leading-relaxed">49 rue de Ponthieu — 75 008 PARIS</p>
+        <p className="mb-1 text-navy/80 leading-relaxed">
+          Tél : 01 89 47 00 14 — Site :{' '}
+          <a href="https://www.cm2c.net/declarer-un-litige.php" className="text-gold underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+            www.cm2c.net
+          </a>
+        </p>
+        <p className="text-navy/80 leading-relaxed">Email : litiges@cm2c.net</p>
       </LandingSectionNarrow>
 
       <LandingSectionNarrow bg="offwhite">

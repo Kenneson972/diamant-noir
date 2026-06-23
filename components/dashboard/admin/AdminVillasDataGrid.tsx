@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
@@ -35,6 +35,49 @@ function formatRevenue(amount: number): string {
 
 export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
   const [drawerVilla, setDrawerVilla] = useState<{ id: string; name: string } | null>(null);
+  const scrollWrapperRef = useRef<HTMLDivElement>(null);
+  const [showScrollGradient, setShowScrollGradient] = useState(false);
+
+  // --- Horizontal scroll overflow indicator ---
+  useEffect(() => {
+    const wrapper = scrollWrapperRef.current;
+    if (!wrapper) return;
+
+    let cleanup: (() => void) | undefined;
+
+    // KayvilaDataGrid renders its own internal scrollable element.
+    // Wait for it, then attach scroll + resize listeners.
+    const timeout = setTimeout(() => {
+      const scroller = wrapper.querySelector<HTMLElement>(
+        '[style*="overflow"]',
+      );
+      if (!scroller) return;
+
+      const update = () => {
+        const hasOverflow = scroller.scrollWidth > scroller.clientWidth;
+        const atEnd =
+          scroller.scrollLeft + scroller.clientWidth >=
+          scroller.scrollWidth - 1;
+        setShowScrollGradient(hasOverflow && !atEnd);
+      };
+
+      update();
+      scroller.addEventListener("scroll", update, { passive: true });
+
+      const ro = new ResizeObserver(update);
+      ro.observe(scroller);
+
+      cleanup = () => {
+        scroller.removeEventListener("scroll", update);
+        ro.disconnect();
+      };
+    }, 150);
+
+    return () => {
+      clearTimeout(timeout);
+      cleanup?.();
+    };
+  }, []);
 
   const columns: DataGridColumn<AdminVillaRow>[] = [
     {
@@ -198,13 +241,18 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
 
   return (
     <>
-      <KayvilaDataGrid
-        aria-label="Catalogue des villas"
-        columns={columns}
-        data={rows}
-        getRowId={(item) => item.id}
-        rowHeight={216}
-      />
+      <div ref={scrollWrapperRef} className="relative">
+        <KayvilaDataGrid
+          aria-label="Catalogue des villas"
+          columns={columns}
+          data={rows}
+          getRowId={(item) => item.id}
+          rowHeight={216}
+        />
+        {showScrollGradient && (
+          <div aria-hidden className="gradient-mask-right" />
+        )}
+      </div>
       {drawerVilla ? (
         <VillaPastBookingsDrawer
           villaId={drawerVilla.id}

@@ -180,6 +180,18 @@
   .font-sans {
     font-family: var(--font-instrument-sans), system-ui, sans-serif;
   }
+
+  /* Horizontal scroll indicator — gradient overlay on the right edge */
+  .gradient-mask-right {
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3rem;
+    background-image: linear-gradient(to right, transparent, white);
+    transition: opacity 300ms;
+  }
 }
 
 /* HeroUI tokens — palette Kayvila (gold / navy) */
