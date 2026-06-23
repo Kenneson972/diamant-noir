@@ -6,7 +6,7 @@
 
 **Branche :** `fix/audit-batch-juin` (depuis `main` @ `5f6ecbd`) — **MERGÉE sur main** (PR #2).
 **Spec :** `docs/superpowers/specs/2026-06-16-correction-audit-batch-design.md`
-**Périmètre :** 135 items (2 audits) — `docs/audit-kayvila-complet-2026-06-16.md` (69 UX) + `docs/audit-securite-perf-seo-2026-06-16.md` (66 sec/perf/SEO).
+**Périmètre :** 135 items (2 audits) — `docs/audits/audit-kayvila-complet-2026-06-16.md` (69 UX) + `docs/audits/audit-securite-perf-seo-2026-06-16.md` (66 sec/perf/SEO).
 **Stratégie :** risque d'abord · 10 lots · hybride (Opus P0 / subagents Sonnet-Haiku polish) · 1 commit/lot · gate `next build` + mobile + vitest(lib).
 
 ---

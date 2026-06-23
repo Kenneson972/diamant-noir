@@ -706,3 +706,12 @@ verify: vérification effectuée
 - **why**: Dossier client éparpillé (~5 Go dont worktrees/foreign projects) ; une seule source doc dans diamant-noir/docs
 - **impact**: Repo git allégé ; workspace DIAMANTNOIR trié (code vs assets vs agent config)
 - **verify**: git status ; worktrees conservés (node_modules/.next purgés localement)
+
+### 2026-06-23 — Worktrees mergés + audits docs + règle PHP obsolète
+
+- **type**: docs | config
+- **summary**: Suppression worktrees mergés (admin-copilot, proactive-agent-b) ; 10 audits déplacés vers `docs/audits/` ; suppression `.cursor/rules/kb-backend.mdc` (PHP legacy)
+- **files**: `docs/audits/*`, `docs/auto-learn/LEARNINGS.md`, `docs/recaps/RECAP_2026-06-22.md`, `.cursor/rules/kb-backend.mdc` (workspace)
+- **why**: Worktrees mergés = ~1 Go libéré ; centraliser audits ; kb-backend remplacé par pack client-builder Supabase/API
+- **impact**: Worktree actif restant : `feat/owner-availability-blocking` (non mergé, 5 commits)
+- **verify**: `git worktree list` ; docs/ racine sans fichiers audit-* loose

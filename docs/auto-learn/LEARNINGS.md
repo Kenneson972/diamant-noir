@@ -8,7 +8,7 @@
 - 26 icônes PNG monoline copiées/renommées kebab-case dans `public/brand/icons-png/` (les `hf_*.png` bruts ignorés).
 - Composant `components/icons/KayvilaPngIcon.tsx` (next/image, lazy-load, prop `invert` pour fond sombre). ⚠️ La map fournie dans le prompt user avait une typo (`"key":"key"ssage"`) — reconstruite proprement.
 - **5 surfaces branchées + déployées** : homepage 5 cartes piliers (`pilier-*` @36), contact (`message`/`mail`), prestations réassurances (`shield-check`/`clock`/`star` @22), hero détail service (`pilier-*` @20 invert), check-in locataire (`clock`/`location`/`phone`).
-- **Audit complet écrit** : `docs/audit-icones-png-kayvila.md` — liste tous les emplacements à pousser + icônes manquantes à générer.
+- **Audit complet écrit** : `docs/audits/audit-icones-png-kayvila.md` — liste tous les emplacements à pousser + icônes manquantes à générer.
 
 ### Règles dures apprises
 - **PNG raster ~1024px = net à ≥16px, flou en dessous.** Garder lucide (vecteur) pour les icônes <14px (tableaux, mini-chips, puces). Seuil de bascule = ~16px.
@@ -19,7 +19,7 @@
 - **Build local cassé (préexistant)** : `npm run build` crashe `TypeError: Cannot read properties of undefined (reading 'length')` AVANT compilation, même sur HEAD vierge. Vercel build OK. → valider via `tsc --noEmit` + déploiement Vercel, pas via build local.
 - **RTK proxy mange `grep -hn` et le résumé lint** : pour du grep brut multi-fichiers, passer par `rtk proxy grep`/`rtk proxy rg`. Pour voir une vraie erreur lint, lancer `rtk proxy npx eslint <fichiers>`.
 
-### Reste (prochaine session — voir `docs/audit-icones-png-kayvila.md`)
+### Reste (prochaine session — voir `docs/audits/audit-icones-png-kayvila.md`)
 - Générer le pack d'icônes manquantes (équipements villa + concepts gem/compass/anchor/bot…) via Higgsfield, mêmes specs (monoline noir, fond transparent, ~1024px).
 - Brancher : banc ADN « à propos » (28px, cité par Kenneson), puces « Ce que nous incluons » des 5 pages piliers → `check-circle`, fiche villa équipements, espace client + dashboard assistant-views.
 - Kenneson a trouvé le rendu « timide » : pousser plus loin une fois les icônes manquantes générées.
@@ -554,7 +554,7 @@ Mint token : `POST https://wsdawdxucyuyopkpgjij.supabase.co/auth/v1/token?grant_
   2. HeroUI RangeCalendar remplace HeroDatePicker.tsx (368 lignes custom → ~70 lignes HeroUI v3). Popover.Content pour bottom sheet mobile.
   3. Messagerie proprio pleine hauteur : `h-[500px]` → `min-h-[calc(100dvh-12rem)]`, `max-w-3xl` → `max-w-5xl`
   4. `VillaImageManager` ajouté au formulaire création villa (déjà dans l'édition)
-- **Audit Élise** : `docs/audit-kayvila-complet-2026-06-16.md` — 69 bugs classés (11 🔴, 28 🟠🟡, 14 🟢, 16 HeroUI)
+- **Audit Élise** : `docs/audits/audit-kayvila-complet-2026-06-16.md` — 69 bugs classés (11 🔴, 28 🟠🟡, 14 🟢, 16 HeroUI)
 - **Agents IA** : Phase 1 + correctifs mergés, Phase 2 n8n v3 mergés, workflows Kayvibot v4 créés (CieloBot 0 outil)
 
 ### Règles apprises
