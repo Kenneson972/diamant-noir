@@ -443,6 +443,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         capacity={villa.capacity}
         checkInTime={villa.check_in_time || "17:00"}
         checkOutTime={villa.check_out_time || "10:00"}
+        seasonalPrices={seasonalPrices}
       >
       <div className="mx-auto max-w-7xl px-6 pb-28 pt-8">
         <div className="grid gap-12 lg:grid-cols-[1fr_380px] items-start">

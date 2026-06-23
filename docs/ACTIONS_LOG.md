@@ -652,3 +652,48 @@ verify: vérification effectuée
 - **why**: Traçabilité handoff Elise — clarifier que CRON_SECRET longue existait, bug était code pre-37f4891
 - **impact**: Équipe / QA ont une source unique pour J-10 sans re-auditer
 - **verify**: fichiers commités sur main
+
+### 2026-06-23 — Pricing calendar HeroUI (fiche villa)
+
+- **type**: ui
+- **summary**: Calendrier dispo avec prix/nuit par cellule (inspiré 21st, implémenté en HeroUI `RangeCalendar`) ; 2 mois desktop ; tarifs saisonniers en gold depuis `seasonal_rates`.
+- **files**: `lib/calendar/pricing-utils.ts`, `components/booking/{PricingCalendarCell,AvailabilityCalendar}.tsx`, `components/villas/VillaBookingWrapper.tsx`, `app/villas/[id]/page.tsx`
+- **why**: UX booking premium sans installer Ark UI / shadcn depuis 21st.dev
+- **impact**: Voyageur voit le prix par nuit avant de sélectionner ; cohérence charte navy/gold
+- **verify**: lint OK ; `npm run build` échoue sur erreur Next préexistante (`undefined.length`)
+
+### 2026-06-23 — Inspirations 21st → composants Kayvila (lot 2)
+
+- **type**: ui
+- **summary**: Carousel images sur `VillaListingCard` (HeroUI Pro) ; section piliers homepage migrée vers Embla ; hub tuiles espace client (6 accès PNG).
+- **files**: `lib/villa-image.ts`, `components/villas/{VillaCardImageCarousel,VillaListingCard}.tsx`, `components/home/HomeServicesSection.tsx`, `components/espace-client/TenantQuickLinks.tsx`
+- **why**: Look premium 21st sans nouvelle stack UI
+- **impact**: Galerie swipe sur catalogue ; carrousel piliers plus fluide ; navigation client plus claire
+- **verify**: lint OK, tsc OK sur fichiers modifiés
+
+### 2026-06-23 — Spec + plan dashboard upgrade HeroUI Pro
+
+- **type**: docs
+- **summary**: Design validé (option C) et plan d’implémentation 8 tasks pour overviews admin/proprio — KPI group sparkline/progress, Timeline Pro, alertes actionnables ; espace client phase 2.
+- **files**: `docs/superpowers/specs/2026-06-23-dashboard-upgrade-heroui-design.md`, `docs/superpowers/plans/2026-06-23-dashboard-upgrade-heroui.md`
+- **why**: Formaliser le brainstorm dashboard avant code ; HeroUI Pro MCP + 21st inspiration only
+- **impact**: Implémentation guidée lot par lot sans shadcn ni migration DB
+- **verify**: spec + plan self-review OK
+
+### 2026-06-23 — Dashboard upgrade HeroUI Pro (implémentation lots 1–6)
+
+- **type**: ui
+- **summary**: KPI group sparkline/progress, widgets shared (timeline Kayvila, alertes, occupation), overviews admin/proprio unifiés ; copilot proprio repliable ; aria-current sidebar
+- **files**: `lib/dashboard/sparkline.ts`, `components/dashboard/shared/*`, `KpiCard.tsx`, `KpiRow.tsx`, `kpi-icons.ts`, `app/(admin)/admin/page.tsx`, `app/(proprio)/dashboard/page.tsx`, `DashboardPageClient.tsx`, `DashboardSidebar.tsx`
+- **why**: Option C polish + efficacité ops phase 1
+- **impact**: KPIs cliquables, 4 KPIs proprio, timeline/alertes cohérentes ; Timeline Pro indispo en beta → timeline Kayvila native
+- **verify**: `npx tsc --noEmit` OK sur fichiers dashboard (erreurs pré-existantes ailleurs)
+
+### 2026-06-23 — Maj HeroUI Pro beta.6 + OSS 3.2.1
+
+- **type**: config
+- **summary**: Upgrade `@heroui-pro/react@1.0.0-beta.6`, `@heroui/react` + `@heroui/styles@3.2.1` ; install peers TipTap (rich-text-editor barrel beta.6) ; `DashboardTimeline` migré vers `@heroui-pro/react/timeline` ; retrait `@ts-expect-error` calendriers (types 3.2.1 OK)
+- **files**: `package.json`, `package-lock.json`, `components/dashboard/shared/dashboard-timeline.tsx`, `AvailabilityCalendar.tsx`, `HeroDateRangePicker.tsx`
+- **why**: beta.6 shippe Timeline en subpath ; aligner stack HeroUI
+- **impact**: Timeline Pro disponible ; build webpack OK (TipTap) ; `npm run build` échoue encore sur erreur Next pré-existante `undefined.length`
+- **verify**: `npm ls` versions OK ; tsc OK fichiers touchés ; build compile jusqu'à crash connu

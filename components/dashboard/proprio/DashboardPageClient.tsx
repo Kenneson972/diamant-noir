@@ -1,12 +1,16 @@
 "use client";
 
 import type { Villa, BookingStatus } from "@/types/domain";
-import { KpiRow, type KpiItem } from "@/components/dashboard/proprio/KpiRow";
+import { DashboardKpiGroup } from "@/components/dashboard/shared/dashboard-kpi-group";
+import type { KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { DashboardCopilotChat } from "@/components/dashboard/DashboardCopilotChat";
 import { ProactiveNotification } from "@/components/dashboard/ProactiveNotification";
 import { StripeConnectButton } from "@/components/dashboard/proprio/StripeConnectButton";
-import { TodayTimeline } from "@/components/dashboard/proprio/TodayTimeline";
-import { AlertsWidget } from "@/components/dashboard/proprio/AlertsWidget";
+import { DashboardWidget } from "@/components/dashboard/shared/dashboard-widget";
+import { DashboardTimeline } from "@/components/dashboard/shared/dashboard-timeline";
+import type { DashboardTimelineItem } from "@/components/dashboard/shared/dashboard-timeline";
+import { DashboardAlertList } from "@/components/dashboard/shared/dashboard-alert-list";
+import type { DashboardAlert } from "@/components/dashboard/shared/dashboard-alert-list";
 import { UpcomingBookings } from "@/components/dashboard/proprio/UpcomingBookings";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 
@@ -16,18 +20,8 @@ type DashboardPageClientProps = {
   isStripeConnected: boolean;
   connectDone: boolean;
   kpiItems: KpiItem[];
-  todayEventsList: Array<{
-    kind: "check_in" | "check_out" | "stay";
-    villa_name: string;
-    guest_name: string;
-    start_date: string;
-    end_date: string;
-  }>;
-  alerts: Array<{
-    severity: "high" | "medium" | "low";
-    title: string;
-    body: string | undefined;
-  }>;
+  timelineItems: DashboardTimelineItem[];
+  taskAlerts: DashboardAlert[];
   upcomingBookings: Array<{
     id: string;
     villa_id: string;
@@ -42,13 +36,12 @@ type DashboardPageClientProps = {
 
 export function DashboardPageClient(props: DashboardPageClientProps) {
   const {
-    villas,
     user,
     isStripeConnected,
     connectDone,
     kpiItems,
-    todayEventsList,
-    alerts,
+    timelineItems,
+    taskAlerts,
     upcomingBookings,
     monthlyChartData,
     hasEnoughHistory,
@@ -60,33 +53,47 @@ export function DashboardPageClient(props: DashboardPageClientProps) {
         <h1 className="font-display text-2xl font-bold text-navy-900">
           Tableau de bord
         </h1>
-        <p className="text-sm text-muted">Apercu de votre activite</p>
+        <p className="text-sm text-muted">Aperçu de votre activité</p>
       </div>
 
-      {/* Digest proactif du jour */}
       <ProactiveNotification />
 
-      {/* Banniere Stripe Connect */}
       <StripeConnectButton
         ownerId={user.id}
         isOnboarded={isStripeConnected}
         connectDone={connectDone}
       />
 
-      <KpiRow items={kpiItems} cols={2} />
-
-      {/* Copilot Diamant integre */}
-      <DashboardCopilotChat />
+      <DashboardKpiGroup items={kpiItems} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <TodayTimeline events={todayEventsList} />
-        <AlertsWidget alerts={alerts} />
+        <DashboardWidget title="Aujourd'hui">
+          <DashboardTimeline items={timelineItems} />
+        </DashboardWidget>
+        <DashboardAlertList alerts={taskAlerts} title="Tâches & alertes" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RevenueChart data={monthlyChartData} hasEnoughHistory={hasEnoughHistory} />
         <UpcomingBookings bookings={upcomingBookings} />
       </div>
+
+      <details className="group rounded-xl border border-navy/10 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-6 py-4 font-display text-lg font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
+          <span className="flex items-center justify-between gap-2">
+            Diamant — Copilot Kayvila
+            <span className="text-[11px] font-normal uppercase tracking-wider text-muted group-open:hidden">
+              Ouvrir
+            </span>
+            <span className="hidden text-[11px] font-normal uppercase tracking-wider text-muted group-open:inline">
+              Replier
+            </span>
+          </span>
+        </summary>
+        <div className="border-t border-navy/5 px-2 pb-4 pt-2">
+          <DashboardCopilotChat />
+        </div>
+      </details>
     </div>
   );
 }

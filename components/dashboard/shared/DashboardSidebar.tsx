@@ -158,6 +158,7 @@ function NavItem({
     <Link
       href={item.href}
       title={collapsed ? item.label : undefined}
+      aria-current={isActive ? "page" : undefined}
       className={cn(baseClass, collapsed && "justify-center px-3")}
     >
       <SidebarIcon name={item.icon} className={iconClass} />

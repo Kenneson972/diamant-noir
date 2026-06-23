@@ -10,6 +10,9 @@ export const KPI_ICONS: Record<string, KayvilaPngName | "lucide"> = {
   trendingUp: "trending-up",
   userCircle: "lucide",
   users: "users",
+  message: "message",
+  star: "star",
+  tasks: "doc",
 };
 
 export type KpiIconName = keyof typeof KPI_ICONS;

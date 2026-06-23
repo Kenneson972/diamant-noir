@@ -4,6 +4,8 @@ import type { Villa, BookingStatus } from "@/types/domain";
 import { type KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { EmptyDashboard } from "@/components/dashboard/proprio/EmptyDashboard";
 import { DashboardPageClient } from "@/components/dashboard/proprio/DashboardPageClient";
+import type { DashboardTimelineItem } from "@/components/dashboard/shared/dashboard-timeline";
+import type { DashboardAlert } from "@/components/dashboard/shared/dashboard-alert-list";
 import { supabaseAdmin } from "@/lib/supabase";
 import { calculateTransferAmounts, getConnectAccount } from "@/lib/stripe/connect";
 
@@ -29,20 +31,17 @@ export default async function ProprioDashboardPage(props: {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch villas owned by the current user
   const { data: villas } = await supabase
     .from("villas")
     .select("*")
     .eq("owner_id", user!.id);
 
-  // Récupérer les infos Stripe Connect du profil (admin pour bypasser RLS)
   const { data: ownerProfile } = await supabaseAdmin()
     .from("profiles")
     .select("stripe_connect_account_id, stripe_connect_onboarding_completed")
     .eq("id", user!.id)
     .maybeSingle();
 
-  // Vérification Stripe Connect côté serveur si on revient de l'onboarding
   let connectDone = false;
   if (
     connectParam === "success" &&
@@ -52,8 +51,6 @@ export default async function ProprioDashboardPage(props: {
     try {
       const admin = supabaseAdmin();
       const account = await getConnectAccount(ownerProfile.stripe_connect_account_id);
-      // Onboarding terminé si details_submitted OU charges_enabled
-      // (en mode test, charges_enabled peut être false même si le formulaire est complet)
       const onboarded = account.charges_enabled || account.details_submitted;
       if (onboarded) {
         await admin
@@ -84,59 +81,71 @@ export default async function ProprioDashboardPage(props: {
   const villaIds = villas.map((v: Villa) => v.id);
   const today = new Date().toISOString().split("T")[0];
   const { start: monthStart, end: monthEnd } = getMonthBounds();
+  const daysInMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  ).getDate();
 
-  // Fetch all data in parallel
-  const [upcomingBookings, , pendingTasks, todayEvents, revenueDataRaw] =
-    await Promise.all([
-      // Upcoming bookings
-      supabase
-        .from("bookings")
-        .select("id, start_date, end_date, guest_name, status, villa_id")
-        .in("villa_id", villaIds)
-        .gte("start_date", today)
-        .order("start_date", { ascending: true })
-        .limit(5)
-        .then((r) => r.data ?? []),
+  const [
+    upcomingBookings,
+    pendingTaskCount,
+    pendingTasks,
+    todayEvents,
+    revenueDataRaw,
+    occupancyBookings,
+  ] = await Promise.all([
+    supabase
+      .from("bookings")
+      .select("id, start_date, end_date, guest_name, status, villa_id")
+      .in("villa_id", villaIds)
+      .gte("start_date", today)
+      .order("start_date", { ascending: true })
+      .limit(5)
+      .then((r) => r.data ?? []),
 
-      // Monthly booking count
-      supabase
-        .from("bookings")
-        .select("id", { count: "exact", head: true })
-        .in("villa_id", villaIds)
-        .gte("start_date", monthStart)
-        .lte("start_date", monthEnd)
-        .then((r) => r.count ?? 0),
+    supabase
+      .from("tasks")
+      .select("*", { count: "exact", head: true })
+      .in("villa_id", villaIds)
+      .eq("status", "pending")
+      .then((r) => r.count ?? 0),
 
-      // Pending tasks
-      supabase
-        .from("tasks")
-        .select("id, title, status, villa_id")
-        .in("villa_id", villaIds)
-        .eq("status", "pending")
-        .limit(5)
-        .then((r) => r.data ?? []),
+    supabase
+      .from("tasks")
+      .select("id, title, status, villa_id")
+      .in("villa_id", villaIds)
+      .eq("status", "pending")
+      .limit(5)
+      .then((r) => r.data ?? []),
 
-      // Today events (check-in/check-out)
-      supabase
-        .from("bookings")
-        .select("id, start_date, end_date, guest_name, status, villa_id")
-        .in("villa_id", villaIds)
-        .or(
-          `start_date.eq.${today},end_date.eq.${today}`
-        )
-        .limit(10)
-        .then((r) => r.data ?? []),
+    supabase
+      .from("bookings")
+      .select("id, start_date, end_date, guest_name, status, villa_id")
+      .in("villa_id", villaIds)
+      .or(`start_date.eq.${today},end_date.eq.${today}`)
+      .limit(10)
+      .then((r) => r.data ?? []),
 
-      // Revenue data for chart — fetch last 6 months for monthly aggregation
-      supabase
-        .from("bookings")
-        .select("start_date, price, cleaning_fee, service_fee, total_price_cents, villa_id, payment_status")
-        .in("villa_id", villaIds)
-        .in("status", ["confirmed", "paid"])
-        .then((r) => r.data ?? []),
-    ]);
+    supabase
+      .from("bookings")
+      .select(
+        "start_date, price, cleaning_fee, service_fee, total_price_cents, villa_id, payment_status"
+      )
+      .in("villa_id", villaIds)
+      .in("status", ["confirmed", "paid"])
+      .then((r) => r.data ?? []),
 
-  // Build today events
+    supabase
+      .from("bookings")
+      .select("villa_id, start_date, end_date")
+      .in("villa_id", villaIds)
+      .eq("status", "confirmed")
+      .lte("start_date", monthEnd)
+      .gte("end_date", monthStart)
+      .then((r) => r.data ?? []),
+  ]);
+
   const todayEventsList = todayEvents.map((b) => {
     const isCheckIn = b.start_date === today;
     const isCheckOut = b.end_date === today;
@@ -155,13 +164,57 @@ export default async function ProprioDashboardPage(props: {
     };
   });
 
-  // Build alerts from pending tasks
-  const alerts = pendingTasks.slice(0, 3)
-    .map((t) => ({
-      severity: "medium" as const,
-      title: t.title,
-      body: villaNameById(t.villa_id, villas),
-    }));
+  const kindConfig = {
+    check_in: {
+      label: "ARRIVÉE",
+      icon: "login" as const,
+      status: "success" as const,
+    },
+    check_out: {
+      label: "DÉPART",
+      icon: "logout" as const,
+      status: "warning" as const,
+    },
+    stay: {
+      label: "SÉJOUR",
+      icon: "calendar" as const,
+      status: "current" as const,
+    },
+  };
+
+  const timelineItems: DashboardTimelineItem[] = todayEventsList.map(
+    (event, index) => ({
+      id: `${event.kind}-${index}`,
+      title: event.guest_name,
+      subtitle: `${kindConfig[event.kind].label} — ${event.villa_name}`,
+      icon: kindConfig[event.kind].icon,
+      status: kindConfig[event.kind].status,
+    })
+  );
+
+  const taskAlerts: DashboardAlert[] = pendingTasks.map((task) => ({
+    href: "/dashboard/taches",
+    label: `${task.title}${villaNameById(task.villa_id, villas) ? ` — ${villaNameById(task.villa_id, villas)}` : ""}`,
+    icon: "bell",
+  }));
+
+  let totalOccupiedNights = 0;
+  for (const booking of occupancyBookings) {
+    const bStart = new Date(booking.start_date);
+    const bEnd = new Date(booking.end_date);
+    const mStart = new Date(monthStart);
+    const mEnd = new Date(monthEnd);
+    const overlapStart = new Date(Math.max(bStart.getTime(), mStart.getTime()));
+    const overlapEnd = new Date(Math.min(bEnd.getTime(), mEnd.getTime()));
+    if (overlapEnd > overlapStart) {
+      totalOccupiedNights += Math.round(
+        (overlapEnd.getTime() - overlapStart.getTime()) / 86400000
+      );
+    }
+  }
+  const maxNights = villaIds.length * daysInMonth;
+  const occupancyRate =
+    maxNights > 0 ? Math.round((totalOccupiedNights / maxNights) * 100) : 0;
 
   const commissionByVilla = new Map(
     (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
@@ -207,6 +260,7 @@ export default async function ProprioDashboardPage(props: {
       return bd.getMonth() === prev.getMonth() && bd.getFullYear() === prev.getFullYear();
     })
     .reduce((sum, b) => sum + ownerNetCents(b), 0);
+
   const revenueFormatted = new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
@@ -216,7 +270,6 @@ export default async function ProprioDashboardPage(props: {
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
 
-  // Aggregate revenue by month over last 6 months from actual booking data
   const monthlyChartData = (() => {
     const monthNames = [
       "Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
@@ -237,7 +290,7 @@ export default async function ProprioDashboardPage(props: {
         })
         .reduce((sum, b) => sum + ownerNetCents(b), 0);
       result.push({
-        month: monthNames[m],
+        month: monthNames[m] ?? "",
         revenue: Math.round(total / 100),
         isCurrent,
       });
@@ -252,8 +305,8 @@ export default async function ProprioDashboardPage(props: {
     {
       icon: "dollarSign",
       label: "Revenus du mois",
-      value: revenueThisMonth > 0 ? revenueFormatted : "Aucun revenu ce mois",
-      href: "/dashboard/revenus" as const,
+      value: revenueThisMonth > 0 ? revenueFormatted : "0 €",
+      href: "/dashboard/revenus",
       trend:
         revenueLastMonth > 0
           ? {
@@ -263,15 +316,30 @@ export default async function ProprioDashboardPage(props: {
               positive: revenueThisMonth >= revenueLastMonth,
             }
           : undefined,
+      chartData: monthlyChartData.map((d) => d.revenue),
     },
     {
       icon: "calendar",
       label: "Réservations à venir",
-      value: upcomingBookings.length > 0 ? upcomingBookings.length : "Aucune réservation à venir",
-      href: "/dashboard/reservations" as const,
-      trend: upcomingBookings.length > 0
-        ? { value: upcomingBookings.length, positive: true }
-        : undefined,
+      value: upcomingBookings.length,
+      href: "/dashboard/reservations",
+      subtitle:
+        upcomingBookings.length === 1
+          ? "1 séjour"
+          : `${upcomingBookings.length} séjours`,
+    },
+    {
+      icon: "tasks",
+      label: "Tâches en attente",
+      value: pendingTaskCount,
+      href: "/dashboard/taches",
+      subtitle: pendingTaskCount ? "À traiter" : "Rien en attente",
+    },
+    {
+      icon: "percent",
+      label: "Occupation du mois",
+      value: `${occupancyRate}%`,
+      progress: occupancyRate,
     },
   ];
 
@@ -282,8 +350,8 @@ export default async function ProprioDashboardPage(props: {
       isStripeConnected={isStripeConnected}
       connectDone={connectDone}
       kpiItems={kpiItems}
-      todayEventsList={todayEventsList}
-      alerts={alerts}
+      timelineItems={timelineItems}
+      taskAlerts={taskAlerts}
       upcomingBookings={upcomingBookings}
       monthlyChartData={monthlyChartData}
       hasEnoughHistory={hasEnoughHistory}

@@ -75,7 +75,6 @@ export function HeroDateRangePicker({
             <div className="w-64">
               <RangeCalendar.Header>
                 <div className="size-6" />
-                {/* @ts-expect-error offset supported at runtime, types lag behind v3.0 */}
                 <RangeCalendar.Heading className="flex-none" offset={{ months: 1 }} />
                 <RangeCalendar.NavButton slot="next" />
               </RangeCalendar.Header>

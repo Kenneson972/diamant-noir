@@ -15,9 +15,18 @@ type DateRange = {
   end: string;
 };
 
+type SeasonalPrice = {
+  season: string;
+  start: string;
+  end: string;
+  price: number;
+};
+
 type BookingContextType = {
   selectedDates: DateRange | null;
   handleDatesChange: (range: DateRange | null) => void;
+  basePrice: number;
+  seasonalPrices?: SeasonalPrice[];
 };
 
 const BookingContext = createContext<BookingContextType | null>(null);
@@ -28,6 +37,8 @@ export const useBookingDates = () => {
     return {
       selectedDates: null as DateRange | null,
       handleDatesChange: (_range: DateRange | null) => {},
+      basePrice: 0,
+      seasonalPrices: undefined as SeasonalPrice[] | undefined,
     };
   }
   return ctx;
@@ -39,6 +50,7 @@ type VillaBookingWrapperProps = {
   capacity: number;
   checkInTime: string;
   checkOutTime: string;
+  seasonalPrices?: SeasonalPrice[];
   children?: React.ReactNode;
 };
 
@@ -56,6 +68,7 @@ export const VillaBookingWrapper = ({
   capacity,
   checkInTime,
   checkOutTime,
+  seasonalPrices,
   children,
 }: VillaBookingWrapperProps) => {
   const [selectedDates, setSelectedDates] = useState<DateRange | null>(null);
@@ -65,8 +78,8 @@ export const VillaBookingWrapper = ({
   }, []);
 
   const ctxValue = useMemo(
-    () => ({ selectedDates, handleDatesChange }),
-    [selectedDates, handleDatesChange]
+    () => ({ selectedDates, handleDatesChange, basePrice, seasonalPrices }),
+    [selectedDates, handleDatesChange, basePrice, seasonalPrices]
   );
 
   return (
@@ -91,8 +104,15 @@ type BookingFormSharedProps = {
 };
 
 export const ConnectedAvailabilityCalendar = ({ villaId }: { villaId: string }) => {
-  const { handleDatesChange } = useBookingDates();
-  return <AvailabilityCalendar villaId={villaId} onDatesChange={handleDatesChange} />;
+  const { handleDatesChange, basePrice, seasonalPrices } = useBookingDates();
+  return (
+    <AvailabilityCalendar
+      villaId={villaId}
+      basePrice={basePrice}
+      seasonalPrices={seasonalPrices}
+      onDatesChange={handleDatesChange}
+    />
+  );
 };
 
 export const ConnectedBookingForm = (props: BookingFormSharedProps) => {

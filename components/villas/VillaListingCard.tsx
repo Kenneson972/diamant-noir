@@ -9,7 +9,8 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
-import { pickVillaImageUrl, VILLA_IMAGE_FALLBACK } from "@/lib/villa-image";
+import { VillaCardImageCarousel } from "@/components/villas/VillaCardImageCarousel";
+import { collectVillaImageUrls, pickVillaImageUrl, VILLA_IMAGE_FALLBACK } from "@/lib/villa-image";
 
 const ENABLE_BORDER_GLOW = true; // mettre false pour désactiver
 
@@ -26,27 +27,28 @@ type VillaListingCardProps = {
 function CardImageBlock({
   villa,
   formatPrice,
+  priority = false,
 }: {
   villa: VillaMapItem;
   formatPrice: (price: number) => string;
+  priority?: boolean;
 }) {
+  const gallery = collectVillaImageUrls(villa.image, villa.images).map((src) => ({
+    src,
+    alt: villa.name,
+  }));
+
   return (
-    <div className="relative aspect-[3/4] overflow-hidden rounded-none">
-      <VillaCoverImage
-        src={pickVillaImageUrl(villa.image, villa.images)}
-        alt={villa.name}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-      />
+    <div className="relative overflow-hidden rounded-none">
+      <VillaCardImageCarousel images={gallery} priority={priority} />
       {villa.tier ? (
-        <div className="absolute top-4 left-4">
+        <div className="pointer-events-none absolute top-4 left-4 z-30">
           <span className="rounded-none border border-gold/40 bg-navy/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
             {villa.tier}
           </span>
         </div>
       ) : null}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60">À partir de</p>
         <p className="mt-0.5 font-display text-lg leading-none text-white">
           {formatPrice(villa.price)}
