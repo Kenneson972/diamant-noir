@@ -7,53 +7,12 @@ import { usePathname } from "next/navigation";
 import { Sidebar, useSidebar } from "@heroui-pro/react/sidebar";
 import { Button } from "@heroui/react";
 import {
-  LayoutDashboard,
-  CalendarDays,
-  UserCircle,
-  DollarSign,
-  Settings,
-  Zap,
-  Inbox,
-  LayoutGrid,
-  FileText,
-  ClipboardList,
-  BarChart3,
-  Gift,
-  Percent,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
-import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { DashboardNavIcon } from "@/components/dashboard/shared/dashboard-nav-icon";
 import type { SidebarMenuItem } from "@/components/dashboard/shared/dashboard-sidebar-types";
-
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string; size?: number }>> = {
-  LayoutDashboard,
-  CalendarDays,
-  UserCircle,
-  DollarSign,
-  Settings,
-  Zap,
-  Inbox,
-  LayoutGrid,
-  FileText,
-  ClipboardList,
-  BarChart3,
-  Gift,
-  Percent,
-};
-
-const PNG_ICON_MAP: Record<string, string> = {
-  Building2: "villa",
-  Users: "users",
-  Sparkles: "sparkle",
-  Home: "home",
-  BookOpen: "book",
-  MessageCircle: "message",
-  Bell: "bell",
-  Heart: "heart",
-  Star: "star",
-};
 
 function getItemId(item: SidebarMenuItem): string {
   return item.id ?? item.href ?? item.label;
@@ -87,20 +46,7 @@ function collectExpandedKeys(items: SidebarMenuItem[], pathname: string): Set<Ke
 }
 
 function SidebarIcon({ name, nested = false }: { name: string; nested?: boolean }) {
-  const size = nested ? 18 : 22;
-  const pngName = PNG_ICON_MAP[name];
-  if (pngName) {
-    return (
-      <KayvilaPngIcon
-        name={pngName as Parameters<typeof KayvilaPngIcon>[0]["name"]}
-        size={size}
-        alt=""
-        invert
-      />
-    );
-  }
-  const LucideComponent = ICON_MAP[name] ?? LayoutDashboard;
-  return <LucideComponent size={nested ? 16 : 20} className="text-current" />;
+  return <DashboardNavIcon name={name} size={nested ? 18 : 22} />;
 }
 
 function SidebarMenuItemNode({

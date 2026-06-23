@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, Search, UserCircle } from "lucide-react";
-import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { Building2, CalendarDays, Search } from "lucide-react";
 import { Command } from "@heroui-pro/react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
 import type { SidebarMenuItem } from "@/components/dashboard/shared/dashboard-sidebar-types";
+import { DashboardNavIcon } from "@/components/dashboard/shared/dashboard-nav-icon";
 
 function flattenNavItems(
   items: SidebarMenuItem[],
@@ -35,16 +35,7 @@ function flattenNavItems(
 const adminNavItems = flattenNavItems(adminMenuItems);
 
 function NavIcon({ name, size = 16 }: { name: string; size?: number }) {
-  const pngMap: Record<string, string> = {
-    Building2: "villa",
-    CalendarDays: "calendar",
-    Users: "users",
-  };
-  const pngName = pngMap[name];
-  if (pngName) {
-    return <KayvilaPngIcon name={pngName as any} size={size} alt="" />;
-  }
-  return <LayoutDashboard className="size-4" />;
+  return <DashboardNavIcon name={name} size={size} />;
 }
 
 type SearchBooking = {
@@ -149,7 +140,7 @@ export function AdminCommandPalette() {
                       textValue={`${b.guest_name ?? "Voyageur"} ${b.villas?.name ?? ""}`}
                       onAction={() => navigate(`/admin/reservations/${b.id}`)}
                     >
-                      <KayvilaPngIcon name="calendar" size={18} alt="" />
+                      <CalendarDays size={18} strokeWidth={1.75} aria-hidden />
                       <span>
                         {b.guest_name ?? "Voyageur"}
                         {b.villas?.name ? ` — ${b.villas.name}` : ""}
@@ -165,7 +156,7 @@ export function AdminCommandPalette() {
                     textValue={v.name}
                     onAction={() => navigate(`/admin/villas/${v.id}`)}
                   >
-                    <KayvilaPngIcon name="villa" size={18} alt="" />
+                    <Building2 size={18} strokeWidth={1.75} aria-hidden />
                     <span>{v.name}</span>
                   </Command.Item>
                 ))}
