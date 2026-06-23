@@ -1,0 +1,111 @@
+---
+name: kb-auto-learn
+description: Règle Karibloom — Auto-apprentissage permanent. Claude apprend et mémorise automatiquement les actions, corrections et préférences de Kenneson à chaque session.
+alwaysApply: true
+---
+
+# Règle Auto-Learn — Karibloom
+
+Cette règle est **toujours active**. Elle s'applique dans toutes les sessions, sans invocation manuelle.
+
+---
+
+## 1. DÉBUT DE CHAQUE SESSION — Charger les apprentissages
+
+Au démarrage de toute session sur un projet Karibloom :
+
+1. Vérifier si `docs/auto-learn/LEARNINGS.md` existe dans le projet
+2. Si oui → le lire silencieusement et appliquer toutes les règles listées
+3. Confirmer en une ligne : `✓ [N] apprentissages chargés.`
+4. Si non → créer le fichier vide et continuer normalement
+
+---
+
+## 2. PENDANT LA SESSION — Détecter et capturer automatiquement
+
+Claude surveille en permanence ces signaux et capture l'apprentissage **sans attendre que Kenneson le demande** :
+
+| Signal détecté | Exemple | Fichier cible |
+|----------------|---------|---------------|
+| Correction directe | "Non, fais plutôt X" | `docs/auto-learn/corrections.md` |
+| Règle explicite | "À chaque fois que…", "Mémorise ça" | `docs/auto-learn/corrections.md` |
+| Préférence exprimée | "Je préfère Y à Z" | `docs/auto-learn/preferences.md` |
+| Workflow répété | Même séquence d'actions | `docs/auto-learn/workflows.md` |
+| Règle client | "Pour ce client on fait…" | `docs/auto-learn/clients/[nom].md` |
+
+**Processus de capture :**
+1. Formuler en règle générale (pas anecdotique)
+2. Écrire dans le bon fichier `docs/auto-learn/`
+3. Confirmer inline : `✓ Apprentissage noté : [règle en 1 ligne]`
+4. Mettre à jour `docs/auto-learn/LEARNINGS.md`
+
+---
+
+## 3. FIN DE SESSION — Persister
+
+Si de nouveaux apprentissages ont été capturés, s'assurer qu'ils sont bien écrits dans les fichiers avant de terminer. Pas besoin de demander — le faire automatiquement.
+
+---
+
+## Structure des fichiers d'apprentissage
+
+```
+docs/auto-learn/
+├── LEARNINGS.md        ← Index global (toujours lu en début de session)
+├── preferences.md      ← Préférences style, nommage, structure
+├── corrections.md      ← Erreurs corrigées → à ne plus refaire
+├── workflows.md        ← Séquences répétées et ordres préférés
+└── clients/
+    └── [nom-client].md ← Règles spécifiques par client
+```
+
+### Format LEARNINGS.md
+
+```markdown
+# Apprentissages — [Projet]
+_Dernière mise à jour : [DATE]_
+
+## Corrections (priorité haute)
+- [Règle à ne jamais enfreindre]
+
+## Préférences
+- [Ce que Kenneson préfère]
+
+## Workflows
+- [Séquence ou ordre favoris]
+
+## Par client
+- [Client] : [règle spécifique]
+```
+
+### Format entrée dans corrections.md / preferences.md
+
+```markdown
+## [DATE] — [Titre court]
+**Règle** : [Formulation précise et générale]
+**Contexte** : [Quand s'applique cette règle]
+**Origine** : [Ce qui s'est passé → correction / demande explicite]
+
+---
+```
+
+---
+
+## Commandes de gestion (Kenneson peut dire)
+
+| Phrase | Action |
+|--------|--------|
+| "Qu'est-ce que tu as appris ?" | Lister LEARNINGS.md |
+| "Oublie cette règle" | Marquer `[ARCHIVÉ]` dans le fichier |
+| "Montre les corrections" | Afficher corrections.md |
+| "Reset les apprentissages" | Archiver dans `docs/auto-learn/archive/` après confirmation |
+
+---
+
+## Règles méta
+
+- **Append-only** : ne jamais écraser un fichier d'apprentissage, toujours ajouter
+- **Règles générales** : formuler pour être utile dans n'importe quelle future session, pas juste celle-ci
+- **Les corrections priment** sur les préférences — une erreur corrigée est une règle dure
+- **Jamais de credentials** dans les fichiers d'apprentissage
+- **En cas de conflit** entre deux règles : garder la plus récente, archiver l'ancienne

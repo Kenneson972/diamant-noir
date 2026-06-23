@@ -6,3 +6,22 @@ node_modules/
 *.tsbuildinfo
 .DS_Store
 .vercel
+
+# Agent / IDE (local only)
+.claude/
+.claude-flow/
+.worktrees/
+.playwright-mcp/
+
+# Tests
+playwright-report/
+test-results/
+coverage/
+
+# Accidental foreign projects
+Downloads/
+KARIBLOOM/
+
+# Logs
+*.log
+npm-debug.log*

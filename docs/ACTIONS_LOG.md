@@ -697,3 +697,12 @@ verify: vérification effectuée
 - **why**: beta.6 shippe Timeline en subpath ; aligner stack HeroUI
 - **impact**: Timeline Pro disponible ; build webpack OK (TipTap) ; `npm run build` échoue encore sur erreur Next pré-existante `undefined.length`
 - **verify**: `npm ls` versions OK ; tsc OK fichiers touchés ; build compile jusqu'à crash connu
+
+### 2026-06-23 — Nettoyage structure DIAMANTNOIR + repo diamant-noir
+
+- **type**: config
+- **summary**: Retrait git de Downloads/ (208 fichiers PESSORA/MAISON PVL), .claude-flow, submodule .worktrees ; docs racine app → docs/{recaps,guides,prompts,archive} ; .gitignore étendu ; client-assets/ à la racine workspace ; README structure
+- **files**: `.gitignore`, `tsconfig.json`, `docs/**`, suppression `Downloads/`, `sdd/`, `README.md` (workspace), `client-assets/README.md`
+- **why**: Dossier client éparpillé (~5 Go dont worktrees/foreign projects) ; une seule source doc dans diamant-noir/docs
+- **impact**: Repo git allégé ; workspace DIAMANTNOIR trié (code vs assets vs agent config)
+- **verify**: git status ; worktrees conservés (node_modules/.next purgés localement)
