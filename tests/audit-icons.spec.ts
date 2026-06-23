@@ -111,16 +111,30 @@ async function injectSizeLabels(page: Page) {
 async function measureIcons(page: Page): Promise<IconMeasure[]> {
   return page.evaluate(() => {
     const imgs = document.querySelectorAll<HTMLImageElement>('img[src*="icons-png"]');
-    return Array.from(imgs).map((img) => {
-      const rect = img.getBoundingClientRect();
-      return {
-        src: img.src.replace(/.*\/brand\/icons-png\//, ""),
-        w: Math.round(rect.width),
-        h: Math.round(rect.height),
-        x: Math.round(rect.left),
-        y: Math.round(rect.top),
-      };
-    });
+    return Array.from(imgs)
+      .filter((img) => {
+        // Ignorer les éléments masqués (display:none, visibility:hidden, dans un parent hidden)
+        const style = window.getComputedStyle(img);
+        if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
+        // Vérifier aussi les parents
+        let el: HTMLElement | null = img.parentElement;
+        while (el) {
+          const ps = window.getComputedStyle(el);
+          if (ps.display === "none" || ps.visibility === "hidden") return false;
+          el = el.parentElement;
+        }
+        return true;
+      })
+      .map((img) => {
+        const rect = img.getBoundingClientRect();
+        return {
+          src: img.src.replace(/.*\/brand\/icons-png\//, ""),
+          w: Math.round(rect.width),
+          h: Math.round(rect.height),
+          x: Math.round(rect.left),
+          y: Math.round(rect.top),
+        };
+      });
   });
 }
 

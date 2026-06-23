@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
@@ -247,7 +247,7 @@ export function HomeServicesSection() {
                     </div>
 
                     <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/50 transition-colors group-hover:text-navy md:mt-4">
-                      Voir le détail <KayvilaPngIcon name="arrow-right" size={14} aria-hidden />
+                      Voir le détail <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
                     </span>
                   </div>
                 </Link>
@@ -264,7 +264,7 @@ export function HomeServicesSection() {
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
             >
-              Tout savoir sur la conciergerie <KayvilaPngIcon name="arrow-right" size={16} aria-hidden />
+              Tout savoir sur la conciergerie <ArrowRight size={16} strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
         </ScrollReveal>

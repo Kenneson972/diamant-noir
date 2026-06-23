@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatPrice } from "@/lib/i18n";
 
 export type HomeFeaturedVilla = {
@@ -36,7 +36,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
               className="group inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-navy/45 transition-colors hover:text-navy"
             >
               Voir toutes les villas
-              <KayvilaPngIcon name="arrow-right" size={14} className="transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight size={14} strokeWidth={1.5} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>
