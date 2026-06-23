@@ -715,3 +715,12 @@ verify: vérification effectuée
 - **why**: Worktrees mergés = ~1 Go libéré ; centraliser audits ; kb-backend remplacé par pack client-builder Supabase/API
 - **impact**: Worktree actif restant : `feat/owner-availability-blocking` (non mergé, 5 commits)
 - **verify**: `git worktree list` ; docs/ racine sans fichiers audit-* loose
+
+### 2026-06-23 — Fix build Vercel PricingCalendarCell (HeroUI 3.2.1)
+
+- **type**: fix
+- **summary**: `PricingCalendarCell` — prop `date` typée `CalendarDate` au lieu de `DateValue` pour `RangeCalendar.Cell` (HeroUI 3.2.1)
+- **files**: `components/booking/PricingCalendarCell.tsx`
+- **why**: Build Vercel échouait en type-check après upgrade HeroUI
+- **impact**: `npm run build` OK en local
+- **verify**: `npm run build` exit 0

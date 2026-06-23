@@ -1,7 +1,7 @@
 "use client";
 
 import { RangeCalendar } from "@heroui/react";
-import type { DateValue } from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
 import {
   formatCompactNightPrice,
   getNightlyPriceForDate,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/calendar/pricing-utils";
 
 type PricingCalendarCellProps = {
-  date: DateValue;
+  date: CalendarDate;
   basePrice: number;
   seasonalRates?: SeasonalNightRate[];
   formatPrice: (price: number) => string;
