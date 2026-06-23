@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Bot, Check } from "lucide-react";
+import { Bot } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 const COPILOT_FEATURES: { title: string; desc: string }[] = [
   {
@@ -80,7 +81,7 @@ export function FinanceCopilotSection() {
                 href="/login"
                 className="inline-flex min-h-[48px] items-center gap-3 border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
               >
-                Accéder à mon espace <ArrowRight size={14} aria-hidden />
+                Accéder à mon espace <KayvilaPngIcon name="arrow-right" size={18} alt="" />
               </Link>
             </div>
           </div>

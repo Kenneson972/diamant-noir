@@ -1,6 +1,7 @@
 "use client";
 
-import { Wifi, LogOut, Star, Phone } from "lucide-react";
+import { Wifi } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { AccordionDetails, AccordionShell, Card, CardContent } from "@/components/espace-client/tenant-ui";
 
 interface WelcomeBookProps {
@@ -71,7 +72,7 @@ export function WelcomeBook({ villa }: WelcomeBookProps) {
           <AccordionDetails
             trigger={
               <>
-                <LogOut size={16} className="shrink-0 text-gold" />
+                <KayvilaPngIcon name="logout" size={18} alt="" className="shrink-0 text-gold" />
                 Instructions de départ
               </>
             }
@@ -84,7 +85,7 @@ export function WelcomeBook({ villa }: WelcomeBookProps) {
           <AccordionDetails
             trigger={
               <>
-                <Star size={16} className="shrink-0 text-gold" />
+                <KayvilaPngIcon name="star" size={18} alt="" className="shrink-0 text-gold" />
                 Nos recommandations locales
               </>
             }
@@ -97,7 +98,7 @@ export function WelcomeBook({ villa }: WelcomeBookProps) {
           <AccordionDetails
             trigger={
               <>
-                <Phone size={16} className="shrink-0 text-gold" />
+                <KayvilaPngIcon name="phone" size={18} alt="" className="shrink-0 text-gold" />
                 Contacts urgence
               </>
             }

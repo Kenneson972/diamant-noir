@@ -1,28 +1,21 @@
-import {
-  Building2,
-  CalendarCheck,
-  CalendarDays,
-  DollarSign,
-  Percent,
-  TrendingUp,
-  UserCircle,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
+import { DollarSign, Percent, UserCircle } from "lucide-react";
+import type { KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 
-export const KPI_ICONS = {
-  building2: Building2,
-  calendarDays: CalendarDays,
-  calendarCheck: CalendarCheck,
-  dollarSign: DollarSign,
-  percent: Percent,
-  trendingUp: TrendingUp,
-  userCircle: UserCircle,
-  users: Users,
-} as const;
+export const KPI_ICONS: Record<string, KayvilaPngName | "lucide"> = {
+  villa: "villa",
+  calendar: "calendar",
+  calendarCheck: "calendar",
+  dollarSign: "lucide",
+  percent: "lucide",
+  trendingUp: "trending-up",
+  userCircle: "lucide",
+  users: "users",
+};
 
 export type KpiIconName = keyof typeof KPI_ICONS;
 
-export function resolveKpiIcon(name: KpiIconName): LucideIcon {
-  return KPI_ICONS[name];
+export function getKpiPngName(name: KpiIconName): KayvilaPngName | null {
+  const icon = KPI_ICONS[name];
+  if (icon === "lucide") return null;
+  return icon;
 }

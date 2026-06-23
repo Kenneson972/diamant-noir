@@ -16,7 +16,7 @@ export function AlertsWidget({ alerts }: AlertsWidgetProps) {
       <div className="dashboard-card">
         <span className="dashboard-eyebrow">ALERTES</span>
         <div className="mt-4 flex flex-col items-center justify-center py-8 text-center">
-          <CheckCircle2 className="mb-3 h-8 w-8 text-emerald-500" aria-hidden />
+          <CheckCircle2 className="mb-3 h-8 w-8 text-emerald-500" strokeWidth={1.5} aria-hidden />
           <p className="text-sm italic text-muted">Tout est calme</p>
         </div>
       </div>
@@ -34,6 +34,7 @@ export function AlertsWidget({ alerts }: AlertsWidgetProps) {
             className="flex items-start gap-3 rounded-lg bg-cream p-3"
           >
             <AlertTriangle
+              strokeWidth={1.5}
               className={`mt-0.5 h-4 w-4 shrink-0 ${
                 alert.severity === "high"
                   ? "dot-alert-high"

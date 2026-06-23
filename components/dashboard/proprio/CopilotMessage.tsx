@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { cn } from "@/lib/utils";
 import type { CopilotMessage as CopilotMessageType } from "@/types/copilot";
 
@@ -21,7 +21,7 @@ export function CopilotMessage({ message }: CopilotMessageProps) {
       {/* Avatar */}
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-900">
-          <Sparkles className="h-4 w-4 text-white" aria-hidden />
+          <KayvilaPngIcon name="sparkle" size={20} invert className="aria-hidden" />
         </div>
       )}
 

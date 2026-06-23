@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BookingCard } from "@/components/espace-client/BookingCard";
-import { CalendarX, ArrowRight, MessageCircle } from "lucide-react";
+import { CalendarX } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import Link from "next/link";
@@ -154,7 +154,7 @@ export default function EspaceClientPage() {
         <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 
         <KayvilaEmptyState
-          icon={<CalendarX className="size-12" strokeWidth={1} />}
+          icon={<CalendarX className="size-12" strokeWidth={1.5} />}
           title="Aucune réservation"
           description="Connectez-vous avec la même adresse email que celle utilisée lors de votre réservation. Si besoin, demandez un lien magique depuis la page de connexion."
           actionLabel="Découvrir nos villas"
@@ -169,7 +169,7 @@ export default function EspaceClientPage() {
               href="/espace-client/messagerie"
               className="inline-flex min-h-[44px] items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-gold no-underline transition-colors hover:text-navy"
             >
-              <MessageCircle size={13} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="message" size={18} alt="" aria-hidden />
               Contacter
             </Link>
           }
@@ -276,7 +276,7 @@ export default function EspaceClientPage() {
                         href={`/villas/${booking.villa_id}`}
                         className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-navy/50 hover:text-gold transition-colors"
                       >
-                        <ArrowRight size={12} />
+                        <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                         Re-réserver
                       </Link>
                     </div>
@@ -332,17 +332,18 @@ export default function EspaceClientPage() {
             href="/espace-client/messagerie"
             className="group flex min-h-[88px] items-center gap-4 border-b border-navy/6 px-2 py-4 no-underline transition-colors hover:bg-gold/[0.03] sm:border-b-0"
           >
-            <MessageCircle
+            <KayvilaPngIcon
+              name="message"
               size={18}
-              strokeWidth={1}
-              className="shrink-0 text-navy/20 transition-colors group-hover:text-gold/70"
+              alt=""
+              className="shrink-0 opacity-60 transition-opacity group-hover:opacity-90"
               aria-hidden
             />
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">Messagerie</p>
               <p className="mt-0.5 font-display text-sm italic text-navy/50">Contacter la conciergerie</p>
             </div>
-            <ArrowRight size={13} className="shrink-0 text-navy/15 group-hover:text-navy/40" aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" className="shrink-0 opacity-60 transition-opacity group-hover:opacity-80" aria-hidden />
           </Link>
           <Link
             href="/espace-client/profil"
@@ -352,14 +353,14 @@ export default function EspaceClientPage() {
               name="book"
               size={18}
               alt=""
-              className="shrink-0 opacity-20 transition-opacity group-hover:opacity-70"
+              className="shrink-0 opacity-60 transition-opacity group-hover:opacity-90"
               aria-hidden
             />
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">Mon profil</p>
               <p className="mt-0.5 font-display text-sm italic text-navy/50">Informations personnelles</p>
             </div>
-            <ArrowRight size={13} className="shrink-0 text-navy/15 group-hover:text-navy/40" aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" className="shrink-0 opacity-60 transition-opacity group-hover:opacity-80" aria-hidden />
           </Link>
         </div>
       </KayvilaTenantWidget>

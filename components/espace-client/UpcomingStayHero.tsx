@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Chip } from "@heroui/react";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
@@ -74,9 +74,9 @@ export function UpcomingStayHero({ booking }: { booking: UpcomingBooking }) {
             href="/espace-client/livret"
             className="mt-7 inline-flex min-h-[44px] items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-gold no-underline transition-colors hover:text-navy"
           >
-            <BookOpen size={14} strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="book" size={18} alt="" aria-hidden />
             Consulter le livret
-            <ArrowRight size={12} aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" aria-hidden />
           </Link>
         </div>
       </div>

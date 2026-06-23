@@ -1,4 +1,4 @@
-import { ShieldCheck, Mail } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -54,7 +54,7 @@ export function VillaHostCard({
           <div className="flex items-center gap-3 mb-2">
             <h3 className="font-display text-xl text-navy">{name}</h3>
             <span className="inline-flex items-center gap-1.5 border border-gold/30 bg-gold/[0.06] px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-navy">
-              <ShieldCheck size={11} className="text-gold" />
+              <KayvilaPngIcon name="shield-check" size={18} alt="" className="shrink-0" />
               Hôte vérifié
             </span>
           </div>
@@ -65,7 +65,7 @@ export function VillaHostCard({
             href="/contact"
             className="inline-flex items-center gap-2 border border-navy/20 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy hover:border-navy transition-colors"
           >
-            <Mail size={12} />
+            <KayvilaPngIcon name="mail" size={18} alt="" />
             Contacter l&apos;hôte
           </Link>
         </div>

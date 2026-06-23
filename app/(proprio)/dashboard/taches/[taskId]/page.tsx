@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Calendar, ClipboardList, Home } from "lucide-react";
+import { ArrowLeft, ClipboardList } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { getSupabaseServer } from "@/lib/supabase-server";
@@ -90,7 +91,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-lg bg-gray-50 p-3">
             <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
-              <Calendar className="h-3.5 w-3.5" />
+              <KayvilaPngIcon name="calendar" size={18} />
               Date limite
             </div>
             <p className="mt-1 text-sm font-medium text-navy">
@@ -101,7 +102,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
           {villa?.name && (
             <div className="rounded-lg bg-gray-50 p-3">
               <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
-                <Home className="h-3.5 w-3.5" />
+                <KayvilaPngIcon name="home" size={18} />
                 Villa
               </div>
               <p className="mt-1 text-sm font-medium text-navy">
@@ -112,7 +113,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
 
           <div className="rounded-lg bg-gray-50 p-3">
             <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-navy/55">
-              <Calendar className="h-3.5 w-3.5" />
+              <KayvilaPngIcon name="calendar" size={18} />
               Créée le
             </div>
             <p className="mt-1 text-sm font-medium text-navy">

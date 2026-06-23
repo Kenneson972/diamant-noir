@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
@@ -39,7 +38,7 @@ export function HomeConciergeHighlight() {
                   name={icon}
                   size={20}
                   alt=""
-                  className="mt-0.5 shrink-0 opacity-30"
+                  className="mt-0.5 shrink-0 opacity-60"
                 />
                 <span className="text-[13px] leading-snug text-navy/70">{label}</span>
               </div>
@@ -53,11 +52,10 @@ export function HomeConciergeHighlight() {
             className="group inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-navy/80 underline-offset-8 transition-colors hover:text-navy hover:underline"
           >
             DÉCOUVRIR LA CONCIERGERIE COMPLÈTE
-            <ArrowRight
-              size={12}
-              strokeWidth={1.5}
+            <KayvilaPngIcon
+              name="arrow-right"
+              size={14}
               className="transition-transform group-hover:translate-x-0.5"
-              aria-hidden
             />
           </Link>
         </ScrollReveal>

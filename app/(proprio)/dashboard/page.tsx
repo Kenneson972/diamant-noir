@@ -265,7 +265,7 @@ export default async function ProprioDashboardPage(props: {
           : undefined,
     },
     {
-      icon: "calendarCheck",
+      icon: "calendar",
       label: "Réservations à venir",
       value: upcomingBookings.length > 0 ? upcomingBookings.length : "Aucune réservation à venir",
       href: "/dashboard/reservations" as const,

@@ -12,7 +12,8 @@ import { KayvilaEmptyState, KayvilaActionBar } from "@/components/ui/pro";
 import { ReservationCalendar } from "@/components/dashboard/ReservationCalendar";
 import { CreateBookingModal } from "@/components/dashboard/CreateBookingModal";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
-import { LayoutList, Calendar, Plus, X, Columns3, Download, Check, Ban } from "lucide-react";
+import { LayoutList, Columns3, Plus, X, Ban } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 const PAGE_SIZE = 20;
 
@@ -287,18 +288,22 @@ export default function AdminReservationsPage() {
         <div className="flex overflow-hidden rounded-lg border border-navy/10">
           {(
             [
-              { id: "list" as const, icon: LayoutList, label: "Liste" },
-              { id: "kanban" as const, icon: Columns3, label: "Kanban" },
-              { id: "calendar" as const, icon: Calendar, label: "Calendrier" },
+              { id: "list" as const, icon: "layoutList" as const, label: "Liste" },
+              { id: "kanban" as const, icon: "columns3" as const, label: "Kanban" },
+              { id: "calendar" as const, icon: "calendar" as const, label: "Calendrier" },
             ] as const
-          ).map(({ id, icon: Icon, label }) => (
+          ).map(({ id, icon, label }) => (
             <button
               key={id}
               type="button"
               onClick={() => setView(id)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold transition-colors ${view === id ? "bg-navy text-white" : "bg-white text-navy/50 hover:text-navy"}`}
             >
-              <Icon size={14} />
+              {icon === "calendar" ? (
+                <KayvilaPngIcon name="calendar" size={18} alt="" />
+              ) : (
+                icon === "layoutList" ? <LayoutList size={16} strokeWidth={1.5} /> : <Columns3 size={16} strokeWidth={1.5} />
+              )}
               {label}
             </button>
           ))}
@@ -363,17 +368,17 @@ export default function AdminReservationsPage() {
             actions={[
               {
                 label: "Exporter",
-                icon: <Download className="size-4" />,
+                icon: <KayvilaPngIcon name="download" size={18} alt="" />,
                 onPress: handleExport,
               },
               {
                 label: "Confirmer",
-                icon: <Check className="size-4" />,
+                icon: <KayvilaPngIcon name="check-circle" size={18} alt="" />,
                 onPress: () => void handleBulkConfirm(),
               },
               {
                 label: "Annuler",
-                icon: <Ban className="size-4" />,
+                icon: <Ban className="size-4" strokeWidth={1.5} />,
                 variant: "destructive",
                 onPress: () => void handleBulkCancel(),
               },

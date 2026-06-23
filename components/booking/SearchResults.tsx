@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Filter, Star, Map as MapIcon, ArrowUpDown, SlidersHorizontal } from "lucide-react";
+import { Filter, Map as MapIcon, ArrowUpDown, SlidersHorizontal } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { VillaSelectionCard } from "@/components/booking/VillaSelectionCard";
 import { formatPrice } from "@/lib/i18n";
 
@@ -149,7 +150,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
       {/* Grid ou liste */}
       {filteredAndSorted.length === 0 ? (
         <div className="border border-navy/10 bg-white px-8 py-16 text-center">
-          <Filter size={32} className="mx-auto mb-4 text-navy/15" strokeWidth={1} />
+          <Filter size={32} className="mx-auto mb-4 text-navy/50" strokeWidth={1.5} />
           <p className="font-display text-lg text-navy">Aucune villa disponible</p>
           <p className="mt-2 text-sm text-navy/50">Essayez de modifier vos filtres ou vos dates.</p>
           <button
@@ -195,7 +196,7 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
                     </h3>
                     {villa.rating != null ? (
                       <div className="flex shrink-0 items-center gap-1 text-xs text-navy">
-                        <Star size={12} className="fill-navy text-navy" strokeWidth={0} aria-hidden />
+                        <KayvilaPngIcon name="star" size={18} alt="" className="shrink-0" />
                         <span className="font-medium tabular-nums">{villa.rating.toFixed(1)}</span>
                       </div>
                     ) : null}

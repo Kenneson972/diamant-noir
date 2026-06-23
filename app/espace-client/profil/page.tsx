@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
-import { Download, Clock, Baby } from "lucide-react";
+import { Baby } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button, Chip } from "@heroui/react";
 import Link from "next/link";
 import { Spinner } from "@/components/espace-client/tenant-ui";
@@ -171,7 +172,7 @@ export default function ProfilPage() {
             </div>
             <div>
               <label className={tenantLabelClass}>
-                <Clock size={12} className="mr-1 inline" aria-hidden />
+                <KayvilaPngIcon name="clock" size={18} alt="" className="mr-1 inline" aria-hidden />
                 Heure d&apos;arrivée estimée
               </label>
               <select
@@ -241,7 +242,7 @@ export default function ProfilPage() {
           }
         >
           <div className="flex flex-col items-center gap-3 py-4 text-center">
-            <Download size={28} className="text-navy/20" aria-hidden />
+            <KayvilaPngIcon name="download" size={24} alt="" className="text-navy/60" aria-hidden />
             <p className="max-w-sm text-sm text-navy/55">
               Vos contrats et factures apparaîtront ici dès qu&apos;ils seront disponibles.
             </p>

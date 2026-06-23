@@ -1,11 +1,8 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import Link from "next/link";
-import {
-  Home, Mail, Phone, MapPin, Calendar, User, Building2,
-  Bed, Bath, Car, Trees, Wifi, Clock, MessageSquare,
-  Star, Eye, FileText, Globe, ExternalLink,
-} from "lucide-react";
+import { Eye, FileText, Globe, ExternalLink } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { SubmissionActions } from "./SubmissionActions";
 
 export const dynamic = "force-dynamic";
@@ -42,14 +39,42 @@ async function getSubmissions() {
   return data ?? [];
 }
 
-function InfoBadge({ icon: Icon, label, value }: { icon: any; label?: string; value: React.ReactNode }) {
+function InfoBadge({ icon, label, value }: { icon: string; label?: string; value: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1 text-xs text-navy/60">
-      <Icon size={11} className="shrink-0 text-navy/30" />
+      {renderIcon(icon)}
       {label && <span className="text-navy/40">{label}:</span>}
       <span className="font-medium text-navy/70">{value}</span>
     </span>
   );
+}
+
+function renderIcon(icon: string) {
+  const pngIcons: Record<string, string> = {
+    "building2": "villa",
+    "home": "home",
+    "mail": "mail",
+    "phone": "phone",
+    "map-pin": "location",
+    "calendar": "calendar",
+    "user": "users",
+    "bed": "villa",
+    "bath": "villa",
+    "car": "car",
+    "trees": "villa",
+    "wifi": "wifi",
+    "clock": "clock",
+    "message-square": "message",
+    "star": "star",
+    "eye": "eye",
+    "file-text": "file-text",
+    "globe": "globe",
+  };
+  const pngName = pngIcons[icon];
+  if (pngName) {
+    return <KayvilaPngIcon name={pngName as any} size={14} alt="" className="shrink-0" />;
+  }
+  return null;
 }
 
 export default async function AdminSoumissionsPage() {
@@ -83,7 +108,7 @@ export default async function AdminSoumissionsPage() {
 
       {all.length === 0 ? (
         <div className="rounded-lg border bg-white p-12 text-center">
-          <Home className="mx-auto h-10 w-10 text-gray-300" />
+          <KayvilaPngIcon name="home" size={40} alt="" />
           <p className="mt-4 text-sm text-gray-500">Aucune soumission pour le moment.</p>
         </div>
       ) : (
@@ -140,13 +165,13 @@ export default async function AdminSoumissionsPage() {
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy/40">Le bien</h4>
                     <div className="space-y-1.5">
-                      {type && <InfoBadge icon={Building2} value={type} />}
-                      {surface && <InfoBadge icon={Home} value={surface} />}
-                      {terrain && <InfoBadge icon={Trees} value={terrain} />}
-                      {s.chambres && <InfoBadge icon={Bed} value={`${s.chambres} chambre${s.chambres > 1 ? "s" : ""}`} />}
-                      {s.salles_de_bains && <InfoBadge icon={Bath} value={`${s.salles_de_bains} sdb`} />}
-                      {s.etages && <InfoBadge icon={Building2} value={`${s.etages} étage${s.etages > 1 ? "s" : ""}`} />}
-                      {s.parking_places && <InfoBadge icon={Car} value={`${s.parking_places} place${s.parking_places > 1 ? "s" : ""}${s.parking_securise ? " sécurisé" : ""}`} />}
+                      {type && <InfoBadge icon="building2" value={type} />}
+                      {surface && <InfoBadge icon="home" value={surface} />}
+                      {terrain && <InfoBadge icon="trees" value={terrain} />}
+                      {s.chambres && <InfoBadge icon="bed" value={`${s.chambres} chambre${s.chambres > 1 ? "s" : ""}`} />}
+                      {s.salles_de_bains && <InfoBadge icon="bath" value={`${s.salles_de_bains} sdb`} />}
+                      {s.etages && <InfoBadge icon="building2" value={`${s.etages} étage${s.etages > 1 ? "s" : ""}`} />}
+                      {s.parking_places && <InfoBadge icon="car" value={`${s.parking_places} place${s.parking_places > 1 ? "s" : ""}${s.parking_securise ? " sécurisé" : ""}`} />}
                     </div>
                     {equipements.length > 0 && (
                       <div className="flex flex-wrap gap-1 pt-1">
@@ -161,18 +186,18 @@ export default async function AdminSoumissionsPage() {
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy/40">Situation</h4>
                     <div className="space-y-1.5">
-                      {listingStatus && <InfoBadge icon={Eye} value={`Location : ${listingStatus}`} />}
-                      {gardien && <InfoBadge icon={User} value={`Gardien : ${gardien}`} />}
-                      {delai && <InfoBadge icon={Clock} value={`Délai : ${delai}`} />}
+                      {listingStatus && <InfoBadge icon="eye" value={`Location : ${listingStatus}`} />}
+                      {gardien && <InfoBadge icon="user" value={`Gardien : ${gardien}`} />}
+                      {delai && <InfoBadge icon="clock" value={`Délai : ${delai}`} />}
                       {s.airbnb_url && (
                         <a href={s.airbnb_url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-xs text-gold hover:underline">
-                          <Star size={11} /> Lien Airbnb ↗
+                          <KayvilaPngIcon name="star" size={14} alt="" /> Lien Airbnb ↗
                         </a>
                       )}
                       {s.platforms && typeof s.platforms === "object" && (
-                        <InfoBadge icon={Globe} value={Object.keys(s.platforms).join(", ")} />
+                        <InfoBadge icon="globe" value={Object.keys(s.platforms).join(", ")} />
                       )}
-                      <InfoBadge icon={FileText} value={s.no_photos ? "Photos à faire" : "Photos fournies"} />
+                      <InfoBadge icon="file-text" value={s.no_photos ? "Photos à faire" : "Photos fournies"} />
                     </div>
                   </div>
 
@@ -180,10 +205,10 @@ export default async function AdminSoumissionsPage() {
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy/40">Contact</h4>
                     <div className="space-y-1.5">
-                      <InfoBadge icon={User} value={s.name} />
-                      <InfoBadge icon={Mail} value={s.email} />
-                      {s.phone && <InfoBadge icon={Phone} value={s.phone} />}
-                      {s.adresse_postale && <InfoBadge icon={MapPin} value={s.adresse_postale} />}
+                      <InfoBadge icon="user" value={s.name} />
+                      <InfoBadge icon="mail" value={s.email} />
+                      {s.phone && <InfoBadge icon="phone" value={s.phone} />}
+                      {s.adresse_postale && <InfoBadge icon="map-pin" value={s.adresse_postale} />}
                     </div>
                   </div>
 
@@ -191,8 +216,8 @@ export default async function AdminSoumissionsPage() {
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy/40">Admin</h4>
                     <div className="space-y-1.5">
-                      {s.ai_tier && <InfoBadge icon={Star} value={`Score AI : ${s.ai_tier}`} />}
-                      {s.ai_score != null && <InfoBadge icon={Star} value={`${s.ai_score}/10`} />}
+                      {s.ai_tier && <InfoBadge icon="star" value={`Score AI : ${s.ai_tier}`} />}
+                      {s.ai_score != null && <InfoBadge icon="star" value={`${s.ai_score}/10`} />}
                       {s.ai_recommendation && (
                         <p className="rounded bg-navy/[0.03] px-2 py-1 text-[10px] italic text-navy/50">{s.ai_recommendation}</p>
                       )}
@@ -208,7 +233,7 @@ export default async function AdminSoumissionsPage() {
                   <div className="border-t border-navy/5 px-6 py-3">
                     {s.message && (
                       <p className="text-sm text-navy/60 italic">
-                        <MessageSquare size={12} className="inline mr-1" />
+                        <KayvilaPngIcon name="message" size={14} alt="" className="inline mr-1" />
                         « {s.message} »
                       </p>
                     )}

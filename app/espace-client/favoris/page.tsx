@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Heart, ArrowRight } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
@@ -65,7 +64,7 @@ export default function FavorisPage() {
           </div>
         ) : villas.length === 0 ? (
           <KayvilaEmptyState
-            icon={<Heart className="size-12" strokeWidth={1} />}
+            icon={<KayvilaPngIcon name="heart" size={24} alt="" />}
             title="Aucune villa favorite"
             description="Explorez nos villas et cliquez sur le cœur pour les ajouter ici."
             actionLabel="Découvrir nos villas"
@@ -93,7 +92,7 @@ export default function FavorisPage() {
                     onPress={() => toggle(v.id)}
                     className="absolute right-3 top-3 min-h-[44px] min-w-[44px] rounded-full bg-white/90 text-red-500 shadow-sm data-[hover=true]:bg-white"
                   >
-                    <Heart size={14} fill="currentColor" aria-hidden />
+                    <KayvilaPngIcon name="heart" size={18} alt="" aria-hidden />
                   </Button>
                 </div>
                 <div className="p-5">
@@ -117,7 +116,7 @@ export default function FavorisPage() {
                     className="mt-4 inline-flex min-h-[44px] items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-gold transition-colors hover:text-navy"
                   >
                     Voir la villa
-                    <ArrowRight size={12} aria-hidden />
+                    <KayvilaPngIcon name="arrow-right" size={18} alt="" aria-hidden />
                   </Link>
                 </div>
               </article>

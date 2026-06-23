@@ -10,7 +10,8 @@ import {
   Field,
   FieldInput,
 } from "@/components/espace-client/tenant-ui";
-import { Loader2, Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface ProfileFormProps {
   initialName?: string;
@@ -259,7 +260,7 @@ export function ProfileForm({
           </span>
         ) : saved ? (
           <span className="flex items-center justify-center gap-2">
-            <Check size={16} /> Sauvegardé
+            <KayvilaPngIcon name="check-circle" size={18} alt="" aria-hidden /> Sauvegardé
           </span>
         ) : (
           "Sauvegarder"

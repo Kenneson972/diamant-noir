@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react";
-import { Calendar } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
 import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
@@ -179,7 +179,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
             className="inline-flex items-center gap-1 text-sm text-muted hover:text-navy"
             title="Calendrier des disponibilités"
           >
-            <Calendar size={14} />
+            <KayvilaPngIcon name="calendar" size={18} alt="" />
             Calendrier
           </Link>
           <a

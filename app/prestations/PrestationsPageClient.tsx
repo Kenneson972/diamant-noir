@@ -19,7 +19,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS, type ScrollSection } from "@/data/prestations-scroll-sections";
@@ -393,7 +393,7 @@ export default function PrestationsPageClient() {
                       onClick={() => router.push(`/prestations/services/${section.id}`)}
                       className="pointer-events-auto mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/75 underline-offset-4 transition-colors hover:text-navy hover:underline"
                     >
-                      Voir le détail <ArrowRight size={11} strokeWidth={1.75} aria-hidden />
+                      Voir le détail <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                     </button>
                   </div>
                 </div>
@@ -461,7 +461,7 @@ export default function PrestationsPageClient() {
                   }}
                   className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
                 >
-                  Explorer les cinq piliers <ArrowRight size={16} strokeWidth={2} aria-hidden />
+                  Explorer les cinq piliers <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </button>
 
                 {arrowVisible && (
@@ -501,7 +501,7 @@ export default function PrestationsPageClient() {
               />
               <div className="relative flex flex-col items-center gap-2 text-white/30">
                 <p className="text-[8px] uppercase tracking-[0.4em]">Gestion clé en main</p>
-                <ChevronDown size={18} />
+                <ChevronDown size={18} strokeWidth={1.5} />
               </div>
             </div>
           </div>
@@ -543,7 +543,7 @@ export default function PrestationsPageClient() {
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
                   className="mt-8 inline-flex min-h-[48px] items-center gap-2 border border-white/25 bg-white/10 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                 >
-                  Explorer les cinq piliers<ArrowRight size={16} strokeWidth={2} aria-hidden />
+                  Explorer les cinq piliers<KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </button>
               </div>
             </div>
@@ -583,7 +583,7 @@ export default function PrestationsPageClient() {
                 <div key={label} className="flex items-center gap-10">
                   <div className="flex flex-col items-center gap-1">
                     <span className="font-display text-3xl text-navy">{val}</span>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.26em] text-navy/45">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.26em] text-navy/60">
                       {label}
                     </span>
                   </div>
@@ -599,7 +599,7 @@ export default function PrestationsPageClient() {
           <LandingSection id="piliers" bg="offwhite">
             <ScrollReveal>
               <div className="mx-auto max-w-2xl text-center">
-                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
                   Gestion clé en main
                 </span>
                 <h2 className="mt-4 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
@@ -662,7 +662,7 @@ export default function PrestationsPageClient() {
                         <div className="h-px flex-1 bg-navy/[0.06]" aria-hidden />
                       </div>
 
-                      <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/50">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/60">
                         {s.tagline}
                       </span>
 
@@ -675,7 +675,7 @@ export default function PrestationsPageClient() {
                       <ul className="mt-6 space-y-3">
                         {s.items.map((item, j) => (
                           <li key={j} className="flex items-start gap-3 text-sm leading-relaxed text-navy/65 stagger-item">
-                            <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/[0.04] text-[9px] font-bold text-navy/50">
+                            <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/[0.04] text-[9px] font-bold text-navy/60">
                               {j + 1}
                             </span>
                             {item}
@@ -687,7 +687,7 @@ export default function PrestationsPageClient() {
                         href={`/prestations/services/${s.id}`}
                         className="mt-8 inline-flex min-h-[44px] items-center gap-2 border border-navy/20 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                       >
-                        Voir le détail complet <ArrowRight size={12} strokeWidth={1.75} aria-hidden />
+                        Voir le détail complet <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                       </Link>
                     </ScrollReveal>
                   </div>
@@ -699,7 +699,7 @@ export default function PrestationsPageClient() {
           {/* ── FAQ dédiée ── */}
           <LandingSection bg="white">
             <div className="mx-auto max-w-2xl text-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
                 Questions fréquentes
               </span>
               <h2 className="mt-4 font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
@@ -712,7 +712,7 @@ export default function PrestationsPageClient() {
                 <details key={q} className="group border-b border-navy/10 py-4">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[12px] font-bold uppercase tracking-[0.2em] text-navy outline-none transition-colors hover:text-navy/70 [&::-webkit-details-marker]:hidden">
                     {q}
-                    <span className="shrink-0 text-navy/55 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
+                    <span className="shrink-0 text-navy/60 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
                   </summary>
                   <p className="mt-3 text-sm leading-relaxed text-navy/80">{a}</p>
                 </details>
@@ -730,7 +730,7 @@ export default function PrestationsPageClient() {
             <LandingBlockTitle eyebrow="Devenez partenaire" title="Confiez-nous votre villa" />
             <div className="grid gap-14 md:grid-cols-2 md:gap-20">
               <div className="space-y-10">
-                <p className="text-[15px] leading-relaxed text-navy/65">
+                <p className="text-[15px] leading-relaxed text-navy/60">
                   Rejoignez les propriétaires qui font confiance à Kayvila pour gérer leur bien
                   avec exigence — et transformez votre villa en une expérience mémorable.
                 </p>
@@ -755,7 +755,7 @@ export default function PrestationsPageClient() {
                   <ul className="mx-auto mt-6 max-w-xs space-y-2 text-left">
                     {["Pas d'exclusivité obligatoire", "Commission 25\u202f% TTC tout compris", "Réponse sous 48h garantie"].map((item) => (
                       <li key={item} className="flex items-center gap-3 text-[11px] text-white/50">
-                        <Check size={12} strokeWidth={2} className="shrink-0 text-gold" aria-hidden />
+                        <Check size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
                         {item}
                       </li>
                     ))}
@@ -764,10 +764,10 @@ export default function PrestationsPageClient() {
                     href="/soumettre-ma-villa"
                     className="mt-8 inline-flex min-h-[52px] items-center gap-3 border border-gold bg-gold px-8 py-4 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
-                    Déposer mon dossier <ArrowRight size={15} aria-hidden />
+                    Déposer mon dossier <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                   </Link>
                 </div>
-                <p className="mt-6 text-center text-sm text-navy/50">
+                <p className="mt-6 text-center text-sm text-navy/60">
                   Une question avant de soumettre ?{" "}
                   <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
                     Contactez-nous directement

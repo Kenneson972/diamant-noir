@@ -171,7 +171,7 @@ export default function ContactPage() {
                     {item.q}
                     <ChevronDown
                       size={18}
-                      strokeWidth={1}
+                      strokeWidth={1.5}
                       aria-hidden
                       className={`shrink-0 transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
                     />

@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Save, Wand2, RefreshCw } from "lucide-react";
+import { Loader2, Save, RefreshCw } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Input } from "@/components/ui/input";
 import { VillaFormFields } from "@/components/dashboard/villa-editor/VillaFormFields";
 import { CANCELLATION_TEMPLATES, type CancellationTemplate } from "@/lib/cancellation-templates";
@@ -333,7 +334,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
           }`}
         >
           {toast.type === "success" ? (
-            <Check className="h-4 w-4" aria-hidden />
+            <KayvilaPngIcon name="check-circle" size={20} />
           ) : null}
           {toast.message}
         </div>
@@ -346,7 +347,7 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
             Import annonce (OTA)
           </h4>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
-            <Wand2 size={16} />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M10 5.5 7.5 3M18.5 14.5 21 17M3 21l6-6"/><path d="M21 13c0 4.4-3.6 8-8 8-4.4 0-8-3.6-8-8 0-4.4 3.6-8 8-8 4.4 0 8 3.6 8 8z"/></svg>
           </div>
         </div>
 
@@ -388,9 +389,9 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
             className="w-full rounded-xl bg-navy text-white hover:bg-gold hover:text-navy transition-all h-12 font-bold uppercase tracking-widest text-[10px] gap-2 inline-flex items-center justify-center disabled:opacity-50"
           >
             {importing ? (
-              <><RefreshCw size={14} className="animate-spin" /> Importation...</>
+              <><RefreshCw size={14} strokeWidth={1.5} className="animate-spin" /> Importation...</>
             ) : (
-              <><Wand2 size={14} /> Importer les détails</>
+              <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M10 5.5 7.5 3M18.5 14.5 21 17M3 21l6-6"/><path d="M21 13c0 4.4-3.6 8-8 8-4.4 0-8-3.6-8-8 0-4.4 3.6-8 8-8 4.4 0 8 3.6 8 8z"/></svg> Importer les détails</>
             )}
           </button>
         </div>
@@ -496,12 +497,12 @@ export function VillaEditorForm({ villa, photosRef: externalPhotosRef }: VillaEd
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} aria-hidden />
                 {isCreate ? "Création..." : "Sauvegarde..."}
               </>
             ) : (
               <>
-                <Save className="h-4 w-4" aria-hidden />
+                <Save className="h-4 w-4" strokeWidth={1.5} aria-hidden />
                 {isCreate ? "Créer la villa" : "Enregistrer les modifications"}
               </>
             )}

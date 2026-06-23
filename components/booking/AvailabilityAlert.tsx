@@ -13,7 +13,8 @@
  */
 
 import { useState } from "react";
-import { Bell, CheckCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseBrowser } from "@/lib/supabase";
 
 interface AvailabilityAlertProps {
@@ -77,7 +78,7 @@ export function AvailabilityAlert({
         onClick={() => setOpen(true)}
         className="w-full flex items-center justify-center gap-2 py-3.5 border border-navy/15 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/80 hover:text-navy hover:border-navy/30 transition-all duration-200"
       >
-        <Bell size={12} strokeWidth={1.8} />
+        <KayvilaPngIcon name="bell" size={18} alt="" />
         Me prévenir si ces dates se libèrent
       </button>
     );
@@ -86,7 +87,7 @@ export function AvailabilityAlert({
   return (
     <div className="border border-gold/30 bg-gold/[0.03] p-5 space-y-4">
       <div className="flex items-start gap-2">
-        <Bell size={14} className="text-gold mt-0.5 shrink-0" />
+        <KayvilaPngIcon name="bell" size={18} alt="" className="mt-0.5 shrink-0" />
         <div>
           <p className="text-xs font-semibold text-navy">
             Alerte disponibilité
@@ -99,7 +100,7 @@ export function AvailabilityAlert({
 
       {status === "success" ? (
         <div className="flex items-center gap-2 py-3">
-          <CheckCircle size={16} className="text-green-600 shrink-0" />
+          <KayvilaPngIcon name="check-circle" size={20} alt="" className="shrink-0" />
           <p className="text-xs text-green-700 font-medium">
             Alerte enregistrée ! Nous vous contacterons à <strong>{email}</strong>.
           </p>
@@ -166,7 +167,7 @@ export function AvailabilityAlert({
               {status === "loading" ? (
                 <Loader2 size={12} className="animate-spin" />
               ) : (
-                <Bell size={11} />
+                <KayvilaPngIcon name="bell" size={18} alt="" />
               )}
               M'alerter
             </button>

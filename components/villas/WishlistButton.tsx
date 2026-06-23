@@ -52,7 +52,7 @@ export function WishlistButton({ villaId, className = "" }: WishlistButtonProps)
       `}
     >
       <Heart
-        size={15}
+        size={16}
         strokeWidth={1.5}
         className={`transition-colors duration-200 ${
           fav

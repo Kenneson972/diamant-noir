@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Calendar, Users, Search, ArrowRight, ChevronDown, Plus, Minus } from "lucide-react";
+import { Search, ChevronDown, Plus, Minus } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useRouter } from "next/navigation";
 
 interface BookingSearchBarProps {
@@ -114,7 +115,7 @@ export function BookingSearchBar({
           aria-label="Choisir la date d'arrivée"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
-            <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="calendar" size={18} className="shrink-0 opacity-60" />
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Arrivée</p>
               <p className={`mt-0.5 text-sm font-medium truncate ${checkin ? "text-navy" : "text-navy/45"}`}>
@@ -145,7 +146,7 @@ export function BookingSearchBar({
           aria-label="Choisir la date de départ"
         >
           <div className="flex min-h-[60px] items-center gap-4 px-5 py-3.5">
-            <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="calendar" size={18} className="shrink-0 opacity-60" />
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Départ</p>
               <p className={`mt-0.5 text-sm font-medium truncate ${checkout ? "text-navy" : "text-navy/45"}`}>
@@ -178,7 +179,7 @@ export function BookingSearchBar({
             aria-expanded={guestOpen}
             aria-haspopup="true"
           >
-            <Users className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="users" size={18} className="shrink-0 opacity-60" />
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55">Voyageurs</p>
               <p className="mt-0.5 text-sm font-medium text-navy">
@@ -202,10 +203,10 @@ export function BookingSearchBar({
         >
           <Search className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
           Rechercher
-          <ArrowRight
-            className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-            strokeWidth={1.25}
-            aria-hidden
+          <KayvilaPngIcon
+            name="arrow-right"
+            size={18}
+            className="transition-transform group-hover:translate-x-0.5"
           />
         </button>
       </div>

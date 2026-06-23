@@ -92,7 +92,7 @@ export function VillaIcalPanel({ villaId, icalUrl, otaChannels }: VillaIcalPanel
             value={addUrl}
             onChange={(e) => setAddUrl(e.target.value)}
             placeholder="https://www.airbnb.com/calendar/ical/…"
-            className="min-h-[44px] flex-1 rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/30 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
+            className="min-h-[44px] flex-1 rounded-xl border border-navy/15 px-3 py-2 text-sm text-navy placeholder:text-navy/50 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
           />
           <button
             type="button"

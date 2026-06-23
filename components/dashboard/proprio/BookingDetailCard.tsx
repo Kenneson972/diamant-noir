@@ -3,20 +3,13 @@ import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatus
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import { getCommissionRate } from "@/lib/revenue/booking-revenue";
 import {
-  CalendarDays,
-  Building2,
   Receipt,
-  CreditCard,
-  Globe,
-  Clock,
   User,
-  Mail,
   Hash,
   Banknote,
-  Users,
-  TrendingDown,
-  TrendingUp,
+  Globe,
 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface BookingDetailCardProps {
   booking: Booking;
@@ -61,12 +54,12 @@ const paymentLabels: Record<string, string> = {
 };
 
 function DetailRow({
-  icon: Icon,
+  icon,
   label,
   value,
   className,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ReactNode;
   label: string;
   value: React.ReactNode;
   className?: string;
@@ -74,7 +67,7 @@ function DetailRow({
   return (
     <div className={`flex items-start gap-3 ${className ?? ""}`}>
       <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg bg-navy/5">
-        <Icon className="h-4 w-4 text-navy/55" />
+        {icon}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium uppercase tracking-wider text-navy/55">
@@ -115,49 +108,49 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
         <div className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Villa */}
           <DetailRow
-            icon={Building2}
+            icon={<KayvilaPngIcon name="villa" size={20} />}
             label="Villa"
             value={villaName ?? "—"}
           />
 
           {/* Client */}
           <DetailRow
-            icon={User}
+            icon={<User className="h-4 w-4 text-navy/55" strokeWidth={1.5} />}
             label="Client"
             value={booking.guest_name ?? "Anonyme"}
           />
 
           {/* Email */}
           <DetailRow
-            icon={Mail}
+            icon={<KayvilaPngIcon name="mail" size={20} />}
             label="Email"
             value={booking.guest_email ?? "—"}
           />
 
           {/* Arrivée */}
           <DetailRow
-            icon={CalendarDays}
+            icon={<KayvilaPngIcon name="calendar" size={20} />}
             label="Arrivée"
             value={formatDate(booking.start_date)}
           />
 
           {/* Départ */}
           <DetailRow
-            icon={CalendarDays}
+            icon={<KayvilaPngIcon name="calendar" size={20} />}
             label="Départ"
             value={formatDate(booking.end_date)}
           />
 
           {/* Durée */}
           <DetailRow
-            icon={Clock}
+            icon={<KayvilaPngIcon name="clock" size={20} />}
             label="Durée"
             value={`${nights} nuit${nights > 1 ? "s" : ""}`}
           />
 
           {/* Prix total */}
           <DetailRow
-            icon={Receipt}
+            icon={<Receipt className="h-4 w-4 text-navy/55" strokeWidth={1.5} />}
             label="Prix total"
             value={
               <span className="font-display text-base font-bold text-emerald-700">
@@ -169,7 +162,7 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
           {/* Prix par nuit */}
           {pricePerNightCents > 0 && (
             <DetailRow
-              icon={Banknote}
+              icon={<Banknote className="h-4 w-4 text-navy/55" strokeWidth={1.5} />}
               label="Prix par nuit"
               value={formatCurrency(pricePerNightCents)}
             />
@@ -177,14 +170,14 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
 
           {/* Voyageurs */}
           <DetailRow
-            icon={Users}
+            icon={<KayvilaPngIcon name="users" size={20} />}
             label="Voyageurs"
             value={(booking as any).guests ? `${(booking as any).guests} personne${(booking as any).guests > 1 ? "s" : ""}` : "—"}
           />
 
           {/* Commission Kayvila */}
           <DetailRow
-            icon={TrendingDown}
+            icon={<KayvilaPngIcon name="trend-down" size={20} />}
             label={`Commission Kayvila (${commissionRate}%)`}
             value={
               <span className="text-amber-700">
@@ -195,7 +188,7 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
 
           {/* Revenu net proprio */}
           <DetailRow
-            icon={TrendingUp}
+            icon={<KayvilaPngIcon name="trending-up" size={20} />}
             label="Revenu net propriétaire"
             value={
               <span className="font-display text-base font-bold text-emerald-700">
@@ -206,14 +199,14 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
 
           {/* Source */}
           <DetailRow
-            icon={Globe}
+            icon={<Globe className="h-4 w-4 text-navy/55" strokeWidth={1.5} />}
             label="Source"
             value={sourceLabels[booking.source] ?? booking.source}
           />
 
           {/* Paiement */}
           <DetailRow
-            icon={CreditCard}
+            icon={<KayvilaPngIcon name="credit-card" size={20} />}
             label="Paiement"
             value={
               <span
@@ -233,7 +226,7 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
           {/* ID Stripe */}
           {booking.stripe_session_id && (
             <DetailRow
-              icon={Hash}
+              icon={<Hash className="h-4 w-4 text-navy/55" strokeWidth={1.5} />}
               label="Session Stripe"
               value={
                 <code className="break-all text-xs text-navy/50">

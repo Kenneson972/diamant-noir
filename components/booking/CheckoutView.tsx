@@ -316,7 +316,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                         name="users"
                         size={20}
                         alt=""
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-60"
                       />
                       <input
                         id="guestName"
@@ -341,7 +341,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                         name="mail"
                         size={20}
                         alt=""
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-30"
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 opacity-60"
                       />
                       <input
                         id="guestEmail"

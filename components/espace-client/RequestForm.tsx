@@ -122,7 +122,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
         disabled={sending || !message.trim()}
         className="inline-flex items-center gap-2 bg-navy px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-white hover:bg-navy/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
-        <Send size={14} />
+        <Send size={16} strokeWidth={1.5} />
         {sending ? "Envoi..." : "Envoyer la demande"}
       </button>
     </form>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
@@ -155,7 +156,7 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 rounded-xl border border-navy/15 bg-white px-4 py-3 text-sm font-medium text-navy transition-colors hover:border-gold hover:text-gold"
             >
-              <ExternalLink className="h-4 w-4" aria-hidden />
+              <KayvilaPngIcon name="door" size={18} alt="" />
               Voir sur le site
             </a>
             <Link

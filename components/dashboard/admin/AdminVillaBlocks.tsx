@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { format, parseISO, isBefore, startOfDay } from "date-fns";
-import { Loader2, Plus, Trash2, Calendar } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseBrowser } from "@/lib/supabase";
 
 type DateBlock = {
@@ -204,7 +205,7 @@ export function AdminVillaBlocks({ villaId }: Props) {
         </div>
       ) : blocks.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-6 text-center">
-          <Calendar className="h-8 w-8 text-navy opacity-30" aria-hidden />
+          <KayvilaPngIcon name="calendar" size={32} alt="" className="text-navy/60" />
           <p className="text-sm text-navy/40">Aucun blocage enregistré.</p>
         </div>
       ) : (

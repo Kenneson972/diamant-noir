@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CreditCard, ExternalLink, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ExternalLink, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface StripeConnectButtonProps {
   ownerId: string;
@@ -96,7 +97,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
   if (checkingConnect) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">
-        <Loader2 size={20} className="shrink-0 animate-spin text-blue-600" />
+        <Loader2 size={20} strokeWidth={1.5} className="shrink-0 animate-spin text-blue-600" />
         <div>
           <p className="text-sm font-bold text-blue-800">Vérification de votre compte Stripe…</p>
           <p className="text-xs text-blue-600">Cela prend quelques secondes</p>
@@ -108,7 +109,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
   if (connected) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-5 py-4">
-        <CheckCircle2 size={20} className="shrink-0 text-green-600" />
+        <CheckCircle2 size={20} strokeWidth={1.5} className="shrink-0 text-green-600" />
         <div>
           <p className="text-sm font-bold text-green-800">Compte bancaire connecté</p>
           <p className="text-xs text-green-600">
@@ -122,7 +123,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
-        <AlertCircle size={20} className="shrink-0 text-amber-600" />
+        <AlertCircle size={20} strokeWidth={1.5} className="shrink-0 text-amber-600" />
         <div>
           <p className="text-sm font-bold text-amber-800">Paiements non configurés</p>
           <p className="text-xs text-amber-600">
@@ -136,9 +137,9 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
         disabled={loading}
         className="group flex w-full items-center justify-center gap-3 rounded-xl bg-navy px-6 py-4 text-sm font-bold text-white transition-all hover:bg-gold hover:text-navy disabled:opacity-50 sm:w-auto"
       >
-        <CreditCard size={18} />
+        <KayvilaPngIcon name="credit-card" size={20} />
         {loading ? "Connexion en cours…" : "Connecter mon compte Stripe"}
-        <ExternalLink size={16} className="transition-transform group-hover:translate-x-1" />
+        <ExternalLink size={16} strokeWidth={1.5} className="transition-transform group-hover:translate-x-1" />
       </button>
 
       {error && (

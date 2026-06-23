@@ -3,7 +3,7 @@
 import type { CheckoutVilla } from "@/components/booking/checkout-types";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
-import { Lock } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type CheckoutPriceSummaryProps = {
   villa: CheckoutVilla;
@@ -81,7 +81,7 @@ export function CheckoutPriceSummary({
 
       {!compact && (
         <div className="mt-6 flex items-start gap-3 border-t border-navy/8 pt-5 text-navy/55">
-          <Lock className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+          <KayvilaPngIcon name="lock" size={18} className="mt-0.5 shrink-0" />
           <p className="text-[11px] leading-relaxed">
             Paiement sécurisé par Stripe. Vos données bancaires ne sont jamais stockées sur nos
             serveurs.

@@ -1,5 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { Download } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { RevenueSummary } from "@/components/dashboard/proprio/RevenueSummary";
@@ -143,7 +143,7 @@ export default async function RevenusPage() {
             download
             className="inline-flex items-center gap-2 rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-white hover:bg-gold/90"
           >
-            <Download size={16} />
+            <KayvilaPngIcon name="download" size={20} />
             Télécharger le relevé
           </a>
         </div>

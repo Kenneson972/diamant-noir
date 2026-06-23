@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Check } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface CheckoutInstructionsProps {
   endDate: string;
@@ -27,7 +27,7 @@ export function CheckoutInstructions({ endDate, checkOutTime = "10:00" }: Checko
   return (
     <div className="border border-gold/10 bg-white p-6 mt-8">
       <div className="flex items-center gap-2 mb-4">
-        <Clock size={16} className="text-navy/30" />
+        <KayvilaPngIcon name="clock" size={18} alt="" className="text-navy/60" aria-hidden />
         <h3 className="font-display text-lg text-navy">Check-out demain</h3>
       </div>
       <p className="text-sm text-navy/50 mb-4">
@@ -36,7 +36,7 @@ export function CheckoutInstructions({ endDate, checkOutTime = "10:00" }: Checko
       <ul className="space-y-2 mb-4">
         {CHECKLIST.map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-sm text-navy/70">
-            <Check size={14} className="text-gold mt-0.5 shrink-0" />
+            <KayvilaPngIcon name="check-circle" size={18} alt="" className="text-gold mt-0.5 shrink-0" aria-hidden />
             {item}
           </li>
         ))}

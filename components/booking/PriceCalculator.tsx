@@ -15,7 +15,8 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Users, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaPressableButton } from "@/components/ui/pro";
 
 interface PriceCalculatorProps {
@@ -118,7 +119,7 @@ export function PriceCalculator({
 
       {/* Voyageurs */}
       <div className="flex items-center gap-3 border border-navy/10 px-4 py-3">
-        <Users size={14} className="text-navy/55 shrink-0" />
+        <KayvilaPngIcon name="users" size={18} className="shrink-0 opacity-60" />
         <label className="text-[10px] uppercase tracking-[0.2em] text-navy/55 flex-1">
           Voyageurs
         </label>
@@ -183,7 +184,7 @@ export function PriceCalculator({
           </>
         ) : (
           <>
-            <Calendar size={13} /> Choisir les dates
+            <KayvilaPngIcon name="calendar" size={18} /> Choisir les dates
           </>
         )}
       </KayvilaPressableButton>

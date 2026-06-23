@@ -7,17 +7,10 @@ import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import {
   Check,
-  Calendar,
-  MapPin,
-  ArrowRight,
-  Mail,
-  Lock,
   ExternalLink,
   PartyPopper,
-  CreditCard,
-  ShieldCheck,
-  LogIn,
 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -145,7 +138,7 @@ function SuccessContent() {
             <div role="status" className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent">
               <span className="sr-only">Chargement de votre confirmation...</span>
             </div>
-            <p className="mt-6 text-sm text-navy/55">Vérification de votre réservation...</p>
+            <p className="mt-6 text-sm text-navy/60">Vérification de votre réservation...</p>
           </div>
         </div>
       </main>
@@ -166,7 +159,7 @@ function SuccessContent() {
             className="inline-flex items-center gap-2 rounded-full bg-navy px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-gold hover:text-navy"
           >
             Découvrir nos villas
-            <ArrowRight size={14} />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" />
           </Link>
         </div>
       </main>
@@ -202,7 +195,7 @@ function SuccessContent() {
         {/* ── Success header ── */}
         <div className="text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
-            <PartyPopper className="h-9 w-9 text-emerald-500" strokeWidth={1.5} />
+            <PartyPopper className="h-9 w-9 text-emerald-500" strokeWidth={1.5} size={18} />
           </div>
           <h1 className="font-display text-3xl text-navy sm:text-4xl">
             Réservation confirmée !
@@ -221,15 +214,15 @@ function SuccessContent() {
             <div className="border-b border-navy/5 bg-gradient-to-br from-navy/5 to-transparent px-6 py-5 sm:px-8">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
-                  <MapPin size={20} />
+                  <KayvilaPngIcon name="location" size={20} alt="" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
                     Villa
                   </p>
                   <h2 className="mt-1 font-display text-xl text-navy">{villa.name}</h2>
                   {villa.location && (
-                    <p className="mt-0.5 text-sm text-navy/50">{villa.location}</p>
+                    <p className="mt-0.5 text-sm text-navy/60">{villa.location}</p>
                   )}
                 </div>
               </div>
@@ -241,17 +234,17 @@ function SuccessContent() {
             {startDate && endDate && (
               <div className="flex items-center gap-4 pb-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gold/10 text-gold">
-                  <Calendar size={18} />
+                  <KayvilaPngIcon name="calendar" size={20} alt="" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
                     Dates du séjour
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-navy">
                     Du {startDate} au {endDate}
                   </p>
                   {nights && (
-                    <p className="text-xs text-navy/55">{nights} nuit{nights > 1 ? "s" : ""}</p>
+                    <p className="text-xs text-navy/60">{nights} nuit{nights > 1 ? "s" : ""}</p>
                   )}
                 </div>
               </div>
@@ -260,10 +253,10 @@ function SuccessContent() {
             {booking?.price != null && (
               <div className="flex items-center gap-4 pt-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-500">
-                  <CreditCard size={18} />
+                  <KayvilaPngIcon name="credit-card" size={20} alt="" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
                     Montant réglé
                   </p>
                   <p className="mt-0.5 text-sm font-semibold text-navy">
@@ -281,7 +274,7 @@ function SuccessContent() {
             <div className="px-6 py-7 sm:px-8">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
-                  <Lock size={20} />
+                  <KayvilaPngIcon name="lock" size={20} alt="" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-display text-lg text-navy">Créez votre espace client</h3>
@@ -291,14 +284,14 @@ function SuccessContent() {
                   </p>
 
                   <div className="mt-5 flex items-center gap-3 rounded-2xl border border-navy/10 bg-white px-4 py-3">
-                    <Mail size={16} className="shrink-0 text-navy/30" />
+                    <KayvilaPngIcon name="mail" size={18} alt="" className="shrink-0" />
                     <span className="text-sm font-medium text-navy">{guestEmail}</span>
                   </div>
 
                   {magicLinkSent ? (
                     <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <Check size={18} className="shrink-0 text-emerald-500" />
+                        <Check size={16} strokeWidth={1.5} className="shrink-0 text-emerald-500" />
                         <p className="text-sm text-emerald-700">
                           Lien magique envoyé ! Vérifiez votre boîte de réception (et vos
                           spams). Le lien expire dans 1 heure.
@@ -323,7 +316,7 @@ function SuccessContent() {
                         </>
                       ) : (
                         <>
-                          <LogIn size={16} />
+                          <KayvilaPngIcon name="login" size={18} alt="" />
                           Recevoir mon lien magique
                         </>
                       )}
@@ -334,7 +327,7 @@ function SuccessContent() {
                     <p className="mt-2 text-xs text-red-500">{magicError}</p>
                   )}
 
-                  <p className="mt-3 text-xs text-navy/30">
+                  <p className="mt-3 text-xs text-navy/60">
                     Un email avec un lien de connexion instantané. Sans mot de passe.
                   </p>
                 </div>
@@ -350,7 +343,7 @@ function SuccessContent() {
               href="/espace-client"
               className="inline-flex items-center gap-3 rounded-2xl bg-navy px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-lg transition-all hover:bg-gold hover:text-navy"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={16} strokeWidth={1.5} />
               Accéder à mon espace client
             </Link>
           </div>
@@ -362,28 +355,28 @@ function SuccessContent() {
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
-                <Mail size={18} />
+                <KayvilaPngIcon name="mail" size={20} alt="" />
               </div>
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Email confirmé</p>
-              <p className="mt-1 text-xs text-navy/50">
+              <p className="mt-1 text-xs text-navy/60">
                 Votre confirmation vous a été envoyée par email
               </p>
             </div>
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
-                <ShieldCheck size={18} />
+                <KayvilaPngIcon name="shield-check" size={20} alt="" />
               </div>
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Paiement sécurisé</p>
-              <p className="mt-1 text-xs text-navy/50">
+              <p className="mt-1 text-xs text-navy/60">
                 Votre paiement a bien été traité par Stripe
               </p>
             </div>
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
-                <Calendar size={18} />
+                <KayvilaPngIcon name="calendar" size={20} alt="" />
               </div>
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Préparez votre séjour</p>
-              <p className="mt-1 text-xs text-navy/50">
+              <p className="mt-1 text-xs text-navy/60">
                 Consultez le livret d&apos;accueil et la checklist
               </p>
             </div>
@@ -397,11 +390,11 @@ function SuccessContent() {
             className="inline-flex items-center gap-2 rounded-full border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy transition-all hover:bg-navy hover:text-white"
           >
             Découvrir nos villas
-            <ArrowRight size={14} />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" />
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full bg-navy/5 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 transition-all hover:bg-navy/10"
+            className="inline-flex items-center gap-2 rounded-full bg-navy/5 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/60 transition-all hover:bg-navy/10"
           >
             Retour à l&apos;accueil
           </Link>

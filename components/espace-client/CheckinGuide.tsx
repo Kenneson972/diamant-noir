@@ -41,7 +41,7 @@ export function CheckinGuide({
     return (
       <div className="border border-navy/10 bg-white p-6 mt-8">
         <div className="flex items-center gap-2 mb-2">
-          <KayvilaPngIcon name="clock" size={18} alt="" className="opacity-30" />
+          <KayvilaPngIcon name="clock" size={18} alt="" className="opacity-60" />
           <h3 className="font-display text-lg text-navy">Check-in</h3>
         </div>
         <p className="text-sm text-navy/50">
@@ -79,7 +79,7 @@ export function CheckinGuide({
         )}
         {address && (
           <div className="flex items-start gap-3">
-            <KayvilaPngIcon name="location" size={18} alt="" className="opacity-30 mt-0.5 shrink-0" />
+            <KayvilaPngIcon name="location" size={18} alt="" className="opacity-60 mt-0.5 shrink-0" />
             <p className="text-sm text-navy/70">{address}</p>
           </div>
         )}
@@ -92,7 +92,7 @@ export function CheckinGuide({
           href="tel:+596696000000"
           className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/80 hover:text-navy transition-colors"
         >
-          <KayvilaPngIcon name="phone" size={16} alt="" className="opacity-70" />
+          <KayvilaPngIcon name="phone" size={18} alt="" className="opacity-70" />
           Problème d&apos;accès ? Appelez-nous
         </a>
       </div>

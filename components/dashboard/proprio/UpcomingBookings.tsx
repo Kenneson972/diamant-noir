@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Booking } from "@/types/domain";
 
 interface UpcomingBookingsProps {
@@ -22,7 +22,7 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
       <div className="dashboard-card">
         <span className="dashboard-eyebrow">PROCHAINES RÉSERVATIONS</span>
         <div className="mt-4 flex flex-col items-center justify-center py-8 text-center">
-          <CalendarDays className="mb-3 h-8 w-8 text-muted" aria-hidden />
+          <KayvilaPngIcon name="calendar" size={24} className="mb-3 text-muted" />
           <p className="text-sm italic text-muted">
             Aucune réservation à venir
           </p>
@@ -51,7 +51,7 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
                   {formatDate(booking.end_date)}
                 </p>
               </div>
-              <ArrowRight className="h-4 w-4 shrink-0 text-muted" aria-hidden />
+              <KayvilaPngIcon name="arrow-right" size={20} className="shrink-0 text-muted" />
             </Link>
           </li>
         ))}

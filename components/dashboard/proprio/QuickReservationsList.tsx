@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CalendarDays, User } from "lucide-react";
+import { User } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Booking } from "@/types/domain";
 import { cn } from "@/lib/utils";
 import { BookingStatusBadge } from "./BookingStatusBadge";
@@ -16,7 +17,7 @@ export function QuickReservationsList({ bookings }: QuickReservationsListProps) 
   if (bookings.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-navy/10 bg-navy/[0.02] px-6 py-12 text-center">
-        <CalendarDays className="mb-3 h-8 w-8 text-navy/30" aria-hidden />
+        <KayvilaPngIcon name="calendar" size={24} className="text-navy/60 mb-3 aria-hidden" />
         <p className="text-sm font-medium text-navy/50">
           Aucune réservation à venir
         </p>
@@ -50,7 +51,7 @@ export function QuickReservationsList({ bookings }: QuickReservationsListProps) 
                   {booking.guest_name ?? "Anonyme"}
                 </span>
                 <span className="hidden text-xs text-navy/55 sm:inline">
-                  <CalendarDays className="mr-1 inline h-3 w-3" aria-hidden />
+                  <KayvilaPngIcon name="calendar" size={18} className="mr-1 inline aria-hidden" />
                   {formatDate(booking.start_date)} – {formatDate(booking.end_date)}
                 </span>
               </div>

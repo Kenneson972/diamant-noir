@@ -25,16 +25,16 @@ export function HomeLifestyleAudience() {
           <div className="grid gap-12 sm:grid-cols-2">
             <ScrollReveal delay={0}>
               <div className="space-y-4">
-                <KayvilaPngIcon name="shield-check" size={32} invert className="opacity-50" />
+                <KayvilaPngIcon name="shield-check" size={32} invert className="opacity-60" />
                 <h3 className="font-bold">Confidentialité Totale</h3>
-                <p className="text-sm text-white/40">Accès privés et discrétion absolue pour votre sérénité.</p>
+                <p className="text-sm text-white/60">Accès privés et discrétion absolue pour votre sérénité.</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={150}>
               <div className="space-y-4">
-                <KayvilaPngIcon name="calendar" size={32} invert className="opacity-50" />
+                <KayvilaPngIcon name="calendar" size={32} invert className="opacity-60" />
                 <h3 className="font-bold">Services Sur-Mesure</h3>
-                <p className="text-sm text-white/40">Chefs, chauffeurs et excursions privées à la demande.</p>
+                <p className="text-sm text-white/60">Chefs, chauffeurs et excursions privées à la demande.</p>
               </div>
             </ScrollReveal>
           </div>

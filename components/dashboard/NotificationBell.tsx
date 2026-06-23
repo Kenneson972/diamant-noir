@@ -18,7 +18,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, X, ExternalLink, CheckCheck, Building2, Calendar, AlertTriangle, Sparkles, Info, MessageCircle, Key, DoorOpen } from "lucide-react";
+import { X, ExternalLink, CheckCheck, AlertTriangle, Info } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { timeAgo } from "@/lib/utils";
 
@@ -47,18 +48,18 @@ interface Notification {
   created_at: string;
 }
 
-const TYPE_CONFIG: Record<NotifType, { icon: any; color: string; bg: string }> = {
-  villa_submission:   { icon: Building2,    color: "text-gold",       bg: "bg-gold/10" },
-  booking_new:        { icon: Calendar,     color: "text-blue-500",   bg: "bg-blue-50" },
-  booking_confirmed:  { icon: CheckCheck,   color: "text-green-500",  bg: "bg-green-50" },
-  ical_error:         { icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
-  availability_alert: { icon: Bell,         color: "text-orange-500", bg: "bg-orange-50" },
-  system:             { icon: Info,           color: "text-navy/80",    bg: "bg-navy/5" },
-  request_update:     { icon: MessageCircle,  color: "text-gold",       bg: "bg-gold/10" },
-  request_urgent:     { icon: AlertTriangle,   color: "text-red-500",    bg: "bg-red-50" },
-  checkin_reminder:   { icon: Key,            color: "text-emerald-500",bg: "bg-emerald-50" },
-  checkout_reminder:  { icon: DoorOpen,       color: "text-amber-500",  bg: "bg-amber-50" },
-  new_message:        { icon: MessageCircle,  color: "text-blue-500",   bg: "bg-blue-50" },
+const TYPE_CONFIG: Record<NotifType, { iconType: "lucide" | "png"; icon: any; color: string; bg: string }> = {
+  villa_submission:   { iconType: "png", icon: "villa",        color: "text-gold",       bg: "bg-gold/10" },
+  booking_new:        { iconType: "png", icon: "calendar",     color: "text-blue-500",   bg: "bg-blue-50" },
+  booking_confirmed:  { iconType: "lucide", icon: CheckCheck,  color: "text-green-500",  bg: "bg-green-50" },
+  ical_error:         { iconType: "lucide", icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
+  availability_alert: { iconType: "png", icon: "bell",         color: "text-orange-500", bg: "bg-orange-50" },
+  system:             { iconType: "lucide", icon: Info,        color: "text-navy/80",    bg: "bg-navy/5" },
+  request_update:     { iconType: "png", icon: "message",      color: "text-gold",       bg: "bg-gold/10" },
+  request_urgent:     { iconType: "lucide", icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
+  checkin_reminder:   { iconType: "png", icon: "door",         color: "text-emerald-500",bg: "bg-emerald-50" },
+  checkout_reminder:  { iconType: "png", icon: "door",         color: "text-amber-500",  bg: "bg-amber-50" },
+  new_message:        { iconType: "png", icon: "message",      color: "text-blue-500",   bg: "bg-blue-50" },
 };
 
 const SCORE_COLOR = (score: number) =>
@@ -216,9 +217,10 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} non lues)` : ""}`}
       >
         <div className="relative shrink-0">
-          <Bell
+          <KayvilaPngIcon
+            name="bell"
             size={18}
-            className={animating ? "text-gold" : ""}
+            alt=""
           />
           {unreadCount > 0 && (
             <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-navy leading-none">
@@ -244,7 +246,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
           {/* Header dropdown */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-navy/[0.06] dark:border-white/10">
             <div className="flex items-center gap-2">
-              <Bell size={14} className="text-gold" />
+              <KayvilaPngIcon name="bell" size={18} alt="" />
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-navy dark:text-white">
                 Notifications
               </span>
@@ -280,13 +282,14 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 gap-2">
-                <Bell size={24} className="text-navy/15 dark:text-white/15" />
+                <KayvilaPngIcon name="bell" size={24} alt="" />
                 <p className="text-xs text-navy/55 dark:text-white/40">Aucune notification</p>
               </div>
             ) : (
               notifications.map((notif) => {
                 const cfg = TYPE_CONFIG[notif.type] ?? TYPE_CONFIG.system;
-                const Icon = cfg.icon;
+                const IconComponent = cfg.iconType === "lucide" ? cfg.icon : undefined;
+                const PngName = cfg.iconType === "png" ? cfg.icon as string : undefined;
                 const score = notif.metadata?.ai_score;
                 const tier = notif.metadata?.ai_tier;
 
@@ -306,7 +309,11 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                     <div className="flex items-start gap-3">
                       {/* Icône type */}
                       <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${cfg.bg}`}>
-                        <Icon size={14} className={cfg.color} />
+                        {IconComponent ? (
+                          <IconComponent size={14} className={cfg.color} />
+                        ) : (
+                          <KayvilaPngIcon name={PngName as any} size={18} alt="" />
+                        )}
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -338,7 +345,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                             )}
                             {notif.metadata?.ai_recommendation === "auto_review" && (
                               <span className="flex items-center gap-0.5 text-[10px] text-green-600">
-                                <Sparkles size={9} /> Dossier fort
+                                <KayvilaPngIcon name="sparkle" size={14} alt="" /> Dossier fort
                               </span>
                             )}
                           </div>

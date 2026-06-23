@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Calendar } from "lucide-react";
+import { Search } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { HeroDateRangePicker } from "@/components/search/HeroDateRangePicker";
 import { HeroGuestPicker } from "@/components/search/HeroGuestPicker";
 
@@ -94,11 +95,10 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         }`}
         aria-label="Choisir les dates du s\u00e9jour"
       >
-        <Calendar
-          size={16}
-          className={`shrink-0 ${isLight ? "text-navy/50" : "text-white/40"}`}
-          strokeWidth={1.5}
-          aria-hidden
+        <KayvilaPngIcon
+          name="calendar"
+          size={20}
+          className={`shrink-0 ${isLight ? "" : "invert"}`}
         />
         <div className="flex min-h-[52px] flex-1 items-center justify-between gap-2 py-3 sm:min-h-[56px]">
           <div className="flex flex-col gap-0.5">

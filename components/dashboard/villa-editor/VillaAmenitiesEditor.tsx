@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus, X, Check, Sparkles } from "lucide-react";
+import { Plus, X } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { SUGGESTED_AMENITY_LABELS, SUGGESTED_AMENITY_SET } from "@/lib/villa-amenities-suggested";
 
 /* ─── Props ─────────────────────────────────────────── */
@@ -20,7 +21,7 @@ export function AmenityImportTag({ className = "" }: { className?: string }) {
     <span
       className={`inline-flex items-center gap-0.5 rounded-md bg-emerald-600/12 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-800 ${className}`}
     >
-      <Sparkles className="h-2.5 w-2.5 shrink-0" aria-hidden />
+      <KayvilaPngIcon name="sparkle" size={14} alt="" />
       Import
     </span>
   );
@@ -81,7 +82,7 @@ export function VillaAmenitiesEditor({
                     : "border-border-subtle text-muted hover:border-navy-900/20 hover:text-navy-900/80"
                 }`}
               >
-                {isActive && <Check className="h-3 w-3 shrink-0" aria-hidden />}
+                {isActive && <KayvilaPngIcon name="check-circle" size={14} alt="" />}
                 {label}
                 {isImported && <AmenityImportTag />}
               </button>

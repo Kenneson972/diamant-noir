@@ -8,7 +8,8 @@ import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
-import { FileText, BookOpen } from "lucide-react";
+import { FileText } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
 
 interface BookingDoc {
@@ -79,7 +80,7 @@ export default function DocumentsPage() {
           </div>
         ) : bookings.length === 0 ? (
           <KayvilaEmptyState
-            icon={<FileText strokeWidth={1} aria-hidden />}
+            icon={<FileText strokeWidth={1.5} size={24} aria-hidden />}
             title="Aucun document disponible"
             description="Vos documents apparaîtront ici après confirmation de votre séjour."
             actionLabel="Découvrir nos villas"
@@ -101,7 +102,7 @@ export default function DocumentsPage() {
                         href="/espace-client/livret/print"
                         className="inline-flex min-h-[44px] items-center gap-1.5 rounded-none border border-navy/15 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-navy/55 no-underline transition-colors hover:border-gold hover:text-gold"
                       >
-                        <BookOpen size={12} aria-hidden />
+                        <KayvilaPngIcon name="book" size={18} alt="" aria-hidden />
                         Livret d&apos;accueil PDF
                       </Link>
                     </div>

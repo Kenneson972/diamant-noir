@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, MapPin } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Input } from "@/components/ui/input";
 import { ChipEditor } from "./ChipEditor";
 import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
@@ -138,7 +139,7 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
                 <Input id="vf-longitude" type="number" min="-180" max="180" step="0.000001" defaultValue={form.longitude as string || ""} placeholder="-61.0247" className="text-sm" />
               </div>
               <button type="button" onClick={handleGeolocate} className="mb-0.5 shrink-0 rounded-xl border border-gold/30 bg-gold/5 px-3 py-2 text-xs font-medium text-gold hover:bg-gold/10">
-                <MapPin size={14} className="inline mr-1" />Me localiser
+                <KayvilaPngIcon name="location" size={18} alt="" className="inline mr-1" />Me localiser
               </button>
             </div>
           </div>

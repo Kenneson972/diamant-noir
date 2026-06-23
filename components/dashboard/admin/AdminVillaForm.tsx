@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Plus, Sparkles } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
@@ -158,7 +159,7 @@ export function AdminVillaForm() {
 
       <div className="rounded-2xl border border-navy/8 bg-amber-50/80 px-4 py-3 text-sm text-navy/75">
         <p className="flex flex-wrap items-center gap-2">
-          <Sparkles className="h-4 w-4 shrink-0 text-gold" aria-hidden />
+          <KayvilaPngIcon name="sparkle" size={18} alt="" />
           Après création, utilisez{" "}
           <strong className="font-semibold text-navy">Éditeur complet</strong>{" "}
           sur la fiche villa pour tout aligner avec le hub classique.

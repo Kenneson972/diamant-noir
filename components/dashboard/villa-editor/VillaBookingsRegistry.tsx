@@ -1,11 +1,11 @@
 "use client"
 
-import { Filter, Download } from "lucide-react"
+import { Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils"
 import type { ReactNode } from "react"
-import { CreditCard } from "lucide-react"
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon"
 
 export type VillaBookingRow = {
   id: string
@@ -62,7 +62,7 @@ export function VillaBookingsRegistry({
             onClick={onExportCsv}
             disabled={filteredBookings.length === 0}
           >
-            <Download size={14} /> Exporter CSV
+            <KayvilaPngIcon name="download" size={18} alt="" /> Exporter CSV
           </Button>
         </div>
         <div
@@ -157,7 +157,7 @@ export function VillaBookingsRegistry({
                         booking.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                       }`}
                     >
-                      <CreditCard size={10} />
+                      <KayvilaPngIcon name="credit-card" size={14} alt="" />
                       {booking.payment_status === "paid" ? "Payé" : "À payer"}
                     </span>
                   </td>

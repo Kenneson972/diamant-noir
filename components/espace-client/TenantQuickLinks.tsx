@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { CheckSquare, Wifi, FileDown, ArrowRight } from "lucide-react";
+import { CheckSquare, Wifi, FileDown } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaTenantWidget } from "@/components/ui/pro/kayvila-tenant-widget";
 
 const LINKS = [
@@ -40,8 +41,8 @@ export function TenantQuickLinks() {
             >
               <Icon
                 size={18}
-                strokeWidth={1.25}
-                className="text-navy/25 transition-colors group-hover:text-gold/80"
+                strokeWidth={1.5}
+                className="text-navy/50 transition-colors group-hover:text-gold/80"
                 aria-hidden
               />
               <span>
@@ -50,9 +51,11 @@ export function TenantQuickLinks() {
                 </span>
                 <span className="mt-0.5 block font-display text-sm italic text-navy/45">{sub}</span>
               </span>
-              <ArrowRight
-                size={12}
-                className="text-navy/15 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
+              <KayvilaPngIcon
+                name="arrow-right"
+                size={18}
+                alt=""
+                className="shrink-0 text-navy/60 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
                 aria-hidden
               />
             </Link>

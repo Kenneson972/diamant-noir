@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { RevenueBreakdownTable, type RevenueRow } from "@/components/dashboard/proprio/RevenueBreakdownTable";
 
 export function RevenuePageClient({ rows, period }: { rows: RevenueRow[]; period: string }) {
@@ -38,7 +38,7 @@ export function RevenuePageClient({ rows, period }: { rows: RevenueRow[]; period
           onClick={handleExport}
           className="flex items-center gap-2 rounded-lg border border-navy/10 px-4 py-2 text-sm text-navy hover:bg-navy/5 transition-colors"
         >
-          <Download size={15} />
+          <KayvilaPngIcon name="download" size={18} />
           Exporter en PDF
         </button>
       </div>

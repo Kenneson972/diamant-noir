@@ -1,6 +1,6 @@
 // components/dashboard/admin/VillaThumb.tsx
 import Image from "next/image";
-import { Building2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export function VillaThumb({
   src,
@@ -18,7 +18,7 @@ export function VillaThumb({
         style={{ width: size, height: size, minWidth: size }}
         aria-hidden
       >
-        <Building2 className="h-5 w-5" />
+        <KayvilaPngIcon name="villa" size={20} alt="" />
       </div>
     );
   }

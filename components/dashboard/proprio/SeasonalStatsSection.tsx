@@ -176,7 +176,7 @@ export function SeasonalStatsSection({
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-8 text-center text-sm text-navy/40"
+                    className="px-4 py-8 text-center text-sm text-navy/60"
                   >
                     Pas encore de données saisonnières.
                   </td>

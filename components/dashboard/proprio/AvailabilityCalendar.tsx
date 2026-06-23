@@ -76,7 +76,7 @@ const STATUS_CLASSES: Record<DayStatus, string> = {
     "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 cursor-pointer",
   booked: "bg-red-100 text-red-800 cursor-default",
   blocked: "bg-navy text-white hover:bg-navy/80 cursor-pointer",
-  past: "bg-white text-navy/20 cursor-default",
+  past: "bg-white text-navy/50 cursor-default",
 };
 
 export function AvailabilityCalendar({
@@ -237,7 +237,7 @@ export function AvailabilityCalendar({
               <p className="mb-2 text-center text-xs font-semibold text-navy capitalize">
                 {format(month, "MMMM yyyy", { locale: fr })}
               </p>
-              <div className="mb-1 grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-navy/40">
+              <div className="mb-1 grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-navy/60">
                 {["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"].map((d) => (
                   <span key={d}>{d}</span>
                 ))}
@@ -286,7 +286,7 @@ export function AvailabilityCalendar({
         {blocks.filter(
           (b) => !isBefore(parseISO(b.end_date), startOfDay(new Date()))
         ).length === 0 ? (
-          <p className="text-sm text-navy/40">Aucun blocage programmé.</p>
+          <p className="text-sm text-navy/60">Aucun blocage programmé.</p>
         ) : (
           <div className="divide-y divide-navy/5 overflow-hidden rounded-xl border border-navy/10">
             {blocks

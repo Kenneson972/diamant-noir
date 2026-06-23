@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type Message = { role: "user" | "assistant"; text: string };
 
@@ -54,15 +55,15 @@ export function AgentChat({
     <div className="flex flex-col h-[calc(100dvh-12rem)] rounded-2xl border border-navy/10 bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-navy/10 px-5 py-4">
-        <Sparkles size={18} className="text-gold" />
+        <KayvilaPngIcon name="sparkle" size={18} alt="" />
         <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-navy">{title}</h2>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-4 pt-12 text-navy/40">
-            <Sparkles size={32} strokeWidth={1} />
+          <div className="flex flex-col items-center justify-center gap-4 pt-12 text-navy/60">
+            <KayvilaPngIcon name="sparkle" size={32} alt="" />
             <p className="text-[12px] font-semibold uppercase tracking-[0.15em]">Assistant IA</p>
             <p className="text-[11px] text-center max-w-xs">Posez une question sur vos villas, réservations ou revenus.</p>
             {suggestedPrompts.length > 0 && (
@@ -94,8 +95,8 @@ export function AgentChat({
         {loading && (
           <div className="flex justify-start">
             <div className="flex items-center gap-2 rounded-2xl rounded-bl-md bg-navy/[0.04] px-4 py-3">
-              <Loader2 size={14} className="animate-spin text-navy/40" />
-              <span className="text-[11px] text-navy/40">Réflexion...</span>
+              <Loader2 size={14} className="animate-spin text-navy/60" />
+              <span className="text-[11px] text-navy/60">Réflexion...</span>
             </div>
           </div>
         )}
@@ -119,12 +120,12 @@ export function AgentChat({
             onChange={(e) => setInput(e.target.value)}
             placeholder={placeholder}
             disabled={loading}
-            className="flex-1 rounded-full border border-navy/15 px-4 py-2.5 text-[12px] text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold/50 disabled:opacity-40"
+            className="flex-1 rounded-full border border-navy/15 px-4 py-2.5 text-[12px] text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold/50 disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy text-white hover:bg-navy/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy text-white hover:bg-navy/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
           </button>

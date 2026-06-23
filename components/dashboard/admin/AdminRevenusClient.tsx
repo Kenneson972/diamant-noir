@@ -1,6 +1,7 @@
 "use client";
 
-import { TrendingUp, BarChart3, DollarSign, Download, Building2 } from "lucide-react";
+import { BarChart3, DollarSign } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatCurrency } from "@/lib/utils";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -50,7 +51,7 @@ export function AdminRevenusClient({
             onClick={exportCSV}
             className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy/90"
           >
-            <Download size={16} />
+            <KayvilaPngIcon name="download" size={18} alt="" />
             Export CSV
           </button>
         )}
@@ -64,14 +65,20 @@ export function AdminRevenusClient({
 
       <div className="grid gap-6 sm:grid-cols-3">
         {[
-          { label: "Ce mois (brut)", value: stats.monthGross, icon: TrendingUp },
-          { label: "Cette année (brut)", value: stats.yearGross, icon: BarChart3 },
-          { label: "Total historique (brut)", value: stats.allTimeGross, icon: DollarSign },
-        ].map(({ label, value, icon: Icon }) => (
+          { label: "Ce mois (brut)", value: stats.monthGross, icon: "trending-up" },
+          { label: "Cette année (brut)", value: stats.yearGross, icon: "barChart3" },
+          { label: "Total historique (brut)", value: stats.allTimeGross, icon: "dollarSign" },
+        ].map(({ label, value, icon }) => (
           <div key={label} className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">{label}</span>
-              <Icon className="h-4 w-4 text-gray-400" />
+              {icon === "trending-up" ? (
+                <KayvilaPngIcon name="trending-up" size={18} alt="" />
+              ) : icon === "barChart3" ? (
+                <BarChart3 className="h-4 w-4 text-gray-400" />
+              ) : (
+                <DollarSign className="h-4 w-4 text-gray-400" />
+              )}
             </div>
             <p className="mt-2 text-3xl font-semibold text-navy">{formatCurrency(value)}</p>
           </div>
@@ -121,7 +128,7 @@ export function AdminRevenusClient({
         <div className="rounded-lg border bg-white shadow-sm">
           <div className="px-6 py-4 border-b border-navy/[0.06]">
             <h3 className="text-sm font-semibold text-navy flex items-center gap-2">
-              <Building2 size={16} className="text-navy/40" />
+              <KayvilaPngIcon name="villa" size={18} alt="" className="text-navy/60" />
               Ventilation par villa
             </h3>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Download, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type Doc = {
   id: string;
@@ -21,7 +22,7 @@ function formatSize(bytes: number | null): string {
 export function DocumentsList({ documents }: { documents: Doc[] }) {
   if (documents.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-navy/40">
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-navy/60">
         <FileText size={40} strokeWidth={1} />
         <p className="text-[12px] font-semibold uppercase tracking-[0.15em]">
           Aucun document partag&eacute;
@@ -93,7 +94,7 @@ export function DocumentsList({ documents }: { documents: Doc[] }) {
                   className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-navy/50 hover:bg-navy/[0.06] hover:text-navy"
                   title="T&eacute;l&eacute;charger"
                 >
-                  <Download size={14} />
+                  <KayvilaPngIcon name="download" size={18} />
                 </a>
               </td>
             </tr>

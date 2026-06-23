@@ -2,7 +2,8 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type Owner = { id: string; name: string };
 
@@ -129,7 +130,7 @@ export function UploadDocumentForm({
           disabled={uploading || !file || !ownerId}
           className="inline-flex items-center gap-2 rounded-full bg-navy px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-navy/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+          {uploading ? <Loader2 size={14} className="animate-spin" /> : <KayvilaPngIcon name="upload" size={18} alt="" />}
           {uploading ? "Upload…" : "Uploader"}
         </button>
         {file && (

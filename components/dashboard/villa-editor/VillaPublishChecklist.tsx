@@ -1,6 +1,7 @@
 "use client"
 
-import { Check, Circle } from "lucide-react"
+import { Circle } from "lucide-react"
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon"
 
 export type VillaPublishChecklistItem = {
   id: string
@@ -20,7 +21,7 @@ export function VillaPublishChecklist({ items }: { items: VillaPublishChecklistI
         {items.map((item) => (
           <li key={item.id} className="flex items-start gap-2 text-sm text-navy/80">
             {item.ok ? (
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+              <KayvilaPngIcon name="check-circle" size={18} alt="" className="mt-0.5 shrink-0 text-emerald-600" />
             ) : (
               <Circle className="mt-0.5 h-4 w-4 shrink-0 text-navy/25" aria-hidden />
             )}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Bed, Bath, Users } from "lucide-react";
+import { Bed } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { LucideIcon } from "lucide-react";
 
 interface VillaCardProps {
@@ -75,9 +76,9 @@ export function VillaCard({
         </div>
 
         <div className="flex items-center gap-4">
-          <InfoIcon icon={Users} text={capacity} />
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted"><KayvilaPngIcon name="users" size={18} /> {capacity}</span>
           <InfoIcon icon={Bed} text={`${bedrooms} ch.`} />
-          <InfoIcon icon={Bath} text={`${bathrooms} sdb.`} />
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted"><KayvilaPngIcon name="home" size={18} /> {bathrooms} sdb.</span>
         </div>
 
         <div className="flex items-center justify-between pt-1">
@@ -87,7 +88,7 @@ export function VillaCard({
             </span>
             <span className="text-muted"> / nuit</span>
           </span>
-          <span className="text-xs font-medium text-navy-900/40 opacity-0 transition-opacity group-hover:opacity-100">
+          <span className="text-xs font-medium text-navy-900/60 opacity-0 transition-opacity group-hover:opacity-100">
             Modifier →
           </span>
         </div>

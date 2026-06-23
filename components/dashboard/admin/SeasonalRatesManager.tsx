@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Plus, Trash2, Calendar, Euro, Tag, Save, Loader2 } from "lucide-react";
+import { Plus, Trash2, Tag, Save, Loader2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface SeasonalRate {
   id: string;
@@ -168,7 +169,7 @@ export function SeasonalRatesManager() {
             </p>
           ) : rates.length === 0 ? (
             <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-              <Calendar className="mx-auto h-8 w-8 text-gray-300" />
+              <KayvilaPngIcon name="calendar" size={32} alt="" />
               <p className="mt-2 text-sm text-gray-500">Aucun tarif saisonnier défini.</p>
             </div>
           ) : (

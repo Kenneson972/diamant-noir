@@ -1,12 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import {
-  Home, Mail, Phone, MapPin, Calendar, User, Building2,
-  Bed, Bath, Car, Trees, Wifi, Clock, MessageSquare,
-  Star, Eye, FileText, Globe, ArrowLeft, Check, X,
-  ChevronRight,
-} from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { SubmissionActions } from "../SubmissionActions";
 
 export const dynamic = "force-dynamic";

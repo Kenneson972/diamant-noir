@@ -6,7 +6,8 @@ import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import { KayvilaDataGrid } from "@/components/ui/pro";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
-import { Globe, CreditCard, Users, Inbox } from "lucide-react";
+import { Globe, Inbox } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type BookingRow = Pick<
   Booking,
@@ -101,7 +102,7 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       accessorKey: "source",
       cell: (item) => (
         <span className="inline-flex items-center gap-1 text-xs text-navy/80">
-          <Globe size={11} />
+          <Globe size={16} strokeWidth={1.5} />
           {SOURCE_LABELS[(item as any).source] ?? (item as any).source ?? "—"}
         </span>
       ),
@@ -126,7 +127,7 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       header: "Voyageurs",
       cell: (item) => (
         <span className="inline-flex items-center gap-1 text-xs text-navy/80">
-          <Users size={11} />
+          <KayvilaPngIcon name="users" size={18} />
           {(item as any).guests ?? "—"}
         </span>
       ),
@@ -146,8 +147,8 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       <div className="flex flex-col gap-3 md:hidden">
         {bookings.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-8 text-center">
-            <Inbox className="h-7 w-7 text-navy opacity-30" aria-hidden />
-            <p className="text-sm text-navy/40">Aucune réservation.</p>
+            <Inbox className="h-7 w-7 text-navy/60" strokeWidth={1.5} aria-hidden />
+            <p className="text-sm text-navy/60">Aucune réservation.</p>
           </div>
         ) : (
           bookings.map((b) => (

@@ -76,7 +76,7 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
       >
-        <AlertTriangle size={16} />
+        <AlertTriangle size={16} strokeWidth={1.5} />
         Signaler un problème
       </button>
 
@@ -144,7 +144,7 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
                     disabled={sending}
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90 disabled:opacity-50"
                   >
-                    <Send size={14} />
+                    <Send size={16} strokeWidth={1.5} />
                     {sending ? "Envoi..." : "Envoyer"}
                   </button>
                 </div>

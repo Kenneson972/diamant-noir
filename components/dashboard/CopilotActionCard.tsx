@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Calendar,
-  DollarSign,
-  Home,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { DollarSign, XCircle } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface CopilotActionCardProps {
   action: string;
@@ -66,7 +61,7 @@ function getConfig(
     case "BLOCK_DATE": {
       if (!result.success) return { ...fail, errorTitle: "Blocage impossible" };
       return {
-        icon: <Calendar className="h-4 w-4 text-gold" />,
+        icon: <KayvilaPngIcon name="calendar" size={18} alt="" />,
         title: "Dates bloquées",
         errorTitle: "Blocage impossible",
         detail: "Les dates ont été bloquées avec succès.",
@@ -94,7 +89,7 @@ function getConfig(
         .booking as Record<string, unknown> | undefined;
       if (!b) {
         return {
-          icon: <Home className="h-4 w-4 text-gold" />,
+          icon: <KayvilaPngIcon name="home" size={18} alt="" />,
           title: "Aucune réservation à venir",
           errorTitle: "",
           detail:
@@ -107,7 +102,7 @@ function getConfig(
           )} €`
         : "—";
       return {
-        icon: <Home className="h-4 w-4 text-gold" />,
+        icon: <KayvilaPngIcon name="home" size={18} alt="" />,
         title: (b.guest_name as string) ?? "Réservation",
         errorTitle: "",
         detail: `${b.start_date ?? ""} → ${b.end_date ?? ""} · ${amount} · ${
@@ -117,7 +112,7 @@ function getConfig(
     }
     default:
       return {
-        icon: <CheckCircle className="h-4 w-4 text-gold" />,
+        icon: <KayvilaPngIcon name="check-circle" size={18} alt="" />,
         title: "Action effectuée",
         errorTitle: "Échec",
         detail: "",

@@ -1,7 +1,8 @@
 "use client";
 
 import { Tabs } from "@heroui/react";
-import { Building2, BarChart3, CreditCard, User } from "lucide-react";
+import { BarChart3, User } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { OwnerInfoTab } from "./OwnerInfoTab";
 import { OwnerVillasTab } from "./OwnerVillasTab";
 import { OwnerRevenueTab } from "./OwnerRevenueTab";
@@ -31,19 +32,19 @@ export function OwnerTabs({ ownerId, profile, villas, bookings, stats }: Props) 
           </Tabs.Tab>
           <Tabs.Tab id="villas">
             <span className={tabLabelClasses}>
-              <Building2 size={14} /> Villas
+              <KayvilaPngIcon name="villa" size={18} alt="" /> Villas
             </span>
             <Tabs.Indicator />
           </Tabs.Tab>
           <Tabs.Tab id="revenus">
             <span className={tabLabelClasses}>
-              <BarChart3 size={14} /> Revenus
+              <BarChart3 size={16} strokeWidth={1.5} /> Revenus
             </span>
             <Tabs.Indicator />
           </Tabs.Tab>
           <Tabs.Tab id="stripe">
             <span className={tabLabelClasses}>
-              <CreditCard size={14} /> Stripe & Litiges
+              <KayvilaPngIcon name="credit-card" size={18} alt="" /> Stripe & Litiges
             </span>
             <Tabs.Indicator />
           </Tabs.Tab>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ArrowRight } from "lucide-react";
 import type { KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
   LandingSection,
@@ -119,7 +119,7 @@ export default async function QuiSommesNousPage() {
       <ScrollReveal>
         <LandingSection bg="white">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
               Notre vision
             </span>
             <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
@@ -158,7 +158,7 @@ export default async function QuiSommesNousPage() {
             </p>
             <Link href="/contact" className="btn-luxury bg-navy text-white">
               Nous contacter
-              <ArrowRight size={16} strokeWidth={1} aria-hidden />
+              <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </Link>
           </LandingCtaBand>
         </LandingSection>

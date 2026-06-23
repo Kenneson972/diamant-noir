@@ -1,7 +1,8 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Mail, ShieldOff, Shield } from "lucide-react";
+import { ArrowLeft, Shield } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { OwnerTabs } from "@/components/dashboard/admin/OwnerTabs";
 
 export const metadata: Metadata = {
@@ -148,11 +149,11 @@ export default async function AdminOwnerDetailPage({
               href={`mailto:${profile.email}`}
               className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 px-4 py-2 text-xs font-medium text-navy hover:bg-navy/5 transition-colors"
             >
-              <Mail size={14} /> Contacter
+              <KayvilaPngIcon name="mail" size={18} alt="" /> Contacter
             </a>
           )}
           <span className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 px-4 py-2 text-xs font-medium text-navy">
-            <Shield size={14} />
+            <KayvilaPngIcon name="shield-check" size={18} alt="" />
             {profile.stripe_connect_onboarding_completed
               ? "Stripe Connecté"
               : profile.stripe_connect_account_id

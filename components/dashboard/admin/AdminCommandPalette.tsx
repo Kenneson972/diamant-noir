@@ -2,25 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Building2,
-  CalendarDays,
-  LayoutDashboard,
-  Search,
-  UserCircle,
-  Users,
-} from "lucide-react";
+import { LayoutDashboard, Search, UserCircle } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Command } from "@heroui-pro/react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
 
-const NAV_ICONS: Record<string, React.ReactNode> = {
-  LayoutDashboard: <LayoutDashboard className="size-4" />,
-  Building2: <Building2 className="size-4" />,
-  CalendarDays: <CalendarDays className="size-4" />,
-  UserCircle: <UserCircle className="size-4" />,
-  Users: <Users className="size-4" />,
-};
+function NavIcon({ name, size = 16 }: { name: string; size?: number }) {
+  const pngMap: Record<string, string> = {
+    Building2: "villa",
+    CalendarDays: "calendar",
+    Users: "users",
+  };
+  const pngName = pngMap[name];
+  if (pngName) {
+    return <KayvilaPngIcon name={pngName as any} size={size} alt="" />;
+  }
+  return <LayoutDashboard className="size-4" />;
+}
 
 type SearchBooking = {
   id: string;
@@ -107,7 +106,7 @@ export function AdminCommandPalette() {
                     textValue={item.label}
                     onAction={() => navigate(item.href)}
                   >
-                    {NAV_ICONS[item.icon] ?? <LayoutDashboard className="size-4" />}
+                    <NavIcon name={item.icon} />
                     <span>{item.label}</span>
                   </Command.Item>
                 ))}
@@ -124,7 +123,7 @@ export function AdminCommandPalette() {
                       textValue={`${b.guest_name ?? "Voyageur"} ${b.villas?.name ?? ""}`}
                       onAction={() => navigate(`/admin/reservations/${b.id}`)}
                     >
-                      <CalendarDays className="size-4" />
+                      <KayvilaPngIcon name="calendar" size={18} alt="" />
                       <span>
                         {b.guest_name ?? "Voyageur"}
                         {b.villas?.name ? ` — ${b.villas.name}` : ""}
@@ -140,7 +139,7 @@ export function AdminCommandPalette() {
                     textValue={v.name}
                     onAction={() => navigate(`/admin/villas/${v.id}`)}
                   >
-                    <Building2 className="size-4" />
+                    <KayvilaPngIcon name="villa" size={18} alt="" />
                     <span>{v.name}</span>
                   </Command.Item>
                 ))}

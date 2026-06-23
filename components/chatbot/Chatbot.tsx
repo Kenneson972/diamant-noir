@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { MessageCircle, X, Send, Smile, Maximize2, Minimize2, Sparkles, Headphones, RotateCcw, CalendarDays, Users } from "lucide-react";
+import { X, Send, Smile, Maximize2, Minimize2, Headphones, RotateCcw } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 const QUICK_SUGGESTIONS = {
@@ -318,7 +319,7 @@ export const Chatbot = () => {
           className="group fixed z-[1060] flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-navy/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
           aria-label="Ouvrir le chat"
         >
-          <Sparkles className="relative z-10 animate-pulse" size={28} />
+          <KayvilaPngIcon name="sparkle" size={32} alt="" invert />
           <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-[10px] font-bold text-black shadow-lg">
             💎
           </span>
@@ -410,11 +411,11 @@ export const Chatbot = () => {
                       <p className="text-sm font-semibold text-navy">Réservation proposée</p>
                       <div className="mt-2 space-y-1.5 text-sm text-navy/70">
                         <p className="flex items-center gap-2">
-                          <CalendarDays size={15} className="text-gold" />
+                          <KayvilaPngIcon name="calendar" size={18} alt="" className="shrink-0" />
                           {message.preBookingCard.startDate} → {message.preBookingCard.endDate}
                         </p>
                         <p className="flex items-center gap-2">
-                          <Users size={15} className="text-gold" />
+                          <KayvilaPngIcon name="users" size={18} alt="" className="shrink-0" />
                           {message.preBookingCard.guests} voyageur{message.preBookingCard.guests > 1 ? "s" : ""}
                         </p>
                       </div>

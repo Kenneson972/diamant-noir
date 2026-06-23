@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Zap, RefreshCcw, CheckCircle2, XCircle, Wifi, AlertTriangle, ExternalLink, Clock } from "lucide-react";
+import { RefreshCcw, XCircle, AlertTriangle, ExternalLink } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
 
 interface OTAChannel {
@@ -157,7 +158,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
                             className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-medium capitalize"
                             title={ch.ical_url ?? ""}
                           >
-                            <Wifi size={10} />
+                            <KayvilaPngIcon name="wifi" size={12} alt="" />
                             {ch.label ?? ch.source}
                           </span>
                         ))}
@@ -180,13 +181,13 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
                   {/* Statut dernière synchro */}
                   {result?.syncedAt && (
                     <div className="mt-2 flex items-center gap-1.5 text-[11px] text-navy/40">
-                      <Clock size={10} />
+                      <KayvilaPngIcon name="clock" size={12} alt="" />
                       Dernière synchro : {timeAgo(result.syncedAt)}
                     </div>
                   )}
                   {!result?.syncedAt && (
                     <div className="mt-2 flex items-center gap-1.5 text-[11px] text-navy/30">
-                      <Clock size={10} />
+                      <KayvilaPngIcon name="clock" size={12} alt="" />
                       Aucune synchro effectuée
                     </div>
                   )}
@@ -206,7 +207,7 @@ export function SyncOtaAdminPage({ villas }: { villas: Villa[] }) {
                         </div>
                       ) : (
                         <div className="flex items-center gap-4">
-                          <CheckCircle2 size={14} />
+                          <KayvilaPngIcon name="check-circle" size={16} alt="" />
                           <span>{result.totalInserted} importé{result.totalInserted > 1 ? "s" : ""}</span>
                           <span>{result.totalDeleted} supprimé{result.totalDeleted > 1 ? "s" : ""}</span>
                           {result.message && <span className="text-gray-500">&mdash; {result.message}</span>}

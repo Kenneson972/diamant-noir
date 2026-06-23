@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import Link from "next/link";
-import { CalendarCheck } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatCurrency, getBookingPriceCents } from "@/lib/utils";
 
 function calcNights(start: string, end: string): number {
@@ -42,7 +42,7 @@ export default async function ProprioReservationsIndexPage() {
             <p className="text-sm text-muted">Gérez vos réservations</p>
           </div>
           <div className="dashboard-card flex flex-col items-center py-12 text-center">
-            <CalendarCheck className="mb-4 h-12 w-12 text-muted" />
+            <KayvilaPngIcon name="calendar" size={24} className="mb-4 text-muted" />
             <p className="text-sm text-muted">Aucune réservation pour le moment.</p>
             <p className="mt-1 text-xs text-muted">
               Vos réservations apparaîtront ici dès qu&apos;un voyageur réservera votre villa.
@@ -132,13 +132,13 @@ export default async function ProprioReservationsIndexPage() {
                           <span className="text-xs text-navy/80">
                             {nights} nuit{nights > 1 ? "s" : ""} · {price}
                           </span>
-                          <span className="text-[10px] text-navy/40">
+                          <span className="text-[10px] text-navy/60">
                             {sourceLabel[booking.source] ?? booking.source ?? "—"}
                           </span>
                           <span className={`text-[10px] font-medium ${booking.payment_status === "paid" ? "text-emerald-600" : "text-amber-600"}`}>
                             {pmtLabel[booking.payment_status] ?? "En attente"}
                           </span>
-                          <span className="text-[10px] text-navy/40">
+                          <span className="text-[10px] text-navy/60">
                             {booking.guests ?? "—"} pers.
                           </span>
                           <BookingStatusBadge status={booking.status} />

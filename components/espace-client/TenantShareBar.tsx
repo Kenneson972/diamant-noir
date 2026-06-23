@@ -63,7 +63,7 @@ export function TenantShareBar({
         onPress={handleShare}
         className="min-h-[44px] text-[10px] font-bold uppercase tracking-[0.18em] text-navy/50 data-[hover=true]:text-navy"
       >
-        <Share2 size={14} aria-hidden />
+        <Share2 size={16} strokeWidth={1.5} aria-hidden />
         Partager le séjour
       </Button>
       {toast ? (

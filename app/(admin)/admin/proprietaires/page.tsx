@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import { Users } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { AdminOwnersDataGrid } from "@/components/dashboard/admin/AdminOwnersDataGrid";
 import type { AdminOwnerRow } from "@/components/dashboard/admin/AdminOwnersDataGrid";
@@ -39,7 +39,7 @@ export default async function AdminProprietairesPage() {
 
       {owners.length === 0 ? (
         <KayvilaEmptyState
-          icon={<Users />}
+          icon={<KayvilaPngIcon name="users" size={24} alt="" />}
           title="Aucun propriétaire inscrit"
           description="Les comptes propriétaires apparaîtront ici après inscription."
         />

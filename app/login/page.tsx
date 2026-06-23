@@ -5,15 +5,13 @@ import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { getSupabaseBrowser } from "@/lib/supabase"
 import {
-  ArrowRight,
   Eye,
   EyeOff,
   Loader2,
-  Lock,
-  Mail,
   Send,
   User,
 } from "lucide-react"
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon"
 import Link from "next/link"
 import { postLoginDestination } from "@/lib/auth/admin-access"
 
@@ -205,7 +203,7 @@ function PasswordPanel({
   if (forgotSuccess) {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <Send size={20} strokeWidth={1.25} className="text-navy/30" aria-hidden />
+        <Send size={20} strokeWidth={1.5} className="text-navy/60" aria-hidden />
         <div className="space-y-2">
           <h2 className="font-display text-2xl text-navy">Vérifiez vos emails</h2>
           <span className="block h-px w-10 bg-navy/12" />
@@ -214,7 +212,7 @@ function PasswordPanel({
           Un lien de réinitialisation a été envoyé à{" "}
           <span className="font-medium text-navy">{email}</span>.
         </p>
-        <p className="text-xs leading-relaxed text-navy/55">
+        <p className="text-xs leading-relaxed text-navy/60">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -225,7 +223,7 @@ function PasswordPanel({
             setError(null)
             setPassword("")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -236,7 +234,7 @@ function PasswordPanel({
   if (signupSuccess === "confirm_email") {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <Send size={20} strokeWidth={1.25} className="text-navy/30" aria-hidden />
+        <Send size={20} strokeWidth={1.5} className="text-navy/60" aria-hidden />
         <div className="space-y-2">
           <h2 className="font-display text-2xl text-navy">Confirmez votre email</h2>
           <span className="block h-px w-10 bg-navy/12" />
@@ -246,7 +244,7 @@ function PasswordPanel({
           <span className="font-medium text-navy">{email}</span>. Cliquez sur le lien pour
           activer votre compte, puis vous pourrez vous connecter.
         </p>
-        <p className="text-xs leading-relaxed text-navy/55">
+        <p className="text-xs leading-relaxed text-navy/60">
           Pas reçu ? Vérifiez vos spams ou attendez quelques secondes.
         </p>
         <button
@@ -259,7 +257,7 @@ function PasswordPanel({
             setFullName("")
             setMode("login")
           }}
-          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
         >
           ← Retour à la connexion
         </button>
@@ -280,15 +278,15 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="full-name-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60"
               >
-                Nom <span className="font-normal normal-case tracking-normal text-navy/30">(optionnel)</span>
+                Nom <span className="font-normal normal-case tracking-normal text-navy/60">(optionnel)</span>
               </label>
               <div className="relative">
                 <User
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
-                  size={15}
-                  strokeWidth={1.25}
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/60"
+                  size={16}
+                  strokeWidth={1.5}
                   aria-hidden
                 />
                 <input
@@ -298,7 +296,7 @@ function PasswordPanel({
                   placeholder="Prénom Nom"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/60 focus:border-navy focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -306,16 +304,16 @@ function PasswordPanel({
           <div className="space-y-1">
             <label
               htmlFor="email-pass"
-              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
+              className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60"
             >
               Adresse email <span className="text-red-600">*</span>
             </label>
             <div className="relative">
-              <Mail
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
-                size={15}
-                strokeWidth={1.25}
-                aria-hidden
+              <KayvilaPngIcon
+                name="mail"
+                size={18}
+                alt=""
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2"
               />
               <input
                 id="email-pass"
@@ -325,7 +323,7 @@ function PasswordPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
+                className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-0 text-base text-navy placeholder:text-navy/60 focus:border-navy focus:outline-none focus:ring-0"
               />
             </div>
           </div>
@@ -333,16 +331,16 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-pass"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60"
               >
                 Mot de passe <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <Lock
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
-                  size={15}
-                  strokeWidth={1.25}
-                  aria-hidden
+                <KayvilaPngIcon
+                  name="lock"
+                  size={18}
+                  alt=""
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2"
                 />
                 <input
                   id="password-pass"
@@ -354,19 +352,19 @@ function PasswordPanel({
                   required
                   minLength={mode === "signup" ? MIN_PASSWORD_LEN : undefined}
                   aria-describedby={mode === "signup" ? "password-hint" : undefined}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/60 focus:border-navy focus:outline-none focus:ring-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/60 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
-                  {showPassword ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
+                  {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
                 </button>
               </div>
               {mode === "signup" && (
-                <p id="password-hint" className="text-xs text-navy/55">
+                <p id="password-hint" className="text-xs text-navy/60">
                   Au moins {MIN_PASSWORD_LEN} caractères.
                 </p>
               )}
@@ -376,16 +374,16 @@ function PasswordPanel({
             <div className="space-y-1">
               <label
                 htmlFor="password-confirm"
-                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/55"
+                className="block text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60"
               >
                 Confirmer le mot de passe <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <Lock
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-navy/25"
-                  size={15}
-                  strokeWidth={1.25}
-                  aria-hidden
+                <KayvilaPngIcon
+                  name="lock"
+                  size={18}
+                  alt=""
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2"
                 />
                 <input
                   id="password-confirm"
@@ -400,15 +398,15 @@ function PasswordPanel({
                   required
                   aria-invalid={Boolean(fieldErrors.confirm)}
                   aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
-                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/25 focus:border-navy focus:outline-none focus:ring-0"
+                  className="tap-target w-full border-0 border-b border-black/[0.18] bg-transparent py-3 pl-6 pr-10 text-base text-navy placeholder:text-navy/60 focus:border-navy focus:outline-none focus:ring-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
-                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/50 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                  className="tap-target absolute right-0 top-1/2 -translate-y-1/2 rounded p-1 text-navy/60 hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                   aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
                 >
-                  {showConfirm ? <EyeOff size={16} strokeWidth={1.25} /> : <Eye size={16} strokeWidth={1.25} />}
+                  {showConfirm ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
                 </button>
               </div>
               {fieldErrors.confirm && (
@@ -424,7 +422,7 @@ function PasswordPanel({
             <button
               type="button"
               onClick={() => { setMode("forgot"); setError(null) }}
-              className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/50 transition-colors hover:text-navy"
+              className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/60 transition-colors hover:text-navy"
             >
               Mot de passe oublié ?
             </button>
@@ -437,28 +435,28 @@ function PasswordPanel({
           className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy bg-navy px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
         >
           {loading ? (
-            <Loader2 className="animate-spin" size={16} strokeWidth={1.25} aria-hidden />
+            <Loader2 className="animate-spin" size={16} strokeWidth={1.5} aria-hidden />
           ) : mode === "login" ? (
             <>
               Accéder à l&apos;espace
-              <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </>
           ) : mode === "forgot" ? (
             <>
               Envoyer le lien
-              <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </>
           ) : (
             <>
               Créer mon compte
-              <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </>
           )}
         </button>
       </form>
 
       {mode === "login" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/60">
           Pas encore de compte ?{" "}
           <button
             type="button"
@@ -473,7 +471,7 @@ function PasswordPanel({
           </button>
         </p>
       ) : mode === "signup" ? (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/60">
           Déjà un compte ?{" "}
           <button
             type="button"
@@ -488,7 +486,7 @@ function PasswordPanel({
           </button>
         </p>
       ) : (
-        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/50">
+        <p className="text-center text-[10px] uppercase tracking-[0.18em] text-navy/60">
           <button
             type="button"
             onClick={() => { setMode("login"); setError(null) }}
@@ -572,7 +570,7 @@ function LoginForm() {
           <div className="space-y-2">
             <h1 className="font-display text-[1.9rem] leading-tight text-navy">Connexion</h1>
             <span className="block h-px w-8 bg-navy/12" />
-            <p className="text-sm text-navy/45">Accédez à votre espace Kayvila.</p>
+            <p className="text-sm text-navy/60">Accédez à votre espace Kayvila.</p>
           </div>
 
           {urlAuthError && (
@@ -583,13 +581,13 @@ function LoginForm() {
 
           <PasswordPanel redirectTo={redirectTo} initialMode={passwordTab} />
 
-          <div className="flex items-center justify-start border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-navy/30">
+          <div className="flex items-center justify-start border-t border-black/[0.07] pt-5 text-[10px] uppercase tracking-[0.18em] text-navy/60">
             <Link href="/" className="transition-colors hover:text-navy">
               ← Retour au site
             </Link>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.25em] text-navy/20">© 2026 Kayvila</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-navy/60">© 2026 Kayvila</p>
         </div>
       </div>
     </main>
@@ -601,7 +599,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <main className="flex min-h-[100dvh] items-center justify-center bg-white">
-          <Loader2 className="animate-spin text-navy/55" size={22} strokeWidth={1.25} aria-hidden />
+          <Loader2 className="animate-spin text-navy/60" size={22} strokeWidth={1.5} aria-hidden />
         </main>
       }
     >

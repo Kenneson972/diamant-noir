@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Bell, CheckCheck, ExternalLink } from "lucide-react";
+import { CheckCheck, ExternalLink } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button, Chip } from "@heroui/react";
 import { timeAgo } from "@/lib/utils";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
@@ -83,7 +84,7 @@ export default function NotificationsPage() {
           </div>
         ) : notifications.length === 0 ? (
           <KayvilaEmptyState
-            icon={<Bell aria-hidden />}
+            icon={<KayvilaPngIcon name="bell" size={24} alt="" />}
             title="Aucune notification"
             description="Les notifications de vos demandes et messages apparaîtront ici."
           />
@@ -98,7 +99,7 @@ export default function NotificationsPage() {
                   onPress={markAllRead}
                   className="min-h-[44px] rounded-none text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 data-[hover=true]:text-gold"
                 >
-                  <CheckCheck size={14} aria-hidden />
+                  <CheckCheck size={16} strokeWidth={1.5} aria-hidden />
                   Tout lire
                 </Button>
               ) : (
@@ -134,7 +135,7 @@ export default function NotificationsPage() {
                           <span className="text-[10px] text-navy/30">{timeAgo(notif.created_at)}</span>
                           {notif.action_url ? (
                             <span className="inline-flex items-center gap-0.5 text-[10px] text-gold">
-                              Voir <ExternalLink size={9} aria-hidden />
+                              Voir <ExternalLink size={12} strokeWidth={1.5} aria-hidden />
                             </span>
                           ) : null}
                         </div>

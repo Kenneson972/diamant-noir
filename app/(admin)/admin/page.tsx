@@ -1,7 +1,8 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import type { Metadata } from "next";
-import { CalendarDays, AlertTriangle, MessageCircle, Star, Heart, LogIn, LogOut } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KpiRow } from "@/components/dashboard/proprio/KpiRow";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { KayvilaWidget } from "@/components/ui/pro";
@@ -130,8 +131,8 @@ export default async function AdminPage() {
       {/* KPIs — Rangée 1 */}
       <KpiRow
         items={[
-          { icon: "building2", label: "Villas", value: villaCount ?? 0 },
-          { icon: "calendarDays", label: "Réservations", value: bookingCount ?? 0 },
+          { icon: "villa", label: "Villas", value: villaCount ?? 0 },
+          { icon: "calendar", label: "Réservations", value: bookingCount ?? 0 },
           { icon: "trendingUp", label: "Note moyenne", value: avgRating !== "—" ? `${avgRating}/5` : avgRating },
         ]}
       />
@@ -154,7 +155,7 @@ export default async function AdminPage() {
         {/* Check-ins du jour */}
         <KayvilaWidget title="Arrivées du jour" className="border-emerald/10">
           <div className="mb-4 flex items-center gap-2 text-emerald-600">
-            <LogIn size={18} aria-hidden />
+            <KayvilaPngIcon name="login" size={18} alt="" />
           </div>
           {(checkIns ?? []).length === 0 ? (
             <p className="text-sm text-navy/55">Aucune arrivée aujourd&apos;hui.</p>
@@ -177,7 +178,7 @@ export default async function AdminPage() {
 
         <KayvilaWidget title="Départs du jour" className="border-amber/10">
           <div className="mb-4 flex items-center gap-2 text-amber-600">
-            <LogOut size={18} aria-hidden />
+            <KayvilaPngIcon name="logout" size={18} alt="" />
           </div>
           {(checkOuts ?? []).length === 0 ? (
             <p className="text-sm text-navy/55">Aucun départ aujourd&apos;hui.</p>
@@ -234,7 +235,7 @@ export default async function AdminPage() {
           <div className="space-y-3">
             {recentRequests?.map((r: any) => (
               <div key={`req-${r.id}`} className="flex items-center gap-3 text-sm">
-                <MessageCircle size={14} className="text-amber-500 shrink-0" />
+                <KayvilaPngIcon name="message" size={18} alt="" />
                 <span className="flex-1 text-navy/70">
                   <strong>{r.bookings?.guest_name ?? "Voyageur"}</strong> — demande {r.type}
                 </span>
@@ -243,7 +244,7 @@ export default async function AdminPage() {
             ))}
             {recentBookings?.map((b: any) => (
               <div key={`book-${b.id}`} className="flex items-center gap-3 text-sm">
-                <CalendarDays size={14} className="text-blue-500 shrink-0" />
+                <KayvilaPngIcon name="calendar" size={18} alt="" />
                 <span className="flex-1 text-navy/70">
                   <strong>{b.guest_name ?? "Voyageur"}</strong> — {b.villas?.name ?? "Villa"} ({fmt(b.start_date)})
                 </span>
@@ -252,7 +253,7 @@ export default async function AdminPage() {
             ))}
             {recentReviews?.map((r: any) => (
               <div key={`rev-${r.id}`} className="flex items-center gap-3 text-sm">
-                <Star size={14} className="text-gold shrink-0" />
+                <KayvilaPngIcon name="star" size={18} alt="" />
                 <span className="flex-1 text-navy/70">
                   <strong>{r.guest_name ?? "Voyageur"}</strong> — {r.rating}/5 sur {r.villas?.name ?? "Villa"}
                 </span>
@@ -281,7 +282,7 @@ export default async function AdminPage() {
                 )}
                 {(pendingReviews ?? 0) > 0 && (
                   <a href="/admin/avis" className="flex items-center gap-2 text-sm text-amber-700 no-underline hover:underline">
-                    <Star size={14} />
+                    <KayvilaPngIcon name="star" size={18} alt="" />
                     {pendingReviews} avis en attente de modération
                   </a>
                 )}
@@ -296,7 +297,7 @@ export default async function AdminPage() {
                 {topVillasData.map((v: any, i: number) => (
                   <a key={v.id} href={`/admin/villas/${v.id}`} className="flex items-center gap-3 no-underline hover:bg-navy/[0.02] p-1 rounded">
                     <span className="text-[11px] font-bold text-gold w-5">{i + 1}</span>
-                    <Heart size={12} className="text-red-400 shrink-0" />
+                    <KayvilaPngIcon name="heart" size={18} alt="" />
                     <span className="flex-1 text-sm text-navy truncate">{v.name}</span>
                     <span className="text-[11px] text-navy/30">{wishFreq[v.id]} favori{wishFreq[v.id] > 1 ? "s" : ""}</span>
                   </a>

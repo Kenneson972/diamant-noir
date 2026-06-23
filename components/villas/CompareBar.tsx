@@ -11,7 +11,8 @@
 import { useCompare } from "@/contexts/CompareContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { X, ArrowRight, Scale } from "lucide-react";
+import { X, Scale } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export function CompareBar() {
   const { items, remove, clear, count } = useCompare();
@@ -112,7 +113,7 @@ export function CompareBar() {
               {count === 1 ? (
                 "Sélectionnez 2 villas"
               ) : (
-                <>Comparer <ArrowRight size={12} /></>
+                <>Comparer <KayvilaPngIcon name="arrow-right" size={18} alt="" /></>
               )}
             </button>
           </div>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, ArrowRight } from "lucide-react";
+import { BedDouble } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatPrice } from "@/lib/i18n";
 
@@ -134,7 +134,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
           {/* Specs */}
           <div className="flex flex-col gap-3 xs:flex-row xs:gap-8 border-y border-black/6 py-5">
             <div className="flex items-center gap-2 text-navy/80">
-              <KayvilaPngIcon name="users" size={18} alt="" className="opacity-50" />
+              <KayvilaPngIcon name="users" size={18} alt="" className="opacity-60" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {villa.capacity} voyageurs
               </span>
@@ -161,7 +161,7 @@ export const VillaSelectionCard = ({ villa, checkin, checkout, guests }: VillaSe
             className="inline-flex min-h-[44px] items-center justify-center gap-2 border border-navy bg-navy px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-navy/90"
           >
             {checkin && checkout ? "Réserver ces dates" : "Réserver"}
-            <ArrowRight size={16} strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} aria-hidden />
           </Link>
         </div>
       </div>

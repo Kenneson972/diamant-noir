@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Camera, CalendarDays } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
@@ -62,7 +63,7 @@ export default async function VillaEditPage({ params }: Props) {
                   href={`/dashboard/villas/${villa.id}/photos`}
                   className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-navy-900/[0.03] hover:text-navy-900"
                 >
-                  <Camera className="h-4 w-4" aria-hidden />
+                  <KayvilaPngIcon name="camera" size={20} className="aria-hidden" />
                   Gerer les photos
                 </Link>
               </li>
@@ -71,7 +72,7 @@ export default async function VillaEditPage({ params }: Props) {
                   href={`/dashboard/villas/${villa.id}/disponibilites`}
                   className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-navy-900/[0.03] hover:text-navy-900"
                 >
-                  <CalendarDays className="h-4 w-4" aria-hidden />
+                  <KayvilaPngIcon name="calendar" size={20} className="aria-hidden" />
                   Gérer les disponibilités
                 </Link>
               </li>

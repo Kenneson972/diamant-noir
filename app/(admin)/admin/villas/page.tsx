@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import { Building2, Home, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { Plus, Search, SlidersHorizontal } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { AdminVillasDataGrid } from "@/components/dashboard/admin/AdminVillasDataGrid";
 import { KayvilaEmptyState } from "@/components/ui/pro";
@@ -293,7 +294,7 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
 
       {villas.length === 0 ? (
         <KayvilaEmptyState
-          icon={<Home className="h-12 w-12" />}
+          icon={<KayvilaPngIcon name="home" size={48} alt="" />}
           title="Aucune villa trouvée"
           description={
             params.search

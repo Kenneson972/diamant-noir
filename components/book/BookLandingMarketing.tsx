@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Users, Search, ArrowRight, MessageCircle, MapPin, Building2 } from "lucide-react";
+import { Search } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { useHomeAudience } from "@/contexts/HomeAudienceContext";
 
@@ -65,7 +66,7 @@ export function BookLandingMarketing({
                   href="/soumettre-ma-villa"
                   className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
                 >
-                  <MapPin className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+                  <KayvilaPngIcon name="location" size={18} alt="" className="shrink-0 opacity-60" />
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 2</p>
                     <p className="mt-1 text-sm text-navy/70">Confier ma villa</p>
@@ -77,7 +78,7 @@ export function BookLandingMarketing({
                 >
                   <Search className="mr-2 h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
                   Catalogue locations
-                  <ArrowRight className="ml-2 inline h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                  <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </Link>
               </div>
             </div>
@@ -88,7 +89,7 @@ export function BookLandingMarketing({
           <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
             <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
               <div className="flex items-start gap-3 sm:items-center">
-                <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="users" size={20} alt="" className="mt-0.5 shrink-0 opacity-60" />
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">Dates indiquées</p>
                   <p className="text-sm text-navy">
@@ -121,14 +122,14 @@ export function BookLandingMarketing({
                 className="inline-flex items-center gap-2 border border-navy bg-navy px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
               >
                 Offre propriétaires
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="arrow-right" size={18} alt="" />
               </Link>
               <Link
                 href={catalogueHref}
                 className="inline-flex items-center gap-2 border border-navy bg-white px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
               >
                 Ouvrir le catalogue
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="arrow-right" size={18} alt="" />
               </Link>
             </div>
           </div>
@@ -137,7 +138,7 @@ export function BookLandingMarketing({
         <section className="border-t border-black/8 bg-white px-5 py-20 sm:px-6 md:py-28">
           <ScrollReveal delay={0}>
             <div className="mx-auto max-w-2xl space-y-8 text-center">
-              <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />
+              <KayvilaPngIcon name="message" size={28} alt="" className="mx-auto" />
               <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">
                 Un interlocuteur dédié
               </h2>
@@ -150,7 +151,7 @@ export function BookLandingMarketing({
                   className="inline-flex items-center gap-2 border border-navy bg-navy px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
                 >
                   Nous contacter
-                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                  <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </Link>
               </div>
             </div>
@@ -187,7 +188,7 @@ export function BookLandingMarketing({
                 href={catalogueHref}
                 className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
-                <MapPin className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="location" size={18} alt="" className="shrink-0 opacity-60" />
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 1</p>
                   <p className="mt-1 text-sm font-medium text-navy">Parcourir le catalogue</p>
@@ -197,7 +198,7 @@ export function BookLandingMarketing({
                 href={catalogueHref}
                 className="group flex flex-1 items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-navy/[0.03] sm:py-5"
               >
-                <Calendar className="h-4 w-4 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="calendar" size={18} alt="" className="shrink-0 opacity-60" />
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-navy/55">Étape 2</p>
                   <p className="mt-1 text-sm text-navy/70">Dates sur la fiche villa</p>
@@ -209,7 +210,7 @@ export function BookLandingMarketing({
               >
                 <Search className="mr-2 h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
                 Voir les villas
-                <ArrowRight className="ml-2 inline h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="arrow-right" size={18} alt="" />
               </Link>
             </div>
           </div>
@@ -220,7 +221,7 @@ export function BookLandingMarketing({
         <section className="border-b border-black/8 bg-white px-5 py-6 sm:px-6">
           <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div className="flex items-start gap-3 sm:items-center">
-              <Users className="mt-0.5 h-5 w-5 shrink-0 text-navy/50" strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="users" size={20} alt="" className="mt-0.5 shrink-0 opacity-60" />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">Dates indiquées</p>
                 <p className="text-sm text-navy">
@@ -252,7 +253,7 @@ export function BookLandingMarketing({
             className="inline-flex items-center gap-2 border border-navy bg-white px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy"
           >
             Ouvrir le catalogue
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" />
           </Link>
         </div>
       </section>
@@ -260,7 +261,7 @@ export function BookLandingMarketing({
       <section className="border-t border-black/8 bg-white px-5 py-20 sm:px-6 md:py-28">
         <ScrollReveal delay={0}>
           <div className="mx-auto max-w-2xl space-y-8 text-center">
-            <MessageCircle className="mx-auto text-gold/70" size={28} strokeWidth={1} aria-hidden />
+            <KayvilaPngIcon name="message" size={28} alt="" className="mx-auto" />
             <h2 className="font-display text-3xl leading-tight text-navy md:text-4xl">Un accompagnement sur mesure</h2>
             <p className="text-base font-light leading-relaxed text-navy/80">
               Notre conciergerie vous aide à composer votre séjour : transferts, expériences, équipe sur place.
@@ -271,7 +272,7 @@ export function BookLandingMarketing({
                 className="inline-flex items-center gap-2 border border-navy bg-navy px-8 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
               >
                 Contacter la conciergerie
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} aria-hidden />
+                <KayvilaPngIcon name="arrow-right" size={18} alt="" />
               </Link>
             </div>
           </div>

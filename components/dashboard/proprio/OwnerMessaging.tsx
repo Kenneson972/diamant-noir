@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
-import { Send, MessageSquare } from "lucide-react";
+import { Send } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface Message {
   id: string;
@@ -95,7 +96,7 @@ export function OwnerMessaging({ userId }: OwnerMessagingProps) {
       <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <MessageSquare className="h-10 w-10 text-muted mb-3" />
+            <KayvilaPngIcon name="message" size={24} className="text-muted mb-3" />
             <p className="text-sm text-muted">Aucun message pour le moment.</p>
             <p className="text-xs text-muted mt-1">
               Utilisez le formulaire ci-dessous pour contacter l&apos;équipe Kayvila.
@@ -151,9 +152,9 @@ export function OwnerMessaging({ userId }: OwnerMessagingProps) {
           <button
             onClick={handleSend}
             disabled={sending || !newContent.trim()}
-            className="shrink-0 inline-flex items-center justify-center w-10 h-10 bg-navy text-white rounded-lg hover:bg-gold hover:text-navy disabled:opacity-40 transition-colors"
+            className="shrink-0 inline-flex items-center justify-center w-10 h-10 bg-navy text-white rounded-lg hover:bg-gold hover:text-navy disabled:opacity-60 transition-colors"
           >
-            <Send size={16} />
+            <Send size={16} strokeWidth={1.5} />
           </button>
         </div>
       </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Chip } from "@heroui/react";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
@@ -74,14 +75,14 @@ export function BookingCard({ booking }: { booking: Booking }) {
           <p className="truncate font-display text-base text-navy">{villaName}</p>
           {location ? (
             <p className="mt-0.5 flex items-center gap-1 text-xs text-navy/55">
-              <MapPin size={10} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="location" size={18} alt="" aria-hidden />
               {location}
             </p>
           ) : null}
         </div>
 
         <div className="flex items-center gap-2 text-sm text-navy/80">
-          <Calendar size={13} strokeWidth={1.25} className="shrink-0 text-gold" aria-hidden />
+          <Calendar size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
           <span>
             {new Date(booking.start_date).toLocaleDateString("fr-FR", {
               day: "numeric",
@@ -117,7 +118,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
             )}
           >
             Détail
-            <ArrowRight size={11} strokeWidth={1.5} aria-hidden />
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" aria-hidden />
           </Link>
         </div>
       </div>

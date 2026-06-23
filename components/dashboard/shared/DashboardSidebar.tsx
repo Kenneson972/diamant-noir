@@ -5,18 +5,40 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LogOut, X,
-  LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
-  DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
-  Home, BookOpen, MessageCircle, FileText,
-  ClipboardList, BarChart3, Bell, Heart, Gift, Star,
+  LayoutDashboard, CalendarDays, UserCircle,
+  DollarSign, Settings, Zap, Inbox, LayoutGrid,
+  FileText, ClipboardList, BarChart3, Gift,
 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutDashboard, Building2, Users, CalendarDays, UserCircle,
-  DollarSign, Settings, Zap, Sparkles, Inbox, LayoutGrid,
-  Home, BookOpen, MessageCircle, FileText,
-  ClipboardList, BarChart3, Bell, Heart, Gift, Star,
+  LayoutDashboard, CalendarDays, UserCircle,
+  DollarSign, Settings, Zap, Inbox, LayoutGrid,
+  FileText, ClipboardList, BarChart3, Gift,
 };
+
+// Mapping des noms d'icône vers les composants KayvilaPngIcon ou Lucide
+function SidebarIcon({ name, className }: { name: string; className?: string }) {
+  const pngIconMap: Record<string, string> = {
+    Building2: "villa",
+    Users: "users",
+    Sparkles: "sparkle",
+    Home: "home",
+    BookOpen: "book",
+    MessageCircle: "message",
+    Bell: "bell",
+    Heart: "heart",
+    Star: "star",
+  };
+  const pngName = pngIconMap[name];
+  if (pngName) {
+    return <KayvilaPngIcon name={pngName as any} size={20} alt="" className={className} />;
+  }
+  const LucideComponent = ICON_MAP[name] ?? LayoutDashboard;
+  return LucideComponent ? (
+    <LucideComponent className={className} />
+  ) : null;
+}
 
 export interface SidebarMenuItem {
   label: string;
@@ -90,17 +112,13 @@ export function DashboardSidebar({
               )}
               aria-current={active ? "page" : undefined}
             >
-              {(() => {
-                const IconComponent = ICON_MAP[item.icon] ?? LayoutDashboard;
-                return IconComponent ? (
-                  <IconComponent
-                    className={cn(
-                      "h-5 w-5 shrink-0 transition-colors duration-200",
-                      active ? "text-gold" : "text-white/45 group-hover:text-white"
-                    )}
-                  />
-                ) : null;
-              })()}
+              <SidebarIcon
+                name={item.icon}
+                className={cn(
+                  "shrink-0 transition-colors duration-200",
+                  active ? "text-gold" : "text-white/45 group-hover:text-white"
+                )}
+              />
               <span>{item.label}</span>
             </Link>
           );

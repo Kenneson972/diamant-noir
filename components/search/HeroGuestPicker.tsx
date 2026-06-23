@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Minus, Plus, Users } from "lucide-react";
+import { ChevronDown, Minus, Plus } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 type HeroGuestPickerProps = {
   value: number;
@@ -71,7 +72,7 @@ export function HeroGuestPicker({ value, onChange, surface = "dark" }: HeroGuest
         aria-expanded={open}
         aria-haspopup="true"
       >
-        <Users size={14} className={`shrink-0 ${isLight ? "text-navy/40" : "text-white/40"}`} strokeWidth={1.5} />
+        <KayvilaPngIcon name="users" size={20} className={`shrink-0 ${isLight ? "" : "invert"}`} />
         <span>
           {value} voyageur{value > 1 ? "s" : ""}
         </span>

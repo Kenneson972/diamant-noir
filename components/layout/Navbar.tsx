@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { Menu, X, Phone, Mail, User, Sparkles } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
@@ -249,7 +250,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
         <div className="border-t border-black/8 bg-navy/[0.03] px-5 pt-6 text-[13px] leading-relaxed text-navy/75" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex gap-3">
-            <Phone size={18} strokeWidth={1.25} className="mt-0.5 shrink-0 text-navy/45" aria-hidden />
+            <KayvilaPngIcon name="phone" size={18} className="mt-0.5 shrink-0 opacity-60" />
             <div>
               <p>
                 {t("nav.advisors")}{" "}
@@ -267,7 +268,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
             onClick={closeMenu}
             className="mt-5 inline-flex items-center gap-2 text-[12px] font-medium text-navy underline-offset-4 hover:underline"
           >
-            <Mail size={16} strokeWidth={1.25} className="text-navy/45" aria-hidden />
+            <KayvilaPngIcon name="mail" size={18} className="opacity-60" />
             {t("nav.contact_us")}
           </Link>
           <div className="mt-5 flex flex-wrap gap-2 border-t border-black/8 pt-5">
@@ -370,7 +371,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               className={`tap-target hidden h-10 w-10 shrink-0 items-center justify-center lg:flex lg:h-11 lg:w-11 ${utility} focus:outline-none focus-visible:ring-2 ${utilityFocus}`}
               aria-label={`Appeler le ${CONCIERGE_TEL}`}
             >
-              <Phone size={20} strokeWidth={1.25} aria-hidden />
+              <KayvilaPngIcon name="phone" size={20} invert={isDarkHeroRoute && !isSolid && !useLightTransparentChrome} />
             </a>
 
             <span className={`hidden h-3 w-px shrink-0 md:block ${divider}`} aria-hidden />
@@ -388,7 +389,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               aria-label={primaryCtaAria}
               className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 lg:h-auto lg:w-auto lg:px-5 lg:py-2 lg:text-[11px] lg:font-semibold lg:uppercase lg:leading-snug lg:tracking-[0.18em] ${primaryCtaSolidStyle}`}
             >
-              <Sparkles size={18} strokeWidth={1.25} className="lg:hidden" aria-hidden />
+              <KayvilaPngIcon name="sparkle" size={20} className="lg:hidden" />
               <span className="hidden lg:inline">{primaryCtaLabel}</span>
             </Link>
           </div>

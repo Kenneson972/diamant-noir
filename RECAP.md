@@ -649,3 +649,24 @@ Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
 ---
 
 **Derniere mise a jour du recap :** 2026-05-28
+
+---
+
+## 2026-06-22 — Refonte complète du système d'icônes
+
+**Contexte** : Kenneson trouve les nouvelles icônes pas assez visibles.
+
+**Audit** : 3 agents → 3 systèmes d'icônes sans stratégie, icônes trop petites (≤11px), contraste faible (text-navy/15), code mort (KayvilaIcons.tsx), PNG doublons avec fautes.
+
+**Solution** : 5 agents parallèles sur 4 phases :
+1. Nettoyage : KayvilaIcons.tsx supprimé, 9 PNG doublons supprimés (-1.6 MB)
+2. Visibilité : taille ≥16px Lucide / ≥18px PNG, strokeWidth ≥1.5, contraste ≥60%
+3. Déploiement : KayvilaPngIcon remplace Lucide partout où un équivalent existe
+4. Correction : 137 fichiers modifiés, build propre (0 erreur icônes)
+
+**Règles** :
+- KayvilaPngIcon size ≥ 18px minimum
+- Lucide conservé size ≥ 16px, strokeWidth ≥ 1.5
+- Pas d'opacity < 60%, pas de text-navy/< 50
+- Mapping complet Lucide → KayvilaPngIcon documenté
+

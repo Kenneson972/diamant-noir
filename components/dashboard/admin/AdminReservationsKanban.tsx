@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Kanban, useKanban, useKanbanColumn } from "@heroui-pro/react";
-import { Inbox } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatDate } from "@/lib/utils";
 import { KayvilaNumberValue } from "@/components/ui/pro";
 import type { AdminBookingRow } from "@/components/dashboard/admin/AdminReservationsDataGrid";
@@ -104,7 +104,7 @@ function KanbanColumnBoard({
             items={items}
             renderEmptyState={() => (
               <div className="flex flex-col items-center gap-1.5 px-2 py-4 text-center">
-                <Inbox className="h-5 w-5 text-muted opacity-40" aria-hidden />
+                <KayvilaPngIcon name="message" size={20} alt="" />
                 <p className="text-[11px] text-muted">Aucune réservation</p>
               </div>
             )}

@@ -21,7 +21,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 // NE PAS appeler gsap.registerPlugin() au niveau module — crash SSR.
 // L'enregistrement se fait dans le premier useEffect (client uniquement).
@@ -345,7 +346,7 @@ export function VideoScrollHero() {
               href="/soumettre-ma-villa"
               className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-4 text-sm font-bold uppercase tracking-widest text-navy hover:scale-105 transition-transform"
             >
-              Confier ma villa <ArrowRight size={14} />
+              Confier ma villa <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </Link>
           </div>
         </div>
@@ -606,7 +607,7 @@ export function VideoScrollHero() {
                 href={section.anchor}
                 className="pointer-events-auto mt-5 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/75 transition-opacity hover:opacity-75"
               >
-                Voir le détail <ArrowRight size={11} strokeWidth={1.75} aria-hidden />
+                Voir le détail <KayvilaPngIcon name="arrow-right" size={14} alt="" />
               </Link>
             </div>
             </div>
@@ -674,7 +675,7 @@ export function VideoScrollHero() {
               href="/soumettre-ma-villa"
               className="inline-flex min-h-[48px] items-center gap-2.5 rounded-full bg-gold px-8 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-navy transition-all hover:scale-[1.03] hover:bg-yellow-400"
             >
-              Confier ma villa <ArrowRight size={13} />
+              Confier ma villa <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </Link>
             <button
               type="button"

@@ -484,7 +484,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {villa.a_la_carte_services.map((service) => (
                       <div key={service} className="flex items-center gap-2 text-navy/70">
-                        <span className="text-gold">{getEquipmentIcon(service)}</span>
+                        <KayvilaPngIcon name={getEquipmentIcon(service)} size={20} alt="" className="text-gold" />
                         <span className="text-sm font-instrument-sans">{service}</span>
                       </div>
                     ))}
@@ -690,7 +690,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 />
               </div>
               
-              <div className="p-8 bg-navy/5 rounded-none border border-navy/15 flex flex-col items-center text-center gap-3">
+              <div className="p-8 bg-navy/5 rounded-none border border-navy/20 flex flex-col items-center text-center gap-3">
                 <div className="w-10 h-10 rounded-none bg-gold/20 flex items-center justify-center text-gold">
                   <KayvilaPngIcon name="shield-check" size={20} alt="" />
                 </div>

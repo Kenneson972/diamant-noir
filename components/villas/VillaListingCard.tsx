@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Sheet } from "@heroui-pro/react";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
-import { Users, Maximize2 } from "lucide-react";
+import { Maximize2 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
@@ -84,7 +85,7 @@ function PreviewBody({
       <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted">
         {villa.capacity ? (
           <span className="inline-flex items-center gap-1">
-            <Users className="size-3.5" />
+            <KayvilaPngIcon name="users" size={18} alt="" />
             {villa.capacity} pers.
           </span>
         ) : null}

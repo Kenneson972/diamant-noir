@@ -1,7 +1,8 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BarChart3, ArrowRight } from "lucide-react";
+import { BarChart3 } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export const metadata: Metadata = {
   title: "Statistiques — Kayvila",
@@ -62,7 +63,7 @@ export default async function ProprioStatistiquesIndexPage() {
                   {villa.name}
                 </h2>
               </div>
-              <ArrowRight className="h-5 w-5 text-muted transition-transform group-hover:translate-x-1" />
+              <KayvilaPngIcon name="arrow-right" size={20} className="text-muted transition-transform group-hover:translate-x-1" />
             </Link>
           ))}
         </div>

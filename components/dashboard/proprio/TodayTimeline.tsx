@@ -1,4 +1,4 @@
-import { CalendarDays } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface TodayEvent {
   kind: "check_in" | "check_out" | "stay";
@@ -29,9 +29,10 @@ export function TodayTimeline({ events }: TodayTimelineProps) {
       <div className="dashboard-card">
         <span className="dashboard-eyebrow">AUJOURD&apos;HUI</span>
         <div className="mt-4 flex flex-col items-center justify-center py-8 text-center">
-          <CalendarDays
-            className="mb-3 h-8 w-8 text-muted"
-            aria-hidden
+          <KayvilaPngIcon
+            name="calendar"
+            size={24}
+            className="mb-3 text-muted"
           />
           <p className="text-sm italic text-muted">
             Aucun événement aujourd&apos;hui

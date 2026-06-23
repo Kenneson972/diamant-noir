@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
-import { Home } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Chip } from "@heroui/react";
 import { PageTopbar } from "@/components/espace-client/PageTopbar";
 
@@ -129,7 +129,7 @@ export default function MessageriePage() {
 
       {booking ? (
         <div className="flex shrink-0 flex-wrap items-center gap-4 border-b border-navy/6 bg-white px-5 py-3 md:px-6">
-          <Home size={16} className="shrink-0 text-gold/80" aria-hidden />
+          <KayvilaPngIcon name="home" size={18} alt="" className="shrink-0 text-gold/80" aria-hidden />
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/50">
               {booking.villa?.name ?? "Villa Kayvila"}

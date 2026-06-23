@@ -1,12 +1,12 @@
 "use client";
 
-import { Home } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaEmptyState } from "@/components/ui/pro";
 
 export function EmptyDashboard() {
   return (
     <KayvilaEmptyState
-      icon={<Home />}
+      icon={<KayvilaPngIcon name="home" size={24} />}
       title="Bienvenue sur votre espace"
       description="Vous n'avez pas encore de villa. Ajoutez votre première propriété pour commencer."
       actionLabel="Ajouter ma première villa"

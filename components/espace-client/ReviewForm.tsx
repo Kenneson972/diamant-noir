@@ -80,7 +80,7 @@ export function ReviewForm({ bookingId, villaId, onSuccess }: ReviewFormProps) {
         disabled={sending || rating === 0}
         className="inline-flex items-center gap-1.5 bg-navy px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-navy/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
-        <Send size={12} />
+        <Send size={16} strokeWidth={1.5} />
         {sending ? "Envoi..." : "Envoyer mon avis"}
       </button>
     </form>

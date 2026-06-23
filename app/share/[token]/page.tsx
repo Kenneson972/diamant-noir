@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { notFound } from "next/navigation";
-import { Wifi, MapPin } from "lucide-react";
+import { Wifi } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export const metadata = { title: "Séjour partagé — Kayvila" };
 
@@ -61,11 +62,11 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
 
         <div className="space-y-6 border border-navy/10 bg-white p-6">
           <div>
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/50">Villa</p>
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy/60">Villa</p>
             <p className="font-display text-2xl text-navy">{villa.name}</p>
             <div className="mt-1 flex items-center gap-1.5">
-              <MapPin size={13} className="text-navy/30" />
-              <p className="text-sm text-navy/50">{villa.location ?? "Martinique"}</p>
+              <KayvilaPngIcon name="location" size={18} alt="" className="text-navy/60 shrink-0" />
+              <p className="text-sm text-navy/60">{villa.location ?? "Martinique"}</p>
             </div>
           </div>
 
@@ -73,14 +74,14 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/55">Arrivée</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/60">Arrivée</p>
               <p className="font-display text-lg text-navy">{fmt(booking.start_date)}</p>
-              <p className="mt-0.5 text-sm text-navy/50">{villa.check_in_time ?? "17:00"}</p>
+              <p className="mt-0.5 text-sm text-navy/60">{villa.check_in_time ?? "17:00"}</p>
             </div>
             <div>
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/55">Départ</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/60">Départ</p>
               <p className="font-display text-lg text-navy">{fmt(booking.end_date)}</p>
-              <p className="mt-0.5 text-sm text-navy/50">{villa.check_out_time ?? "10:00"}</p>
+              <p className="mt-0.5 text-sm text-navy/60">{villa.check_out_time ?? "10:00"}</p>
             </div>
           </div>
 
@@ -88,9 +89,9 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
             <>
               <div className="h-px bg-navy/8" />
               <div className="flex items-center gap-2">
-                <Wifi size={15} className="text-navy/30" />
+                <Wifi size={16} strokeWidth={1.5} className="text-navy/60" />
                 <div>
-                  <p className="text-[11px] text-navy/50">{villa.wifi_name}</p>
+                  <p className="text-[11px] text-navy/60">{villa.wifi_name}</p>
                   {villa.wifi_password ? <p className="text-sm text-navy">{villa.wifi_password}</p> : null}
                 </div>
               </div>
@@ -99,7 +100,7 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
 
           <div className="h-px bg-navy/8" />
 
-          <p className="text-center text-[11px] text-navy/50">Kayvila Conciergerie — Martinique</p>
+          <p className="text-center text-[11px] text-navy/60">Kayvila Conciergerie — Martinique</p>
         </div>
       </div>
     </div>

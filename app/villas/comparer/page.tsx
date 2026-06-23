@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Scale, Users, Maximize2, X, Waves } from "lucide-react";
+import { Scale, Maximize2, X, Waves } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useCompare } from "@/contexts/CompareContext";
 import { KayvilaEmptyState, KayvilaNumberValue } from "@/components/ui/pro";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -60,7 +61,7 @@ export default function ComparePage() {
     return (
       <main className="mx-auto max-w-6xl px-6 py-16">
         <KayvilaEmptyState
-          icon={<Scale className="size-12" />}
+          icon={<Scale size={24} strokeWidth={1.5} />}
           title="Aucune villa à comparer"
           description="Ajoutez jusqu'à 3 villas depuis la page de recherche."
           actionLabel="Voir les villas"
@@ -73,10 +74,10 @@ export default function ComparePage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-12 pb-24">
       <h1 className="font-display text-3xl text-navy mb-2">Comparer les villas</h1>
-      <p className="text-sm text-navy/55 mb-8">{villas.length} villa{villas.length > 1 ? "s" : ""} sélectionnée{villas.length > 1 ? "s" : ""}</p>
+      <p className="text-sm text-navy/60 mb-8">{villas.length} villa{villas.length > 1 ? "s" : ""} sélectionnée{villas.length > 1 ? "s" : ""}</p>
 
       {loading ? (
-        <p className="text-sm text-navy/55">Chargement…</p>
+        <p className="text-sm text-navy/60">Chargement…</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {villas.map((villa) => {
@@ -86,10 +87,10 @@ export default function ComparePage() {
                 <button
                   type="button"
                   onClick={() => remove(villa.id)}
-                  className="absolute right-4 top-4 text-navy/40 transition-colors hover:text-red-500"
+                  className="absolute right-4 top-4 text-navy/60 transition-colors hover:text-red-500"
                   aria-label={`Retirer ${villa.name}`}
                 >
-                  <X className="size-4" />
+                  <X size={16} strokeWidth={1.5} />
                 </button>
                 <div className="relative mb-4 aspect-[4/3] overflow-hidden">
                   <Image
@@ -102,25 +103,25 @@ export default function ComparePage() {
                 </div>
                 <h2 className="font-display text-lg text-navy pr-8">{villa.name}</h2>
                 {villa.location ? (
-                  <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-navy/45">{villa.location}</p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-navy/60">{villa.location}</p>
                 ) : null}
                 <div className="mt-4 space-y-2 text-sm text-navy/70">
                   <p className="flex items-center gap-2">
-                    <Users className="size-4 text-gold" />
+                    <KayvilaPngIcon name="users" size={18} alt="" className="text-gold shrink-0" />
                     {villa.capacity ?? "—"} voyageurs
                   </p>
                   <p className="flex items-center gap-2">
-                    <Maximize2 className="size-4 text-gold" />
+                    <Maximize2 size={16} strokeWidth={1.5} className="text-gold shrink-0" />
                     {villa.surface_m2 ?? "—"} m²
                   </p>
                   <p className="flex items-center gap-2">
-                    <Waves className="size-4 text-gold" />
+                    <Waves size={16} strokeWidth={1.5} className="text-gold shrink-0" />
                     {hasPool ? "Piscine" : "Sans piscine"}
                   </p>
                 </div>
                 <p className="mt-4">
                   <KayvilaNumberValue value={villa.price_per_night} format="currency" className="font-sora font-semibold text-gold" />
-                  <span className="text-sm text-navy/50"> / nuit</span>
+                  <span className="text-sm text-navy/60"> / nuit</span>
                 </p>
                 <Link
                   href={`/villas/${villa.id}`}

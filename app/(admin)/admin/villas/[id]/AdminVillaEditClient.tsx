@@ -8,7 +8,8 @@ import { VillaBookingsRegistry } from "@/components/dashboard/villa-editor/Villa
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { PlanningIcalSyncCard } from "@/components/dashboard/villa-editor/PlanningIcalSyncCard";
 import { IcalConnectivityStatus } from "@/components/dashboard/villa-editor/IcalConnectivityStatus";
-import { Save, Loader2, ChevronDown } from "lucide-react";
+import { Loader2, ChevronDown } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface AdminVillaEditClientProps {
   villa: Record<string, unknown>;
@@ -259,7 +260,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
                 {adminSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Save className="h-4 w-4" />
+                  <KayvilaPngIcon name="check-circle" size={18} alt="" />
                 )}
                 {adminSaving ? "Sauvegarde..." : "Enregistrer"}
               </button>
@@ -298,7 +299,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
             {cleaningFeeSaving ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <Save className="h-4 w-4" />
+              <KayvilaPngIcon name="check-circle" size={18} alt="" />
             )}
             {cleaningFeeSaving ? "Sauvegarde..." : "Enregistrer"}
           </button>

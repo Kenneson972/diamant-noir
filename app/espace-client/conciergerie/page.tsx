@@ -65,13 +65,13 @@ export default function ConciergeriePage() {
                 className="flex items-center gap-5 px-6 py-5 no-underline transition-colors hover:bg-navy/[0.02] group"
               >
                 {typeof Icon === "string" ? (
-                  <KayvilaPngIcon name={Icon} size={20} alt="" className={gold ? "shrink-0" : "shrink-0 opacity-25 transition-opacity group-hover:opacity-60"} />
+                  <KayvilaPngIcon name={Icon} size={20} alt="" className={gold ? "shrink-0" : "shrink-0 opacity-60 transition-opacity group-hover:opacity-90"} />
                 ) : (
                   <Icon
                     size={16}
-                    strokeWidth={1.25}
+                    strokeWidth={1.5}
                     className={
-                      gold ? "shrink-0 text-gold" : "shrink-0 text-navy/25 transition-colors group-hover:text-gold/60"
+                      gold ? "shrink-0 text-gold" : "shrink-0 text-navy/50 transition-colors group-hover:text-gold/60"
                     }
                     aria-hidden
                   />
@@ -90,7 +90,7 @@ export default function ConciergeriePage() {
 
         <KayvilaTenantWidget
           title="Horaires"
-          action={<KayvilaPngIcon name="clock" size={18} alt="" className="opacity-25" />}
+          action={<KayvilaPngIcon name="clock" size={18} alt="" className="opacity-60" />}
         >
           <div className="divide-y divide-navy/5">
             {HOURS.map(({ day, hours }) => (

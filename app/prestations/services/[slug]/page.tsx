@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
@@ -151,7 +150,7 @@ export default async function PrestationServicePage({
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Texte */}
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
               Notre approche
             </span>
             <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
@@ -192,7 +191,7 @@ export default async function PrestationServicePage({
           </div>
           {/* Texte */}
           <div className="lg:order-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
               Comment nous travaillons
             </span>
             <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
@@ -252,14 +251,14 @@ export default async function PrestationServicePage({
                       href={`/prestations/services/${prevSlug}`}
                       className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                     >
-                      <ArrowRight size={14} className="rotate-180" aria-hidden /> Pilier précédent : {prev.title}
+                      <KayvilaPngIcon name="arrow-right" size={18} alt="" className="rotate-180" /> Pilier précédent : {prev.title}
                     </Link>
                   )}
                   <Link
                     href={`/prestations/services/${nextSlug}`}
                     className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                   >
-                    {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <ArrowRight size={14} aria-hidden />
+                    {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                   </Link>
                 </div>
               );
@@ -268,7 +267,7 @@ export default async function PrestationServicePage({
               href="/soumettre-ma-villa"
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
-              Confier ma villa <ArrowRight size={14} aria-hidden />
+              Confier ma villa <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </Link>
           </div>
         </div>

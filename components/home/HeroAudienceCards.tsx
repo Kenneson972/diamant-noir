@@ -2,7 +2,8 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Search, Building2 } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import {
   HOME_AUDIENCE_STORAGE_KEY,
   notifyHomeAudienceChange,
@@ -96,10 +97,10 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
           >
             {`Gérer ma villa avec ${SITE_BRAND_DISPLAY}`}
           </span>
-          <Building2
-            className={`mt-auto h-[14px] w-[14px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 sm:h-[15px] sm:w-[15px] ${isLight ? iconLight : iconDark}`}
-            strokeWidth={1.5}
-            aria-hidden
+          <KayvilaPngIcon
+            name="villa"
+            size={18}
+            className={`mt-auto shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 ${isLight ? "opacity-60" : "invert opacity-60"}`}
           />
         </button>
 

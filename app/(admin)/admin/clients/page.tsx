@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import { User, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { AdminClientsDataGrid } from "@/components/dashboard/admin/AdminClientsDataGrid";
 import { KayvilaEmptyState } from "@/components/ui/pro";
@@ -108,7 +109,7 @@ export default async function AdminClientsPage({ searchParams }: PageProps) {
 
       {tenants.length === 0 ? (
         <KayvilaEmptyState
-          icon={<User />}
+          icon={<KayvilaPngIcon name="users" size={24} alt="" />}
           title={search ? "Aucun client trouvé" : "Aucun client inscrit"}
           description={
             search
