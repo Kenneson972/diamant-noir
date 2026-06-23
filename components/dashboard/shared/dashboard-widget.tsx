@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { KayvilaWidget } from "@/components/ui/pro";
+import { Widget } from "@heroui-pro/react";
+import { cn } from "@/lib/utils";
 
 type DashboardWidgetProps = {
   title: string;
@@ -20,18 +23,26 @@ export function DashboardWidget({
   className,
 }: DashboardWidgetProps) {
   return (
-    <KayvilaWidget title={title} description={description} className={className}>
+    <Widget className={cn("rounded-xl border border-navy/5 bg-white shadow-sm", className)}>
+      <Widget.Header>
+        <Widget.Title className="font-display text-lg font-semibold text-navy">
+          {title}
+        </Widget.Title>
+        {description ? (
+          <Widget.Description className="text-sm text-muted">{description}</Widget.Description>
+        ) : null}
+      </Widget.Header>
+      <Widget.Content>{children}</Widget.Content>
       {actionHref ? (
-        <div className="-mt-2 mb-4 flex justify-end">
+        <Widget.Footer className="justify-end border-t border-navy/[0.06]">
           <Link
             href={actionHref}
-            className="text-[11px] font-semibold uppercase tracking-wider text-gold hover:underline"
+            className="text-[11px] font-semibold uppercase tracking-wider text-gold no-underline hover:underline"
           >
             {actionLabel}
           </Link>
-        </div>
+        </Widget.Footer>
       ) : null}
-      {children}
-    </KayvilaWidget>
+    </Widget>
   );
 }

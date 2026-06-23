@@ -1,7 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import type { Metadata } from "next";
-import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { type KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { DashboardKpiGroup } from "@/components/dashboard/shared/dashboard-kpi-group";
@@ -12,7 +11,7 @@ import { DashboardAlertList } from "@/components/dashboard/shared/dashboard-aler
 import type { DashboardAlert } from "@/components/dashboard/shared/dashboard-alert-list";
 import { DashboardOccupancyList } from "@/components/dashboard/shared/dashboard-occupancy-list";
 import { buildDailyCounts } from "@/lib/dashboard/sparkline";
-import Link from "next/link";
+import { DashboardStayList, DashboardFavoritesList } from "@/components/dashboard/shared/dashboard-stay-list";
 
 export const metadata: Metadata = {
   title: "Administration — Kayvila",
@@ -308,63 +307,27 @@ export default async function AdminPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <DashboardWidget title="Arrivées du jour" className="border-emerald/10">
-            <div className="mb-4 flex items-center gap-2 text-emerald-600">
-              <KayvilaPngIcon name="login" size={22} alt="" />
-            </div>
-            {(checkIns ?? []).length === 0 ? (
-              <p className="text-sm text-navy/55">Aucune arrivée aujourd&apos;hui.</p>
-            ) : (
-              <div className="space-y-2">
-                {checkIns!.map((b) => (
-                  <div
-                    key={b.id}
-                    className="flex items-center justify-between border-b border-navy/[0.05] pb-2 last:border-0"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-navy">
-                        {b.guest_name ?? "Voyageur"}
-                      </p>
-                      <p className="text-[11px] text-navy/50">
-                        {(b.villas as { name?: string } | null)?.name ?? "Villa"}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                      Arrivée
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DashboardStayList
+              kind="check-in"
+              emptyLabel="Aucune arrivée aujourd'hui."
+              items={(checkIns ?? []).map((b) => ({
+                id: b.id,
+                guestName: b.guest_name ?? "Voyageur",
+                villaName: (b.villas as { name?: string } | null)?.name ?? "Villa",
+              }))}
+            />
           </DashboardWidget>
 
           <DashboardWidget title="Départs du jour" className="border-amber/10">
-            <div className="mb-4 flex items-center gap-2 text-amber-600">
-              <KayvilaPngIcon name="logout" size={22} alt="" />
-            </div>
-            {(checkOuts ?? []).length === 0 ? (
-              <p className="text-sm text-navy/55">Aucun départ aujourd&apos;hui.</p>
-            ) : (
-              <div className="space-y-2">
-                {checkOuts!.map((b) => (
-                  <div
-                    key={b.id}
-                    className="flex items-center justify-between border-b border-navy/[0.05] pb-2 last:border-0"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-navy">
-                        {b.guest_name ?? "Voyageur"}
-                      </p>
-                      <p className="text-[11px] text-navy/50">
-                        {(b.villas as { name?: string } | null)?.name ?? "Villa"}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
-                      Départ
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DashboardStayList
+              kind="check-out"
+              emptyLabel="Aucun départ aujourd'hui."
+              items={(checkOuts ?? []).map((b) => ({
+                id: b.id,
+                guestName: b.guest_name ?? "Voyageur",
+                villaName: (b.villas as { name?: string } | null)?.name ?? "Villa",
+              }))}
+            />
           </DashboardWidget>
         </div>
 
@@ -378,22 +341,14 @@ export default async function AdminPage() {
             <DashboardAlertList alerts={adminAlerts} />
             {topVillasData.length > 0 ? (
               <DashboardWidget title="Villas les plus aimées" actionHref="/admin/villas">
-                <div className="space-y-2">
-                  {topVillasData.map((v, i) => (
-                    <Link
-                      key={v.id}
-                      href={`/admin/villas/${v.id}`}
-                      className="flex items-center gap-3 rounded p-1 no-underline hover:bg-navy/[0.02]"
-                    >
-                      <span className="w-5 text-[11px] font-bold text-gold">{i + 1}</span>
-                      <KayvilaPngIcon name="heart" size={22} alt="" />
-                      <span className="flex-1 truncate text-sm text-navy">{v.name}</span>
-                      <span className="text-[11px] text-navy/30">
-                        {wishFreq[v.id]} favori{wishFreq[v.id] > 1 ? "s" : ""}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
+                <DashboardFavoritesList
+                  items={topVillasData.map((v, i) => ({
+                    id: v.id,
+                    name: v.name,
+                    count: wishFreq[v.id] ?? 0,
+                    rank: i + 1,
+                  }))}
+                />
               </DashboardWidget>
             ) : null}
           </div>

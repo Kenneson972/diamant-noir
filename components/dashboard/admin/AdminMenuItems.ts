@@ -1,30 +1,81 @@
-import type { SidebarMenuItem } from "@/components/dashboard/shared/DashboardSidebar";
+import type { SidebarMenuItem } from "@/components/dashboard/shared/dashboard-sidebar-types";
 
+/**
+ * Navigation admin — parents métier + enfants actionnables.
+ * Les parents n'ont pas de href : expand/collapse HeroUI Sidebar uniquement.
+ */
 export const adminMenuItems: SidebarMenuItem[] = [
   { label: "Tableau de bord", href: "/admin", icon: "LayoutDashboard", exact: true },
 
-  { label: "Villas",         href: "/admin/villas",        icon: "Building2",    group: "GESTION" },
-  { label: "Réservations",   href: "/admin/reservations",  icon: "CalendarDays", group: "GESTION" },
-  { label: "Clients",        href: "/admin/clients",       icon: "UserCircle",   group: "GESTION" },
-  { label: "Propriétaires",  href: "/admin/proprietaires", icon: "Users",        group: "GESTION" },
-  { label: "Soumissions",    href: "/admin/soumissions",   icon: "Home",         group: "GESTION" },
-  { label: "Demandes",       href: "/admin/demandes",      icon: "ClipboardList",group: "GESTION" },
-
-  { label: "Revenus",        href: "/admin/revenus",       icon: "DollarSign",   group: "FINANCES" },
   {
-    label: "Outils",
-    href: "#",
-    icon: "Zap",
-    group: "FINANCES",
+    id: "admin-gestion-patrimoine",
+    label: "Patrimoine",
+    icon: "Building2",
+    group: "GESTION",
     children: [
-      { label: "Tarification", href: "/admin/tarification", icon: "Percent" },
-      { label: "Sync OTA",     href: "/admin/sync-ota",     icon: "Zap" },
+      { label: "Villas", href: "/admin/villas", icon: "Building2" },
+      { label: "Soumissions", href: "/admin/soumissions", icon: "Home" },
+    ],
+  },
+  {
+    id: "admin-gestion-sejours",
+    label: "Séjours & demandes",
+    icon: "CalendarDays",
+    group: "GESTION",
+    children: [
+      { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
+      { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
+    ],
+  },
+  {
+    id: "admin-gestion-acteurs",
+    label: "Clients & propriétaires",
+    icon: "Users",
+    group: "GESTION",
+    children: [
+      { label: "Clients", href: "/admin/clients", icon: "UserCircle" },
+      { label: "Propriétaires", href: "/admin/proprietaires", icon: "Users" },
     ],
   },
 
-  { label: "Avis",         href: "/admin/avis",       icon: "Star",          group: "OUTILS" },
-  { label: "Documents",    href: "/admin/documents",  icon: "FileText",      group: "OUTILS" },
-  { label: "Messagerie",   href: "/admin/messagerie", icon: "MessageCircle", group: "OUTILS" },
-  { label: "Concierge IA", href: "/admin/concierge",  icon: "Sparkles",      group: "OUTILS" },
-  { label: "Paramètres",   href: "/admin/parametres", icon: "Settings",      group: "OUTILS" },
+  {
+    id: "admin-finances-canaux",
+    label: "Finances & canaux",
+    icon: "DollarSign",
+    group: "FINANCES",
+    children: [
+      { label: "Revenus", href: "/admin/revenus", icon: "DollarSign" },
+      { label: "Tarification", href: "/admin/tarification", icon: "Percent" },
+      { label: "Sync OTA", href: "/admin/sync-ota", icon: "Zap" },
+    ],
+  },
+
+  {
+    id: "admin-relation-client",
+    label: "Relation client",
+    icon: "MessageCircle",
+    group: "OUTILS",
+    children: [
+      { label: "Avis", href: "/admin/avis", icon: "Star" },
+      { label: "Messagerie", href: "/admin/messagerie", icon: "MessageCircle" },
+    ],
+  },
+  {
+    label: "Concierge IA",
+    href: "/admin/concierge",
+    icon: "Sparkles",
+    group: "OUTILS",
+  },
+  {
+    label: "Documents",
+    href: "/admin/documents",
+    icon: "FileText",
+    group: "OUTILS",
+  },
+  {
+    label: "Paramètres",
+    href: "/admin/parametres",
+    icon: "Settings",
+    group: "OUTILS",
+  },
 ];

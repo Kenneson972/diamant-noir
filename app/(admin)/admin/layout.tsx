@@ -3,7 +3,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
 import { isStaffAdmin, normalizeRole } from "@/lib/auth/admin-access";
-import type { SidebarMenuItem } from "@/components/dashboard/shared/DashboardSidebar";
+import { applyMenuBadges } from "@/lib/dashboard/apply-menu-badges";
 
 export const metadata = {
   title: "Administration Kayvila",
@@ -44,7 +44,6 @@ export default async function AdminDashboardLayout({
     redirect("/espace-client");
   }
 
-  // Fetch badge counts en parallèle
   const [reservations, soumissions, avis, demandes] = await Promise.all([
     supabase
       .from("bookings")
@@ -67,15 +66,12 @@ export default async function AdminDashboardLayout({
 
   const badgeMap: Record<string, number> = {
     "/admin/reservations": reservations.count ?? 0,
-    "/admin/soumissions":  soumissions.count ?? 0,
-    "/admin/avis":         avis.count ?? 0,
-    "/admin/demandes":     demandes.count ?? 0,
+    "/admin/soumissions": soumissions.count ?? 0,
+    "/admin/avis": avis.count ?? 0,
+    "/admin/demandes": demandes.count ?? 0,
   };
 
-  const menuWithBadges: SidebarMenuItem[] = adminMenuItems.map((item) => ({
-    ...item,
-    badge: badgeMap[item.href] ?? item.badge,
-  }));
+  const menuWithBadges = applyMenuBadges(adminMenuItems, badgeMap);
 
   return (
     <DashboardShell role="admin" roleLabel="Admin" menu={menuWithBadges}>

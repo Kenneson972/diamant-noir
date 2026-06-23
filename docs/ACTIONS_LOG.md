@@ -724,3 +724,21 @@ verify: vérification effectuée
 - **why**: Build Vercel échouait en type-check après upgrade HeroUI
 - **impact**: `npm run build` OK en local
 - **verify**: `npm run build` exit 0
+
+### 2026-06-23 — Sidebar parents métier HeroUI + polish dashboard admin
+
+- **type**: ui
+- **summary**: Migration sidebar HeroUI Pro (`kayvila-sidebar-panel`) avec parents métier expand/collapse, badges agrégés, fil d'Ariane ; overview admin (ListView, Alert, Widget) ; segment Liste/Kanban/Calendrier réservations
+- **files**: `components/dashboard/shared/kayvila-sidebar-panel.tsx`, `AdminMenuItems.ts`, `ProprioMenuItems.ts`, `lib/dashboard/apply-menu-badges.ts`, `DashboardShell.tsx`, `app/(admin)/admin/{layout,page,reservations}/**`, `components/ui/pro/kayvila-segment.tsx`
+- **why**: Navigation admin trop plate ; regroupement métier (Patrimoine, Séjours, Finances…) avec auto-expand route active
+- **impact**: Sidebar hiérarchique admin/proprio ; badges remontés sur parents ; ⌘K avec contexte parent
+- **verify**: `npm run build` exit 0
+
+### 2026-06-23 — Sidebar parents métier HeroUI + polish dashboard admin
+
+- **type**: ui
+- **summary**: Migration sidebar HeroUI Pro (`kayvila-sidebar-panel`) avec parents métier expand/collapse, badges agrégés, fil d'Ariane ; overview admin (ListView, Alert, Widget) ; segment Liste/Kanban/Calendrier réservations
+- **files**: `components/dashboard/shared/kayvila-sidebar-panel.tsx`, `AdminMenuItems.ts`, `ProprioMenuItems.ts`, `lib/dashboard/apply-menu-badges.ts`, `DashboardShell.tsx`, `app/(admin)/admin/{layout,page,reservations}/**`, `components/ui/pro/kayvila-segment.tsx`
+- **why**: Navigation admin trop plate ; regroupement métier (Patrimoine, Séjours, Finances…) avec auto-expand route active
+- **impact**: Sidebar hiérarchique admin/proprio ; badges remontés sur parents ; ⌘K avec contexte parent
+- **verify**: `npm run build` exit 0

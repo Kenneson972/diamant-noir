@@ -7,6 +7,32 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Command } from "@heroui-pro/react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
+import type { SidebarMenuItem } from "@/components/dashboard/shared/dashboard-sidebar-types";
+
+function flattenNavItems(
+  items: SidebarMenuItem[],
+  parentLabel?: string
+): Array<{ key: string; label: string; href: string; icon: string }> {
+  const flat: Array<{ key: string; label: string; href: string; icon: string }> = [];
+
+  for (const item of items) {
+    if (item.href) {
+      flat.push({
+        key: item.href,
+        label: parentLabel ? `${parentLabel} · ${item.label}` : item.label,
+        href: item.href,
+        icon: item.icon,
+      });
+    }
+    if (item.children?.length) {
+      flat.push(...flattenNavItems(item.children, item.label));
+    }
+  }
+
+  return flat;
+}
+
+const adminNavItems = flattenNavItems(adminMenuItems);
 
 function NavIcon({ name, size = 16 }: { name: string; size?: number }) {
   const pngMap: Record<string, string> = {
@@ -100,9 +126,9 @@ export function AdminCommandPalette() {
             </Command.InputGroup>
             <Command.List>
               <Command.Group heading="Navigation">
-                {adminMenuItems.map((item) => (
+                {adminNavItems.map((item) => (
                   <Command.Item
-                    key={item.href}
+                    key={item.key}
                     textValue={item.label}
                     onAction={() => navigate(item.href)}
                   >

@@ -12,3 +12,5 @@ export { KayvilaActionBar } from "./kayvila-action-bar";
 export type { KayvilaActionBarAction } from "./kayvila-action-bar";
 export { KayvilaNumberValue } from "./kayvila-number-value";
 export { KayvilaPressableButton } from "./kayvila-pressable-button";
+export { KayvilaSegment } from "./kayvila-segment";
+export type { KayvilaSegmentOption } from "./kayvila-segment";

@@ -5,12 +5,13 @@ import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItem
 import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
 import { OwnerContactFAB } from "@/components/dashboard/proprio/OwnerContactFAB";
-import type { SidebarMenuItem } from "@/components/dashboard/shared/DashboardSidebar";
+import { applyMenuBadges } from "@/lib/dashboard/apply-menu-badges";
 
 export const metadata = {
   title: "Tableau de bord propriétaire",
   robots: { index: false, follow: false },
 };
+
 export const dynamic = "force-dynamic";
 
 export default async function ProprioDashboardLayout({
@@ -76,10 +77,7 @@ export default async function ProprioDashboardLayout({
     "/dashboard/taches": taches.count ?? 0,
   };
 
-  const menuWithBadges: SidebarMenuItem[] = proprioMenuItems.map((item) => ({
-    ...item,
-    badge: badgeMap[item.href] ?? item.badge,
-  }));
+  const menuWithBadges = applyMenuBadges(proprioMenuItems, badgeMap);
 
   return (
     <CopilotProvider>

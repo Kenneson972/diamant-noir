@@ -8,7 +8,7 @@ import {
   type AdminBookingRow,
 } from "@/components/dashboard/admin/AdminReservationsDataGrid";
 import { AdminReservationsKanban } from "@/components/dashboard/admin/AdminReservationsKanban";
-import { KayvilaEmptyState, KayvilaActionBar } from "@/components/ui/pro";
+import { KayvilaEmptyState, KayvilaActionBar, KayvilaSegment } from "@/components/ui/pro";
 import { ReservationCalendar } from "@/components/dashboard/ReservationCalendar";
 import { CreateBookingModal } from "@/components/dashboard/CreateBookingModal";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";
@@ -285,29 +285,20 @@ export default function AdminReservationsPage() {
           ))}
         </div>
 
-        <div className="flex overflow-hidden rounded-lg border border-navy/10">
-          {(
-            [
-              { id: "list" as const, icon: "layoutList" as const, label: "Liste" },
-              { id: "kanban" as const, icon: "columns3" as const, label: "Kanban" },
-              { id: "calendar" as const, icon: "calendar" as const, label: "Calendrier" },
-            ] as const
-          ).map(({ id, icon, label }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setView(id)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold transition-colors ${view === id ? "bg-navy text-white" : "bg-white text-navy/50 hover:text-navy"}`}
-            >
-              {icon === "calendar" ? (
-                <KayvilaPngIcon name="calendar" size={18} alt="" />
-              ) : (
-                icon === "layoutList" ? <LayoutList size={16} strokeWidth={1.5} /> : <Columns3 size={16} strokeWidth={1.5} />
-              )}
-              {label}
-            </button>
-          ))}
-        </div>
+        <KayvilaSegment
+          aria-label="Mode d'affichage des réservations"
+          options={[
+            { id: "list", label: "Liste", icon: <LayoutList size={16} strokeWidth={1.5} /> },
+            { id: "kanban", label: "Kanban", icon: <Columns3 size={16} strokeWidth={1.5} /> },
+            {
+              id: "calendar",
+              label: "Calendrier",
+              icon: <KayvilaPngIcon name="calendar" size={18} alt="" />,
+            },
+          ]}
+          value={view}
+          onChange={setView}
+        />
       </div>
 
       {villaFilter && villaName ? (
