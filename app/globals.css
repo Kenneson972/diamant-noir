@@ -280,6 +280,12 @@ button,
   touch-action: manipulation;
 }
 
+/* KPI cards — forcer la taille des icônes PNG à 32px */
+[data-slot="kpi-icon"] img {
+  width: 32px !important;
+  height: 32px !important;
+}
+
 /* Dashboard : classes spécifiques pour la sidebar etc. */
 .font-display-dashboard {
   font-family: var(--font-sora), system-ui, sans-serif;

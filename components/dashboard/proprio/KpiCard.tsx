@@ -22,10 +22,10 @@ interface KpiCardProps {
 function KpiIconRenderer({ iconName }: { iconName: KpiIconName }) {
   const pngName = getKpiPngName(iconName);
   if (pngName) {
-    return <KayvilaPngIcon name={pngName} size={20} className="aria-hidden" />;
+    return <KayvilaPngIcon name={pngName} size={32} className="aria-hidden" />;
   }
   // Lucide fallback for icons without Kayvila PNG equivalent
-  const lucideClass = "size-5 text-navy/80";
+  const lucideClass = "size-8 text-navy/80";
   switch (iconName) {
     case "dollarSign": return <DollarSign className={lucideClass} strokeWidth={1.5} aria-hidden />;
     case "percent": return <Percent className={lucideClass} strokeWidth={1.5} aria-hidden />;

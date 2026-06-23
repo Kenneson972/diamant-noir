@@ -5,3 +5,4 @@ node_modules/
 # .env.example doit être commité — NE PAS ignorer
 *.tsbuildinfo
 .DS_Store
+.vercel

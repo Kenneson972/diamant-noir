@@ -37,9 +37,9 @@ export function HomeConciergeHighlight() {
               <div className="flex items-start gap-4">
                 <KayvilaPngIcon
                   name={icon}
-                  size={20}
+                  size={28}
                   alt=""
-                  className="mt-0.5 shrink-0 opacity-60"
+                  className="mt-0.5 shrink-0 opacity-70"
                 />
                 <span className="text-[13px] leading-snug text-navy/70">{label}</span>
               </div>

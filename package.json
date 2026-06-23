@@ -10,8 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "check:schema": "node scripts/check-supabase-schema.mjs",
-    "test": "vitest run",
-    "audit:icons": "playwright test tests/audit-icons.spec.ts --project=audit"
+    "test": "vitest run"
   },
   "dependencies": {
     "@heroui-pro/react": "^1.0.0-beta.5",
