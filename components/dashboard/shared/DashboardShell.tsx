@@ -56,6 +56,7 @@ export function DashboardShell({
         open={sidebarOpen}
         toggleShortcut={false}
         onOpenChange={handleOpenChange}
+        className="bg-offwhite font-body-dashboard text-navy antialiased"
       >
         <a
           href={`#${role}-main`}
@@ -64,32 +65,30 @@ export function DashboardShell({
           Aller au contenu principal
         </a>
 
-        <div className="min-h-dvh bg-offwhite font-body-dashboard text-navy antialiased">
-          <KayvilaSidebarPanel
-            role={role}
-            roleLabel={roleLabel}
-            menu={menu}
-            userName={displayName}
-            userEmail={userEmail}
-            onSignOut={handleSignOut}
-          />
+        <KayvilaSidebarPanel
+          role={role}
+          roleLabel={roleLabel}
+          menu={menu}
+          userName={displayName}
+          userEmail={userEmail}
+          onSignOut={handleSignOut}
+        />
 
-          <Sidebar.Main className="flex min-h-dvh flex-col bg-offwhite">
-            <DashboardHeader
-              roleLabel={roleLabel}
-              displayName={displayName}
-              userId={user?.id}
-              role={role}
-              menu={menu}
-            />
-            <main
-              id={`${role}-main`}
-              className="flex-1 px-4 py-6 md:px-8 md:py-8"
-            >
-              {children}
-            </main>
-          </Sidebar.Main>
-        </div>
+        <Sidebar.Main className="flex min-h-dvh flex-col bg-offwhite">
+          <DashboardHeader
+            roleLabel={roleLabel}
+            displayName={displayName}
+            userId={user?.id}
+            role={role}
+            menu={menu}
+          />
+          <main
+            id={`${role}-main`}
+            className="flex-1 px-4 py-6 md:px-8 md:py-8"
+          >
+            {children}
+          </main>
+        </Sidebar.Main>
       </Sidebar.Provider>
     </>
   );

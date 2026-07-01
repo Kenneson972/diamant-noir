@@ -171,16 +171,16 @@
 @import "@heroui/styles";
 @import "@heroui-pro/react/css";
 
-/* Sidebar dashboard Kayvila — HeroUI Pro Sidebar sur fond navy */
+/* Sidebar dashboard Kayvila — HeroUI Pro Sidebar sur fond clair */
 .kayvila-sidebar {
   --sidebar-width: 16rem;
   --sidebar-width-collapsed: 4rem;
-  background: var(--color-navy) !important;
-  color: rgb(255 255 255 / 0.9);
+  background: var(--color-offwhite) !important;
+  color: rgb(10 10 10 / 0.9);
 }
 
 .kayvila-sidebar .sidebar__menu-header {
-  color: rgb(255 255 255 / 0.32);
+  color: rgb(10 10 10 / 0.4);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.2em;
@@ -188,17 +188,17 @@
 }
 
 .kayvila-sidebar .sidebar__menu-item-content {
-  color: rgb(255 255 255 / 0.78);
+  color: rgb(10 10 10 / 0.75);
 }
 
 .kayvila-sidebar .sidebar__menu-icon {
-  color: rgb(255 255 255 / 0.45);
+  color: rgb(10 10 10 / 0.45);
 }
 
 .kayvila-sidebar [data-current="true"] .sidebar__menu-item-content {
-  background: rgb(212 175 55 / 0.08);
-  box-shadow: inset 0 0 0 1px rgb(212 175 55 / 0.28);
-  color: var(--color-gold);
+  background: rgb(212 175 55 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(212 175 55 / 0.3);
+  color: var(--color-navy);
 }
 
 .kayvila-sidebar [data-current="true"] .sidebar__menu-icon {
@@ -216,7 +216,7 @@
 }
 
 .kayvila-sidebar .sidebar__menu-item:hover .sidebar__menu-item-content {
-  background: rgb(255 255 255 / 0.06);
+  background: rgb(10 10 10 / 0.04);
 }
 
 /* Polices Kayvila — même mapping que tailwind.config.ts sur git */

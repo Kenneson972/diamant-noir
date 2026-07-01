@@ -167,7 +167,7 @@ function SidebarInner({
 
   return (
     <>
-      <Sidebar.Header className="border-b border-white/10 px-4 py-5">
+      <Sidebar.Header className="border-b border-navy/10 px-4 py-5">
         <Link href={homeHref} className="flex items-center gap-2 no-underline">
           <span className="font-display-dashboard text-xl font-semibold tracking-wide text-gold">
             Kayvila
@@ -205,18 +205,18 @@ function SidebarInner({
         </Sidebar.Menu>
       </Sidebar.Content>
 
-      <Sidebar.Footer className="mt-auto border-t border-white/10 px-3 py-4">
-        <div className="rounded-lg bg-white/5 px-3 py-2">
-          <p className="truncate text-[11px] font-medium text-white/90" title={displayName}>
+      <Sidebar.Footer className="mt-auto border-t border-navy/10 px-3 py-4">
+        <div className="rounded-lg bg-navy/5 px-3 py-2">
+          <p className="truncate text-[11px] font-medium text-navy/90" title={displayName}>
             {displayName}
           </p>
-          <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/45">
+          <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-navy/45">
             {roleLabel}
           </p>
         </div>
 
         <Button
-          className="mt-3 w-full justify-start gap-2 text-white/85 hover:bg-white/10"
+          className="mt-3 w-full justify-start gap-2 text-navy/85 hover:bg-navy/10"
           variant="ghost"
           onPress={onSignOut}
         >
@@ -226,13 +226,13 @@ function SidebarInner({
 
         <Link
           href="/"
-          className="mt-2 block px-2 py-2 text-xs text-white/65 no-underline transition-colors hover:text-white"
+          className="mt-2 block px-2 py-2 text-xs text-navy/65 no-underline transition-colors hover:text-navy"
         >
           Retour au site public
         </Link>
 
         <Button
-          className="mt-2 hidden w-full justify-start gap-2 text-white/55 hover:bg-white/10 md:inline-flex"
+          className="mt-2 hidden w-full justify-start gap-2 text-navy/55 hover:bg-navy/10 md:inline-flex"
           variant="ghost"
           onPress={toggleSidebar}
           aria-label={isOpen ? "Réduire le menu" : "Étendre le menu"}
@@ -257,15 +257,13 @@ function SidebarInner({
 export function KayvilaSidebarPanel(props: KayvilaSidebarPanelProps) {
   return (
     <>
-      <Sidebar className="kayvila-sidebar hidden border-r border-white/10 md:flex">
+      <Sidebar className="kayvila-sidebar hidden border-r border-navy/10 md:flex">
         <SidebarInner {...props} />
         <Sidebar.Rail />
       </Sidebar>
 
-      <Sidebar.Mobile backdrop="opaque">
-        <Sidebar className="kayvila-sidebar border-r border-white/10">
-          <SidebarInner {...props} />
-        </Sidebar>
+      <Sidebar.Mobile backdrop="opaque" className="kayvila-sidebar">
+        <SidebarInner {...props} />
       </Sidebar.Mobile>
     </>
   );
