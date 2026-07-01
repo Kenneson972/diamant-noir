@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { supabaseAdmin } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getCurrentUser } from "@/lib/supabase-server";
 import { verifyVillaOwnerOrAdmin } from "@/lib/auth/verify-villa-access";
 import { BookingDetailCard } from "@/components/dashboard/proprio/BookingDetailCard";
 import type { Booking } from "@/types/domain";
@@ -16,10 +16,9 @@ export const dynamic = "force-dynamic";
 export default async function BookingDetailPage({ params }: PageProps) {
   const { villaId, bookingId } = await params;
 
-  const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
   if (!user) redirect("/login?redirect=/dashboard");
 
   const allowed = await verifyVillaOwnerOrAdmin(

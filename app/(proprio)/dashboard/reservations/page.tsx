@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
@@ -19,17 +19,12 @@ export const metadata: Metadata = {
 };
 
 export default async function ProprioReservationsIndexPage() {
-  const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
   // Fetch villas for this owner
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("id, name")
-    .eq("owner_id", user!.id)
-    .order("name");
+  const { data: villas } = await getOwnerVillas(user!.id);
 
   if (!villas || villas.length === 0) {
     return (

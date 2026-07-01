@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import { AvailabilityCalendar } from "@/components/dashboard/proprio/AvailabilityCalendar";
 import type { Metadata } from "next";
 
@@ -14,7 +14,7 @@ export default async function DisponibilitesPage({ params }: Props) {
   const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
   if (!user) notFound();
 
   const { data: villa } = await supabase

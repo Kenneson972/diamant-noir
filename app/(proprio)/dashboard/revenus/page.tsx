@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
@@ -19,12 +19,9 @@ export default async function RevenusPage() {
   const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("id, name, commission_rate")
-    .eq("owner_id", user!.id);
+  const { data: villas } = await getOwnerVillas(user!.id);
 
   const villaIds = villas?.map((v) => v.id) ?? [];
   const commissionByVilla = new Map(

@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
+import type { Villa } from "@/types/domain";
 
-export async function getSupabaseServer() {
+// Mémoïsé par requête (React cache) : layout + page(s) appellent tous
+// getSupabaseServer() indépendamment — sans ça, chaque appel recréait un
+// client et refaisait auth.getSession(), multipliant la latence de chaque
+// page du dashboard.
+export const getSupabaseServer = cache(async function getSupabaseServer() {
   const cookieStore = await cookies();
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -33,4 +39,30 @@ export async function getSupabaseServer() {
   // Warm up session so _getAccessToken() uses the user's JWT for DB queries (not anon key)
   await client.auth.getSession();
   return client;
-}
+});
+
+// Mémoïsé par requête : auth.getUser() fait un aller-retour réseau vers
+// Supabase Auth (vérification JWT). Le layout du dashboard ET chaque page
+// l'appelaient chacun séparément, doublant ce coût sur chaque navigation —
+// utiliser ce helper partagé au lieu de `(await getSupabaseServer()).auth.getUser()`.
+export const getCurrentUser = cache(async function getCurrentUser() {
+  const supabase = await getSupabaseServer();
+  return supabase.auth.getUser();
+});
+
+// Mémoïsé par requête : le layout du dashboard propriétaire ET quasi chaque
+// page refaisaient chacun `select(...) from villas where owner_id = X` —
+// chaque round-trip Supabase coûtant ~300ms, ces doublons multipliaient le
+// temps de chargement de chaque navigation. `select("*")` couvre tous les
+// besoins (les pages qui n'utilisaient que quelques colonnes en piochent un
+// sous-ensemble), la déduplication par requête l'emporte sur le léger surcoût
+// de sur-fetch (table villas = quelques lignes par propriétaire).
+export const getOwnerVillas = cache(async function getOwnerVillas(ownerId: string) {
+  const supabase = await getSupabaseServer();
+  return supabase
+    .from("villas")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .order("name")
+    .returns<Villa[]>();
+});

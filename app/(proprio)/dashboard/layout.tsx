@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItems";
 import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
@@ -22,23 +22,16 @@ export default async function ProprioDashboardLayout({
   const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
   if (!user) {
     redirect("/login?redirect=/dashboard");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const { data: ownerVillas } = await supabase
-    .from("villas")
-    .select("id, name")
-    .eq("owner_id", user.id)
-    .order("name");
+  const [{ data: profile }, { data: ownerVillas }] = await Promise.all([
+    supabase.from("profiles").select("role").eq("id", user.id).maybeSingle(),
+    getOwnerVillas(user.id),
+  ]);
 
   const adminUser = isStaffAdmin(
     profile?.role,

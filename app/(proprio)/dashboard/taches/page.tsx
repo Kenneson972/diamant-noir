@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Task } from "@/types/domain";
 import { TaskList } from "@/components/dashboard/proprio/TaskList";
@@ -12,13 +12,10 @@ export default async function TasksPage() {
   const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
   // Fetch villas owned by user
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("id, name")
-    .eq("owner_id", user!.id);
+  const { data: villas } = await getOwnerVillas(user!.id);
 
   if (!villas || villas.length === 0) {
     return (

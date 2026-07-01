@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import { OwnerMessaging } from "@/components/dashboard/proprio/OwnerMessaging";
 
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MessagesPage() {
   const supabase = await getSupabaseServer();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await getCurrentUser();
 
   return (
     <div>

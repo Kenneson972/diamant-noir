@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import { DashboardCopilotChat } from "@/components/dashboard/DashboardCopilotChat";
 
@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ProprioConciergePage() {
   const supabase = await getSupabaseServer();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await getCurrentUser();
   if (!user) redirect("/login?redirect=/dashboard/concierge");
 
   return (

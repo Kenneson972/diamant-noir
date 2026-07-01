@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
 import type { Villa, BookingStatus } from "@/types/domain";
 import { type KpiItem } from "@/components/dashboard/proprio/KpiRow";
@@ -29,18 +29,16 @@ export default async function ProprioDashboardPage(props: {
   const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("*")
-    .eq("owner_id", user!.id);
-
-  const { data: ownerProfile } = await supabaseAdmin()
-    .from("profiles")
-    .select("stripe_connect_account_id, stripe_connect_onboarding_completed")
-    .eq("id", user!.id)
-    .maybeSingle();
+  const [{ data: villas }, { data: ownerProfile }] = await Promise.all([
+    getOwnerVillas(user!.id),
+    supabaseAdmin()
+      .from("profiles")
+      .select("stripe_connect_account_id, stripe_connect_onboarding_completed")
+      .eq("id", user!.id)
+      .maybeSingle(),
+  ]);
 
   let connectDone = false;
   if (

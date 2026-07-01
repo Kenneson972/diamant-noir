@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
 import { VillaCard } from "@/components/dashboard/proprio/VillaCard";
@@ -11,15 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ProprioVillasPage() {
-  const supabase = await getSupabaseServer();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCurrentUser();
 
-  const { data: villas } = await supabase
-    .from("villas")
-    .select("*")
-    .eq("owner_id", user!.id);
+  const { data: villas } = await getOwnerVillas(user!.id);
 
   if (!villas || villas.length === 0) {
     return (
