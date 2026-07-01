@@ -105,7 +105,6 @@ export default async function ProprioReservationsIndexPage() {
               {(villa.bookings || []).length > 0 && (
                 <div className="mt-3 space-y-1 border-t border-border-subtle pt-3">
                   {(villa.bookings as any[])
-                    .filter((b: any) => b.status !== "cancelled")
                     .sort(
                       (a: any, b: any) =>
                         new Date(a.start_date).getTime() -
