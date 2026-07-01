@@ -20,10 +20,10 @@ import { tServer } from "@/lib/i18n";
 export const metadata = {
   title: "Qui sommes-nous",
   description:
-    "La mission de Kayvila : conciergerie de luxe, entretien et gestion de villas d'exception en Martinique.",
+    "La mission de Kayvila : conciergerie de standing, entretien et gestion de villas d'exception en Martinique.",
   alternates: { canonical: "https://kayvila.com/qui-sommes-nous" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Kayvila — Conciergerie de luxe en Martinique" }],
+    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Kayvila — Conciergerie de standing en Martinique" }],
   },
 };
 
@@ -57,9 +57,9 @@ export default async function QuiSommesNousPage() {
             capable d&apos;aligner rentabilité, entretien impeccable et expérience voyageur haut de gamme.
           </p>
           <p>
-            Nous croyons que le luxe n&apos;est pas une surcharge de promesses — c&apos;est la justesse des gestes, la
-            fluidité des séjours et le respect du lieu. Du Rocher du Diamant aux plages du soleil, chaque
-            collaboration est pensée pour durer.
+            Nous croyons que l&apos;excellence n&apos;est pas une surcharge de promesses — c&apos;est la justesse des
+            gestes, la fluidité des séjours et le respect du lieu. Au cœur des Caraïbes, chaque collaboration
+            est pensée pour durer.
           </p>
         </EditorialIntro>
       </ScrollReveal>
@@ -80,34 +80,31 @@ export default async function QuiSommesNousPage() {
           imagePosition="right"
           imageAlt="Intérieur et lumière naturelle"
           body={
-            <>
-              <p>
-                Conciergerie haut de gamme, entretien des espaces et des piscines, ménage et remise en état,
-                états des lieux rigoureux : nous protégeons votre patrimoine tout en offrant à vos hôtes une
-                expérience mémorable.
-              </p>
-              <p>
-                Le luxe, pour nous, c&apos;est la cohérence — entre ce que vous promettez en ligne et ce que vivent
-                vos voyageurs sur place.
-              </p>
-            </>
+            <p>
+              Conciergerie haut de gamme, coordination de l&apos;entretien des espaces et des piscines, ménage
+              et remise en état, états des lieux rigoureux : nous protégeons votre patrimoine tout en offrant à
+              vos hôtes une expérience mémorable. L&apos;excellence, pour nous, c&apos;est la cohérence — entre ce que
+              vous promettez en ligne et ce que vivent vos voyageurs sur place.
+            </p>
           }
         />
       </ScrollReveal>
 
       <ScrollReveal>
         <LandingSection bg="white">
-          <LandingBlockTitle eyebrow="L'esprit du nom" title="Rocher, plage, élégance" />
+          <LandingBlockTitle eyebrow="L'esprit du nom" title="Un mot, une promesse" />
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <div className="space-y-6 text-base leading-relaxed text-navy/80 lg:col-span-7">
               <p>
-                Symbole de rareté et d&apos;élégance, Kayvila évoque la force du Rocher du Diamant et la
-                douceur des plages ensoleillées. C&apos;est cette alliance que nous cultivons dans chaque détail.
+                Kayvila puise ses racines dans le créole martiniquais : « kay », la maison, le foyer, l&apos;endroit
+                où l&apos;on se sent le mieux. Un nom qui dit notre mission — prendre soin de votre bien comme du
+                nôtre, et faire de chaque séjour un accueil chaleureux. C&apos;est cet esprit que nous cultivons dans
+                chaque détail.
               </p>
             </div>
             <aside className="flex flex-col justify-center border-t border-navy/10 pt-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
               <p className="font-display text-2xl leading-snug text-navy md:text-3xl">
-                Le luxe, ce n&apos;est pas l&apos;excès — c&apos;est la justesse de chaque détail.
+                L&apos;excellence, ce n&apos;est pas l&apos;excès — c&apos;est la justesse de chaque détail.
               </p>
               <span className="mt-8 block h-px w-12 bg-gold" aria-hidden />
             </aside>
@@ -134,15 +131,15 @@ export default async function QuiSommesNousPage() {
                 chaque voyageur comme un invité.
               </p>
               <p>
-                Basés au Diamant, nous connaissons le territoire, ses prestataires, ses artisans et
+                Basés en Martinique, nous connaissons le territoire, ses prestataires, ses artisans et
                 ses spécificités. Cette connaissance locale est notre premier atout : elle nous permet
                 d&apos;anticiper les besoins, de coordonner les interventions et de garantir une qualité
                 constante, séjour après séjour.
               </p>
               <p>
-                Notre modèle repose sur la transparence : commission de 25 % TTC sur les nuitées
-                nettes, ménage et blanchisserie facturés aux voyageurs, réassort des consommables à
-                nos frais dès la deuxième location. Pas de frais cachés, pas de mauvaise surprise.
+                Notre modèle repose sur la transparence : commission de 22% sur les nuitées, ménage
+                et blanchisserie facturés aux voyageurs, réassort des consommables à nos frais dès la
+                deuxième location. Chaque ligne de facturation est claire et prévue au contrat.
               </p>
             </div>
           </div>
