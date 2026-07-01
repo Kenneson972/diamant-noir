@@ -36,7 +36,7 @@ export default function NotFound() {
       </div>
 
       <p className="mt-12 font-body text-xs text-navy/30">
-        Kayvila — Conciergerie de luxe en Martinique
+        Kayvila — Conciergerie de standing en Martinique
       </p>
     </div>
   );

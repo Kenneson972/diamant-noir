@@ -11,11 +11,11 @@ import { HeroBackgroundMedia } from "@/components/home/HeroBackgroundMedia";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Kayvila | Conciergerie de luxe en Martinique",
+  title: "Kayvila | Conciergerie de standing en Martinique",
   description:
-    "Kayvila — Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion locative. Rocher du Diamant, plages du Soleil.",
+    "Kayvila — Conciergerie de standing en Martinique. Villas d'exception, réservation en ligne, entretien et gestion locative. Rocher du Diamant, plages du Soleil.",
   openGraph: {
-    title: "Kayvila | Conciergerie de luxe en Martinique",
+    title: "Kayvila | Conciergerie de standing en Martinique",
     description:
       "Villas d'exception, réservation en ligne, entretien et gestion locative en Martinique.",
     images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
@@ -78,7 +78,7 @@ const LOCAL_BUSINESS_JSONLD = {
   "@context": "https://schema.org",
   "@type": ["LocalBusiness", "TravelAgency"],
   "name": "Kayvila Conciergerie",
-  "description": "Conciergerie de villas de luxe en Martinique — accueil voyageurs, entretien, ménage, piscine, jardin, création et optimisation d'annonces, photos, revenue management",
+  "description": "Conciergerie de villas de standing en Martinique — accueil voyageurs, entretien, ménage, piscine, jardin, création et optimisation d'annonces, photos, revenue management",
   "url": "https://kayvila.com",
   "telephone": "+596 696 00 00 00",
   "address": {

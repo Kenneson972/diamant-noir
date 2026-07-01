@@ -333,7 +333,7 @@ export function VideoScrollHero() {
         <div className="absolute inset-0 bg-[url('/prestations-hero.png')] bg-cover bg-center opacity-40" />
         <div className="relative z-10 px-6">
           <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gold/70">
-            Martinique · Conciergerie de Luxe
+            Martinique · Conciergerie de Standing
           </p>
           <h1 className="font-display text-5xl font-bold text-white md:text-7xl">
             Gestion Complète
@@ -642,7 +642,7 @@ export function VideoScrollHero() {
             }}
           >
             <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-gold/75">
-              Conciergerie de Luxe · Martinique
+              Conciergerie de Standing · Martinique
             </span>
           </div>
 

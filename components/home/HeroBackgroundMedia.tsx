@@ -79,7 +79,7 @@ export function HeroBackgroundMedia() {
         {/* Poster — visible uniquement si la vidéo ne joue pas */}
         <Image
           src="/villa-hero.jpg"
-          alt="Villa de luxe avec piscine en Martinique — Kayvila"
+          alt="Villa de standing avec piscine en Martinique — Kayvila"
           fill
           priority
           className={`object-cover transition-opacity duration-500 ${videoReady && !videoFailed ? "opacity-0" : "opacity-70"}`}

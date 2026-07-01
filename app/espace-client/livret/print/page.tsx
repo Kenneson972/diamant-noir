@@ -170,7 +170,7 @@ export default function LivretPrintPage() {
 
         <div className="pt-6 border-t border-[rgba(13,27,42,0.08)]">
           <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
-            Kayvila · Conciergerie de luxe, Martinique
+            Kayvila · Conciergerie de standing, Martinique
           </p>
         </div>
       </div>

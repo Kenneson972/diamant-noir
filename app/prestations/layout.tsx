@@ -21,7 +21,7 @@ export const metadata: Metadata = {
         url: "/prestations-hero.png",
         width: 1200,
         height: 630,
-        alt: "Villa de luxe avec piscine à débordement — Martinique",
+        alt: "Villa de standing avec piscine à débordement — Martinique",
       },
     ],
     type: "website",

@@ -50,7 +50,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Conditions d'utilisation",
     "footer.privacy": "Politique de confidentialité",
     "footer.cookies": "Gestion des cookies",
-    "footer.branding_desc": "Conciergerie de luxe en Martinique. Villas d'exception, service sur mesure.",
+    "footer.branding_desc": "Conciergerie de standing en Martinique. Villas d'exception, service sur mesure.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Réserver",
@@ -211,7 +211,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.success_desc": "Nous vous répondrons dans les meilleurs délais.",
 
     // ── Accueil ──────────────────────────────────────────────
-    "home.hero_tagline": "Conciergerie de luxe en Martinique",
+    "home.hero_tagline": "Conciergerie de standing en Martinique",
     "home.hero_cta": "Découvrir nos villas",
     "home.hero_secondary": "Confier ma villa",
     "home.villas_section": "Nos villas d'exception",
@@ -250,7 +250,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // ── Qui sommes-nous ──────────────────────────────────────
     "about.title": "Notre mission",
-    "about.subtitle": "La conciergerie de villa de luxe en Martinique",
+    "about.subtitle": "La conciergerie de villa de standing en Martinique",
     "about.intro": "Kayvila accompagne les propriétaires de villas d'exception dans la mise en valeur et la gestion sereine de leur patrimoine.",
     "about.adn_title": "Notre ADN",
     "about.cta_villas": "Découvrir nos villas",
@@ -288,7 +288,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Terms of use",
     "footer.privacy": "Privacy policy",
     "footer.cookies": "Cookie policy",
-    "footer.branding_desc": "Luxury concierge in Martinique. Exceptional villas, bespoke service.",
+    "footer.branding_desc": "Premium concierge in Martinique. Exceptional villas, bespoke service.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Book now",
@@ -449,7 +449,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.success_desc": "We will get back to you as soon as possible.",
 
     // ── Accueil ──────────────────────────────────────────────
-    "home.hero_tagline": "Luxury concierge in Martinique",
+    "home.hero_tagline": "Premium concierge in Martinique",
     "home.hero_cta": "Discover our villas",
     "home.hero_secondary": "List my villa",
     "home.villas_section": "Our exceptional villas",
@@ -488,7 +488,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // ── Qui sommes-nous ──────────────────────────────────────
     "about.title": "Our mission",
-    "about.subtitle": "The luxury villa concierge in Martinique",
+    "about.subtitle": "The premium villa concierge in Martinique",
     "about.intro": "Kayvila supports exceptional villa owners in showcasing and serenely managing their property.",
     "about.adn_title": "Our DNA",
     "about.cta_villas": "Discover our villas",
@@ -526,7 +526,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Condiciones de uso",
     "footer.privacy": "Política de privacidad",
     "footer.cookies": "Política de cookies",
-    "footer.branding_desc": "Conserjería de lujo en Martinica. Villas excepcionales, servicio a medida.",
+    "footer.branding_desc": "Conserjería de alto standing en Martinica. Villas excepcionales, servicio a medida.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Reservar",
@@ -688,7 +688,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.success_desc": "Le responderemos a la brevedad.",
 
     // ── Accueil ──────────────────────────────────────────────
-    "home.hero_tagline": "Conserjería de lujo en Martinica",
+    "home.hero_tagline": "Conserjería de alto standing en Martinica",
     "home.hero_cta": "Descubrir nuestras villas",
     "home.hero_secondary": "Registrar mi villa",
     "home.villas_section": "Nuestras villas de excepción",
@@ -727,7 +727,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // ── Qui sommes-nous ──────────────────────────────────────
     "about.title": "Nuestra misión",
-    "about.subtitle": "La conserjería de villas de lujo en Martinica",
+    "about.subtitle": "La conserjería de villas de alto standing en Martinica",
     "about.intro": "Kayvila acompaña a los propietarios de villas excepcionales en la valorización y gestión serena de su patrimonio.",
     "about.adn_title": "Nuestro ADN",
     "about.cta_villas": "Descubrir nuestras villas",

@@ -45,15 +45,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const localeCookie = cookieStore.get("dn_locale")?.value ?? "fr";
   const ogLocale = localeCookie === "en" ? "en_US" : localeCookie === "es" ? "es_ES" : "fr_FR";
   const title = localeCookie === "en"
-    ? "Kayvila | Luxury Concierge Martinique"
+    ? "Kayvila | Premium Concierge Martinique"
     : localeCookie === "es"
-    ? "Kayvila | Conserjería de lujo Martinica"
-    : "Kayvila | Conciergerie de luxe Martinique";
+    ? "Kayvila | Conserjería de alto standing Martinica"
+    : "Kayvila | Conciergerie de standing Martinique";
   const description = localeCookie === "en"
-    ? "Luxury concierge in Martinique. Exceptional villas, online booking, maintenance and management. Diamond Rock, Sun Beach."
+    ? "Premium concierge in Martinique. Exceptional villas, online booking, maintenance and management. Diamond Rock, Sun Beach."
     : localeCookie === "es"
-    ? "Conserjería de lujo en Martinica. Villas excepcionales, reserva en línea, mantenimiento y gestión."
-    : "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.";
+    ? "Conserjería de alto standing en Martinica. Villas excepcionales, reserva en línea, mantenimiento y gestión."
+    : "Conciergerie de standing en Martinique. Villas d'exception, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.";
 
   return {
     metadataBase: new URL(siteUrl),
@@ -120,7 +120,7 @@ export default async function RootLayout({
               name: "Kayvila",
               url: "https://kayvila.com",
               description:
-                "Conciergerie de luxe en Martinique. Villas d'exception, réservation en ligne, entretien et gestion.",
+                "Conciergerie de standing en Martinique. Villas d'exception, réservation en ligne, entretien et gestion.",
               sameAs: [
                 "https://www.instagram.com/kayvila",
                 "https://www.facebook.com/kayvila",

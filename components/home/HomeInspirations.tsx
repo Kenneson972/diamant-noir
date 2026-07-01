@@ -4,7 +4,7 @@ const CATEGORIES = [
   {
     id: "lune-de-miel",
     label: "Lune de miel",
-    subtitle: "Intimité & luxe à deux",
+    subtitle: "Intimité & standing à deux",
     href: "/villas",
     bg: "from-[#2c1810] via-[#3d2214] to-[#1a0e0a]",
   },

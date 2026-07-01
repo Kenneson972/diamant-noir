@@ -17,7 +17,7 @@ export function HomeOwnersSection() {
           <div className="relative min-h-[320px] h-full w-full lg:min-h-0 lg:h-full">
             <Image
               src="/notregestion.webp"
-              alt="Vue aérienne villa de luxe avec piscine à débordement — Votre villa notre gestion Kayvila"
+              alt="Vue aérienne villa de standing avec piscine à débordement — Votre villa notre gestion Kayvila"
               fill
               className="object-cover object-center"
               sizes="(max-width: 1024px) 100vw, 55vw"

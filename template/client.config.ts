@@ -30,9 +30,9 @@ export const CLIENT = {
   /* ─── Identité ─────────────────────────────────────────── */
   brand: 'Kayvila',                       // ⟶ À CHANGER (src/data/site-brand.ts)
   legalName: 'Conciergerie Diamant Noir', // ⟶ À CHANGER — raison sociale
-  tagline: 'Conciergerie de luxe en Martinique', // ⟶ À CHANGER
+  tagline: 'Conciergerie de standing en Martinique', // ⟶ À CHANGER
   shortDescription:
-    'Conciergerie de luxe en Martinique. Villas d’exception, réservation en ligne, entretien et gestion.', // ⟶ À CHANGER
+    'Conciergerie de standing en Martinique. Villas d’exception, réservation en ligne, entretien et gestion.', // ⟶ À CHANGER
   businessType: 'TravelAgency',           // ⟶ À CHANGER — type schema.org
 
   /* ─── i18n (le site est multilingue) ───────────────────── */
@@ -51,17 +51,17 @@ export const CLIENT = {
   /* ─── SEO ──────────────────────────────────────────────── */
   seo: {
     baseUrl: 'https://kayvila.com',       // ⟶ À CHANGER
-    keywords: ['conciergerie', 'luxe', 'Martinique', 'villa', 'réservation'], // ⟶ À CHANGER
+    keywords: ['conciergerie', 'standing', 'Martinique', 'villa', 'réservation'], // ⟶ À CHANGER
     titles: {
-      fr: 'Kayvila | Conciergerie de luxe Martinique',   // ⟶ À CHANGER
-      en: 'Kayvila | Luxury Concierge Martinique',       // ⟶ À CHANGER
-      es: 'Kayvila | Conserjería de lujo Martinica',     // ⟶ À CHANGER
+      fr: 'Kayvila | Conciergerie de standing Martinique',      // ⟶ À CHANGER
+      en: 'Kayvila | Premium Concierge Martinique',             // ⟶ À CHANGER
+      es: 'Kayvila | Conserjería de alto standing Martinica',   // ⟶ À CHANGER
     },
   },
 
   /* ─── Thème (reporter dans tailwind.config.ts → colors) ── */
   theme: {
-    gold: '#D4AF37',          // accent luxe          ⟶ À CHANGER
+    gold: '#D4AF37',          // accent standing       ⟶ À CHANGER
     navy: '#0A0A0A',          // encre / texte fort   ⟶ À CHANGER
     navy900: '#0B1D2E',
     navy800: '#132A41',

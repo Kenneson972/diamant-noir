@@ -15,7 +15,7 @@ const SERVICE_VISUALS: Record<
 > = {
   marketing: {
     src: "/marketing.png",
-    alt: "Piscine de villa de luxe au coucher du soleil avec appareil photo — Marketing locatif Martinique",
+    alt: "Piscine de villa de standing au coucher du soleil avec appareil photo — Marketing locatif Martinique",
     position: "center 30%",
   },
   operations: {

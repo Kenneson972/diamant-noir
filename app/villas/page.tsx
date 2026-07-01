@@ -9,13 +9,13 @@ import type { Metadata } from "next";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Villas de luxe en Martinique",
+  title: "Villas de standing en Martinique",
   description:
-    "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de luxe, entretien et gestion locative.",
+    "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de standing, entretien et gestion locative.",
   openGraph: {
-    title: "Villas de luxe en Martinique | Kayvila",
+    title: "Villas de standing en Martinique | Kayvila",
     description:
-      "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de luxe.",
+      "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de standing.",
     url: "https://kayvila.com/villas",
     type: "website",
   },
@@ -143,7 +143,7 @@ export default async function VillasListingPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Villas de luxe en Martinique",
+    "name": "Villas de standing en Martinique",
     "description": "Collection de villas d'exception gérées par Kayvila en Martinique",
     "url": "https://kayvila.com/villas",
     "itemListElement": villas.map((v, i) => ({

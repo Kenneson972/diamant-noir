@@ -35,7 +35,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     metaDescription:
       "Estimation locative, reportage photos, annonces optimisées et gestion dynamique des prix pour maximiser le revenu de votre villa en Martinique — Kayvila conciergerie.",
     image: "/marketing.png",
-    imageAlt: "Piscine de villa de luxe au coucher du soleil avec appareil photo — Marketing locatif Kayvila Martinique",
+    imageAlt: "Piscine de villa de standing au coucher du soleil avec appareil photo — Marketing locatif Kayvila Martinique",
     imagePosition: "center 40%",
     overlay: "bg-gradient-to-r from-black/70 via-black/40 to-black/10",
     imageAlign: "left",
@@ -60,7 +60,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     images: {
       sectionIntro: "/marketing.png",
       sectionDetails: "/marketing.webp",
-      sectionIntroAlt: "Piscine villa luxe au coucher du soleil — stratégie marketing locatif",
+      sectionIntroAlt: "Piscine villa standing au coucher du soleil — stratégie marketing locatif",
       sectionDetailsAlt: "Annonce premium optimisée pour villa martiniquaise",
     },
   },
