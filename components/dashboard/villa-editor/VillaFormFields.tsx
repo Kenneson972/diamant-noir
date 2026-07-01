@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Input } from "@/components/ui/input";
 import { ChipEditor } from "./ChipEditor";
@@ -36,17 +34,13 @@ function FieldLabel({ htmlFor, label }: { htmlFor: string; label: string }) {
   );
 }
 
-function CollapsibleSection({ title, icon, defaultOpen = false, children }: {
-  title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
+function FormSection({ title, icon, children }: {
+  title: string; icon: string; children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm">
-      <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-left">
-        <h3 className="font-display text-base font-semibold text-navy-900">{icon} {title}</h3>
-        <ChevronDown className={`h-5 w-5 text-muted transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      <div className={`mt-6 space-y-4 ${open ? "" : "hidden"}`}>{children}</div>
+      <h3 className="font-display text-base font-semibold text-navy-900">{icon} {title}</h3>
+      <div className="mt-6 space-y-4">{children}</div>
     </div>
   );
 }
@@ -82,7 +76,7 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
   return (
     <div className="space-y-6">
       {/* 🏠 Informations générales */}
-      <CollapsibleSection title="Informations générales" icon="🏠" defaultOpen>
+      <FormSection title="Informations générales" icon="🏠">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <FieldLabel htmlFor="vf-name" label="Nom de la villa *" />
@@ -152,10 +146,10 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
             <Input id="vf-airbnb" defaultValue={s(form.airbnb_url)} placeholder="https://www.airbnb.fr/rooms/..." className="text-sm" />
           </div>
         </div>
-      </CollapsibleSection>
+      </FormSection>
 
       {/* 🛋️ Équipements & Services */}
-      <CollapsibleSection title="Équipements & Services" icon="🛋️">
+      <FormSection title="Équipements & Services" icon="🛋️">
         <div className="space-y-6">
           <ChipEditor id="vf-equipment-interior" label="Équipements intérieurs" items={a(form.equipment_interior)} suggestions={INTERIOR_SUGGESTIONS} onChange={(items) => onChange("equipment_interior", items)} />
           <ChipEditor id="vf-equipment-exterior" label="Équipements extérieurs" items={a(form.equipment_exterior)} suggestions={EXTERIOR_SUGGESTIONS} onChange={(items) => onChange("equipment_exterior", items)} />
@@ -163,10 +157,10 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
           <ChipEditor id="vf-included-collection" label="Services inclus — Collection" items={a(form.included_services_collection)} suggestions={SERVICES_COLLECTION_SUGGESTIONS} onChange={(items) => onChange("included_services_collection", items)} />
           <ChipEditor id="vf-a-la-carte" label="Services à la carte" items={a(form.a_la_carte_services)} suggestions={A_LA_CARTE_SUGGESTIONS} onChange={(items) => onChange("a_la_carte_services", items)} />
         </div>
-      </CollapsibleSection>
+      </FormSection>
 
       {/* 📋 Règles & Sécurité */}
-      <CollapsibleSection title="Règles & Sécurité" icon="📋">
+      <FormSection title="Règles & Sécurité" icon="📋">
         <div className="space-y-6">
           <ChipEditor id="vf-house-rules" label="Règles de la maison" items={a(form.house_rules)} suggestions={HOUSE_RULES_SUGGESTIONS} onChange={(items) => onChange("house_rules", items)} />
           <ChipEditor id="vf-safety-info" label="Infos sécurité" items={a(form.safety_info)} suggestions={SAFETY_SUGGESTIONS} onChange={(items) => onChange("safety_info", items)} />
@@ -208,10 +202,10 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
             <textarea id="vf-checkout-instructions" defaultValue={s(form.checkout_instructions)} rows={3} placeholder="Sortir les poubelles, fermer les volets..." className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 focus:border-navy-900/30 focus:outline-none" />
           </div>
         </div>
-      </CollapsibleSection>
+      </FormSection>
 
       {/* 📍 Localisation & Environs */}
-      <CollapsibleSection title="Localisation & Environs" icon="📍">
+      <FormSection title="Localisation & Environs" icon="📍">
         <div className="space-y-6">
           <div>
             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-environment">Environnement</label>
@@ -219,10 +213,10 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
           </div>
           <ChipEditor id="vf-nearby-points" label="Points d'intérêt proches" items={a(form.nearby_points)} suggestions={NEARBY_SUGGESTIONS} onChange={(items) => onChange("nearby_points", items)} />
         </div>
-      </CollapsibleSection>
+      </FormSection>
 
       {/* 💰 Prix & Conditions */}
-      <CollapsibleSection title="Prix & Conditions" icon="💰">
+      <FormSection title="Prix & Conditions" icon="💰">
         <div className="space-y-6">
           <div className="space-y-2">
             <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="vf-wifi-name">WiFi — Nom (SSID)</label>
@@ -235,7 +229,7 @@ export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
           <RoomsEditor rooms={j(form.rooms_details, [])} onChange={(rooms) => onChange("rooms_details", rooms)} />
           <SeasonalPricesEditor seasons={j(form.seasonal_prices, [])} onChange={(seasons) => onChange("seasonal_prices", seasons)} />
         </div>
-      </CollapsibleSection>
+      </FormSection>
     </div>
   );
 }
