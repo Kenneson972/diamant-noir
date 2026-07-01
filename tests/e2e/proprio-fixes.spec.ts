@@ -5,8 +5,7 @@
  *   1. Responsive BookingCard (mobile cards / desktop table)
  *   2. Axe Y K€ sur RevenueChart
  *   3. Blocage calendrier (AvailabilityCalendar)
- *   4. Contact FAB (OwnerContactFAB)
- *   5. Export PDF revenus (RevenuePageClient)
+ *   4. Export PDF revenus (RevenuePageClient)
  *
  * Ces tests sont E2E visuels — ils nécessitent une instance locale avec Supabase.
  * Ils sont skippés en CI (PLAYWRIGHT_SKIP_DB_TESTS=true).
@@ -203,58 +202,6 @@ test.describe("AvailabilityCalendar — blocage calendrier", () => {
     await expect(legend.filter({ hasText: "Réservé" })).toBeVisible();
     await expect(legend.filter({ hasText: "Bloqué" })).toBeVisible();
     await expect(legend.filter({ hasText: "Passé" })).toBeVisible();
-  });
-});
-
-// ---------------------------------------------------------------------------
-// 4. Contact FAB — OwnerContactFAB
-//    aria-label="Contacter Kayvila" sur le <button> FAB (classe fixed bottom-24 right-6)
-//    La modale affiche <h2>Contacter Kayvila</h2> et un <select> pour l'objet.
-// ---------------------------------------------------------------------------
-test.describe("OwnerContactFAB — contact FAB", () => {
-  test.skip(
-    !!process.env.PLAYWRIGHT_SKIP_DB_TESTS,
-    "Needs local Supabase"
-  );
-
-  test("FAB is visible on dashboard and opens contact modal with subject select", async ({
-    page,
-  }) => {
-    await loginAsOwner(page);
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
-
-    // Le FAB : button[aria-label="Contacter Kayvila"] — position fixed, toujours visible
-    const fab = page.locator("button[aria-label='Contacter Kayvila']");
-    await expect(fab).toBeVisible({ timeout: 8_000 });
-
-    // Cliquer le FAB pour ouvrir la modale
-    await fab.click();
-
-    // La modale affiche un <h2> avec le titre exact
-    const modalTitle = page.locator("h2").filter({ hasText: "Contacter Kayvila" });
-    await expect(modalTitle).toBeVisible({ timeout: 5_000 });
-
-    // Select "Objet" — c'est un vrai <select> HTML (pas un custom listbox)
-    // Le select de sujet est le premier <select> dans la modale
-    const subjectSelect = page.locator("select").first();
-    await expect(subjectSelect).toBeVisible();
-
-    // Vérifier que les options de sujet attendues sont présentes
-    const options = await subjectSelect.locator("option").allTextContents();
-    expect(options).toContain("Reversement / Facturation");
-    expect(options).toContain("Disponibilités");
-    expect(options).toContain("Mon contrat");
-    expect(options).toContain("Autre");
-
-    // Fermer la modale via "Annuler"
-    const cancelBtn = page
-      .locator("button")
-      .filter({ hasText: "Annuler" })
-      .first();
-    await expect(cancelBtn).toBeVisible();
-    await cancelBtn.click();
-    await expect(modalTitle).not.toBeVisible();
   });
 });
 

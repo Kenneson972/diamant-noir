@@ -4,7 +4,6 @@ import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { proprioMenuItems } from "@/components/dashboard/proprio/ProprioMenuItems";
 import { CopilotProvider } from "@/components/dashboard/proprio/CopilotContext";
 import { isStaffAdmin, isOwnerRole } from "@/lib/auth/admin-access";
-import { OwnerContactFAB } from "@/components/dashboard/proprio/OwnerContactFAB";
 import { applyMenuBadges } from "@/lib/dashboard/apply-menu-badges";
 
 export const metadata = {
@@ -77,7 +76,6 @@ export default async function ProprioDashboardLayout({
       <DashboardShell role="owner" roleLabel="Propriétaire" menu={menuWithBadges}>
         {children}
       </DashboardShell>
-      <OwnerContactFAB ownerId={user.id} villas={ownerVillas ?? []} />
     </CopilotProvider>
   );
 }
