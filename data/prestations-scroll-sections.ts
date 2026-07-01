@@ -97,7 +97,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
   {
     id: "finance",
     label: "05",
-    title: "Finance & Reversements",
+    title: "Revenus & transparence",
     tagline: "Encaissement · Reporting · Copilot",
     scene: "Cuisine · Plan de Travail Marbre",
     startFrame: 424,

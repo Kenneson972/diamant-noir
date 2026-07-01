@@ -37,7 +37,7 @@ export function FinancesView({ data }: { data: any }) {
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-display text-3xl text-white">Finances & reversements</h3>
+          <h3 className="font-display text-3xl text-white">Revenus & transparence</h3>
           <p className="text-sm text-white/40">Données en temps réel · compte propriétaire</p>
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-gold/20 bg-gold/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold">

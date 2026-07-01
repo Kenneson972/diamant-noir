@@ -14,7 +14,7 @@
  *   224–336 → Chambre · Balcon       → Entretien & Qualité
  *   337–420 → Escalier · Hall        → Ménage & Blanchisserie
  *   449–504 → Cuisine (travelling / plan large) → pas de carte
- *   505–560 → Café + tablette marbre → Finance & Reversements
+ *   505–560 → Café + tablette marbre → Revenus & transparence
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -120,7 +120,7 @@ const SECTIONS: Section[] = [
   {
     id: "finance",
     label: "05",
-    title: "Finance & Reversements",
+    title: "Revenus & transparence",
     tagline: "Encaissement · Reporting · Copilot",
     scene: "Cuisine · Plan de Travail Marbre",
     startFrame: 505,
