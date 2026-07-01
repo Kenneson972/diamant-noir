@@ -12,7 +12,7 @@
 
 - Commission/text rules from prior work do not apply here — no copy changes to commission wording.
 - Realtime subscriptions MUST follow the exact pattern already used in `components/dashboard/NotificationBell.tsx`: `supabase.channel(name).on("postgres_changes", {...}).subscribe()` in a `useEffect`, with `supabase.removeChannel(channel)` cleanup.
-- Admin RLS bypass MUST use `auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'` (the corrected claim path from `supabase/migrations/20260606120000_fix_rls_jwt_role_claim.sql`) — never `auth.jwt() ->> 'role'` (that was the bug this migration fixed).
+- Admin RLS bypass MUST use `public.is_staff_admin()` (the single-source-of-truth helper from `supabase/migrations/20260606200000_admin_supabase_standardize.sql`, which checks `service_role`, JWT `user_metadata.role`, and `profiles.role` — catching admins whose role only lives in the DB row, not the JWT). Amended after Task 1 review flagged that the plan's original text (`auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'`, from the now-superseded `20260606120000_fix_rls_jwt_role_claim.sql`) was stale relative to this newer convention. Never use the bare `auth.jwt() ->> 'role'` form (the bug the 20260606120000 migration fixed).
 - Owner RLS MUST use `owner_id = auth.uid()`.
 - No functions passed as props from a Server Component to a Client Component (Next.js App Router restriction — use client-side Supabase calls instead).
 - Never delete `requests` table, traveler chat tables, or their data — Approach B keeps those schemas untouched; only the admin UI is unified.
@@ -1555,10 +1555,31 @@ to:
   },
 ```
 
-- [ ] **Step 3: Verify no orphaned badge keys reference the removed routes**
+- [ ] **Step 3: Rekey the orphaned urgent-requests badge to the new Messages route**
 
-Run: `grep -rn "/admin/demandes\|/admin/messagerie" lib/dashboard/apply-menu-badges.ts app/(admin)/admin/layout.tsx 2>/dev/null`
-Expected: no results (badges in this codebase are keyed by owner-side routes like `/dashboard/reservations`, not admin routes — this is a sanity check, not an expected change).
+Correction found during Task 9 review: `app/(admin)/admin/layout.tsx` builds a `badgeMap` keyed by menu href to show a count badge in the sidebar. It currently has:
+```ts
+  const badgeMap: Record<string, number> = {
+    "/admin/reservations": reservations.count ?? 0,
+    "/admin/soumissions": soumissions.count ?? 0,
+    "/admin/avis": avis.count ?? 0,
+    "/admin/demandes": demandes.count ?? 0,
+  };
+```
+`demandes.count` is the count of urgent, unresolved traveler requests (see the query just above this block: `.from("requests")...eq("priority","urgent").neq("status","resolved")`). Since Step 1 removes the `/admin/demandes` menu entry, this key would silently stop matching anything in `applyMenuBadges`, and the urgent-request count badge would disappear from the sidebar entirely. Rekey it to the new unified route:
+```ts
+  const badgeMap: Record<string, number> = {
+    "/admin/reservations": reservations.count ?? 0,
+    "/admin/soumissions": soumissions.count ?? 0,
+    "/admin/avis": avis.count ?? 0,
+    "/admin/messages": demandes.count ?? 0,
+  };
+```
+Only change the key string (`"/admin/demandes"` → `"/admin/messages"`) on that one line — everything else in `app/(admin)/admin/layout.tsx` stays as-is.
+
+Then verify no orphaned references remain:
+Run: `grep -rn "/admin/demandes\|/admin/messagerie" lib/dashboard/apply-menu-badges.ts "app/(admin)/admin/layout.tsx" 2>/dev/null`
+Expected: no results.
 
 - [ ] **Step 4: Verify build**
 
