@@ -103,10 +103,14 @@ const nextConfig = {
         ],
       },
       // Désactiver le cache navigateur en développement (évite les refreshes manuels)
+      // ⚠️ En dev, ce bloc doit COUVRIR _next/static aussi : les chunks Turbopack
+      // ne sont pas garantis content-hashés d'une recompilation à l'autre, donc le
+      // cache "immutable" plus bas (destiné à la prod) rendait des changements de
+      // code invisibles tant que le cache navigateur n'était pas vidé manuellement.
       ...(process.env.NODE_ENV === "development"
         ? [
             {
-              source: "/:path((?!_next/static|favicon|brand/).*)",
+              source: "/:path((?!favicon|brand/).*)",
               headers: [
                 {
                   key: "Cache-Control",
@@ -120,13 +124,20 @@ const nextConfig = {
         source: "/api/:path*",
         headers: [{ key: "Cache-Control", value: "no-store" }],
       },
+      ...(process.env.NODE_ENV !== "development"
+        ? [
+            {
+              // Immutable cache for Next.js static assets (chunks, fonts, etc.) — prod only.
+              // Sûr car ces fichiers sont content-hashés en build de production.
+              source: "/_next/static/:path*",
+              headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+            },
+          ]
+        : []),
       {
-        // Immutable cache for Next.js static assets (chunks, fonts, etc.)
-        source: "/_next/static/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-      {
-        // Long cache for public images (villa photos, etc.) — mais PAS en mode dev
+        // Cache image raisonnable en prod (1h + revalidation en arrière-plan), aucun cache en dev.
+        // Auparavant 86400/604800 (jusqu'à 8 jours) : trop long pour voir une photo
+        // de villa remplacée sans vider le cache.
         source: "/:path*.{jpg,jpeg,png,webp,avif,svg,ico}",
         headers: [
           {
@@ -134,7 +145,7 @@ const nextConfig = {
             value:
               process.env.NODE_ENV === "development"
                 ? "no-cache, no-store, must-revalidate"
-                : "public, max-age=86400, stale-while-revalidate=604800",
+                : "public, max-age=3600, stale-while-revalidate=86400",
           },
         ],
       },
