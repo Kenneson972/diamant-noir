@@ -49,7 +49,7 @@ serve(async () => {
   // Une seule query pour toutes les réservations de l'année
   const allVillaIds = [...byOwner.values()].flat();
   const { data: allBookings, error: bookingsErr } = await supabase
-    .from("reservations")
+    .from("bookings")
     .select("id, villa_id, start_date, end_date, price")
     .in("villa_id", allVillaIds)
     .in("status", ["confirmed", "paid"])
