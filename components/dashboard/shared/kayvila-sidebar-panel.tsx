@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Key } from "@react-types/shared";
 import { usePathname } from "next/navigation";
 import { Sidebar, useSidebar } from "@heroui-pro/react/sidebar";
@@ -163,7 +163,21 @@ function SidebarInner({
     role === "admin" ? "/admin" : role === "owner" ? "/dashboard" : "/espace-client";
 
   const blocks = useMemo(() => groupMenuItems(menu), [menu]);
-  const expandedKeys = useMemo(() => collectExpandedKeys(menu, pathname), [menu, pathname]);
+
+  // `expandedKeys` doit rester contrôlé mais aussi réagir au clic : sans état
+  // local + onExpandedChange, react-aria-components Tree ne peut jamais faire
+  // évoluer l'ensemble ouvert au clic (seule la navigation le recalculait).
+  const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(() =>
+    collectExpandedKeys(menu, pathname)
+  );
+  useEffect(() => {
+    setExpandedKeys((prev) => {
+      const fromRoute = collectExpandedKeys(menu, pathname);
+      const merged = new Set(prev);
+      fromRoute.forEach((key) => merged.add(key));
+      return merged;
+    });
+  }, [menu, pathname]);
 
   return (
     <>
@@ -182,6 +196,7 @@ function SidebarInner({
         <Sidebar.Menu
           aria-label={`Navigation ${roleLabel.toLowerCase()}`}
           expandedKeys={expandedKeys}
+          onExpandedChange={setExpandedKeys}
           showGuideLines="hover"
         >
           {blocks.map((block) =>
