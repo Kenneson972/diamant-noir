@@ -17,8 +17,8 @@ describe("calculateTransferAmounts", () => {
     expect(result).toEqual({ ownerAmountCents: 16000, platformFeeCents: 4000 });
   });
 
-  it("commission par défaut (25%) si non spécifiée", () => {
+  it("commission par défaut (22%) si non spécifiée", () => {
     const result = calculateTransferAmounts(10000, 0, 0);
-    expect(result).toEqual({ ownerAmountCents: 7500, platformFeeCents: 2500 });
+    expect(result).toEqual({ ownerAmountCents: 7800, platformFeeCents: 2200 });
   });
 });

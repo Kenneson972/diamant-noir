@@ -11,7 +11,7 @@ const OTA_SOURCES = ['airbnb', 'expedia', 'trivago', 'vrbo', 'booking', 'ical'];
 
 export function getCommissionRate(source: string | null): number {
   if (source && OTA_SOURCES.includes(source)) return 20;
-  return 25; // direct, manual, admin, ou null → 25%
+  return 22; // direct, manual, admin, ou null → 22%
 }
 
 /** Montant séjour en centimes (price euros prioritaire, sinon total legacy). */

@@ -217,7 +217,7 @@ export default async function ProprioDashboardPage(props: {
     maxNights > 0 ? Math.round((totalOccupiedNights / maxNights) * 100) : 0;
 
   const commissionByVilla = new Map(
-    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
+    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 22])
   );
 
   const ownerNetCents = (b: {
@@ -231,7 +231,7 @@ export default async function ProprioDashboardPage(props: {
       b.price != null && Number(b.price) > 0
         ? Math.round(Number(b.price) * 100)
         : (b.total_price_cents ?? 0);
-    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 25;
+    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 22;
     return calculateTransferAmounts(
       stayCents,
       Math.round(Number(b.cleaning_fee ?? 0) * 100),

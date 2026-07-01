@@ -317,7 +317,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Stripe Connect : split selon canal (20% OTA · 25% direct) ──
+    // ── Stripe Connect : split selon canal (20% OTA · 22% direct) ──
     const commissionRate = getCommissionRate("direct"); // bookings créés via cette route = directs
     const { platformFeeCents } = calculateTransferAmounts(
       stayCents,

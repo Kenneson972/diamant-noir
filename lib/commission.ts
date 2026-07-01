@@ -1,7 +1,7 @@
-/** Taux par défaut Kayvila (25 %) — fraction décimale 0.25.
- *  ⚠️ Pour le calcul différencié OTA (20%) / Direct (25%), utiliser
+/** Taux par défaut Kayvila (22 %) — fraction décimale 0.22.
+ *  ⚠️ Pour le calcul différencié OTA (20%) / Direct (22%), utiliser
  *  `getCommissionRate(source)` depuis `@/lib/revenue/booking-revenue`. */
-export const DEFAULT_COMMISSION_RATE = 0.25;
+export const DEFAULT_COMMISSION_RATE = 0.22;
 
 /**
  * Normalise `villas.commission_rate` : décimal (0.25) ou legacy pourcent (25).

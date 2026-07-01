@@ -185,8 +185,8 @@ export default async function StatistiquesVillaPage({ params }: PageProps) {
         );
       }
       if (bStart >= mStart && bStart <= mEnd) {
-        // Commission 25% par défaut
-        revenue += ((b as { price?: number }).price ?? 0) * 0.75;
+        // Commission 22% par défaut
+        revenue += ((b as { price?: number }).price ?? 0) * 0.78;
       }
     }
 

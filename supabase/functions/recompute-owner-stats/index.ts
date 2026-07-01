@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const PLATFORM_COMMISSION = 0.25;
+const PLATFORM_COMMISSION = 0.22;
 const OWNER_SHARE = 1 - PLATFORM_COMMISSION;
 
 serve(async () => {

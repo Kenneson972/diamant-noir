@@ -214,12 +214,12 @@ export async function buildOwnerContextPack(
   const commissionByVilla = new Map(
     villaList.map((v) => [
       v.id as string,
-      (v as { commission_rate?: number }).commission_rate ?? 25,
+      (v as { commission_rate?: number }).commission_rate ?? 22,
     ])
   );
 
   const netEuros = (b: (typeof paidBookings)[0]) =>
-    ownerNetCents(b, commissionByVilla.get(String(b.villa_id)) ?? 25) / 100;
+    ownerNetCents(b, commissionByVilla.get(String(b.villa_id)) ?? 22) / 100;
 
   const totalRevenuePaid = paidBookings.reduce((sum, b) => sum + netEuros(b), 0);
 

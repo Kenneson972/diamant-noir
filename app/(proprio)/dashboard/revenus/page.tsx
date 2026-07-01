@@ -28,7 +28,7 @@ export default async function RevenusPage() {
 
   const villaIds = villas?.map((v) => v.id) ?? [];
   const commissionByVilla = new Map(
-    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 25])
+    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 22])
   );
   const villaNameMap = new Map((villas ?? []).map((v) => [v.id, v.name]));
 
@@ -52,7 +52,7 @@ export default async function RevenusPage() {
     const stayCents = Math.round((b.price ?? 0) * 100);
     const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
     const serviceCents = Math.round((b.service_fee ?? 0) * 100);
-    const commissionRate = commissionByVilla.get(b.villa_id) ?? 25;
+    const commissionRate = commissionByVilla.get(b.villa_id) ?? 22;
     const rate = getCommissionRate(b.source ?? null);
     const { ownerAmountCents, platformFeeCents } = calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate);
     const gross = stayCents + cleaningCents + serviceCents;
@@ -91,7 +91,7 @@ export default async function RevenusPage() {
     const stayCents = Math.round((b.price ?? 0) * 100);
     const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
     const serviceCents = Math.round((b.service_fee ?? 0) * 100);
-    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 25;
+    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 22;
     return calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate)
       .ownerAmountCents;
   }

@@ -44,7 +44,7 @@ export function AdminRevenusClient({
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <AdminPageIntro
           title="Revenus"
-          description="Commission selon canal de réservation (20% OTA · 25% direct)"
+          description="Commission selon canal de réservation (20% OTA · 22% direct)"
         />
         {byVilla.length > 0 && (
           <button

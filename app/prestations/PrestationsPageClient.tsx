@@ -566,7 +566,7 @@ export default function PrestationsPageClient() {
                 </Link>
               </div>
               <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/30 md:mt-3">
-                Commission 25&nbsp;% TTC · Équipe locale 7j/7 · Présence en Martinique
+                Commission 22&nbsp;% · Équipe locale 7j/7 · Présence en Martinique
               </p>
             </div>
           </section>
@@ -576,7 +576,7 @@ export default function PrestationsPageClient() {
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-5 text-center">
               {[
                 { val: "13", label: "prestations incluses" },
-                { val: "25\u202f%", label: "commission TTC" },
+                { val: "22\u202f%", label: "commission" },
                 { val: "100+", label: "séjours gérés" },
                 { val: "7j/7", label: "équipe locale" },
               ].map(({ val, label }, i, arr) => (
@@ -753,7 +753,7 @@ export default function PrestationsPageClient() {
                     Dossier interactif en 4 étapes — 5 minutes. Notre équipe vous recontacte sous 48h avec une estimation personnalisée.
                   </p>
                   <ul className="mx-auto mt-6 max-w-xs space-y-2 text-left">
-                    {["Pas d'exclusivité obligatoire", "Commission 25\u202f% TTC tout compris", "Réponse sous 48h garantie"].map((item) => (
+                    {["Pas d'exclusivité obligatoire", "Commission 22\u202f% tout compris", "Réponse sous 24h garantie"].map((item) => (
                       <li key={item} className="flex items-center gap-3 text-[11px] text-white/50">
                         <Check size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
                         {item}

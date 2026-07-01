@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10);
 
     const rateFor = (b: (typeof rows)[0]) =>
-      (b.villas as { commission_rate?: number } | null)?.commission_rate ?? 25;
+      (b.villas as { commission_rate?: number } | null)?.commission_rate ?? 22;
 
     const sumGross = (list: typeof rows) =>
       list.reduce((s, b) => s + grossCentsFromBooking(b), 0);

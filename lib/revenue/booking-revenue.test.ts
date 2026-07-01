@@ -6,16 +6,16 @@ describe("getCommissionRate", () => {
     expect(getCommissionRate("airbnb")).toBe(20);
   });
 
-  it('"direct" → 25%', () => {
-    expect(getCommissionRate("direct")).toBe(25);
+  it('"direct" → 22%', () => {
+    expect(getCommissionRate("direct")).toBe(22);
   });
 
   it('"booking" → 20%', () => {
     expect(getCommissionRate("booking")).toBe(20);
   });
 
-  it("null → 25% (défaut)", () => {
-    expect(getCommissionRate(null)).toBe(25);
+  it("null → 22% (défaut)", () => {
+    expect(getCommissionRate(null)).toBe(22);
   });
 });
 

@@ -144,7 +144,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     eyebrow: "Qualité séjour",
     tagline: "Facturé aux voyageurs — transparent pour vous",
     metaDescription:
-      "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 25 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
+      "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 22 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
     image: "/menage.png",
     imageAlt: "Lit impeccable avec drap blanc et fleur de frangipanier — Ménage blanchisserie Kayvila Martinique",
     imagePosition: "center 45%",
@@ -156,7 +156,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Les montants de ménage sont ajoutés au séjour : vous n'avancez pas ces coûts. Une présentation claire sur les annonces et au moment de la réservation.",
       },
       {
-        title: "Blanchisserie incluse hors commission 25 %",
+        title: "Blanchisserie incluse hors commission 22 %",
         desc: "Le linge et le ménage ne sont pas soumis à notre commission : vous conservez 100 % de ces revenus annexes selon le calibrage de votre annonce.",
       },
       {
@@ -168,8 +168,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Avant chaque arrivée, nous réapprovisionnons café, eau, savon, gel douche et produits d'accueil. Ces consommables courants sont pris en charge par Kayvila — aucun frais supplémentaire pour vous.",
       },
       {
-        title: "Entretien piscine & jardin (abonnement non inclus)",
-        desc: "Un prestataire agréé assure l'entretien régulier de votre piscine (traitement de l'eau, nettoyage, contrôle PH) et de vos espaces verts (tonte, taille, désherbage). Service facturé en sus, sur abonnement — nous coordonnons et supervisons pour vous.",
+        title: "Entretien piscine & jardin",
+        desc: "Nous vous mettons en relation avec des prestataires de confiance sélectionnés localement (pisciniste, jardinier) et coordonnons leurs interventions autour de votre calendrier. Ces prestations sont facturées directement par le prestataire, à votre nom — factures conformes et déductibles de vos revenus locatifs.",
       },
     ],
     images: {
@@ -181,11 +181,11 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
   },
   finance: {
     slug: "finance",
-    title: "Finance & reversement",
+    title: "Revenus & transparence",
     eyebrow: "Transparence",
-    tagline: "Vos revenus reversés, vos comptes clairs",
+    tagline: "Chaque ligne justifiée",
     metaDescription:
-      "Encaissement des loyers, commission 25 % TTC sur nuitées nettes, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
+      "Encaissement des loyers, commission 22 % sur les nuitées, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
     image: "/finance.png",
     imageAlt: "Bureau en terrasse avec MacBook, café et orchidée — Gestion financière Kayvila Martinique",
     imagePosition: "center 40%",
@@ -197,8 +197,8 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via Airbnb, Booking ou toute autre plateforme. En fin de mois, Kayvila vous adresse une facture de commission — réglable sous 8 jours. Un mandat de prélèvement SEPA peut simplifier ce règlement.",
       },
       {
-        title: "Commission 25 % TTC sur les nuitées réalisées",
-        desc: "La commission de 25 % s'applique sur le montant brut du séjour, frais de ménage et blanchisserie inclus (selon l'affichage de la plateforme). Sur les plateformes qui intègrent le ménage dans le prix affiché, l'assiette est recalculée : base commission = prix total encaissé − forfait ménage contractuel. Ménage et blanchisserie facturés aux voyageurs — hors commission. Vous conservez 100 % de ces montants.",
+        title: "Commission 22 % sur les nuitées",
+        desc: "La commission de 22 % s'applique uniquement sur le montant des nuitées réglé par le voyageur. Les frais de ménage et de blanchisserie sont exclus de la base de commission : vous savez précisément ce sur quoi nous nous rémunérons. Le ménage et la blanchisserie sont facturés aux voyageurs — vous ne les avancez pas. Sur les plateformes qui intègrent le ménage au prix affiché, le forfait ménage est déduit du montant encaissé pour reconstituer la base de commission.",
       },
       {
         title: "Espace propriétaire en ligne",

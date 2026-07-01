@@ -31,7 +31,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
   const [adminOpen, setAdminOpen] = useState(false);
   const [isPublished, setIsPublished] = useState(!!villa.is_published);
   const [commissionRate, setCommissionRate] = useState(
-    ((villa.commission_rate as number) || 25)
+    ((villa.commission_rate as number) || 22)
   );
   const [collectionTier, setCollectionTier] = useState(
     (villa.collection_tier as string) || "standard"
@@ -62,7 +62,7 @@ export function AdminVillaEditClient({ villa, bookings }: AdminVillaEditClientPr
           villaId: villa.id,
           payload: {
             is_published: isPublished,
-            commission_rate: Number(commissionRate) || 25,
+            commission_rate: Number(commissionRate) || 22,
             collection_tier: collectionTier,
             owner_id: selectedOwnerId || null,
           },

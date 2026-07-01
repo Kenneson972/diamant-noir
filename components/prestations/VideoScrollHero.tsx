@@ -114,7 +114,7 @@ const SECTIONS: Section[] = [
       "Ménage facturé aux voyageurs",
       "Blanchisserie hors commission",
       "Réassort consommables à nos frais",
-      "Commission 25% sur nuitées nettes",
+      "Commission 22% sur nuitées",
     ],
   },
   {
@@ -339,7 +339,7 @@ export function VideoScrollHero() {
             Gestion Complète
           </h1>
           <p className="mt-4 text-sm uppercase tracking-[0.3em] text-white/40">
-            Commission 25% TTC · Équipe locale 7j/7
+            Commission 22% · Équipe locale 7j/7
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -666,7 +666,7 @@ export function VideoScrollHero() {
 
           {/* Commission */}
           <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-white/35">
-            Commission 25% TTC · 13 prestations incluses · Équipe locale
+            Commission 22% · 13 prestations incluses · Équipe locale
           </p>
 
           {/* CTAs */}
