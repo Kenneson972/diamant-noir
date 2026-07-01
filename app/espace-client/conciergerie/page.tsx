@@ -9,17 +9,17 @@ import Link from "next/link";
 const CONTACTS: { label: string; value: string; sub: string; href: string; icon: LucideIcon | KayvilaPngName; gold: boolean }[] = [
   {
     label: "Urgences 24h/24",
-    value: "+596 696 00 00 00",
+    value: "+596 696 68 18 69",
     sub: "Disponible en permanence",
-    href: "tel:+596696000000",
+    href: "tel:+596696681869",
     icon: AlertTriangle,
     gold: true,
   },
   {
     label: "Téléphone",
-    value: "+596 696 00 00 00",
+    value: "+596 696 68 18 69",
     sub: "Lun – Sam, 8h – 20h",
-    href: "tel:+596696000000",
+    href: "tel:+596696681869",
     icon: "phone",
     gold: false,
   },

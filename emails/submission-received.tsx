@@ -16,7 +16,7 @@ export default function SubmissionReceived({ ownerName, villaName }: SubmissionR
         vous proposer une estimation personnalisée et organiser une visite si nécessaire.
       </Text>
       <Text style={body}>
-        Vous pouvez également nous joindre au <strong>+596 696 00 00 00</strong> pour toute question.
+        Vous pouvez également nous joindre au <strong>+596 696 68 18 69</strong> pour toute question.
       </Text>
       <Text style={signature}>À très bientôt,<br />L&apos;équipe Kayvila</Text>
     </EmailLayout>

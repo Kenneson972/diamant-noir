@@ -10,7 +10,7 @@ export type SubmissionCallRequestedProps = {
 export default function SubmissionCallRequested({
   ownerName,
   villaName,
-  phone = "+596 696 00 00 00",
+  phone = "+596 696 68 18 69",
 }: SubmissionCallRequestedProps) {
   return (
     <EmailLayout preview={`Appel souhaité — ${villaName}`}>

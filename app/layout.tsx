@@ -122,12 +122,13 @@ export default async function RootLayout({
               description:
                 "Conciergerie de standing en Martinique. Villas d'exception, réservation en ligne, entretien et gestion.",
               sameAs: [
-                "https://www.instagram.com/kayvila",
-                "https://www.facebook.com/kayvila",
+                "https://www.instagram.com/kayvilaconciergerie",
+                "https://www.facebook.com/share/1EttHdFGZp/?mibextid=wwXIfr",
+                "https://www.tiktok.com/@kayvilaconciergerie",
               ],
               contactPoint: {
                 "@type": "ContactPoint",
-                telephone: "+596 696 00 00 00",
+                telephone: "+596 696 68 18 69",
                 contactType: "customer service",
                 availableLanguage: ["French", "English", "Spanish"],
               },

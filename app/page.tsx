@@ -80,7 +80,7 @@ const LOCAL_BUSINESS_JSONLD = {
   "name": "Kayvila Conciergerie",
   "description": "Conciergerie de villas de standing en Martinique — accueil voyageurs, entretien, ménage, piscine, jardin, création et optimisation d'annonces, photos, revenue management",
   "url": "https://kayvila.com",
-  "telephone": "+596 696 00 00 00",
+  "telephone": "+596 696 68 18 69",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Quartier Palmène",
