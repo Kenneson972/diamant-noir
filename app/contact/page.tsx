@@ -22,7 +22,7 @@ const faqItems = [
   },
   {
     q: "Proposez-vous des prestations d'entretien ?",
-    a: "Oui. Nous proposons le nettoyage de piscine, l'entretien des jardins, le ménage et les états des lieux. Contactez-nous pour un devis personnalisé.",
+    a: "Oui. Le ménage et les états des lieux sont assurés dans le cadre de notre gestion. Pour l'entretien de la piscine et du jardin, nous vous mettons en relation avec des prestataires de confiance sélectionnés localement et coordonnons leurs interventions. Contactez-nous pour un devis personnalisé.",
   },
   {
     q: "Comment devenir propriétaire partenaire ?",
