@@ -61,7 +61,7 @@ const SECTIONS: Section[] = [
     anchor: "/prestations/services/marketing",
     items: [
       "Estimation de valeur locative",
-      "Photos professionnelles",
+      "Reportage photos",
       "Diffusion multi-plateformes",
       "Gestion dynamique des prix",
     ],

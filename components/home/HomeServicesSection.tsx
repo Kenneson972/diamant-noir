@@ -50,7 +50,7 @@ const SERVICE_TAGLINES: Record<string, string> = {
 
 const SERVICE_DESCS: Record<string, string> = {
   marketing:
-    "Votre villa visible partout, valorisée au bon prix — estimation locative, photos professionnelles, annonces optimisées et prix dynamiques automatiques.",
+    "Votre villa visible partout, valorisée au bon prix — estimation locative, reportage photos, annonces optimisées et prix dynamiques automatiques.",
   operations:
     "Zéro contrainte, tout géré sur place — check-in, contrôles qualité entre chaque séjour, coordination ménage, linge, consommables et artisans.",
   voyageurs:

@@ -731,7 +731,7 @@ function Step4({
         />
         <span className="flex items-center gap-2 text-[13px] text-navy/80">
           <ImageOff size={13} aria-hidden />
-          Pas de photos — Kayvila s&apos;en charge (état des lieux + photos professionnelles)
+          Pas de photos — Kayvila s&apos;en charge (état des lieux + reportage photos)
         </span>
       </label>
     </div>

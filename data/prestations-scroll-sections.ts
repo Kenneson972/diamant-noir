@@ -32,7 +32,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
     vertical: "lower",
     items: [
       "Estimation de valeur locative",
-      "Photos professionnelles",
+      "Reportage photos",
       "Diffusion multi-plateformes",
       "Gestion dynamique des prix",
     ],
