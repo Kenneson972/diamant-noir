@@ -12,7 +12,7 @@ export type OwnerLeadInput = {
 
 /** Points clés conciergerie injectés dans le contexte n8n (pas de hardcode chiffré ailleurs). */
 export const CONCIERGERIE_FACTS = [
-  "Commission Kayvila : 25 % du montant brut du séjour (ménage et blanchisserie inclus, aucune déduction préalable).",
+  "Commission Kayvila : 22 % du montant des nuitées réglé par le voyageur (ménage et blanchisserie exclus de la base de commission, facturés séparément aux voyageurs).",
   "Réservations directes via le site Kayvila : frais de traitement de 5 % (pas de commission plateforme).",
   "Synchronisation des calendriers Airbnb / Booking pour éviter les doubles réservations.",
   "Maintenance, ménage, accueil voyageurs et réassort des consommables gérés par Kayvila.",
