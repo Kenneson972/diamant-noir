@@ -25,7 +25,7 @@ export async function POST(request: Request) {
             Nous avons bien reçu votre demande de conciergerie${villa_name ? ` pour <strong>${villa_name}</strong>` : ""}.
           </p>
           <p style="font-size:15px;line-height:1.6;color:#334155">
-            Notre équipe étudiera votre dossier avec attention et vous recontactera sous <strong>48 heures ouvrées</strong>.
+            Notre équipe étudiera votre dossier avec attention et vous recontactera sous <strong>24h</strong>.
           </p>
           <p style="font-size:15px;line-height:1.6;color:#334155">
             Sans engagement, votre demande ne vous oblige à rien.

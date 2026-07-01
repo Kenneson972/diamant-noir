@@ -2,12 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { filterNewRefIds, markAlerted } from "@/lib/proactive/dedup";
 import { sendAdminPendingSubmissionsEmail } from "@/lib/emails/admin-proactive";
 
-/** Pure : garde les lignes créées il y a plus de 48h. */
+/** Pure : garde les lignes créées il y a plus de 24h. */
 export function decidePendingSubmissions(
   rows: { id: string; villa_name: string | null; created_at: string }[],
   now: Date
 ): { id: string; villa: string; since: string }[] {
-  const cutoff = new Date(now.getTime() - 48 * 3600_000);
+  const cutoff = new Date(now.getTime() - 24 * 3600_000);
   return rows
     .filter((r) => new Date(r.created_at).getTime() < cutoff.getTime())
     .map((r) => ({

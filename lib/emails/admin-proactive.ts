@@ -38,8 +38,8 @@ export async function sendAdminPendingSubmissionsEmail(
   items: { villa: string; since: string }[]
 ): Promise<void> {
   if (items.length === 0) return;
-  const list = renderList("Soumissions en attente depuis +48h", items.map((i) => `${i.villa} — depuis ${i.since}`));
-  await sendAdmin(`Kayvila — ${items.length} soumission(s) en attente +48h`, fullHtml(list));
+  const list = renderList("Soumissions en attente depuis +24h", items.map((i) => `${i.villa} — depuis ${i.since}`));
+  await sendAdmin(`Kayvila — ${items.length} soumission(s) en attente +24h`, fullHtml(list));
 }
 
 export async function sendAdminDailyRecapEmail(data: {

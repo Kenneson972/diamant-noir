@@ -57,14 +57,14 @@ function scrollSectionVerticalClasses(v: ScrollSection["vertical"] | undefined) 
 
 const REASSURANCES: { icon: KayvilaPngName; text: string }[] = [
   { icon: "shield-check", text: "Pas d'exclusivité obligatoire" },
-  { icon: "clock", text: "Réponse sous 48h garantie" },
+  { icon: "clock", text: "Réponse sous 24h garantie" },
   { icon: "star", text: "Estimation gratuite et sans engagement" },
 ];
 
 const FAQ_ITEMS: { q: string; a: string }[] = [
   {
     q: "Quelle est la première étape ?",
-    a: "Soumettez votre villa en 5 minutes via notre dossier interactif. Notre équipe vous recontacte sous 48h pour une estimation gratuite et sans engagement.",
+    a: "Soumettez votre villa en 5 minutes via notre dossier interactif. Notre équipe vous recontacte sous 24h pour une estimation gratuite et sans engagement.",
   },
   {
     q: "Y a-t-il un engagement de durée ?",
@@ -750,7 +750,7 @@ export default function PrestationsPageClient() {
                   </p>
                   <p className="font-display text-2xl font-normal text-white md:text-3xl">Votre villa mérite mieux.</p>
                   <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/55">
-                    Dossier interactif en 4 étapes — 5 minutes. Notre équipe vous recontacte sous 48h avec une estimation personnalisée.
+                    Dossier interactif en 4 étapes — 5 minutes. Notre équipe vous recontacte sous 24h avec une estimation personnalisée.
                   </p>
                   <ul className="mx-auto mt-6 max-w-xs space-y-2 text-left">
                     {["Pas d'exclusivité obligatoire", "Commission 22\u202f% tout compris", "Réponse sous 24h garantie"].map((item) => (

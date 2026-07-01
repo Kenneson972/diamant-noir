@@ -12,7 +12,7 @@ export default function SubmissionReceived({ ownerName, villaName }: SubmissionR
       <Text style={greeting}>Bonjour {ownerName},</Text>
       <Text style={subtitle}>Nous avons bien reçu votre demande pour {villaName || "votre villa"}.</Text>
       <Text style={body}>
-        Notre équipe étudie votre dossier et vous recontacte sous <strong>48 heures</strong> pour
+        Notre équipe étudie votre dossier et vous recontacte sous <strong>24h</strong> pour
         vous proposer une estimation personnalisée et organiser une visite si nécessaire.
       </Text>
       <Text style={body}>

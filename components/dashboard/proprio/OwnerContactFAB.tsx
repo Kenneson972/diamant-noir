@@ -124,7 +124,7 @@ export function OwnerContactFAB({ ownerId, villas }: Props) {
 
             {success ? (
               <p className="py-8 text-center text-sm text-emerald-600">
-                ✓ Votre message a bien été envoyé. Nous vous répondrons sous 48h.
+                ✓ Votre message a bien été envoyé. Nous vous répondrons sous 24h.
               </p>
             ) : (
               <div className="space-y-4">

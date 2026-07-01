@@ -756,7 +756,7 @@ function Confirmation({ name }: { name: string }) {
         </h2>
         <p className="mt-4 text-[15px] leading-relaxed text-navy/80">
           Votre dossier a bien été reçu. Notre équipe l&apos;étudiera avec
-          attention et vous recontactera sous 48 h ouvrées.
+          attention et vous recontactera sous 24h.
         </p>
         <p className="mt-2 text-sm text-navy/50">
           Un email de confirmation vous a été envoyé.
@@ -768,7 +768,7 @@ function Confirmation({ name }: { name: string }) {
         className="mt-8 flex animate-fade-up flex-wrap justify-center gap-6 border-y border-navy/8 py-5"
         style={{ animationDelay: "160ms" }}
       >
-        {["Réponse sous 48 h", "Étude personnalisée", "Sans engagement"].map((s) => (
+        {["Réponse sous 24h", "Étude personnalisée", "Sans engagement"].map((s) => (
           <span key={s} className="flex items-center gap-1.5 text-[11px] text-navy/55">
             <Check size={11} className="text-gold" aria-hidden />
             {s}

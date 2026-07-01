@@ -81,7 +81,7 @@ export default function ContactPage() {
           <div className="lg:col-span-6">
             <LandingBlockTitle title="Écrire au concierge" />
             <p className="-mt-4 mb-8 text-sm text-navy/70">
-              Devis, séjour, partenariat : nous revenons vers vous sous 48h ouvrées.
+              Devis, séjour, partenariat : nous revenons vers vous sous 24h.
             </p>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>

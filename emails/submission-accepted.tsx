@@ -34,7 +34,7 @@ export default function SubmissionAccepted({
         Créer mon compte propriétaire →
       </Link>
       <Text style={detail}>
-        L&apos;équipe Kayvila vous contactera dans les 48h pour organiser la suite.
+        L&apos;équipe Kayvila vous contactera dans les 24h pour organiser la suite.
       </Text>
     </EmailLayout>
   );
