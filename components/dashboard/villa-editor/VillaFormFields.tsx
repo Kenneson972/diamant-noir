@@ -14,8 +14,10 @@ import { SeasonalPricesEditor } from "./SeasonalPricesEditor";
 export type VillaFormFieldsProps = {
   form: Record<string, any>;
   onChange: (key: string, value: any) => void;
-  /** Si true, pas d'accordéon — les champs de base sont rendus à plat. Les sections déjà couvertes par VillaEditor (équipements, règles, services, tarifs) sont masquées. */
+  /** Si true, pas d'accordéon — les champs de base sont rendus à plat. */
   embedded?: boolean;
+  /** En mode embedded : "identity" = identité (nom, prix, capacité…), "details" = description & accès. Sans variant : tout. */
+  variant?: "identity" | "details";
 };
 
 /* ─── Helpers ───────────────────────────────────────── */
@@ -73,7 +75,7 @@ const NEARBY_SUGGESTIONS = ["Plage", "Restaurant", "Supermarché", "Pharmacie", 
 
 /* ─── Composant principal ───────────────────────────── */
 
-export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsProps) {
+export function VillaFormFields({ form, onChange, embedded, variant }: VillaFormFieldsProps) {
   const handleGeolocate = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -86,8 +88,8 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
     );
   };
 
-  // Section de base — commune aux deux modes
-  const basicFields = (
+  // Identité — nom, localisation, prix, capacité, chambres, sdb, surface (Bloc 1)
+  const identityFields = (
     <div className="grid gap-3 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <FieldLabel htmlFor="vf-name" label="Nom de la villa *" />
@@ -100,10 +102,6 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
       <div>
         <FieldLabel htmlFor="vf-price" label="Prix / nuit (€)" />
         <Input id="vf-price" type="number" min="0" step="1" defaultValue={form.price_per_night as string || ""} placeholder="250" className="text-sm" onChange={(e: any) => onChange("price_per_night", Number(e.target.value))} />
-      </div>
-      <div>
-        <FieldLabel htmlFor="vf-min-nights" label="Nuits minimum" />
-        <Input id="vf-min-nights" type="number" min="1" max="30" step="1" defaultValue={(form.min_nights as string) || "1"} placeholder="1" className="text-sm" onChange={(e: any) => onChange("min_nights", Number(e.target.value))} />
       </div>
       <div>
         <FieldLabel htmlFor="vf-capacity" label="Capacité (personnes)" />
@@ -121,6 +119,12 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
         <FieldLabel htmlFor="vf-surface" label="Surface (m²)" />
         <Input id="vf-surface" type="number" min="0" defaultValue={form.surface_m2 as string || ""} placeholder="120" className="text-sm" onChange={(e: any) => onChange("surface_m2", Number(e.target.value))} />
       </div>
+    </div>
+  );
+
+  // Description & accès — check-in/out, nuits min, description, GPS, URLs (section Bloc 2)
+  const detailFields = (
+    <div className="grid gap-3 sm:grid-cols-2">
       <div>
         <FieldLabel htmlFor="vf-checkin" label="Check-in" />
         <Input id="vf-checkin" defaultValue={s(form.check_in_time)} placeholder="15:00" className="text-sm" onChange={(e: any) => onChange("check_in_time", e.target.value)} />
@@ -128,6 +132,10 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
       <div>
         <FieldLabel htmlFor="vf-checkout" label="Check-out" />
         <Input id="vf-checkout" defaultValue={s(form.check_out_time)} placeholder="11:00" className="text-sm" onChange={(e: any) => onChange("check_out_time", e.target.value)} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-min-nights" label="Nuits minimum" />
+        <Input id="vf-min-nights" type="number" min="1" max="30" step="1" defaultValue={(form.min_nights as string) || "1"} placeholder="1" className="text-sm" onChange={(e: any) => onChange("min_nights", Number(e.target.value))} />
       </div>
       <div className="sm:col-span-2">
         <FieldLabel htmlFor="vf-desc" label="Description" />
@@ -160,7 +168,9 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
   );
 
   if (embedded) {
-    return <div>{basicFields}</div>;
+    if (variant === "identity") return <div>{identityFields}</div>;
+    if (variant === "details") return <div>{detailFields}</div>;
+    return <div className="space-y-3">{identityFields}{detailFields}</div>;
   }
 
   // --- MODE STANDALONE (ancien comportement, utilisé par les formulaires legacy) ---
