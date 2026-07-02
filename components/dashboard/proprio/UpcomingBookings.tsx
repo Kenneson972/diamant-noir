@@ -26,6 +26,13 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
           <p className="text-sm italic text-muted">
             Aucune réservation à venir
           </p>
+          <Link
+            href="/dashboard/villas"
+            className="mt-3 inline-flex min-h-[44px] items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-gold no-underline transition-colors hover:text-navy"
+          >
+            Voir mes villas
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" aria-hidden />
+          </Link>
         </div>
       </div>
     );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ExternalLink, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ExternalLink, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 interface StripeConnectButtonProps {
@@ -108,14 +108,15 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
 
   if (connected) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-5 py-4">
-        <CheckCircle2 size={20} strokeWidth={1.5} className="shrink-0 text-green-600" />
-        <div>
-          <p className="text-sm font-bold text-green-800">Compte bancaire connecté</p>
-          <p className="text-xs text-green-600">
-            Les reversements seront automatiques après chaque réservation
-          </p>
-        </div>
+      <div
+        data-testid="stripe-connected-banner"
+        className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5"
+      >
+        <CheckCircle2 className="size-4 shrink-0 text-emerald-600" aria-hidden />
+        <p className="min-w-0 truncate text-sm text-emerald-800">
+          <span className="font-semibold">Compte bancaire connecté</span>
+          <span className="hidden text-emerald-700 sm:inline"> — paiements automatiques activés</span>
+        </p>
       </div>
     );
   }
