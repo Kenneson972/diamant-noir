@@ -1,0 +1,55 @@
+"use client";
+
+import { useState, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+export function VillaEditorShell({
+  sidebar,
+  preview,
+  children,
+}: {
+  sidebar?: ReactNode;
+  preview: ReactNode;
+  children: ReactNode;
+}) {
+  const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
+
+  return (
+    <div>
+      {/* Onglets mobile */}
+      <div className="sticky top-16 z-20 mb-4 flex gap-1 bg-offwhite pb-2 lg:hidden">
+        {(["edit", "preview"] as const).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setMobileTab(tab)}
+            className={cn(
+              "flex-1 rounded-md py-2 text-sm font-semibold transition-colors",
+              mobileTab === tab
+                ? "bg-navy text-white"
+                : "border border-navy/10 bg-white text-navy/55"
+            )}
+          >
+            {tab === "edit" ? "Éditer" : "Aperçu"}
+          </button>
+        ))}
+      </div>
+
+      {/* Layout desktop */}
+      <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-10">
+        <div className={cn(sidebar ? "lg:grid lg:grid-cols-[56px_1fr] lg:gap-4" : "")}>
+          {sidebar}
+          <div className={cn(mobileTab !== "edit" && "hidden lg:block")}>{children}</div>
+        </div>
+        <div
+          className={cn(
+            "pt-8 lg:sticky lg:top-24 lg:self-start",
+            mobileTab !== "preview" && "hidden lg:block"
+          )}
+        >
+          {preview}
+        </div>
+      </div>
+    </div>
+  );
+}
