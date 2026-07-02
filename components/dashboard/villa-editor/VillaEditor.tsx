@@ -105,10 +105,10 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
 
   useEffect(() => {
     if (!isEdit) return;
-    clearTimeout(autoTimer.current);
+    clearTimeout(autoTimer.current ?? undefined);
     setAutoStatus("idle");
     autoTimer.current = setTimeout(() => { void doSave(); }, 2500);
-    return () => clearTimeout(autoTimer.current);
+    return () => clearTimeout(autoTimer.current ?? undefined);
   }, [form, isEdit, doSave]);
 
   // Submit création
