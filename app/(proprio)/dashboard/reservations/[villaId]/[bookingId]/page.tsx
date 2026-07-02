@@ -67,6 +67,13 @@ export default async function BookingDetailPage({ params }: PageProps) {
         booking={typedBooking}
         villaName={villa?.name ?? undefined}
       />
+
+      <Link
+        href="/dashboard/concierge"
+        className="mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-navy/15 bg-white px-6 text-sm font-semibold text-navy no-underline transition-colors hover:border-navy/30"
+      >
+        Contacter Kayvila
+      </Link>
     </div>
   );
 }
