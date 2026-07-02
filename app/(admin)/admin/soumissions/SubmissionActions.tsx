@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Check, X, Calendar, Phone, FileText } from "lucide-react";
 
 export function SubmissionActions({ id, ownerEmail }: { id: string; ownerEmail: string }) {
@@ -10,16 +11,38 @@ export function SubmissionActions({ id, ownerEmail }: { id: string; ownerEmail: 
   const [visitDate, setVisitDate] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [done, setDone] = useState(false);
+  const [villaId, setVillaId] = useState<string | null>(null);
 
-  const call = async (status: string, extra?: Record<string, any>) => {
+  const call = async (status: string, extra?: Record<string, unknown>) => {
     setLoading(status);
-    await fetch("/api/villa-submissions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status, owner_email: ownerEmail, ...extra }) });
+    const res = await fetch("/api/villa-submissions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status, owner_email: ownerEmail, ...extra }),
+    });
+    try {
+      const data = await res.json();
+      if (data?.villa_id) setVillaId(String(data.villa_id));
+    } catch {
+      /* réponse sans corps : on garde le comportement existant */
+    }
     setLoading(null);
     setDone(true);
     router.refresh();
   };
 
-  if (done) return <span className="shrink-0 text-[11px] font-medium text-emerald-700">✓ Traité</span>;
+  if (done) {
+    return villaId ? (
+      <Link
+        href={`/admin/villas/${villaId}`}
+        className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-gold/90"
+      >
+        ✓ Villa créée — Ouvrir dans l&apos;éditeur
+      </Link>
+    ) : (
+      <span className="shrink-0 text-[11px] font-medium text-emerald-700">✓ Traité</span>
+    );
+  }
 
   return (
     <div className="flex shrink-0 flex-col gap-2 items-end">

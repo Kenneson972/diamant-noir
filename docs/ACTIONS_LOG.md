@@ -734,11 +734,11 @@ verify: vérification effectuée
 - **impact**: Sidebar hiérarchique admin/proprio ; badges remontés sur parents ; ⌘K avec contexte parent
 - **verify**: `npm run build` exit 0
 
-### 2026-06-23 — Sidebar parents métier HeroUI + polish dashboard admin
+### 2026-07-02 — Soumission acceptée → villa pré-remplie auto
 
-- **type**: ui
-- **summary**: Migration sidebar HeroUI Pro (`kayvila-sidebar-panel`) avec parents métier expand/collapse, badges agrégés, fil d'Ariane ; overview admin (ListView, Alert, Widget) ; segment Liste/Kanban/Calendrier réservations
-- **files**: `components/dashboard/shared/kayvila-sidebar-panel.tsx`, `AdminMenuItems.ts`, `ProprioMenuItems.ts`, `lib/dashboard/apply-menu-badges.ts`, `DashboardShell.tsx`, `app/(admin)/admin/{layout,page,reservations}/**`, `components/ui/pro/kayvila-segment.tsx`
-- **why**: Navigation admin trop plate ; regroupement métier (Patrimoine, Séjours, Finances…) avec auto-expand route active
-- **impact**: Sidebar hiérarchique admin/proprio ; badges remontés sur parents ; ⌘K avec contexte parent
-- **verify**: `npm run build` exit 0
+- **type**: api | sql | ui
+- **summary**: Acceptation soumission crée villa brouillon idempotente ; migration capture equipements/photos ; mapping testé ; lien éditeur admin ; fix tiers Collection signature/iconic
+- **files**: `supabase/migrations/20260702143000_submission_to_villa.sql`, `lib/submissions/create-villa-from-submission.ts`, `lib/submissions/update-status.ts`, `app/api/villa-submissions/route.ts`, `SubmissionActions.tsx`, `VillaEditor.tsx`
+- **why**: Éviter re-saisie manuelle après acceptation ; corriger fuite données formulaire soumission
+- **impact**: Admin Accepter → villa brouillon + lien `/admin/villas/[id]` ; autosave tier sans 500
+- **verify**: vitest 117 PASS ; `npm run build` OK

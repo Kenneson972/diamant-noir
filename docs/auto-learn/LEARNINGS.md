@@ -771,7 +771,13 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 - **Focus trap avec `document.addEventListener('keydown')`** : querySelectAll au montage, premier/dernier focusable, Tab/Shift+Tab cyclique. S'assurer que le modal est visible quand `active=true` (querySelectorAll vide si `hidden`).
 - **JSON-LD via `<script dangerouslySetInnerHTML>`** est safe pour les structured data (pas du user input) — pattern Next.js standard.
 
-### Reste à faire (sous-projets brainstormés, prompt Richard 17 juin)
+### 2026-07-02 — Soumission acceptée → villa auto
+
+- **`villas.collection_tier`** : contrainte DB = `signature` | `iconic` uniquement — jamais `standard`/`premium` dans le select admin.
+- **Insert villa depuis soumission** : ne jamais envoyer `collection_tier`, `cancellation_template`, `owner_id` vides (`""`) — omettre ou `null`.
+- **Idempotence** : `villa_submissions.villa_id` — si déjà renseigné, ne pas re-créer la villa au re-clic Accepter.
+- **Migration `20260702143000_submission_to_villa.sql`** : appliquer en prod Supabase avant deploy du code qui écrit `equipements`/`photo_urls`/`villa_id`.
+
 
 | # | Tâche | État |
 |---|-------|------|

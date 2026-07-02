@@ -109,6 +109,15 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
         )}
       </div>
 
+      {s.villa_id && (
+        <Link
+          href={`/admin/villas/${s.villa_id}`}
+          className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-gold/40 bg-gold/5 px-4 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
+        >
+          Villa créée à partir de cette soumission — Ouvrir dans l&apos;éditeur →
+        </Link>
+      )}
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Le bien */}
         <Section title="Le bien">
