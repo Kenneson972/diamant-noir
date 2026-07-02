@@ -168,7 +168,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Avant chaque arrivée, nous réapprovisionnons café, eau, savon, gel douche et produits d'accueil. Ces consommables courants sont pris en charge par Kayvila — aucun frais supplémentaire pour vous.",
       },
       {
-        title: "Entretien piscine & jardin",
+        title: "Mise en relation piscine & jardin",
         desc: "Nous vous mettons en relation avec des prestataires de confiance sélectionnés localement (pisciniste, jardinier) et coordonnons leurs interventions autour de votre calendrier. Ces prestations sont facturées directement par le prestataire, à votre nom — factures conformes et déductibles de vos revenus locatifs.",
       },
     ],

@@ -89,7 +89,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
       "Blanchisserie incluse hors commission 22%",
       "Coordination complète des équipes",
       "Réassort consommables à nos frais",
-      "Entretien piscine & jardin",
+      "Mise en relation piscine & jardin",
     ],
   },
   // gap 421-423 : escalier → cuisine (menage fade-out)
@@ -105,7 +105,7 @@ export const SCROLL_SECTIONS: ScrollSection[] = [
     position: "left",
     vertical: "upper",
     items: [
-      "Encaissement et reversement des loyers",
+      "Réception et suivi des paiements",
       "Pack démarrage 1ère location",
       "Reporting clair en ligne",
       "Accès exclusif Assistant Copilot Proprio",

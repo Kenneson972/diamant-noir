@@ -128,7 +128,7 @@ const SECTIONS: Section[] = [
     position: "left",
     anchor: "/prestations/services/finance",
     items: [
-      "Encaissement et reversement des loyers",
+      "Réception et suivi des paiements",
       "Pack démarrage 1ère location",
       "Reporting clair en ligne",
       "Accès exclusif Assistant Copilot Proprio",

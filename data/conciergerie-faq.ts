@@ -101,7 +101,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
   {
     id: "finance",
     label: "05",
-    title: "Encaissement et reversement des loyers",
+    title: "Réception et suivi des paiements",
     items: [
       {
         q: "Quel est le délai de reversement ?",
