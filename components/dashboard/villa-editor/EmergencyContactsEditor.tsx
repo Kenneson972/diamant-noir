@@ -1,8 +1,8 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
+import type { EmergencyContact } from "@/lib/validations/villa";
 
-type EmergencyContact = { name: string; phone: string };
 type Props = { contacts: EmergencyContact[]; onChange: (contacts: EmergencyContact[]) => void };
 
 export function EmergencyContactsEditor({ contacts, onChange }: Props) {

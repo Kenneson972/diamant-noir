@@ -1,9 +1,8 @@
 "use client";
 
 import { Plus, Trash2, Copy, AlertTriangle } from "lucide-react";
+import type { Season } from "@/lib/validations/villa";
 import { cn } from "@/lib/utils";
-
-type Season = { season: string; start: string; end: string; price: number };
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));

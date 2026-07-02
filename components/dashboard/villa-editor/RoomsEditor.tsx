@@ -2,11 +2,10 @@
 
 import { Plus, Trash2, Bed, BedSingle, Sofa, ChevronDown } from "lucide-react";
 import { ROOM_PRESETS, getBedCapacity, totalRoomCapacity } from "@/lib/room-presets";
+import type { Room } from "@/lib/validations/villa";
 import { useState } from "react";
 
-type Room = { name: string; bed: string; ensuite: boolean };
-
-const BED_OPTIONS = ["King size", "Queen size", "Double", "Simple", "Canapé-lit"];
+const BED_OPTIONS: Room["bed"][] = ["King size", "Queen size", "Double", "Simple", "Canapé-lit"];
 
 function BedIcon({ bed }: { bed: string }) {
   const cls = "size-5 text-navy/60";
@@ -20,10 +19,15 @@ export function RoomsEditor({ rooms, onChange }: { rooms: Room[]; onChange: (roo
   const [presetOpen, setPresetOpen] = useState(false);
   const capacity = totalRoomCapacity(rooms);
 
-  const add = () => onChange([...rooms, { name: "", bed: "Queen size", ensuite: false }]);
-  const update = (i: number, field: keyof Room, value: string | boolean) => {
+  const add = () => onChange([...rooms, { name: "", bed: "Queen size" as Room["bed"], ensuite: false }]);
+  const update = <F extends "name" | "ensuite">(i: number, field: F, value: Room[F]) => {
     const next = [...rooms];
     next[i] = { ...next[i], [field]: value };
+    onChange(next);
+  };
+  const setBed = (i: number, bed: Room["bed"]) => {
+    const next = [...rooms];
+    next[i] = { ...next[i], bed };
     onChange(next);
   };
   const remove = (i: number) => onChange(rooms.filter((_, idx) => idx !== i));
@@ -54,7 +58,7 @@ export function RoomsEditor({ rooms, onChange }: { rooms: Room[]; onChange: (roo
             <div className="flex items-center gap-3">
               <select
                 value={r.bed}
-                onChange={(e) => update(i, "bed", e.target.value)}
+                onChange={(e) => setBed(i, e.target.value as Room["bed"])}
                 className="flex-1 rounded-lg border border-navy/10 px-3 py-2 text-sm focus:border-gold focus:outline-none"
               >
                 {BED_OPTIONS.map((opt) => (<option key={opt} value={opt}>{opt}</option>))}
