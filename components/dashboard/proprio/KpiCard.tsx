@@ -21,6 +21,7 @@ interface KpiCardProps {
   chartData?: number[];
   progress?: number;
   className?: string;
+  hideChart?: boolean;
 }
 
 function KpiIconRenderer({ iconName }: { iconName: KpiIconName }) {
@@ -51,6 +52,7 @@ export function KpiCard({
   chartData,
   progress,
   className,
+  hideChart,
 }: KpiCardProps) {
   const numericValue =
     typeof value === "number"
@@ -109,7 +111,7 @@ export function KpiCard({
           />
         ) : null}
       </KPI.Content>
-      {chartPoints ? (
+      {chartPoints && !hideChart ? (
         <KPI.Chart
           color="var(--color-accent)"
           data={chartPoints}
