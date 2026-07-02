@@ -165,7 +165,7 @@ export default async function VillasListingPage({
         imageSrc="/villas-hero.webp"
         eyebrow={tServer(locale, "villas.subtitle")}
         title={tServer(locale, "villas.title")}
-        subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune avec son charme, sa vue, son histoire.`}
+        subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune son charme, sa vue, son histoire.`}
       >
         <div className="flex items-end justify-center gap-3">
           <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">

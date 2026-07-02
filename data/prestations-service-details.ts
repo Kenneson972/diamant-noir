@@ -30,7 +30,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
   marketing: {
     slug: "marketing",
     title: "Marketing & visibilité",
-    eyebrow: "Acquisition",
+    eyebrow: "Rayonnement",
     tagline: "Votre villa visible partout, valorisée au bon prix",
     metaDescription:
       "Estimation locative, reportage photos, annonces optimisées et gestion dynamique des prix pour maximiser le revenu de votre villa en Martinique — Kayvila conciergerie.",
@@ -83,7 +83,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Contrôles qualité entre chaque séjour",
-        desc: "Nous inspectons la villa — équipements, électroménager, piscine, extérieurs. Tout problème est identifié et résolu avant la prochaine arrivée.",
+        desc: "Nous inspectons la villa — équipements, électroménager, piscine, extérieurs. Tout problème est identifié et pris en main avant la prochaine arrivée.",
       },
       {
         title: "Coordination ménage, linge et consommables",
@@ -128,7 +128,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Suivi des avis et valorisation",
-        desc: "Nous répondons à chaque commentaire — remerciements, retours négatifs traités avec soin, valorisation des avis positifs. Votre note moyenne grimpe, vos réservations aussi.",
+        desc: "Nous répondons avec soin à chaque commentaire et mettons en avant les retours de vos voyageurs. Votre note moyenne progresse, vos réservations aussi.",
       },
     ],
     images: {
@@ -183,7 +183,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     slug: "finance",
     title: "Revenus & transparence",
     eyebrow: "Transparence",
-    tagline: "Chaque ligne justifiée",
+    tagline: "Vos comptes, en toute confiance",
     metaDescription:
       "Encaissement des loyers, commission 22 % sur les nuitées, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
     image: "/finance.png",
@@ -206,7 +206,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Pack démarrage — 1ère location uniquement",
-        desc: "Pour votre première mise en location, un pack d'installation est facturé une seule fois : sucre, café, eau, poivre, huile, épices, papier toilettes, savon, boîte à clefs et inventaire complet. Dès la 2ème location, le réassort courant est à nos frais.",
+        desc: "Pour votre première mise en location, un pack d'installation est facturé une seule fois : consommables de cuisine, d'accueil et d'entretien (lessive, vaisselle), produits de bain, boîte à clefs et inventaire complet. Dès la 2ᵉ location, le réassort courant est à nos frais.",
       },
     ],
     images: {
