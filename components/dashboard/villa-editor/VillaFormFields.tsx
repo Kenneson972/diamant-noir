@@ -1,7 +1,9 @@
 "use client";
 
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { DashboardNavIcon } from "@/components/dashboard/shared/dashboard-nav-icon";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { ChipEditor } from "./ChipEditor";
 import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
 import { RoomsEditor } from "./RoomsEditor";
@@ -34,13 +36,24 @@ function FieldLabel({ htmlFor, label }: { htmlFor: string; label: string }) {
   );
 }
 
-function FormSection({ title, icon, children }: {
-  title: string; icon: string; children: React.ReactNode;
+const ICON_MAP: Record<string, string> = {
+  infos: "LayoutDashboard", photos: "Home", equipments: "Star",
+  rooms: "Building2", pricing: "DollarSign", contacts: "UserCircle",
+  services: "Sparkles", rules: "Settings", safety: "Zap", external: "CalendarDays",
+};
+
+function FormSection({ id, title, icon, children }: {
+  id?: string; title: string; icon: string; children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl border border-navy/8 bg-white p-6 shadow-sm">
-      <h3 className="font-display text-base font-semibold text-navy-900">{icon} {title}</h3>
-      <div className="mt-6 space-y-4">{children}</div>
+    <div className="rounded-xl border border-navy/8 bg-white">
+      <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-base font-semibold text-navy transition-colors hover:bg-navy/[0.02]">
+        <DashboardNavIcon name={ICON_MAP[icon] ?? "LayoutDashboard"} size={20} />
+        <span className="flex-1">{title}</span>
+        <span className="text-[10px] text-navy/30">{open ? "▲" : "▼"}</span>
+      </button>
+      {open && <div className="border-t border-navy/5 px-6 pb-6 space-y-4">{children}</div>}
     </div>
   );
 }
