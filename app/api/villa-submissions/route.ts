@@ -99,6 +99,10 @@ export async function POST(request: Request) {
         delai_souhaite: delai_souhaite || null,
         adresse_postale: adresse_postale || null,
         status: "pending",
+        equipements: Array.isArray(equipements) ? equipements : [],
+        surface: surface != null && surface !== "" ? String(surface) : null,
+        villa_type: villa_type || null,
+        photo_urls: Array.isArray(photo_urls) ? photo_urls : [],
       })
       .select()
       .single();
@@ -244,12 +248,16 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
     }
 
-    const { submission, error } = await updateSubmissionStatus(supabase, { id, status, visit_date, owner_email });
+    const { submission, villaId, villaCreationError, error } = await updateSubmissionStatus(supabase, { id, status, visit_date, owner_email });
     if (error || !submission) {
       return NextResponse.json({ error: error ?? "Erreur serveur" }, { status: 500 });
     }
 
-    return NextResponse.json(submission);
+    return NextResponse.json({
+      ...submission,
+      villa_id: villaId ?? submission.villa_id ?? null,
+      villa_creation_error: villaCreationError ?? null,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

@@ -6,13 +6,19 @@ import SubmissionCallRequested from "@/emails/submission-call-requested";
 import SubmissionDocsRequested from "@/emails/submission-docs-requested";
 import SubmissionAccepted from "@/emails/submission-accepted";
 import SubmissionRejected from "@/emails/submission-rejected";
+import { createVillaFromSubmission } from "./create-villa-from-submission";
 
 export async function updateSubmissionStatus(
   admin: SupabaseClient,
   // `reason` est réservé au contexte de refus (transmis par le copilot admin) ; il n'est
   // pas encore exposé dans l'email de refus (template { ownerName, villaName } uniquement).
-  params: { id: string; status: "accepted" | "rejected"; reason?: string; visit_date?: string; owner_email?: string },
-): Promise<{ submission: Record<string, unknown> | null; error?: string }> {
+  params: { id: string; status: string; reason?: string; visit_date?: string; owner_email?: string },
+): Promise<{
+  submission: Record<string, unknown> | null;
+  villaId?: string | null;
+  villaCreationError?: string;
+  error?: string;
+}> {
   const { id, status, visit_date, owner_email } = params;
 
   const updateData: Record<string, unknown> = { status, updated_at: new Date().toISOString() };
@@ -84,5 +90,16 @@ export async function updateSubmissionStatus(
     }
   }
 
-  return { submission };
+  let villaId: string | null = null;
+  let villaCreationError: string | undefined;
+  if (status === "accepted") {
+    const result = await createVillaFromSubmission(admin, submission);
+    villaId = result.villaId;
+    if (result.error) {
+      villaCreationError = result.error;
+      console.error("[submissions] création villa échouée:", result.error);
+    }
+  }
+
+  return { submission, villaId, villaCreationError };
 }

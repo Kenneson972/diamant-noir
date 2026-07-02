@@ -172,9 +172,8 @@ export function VillaEditor({
           <label htmlFor="ve-admin-tier" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Collection</label>
           <select id="ve-admin-tier" value={form.collection_tier ?? ""} onChange={(e) => handleChange("collection_tier", e.target.value)} className="min-h-[44px] w-full rounded-lg border border-navy/10 bg-white px-4 text-base focus:border-gold/50 focus:outline-none">
             <option value="">—</option>
-            <option value="standard">Standard</option>
-            <option value="premium">Premium</option>
             <option value="signature">Signature</option>
+            <option value="iconic">Iconic</option>
           </select>
         </div>
         <label className="flex min-h-[44px] items-center gap-3">
