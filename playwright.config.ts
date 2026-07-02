@@ -30,5 +30,18 @@ export default defineConfig({
       timeout: 60000,
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "dashboards",
+      testMatch: [
+        "tests/responsive-dashboards.spec.ts",
+        "tests/chatbot-scroll.spec.ts",
+        "tests/chatbot-prebooking.spec.ts",
+        "tests/hero-search.spec.ts",
+        "tests/search.spec.ts",
+        "tests/login.spec.ts",
+        "tests/a11y.spec.ts",
+      ],
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
 });
