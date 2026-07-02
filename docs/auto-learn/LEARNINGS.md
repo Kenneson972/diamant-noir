@@ -776,11 +776,12 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 - **`villas.collection_tier`** : contrainte DB = `signature` | `iconic` uniquement — jamais `standard`/`premium` dans le select admin.
 - **Insert villa depuis soumission** : ne jamais envoyer `collection_tier`, `cancellation_template`, `owner_id` vides (`""`) — omettre ou `null`.
 - **Idempotence** : `villa_submissions.villa_id` — si déjà renseigné, ne pas re-créer la villa au re-clic Accepter.
-- **Migration `20260702143000_submission_to_villa.sql`** : appliquer en prod Supabase avant deploy du code qui écrit `equipements`/`photo_urls`/`villa_id`.
+- **Migration prod** : `submission_to_villa` appliquée Supabase `wsdawdxucyuyopkpgjij` le 2026-07-02 (`20260702191002`) — repo `20260702143000_submission_to_villa.sql`.
 
+### Reste à faire (sous-projets brainstormés, prompt Richard 17 juin)
 
 | # | Tâche | État |
-|---|-------|------|
+|---|---|---|
 | 1 | Header glow homepage | ✅ Fait |
 | 2 | Carte interactive Leaflet fiche villa | À faire |
 | 3 | Demandes : tri ASC + accusé Resend | À faire (timeAgo déjà fait) |

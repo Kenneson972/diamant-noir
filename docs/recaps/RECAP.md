@@ -670,3 +670,24 @@ Source : `CURSOR_PROMPTS_28MAI.md` (Élise) — 31 bugs identifiés
 - Pas d'opacity < 60%, pas de text-navy/< 50
 - Mapping complet Lucide → KayvilaPngIcon documenté
 
+---
+
+## 2026-07-02 — Soumission → villa + éditeur v2 + dashboard
+
+### Soumission acceptée → villa brouillon (LIVRÉ)
+- Spec + plan : `2026-07-02-submission-to-villa-*`
+- Code : `createVillaFromSubmission`, hook `updateSubmissionStatus`, UI lien éditeur, fix tiers Collection
+- Migration prod Supabase : `submission_to_villa` (`20260702191002`)
+- Commits : `99daab4` | Tests : 117 vitest PASS
+
+### Éditeur villa v2 (déjà main)
+- Sommaire sticky, mini-form → brouillon → éditeur, 5 tests Playwright
+
+### Dashboard (23–24 juin)
+- Sidebar parents métier HeroUI, Lucide nav, responsive mobile
+
+**Recap détaillé :** `docs/recaps/RECAP_2026-07-02.md`  
+**Journal session :** `docs/logs/2026-07-02.md`
+
+**Dernière mise à jour du recap :** 2026-07-02
+

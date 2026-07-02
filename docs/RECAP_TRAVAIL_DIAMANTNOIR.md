@@ -1,7 +1,30 @@
 # Récap Travail — Diamant Noir / Kayvila
 
 > Synthèse de tout le travail effectué sur la conciergerie de luxe Diamant Noir.
-> Mise à jour : 11 mai 2026
+> Mise à jour : **2 juillet 2026**
+
+---
+
+## Travail récent (juillet 2026)
+
+### 2 juillet — Soumission acceptée → villa auto ✅
+- Acceptation admin crée une **villa brouillon pré-remplie** (idempotent)
+- Migration DB : `equipements`, `surface`, `villa_type`, `photo_urls`, `villa_id`
+- Migration **prod appliquée** Supabase (`submission_to_villa`)
+- Lien « Ouvrir dans l'éditeur » + 5 tests Vitest mapping
+- Fix tiers Collection (`signature` / `iconic`)
+
+### 1–2 juillet — Éditeur villa unifié v2 ✅
+- Mini-form création → brouillon → éditeur pleine page (admin + proprio)
+- Sommaire sticky, 3 blocs, autosave corrigé
+- 5 tests Playwright
+
+### 23–24 juin — Dashboard HeroUI ✅
+- Sidebar parents métier, overview admin HeroUI Pro
+- Responsive mobile + tests Playwright dashboards
+- Icônes Lucide sidebar (revert PNG trop petites)
+
+**Détails :** `docs/recaps/RECAP_2026-07-02.md`, `docs/logs/2026-07-02.md`
 
 ---
 
@@ -87,9 +110,11 @@
 - Créer les profiles pour les utilisateurs existants (trigger OK pour les nouveaux)
 
 ### Non migré de l'ancien monolithe
-- Assistant IA propriétaire
-- Submissions (soumettre ma villa)
+- Assistant IA propriétaire (partiel — copilot présent)
 - Analytics détaillés
+
+### Soumissions villa
+- ~~Re-saisie manuelle après acceptation~~ → **résolu 2026-07-02** (villa brouillon auto)
 
 ---
 
@@ -101,6 +126,7 @@
 | `20260501_stripe_idempotence.sql` | Idempotence Stripe + historique statuts | OK |
 | `20260501_rls_audit.sql` | Policies RLS (10 tables) + index | OK |
 | `20260501_create_profiles.sql` | Table profiles + trigger | OK |
+| `20260702143000_submission_to_villa.sql` | Capture soumission + villa_id | OK (prod `20260702191002`) |
 
 ---
 

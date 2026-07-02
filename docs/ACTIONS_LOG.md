@@ -742,3 +742,12 @@ verify: vérification effectuée
 - **why**: Éviter re-saisie manuelle après acceptation ; corriger fuite données formulaire soumission
 - **impact**: Admin Accepter → villa brouillon + lien `/admin/villas/[id]` ; autosave tier sans 500
 - **verify**: vitest 117 PASS ; `npm run build` OK
+
+### 2026-07-02 — Migration prod submission_to_villa (Supabase MCP)
+
+- **type**: sql
+- **summary**: Application migration `submission_to_villa` sur projet prod `wsdawdxucyuyopkpgjij` — 5 colonnes `villa_submissions` confirmées
+- **files**: `supabase/migrations/20260702143000_submission_to_villa.sql`
+- **why**: Code `99daab4` écrit equipements/photo_urls/villa_id — DB prod doit être alignée avant usage
+- **impact**: Flux acceptation soumission → villa opérationnel en prod
+- **verify**: `SELECT column_name FROM information_schema.columns …` → 5 lignes ; `list_migrations` → `submission_to_villa`
