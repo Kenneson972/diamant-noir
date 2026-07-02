@@ -112,7 +112,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
         data-testid="stripe-connected-banner"
         className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5"
       >
-        <CheckCircle2 className="size-4 shrink-0 text-emerald-600" aria-hidden />
+        <CheckCircle className="size-4 shrink-0 text-emerald-600" aria-hidden />
         <p className="min-w-0 truncate text-sm text-emerald-800">
           <span className="font-semibold">Compte bancaire connecté</span>
           <span className="hidden text-emerald-700 sm:inline"> — paiements automatiques activés</span>
