@@ -88,7 +88,7 @@ export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsPro
 
   // Section de base — commune aux deux modes
   const basicFields = (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-3 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <FieldLabel htmlFor="vf-name" label="Nom de la villa *" />
         <Input id="vf-name" defaultValue={s(form.name)} placeholder="Ex: Villa Océane" className="text-sm" onChange={(e: any) => onChange("name", e.target.value)} />

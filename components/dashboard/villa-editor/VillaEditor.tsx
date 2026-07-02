@@ -275,7 +275,7 @@ export function VillaEditor({ villa, isAdmin, compact }: { villa?: Villa | null;
       </div>
       <ProgressBar sections={sectionArr} />
 
-      <div className="mt-6 space-y-8" data-testid="villa-editor-sections">
+      <div className="mt-6 space-y-3" data-testid="villa-editor-sections">
         {/* Infos générales */}
         <section
           id="ve-infos"
@@ -296,7 +296,7 @@ export function VillaEditor({ villa, isAdmin, compact }: { villa?: Villa | null;
 
         {/* Photos */}
         <section id="ve-photos" role="region" aria-labelledby="ve-photos-title" onMouseEnter={() => setHoveredSection("photos")} onMouseLeave={() => setHoveredSection(null)}>
-          <details className="group rounded-xl border border-navy/8 bg-white">
+          <details className="group rounded-xl border border-navy/8 bg-white" open>
             <summary id="ve-photos-title" className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
               Photos ({form.image_urls.length})
             </summary>
@@ -308,7 +308,7 @@ export function VillaEditor({ villa, isAdmin, compact }: { villa?: Villa | null;
 
         {/* Équipements */}
         <section id="ve-equipments" role="region" aria-labelledby="ve-equipments-title" onMouseEnter={() => setHoveredSection("equipments")} onMouseLeave={() => setHoveredSection(null)}>
-          <details className="group rounded-xl border border-navy/8 bg-white">
+          <details className="group rounded-xl border border-navy/8 bg-white" open>
             <summary id="ve-equipments-title" className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Équipements</summary>
             <div className="border-t border-navy/5 px-6 pb-6">
               <VillaAmenitiesEditorV2 interior={form.equipment_interior} exterior={form.equipment_exterior} servicesHome={form.included_services_home} servicesCollection={form.included_services_collection} aLaCarte={form.a_la_carte_services} amenitiesImportLabels={[]} onChangeInterior={(v) => dispatch({ type: "SET_ARRAY", field: "equipment_interior", value: v })} onChangeExterior={(v) => dispatch({ type: "SET_ARRAY", field: "equipment_exterior", value: v })} onChangeServicesHome={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_home", value: v })} onChangeServicesCollection={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_collection", value: v })} onChangeALaCarte={(v) => dispatch({ type: "SET_ARRAY", field: "a_la_carte_services", value: v })} />

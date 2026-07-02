@@ -43,7 +43,7 @@ export function VillaEditorShell({
       </div>
 
       {/* Layout desktop */}
-      <div className={cn("lg:gap-10", hasPreview ? "lg:grid lg:grid-cols-[1fr_380px]" : "")}>
+      <div className={cn("lg:gap-6", hasPreview ? "lg:grid lg:grid-cols-[1fr_280px]" : "")}>
         <div className={cn(sidebar ? "lg:grid lg:grid-cols-[56px_1fr] lg:gap-4" : "")}>
           {sidebar}
           <div
