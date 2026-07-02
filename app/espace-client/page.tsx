@@ -15,6 +15,8 @@ import { TenantQuickLinks } from "@/components/espace-client/TenantQuickLinks";
 import { TenantShareBar } from "@/components/espace-client/TenantShareBar";
 import { RequestList } from "@/components/espace-client/RequestList";
 import { LocalGuide } from "@/components/espace-client/LocalGuide";
+import { PracticalInfoCard } from "@/components/espace-client/PracticalInfoCard";
+import { CheckoutInstructions } from "@/components/espace-client/CheckoutInstructions";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
@@ -80,7 +82,9 @@ export default function EspaceClientPage() {
       const villaIds = [...new Set(data.map((b: any) => b.villa_id))];
       const { data: villas } = await supabase
         .from("villas")
-        .select("id, name, location, image_url, image_urls")
+        .select(
+          "id, name, location, image_url, image_urls, wifi_name, wifi_password, welcome_booklet_url, check_out_time, checkout_instructions"
+        )
         .in("id", villaIds);
 
       const villaMap = Object.fromEntries((villas || []).map((v: any) => [v.id, v]));
@@ -236,6 +240,21 @@ export default function EspaceClientPage() {
       {/* Hero — prochain séjour */}
       {upcomingBooking && <UpcomingStayHero booking={upcomingBooking} />}
 
+      {upcomingBooking ? (
+        <>
+          <PracticalInfoCard
+            villa={upcomingBooking.villa}
+            startDate={upcomingBooking.start_date}
+            endDate={upcomingBooking.end_date}
+            status={upcomingBooking.status}
+          />
+          <CheckoutInstructions
+            endDate={upcomingBooking.end_date}
+            checkOutTime={upcomingBooking.villa?.check_out_time ?? undefined}
+          />
+        </>
+      ) : null}
+
       {/* Demandes en cours */}
       {upcomingBooking && (
         <section className="mt-10">
@@ -271,13 +290,18 @@ export default function EspaceClientPage() {
                 <div key={booking.id} className="space-y-3">
                   <BookingCard booking={booking} />
                   {isPast && (
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex flex-col gap-2 sm:flex-row">
                       <Link
                         href={`/villas/${booking.villa_id}`}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-navy/50 hover:text-gold transition-colors"
+                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
                       >
-                        <KayvilaPngIcon name="arrow-right" size={18} alt="" />
-                        Re-réserver
+                        RE-RÉSERVER
+                      </Link>
+                      <Link
+                        href="/espace-client/messagerie"
+                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 border border-navy/15 px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-navy no-underline transition-colors hover:border-navy/30"
+                      >
+                        Contacter la conciergerie
                       </Link>
                     </div>
                   )}

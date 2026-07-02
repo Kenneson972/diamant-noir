@@ -9,6 +9,7 @@ import { pickVillaImageUrl } from "@/lib/villa-image";
 type UpcomingBooking = {
   start_date: string;
   end_date: string;
+  price?: number | null;
   villa?: {
     name?: string;
     location?: string | null;
@@ -42,7 +43,17 @@ export function UpcomingStayHero({ booking }: { booking: UpcomingBooking }) {
             sizes="(max-width: 768px) 100vw, 55vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-navy/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-navy/5" />
+          <div className="absolute inset-x-0 bottom-0 p-4 md:hidden">
+            <h2 className="font-display text-xl font-normal leading-snug text-white drop-shadow">
+              {booking.villa?.name ?? "Villa Kayvila"}
+            </h2>
+            {booking.villa?.location ? (
+              <p className="font-display text-sm italic text-white/80">
+                {booking.villa.location}, Martinique
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex flex-col justify-center px-6 py-8 md:px-8 md:py-10">
@@ -57,18 +68,27 @@ export function UpcomingStayHero({ booking }: { booking: UpcomingBooking }) {
             ) : null}
           </div>
 
-          <h2 className="font-display text-2xl font-normal leading-snug text-navy md:text-[26px]">
+          <h2 className="hidden font-display text-2xl font-normal leading-snug text-navy md:block md:text-[26px]">
             {booking.villa?.name ?? "Villa Kayvila"}
           </h2>
           {booking.villa?.location ? (
-            <p className="mt-1 font-display text-sm italic text-navy/50">
+            <p className="mt-1 hidden font-display text-sm italic text-navy/50 md:block">
               {booking.villa.location}, Martinique
             </p>
           ) : null}
-          <p className="mt-4 text-sm text-navy/65">
-            {fmt(startDate)} – {fmt(endDate)}
-            <span className="text-navy/35"> · {nights} nuit{nights > 1 ? "s" : ""}</span>
-          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70">
+              {fmt(startDate)} – {fmt(endDate)}
+            </span>
+            <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70">
+              {nights} nuit{nights > 1 ? "s" : ""}
+            </span>
+            {booking.price != null && booking.price > 0 ? (
+              <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70">
+                {new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(booking.price)}
+              </span>
+            ) : null}
+          </div>
 
           <Link
             href="/espace-client/livret"
