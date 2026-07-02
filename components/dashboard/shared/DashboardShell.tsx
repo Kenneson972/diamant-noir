@@ -6,6 +6,7 @@ import { Sidebar } from "@heroui-pro/react/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { KayvilaSidebarPanel } from "@/components/dashboard/shared/kayvila-sidebar-panel";
 import { DashboardHeader } from "./DashboardHeader";
+import { MobileBottomNav } from "./MobileBottomNav";
 import { AdminCommandPalette } from "@/components/dashboard/admin/AdminCommandPalette";
 import type { SidebarMenuItem } from "./dashboard-sidebar-types";
 
@@ -84,10 +85,11 @@ export function DashboardShell({
           />
           <main
             id={`${role}-main`}
-            className="flex-1 px-4 py-6 md:px-8 md:py-8"
+            className="flex-1 px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:py-8 md:pb-8"
           >
             {children}
           </main>
+          <MobileBottomNav role={role} />
         </Sidebar.Main>
       </Sidebar.Provider>
     </>
