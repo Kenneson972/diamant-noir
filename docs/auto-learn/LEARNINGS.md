@@ -2,6 +2,24 @@
 
 ---
 
+## 2026-07-02 — Refonte responsive mobile (T1-T5/11, ⏸️ HANDOFF)
+
+### Fait
+- Brainstorm→spec→plan superpowers (2 missions fable-*.md décomposées : responsive d'abord, CRUD Villa reporté). Spec `docs/superpowers/specs/2026-07-01-responsive-mobile-dashboards-design.md` (+ section impeccable), plan 11 tâches `docs/superpowers/plans/2026-07-02-responsive-mobile-dashboards.md`.
+- Branche `feat/responsive-mobile-dashboards` poussée : T1 bottom nav 3 rôles (`0bdf15d`), T2 KPI 2×2 mobile (`1218616`), T3 QuickActions+BookOpen (`deef3e9`), T4 FilterBottomSheet (`f5d11fd`), T5 cartes villas admin (`86f09dc`). RESTE T6-T11 — reprise : `.git/sdd/progress.md` section HANDOFF.
+
+### Règles dures apprises
+- **Tiroir sidebar mobile HeroUI Pro par code = `useSidebar().setMobileOpen(true)`** — `<Sidebar.Trigger>` avec children impose `button--icon-only` 36px et sa pressabilité react-aria fait timeouter les clics Playwright. API : `dist/components/sidebar/sidebar.d.ts`.
+- **Le banner cookies (`z-[9999]`) intercepte tout clic bas d'écran en navigateur vierge** (« subtree intercepts pointer events ») → en test, `addInitScript` posant `kayvila-cookie-consent` dans localStorage AVANT le premier goto.
+- **`Sidebar.Main` HeroUI rend un `<main>`** → 2 `<main>` imbriqués dans les dashboards ; cibler `#admin-main`/`#owner-main`/`#tenant-main`, jamais `querySelector("main")`.
+- **Double rendu : `.first()` peut matcher l'instance cachée** (ex. « Déconnexion » sidebar desktop) → `filter({ visible: true })`.
+- **Vérif headless sans MCP** : `import { chromium } from "<abs>/node_modules/playwright-core/index.mjs"` (NODE_PATH inopérant en ESM). Utile quand le browser MCP est verrouillé par un subagent tué.
+- **`ICON_MAP` de dashboard-nav-icon fallback silencieusement** sur LayoutDashboard → vérifier l'existence du nom (BookOpen manquait).
+- **Le dev server :3000 du user peut servir du code périmé** → lancer le sien (`PORT=3001 npm run dev`) pour vérifier, puis le tuer en fin de session.
+- **`.git/sdd/` garde briefs/rapports d'anciennes sessions aux mêmes noms** → vérifier le mtime avant de lire un rapport de subagent.
+
+---
+
 ## 2026-06-21 (nuit) — Intégration pack d'icônes PNG Kayvila (Higgsfield)
 
 ### Fait
