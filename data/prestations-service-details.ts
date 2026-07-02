@@ -46,7 +46,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Reportage photos",
-        desc: "Visuels haute résolution signés par un photographe. Lumière, cadrage, mise en scène des espaces. Des images premium justifient un tarif premium.",
+        desc: "Prises de vue réalisées par notre équipe. Cadrage, lumière et mise en scène travaillés pour des images attractives sur les plateformes.",
       },
       {
         title: "Création et optimisation d'annonces",
@@ -157,7 +157,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
       {
         title: "Blanchisserie incluse hors commission 22 %",
-        desc: "Le linge et le ménage ne sont pas soumis à notre commission : vous conservez 100 % de ces revenus annexes selon le calibrage de votre annonce.",
+        desc: "Le linge et le ménage ne sont pas soumis à notre commission : ils sont facturés au voyageur et réglés directement aux intervenants. Vous ne les avancez pas et ils n'entrent pas dans le calcul de nos 22 %.",
       },
       {
         title: "Coordination des équipes",

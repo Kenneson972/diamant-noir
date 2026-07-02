@@ -39,9 +39,9 @@ export function HomeOwnersSection() {
             </h2>
             <div className="mt-5 h-px w-8 bg-gold/40" aria-hidden />
             <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/80">
-              De la mise en ligne au reversement, nous prenons en charge chaque aspect de votre bien
-              avec une équipe locale au Diamant. Vous recevez vos revenus, vos voyageurs sont comblés,
-              vous ne gérez rien.
+              De la mise en ligne au suivi de vos revenus, nous prenons en charge chaque aspect de votre bien
+              avec une équipe locale en Martinique. Le fruit de vos locations vous revient directement,
+              vos voyageurs sont comblés, vous ne gérez rien.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link

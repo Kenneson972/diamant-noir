@@ -250,7 +250,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // ── Qui sommes-nous ──────────────────────────────────────
     "about.title": "Notre mission",
-    "about.subtitle": "La conciergerie de villa de standing en Martinique",
+    "about.subtitle": "La conciergerie de villas de standing en Martinique",
     "about.intro": "Kayvila accompagne les propriétaires de villas d'exception dans la mise en valeur et la gestion sereine de leur patrimoine.",
     "about.adn_title": "Notre ADN",
     "about.cta_villas": "Découvrir nos villas",

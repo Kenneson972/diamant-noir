@@ -41,7 +41,7 @@ const SERVICE_VISUALS: Record<
 };
 
 const SERVICE_TAGLINES: Record<string, string> = {
-  marketing: "Estimation locative, photos pro, annonces optimisées.",
+  marketing: "Estimation locative, reportage photos, annonces optimisées.",
   operations: "Check-in, contrôles qualité, coordination ménage et artisans.",
   voyageurs: "Interlocuteur unique 7j/7, de la réservation au départ.",
   menage: "Ménage et blanchisserie facturés aux voyageurs, hors commission.",
