@@ -7,12 +7,15 @@ export function VillaEditorShell({
   sidebar,
   preview,
   children,
+  compact,
 }: {
   sidebar?: ReactNode;
   preview: ReactNode;
   children: ReactNode;
+  compact?: boolean;
 }) {
   const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
+  const hasPreview = !compact;
 
   return (
     <div>
@@ -36,19 +39,21 @@ export function VillaEditorShell({
       </div>
 
       {/* Layout desktop */}
-      <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-10">
+      <div className={cn("lg:gap-10", hasPreview ? "lg:grid lg:grid-cols-[1fr_380px]" : "")}>
         <div className={cn(sidebar ? "lg:grid lg:grid-cols-[56px_1fr] lg:gap-4" : "")}>
           {sidebar}
           <div className={cn(mobileTab !== "edit" && "hidden lg:block")}>{children}</div>
         </div>
-        <div
-          className={cn(
-            "pt-8 lg:sticky lg:top-24 lg:self-start",
-            mobileTab !== "preview" && "hidden lg:block"
-          )}
-        >
-          {preview}
-        </div>
+        {hasPreview && (
+          <div
+            className={cn(
+              "pt-8 lg:sticky lg:top-24 lg:self-start",
+              mobileTab !== "preview" && "hidden lg:block"
+            )}
+          >
+            {preview}
+          </div>
+        )}
       </div>
     </div>
   );

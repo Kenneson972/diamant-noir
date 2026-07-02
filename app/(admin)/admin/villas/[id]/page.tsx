@@ -82,7 +82,7 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
       {/* Layout : VillaEditor + AdminVillaBlocks (2/3) | Sidebar (1/3) */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <VillaEditor villa={villa} isAdmin />
+          <VillaEditor villa={villa} isAdmin compact />
           <AdminVillaBlocks villaId={villa.id} />
         </div>
 

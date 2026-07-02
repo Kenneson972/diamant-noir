@@ -40,7 +40,7 @@ const EDIT_SECTIONS = [
   { id: "admin", label: "Administration", icon: "Zap" },
 ];
 
-export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?: boolean }) {
+export function VillaEditor({ villa, isAdmin, compact }: { villa?: Villa | null; isAdmin?: boolean; compact?: boolean }) {
   const router = useRouter();
   const isEdit = !!villa?.id;
   const [form, dispatch] = useReducer(villaFormReducer, createEmptyForm(), (empty) => {
@@ -150,7 +150,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
   // ─── Mode création ──────────────────────────────────────
   if (!isEdit) {
     return (
-      <VillaEditorShell preview={<VillaPreviewCard form={form} hoveredSection={hoveredSection} />}>
+      <VillaEditorShell preview={<VillaPreviewCard form={form} hoveredSection={hoveredSection} />} compact={compact}>
         <Stepper steps={CREATE_STEPS} current={step} onChange={setStep} />
         {step === 0 && (
           <div
@@ -261,6 +261,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
         />
       }
       preview={<VillaPreviewCard form={form} hoveredSection={hoveredSection} />}
+      compact={compact}
     >
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl font-bold text-navy">Modifier la villa</h2>
