@@ -42,50 +42,34 @@ export default async function VillaEditPage({ params }: Props) {
         Retour aux villas
       </Link>
 
-      {/* Title */}
-      <h1 className="font-display text-2xl font-bold text-navy-900">
-        {villa.name}
-      </h1>
-
-      {/* Layout: 2/3 edit + 1/3 sidebar */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Main — Form fields + Amenities */}
-        <div className="space-y-8 lg:col-span-2">
-          <VillaEditor villa={villa as unknown as Villa} />
-          <VillaIcalPanel
-            villaId={villa.id}
-            icalUrl={(villa.ical_url as string) ?? null}
-            otaChannels={(villa.ota_channels as Array<{ source: string; ical_url: string; label?: string }>) ?? null}
-          />
-        </div>
-
-        {/* Sidebar — Photo management link */}
-        <div className="space-y-4">
-          <div className="dashboard-card">
-            <h3 className="text-sm font-semibold text-navy-900">Gestion</h3>
-            <ul className="mt-3 space-y-2">
-              <li>
-                <Link
-                  href={`/dashboard/villas/${villa.id}/photos`}
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-navy-900/[0.03] hover:text-navy-900"
-                >
-                  <KayvilaPngIcon name="camera" size={20} className="aria-hidden" />
-                  Gerer les photos
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/dashboard/villas/${villa.id}/disponibilites`}
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-navy-900/[0.03] hover:text-navy-900"
-                >
-                  <KayvilaPngIcon name="calendar" size={20} className="aria-hidden" />
-                  Gérer les disponibilités
-                </Link>
-              </li>
-            </ul>
+      <VillaEditor
+        villa={villa as unknown as Villa}
+        icalContent={
+          <div className="space-y-4">
+            <VillaIcalPanel
+              villaId={villa.id}
+              icalUrl={(villa.ical_url as string) ?? null}
+              otaChannels={(villa.ota_channels as Array<{ source: string; ical_url: string; label?: string }>) ?? null}
+            />
+            <Link
+              href={`/dashboard/villas/${villa.id}/disponibilites`}
+              className="inline-flex min-h-[44px] items-center gap-2 text-sm font-medium text-navy/60 transition-colors hover:text-navy"
+            >
+              <KayvilaPngIcon name="calendar" size={20} alt="" />
+              Gérer les disponibilités
+            </Link>
           </div>
-        </div>
-      </div>
+        }
+        photosFooter={
+          <Link
+            href={`/dashboard/villas/${villa.id}/photos`}
+            className="mt-3 inline-flex min-h-[44px] items-center gap-2 text-sm font-medium text-navy/60 transition-colors hover:text-navy"
+          >
+            <KayvilaPngIcon name="camera" size={20} alt="" />
+            Gérer les photos (page dédiée)
+          </Link>
+        }
+      />
     </div>
   );
 }
