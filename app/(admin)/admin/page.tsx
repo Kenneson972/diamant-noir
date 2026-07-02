@@ -3,6 +3,7 @@ import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 import type { Metadata } from "next";
 import { type KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
+import { QuickActions } from "@/components/dashboard/shared/QuickActions";
 import { DashboardKpiGroup } from "@/components/dashboard/shared/dashboard-kpi-group";
 import { DashboardWidget } from "@/components/dashboard/shared/dashboard-widget";
 import { DashboardTimeline } from "@/components/dashboard/shared/dashboard-timeline";
@@ -305,11 +306,19 @@ export default async function AdminPage() {
         <DashboardKpiGroup items={priorityKpis} />
         <DashboardKpiGroup items={secondaryKpis} className="mt-4" />
 
+        <QuickActions
+          actions={[
+            { label: "Ajouter une villa", href: "/admin/villas/ajouter", icon: "Building2", primary: true },
+            { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
+            { label: "Messages", href: "/admin/messages", icon: "MessageCircle" },
+          ]}
+        />
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <DashboardWidget title="Arrivées du jour" className="border-emerald/10">
             <DashboardStayList
               kind="check-in"
-              emptyLabel="Aucune arrivée aujourd'hui."
+              emptyLabel="Aucune arrivée aujourd'hui — les check-ins du jour apparaîtront ici."
               items={(checkIns ?? []).map((b) => ({
                 id: b.id,
                 guestName: b.guest_name ?? "Voyageur",
@@ -321,7 +330,7 @@ export default async function AdminPage() {
           <DashboardWidget title="Départs du jour" className="border-amber/10">
             <DashboardStayList
               kind="check-out"
-              emptyLabel="Aucun départ aujourd'hui."
+              emptyLabel="Aucun départ aujourd'hui — les check-outs du jour apparaîtront ici."
               items={(checkOuts ?? []).map((b) => ({
                 id: b.id,
                 guestName: b.guest_name ?? "Voyageur",

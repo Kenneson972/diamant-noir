@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  BookOpen,
   Building2,
   CalendarDays,
   ClipboardList,
@@ -22,6 +23,7 @@ import {
 
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutDashboard,
+  BookOpen,
   Building2,
   CalendarDays,
   UserCircle,
