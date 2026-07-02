@@ -60,6 +60,9 @@ export function AdminOwnerMessagesPanel() {
 
   useEffect(() => {
     if (!supabase) return;
+    const existing = supabase.getChannels().find((c) => c.topic === "admin-owner-messages-realtime");
+    if (existing) return;
+
     const channel = supabase
       .channel("admin-owner-messages-realtime")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "owner_messages" }, fetchAll)
