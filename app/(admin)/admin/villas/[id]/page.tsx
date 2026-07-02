@@ -6,7 +6,6 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
 import type { VillaPublishChecklistItem } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
-import { AdminVillaEditClient } from "./AdminVillaEditClient";
 import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
