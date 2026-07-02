@@ -60,7 +60,7 @@ export function AdminOwnerMessagesPanel() {
 
   useEffect(() => {
     if (!supabase) return;
-    const existing = supabase.getChannels().find((c) => c.topic === "admin-owner-messages-realtime");
+    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "admin-owner-messages-realtime");
     if (existing) return;
 
     const channel = supabase
