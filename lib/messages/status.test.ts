@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getOwnerMessageStatus, type OwnerMessageRow } from "./status";
+import { getOwnerMessageStatus, type OwnerMessageRow, type TenantMessageRow } from "./status";
 
 function makeMessage(overrides: Partial<OwnerMessageRow>): OwnerMessageRow {
   return {
@@ -51,5 +51,20 @@ describe("getOwnerMessageStatus", () => {
       created_at: "2026-07-01T10:00:00.000Z",
     });
     expect(getOwnerMessageStatus(message, [adminReply, message])).toBe("read");
+  });
+
+  it("accepts a tenant message row (sender_role 'guest') without a type error", () => {
+    const tenantMessage: TenantMessageRow = {
+      id: "t1",
+      guest_id: "guest-1",
+      booking_id: null,
+      subject: "autre",
+      content: "test",
+      sender_role: "guest",
+      sender_id: "guest-1",
+      read_at: null,
+      created_at: "2026-07-01T10:00:00.000Z",
+    };
+    expect(getOwnerMessageStatus(tenantMessage, [tenantMessage])).toBe("sent");
   });
 });

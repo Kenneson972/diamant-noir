@@ -10,11 +10,29 @@ export type OwnerMessageRow = {
   created_at: string;
 };
 
+export type TenantMessageRow = {
+  id: string;
+  guest_id: string;
+  booking_id: string | null;
+  subject: "probleme" | "sejour" | "reservation" | "autre";
+  content: string;
+  sender_role: "guest" | "admin";
+  sender_id: string;
+  read_at: string | null;
+  created_at: string;
+};
+
+export type MessageStatusInput = {
+  sender_role: string;
+  read_at: string | null;
+  created_at: string;
+};
+
 export type OwnerMessageStatus = "sent" | "read" | "replied";
 
 export function getOwnerMessageStatus(
-  message: OwnerMessageRow,
-  thread: OwnerMessageRow[]
+  message: MessageStatusInput,
+  thread: MessageStatusInput[]
 ): OwnerMessageStatus {
   const hasAdminReplyAfter = thread.some(
     (m) =>
