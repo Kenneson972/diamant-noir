@@ -7,6 +7,7 @@ import {
   AdminReservationsDataGrid,
   type AdminBookingRow,
 } from "@/components/dashboard/admin/AdminReservationsDataGrid";
+import { AdminReservationCardList } from "@/components/dashboard/admin/AdminReservationCardList";
 import { AdminReservationsKanban } from "@/components/dashboard/admin/AdminReservationsKanban";
 import { KayvilaEmptyState, KayvilaActionBar, KayvilaSegment } from "@/components/ui/pro";
 import { ReservationCalendar } from "@/components/dashboard/ReservationCalendar";
@@ -344,14 +345,23 @@ export default function AdminReservationsPage() {
         />
       ) : (
         <>
-          <AdminReservationsDataGrid
-            rows={bookings}
-            filter={filter}
-            onConfirm={(id) => handleAction(id, "confirmed")}
-            onCancel={(id) => handleAction(id, "cancelled")}
-            selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
-          />
+          <div className="hidden md:block">
+            <AdminReservationsDataGrid
+              rows={bookings}
+              filter={filter}
+              onConfirm={(id) => handleAction(id, "confirmed")}
+              onCancel={(id) => handleAction(id, "cancelled")}
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
+            />
+          </div>
+          <div className="md:hidden">
+            <AdminReservationCardList
+              rows={bookings}
+              onConfirm={(id) => handleAction(id, "confirmed")}
+              onCancel={(id) => handleAction(id, "cancelled")}
+            />
+          </div>
 
           <KayvilaActionBar
             selectedCount={selectionCount}
