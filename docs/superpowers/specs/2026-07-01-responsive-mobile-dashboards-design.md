@@ -148,6 +148,35 @@ Rendre les dashboards Kayvila impeccables sur mobile (< 768 px, testé jusqu'à 
 - **Gestion d'erreur** : aucune nouvelle surface d'erreur ; les sections conditionnelles (Infos pratiques, onboarding) dégradent en « non affiché » si données absentes, jamais en crash.
 - Zéro nouvelle dépendance npm.
 
+## Direction design — impeccable (obligatoire pour tous les nouveaux composants)
+
+Contexte `.impeccable.md` : Kayvila = portail de club privé, pas un dashboard SaaS. Autorité calme. Note : la direction « thème sombre » de `.impeccable.md` est antérieure au design system actuel (offwhite/navy/gold) — on reste sur le thème clair existant, seuls les principes s'appliquent.
+
+**La donnée parle par la typographie, pas par les conteneurs.**
+- KPI mobile 2×2 : chiffre en `font-display-dashboard` grand (≥ `text-3xl`), label en eyebrow caps letter-spaced (pattern existant `tracking-[0.25em]`). Pas de chrome de carte lourd, pas d'icône géante au-dessus de chaque chiffre.
+- En-têtes de mois (écran 5) : eyebrow caps fines + espacement généreux au-dessus, serré en dessous — la hiérarchie vient du rythme d'espacement, pas de bordures.
+
+**L'or est un signal, jamais une décoration.**
+- Bottom nav : icônes/labels en `text-navy/55`, **seule l'entrée active est gold**. Pas de fond gold, pas de glow.
+- Un seul CTA gold par écran (RE-RÉSERVER, Ajouter une villa). Les actions secondaires = ghost/outline navy. Jamais 3 boutons primaires côte à côte dans Actions rapides.
+
+**Interdits absolus (tells IA — déjà règles du projet depuis l'audit 2026-05-10) :**
+- Zéro side-stripe (`border-left/right` > 1 px coloré) sur cartes, alertes, groupes — remplacer par bordure complète + fond teinté (`border-gold/30 bg-gold/[0.08]`).
+- Zéro texte en dégradé, zéro glassmorphism décoratif (et `backdrop-filter` désactivé mobile — règle perf existante).
+- Pas de cartes imbriquées dans des cartes : les cartes résa/villa mobiles sont plates (bordure `border-navy/8`, fond blanc, c'est tout).
+
+**Rythme et espacement.**
+- Espacement varié, pas un padding uniforme : groupes serrés (infos d'une même résa), séparations généreuses (entre mois, entre sections). `gap` plutôt que margins.
+- Asymétrie assumée : texte aligné à gauche, pas de tout-centré.
+
+**Interaction et mouvement.**
+- Bottom sheets : `transform` + `opacity` uniquement, easing déccélérant (ease-out), `prefers-reduced-motion` respecté. Pas de bounce.
+- Optimistic UI sur les filtres (déjà côté client, instantané).
+- Empty states qui enseignent : « Aucune arrivée aujourd'hui — vos check-ins apparaîtront ici la veille » plutôt que « Aucune donnée ». Chaque empty state des 6 écrans est rédigé, pas générique.
+- Zones interactives : feedback tactile discret (`active:scale-[0.98]`, pattern existant).
+
+**Test anti-slop avant merge** : chaque nouvel écran mobile doit passer la question « est-ce qu'on dirait un template IA ? » — si un composant pourrait sortir tel quel d'un starter admin générique, retravailler la typographie et le rythme avant de livrer.
+
 ## Risques identifiés
 
 - **Double rendu DataGrid/cartes** : poids DOM double sur ces 2 pages — acceptable (listes bornées), et les tests Playwright doivent cibler `:visible`.
