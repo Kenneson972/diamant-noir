@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Metadata } from "next";
-import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
-import type { VillaPublishChecklistItem } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
 import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
@@ -57,14 +54,6 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
     status: b.status,
   }));
 
-  const checklistItems: VillaPublishChecklistItem[] = [
-    { id: "name",  ok: !!villa.name,            label: "Nom renseigné" },
-    { id: "price", ok: !!villa.price_per_night,  label: "Prix par nuit défini" },
-    { id: "desc",  ok: !!villa.description,      label: "Description rédigée" },
-    { id: "img",   ok: !!villa.image_url,        label: "Photo principale" },
-    { id: "loc",   ok: !!villa.location,         label: "Localisation" },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -79,90 +68,67 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
         <h1 className="font-display text-2xl font-bold text-navy">{villa.name}</h1>
       </div>
 
-      {/* Layout : VillaEditor + AdminVillaBlocks (2/3) | Sidebar (1/3) */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="space-y-8 lg:col-span-2">
-          <VillaEditor villa={villa} isAdmin />
-          <AdminVillaBlocks villaId={villa.id} />
-        </div>
+      <VillaEditor
+        villa={villa}
+        isAdmin
+        adminExtras={
+          <>
+            <AdminVillaBlocks villaId={villa.id} />
 
-        {/* Sidebar */}
-        <aside className="space-y-4">
-          <VillaPublishChecklist items={checklistItems} />
-
-          {/* Mini-map sous la disponibilité */}
-          {villa.latitude != null && villa.longitude != null ? (
-            <div className="rounded-2xl border border-navy/8 bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-navy/50">
-                Localisation
-              </h3>
-              <div className="h-[220px] overflow-hidden rounded-xl border border-navy/10 md:h-[280px]">
-                <VillaDetailMiniMap
-                  latitude={villa.latitude}
-                  longitude={villa.longitude}
-                  name={villa.name ?? "Villa"}
-                />
-              </div>
-            </div>
-          ) : null}
-
-          {/* Historique des réservations */}
-          {bookings.length > 0 && (() => {
-            const todayDate = new Date().toISOString().slice(0, 10);
-            const upcoming = bookings.filter((b) => (b.end_date ?? "") >= todayDate);
-            const past = bookings.filter((b) => (b.end_date ?? "") < todayDate);
-            const villaImageSrc =
-              (villa.image_url as string | null) ??
-              (Array.isArray(villa.image_urls)
-                ? (villa.image_urls as string[])[0]
-                : null);
-            return (
-              <div className="rounded-2xl border border-navy/8 bg-white p-4 shadow-sm">
+            {villa.latitude != null && villa.longitude != null ? (
+              <div>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-navy/50">
-                  Historique
+                  Localisation
                 </h3>
-                <div className="space-y-0.5">
-                  {[...upcoming, ...past].map((b) => (
-                    <div key={b.id} className="flex items-center gap-3 border-b border-navy/8 py-2">
-                      <VillaThumb
-                        src={villaImageSrc}
-                        alt={b.guest_name ?? "Réservation"}
-                        size={48}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm text-navy">{b.guest_name ?? "Client"}</p>
-                        <p className="text-[11px] text-navy/50">
-                          {b.start_date ? new Date(b.start_date).toLocaleDateString("fr-FR") : "—"}{" "}→{" "}
-                          {b.end_date ? new Date(b.end_date).toLocaleDateString("fr-FR") : "—"}
-                        </p>
-                      </div>
-                      <span className="text-[11px] uppercase tracking-wide text-navy/45">{b.status}</span>
-                    </div>
-                  ))}
+                <div className="h-[220px] overflow-hidden rounded-xl border border-navy/10 md:h-[280px]">
+                  <VillaDetailMiniMap
+                    latitude={villa.latitude}
+                    longitude={villa.longitude}
+                    name={villa.name ?? "Villa"}
+                  />
                 </div>
               </div>
-            );
-          })()}
+            ) : null}
 
-          <div className="rounded-2xl border border-navy/8 bg-white p-5 shadow-sm space-y-3">
-            <a
-              href={`/villas/${villa.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-xl border border-navy/15 bg-white px-4 py-3 text-sm font-medium text-navy transition-colors hover:border-gold hover:text-gold"
-            >
-              <KayvilaPngIcon name="door" size={18} alt="" />
-              Voir sur le site
-            </a>
-            <Link
-              href="/admin/villas"
-              className="block text-center text-xs text-navy/55 hover:text-navy transition-colors"
-            >
-              ← Retour aux villas
-            </Link>
-          </div>
-        </aside>
-      </div>
+            {bookings.length > 0 && (() => {
+              const todayDate = new Date().toISOString().slice(0, 10);
+              const upcoming = bookings.filter((b) => (b.end_date ?? "") >= todayDate);
+              const past = bookings.filter((b) => (b.end_date ?? "") < todayDate);
+              const villaImageSrc =
+                (villa.image_url as string | null) ??
+                (Array.isArray(villa.image_urls)
+                  ? (villa.image_urls as string[])[0]
+                  : null);
+              return (
+                <div>
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-navy/50">
+                    Historique
+                  </h3>
+                  <div className="space-y-0.5">
+                    {[...upcoming, ...past].map((b) => (
+                      <div key={b.id} className="flex items-center gap-3 border-b border-navy/8 py-2">
+                        <VillaThumb
+                          src={villaImageSrc}
+                          alt={b.guest_name ?? "Réservation"}
+                          size={48}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm text-navy">{b.guest_name ?? "Client"}</p>
+                          <p className="text-[11px] text-navy/50">
+                            {b.start_date ? new Date(b.start_date).toLocaleDateString("fr-FR") : "—"}{" "}→{" "}
+                            {b.end_date ? new Date(b.end_date).toLocaleDateString("fr-FR") : "—"}
+                          </p>
+                        </div>
+                        <span className="text-[11px] uppercase tracking-wide text-navy/45">{b.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </>
+        }
+      />
     </div>
   );
 }
