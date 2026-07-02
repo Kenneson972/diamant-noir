@@ -14,6 +14,8 @@ import { SeasonalPricesEditor } from "./SeasonalPricesEditor";
 export type VillaFormFieldsProps = {
   form: Record<string, any>;
   onChange: (key: string, value: any) => void;
+  /** Si true, pas d'accordéon — les champs de base sont rendus à plat. Les sections déjà couvertes par VillaEditor (équipements, règles, services, tarifs) sont masquées. */
+  embedded?: boolean;
 };
 
 /* ─── Helpers ───────────────────────────────────────── */
@@ -71,21 +73,97 @@ const NEARBY_SUGGESTIONS = ["Plage", "Restaurant", "Supermarché", "Pharmacie", 
 
 /* ─── Composant principal ───────────────────────────── */
 
-export function VillaFormFields({ form, onChange }: VillaFormFieldsProps) {
+export function VillaFormFields({ form, onChange, embedded }: VillaFormFieldsProps) {
   const handleGeolocate = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const lat = document.getElementById("vf-latitude") as HTMLInputElement | null;
-        const lng = document.getElementById("vf-longitude") as HTMLInputElement | null;
-        if (lat) lat.value = pos.coords.latitude.toFixed(6);
-        if (lng) lng.value = pos.coords.longitude.toFixed(6);
+        onChange("latitude", pos.coords.latitude);
+        onChange("longitude", pos.coords.longitude);
       },
       () => {},
       { enableHighAccuracy: true, timeout: 5000 }
     );
   };
 
+  // Section de base — commune aux deux modes
+  const basicFields = (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <div className="sm:col-span-2">
+        <FieldLabel htmlFor="vf-name" label="Nom de la villa *" />
+        <Input id="vf-name" defaultValue={s(form.name)} placeholder="Ex: Villa Océane" className="text-sm" onChange={(e: any) => onChange("name", e.target.value)} />
+      </div>
+      <div className="sm:col-span-2">
+        <FieldLabel htmlFor="vf-location" label="Localisation" />
+        <Input id="vf-location" defaultValue={s(form.location)} placeholder="Ex: Trois-Îlets, Martinique" className="text-sm" onChange={(e: any) => onChange("location", e.target.value)} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-price" label="Prix / nuit (€)" />
+        <Input id="vf-price" type="number" min="0" step="1" defaultValue={form.price_per_night as string || ""} placeholder="250" className="text-sm" onChange={(e: any) => onChange("price_per_night", Number(e.target.value))} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-min-nights" label="Nuits minimum" />
+        <Input id="vf-min-nights" type="number" min="1" max="30" step="1" defaultValue={(form.min_nights as string) || "1"} placeholder="1" className="text-sm" onChange={(e: any) => onChange("min_nights", Number(e.target.value))} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-capacity" label="Capacité (personnes)" />
+        <Input id="vf-capacity" type="number" min="1" defaultValue={form.capacity as string || ""} placeholder="6" className="text-sm" onChange={(e: any) => onChange("capacity", Number(e.target.value))} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-bedrooms" label="Chambres" />
+        <input id="vf-bedrooms" type="number" min="0" max="20" step="1" defaultValue={(form.bedrooms ?? 0) as number} placeholder="3" onChange={(e: any) => onChange("bedrooms", Number(e.target.value))} className="w-full rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 placeholder:text-muted/50 focus:border-navy-900/30 focus:outline-none" />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-bathrooms" label="Salles de bain" />
+        <Input id="vf-bathrooms" type="number" min="0" step="1" defaultValue={form.bathrooms_count as string || ""} placeholder="2" className="text-sm" onChange={(e: any) => onChange("bathrooms_count", Number(e.target.value))} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-surface" label="Surface (m²)" />
+        <Input id="vf-surface" type="number" min="0" defaultValue={form.surface_m2 as string || ""} placeholder="120" className="text-sm" onChange={(e: any) => onChange("surface_m2", Number(e.target.value))} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-checkin" label="Check-in" />
+        <Input id="vf-checkin" defaultValue={s(form.check_in_time)} placeholder="15:00" className="text-sm" onChange={(e: any) => onChange("check_in_time", e.target.value)} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-checkout" label="Check-out" />
+        <Input id="vf-checkout" defaultValue={s(form.check_out_time)} placeholder="11:00" className="text-sm" onChange={(e: any) => onChange("check_out_time", e.target.value)} />
+      </div>
+      <div className="sm:col-span-2">
+        <FieldLabel htmlFor="vf-desc" label="Description" />
+        <textarea id="vf-desc" defaultValue={s(form.description)} rows={4} placeholder="Description luxueuse de la villa..." onChange={(e: any) => onChange("description", e.target.value)} className="w-full resize-y rounded-lg border border-border-subtle bg-transparent px-3 py-2 text-sm text-navy-900 placeholder:text-muted/50 focus:border-navy-900/30 focus:outline-none" />
+      </div>
+      <div>
+        <FieldLabel htmlFor="vf-latitude" label="Latitude" />
+        <Input id="vf-latitude" type="number" value={form.latitude || ""} placeholder="14.4750" className="text-sm" onChange={(e: any) => onChange("latitude", Number(e.target.value))} />
+      </div>
+      <div>
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <FieldLabel htmlFor="vf-longitude" label="Longitude" />
+            <Input id="vf-longitude" type="number" value={form.longitude || ""} placeholder="-61.0247" className="text-sm" onChange={(e: any) => onChange("longitude", Number(e.target.value))} />
+          </div>
+          <button type="button" onClick={handleGeolocate} className="mb-0.5 shrink-0 rounded-xl border border-gold/30 bg-gold/5 px-3 py-2 text-xs font-medium text-gold hover:bg-gold/10">
+            <KayvilaPngIcon name="location" size={18} alt="" className="inline mr-1" />Me localiser
+          </button>
+        </div>
+      </div>
+      <div className="sm:col-span-2">
+        <FieldLabel htmlFor="vf-map-embed" label="URL carte Google Maps (embed)" />
+        <Input id="vf-map-embed" defaultValue={s(form.map_embed_url)} placeholder="https://www.google.com/maps/embed?..." className="text-sm" onChange={(e: any) => onChange("map_embed_url", e.target.value)} />
+      </div>
+      <div className="sm:col-span-2">
+        <FieldLabel htmlFor="vf-airbnb" label="URL Airbnb" />
+        <Input id="vf-airbnb" defaultValue={s(form.airbnb_url)} placeholder="https://www.airbnb.fr/rooms/..." className="text-sm" onChange={(e: any) => onChange("airbnb_url", e.target.value)} />
+      </div>
+    </div>
+  );
+
+  if (embedded) {
+    return <div>{basicFields}</div>;
+  }
+
+  // --- MODE STANDALONE (ancien comportement, utilisé par les formulaires legacy) ---
   return (
     <div className="space-y-6">
       {/* 🏠 Informations générales */}

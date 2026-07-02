@@ -158,7 +158,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
             onMouseEnter={() => setHoveredSection("infos")}
             onMouseLeave={() => setHoveredSection(null)}
           >
-            <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} />
+            <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} embedded />
           </div>
         )}
         {step === 1 && (
@@ -286,7 +286,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
               Infos générales
             </summary>
             <div className="border-t border-navy/5 px-6 pb-6">
-              <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} />
+              <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} embedded />
             </div>
           </details>
         </section>
