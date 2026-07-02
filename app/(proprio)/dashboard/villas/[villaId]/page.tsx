@@ -5,7 +5,7 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
-import { VillaEditClient } from "./VillaEditClient";
+import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 
 export const metadata: Metadata = {
   title: "Modifier la villa — Kayvila",
@@ -50,7 +50,7 @@ export default async function VillaEditPage({ params }: Props) {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Main — Form fields + Amenities */}
         <div className="space-y-8 lg:col-span-2">
-          <VillaEditClient villa={villa as Record<string, unknown>} />
+          <VillaEditor villa={villa as unknown as Villa} />
         </div>
 
         {/* Sidebar — Photo management link */}

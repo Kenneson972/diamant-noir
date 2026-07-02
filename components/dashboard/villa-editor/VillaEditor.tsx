@@ -13,6 +13,12 @@ import { ProgressBar } from "./ProgressBar";
 import { VillaPreviewCard } from "./VillaPreviewCard";
 import { VillaEditorShell } from "./VillaEditorShell";
 import { VillaFormFields } from "./VillaFormFields";
+import { VillaImageManager } from "./VillaImageManager";
+import { VillaAmenitiesEditorV2 } from "./VillaAmenitiesEditor";
+import { RoomsEditor } from "./RoomsEditor";
+import { SeasonalPricesEditor } from "./SeasonalPricesEditor";
+import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
+import { ChipEditor } from "./ChipEditor";
 
 const CREATE_STEPS = [
   { label: "Infos générales", description: "Nom, localisation, description" },
@@ -40,7 +46,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
   const [form, dispatch] = useReducer(villaFormReducer, createEmptyForm(), (empty) => {
     if (!villa) return empty;
     // Map Villa (domain) → VillaFormData (Zod)
-    const v = villa as Record<string, unknown>;
+    const v = villa as unknown as Record<string, unknown>;
     const partial: Partial<VillaFormData> = {
       name: String(v.name ?? ""),
       location: String(v.location ?? ""),
@@ -71,7 +77,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const autoTimer = useRef<ReturnType<typeof setTimeout>>();
+  const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sections = sectionCompleteness(form);
   const sectionArr = EDIT_SECTIONS.map((s) => ({
@@ -110,7 +116,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
     const parsed = villaFormSchema.safeParse(form);
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
-      for (const e of parsed.error.errors) {
+      for (const e of parsed.error.issues) {
         if (e.path[0]) fieldErrors[e.path[0] as string] = e.message;
       }
       setErrors(fieldErrors);
@@ -285,41 +291,85 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
           </details>
         </section>
 
-        {/* Photos, Équipements, Pièces, Tarifs, Services, Contacts, Règles — placeholders */}
-        {["photos", "equipments", "rooms", "pricing", "contacts", "services", "rules"].map(
-          (id) => {
-            const label =
-              { photos: "Photos", equipments: "Équipements", rooms: "Pièces", pricing: "Tarifs", contacts: "Contacts urgence", services: "Services", rules: "Règles & sécurité" }[id] ?? id;
-            return (
-              <section
-                key={id}
-                id={`ve-${id}`}
-                onMouseEnter={() => setHoveredSection(id)}
-                onMouseLeave={() => setHoveredSection(null)}
-              >
-                <details className="group rounded-xl border border-navy/8 bg-white">
-                  <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
-                    {label}
-                  </summary>
-                  <div className="border-t border-navy/5 px-6 pb-6">
-                    <p className="text-sm text-muted">Cette section sera enrichie dans les prochaines tâches.</p>
-                  </div>
-                </details>
-              </section>
-            );
-          }
-        )}
-
-        {/* iCal */}
-        <section
-          id="ve-ical"
-          onMouseEnter={() => setHoveredSection("ical")}
-          onMouseLeave={() => setHoveredSection(null)}
-        >
+        {/* Photos */}
+        <section id="ve-photos" onMouseEnter={() => setHoveredSection("photos")} onMouseLeave={() => setHoveredSection(null)}>
           <details className="group rounded-xl border border-navy/8 bg-white">
             <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
-              Calendrier iCal
+              Photos ({form.image_urls.length})
             </summary>
+            <div className="border-t border-navy/5 px-6 pb-6">
+              <VillaImageManager imageUrls={form.image_urls} villaId={villa?.id} onImagesChange={(urls) => dispatch({ type: "SET_IMAGES", urls })} onMainImageChange={(url) => handleChange("image_url", url)} onError={(msg) => setErrors((p) => ({ ...p, _form: msg }))} />
+            </div>
+          </details>
+        </section>
+
+        {/* Équipements */}
+        <section id="ve-equipments" onMouseEnter={() => setHoveredSection("equipments")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Équipements</summary>
+            <div className="border-t border-navy/5 px-6 pb-6">
+              <VillaAmenitiesEditorV2 interior={form.equipment_interior} exterior={form.equipment_exterior} servicesHome={form.included_services_home} servicesCollection={form.included_services_collection} aLaCarte={form.a_la_carte_services} amenitiesImportLabels={[]} onChangeInterior={(v) => dispatch({ type: "SET_ARRAY", field: "equipment_interior", value: v })} onChangeExterior={(v) => dispatch({ type: "SET_ARRAY", field: "equipment_exterior", value: v })} onChangeServicesHome={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_home", value: v })} onChangeServicesCollection={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_collection", value: v })} onChangeALaCarte={(v) => dispatch({ type: "SET_ARRAY", field: "a_la_carte_services", value: v })} />
+            </div>
+          </details>
+        </section>
+
+        {/* Pièces */}
+        <section id="ve-rooms" onMouseEnter={() => setHoveredSection("rooms")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Pièces</summary>
+            <div className="border-t border-navy/5 px-6 pb-6">
+              <RoomsEditor rooms={form.rooms_details} onChange={(rooms) => dispatch({ type: "SET_ROOMS", rooms })} />
+            </div>
+          </details>
+        </section>
+
+        {/* Tarifs */}
+        <section id="ve-pricing" onMouseEnter={() => setHoveredSection("pricing")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Tarifs</summary>
+            <div className="border-t border-navy/5 px-6 pb-6">
+              <SeasonalPricesEditor seasons={form.seasonal_prices} onChange={(seasons) => dispatch({ type: "SET_SEASONS", seasons })} basePrice={form.price_per_night} />
+            </div>
+          </details>
+        </section>
+
+        {/* Contacts */}
+        <section id="ve-contacts" onMouseEnter={() => setHoveredSection("contacts")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Contacts urgence</summary>
+            <div className="border-t border-navy/5 px-6 pb-6">
+              <EmergencyContactsEditor contacts={form.emergency_contacts} onChange={(contacts) => dispatch({ type: "SET_CONTACTS", contacts })} />
+            </div>
+          </details>
+        </section>
+
+        {/* Services */}
+        <section id="ve-services" onMouseEnter={() => setHoveredSection("services")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Services</summary>
+            <div className="border-t border-navy/5 px-6 pb-6 space-y-4">
+              <ChipEditor id="srv-home" label="Inclus (accueil)" items={form.included_services_home} suggestions={[]} onChange={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_home", value: v })} />
+              <ChipEditor id="srv-collection" label="Services de collection" items={form.included_services_collection} suggestions={[]} onChange={(v) => dispatch({ type: "SET_ARRAY", field: "included_services_collection", value: v })} />
+              <ChipEditor id="srv-alacarte" label="À la carte" items={form.a_la_carte_services} suggestions={[]} onChange={(v) => dispatch({ type: "SET_ARRAY", field: "a_la_carte_services", value: v })} />
+            </div>
+          </details>
+        </section>
+
+        {/* Règles & sécurité */}
+        <section id="ve-rules" onMouseEnter={() => setHoveredSection("rules")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Règles & sécurité</summary>
+            <div className="border-t border-navy/5 px-6 pb-6 space-y-4">
+              <ChipEditor id="house-rules" label="Règles intérieures" items={form.house_rules} suggestions={["Pas de fête", "Non-fumeur", "Animaux acceptés", "Respect du voisinage", "Pas de bruit après 22h", "Enfants bienvenus", "Adultes seulement", "Check-in autonome"]} onChange={(v) => dispatch({ type: "SET_ARRAY", field: "house_rules", value: v })} />
+              <ChipEditor id="safety-info" label="Sécurité" items={form.safety_info} suggestions={["Extincteur", "Trousse premiers secours", "Détecteur de fumée", "Détecteur CO", "Alarme", "Piscine sécurisée"]} onChange={(v) => dispatch({ type: "SET_ARRAY", field: "safety_info", value: v })} />
+            </div>
+          </details>
+        </section>
+
+        {/* iCal */}
+        <section id="ve-ical" onMouseEnter={() => setHoveredSection("ical")} onMouseLeave={() => setHoveredSection(null)}>
+          <details className="group rounded-xl border border-navy/8 bg-white">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-base font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">Calendrier iCal</summary>
             <div className="border-t border-navy/5 px-6 pb-6">
               <p className="text-sm text-muted">Synchronisation iCal disponible.</p>
             </div>

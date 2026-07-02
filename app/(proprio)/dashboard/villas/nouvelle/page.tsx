@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import { VillaEditorForm } from "@/components/dashboard/proprio/VillaEditorForm";
+import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 
 export const metadata: Metadata = {
   title: "Ajouter une villa — Kayvila",
@@ -34,7 +34,7 @@ export default function NewVillaPage() {
       {/* Form */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <VillaEditorForm villa={{}} />
+          <VillaEditor />
         </div>
       </div>
     </div>

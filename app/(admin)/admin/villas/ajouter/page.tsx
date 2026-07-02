@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { AdminVillaForm } from "@/components/dashboard/admin/AdminVillaForm";
+import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 
 export const metadata: Metadata = {
   title: "Ajouter une villa — Administration Kayvila",
 };
 
 export default function AdminAddVillaPage() {
-  return <AdminVillaForm />;
+  return <VillaEditor isAdmin />;
 }

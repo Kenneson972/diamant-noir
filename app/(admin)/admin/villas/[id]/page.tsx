@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { VillaPublishChecklist } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
 import type { VillaPublishChecklistItem } from "@/components/dashboard/villa-editor/VillaPublishChecklist";
 import { AdminVillaEditClient } from "./AdminVillaEditClient";
+import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 import type { VillaBookingRow } from "@/components/dashboard/villa-editor/VillaBookingsRegistry";
 import { VillaDetailMiniMap } from "@/components/dashboard/admin/VillaDetailMiniMap";
 import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
@@ -81,15 +82,8 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
 
       {/* Layout 2 colonnes */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Colonne principale */}
-        <div className="lg:col-span-2 space-y-8">
-          <AdminVillaEditClient
-            villa={villa as Record<string, unknown>}
-            bookings={bookings}
-          />
-          {/* Blocages de disponibilités (admin) */}
-          <AdminVillaBlocks villaId={villa.id} />
-        </div>
+        <VillaEditor villa={villa} isAdmin />
+        <AdminVillaBlocks villaId={villa.id} />
 
         {/* Sidebar */}
         <aside className="space-y-4">
