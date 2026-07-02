@@ -2,6 +2,16 @@
 
 ---
 
+## 2026-07-02 — Éditeur villa v2 (✅ MERGÉ main) — pièges découverts
+
+- **Autosave villas / contraintes DB** : la table `villas` refuse `""` sur `collection_tier` et `cancellation_template` (check constraints) et sur `owner_id` (uuid). L'ancien éditeur 500-ait silencieusement sur les brouillons neufs. Règle : avant POST update-villa, envoyer `null` (ou omettre `owner_id`) pour ces champs quand ils sont vides.
+- **API create-villa** : répond `{ success, data: { id } }` — l'id n'est PAS à la racine. L'ancien code lisait `json.id` (undefined) et redirigeait vers la liste au lieu de l'éditeur.
+- **Playwright + `next start` résident** : un `npm run start` qui tourne depuis la veille sert le build de la veille même si `.next` a été reconstruit — toujours redémarrer le serveur après un build avant de lancer Playwright.
+- **Sélecteur listing villas** : `a[href^='/dashboard/villas/']` matche aussi `/nouvelle` — filtrer par regex UUID (`[0-9a-f-]{36}`) pour ouvrir une vraie villa.
+- Les tests villa-editor.spec.ts créent un brouillon « Villa Test E2E <timestamp> » par run (non publié) — nettoyer périodiquement via SQL (`DELETE FROM villas WHERE is_published = false AND name LIKE 'Villa Test E2E%'`).
+
+---
+
 ## 2026-07-02 — Préférence workflow design : croiser le brief avec les skills design
 
 - Pour toute refonte UI/UX Kayvila, Kenneson veut un **second avis design** via les skills `ui-ux-pro-max` et `impeccable` AVANT d'écrire le spec — pas seulement suivre le brief à la lettre.
