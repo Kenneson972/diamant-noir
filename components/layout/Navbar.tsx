@@ -22,9 +22,8 @@ const NAV_KEYS: { href: string; key: string }[] = [
   { href: "/contact", key: "nav.contact" },
 ];
 
-const CONCIERGE_TEL = "+596 96 00 00 00";
-const CONCIERGE_TEL_HREF = "tel:+59696000000";
-
+const CONCIERGE_TEL = "0696 68 18 69";
+const CONCIERGE_TEL_HREF = "tel:+596696681869";
 /** Aligné avec `BrandLogo` (`wrapClass` + `className` nav). */
 const NAVBAR_BRAND_HOME_LINK_CLASSES =
   "inline-flex items-center gap-2 md:gap-3 shrink-0 justify-center";

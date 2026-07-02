@@ -3,11 +3,9 @@ import { marketingSimpleLegal } from "@/lib/marketing-layout";
 import {
   LandingShell,
   LandingSectionNarrow,
-  LandingBlockTitle,
 } from "@/components/marketing/landing-sections";
 import { PageHero } from "@/components/marketing/PageHero";
 import { CgvContent } from "@/components/legal/CgvContent";
-import { CGV_TEXT } from "@/lib/legal";
 
 export const metadata = {
   title: "Conditions générales de vente",
@@ -48,23 +46,7 @@ export default function CgvPage() {
       />
 
       <LandingSectionNarrow bg="white">
-        <LandingBlockTitle eyebrow="Objet" title="Champ d'application" />
-        <p className="text-navy/80 leading-relaxed">{CGV_TEXT.objet}</p>
-      </LandingSectionNarrow>
-
-      <LandingSectionNarrow bg="offwhite">
-        <LandingBlockTitle eyebrow="Commande" title="Réservation & paiement" />
-        <p className="text-navy/80 leading-relaxed">{CGV_TEXT.reservationPaiement}</p>
-      </LandingSectionNarrow>
-
-      <LandingSectionNarrow bg="white">
-        <LandingBlockTitle eyebrow="Flexibilité" title="Annulation" />
-        <p className="text-navy/80 leading-relaxed">{CGV_TEXT.annulation}</p>
-      </LandingSectionNarrow>
-
-      <LandingSectionNarrow bg="offwhite">
-        <LandingBlockTitle eyebrow="Cadre" title="Responsabilité" />
-        <p className="text-navy/80 leading-relaxed">{CGV_TEXT.responsabilite}</p>
+        <CgvContent />
       </LandingSectionNarrow>
 
       <LandingSectionNarrow bg="white">
