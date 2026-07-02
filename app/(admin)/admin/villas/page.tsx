@@ -5,6 +5,8 @@ import { Plus, Search, SlidersHorizontal } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { AdminVillasDataGrid } from "@/components/dashboard/admin/AdminVillasDataGrid";
+import { AdminVillaCardList } from "@/components/dashboard/admin/AdminVillaCardList";
+import { FilterBottomSheet } from "@/components/dashboard/shared/FilterBottomSheet";
 import { KayvilaEmptyState } from "@/components/ui/pro";
 
 export const dynamic = "force-dynamic";
@@ -167,6 +169,81 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
 
   const isActive = (k: string, v: string) => params[k as keyof typeof params] === v;
 
+  const filterChips = (
+    <div className="flex flex-wrap items-center gap-2">
+      <SlidersHorizontal size={14} className="text-navy/30" />
+
+      {/* Filtre statut publié */}
+      <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-1">Statut</span>
+      {["", "oui", "non"].map((v) => (
+        <Link
+          key={v}
+          href={`/admin/villas${filterQs("published", v) ? `?${filterQs("published", v)}` : ""}`}
+          className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
+            isActive("published", v) || (!params.published && v === "")
+              ? "bg-navy text-white"
+              : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
+          }`}
+        >
+          {v === "" ? "Tous" : v === "oui" ? "Publiées" : "Non publiées"}
+        </Link>
+      ))}
+
+      {/* Filtre tier */}
+      {tiers.length > 0 && (
+        <>
+          <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-3">Collection</span>
+          <Link
+            href={`/admin/villas${filterQs("tier", "all") ? `?${filterQs("tier", "all")}` : ""}`}
+            className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
+              !params.tier || params.tier === "all"
+                ? "bg-navy text-white"
+                : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
+            }`}
+          >
+            Toutes
+          </Link>
+          {tiers.map((t) => (
+            <Link
+              key={t}
+              href={`/admin/villas?${filterQs("tier", t)}`}
+              className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
+                params.tier === t
+                  ? "bg-navy text-white"
+                  : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
+              }`}
+            >
+              {t}
+            </Link>
+          ))}
+        </>
+      )}
+
+      {/* Tri */}
+      <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-3">Trier</span>
+      {[
+        { k: "", label: "Défaut" },
+        { k: "price_asc", label: "Prix ↑" },
+        { k: "price_desc", label: "Prix ↓" },
+        { k: "name_asc", label: "Nom" },
+        { k: "location", label: "Localisation" },
+        { k: "capacity", label: "Capacité" },
+      ].map(({ k, label }) => (
+        <Link
+          key={k}
+          href={`/admin/villas${filterQs("sort", k) ? `?${filterQs("sort", k)}` : ""}`}
+          className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
+            isActive("sort", k) || (!params.sort && k === "")
+              ? "bg-gold text-white"
+              : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
+          }`}
+        >
+          {label}
+        </Link>
+      ))}
+    </div>
+  );
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-6 border-b border-navy/[0.06] pb-8 sm:flex-row sm:items-start sm:justify-between">
@@ -189,7 +266,10 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
       {/* Barre de filtres et tri */}
       <div className="space-y-4">
         {/* Recherche */}
-        <form className="flex gap-2" method="GET">
+        <form
+          className="sticky top-16 z-20 -mx-4 flex gap-2 bg-offwhite px-4 py-2 md:static md:z-auto md:mx-0 md:bg-transparent md:p-0"
+          method="GET"
+        >
           {/* Préserver les filtres actuels dans des champs cachés */}
           {params.sort && <input type="hidden" name="sort" value={params.sort} />}
           {params.tier && <input type="hidden" name="tier" value={params.tier} />}
@@ -201,89 +281,21 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
               name="search"
               defaultValue={params.search ?? ""}
               placeholder="Rechercher par nom ou localisation..."
-              className="w-full pl-9 pr-4 py-2 text-sm border border-navy/10 rounded-lg bg-white focus:outline-none focus:border-gold/50"
+              className="min-h-[44px] w-full pl-9 pr-4 py-2 text-base md:text-sm border border-navy/10 rounded-lg bg-white focus:outline-none focus:border-gold/50"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 text-[11px] font-semibold bg-navy text-white rounded-lg hover:bg-navy/90"
+            className="min-h-[44px] px-4 py-2 text-[11px] font-semibold bg-navy text-white rounded-lg hover:bg-navy/90"
           >
             Rechercher
           </button>
         </form>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <SlidersHorizontal size={14} className="text-navy/30" />
-
-          {/* Filtre statut publié */}
-          <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-1">Statut</span>
-          {["", "oui", "non"].map((v) => (
-            <Link
-              key={v}
-              href={`/admin/villas${filterQs("published", v) ? `?${filterQs("published", v)}` : ""}`}
-              className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
-                isActive("published", v) || (!params.published && v === "")
-                  ? "bg-navy text-white"
-                  : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
-              }`}
-            >
-              {v === "" ? "Tous" : v === "oui" ? "Publiées" : "Non publiées"}
-            </Link>
-          ))}
-
-          {/* Filtre tier */}
-          {tiers.length > 0 && (
-            <>
-              <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-3">Collection</span>
-              <Link
-                href={`/admin/villas${filterQs("tier", "all") ? `?${filterQs("tier", "all")}` : ""}`}
-                className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
-                  !params.tier || params.tier === "all"
-                    ? "bg-navy text-white"
-                    : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
-                }`}
-              >
-                Toutes
-              </Link>
-              {tiers.map((t) => (
-                <Link
-                  key={t}
-                  href={`/admin/villas?${filterQs("tier", t)}`}
-                  className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
-                    params.tier === t
-                      ? "bg-navy text-white"
-                      : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
-                  }`}
-                >
-                  {t}
-                </Link>
-              ))}
-            </>
-          )}
-
-          {/* Tri */}
-          <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40 ml-3">Trier</span>
-          {[
-            { k: "", label: "Défaut" },
-            { k: "price_asc", label: "Prix ↑" },
-            { k: "price_desc", label: "Prix ↓" },
-            { k: "name_asc", label: "Nom" },
-            { k: "location", label: "Localisation" },
-            { k: "capacity", label: "Capacité" },
-          ].map(({ k, label }) => (
-            <Link
-              key={k}
-              href={`/admin/villas${filterQs("sort", k) ? `?${filterQs("sort", k)}` : ""}`}
-              className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
-                isActive("sort", k) || (!params.sort && k === "")
-                  ? "bg-gold text-white"
-                  : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
+        {/* Desktop : chips inline inchangées */}
+        <div className="hidden md:block">{filterChips}</div>
+        {/* Mobile : chips dans le bottom sheet */}
+        <FilterBottomSheet label="Filtres & tri">{filterChips}</FilterBottomSheet>
 
         {params.search && (
           <p className="text-sm text-navy/50">
@@ -305,7 +317,14 @@ export default async function AdminVillasPage({ searchParams }: PageProps) {
           actionHref="/admin/villas/ajouter"
         />
       ) : (
-        <AdminVillasDataGrid rows={villas} />
+        <>
+          <div className="hidden md:block">
+            <AdminVillasDataGrid rows={villas} />
+          </div>
+          <div className="md:hidden">
+            <AdminVillaCardList rows={villas} />
+          </div>
+        </>
       )}
     </div>
   );
