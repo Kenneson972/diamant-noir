@@ -68,7 +68,7 @@ export default async function AdminDashboardLayout({
     "/admin/reservations": reservations.count ?? 0,
     "/admin/soumissions": soumissions.count ?? 0,
     "/admin/avis": avis.count ?? 0,
-    "/admin/demandes": demandes.count ?? 0,
+    "/admin/messages": demandes.count ?? 0,
   };
 
   const menuWithBadges = applyMenuBadges(adminMenuItems, badgeMap);

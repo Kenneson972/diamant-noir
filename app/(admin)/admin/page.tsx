@@ -184,7 +184,7 @@ export default async function AdminPage() {
         icon: "message",
         label: "Demandes",
         value: pendingRequests ?? 0,
-        href: "/admin/demandes",
+        href: "/admin/messages",
         subtitle: pendingRequests ? `${pendingRequests} en attente` : "Rien en attente",
       },
       {
@@ -221,7 +221,7 @@ export default async function AdminPage() {
       ...((pendingRequests ?? 0) > 0
         ? [
             {
-              href: "/admin/demandes",
+              href: "/admin/messages",
               label: `${pendingRequests} demande${pendingRequests! > 1 ? "s" : ""} en attente`,
               icon: "message" as const,
             },
@@ -248,7 +248,7 @@ export default async function AdminPage() {
           title: `${(r.bookings as { guest_name?: string } | null)?.guest_name ?? "Voyageur"} — demande ${r.type}`,
           timestamp: fmt(r.created_at),
           icon: "message" as const,
-          href: "/admin/demandes",
+          href: "/admin/messages",
           status: r.status === "pending" ? ("warning" as const) : ("success" as const),
         },
       })),

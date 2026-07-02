@@ -14,7 +14,7 @@ const SLA_LEVEL_COLOR = {
   over: "bg-red-50 text-red-700",
 } as const;
 
-export default function AdminDemandesPage() {
+export function AdminRequestsPanel() {
   const supabase = getSupabaseBrowser();
   const [requests, setRequests] = useState<any[]>([]);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
@@ -118,11 +118,6 @@ export default function AdminDemandesPage() {
         </p>
       )}
 
-      <div>
-        <h1 className="font-display text-2xl font-bold text-navy">Demandes voyageurs</h1>
-        <p className="text-sm text-navy/50 mt-1">Gérez les demandes des voyageurs en temps réel</p>
-      </div>
-
       <div className="flex gap-2 flex-wrap">
         {["pending", "in_progress", "resolved", "rejected", "all"].map((f) => (
           <button key={f} onClick={() => { setFilter(f); setLoading(true); }}
@@ -158,7 +153,6 @@ export default function AdminDemandesPage() {
                           ⚡ URGENT
                         </span>
                       )}
-                      {/* SLA Badge */}
                       <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full", SLA_LEVEL_COLOR[sla.level])}>
                         <Clock size={10} />
                         {timeAgo(r.created_at)}
@@ -177,7 +171,6 @@ export default function AdminDemandesPage() {
                     <span className="text-[11px] text-navy/30 block">
                       {new Date(r.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}
                     </span>
-                    {/* Assignation */}
                     <div className="mt-1.5">
                       <select
                         value={r.assignee_id ?? ""}

@@ -278,13 +278,15 @@ test.describe("Wave 4 — SLA demandes", () => {
 
   test("4.1 Badges SLA visibles sur page demandes admin", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/admin/demandes");
+    await page.goto("/admin/messages");
     await page.waitForLoadState("networkidle");
 
-    // Les badges SLA utilisent les couleurs emerald/amber/red
-    // Vérifier que la page charge avec le titre
-    const title = page.locator("h1").filter({ hasText: "Demandes" }).first();
+    const title = page.locator("h1").filter({ hasText: "Messages" }).first();
     await expect(title).toBeVisible({ timeout: 10_000 });
+
+    // Les badges SLA utilisent les couleurs emerald/amber/red
+    // Vérifier que l'onglet Demandes charge son contenu
+    await page.getByRole("tab", { name: "Demandes" }).click();
   });
 
   test("4.2 Toggle ⚡ Urgent dans formulaire client", async ({ page }) => {

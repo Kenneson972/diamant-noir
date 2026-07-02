@@ -61,7 +61,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
           type: "request_urgent",
           title: "⚡ Demande urgente",
           body: `Nouvelle demande urgente "${REQUEST_TYPES[type]}" reçue — réponse attendue dans les 24h.`,
-          action_url: "/admin/demandes",
+          action_url: "/admin/messages",
         });
       }
       setDone(true);

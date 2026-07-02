@@ -18,14 +18,10 @@ export const adminMenuItems: SidebarMenuItem[] = [
     ],
   },
   {
-    id: "admin-gestion-sejours",
-    label: "Séjours & demandes",
+    label: "Réservations",
+    href: "/admin/reservations",
     icon: "CalendarDays",
     group: "GESTION",
-    children: [
-      { label: "Réservations", href: "/admin/reservations", icon: "CalendarDays" },
-      { label: "Demandes", href: "/admin/demandes", icon: "ClipboardList" },
-    ],
   },
   {
     id: "admin-gestion-acteurs",
@@ -57,7 +53,7 @@ export const adminMenuItems: SidebarMenuItem[] = [
     group: "OUTILS",
     children: [
       { label: "Avis", href: "/admin/avis", icon: "Star" },
-      { label: "Messagerie", href: "/admin/messagerie", icon: "MessageCircle" },
+      { label: "Messages", href: "/admin/messages", icon: "MessageCircle" },
     ],
   },
   {

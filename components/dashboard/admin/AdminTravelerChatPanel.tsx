@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
 import { Send, MessageCircle } from "lucide-react";
 import { KayvilaEmptyState } from "@/components/ui/pro";
 import { timeAgo } from "@/lib/utils";
@@ -15,7 +14,7 @@ type ChatRow = {
   created_at: string;
 };
 
-export default function AdminMessageriePage() {
+export function AdminTravelerChatPanel() {
   const [messages, setMessages] = useState<ChatRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [reply, setReply] = useState("");
@@ -95,11 +94,6 @@ export default function AdminMessageriePage() {
 
   return (
     <div className="space-y-6">
-      <AdminPageIntro
-        title="Messagerie"
-        description="Conversations espace client (session_id / content)."
-      />
-
       {error && (
         <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
