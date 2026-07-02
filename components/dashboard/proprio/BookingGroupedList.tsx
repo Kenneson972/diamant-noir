@@ -22,12 +22,12 @@ export type OwnerBookingItem = {
   guests: number | null;
 };
 
-const STATUS_FILTERS = [
+const STATUS_FILTERS: { key: string; label: string; statuses: readonly BookingStatus[] | null }[] = [
   { key: "all", label: "Toutes", statuses: null },
   { key: "pending", label: "En attente", statuses: ["pending"] },
   { key: "confirmed", label: "Confirmées", statuses: ["confirmed", "paid"] },
   { key: "cancelled", label: "Annulées", statuses: ["cancelled", "refunded"] },
-] as const;
+];
 
 const SOURCE_LABELS: Record<string, string> = {
   airbnb: "Airbnb",
@@ -68,7 +68,7 @@ export function BookingGroupedList({
   items: OwnerBookingItem[];
   villas: { id: string; name: string }[];
 }) {
-  const [statusKey, setStatusKey] = useState<(typeof STATUS_FILTERS)[number]["key"]>("all");
+  const [statusKey, setStatusKey] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [villaId, setVillaId] = useState<string>("all");
 
