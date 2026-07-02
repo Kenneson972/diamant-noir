@@ -37,9 +37,35 @@ const EDIT_SECTIONS = [
 export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?: boolean }) {
   const router = useRouter();
   const isEdit = !!villa?.id;
-  const [form, dispatch] = useReducer(villaFormReducer, createEmptyForm(), (empty) =>
-    villa ? villaFormReducer(empty, { type: "LOAD_VILLA", villa: villa as Partial<VillaFormData> }) : empty
-  );
+  const [form, dispatch] = useReducer(villaFormReducer, createEmptyForm(), (empty) => {
+    if (!villa) return empty;
+    // Map Villa (domain) → VillaFormData (Zod)
+    const v = villa as Record<string, unknown>;
+    const partial: Partial<VillaFormData> = {
+      name: String(v.name ?? ""),
+      location: String(v.location ?? ""),
+      description: String(v.description ?? ""),
+      price_per_night: Number(v.price_per_night ?? 0),
+      capacity: Number(v.capacity ?? 0),
+      bedrooms: Number(v.bedrooms ?? 0),
+      bathrooms_count: Number(v.bathrooms_count ?? 0),
+      surface_m2: Number(v.surface_m2 ?? 0),
+      image_url: String(v.image_url ?? ""),
+      image_urls: Array.isArray(v.image_urls) ? v.image_urls as string[] : [],
+      equipment_interior: Array.isArray(v.equipment_interior) ? v.equipment_interior as string[] : [],
+      equipment_exterior: Array.isArray(v.equipment_exterior) ? v.equipment_exterior as string[] : [],
+      check_in_time: String(v.check_in_time ?? "15:00"),
+      check_out_time: String(v.check_out_time ?? "10:00"),
+      wifi_name: String(v.wifi_name ?? ""),
+      wifi_password: String(v.wifi_password ?? ""),
+      is_published: Boolean(v.is_published),
+      commission_rate: Number(v.commission_rate ?? 22),
+      owner_id: String(v.owner_id ?? ""),
+      collection_tier: String(v.collection_tier ?? ""),
+      cleaning_fee_cents: Number(v.cleaning_fee_cents ?? 0),
+    };
+    return villaFormReducer(empty, { type: "LOAD_VILLA", villa: partial });
+  });
   const [step, setStep] = useState(0);
   const [autoStatus, setAutoStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
