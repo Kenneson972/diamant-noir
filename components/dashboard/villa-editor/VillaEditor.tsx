@@ -235,7 +235,6 @@ export function VillaEditor({
       <section id="ve-identite" aria-label="Carte d'identité" className="scroll-mt-24 pb-8 pt-6" data-testid="editor-section-identite">
         <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} embedded variant="identity" />
         <div className="mt-6">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Photos ({form.image_urls.length}) — la première est la couverture</p>
           <VillaImageManager
             imageUrls={form.image_urls}
             villaId={villa.id}

@@ -56,17 +56,14 @@ export default async function AdminVillaEditPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <Link
-          href="/admin/villas"
-          className="inline-flex items-center gap-1.5 text-sm text-navy/50 transition-colors hover:text-navy"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          Toutes les villas
-        </Link>
-        <h1 className="font-display text-2xl font-bold text-navy">{villa.name}</h1>
-      </div>
+      {/* Back link — le nom de la villa est déjà dans le header de l'éditeur */}
+      <Link
+        href="/admin/villas"
+        className="inline-flex items-center gap-1.5 text-sm text-navy/50 transition-colors hover:text-navy"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden />
+        Toutes les villas
+      </Link>
 
       <VillaEditor
         villa={villa}
