@@ -6,6 +6,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import type { Metadata } from "next";
 import type { Villa } from "@/types/domain";
 import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
+import { VillaIcalPanel } from "@/components/dashboard/proprio/VillaIcalPanel";
 
 export const metadata: Metadata = {
   title: "Modifier la villa — Kayvila",
@@ -51,6 +52,11 @@ export default async function VillaEditPage({ params }: Props) {
         {/* Main — Form fields + Amenities */}
         <div className="space-y-8 lg:col-span-2">
           <VillaEditor villa={villa as unknown as Villa} />
+          <VillaIcalPanel
+            villaId={villa.id}
+            icalUrl={(villa.ical_url as string) ?? null}
+            otaChannels={(villa.ota_channels as Array<{ source: string; ical_url: string; label?: string }>) ?? null}
+          />
         </div>
 
         {/* Sidebar — Photo management link */}
