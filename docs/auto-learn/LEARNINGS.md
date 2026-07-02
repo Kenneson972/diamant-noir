@@ -2,6 +2,45 @@
 
 ---
 
+## 2026-07-01/02 — Refonte responsive mobile dashboards (✅ MERGÉ main)
+
+### Fait
+- Brainstorm→spec→plan→exécution inline. 6 écrans refaits : /admin, /admin/villas, /dashboard, /espace-client, /dashboard/reservations, /admin/reservations.
+- 13 commits sur feat/responsive-mobile-dashboards, mergé FF sur main.
+- Bottom nav 3 rôles (MobileBottomNav), KPI 2×2 mobile, cartes mobiles à côté des DataGrids desktop, FilterBottomSheet partagé, résas proprio refondues (groupes mois, filtres, recherche), infos pratiques WiFi gated 24h, QuickActions.
+- Playwright 7/7 PASS (3 viewports : 360, 390, 1280).
+
+### Règles dures apprises
+- **Tiroir sidebar HeroUI Pro = useSidebar().setMobileOpen(true)** — jamais <Sidebar.Trigger> avec children : bouton 36px + pressabilité react-aria qui bloque Playwright.
+- **Cookie banner intercepte les clics bas d'écran** → addInitScript localStorage kayvila-cookie-consent AVANT goto. Pattern récurrent.
+- **Double <main> Sidebar.Main** → cibler #admin-main / #owner-main / #tenant-main dans les tests.
+- **Double rendu desktop/mobile** → filter({ visible: true }). .first() peut matcher l'instance cachée.
+- **Dev server :3000 = user, périmé** → toujours lancer le sien sur :3001.
+- **BookOpen manquait dans ICON_MAP** → fallback silencieux LayoutDashboard. Vérifier le mapping avant d'utiliser un nom.
+- **Playwright sans MCP (browser verrouillé)** : `import { chromium } from "node_modules/playwright-core/index.mjs"` (chemin absolu, NODE_PATH inopérant en ESM).
+
+---
+
+## 2026-07-02 — CRUD Villa unifié (✅ MERGÉ main)
+
+### Fait
+- Brainstorm→spec→plan→exécution inline. 10 commits sur feat/crud-villa-unified, mergé FF sur main.
+- VillaEditor unique (~350 lignes) remplaçant AdminVillaForm (622), VillaEditorForm (514), AdminVillaEditClient (345). Bascule auto création/édition. Split layout + preview live interactive + autosave 2.5s.
+- 10 sous-éditeurs améliorés : RoomsEditor (icônes lit + presets), SeasonalPricesEditor (timeline + anti-chevauchement), VillaAmenitiesEditorV2 (5 catégories + recherche + remplissage rapide), ChipEditor (recherche + contraste), FormFields (accordéon + géoloc contrôlée).
+- Zéro nouvelle dépendance, zéro migration DB, zéro route API modifiée.
+- Tous les sous-éditeurs rétrocompatibles avec les anciens callers jusqu'à la suppression (T14).
+- 105/105 vitest, tsc 10 erreurs pré-existantes.
+
+### Règles dures apprises
+- **Zod v4 : z.record() → z.record(z.string(), z.any())** (2 args requis en v4, plus le 1-arg de v3). ZodError : `.issues` pas `.errors`. z.record(z.any()) → Expected 2-3 arguments.
+- **useRef sans argument initial = erreur TS2554** (React 19?). Toujours `useRef<T | null>(null)`.
+- **Villa → Record<string, unknown> interdit** (TS2352) → passer par `unknown` : `villa as unknown as Record<string, unknown>`.
+- **Import de fichier supprimé → tsc casse les callers** → rétrocompatibilité obligatoire : exporter l'ancien composant ET le nouveau dans le même fichier, ne pas casser les imports existants avant la suppression finale.
+- **git push --set-upstream requis après git checkout -b** (push.autoSetupRemote non configuré sur ce repo).
+- **Subagent-driven non fiable sur les gros chantiers inline** (crash browser MCP, rapports périmés, timeouts) → exécution inline plus robuste.
+
+---
+
 ## 2026-07-02 — Refonte responsive mobile (T1-T5/11, ⏸️ HANDOFF)
 
 ### Fait
