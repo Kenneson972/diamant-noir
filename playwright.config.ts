@@ -33,6 +33,7 @@ export default defineConfig({
     {
       name: "dashboards",
       testMatch: [
+        "tests/villa-editor.spec.ts",
         "tests/responsive-dashboards.spec.ts",
         "tests/chatbot-scroll.spec.ts",
         "tests/chatbot-prebooking.spec.ts",
