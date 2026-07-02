@@ -28,7 +28,7 @@ export function VillaPreviewCard({
         {imageSrc ? (
           <VillaCoverImage
             src={imageSrc}
-            alt={form.name || "Villa"}
+            alt={form.name ? `Photo de ${form.name}` : "Aperçu de la villa"}
             fill
             className="object-cover"
             sizes="400px"

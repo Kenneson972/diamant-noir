@@ -23,7 +23,7 @@ export function ChipEditor({ id, label, items: initialItems, suggestions, onChan
       {items.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {items.map((item) => (
-            <span key={item} className="inline-flex min-h-[36px] items-center gap-1 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
+            <span key={item} className="inline-flex min-h-[44px] items-center gap-1 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
               {item}<button type="button" onClick={() => remove(item)} className="ml-0.5 text-white/70 hover:text-white"><X size={12} /></button>
             </span>
           ))}
@@ -44,7 +44,7 @@ export function ChipEditor({ id, label, items: initialItems, suggestions, onChan
           const selected = items.includes(s);
           return (
             <button key={s} type="button" onClick={() => toggle(s)}
-              className={`inline-flex min-h-[36px] items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${selected ? "bg-navy text-white" : "border border-navy/15 text-navy/60 hover:border-navy/30"}`}>
+              className={`inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${selected ? "bg-navy text-white" : "border border-navy/15 text-navy/60 hover:border-navy/30"}`}>
               {selected && <span className="text-[10px]">✓</span>}{s}
             </button>
           );

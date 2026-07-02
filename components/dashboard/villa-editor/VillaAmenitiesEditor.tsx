@@ -43,7 +43,7 @@ export function VillaAmenitiesEditor({
             const isImported = amenitiesImportLabels.includes(label);
             return (
               <button key={label} type="button" onClick={() => (isActive ? remove(label) : addSuggested(label))}
-                className={`inline-flex min-h-[36px] items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-colors ${isActive ? "border-navy/30 bg-navy/5 text-navy" : "border-navy/15 text-muted hover:border-navy/30 hover:text-navy"}`}>
+                className={`inline-flex min-h-[44px] items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-colors ${isActive ? "border-navy/30 bg-navy/5 text-navy" : "border-navy/15 text-muted hover:border-navy/30 hover:text-navy"}`}>
                 {isActive && <KayvilaPngIcon name="check-circle" size={18} alt="" />}{label}{isImported && <AmenityImportTag />}
               </button>
             );
@@ -55,7 +55,7 @@ export function VillaAmenitiesEditor({
         {customAmenityItems.length === 0 ? <p className="text-xs italic text-muted">Aucun équipement personnalisé.</p> : (
           <div className="flex flex-wrap gap-1.5">
             {customAmenityItems.map((label) => (
-              <span key={label} className="inline-flex min-h-[36px] items-center gap-1 rounded-md border border-navy/20 bg-navy/5 px-2.5 py-1 text-[11px] font-medium text-navy">
+              <span key={label} className="inline-flex min-h-[44px] items-center gap-1 rounded-md border border-navy/20 bg-navy/5 px-2.5 py-1 text-[11px] font-medium text-navy">
                 {label}<button type="button" onClick={() => remove(label)} className="ml-0.5 hover:text-red-600" aria-label={`Supprimer ${label}`}><X className="h-3 w-3" /></button>
               </span>
             ))}
@@ -64,7 +64,7 @@ export function VillaAmenitiesEditor({
       </div>
       <div className="flex items-center gap-1.5">
         <input type="text" value={draft} onChange={(e) => onDraftChange(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
-          placeholder="Ajouter un équipement..." className="min-h-[36px] flex-1 rounded-md border border-navy/10 bg-transparent px-2.5 py-1.5 text-base placeholder:text-muted/40 focus:border-navy/30 focus:outline-none" />
+          placeholder="Ajouter un équipement..." className="min-h-[44px] flex-1 rounded-md border border-navy/10 bg-transparent px-2.5 py-1.5 text-base placeholder:text-muted/40 focus:border-navy/30 focus:outline-none" />
         <button type="button" onClick={addCustom} disabled={!draft.trim()} className="inline-flex items-center justify-center rounded-md bg-navy/5 px-3 py-1.5 text-xs font-medium text-navy/60 hover:bg-navy/10 disabled:opacity-40" aria-label="Ajouter"><Plus className="h-3.5 w-3.5" /></button>
       </div>
     </div>
@@ -93,7 +93,7 @@ function AmenityCategorySection({ label, items, suggestions, importLabels, onCha
       )}
       <div className="flex flex-wrap gap-1.5">
         {filtered.map((s) => { const active = items.includes(s); const imp = importLabels.includes(s);
-          return <button key={s} type="button" onClick={() => toggle(s)} className={`inline-flex min-h-[36px] items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-colors ${active ? "border-navy/30 bg-navy/5 text-navy" : "border-navy/15 text-muted hover:border-navy/30 hover:text-navy"}`}>{active && <KayvilaPngIcon name="check-circle" size={18} alt="" />}{s}{imp && <AmenityImportTag />}</button>;
+          return <button key={s} type="button" onClick={() => toggle(s)} className={`inline-flex min-h-[44px] items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-colors ${active ? "border-navy/30 bg-navy/5 text-navy" : "border-navy/15 text-muted hover:border-navy/30 hover:text-navy"}`}>{active && <KayvilaPngIcon name="check-circle" size={18} alt="" />}{s}{imp && <AmenityImportTag />}</button>;
         })}
       </div>
     </div>

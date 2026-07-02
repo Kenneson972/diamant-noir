@@ -55,15 +55,15 @@ export function sectionCompleteness(form: VillaFormData): Record<string, "empty"
   const has = (arr: unknown[]) => arr.length > 0;
   const str = (s: string) => s.trim().length > 0;
   return {
-    infos: str(form.name) ? "complete" : "empty",
-    photos: has(form.image_urls) ? "complete" : "empty",
-    equipments: (has(form.equipment_interior) || has(form.equipment_exterior)) ? "complete" : "empty",
+    infos: str(form.name) && str(form.description) ? "complete" : str(form.name) ? "partial" : "empty",
+    photos: has(form.image_urls) && form.image_urls.length >= 3 ? "complete" : has(form.image_urls) ? "partial" : "empty",
+    equipments: (has(form.equipment_interior) && has(form.equipment_exterior)) ? "complete" : (has(form.equipment_interior) || has(form.equipment_exterior)) ? "partial" : "empty",
     rooms: has(form.rooms_details) ? "complete" : "empty",
-    pricing: form.price_per_night > 0 ? "complete" : "empty",
+    pricing: form.price_per_night > 0 && form.seasonal_prices.length > 0 ? "complete" : form.price_per_night > 0 ? "partial" : "empty",
     availability: "empty",
     contacts: has(form.emergency_contacts) ? "complete" : "empty",
-    services: (has(form.included_services_home) || has(form.included_services_collection)) ? "complete" : "empty",
-    rules: has(form.house_rules) ? "complete" : "empty",
-    safety: has(form.safety_info) ? "complete" : "empty",
+    services: (has(form.included_services_home) && has(form.included_services_collection)) ? "complete" : (has(form.included_services_home) || has(form.included_services_collection)) ? "partial" : "empty",
+    rules: has(form.house_rules) && form.house_rules.length >= 3 ? "complete" : has(form.house_rules) ? "partial" : "empty",
+    safety: has(form.safety_info) && form.safety_info.length >= 3 ? "complete" : has(form.safety_info) ? "partial" : "empty",
   };
 }

@@ -33,12 +33,20 @@ describe("sectionCompleteness", () => {
   it("form vide = infos empty", () => {
     expect(sectionCompleteness(createEmptyForm()).infos).toBe("empty");
   });
-  it("nom rempli = infos complete", () => {
+  it("nom rempli sans description = infos partial", () => {
     const f = { ...createEmptyForm(), name: "X" };
+    expect(sectionCompleteness(f).infos).toBe("partial");
+  });
+  it("nom + description = infos complete", () => {
+    const f = { ...createEmptyForm(), name: "X", description: "Belle villa" };
     expect(sectionCompleteness(f).infos).toBe("complete");
   });
-  it("photos = complete si urls présentes", () => {
+  it("1 photo = photos partial (< 3)", () => {
     const f = { ...createEmptyForm(), image_urls: ["a.jpg"] };
+    expect(sectionCompleteness(f).photos).toBe("partial");
+  });
+  it("3 photos = photos complete", () => {
+    const f = { ...createEmptyForm(), image_urls: ["a.jpg", "b.jpg", "c.jpg"] };
     expect(sectionCompleteness(f).photos).toBe("complete");
   });
 });
