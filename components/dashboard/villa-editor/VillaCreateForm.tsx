@@ -70,9 +70,11 @@ export function VillaCreateForm({ redirectBase }: { redirectBase: string }) {
         body: JSON.stringify(parsed.data),
       });
       if (!res.ok) throw new Error("Create failed");
-      const data = (await res.json()) as { id?: string };
-      if (!data.id) throw new Error("Missing id");
-      router.push(`${redirectBase}/${data.id}`);
+      // L'API répond { success, data: { id } } — tolérer aussi un id à la racine
+      const json = (await res.json()) as { id?: string; data?: { id?: string } };
+      const id = json.data?.id ?? json.id;
+      if (!id) throw new Error("Missing id");
+      router.push(`${redirectBase}/${id}`);
     } catch {
       setErrors({ _form: "Erreur lors de la création. Vérifiez votre connexion et réessayez." });
       setSubmitting(false);

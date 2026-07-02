@@ -81,10 +81,15 @@ export function VillaEditor({
   const doSave = useCallback(async () => {
     setAutoStatus("saving");
     try {
+      // La DB refuse "" sur ces colonnes (check constraints + uuid) — envoyer null / omettre
+      const payload: Record<string, unknown> = { ...form };
+      if (!form.owner_id) delete payload.owner_id;
+      if (!form.collection_tier) payload.collection_tier = null;
+      if (!form.cancellation_template) payload.cancellation_template = null;
       const res = await fetch("/api/dashboard/update-villa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ villaId: villa.id, payload: form }),
+        body: JSON.stringify({ villaId: villa.id, payload }),
       });
       if (!res.ok) throw new Error("Save failed");
       setAutoStatus("saved");
