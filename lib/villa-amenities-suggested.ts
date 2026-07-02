@@ -26,8 +26,8 @@ export const SUGGESTED_AMENITIES = {
 export type AmenityCategory = keyof typeof SUGGESTED_AMENITIES;
 
 // Legacy flat set — rétrocompatibilité avec VillaAmenitiesEditor existant
-export const SUGGESTED_AMENITY_SET = new Set(
-  Object.values(SUGGESTED_AMENITIES).flat()
+export const SUGGESTED_AMENITY_SET: Set<string> = new Set(
+  Object.values(SUGGESTED_AMENITIES).flat() as string[]
 );
 
-export const SUGGESTED_AMENITY_LABELS = Object.values(SUGGESTED_AMENITIES).flat();
+export const SUGGESTED_AMENITY_LABELS: string[] = Object.values(SUGGESTED_AMENITIES).flat() as string[];

@@ -53,7 +53,7 @@ export const villaFormSchema = z.object({
   rooms_details: z.array(roomSchema).optional().default([]),
   seasonal_prices: z.array(seasonSchema).optional().default([]),
   emergency_contacts: z.array(emergencyContactSchema).optional().default([]),
-  booking_terms: z.record(z.any()).optional().default({}),
+  booking_terms: z.record(z.string(), z.any()).optional().default({}),
   min_nights: z.number().min(1).optional().default(2),
   welcome_booklet_url: z.string().optional().default(""),
   cancellation_policy: z.string().optional().default(""),
