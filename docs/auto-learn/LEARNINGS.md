@@ -2,6 +2,14 @@
 
 ---
 
+## 2026-07-02 — Préférence workflow design : croiser le brief avec les skills design
+
+- Pour toute refonte UI/UX Kayvila, Kenneson veut un **second avis design** via les skills `ui-ux-pro-max` et `impeccable` AVANT d'écrire le spec — pas seulement suivre le brief à la lettre.
+- Résultat concret sur l'éditeur villa v2 : 3 points du brief contredits et corrigés (auto-fermeture des sections = anti-pattern ; mini-carte flottante redondante avec bloc toujours visible ; sections plates + filets plutôt que 10 cartes bordées empilées — cartes imbriquées interdites car les sous-éditeurs ont déjà leurs cartes internes).
+- Le générateur `--design-system` de ui-ux-pro-max est générique (propose OLED/Cinzel/bleu) — ignorer quand la charte est verrouillée ; utiliser plutôt `--domain ux` et le Quick Reference (§8 Forms, §9 Navigation).
+
+---
+
 ## 2026-07-01/02 — Refonte responsive mobile dashboards (✅ MERGÉ main)
 
 ### Fait
