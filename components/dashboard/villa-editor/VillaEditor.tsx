@@ -93,7 +93,7 @@ export function VillaEditor({ villa, isAdmin }: { villa?: Villa | null; isAdmin?
       const res = await fetch("/api/dashboard/update-villa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: villa.id, ...form }),
+        body: JSON.stringify({ villaId: villa.id, payload: form }),
       });
       if (!res.ok) throw new Error("Save failed");
       setAutoStatus("saved");
