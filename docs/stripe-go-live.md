@@ -5,6 +5,58 @@
 
 ---
 
+## 📍 JOURNAL DE BORD — état au 2026-07-03 (pour ne pas se perdre)
+
+### ✅ Déjà fait
+- [x] **43 tests Playwright verts** (double run) : connect, admin-refund, webhooks
+      signés HMAC, checkout mocké, checkout live (cartes de test) — commit `f2e1618`
+- [x] **Bug P0 corrigé en prod** : trigger `owner_stats` qui bloquait TOUTE création
+      de réservation (migration `20260703170000` appliquée)
+- [x] **Handler webhook patché** pour accepter 2 secrets
+      (`STRIPE_WEBHOOK_SECRET` + `STRIPE_CONNECT_WEBHOOK_SECRET`) — poussé sur main
+- [x] **Endpoint webhook n°1 créé dans Stripe** (périmètre « votre compte »,
+      les 10 événements paiements/litiges/refunds) — URL saisie :
+      `https://kayvila.com/api/webhooks/stripe`
+- [x] **Toutes les clés live récupérées** (`sk_live_…`, `whsec_…`)
+
+### ⚠️ Situation actuelle / décisions prises
+- `kayvila.com` ne pointe **PAS encore** sur l'app (DNS → OVH, ne répond pas) ;
+  l'app tourne sur `kayvila.vercel.app`. **Tant que le domaine n'a pas basculé,
+  l'endpoint webhook vise dans le vide** → ne pas passer les clés live avant.
+- Vercel production est **encore en clés TEST** — rien de cassé, rien d'urgent.
+- Décision Kenneson : **endpoint n°2 « comptes connectés » remis à plus tard**
+  (le fallback `?connect=success` → `connect-verify` couvre l'onboarding ;
+  seul manque : détection de déconnexion d'un compte proprio).
+
+### 📋 À FAIRE, dans cet ordre (chemin retenu : domaine d'abord)
+1. [ ] **Brancher `kayvila.com` sur Vercel** : projet → Settings → Domains →
+       ajouter `kayvila.com` + `www.kayvila.com` → modifier les DNS chez OVH
+       comme indiqué → attendre que `https://kayvila.com` affiche le site
+2. [ ] **Vercel → Environment Variables (Production)** :
+       `STRIPE_SECRET_KEY` = `sk_live_…` ·
+       `STRIPE_WEBHOOK_SECRET` = `whsec_…` de l'endpoint n°1 ·
+       `NEXT_PUBLIC_BASE_URL` = `https://kayvila.com` (⚠️ fabrique les URLs de
+       retour Stripe et les liens des emails) ·
+       (+ `pk_live_…` si une variable `NEXT_PUBLIC_STRIPE_*` existe)
+3. [ ] **Redéployer** (les env ne s'appliquent qu'au prochain déploiement)
+4. [ ] **Stripe → endpoint → « Envoyer un événement test »** → doit répondre 200
+5. [ ] **Purger les comptes Connect de test** en base (SQL au §6) — sinon
+       « No such destination » au premier paiement réel
+6. [ ] **Onboarder un proprio pilote** puis dérouler la checklist §7
+       (garde 503 → petite résa réelle → remboursement admin → payout)
+7. [ ] *(plus tard)* Endpoint n°2 « comptes connectés » (`account.updated` +
+       `account.application.deauthorized`) → `STRIPE_CONNECT_WEBHOOK_SECRET`
+8. [ ] *(plus tard)* Re-valider `tests/stripe-webhooks.spec.ts` après le patch
+       2-secrets (dernier run 13/14 — échec « completed sans bookingId → 400 »
+       à diagnostiquer, possiblement flake de compilation)
+
+> Alternative si tu veux être live AVANT la bascule du domaine (« chemin B ») :
+> éditer l'URL de l'endpoint Stripe → `https://kayvila.vercel.app/api/webhooks/stripe`
+> (le `whsec_` ne change pas) et mettre `NEXT_PUBLIC_BASE_URL` sur `kayvila.vercel.app`,
+> puis refaire les deux dans l'autre sens le jour du domaine.
+
+---
+
 ## 0. Comment marche l'argent chez Kayvila (rappel)
 
 - **Stripe Connect Express** : chaque propriétaire a son propre compte Stripe Express
