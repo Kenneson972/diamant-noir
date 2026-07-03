@@ -60,24 +60,62 @@ Dashboard live → **Développeurs → Clés API** :
 
 > Ne jamais coller ces clés dans le code ni dans un fichier committé — Vercel uniquement.
 
-## 4. Créer l'endpoint webhook Live (l'étape critique)
+## 4. Créer les webhooks Live (l'étape critique)
 
-Dashboard live → **Développeurs → Webhooks → Ajouter un endpoint**.
+> ⚠️ **Stripe impose UN endpoint par périmètre** : « Événements de votre compte »
+> OU « Événements des comptes connectés » — pas les deux sur le même endpoint.
+> Il faut donc créer **2 endpoints** vers la MÊME URL. Le handler accepte les deux
+> secrets de signature (`STRIPE_WEBHOOK_SECRET` + `STRIPE_CONNECT_WEBHOOK_SECRET`).
 
-**URL :**
+Navigation : Dashboard live → **Développeurs** (ou icône Workbench en bas à
+gauche) → onglet **Webhooks** → « Ajouter un endpoint » / « Créer une destination
+d'événements ».
+
+**URL (la même pour les deux endpoints) :**
 ```
 https://kayvila.vercel.app/api/webhooks/stripe
 ```
 (remplacer par le domaine custom si le site est servi sur kayvila.com)
 
-**Écoute des événements — IMPORTANT** : au moment de choisir les événements, Stripe
-propose « Événements de votre compte » et « Événements des comptes connectés ».
-👉 **Cocher AUSSI l'écoute des comptes connectés** sur ce même endpoint : les
-événements `account.*` (onboarding des proprios) arrivent depuis LEURS comptes
-Express, pas depuis le compte plateforme. Un seul endpoint = un seul secret de
-signature = configuration simple.
+### Endpoint n°1 — « Événements de votre compte » (paiements, litiges, refunds)
 
-**Les 12 événements à sélectionner** (exactement ceux que gère
+Au début de la sélection des événements, laisser le périmètre par défaut
+(**Votre compte**) et sélectionner ces **10 événements** (utilise le champ de
+recherche, tape par ex. `checkout.session.` puis `charge.dispute.`) :
+`checkout.session.completed`, `checkout.session.expired`,
+`checkout.session.async_payment_failed`, `payment_intent.succeeded`,
+`payment_intent.payment_failed`, `charge.refunded`, `charge.dispute.created`,
+`charge.dispute.closed`, `charge.dispute.funds_reinstated`,
+`charge.dispute.funds_withdrawn`.
+
+→ copier son **secret de signature** `whsec_…` → variable `STRIPE_WEBHOOK_SECRET`.
+
+### Endpoint n°2 — « Événements des comptes connectés » (onboarding proprios)
+
+Recréer un endpoint, même URL, mais choisir le périmètre
+**« Comptes connectés »** (sélecteur en haut de l'écran de choix des événements —
+appelé « Événements provenant de » / "Listen to events on Connected accounts"
+selon la version de l'UI).
+
+Sélectionner **2 événements** : `account.updated` et
+`account.application.deauthorized`.
+
+> 🔎 **Si tu ne vois pas l'option « Comptes connectés »** : c'est que Connect
+> n'est pas encore activé en mode live → retourne à l'étape 2 (menu Connect →
+> Commencer). L'option n'apparaît qu'une fois Connect actif.
+>
+> 🔎 **Si tu ne trouves pas d'événements « Connect »** dans la liste : ils
+> n'existent pas sous ce nom — cherche `account.updated` (catégorie **Account**).
+
+→ copier son **secret de signature** `whsec_…` (différent du premier) →
+variable `STRIPE_CONNECT_WEBHOOK_SECRET`.
+
+> ℹ️ Filet de sécurité : même si cet endpoint n°2 manque, l'app marque quand même
+> l'onboarding complété au retour du proprio (`?connect=success` →
+> `POST /api/stripe/connect-verify`). L'endpoint n°2 apporte le temps réel +
+> la détection de déconnexion du compte (`deauthorized`).
+
+**Récap des 12 événements** (exactement ceux que gère
 `app/api/webhooks/stripe/route.ts`) :
 
 | Catégorie | Événement | Ce que fait le handler |
@@ -104,9 +142,10 @@ fonctionnera pas en live.
 Vercel → projet Kayvila → Settings → Environment Variables (scope **Production**) :
 
 1. `STRIPE_SECRET_KEY` = `sk_live_…`
-2. `STRIPE_WEBHOOK_SECRET` = le `whsec_…` de l'endpoint live créé à l'étape 4
-3. (si présente) `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_…`
-4. **Redéployer** (les env changées ne s'appliquent qu'au prochain déploiement) :
+2. `STRIPE_WEBHOOK_SECRET` = le `whsec_…` de l'endpoint n°1 (votre compte)
+3. `STRIPE_CONNECT_WEBHOOK_SECRET` = le `whsec_…` de l'endpoint n°2 (comptes connectés)
+4. (si présente) `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_…`
+5. **Redéployer** (les env changées ne s'appliquent qu'au prochain déploiement) :
    Deployments → ⋯ → Redeploy, ou un push sur main.
 
 > ⚠️ Ne PAS toucher `.env.local` : le local reste en `sk_test_` pour que les tests
@@ -173,7 +212,8 @@ WHERE stripe_connect_account_id LIKE 'acct_%';  -- affiner à la main si mix tes
 |---|---|---|
 | Webhook 400 « signature failed » | `STRIPE_WEBHOOK_SECRET` = secret test ou pas redéployé | recopier le `whsec_` live + redeploy |
 | Webhook 500 « Stripe not configured » | `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` absente en prod | vérifier les env Vercel scope Production |
-| Onboarding jamais marqué complété | endpoint sans écoute « comptes connectés » | éditer l'endpoint → activer les événements des comptes connectés |
+| Onboarding jamais marqué complété en temps réel | endpoint n°2 (comptes connectés) absent ou `STRIPE_CONNECT_WEBHOOK_SECRET` manquante | créer l'endpoint n°2 + renseigner la variable (le retour `?connect=success` reste un fallback) |
+| Option « Comptes connectés » invisible à la création du webhook | Connect pas activé en live | activer Connect (étape 2) puis recréer l'endpoint |
 | Paiement refusé « No such destination » | `acct_` de test resté en base après bascule | reset profil (étape 6) + re-onboarding |
 | Toutes les résas échouent en erreur base | régression du trigger stats (fixé le 2026-07-03) | vérifier `supabase/migrations/20260703170000_fix_invalidate_owner_stats_trigger.sql` appliquée |
 | 503 sur toutes les villas d'un proprio | onboarding non fini (comportement voulu) | relancer le proprio, vérifier `connect-verify` |

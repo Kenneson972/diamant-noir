@@ -15,6 +15,9 @@ export const runtime = "nodejs";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+// Endpoint séparé « comptes connectés » (account.updated / deauthorized) :
+// Stripe impose un endpoint par périmètre, chacun avec son propre secret.
+const connectWebhookSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET || "";
 
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2025-03-31.basil" as any });
 
@@ -39,9 +42,27 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Stripe webhook signature verification failed:", message);
-    return NextResponse.json({ error: `Webhook signature failed: ${message}` }, { status: 400 });
+    // Signature invalide pour l'endpoint principal → tenter le secret de
+    // l'endpoint « comptes connectés » s'il est configuré.
+    if (connectWebhookSecret) {
+      try {
+        event = stripe.webhooks.constructEvent(body, sig, connectWebhookSecret);
+      } catch {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        console.error("Stripe webhook signature verification failed:", message);
+        return NextResponse.json(
+          { error: `Webhook signature failed: ${message}` },
+          { status: 400 }
+        );
+      }
+    } else {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      console.error("Stripe webhook signature verification failed:", message);
+      return NextResponse.json(
+        { error: `Webhook signature failed: ${message}` },
+        { status: 400 }
+      );
+    }
   }
 
   const supabase = supabaseAdmin();

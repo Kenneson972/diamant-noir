@@ -2,6 +2,16 @@
 
 ---
 
+## 2026-07-03 (suite) — Webhook Connect = 2e endpoint + 2e secret
+
+- **Stripe impose UN endpoint webhook par périmètre** (« votre compte » OU « comptes connectés ») — impossible de cocher les deux sur un seul endpoint. Pour Kayvila : endpoint n°1 (10 événements paiements/litiges/refunds) + endpoint n°2 « comptes connectés » (`account.updated`, `account.application.deauthorized`), même URL, 2 secrets `whsec_` différents.
+- **Handler patché** : `app/api/webhooks/stripe/route.ts` essaie `STRIPE_WEBHOOK_SECRET` puis `STRIPE_CONNECT_WEBHOOK_SECRET` (fallback) pour `constructEvent`. Nouvelle env Vercel à créer au go-live : `STRIPE_CONNECT_WEBHOOK_SECRET`.
+- **Pièges UI Stripe** : l'option « comptes connectés » n'apparaît que si Connect est activé en live ; les événements Connect n'ont PAS de catégorie « Connect » — chercher `account.updated` (catégorie Account).
+- **Fallback déjà codé** : au retour `?connect=success`, StripeConnectButton appelle `POST /api/stripe/connect-verify` → l'onboarding se complète même sans l'endpoint n°2.
+- ⏳ **À FAIRE (demande de Kenneson : reprendre plus tard)** : re-valider `tests/stripe-webhooks.spec.ts` après le patch du handler — dernier run 13/14, échec sur « checkout.session.completed sans bookingId → 400 » (statut reçu non identifié, possiblement flake de premier compile ou effet du patch). Serveur frais :3001 requis. NE PAS conclure avant d'avoir vu le statut réellement reçu.
+
+---
+
 ## 2026-07-03 — Suite Playwright Stripe pré-live (5 prompts STRIPE TEST) — ✅ 43 tests verts ×2
 
 ### Fait
