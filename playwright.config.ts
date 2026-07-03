@@ -24,6 +24,15 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
     {
+      name: "stripe-api",
+      testMatch: [
+        "tests/stripe-connect.spec.ts",
+        "tests/stripe-admin-refund.spec.ts",
+        "tests/stripe-webhooks.spec.ts",
+      ],
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "live-stripe",
       testMatch: ["tests/stripe-checkout-live.spec.ts"],
       retries: 1,

@@ -2,6 +2,24 @@
 
 ---
 
+## 2026-07-03 — Suite Playwright Stripe pré-live (5 prompts STRIPE TEST) — ✅ 43 tests verts ×2
+
+### Fait
+- 3 nouveaux specs (`stripe-connect`, `stripe-admin-refund`, `stripe-webhooks`) + refonte `stripe-checkout-mocked` (8 tests) + refonte `stripe-checkout-live` (3 tests réels). Nouveau projet `stripe-api` dans playwright.config.ts. Bilan stable sur double run : mocked+stripe-api 40 PASS, live 3 PASS, 1 skip légitime (aucune résa `refunded` en base).
+- **BUG P0 PROD trouvé et corrigé** : le trigger `invalidate_owner_stats_snapshot` faisait `SET computed_at = NULL` sur une colonne NOT NULL → **toute création de réservation plantait** (« Database error: null value in column computed_at ») dès qu'un snapshot de stats existait pour la villa/année. Fix = invalidation par DELETE du snapshot (migration `20260703170000`, appliquée en prod via MCP le 2026-07-03). La fonction edge `recompute-owner-stats` reconstruit le cache.
+
+### Règles dures apprises
+- **`/checkout` n'existe plus → `/book`**, et `/book` valide la villa en base (villaId bidon = « Villa introuvable »). Tout ancien test avec un faux villaId est mort : utiliser `TEST_VILLA_ID` env-overridable + navigation directe (pattern cgv-checkout.spec.ts).
+- **La garde CGV n'est plus un bouton disabled** : le clic déclenche un `[role="alert"]` « Veuillez accepter les CGV pour continuer ». Ne plus tester `toBeDisabled()`.
+- **`/api/stripe/admin-refund` n'est PAS dans les publicPaths du middleware** → sans cookie de session : 307 → /login AVANT la route (un Bearer seul ne suffit pas au niveau middleware). Tester via login UI + `page.request` (cookies partagés). Les routes connect-onboarding/verify, elles, sont publiques middleware + Bearer-only (`requireAuth`).
+- **Webhooks Stripe testables en réel sans mock** : signer les payloads HMAC-SHA256 avec `STRIPE_WEBHOOK_SECRET` de `.env.local` (`t=<ts>,v1=<hmac(ts.payload)>`). Permet de vérifier pour de vrai : signature manquante/invalide (400), idempotence (`duplicate:true`), booking seedé pending → `checkout.session.expired` → cancelled en DB, `charge.dispute.created/closed` → insert/update réels dans `stripe_disputes`. ⚠️ dispute.created envoie un VRAI email admin par run. Cleanup afterAll via REST service-role (`stripe_events_processed`, `stripe_disputes`, booking seedé).
+- **Stripe Checkout hosted (2026) = accordéon radio des moyens de paiement** (Card/Bancontact/EPS), parfois replié : cliquer `[data-testid="card-accordion-item"]` (la LIGNE — le `-button` interne est caché quand l'accordéon est ouvert), puis attendre `[name="cardNumber"]`. Payer = `[data-testid="hosted-payment-submit-button"]`.
+- **Tests live : une fenêtre de dates par test** (~J+300/315/330) — un booking `pending` créé par un test bloque la dispo du suivant (409). Purge before/after par `guest_email` dédié (marie.test@kayvila.com) via REST service-role, et lancer le projet live en `--workers=1` (sinon la purge d'un test supprime les bookings en vol des autres).
+- **Signature d'un serveur :3000 périmé** : chunks `_next/static` en 404/MIME `text/html` dans la console → zéro hydratation → le form login se soumet en natif (URL devient `/login?`) et TOUT test UI échoue. Réflexe : serveur perso `PORT=3001` + `PLAYWRIGHT_BASE_URL` + **`NEXT_PUBLIC_BASE_URL=http://localhost:3001`** (sinon les success/cancel_url Stripe renvoient vers :3000).
+- **/success n'affiche plus le nom du client** (villa + dates seulement) ; le lien espace-client est le CTA « Accéder à mon espace client », rendu seulement si connecté — la nav contient AUSSI un `a[href="/espace-client"]` caché → cibler `:visible` + hasText.
+
+---
+
 ## 2026-07-02 — Éditeur villa v2 (✅ MERGÉ main) — pièges découverts
 
 - **Autosave villas / contraintes DB** : la table `villas` refuse `""` sur `collection_tier` et `cancellation_template` (check constraints) et sur `owner_id` (uuid). L'ancien éditeur 500-ait silencieusement sur les brouillons neufs. Règle : avant POST update-villa, envoyer `null` (ou omettre `owner_id`) pour ces champs quand ils sont vides.
