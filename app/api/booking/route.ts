@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { calculatePrice } from "@/lib/price-engine";
+import { calculatePrice, SERVICE_FEE_PERCENT } from "@/lib/price-engine";
 import { supabaseAdmin } from "@/lib/supabase";
 import { checkRateLimit, ipFromRequest } from "@/lib/security";
 import { checkCsrf } from "@/lib/security";
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { startDate, endDate, villaId, guests, guestName, guestEmail, serviceFeePercent } = parsed.data;
+    const { startDate, endDate, villaId, guests, guestName, guestEmail } = parsed.data;
 
     const authClient = await getSupabaseServer();
     const {
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
     // ── Recalcul des frais côté serveur (sécurité : le client ne dicte pas le montant) ──
     const stayCents = Math.round(price.total * 100);
     const cleaningFeeCents = villa.cleaning_fee_cents || 0;
-    const serviceFeeCents = Math.round(price.total * serviceFeePercent / 100 * 100);
+    const serviceFeeCents = Math.round(price.total * SERVICE_FEE_PERCENT / 100 * 100);
     const totalCents = stayCents + cleaningFeeCents + serviceFeeCents;
 
     // Récupérer le compte Connect du propriétaire (si configuré)
