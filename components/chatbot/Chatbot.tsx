@@ -82,7 +82,7 @@ export const Chatbot = () => {
           role: "assistant" as const,
           content:
             "Bonjour, bienvenue chez Kayvila.\n\n" +
-            "Je suis votre concierge privé — je suis là pour vous aider à découvrir nos villas d'exception en Martinique et vous accompagner dans votre projet de séjour.\n\n" +
+            "Je suis votre concierge privé — je suis là pour vous aider à découvrir nos villas en Martinique et vous accompagner dans votre projet de séjour.\n\n" +
             "Comment puis-je vous aider aujourd'hui ?",
         },
       ];

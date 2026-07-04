@@ -41,13 +41,6 @@ function CardImageBlock({
   return (
     <div className="relative overflow-hidden rounded-none">
       <VillaCardImageCarousel images={gallery} priority={priority} />
-      {villa.tier ? (
-        <div className="pointer-events-none absolute top-4 left-4 z-30">
-          <span className="rounded-none border border-gold/40 bg-navy/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
-            {villa.tier}
-          </span>
-        </div>
-      ) : null}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/65 via-black/20 to-transparent pb-5 pt-14 px-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60">À partir de</p>
         <p className="mt-0.5 font-display text-lg leading-none text-white">
@@ -77,9 +70,6 @@ function PreviewBody({
       </div>
       <div className="flex items-start justify-between gap-2">
         <span className="font-display text-lg text-navy">{villa.name}</span>
-        {villa.tier ? (
-          <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-gold">{villa.tier}</span>
-        ) : null}
       </div>
       {villa.location ? (
         <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">{villa.location}</p>

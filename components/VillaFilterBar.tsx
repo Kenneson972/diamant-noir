@@ -9,7 +9,6 @@ export type FilterState = {
   plage: boolean;
   chambres: boolean;
   budget: null | "<800" | "800-1200" | ">1200";
-  tier: null | "Signature" | "Prestige" | "Exclusive";
   minGuests: number | null;
 };
 
@@ -19,7 +18,6 @@ export const DEFAULT_FILTERS: FilterState = {
   plage: false,
   chambres: false,
   budget: null,
-  tier: null,
   minGuests: null,
 };
 
@@ -30,7 +28,6 @@ export function isFilterActive(filters: FilterState): boolean {
     filters.plage ||
     filters.chambres ||
     filters.budget !== null ||
-    filters.tier !== null ||
     filters.minGuests !== null
   );
 }
@@ -46,7 +43,6 @@ export function filterVillas(villas: VillaMapItem[], filters: FilterState): Set<
     if (filters.budget === "<800" && v.price >= 800) continue;
     if (filters.budget === "800-1200" && (v.price < 800 || v.price > 1200)) continue;
     if (filters.budget === ">1200" && v.price <= 1200) continue;
-    if (filters.tier && v.tier !== filters.tier) continue;
     if (filters.minGuests && (v.capacity === null || v.capacity < filters.minGuests)) continue;
     passing.add(v.id);
   }
@@ -66,7 +62,6 @@ const CHIP_OFF = `${CHIP_BASE} border-navy/15 text-navy/80 hover:border-navy/40`
 const CHIP_ON = `${CHIP_BASE} border-gold bg-gold/[0.08] text-gold`;
 
 type BudgetVal = "<800" | "800-1200" | ">1200";
-type TierVal = "Signature" | "Prestige" | "Exclusive";
 
 export default function VillaFilterBar({ filters, onChange, passCount, total }: Props) {
   const { t } = useLocale();
@@ -77,10 +72,6 @@ export default function VillaFilterBar({ filters, onChange, passCount, total }: 
 
   const toggleBudget = (val: BudgetVal) => {
     onChange({ ...filters, budget: filters.budget === val ? null : val });
-  };
-
-  const toggleTier = (val: TierVal) => {
-    onChange({ ...filters, tier: filters.tier === val ? null : val });
   };
 
   const active = isFilterActive(filters);
@@ -114,21 +105,6 @@ export default function VillaFilterBar({ filters, onChange, passCount, total }: 
             onClick={() => toggleBudget(val)}
           >
             {val === "<800" ? "< 800 €" : val === "800-1200" ? "800–1200 €" : "> 1200 €"}
-          </button>
-        ))}
-
-        {/* Separator */}
-        <div className="h-5 w-px shrink-0 bg-navy/12 mx-1" aria-hidden="true" />
-
-        {/* Tier chips */}
-        {(["Signature", "Prestige", "Exclusive"] as TierVal[]).map((val) => (
-          <button
-            key={val}
-            type="button"
-            className={filters.tier === val ? CHIP_ON : CHIP_OFF}
-            onClick={() => toggleTier(val)}
-          >
-            {val}
           </button>
         ))}
       </div>

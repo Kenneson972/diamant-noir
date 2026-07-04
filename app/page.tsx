@@ -13,11 +13,11 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Kayvila | Conciergerie de standing en Martinique",
   description:
-    "Kayvila — Conciergerie de standing en Martinique. Villas d'exception, réservation en ligne, entretien et gestion locative. Rocher du Diamant, plages du Soleil.",
+    "Kayvila — Conciergerie de standing en Martinique. Villas en bord de mer, réservation en ligne, entretien et gestion locative. Rocher du Diamant, plages du Soleil.",
   openGraph: {
     title: "Kayvila | Conciergerie de standing en Martinique",
     description:
-      "Villas d'exception, réservation en ligne, entretien et gestion locative en Martinique.",
+      "Villas en bord de mer, réservation en ligne, entretien et gestion locative en Martinique.",
     images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
     url: "https://kayvila.com",
     type: "website",

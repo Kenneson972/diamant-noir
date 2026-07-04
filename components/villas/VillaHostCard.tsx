@@ -42,7 +42,7 @@ export function VillaHostCard({
   const name = host.full_name || "Votre hôte";
   const bio = host.role
     ? `${name}, ${host.role.toLowerCase()}, vous accueille dans ${villaName || "sa villa"}. Il sera ravi de partager ses meilleures adresses et de rendre votre séjour inoubliable.`
-    : `${name} est le propriétaire de ${villaName || "cette villa d'exception"}. Passionné par sa région, il sera ravi de vous faire découvrir les trésors cachés de la Martinique.`;
+    : `${name} est le propriétaire de ${villaName || "cette villa"}. Passionné par sa région, il sera ravi de vous faire découvrir les trésors cachés de la Martinique.`;
 
   return (
     <section id="hote" className="pt-10 border-t border-navy/10">

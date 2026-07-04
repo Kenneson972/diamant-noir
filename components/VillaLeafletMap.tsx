@@ -16,7 +16,6 @@ export type VillaMapItem = {
   capacity: number | null;
   surface: number | null;
   amenities: string[];
-  tier: string | null;
 };
 
 interface Props {

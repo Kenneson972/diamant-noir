@@ -17,7 +17,7 @@ export function HomeLifestyleAudience() {
             </span>
             <h2 className="font-display text-5xl md:text-7xl">Un Art de Vivre.</h2>
             <p className="text-lg font-light leading-relaxed text-white/60">
-              Chaque propriété de notre collection est un sanctuaire pensé pour la déconnexion. Notre conciergerie
+              Chaque propriété de notre collection est pensée pour la déconnexion. Notre conciergerie
               privée s&apos;occupe de chaque détail pour que votre seule préoccupation soit l&apos;instant présent.
             </p>
           </div>

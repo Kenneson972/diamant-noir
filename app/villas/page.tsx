@@ -11,11 +11,11 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Villas de standing en Martinique",
   description:
-    "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de standing, entretien et gestion locative.",
+    "Découvrez notre collection de villas de standing en Martinique. Réservation en ligne, conciergerie, entretien et gestion locative.",
   openGraph: {
     title: "Villas de standing en Martinique | Kayvila",
     description:
-      "Découvrez notre collection de villas d'exception en Martinique. Réservation en ligne, conciergerie de standing.",
+      "Découvrez notre collection de villas de standing en Martinique. Réservation en ligne, conciergerie.",
     url: "https://kayvila.com/villas",
     type: "website",
   },
@@ -54,17 +54,17 @@ const FALLBACK_VILLAS: VillaMapItem[] = [
   {
     id: "1", name: "Villa Kayvila", location: "Le Diamant, Martinique",
     price: 1000, image: "/prestations-hero.png", coords: [14.4750, -61.0247],
-    images: ["/prestations-hero.png", "/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"], tier: "Prestige",
+    images: ["/prestations-hero.png", "/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"],
   },
   {
     id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique",
     price: 1200, image: "/villa-hero.jpg", coords: [14.4917, -61.0650],
-    images: ["/villa-hero.jpg"], capacity: 8, surface: 350, amenities: ["Piscine", "Vue mer", "Plage directe"], tier: "Exclusive",
+    images: ["/villa-hero.jpg"], capacity: 8, surface: 350, amenities: ["Piscine", "Vue mer", "Plage directe"],
   },
   {
     id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique",
     price: 900, image: "/notregestion.webp", coords: [14.5361, -61.0261],
-    images: ["/notregestion.webp", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"], tier: "Signature",
+    images: ["/notregestion.webp", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"],
   },
 ];
 
@@ -132,7 +132,6 @@ export default async function VillasListingPage({
           capacity: typeof villa.capacity === "number" ? villa.capacity : null,
           surface: typeof villa.surface_m2 === "number" ? villa.surface_m2 : null,
           amenities,
-          tier: villa.collection_tier || null,
         };
       });
     }
@@ -144,7 +143,7 @@ export default async function VillasListingPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "Villas de standing en Martinique",
-    "description": "Collection de villas d'exception gérées par Kayvila en Martinique",
+    "description": "Collection de villas de standing gérées par Kayvila en Martinique",
     "url": "https://kayvila.com/villas",
     "itemListElement": villas.map((v, i) => ({
       "@type": "ListItem",
@@ -165,7 +164,7 @@ export default async function VillasListingPage({
         imageSrc="/villas-hero.webp"
         eyebrow={tServer(locale, "villas.subtitle")}
         title={tServer(locale, "villas.title")}
-        subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} d'exception en Martinique — chacune son charme, sa vue, son histoire.`}
+        subtitle={`${villas.length} propriété${villas.length > 1 ? "s" : ""} en Martinique — chacune son charme, sa vue, son histoire.`}
       >
         <div className="flex items-end justify-center gap-3">
           <span className="font-display text-7xl md:text-8xl text-white/10 leading-none select-none">

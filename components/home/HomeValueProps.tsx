@@ -3,7 +3,7 @@ import Link from "next/link";
 const PROPS = [
   {
     label: "Des villas",
-    word: "Exclusives",
+    word: "Choisies",
     body: "Chaque propriété est sélectionnée pour son âme, sa situation et sa singularité en Martinique.",
     href: "/villas",
   },

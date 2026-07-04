@@ -24,7 +24,6 @@ export function VillaDetailMiniMap({ latitude, longitude, name }: Props) {
       capacity: null,
       surface: null,
       amenities: [],
-      tier: null,
     },
   ];
 

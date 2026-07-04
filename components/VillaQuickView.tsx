@@ -96,20 +96,11 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
             </p>
           )}
 
-          {/* Name + Tier badge */}
+          {/* Name */}
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="font-display text-2xl text-navy leading-snug">
               {villa.name}
             </h2>
-            {villa.tier && (
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold border border-gold/30 px-2 py-0.5 shrink-0">
-                {villa.tier === "signature"
-                  ? "Collection Signature"
-                  : villa.tier === "prestige"
-                    ? "Collection Prestige"
-                    : "Collection Exclusive"}
-              </span>
-            )}
           </div>
 
           {/* Stats grid — 4 cols */}

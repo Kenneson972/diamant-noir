@@ -35,9 +35,9 @@ export const Footer = () => {
             <BrandLogo variant="onLight" size="sm" />
             <p className="text-sm leading-relaxed text-navy/80">
               {audience === "proprietaire" ? (
-                "Conciergerie haut de gamme en Martinique : valorisation de biens d'exception et relation voyageurs pour les propriétaires qui exigent sérénité et exigence."
+                "Conciergerie haut de gamme en Martinique : valorisation de biens de standing et relation voyageurs pour les propriétaires qui recherchent sérénité et fiabilité."
               ) : (
-                "Un sanctuaire côtier exclusif conçu pour ceux qui recherchent la rareté, la tranquillité et une élégance raffinée."
+                "Des villas de standing en bord de mer, choisies pour leur caractère, leur tranquillité et leur confort."
               )}
             </p>
           </div>
