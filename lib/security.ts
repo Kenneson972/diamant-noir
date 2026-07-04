@@ -77,6 +77,13 @@ export function ipFromRequest(request: Request): string {
 
 /**
  * Vérifie le header CSRF simple (Origin / Referer).
+ *
+ * On valide contre le Host réel de la requête (pas seulement contre
+ * NEXT_PUBLIC_BASE_URL) : cette variable d'env reflète le domaine final
+ * (kayvila.com) mais peut diverger du domaine effectivement servi
+ * (preview/staging *.vercel.app avant le branchement DNS), ce qui
+ * bloquerait à tort toutes les mutations. NEXT_PUBLIC_BASE_URL reste
+ * une origine autorisée en plus, pas la seule source de vérité.
  */
 export function verifyOrigin(request: Request, allowedOrigins?: string[]): boolean {
   const origin = request.headers.get("origin");
@@ -84,11 +91,20 @@ export function verifyOrigin(request: Request, allowedOrigins?: string[]): boole
 
   if (process.env.NODE_ENV === "development") return true;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const origins = allowedOrigins || [baseUrl];
+  const origins = new Set<string>(allowedOrigins);
+  if (process.env.NEXT_PUBLIC_BASE_URL) origins.add(process.env.NEXT_PUBLIC_BASE_URL);
 
-  if (origin && origins.some((o) => origin.startsWith(o))) return true;
-  if (referer && origins.some((o) => referer.startsWith(o))) return true;
+  const host = request.headers.get("host");
+  if (host) {
+    origins.add(`https://${host}`);
+    origins.add(`http://${host}`);
+  }
+
+  if (origins.size === 0) origins.add("http://localhost:3000");
+  const allowed = [...origins];
+
+  if (origin && allowed.some((o) => origin.startsWith(o))) return true;
+  if (referer && allowed.some((o) => referer.startsWith(o))) return true;
 
   return false;
 }
