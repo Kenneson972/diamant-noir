@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { escapeHtml, verifyOrigin } from "./security";
 
 describe("escapeHtml", () => {
@@ -15,16 +15,12 @@ describe("escapeHtml", () => {
 });
 
 describe("verifyOrigin", () => {
-  const prevNodeEnv = process.env.NODE_ENV;
-  const prevBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
   beforeEach(() => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = prevNodeEnv;
-    process.env.NEXT_PUBLIC_BASE_URL = prevBaseUrl;
+    vi.unstubAllEnvs();
   });
 
   function req(headers: Record<string, string>) {
@@ -32,7 +28,7 @@ describe("verifyOrigin", () => {
   }
 
   it("accepte une requête same-origin même si NEXT_PUBLIC_BASE_URL pointe vers un autre domaine (régression update-villa)", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://kayvila.com";
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://kayvila.com");
     const request = req({
       host: "kayvila.vercel.app",
       referer: "https://kayvila.vercel.app/admin/villas/123",
@@ -41,7 +37,7 @@ describe("verifyOrigin", () => {
   });
 
   it("accepte via Origin quand il correspond au Host", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://kayvila.com";
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://kayvila.com");
     const request = req({
       host: "kayvila.vercel.app",
       origin: "https://kayvila.vercel.app",
@@ -50,7 +46,7 @@ describe("verifyOrigin", () => {
   });
 
   it("accepte aussi via NEXT_PUBLIC_BASE_URL quand il correspond (domaine final branché)", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://kayvila.com";
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://kayvila.com");
     const request = req({
       host: "kayvila.com",
       origin: "https://kayvila.com",
@@ -59,7 +55,7 @@ describe("verifyOrigin", () => {
   });
 
   it("refuse une origine réellement étrangère", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://kayvila.com";
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://kayvila.com");
     const request = req({
       host: "kayvila.vercel.app",
       origin: "https://evil-attacker.example",
@@ -68,7 +64,7 @@ describe("verifyOrigin", () => {
   });
 
   it("refuse quand aucun Origin/Referer n'est fourni", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://kayvila.com";
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://kayvila.com");
     const request = req({ host: "kayvila.vercel.app" });
     expect(verifyOrigin(request)).toBe(false);
   });
