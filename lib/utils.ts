@@ -33,7 +33,19 @@ export function timeAgo(iso: string): string {
   return `Il y a ${Math.floor(diff / 86400)} j`;
 }
 
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Parse une chaîne de date. Si c'est une date "pure" (YYYY-MM-DD, sans heure),
+ * l'ancre à minuit LOCAL plutôt que de laisser JS l'interpréter en UTC minuit
+ * (ce qui décale l'affichage d'un jour pour les fuseaux négatifs par rapport à UTC).
+ * Un timestamp complet (avec heure/zone) est laissé inchangé.
+ */
+export function parseDateOnly(value: string): Date {
+  return DATE_ONLY_RE.test(value) ? new Date(`${value}T00:00:00`) : new Date(value);
+}
+
 /** Formate une date en français avec options. */
 export function formatDate(dateStr: string, opts?: Intl.DateTimeFormatOptions): string {
-  return new Date(dateStr).toLocaleDateString("fr-FR", opts);
+  return parseDateOnly(dateStr).toLocaleDateString("fr-FR", opts);
 }
