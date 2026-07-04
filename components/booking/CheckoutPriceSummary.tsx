@@ -4,6 +4,8 @@ import type { CheckoutVilla } from "@/components/booking/checkout-types";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { useLocale } from "@/contexts/LocaleContext";
+import { SERVICE_FEE_PERCENT } from "@/lib/price-engine";
 
 type CheckoutPriceSummaryProps = {
   villa: CheckoutVilla;
@@ -26,6 +28,7 @@ export function CheckoutPriceSummary({
   formatPrice,
   compact = false,
 }: CheckoutPriceSummaryProps) {
+  const { t } = useLocale();
   const imageSrc = pickVillaImageUrl(villa.image_url, villa.image_urls);
 
   return (
@@ -68,7 +71,7 @@ export function CheckoutPriceSummary({
             <dd className="shrink-0 font-medium text-navy">{formatPrice(cleaningFee)}</dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt>Frais de conciergerie Kayvila (5 %)</dt>
+            <dt>{t("booking.service_fee")} ({SERVICE_FEE_PERCENT} %)</dt>
             <dd className="shrink-0 font-medium text-navy">{formatPrice(serviceFee)}</dd>
           </div>
         </dl>

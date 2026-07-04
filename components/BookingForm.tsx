@@ -42,7 +42,7 @@ export const BookingForm = ({
   seasonalPrices,
 }: BookingFormProps) => {
   const cleaningFee = (cleaningFeeCents || 0) / 100;
-  const { formatPrice } = useLocale();
+  const { formatPrice, t } = useLocale();
   const [start, setStart] = useState(externalStart || "");
   const [end, setEnd] = useState(externalEnd || "");
 
@@ -204,7 +204,7 @@ export const BookingForm = ({
             <span>{formatPrice(cleaningFee)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="underline decoration-navy/20 underline-offset-4">Frais de service Kayvila</span>
+            <span className="underline decoration-navy/20 underline-offset-4">{t("booking.service_fee")}</span>
             <span>{formatPrice(Math.round(price.total * (SERVICE_FEE_PERCENT / 100)))}</span>
           </div>
           <div className="flex justify-between font-bold text-navy pt-4 border-t border-navy/10 text-lg">
