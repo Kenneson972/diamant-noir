@@ -174,6 +174,7 @@ export function VillaListingCard({
     >
       <Link
         href={href}
+        aria-label={villa.name}
         className="block w-full min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite"
         tabIndex={villa.dimmed ? -1 : 0}
       >
