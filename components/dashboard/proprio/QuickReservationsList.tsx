@@ -2,15 +2,11 @@ import Link from "next/link";
 import { User } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Booking } from "@/types/domain";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { BookingStatusBadge } from "./BookingStatusBadge";
 
 interface QuickReservationsListProps {
   bookings: Pick<Booking, "id" | "start_date" | "end_date" | "guest_name" | "status">[];
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("fr-FR");
 }
 
 export function QuickReservationsList({ bookings }: QuickReservationsListProps) {

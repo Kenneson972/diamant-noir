@@ -1,19 +1,13 @@
 import Link from "next/link";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Booking } from "@/types/domain";
+import { formatDate } from "@/lib/utils";
 
 interface UpcomingBookingsProps {
   bookings: Pick<
     Booking,
     "id" | "start_date" | "end_date" | "guest_name" | "status" | "villa_id"
   >[];
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-  });
 }
 
 export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
@@ -54,8 +48,8 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
                   {booking.guest_name ?? "Anonyme"}
                 </p>
                 <p className="text-xs text-muted">
-                  {formatDate(booking.start_date)} —{" "}
-                  {formatDate(booking.end_date)}
+                  {formatDate(booking.start_date, { day: "numeric", month: "long" })} —{" "}
+                  {formatDate(booking.end_date, { day: "numeric", month: "long" })}
                 </p>
               </div>
               <KayvilaPngIcon name="arrow-right" size={20} className="shrink-0 text-muted" />
