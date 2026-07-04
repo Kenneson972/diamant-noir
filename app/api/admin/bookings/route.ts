@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 import { hasBookingConflict } from "@/lib/booking/conflict";
 import { logAdminAction } from "@/lib/admin/audit-log";
-import { ipFromRequest } from "@/lib/security";
+import { ipFromRequest, checkCsrf } from "@/lib/security";
 import { BOOKING_VILLA_EMBED } from "@/lib/supabase/embeds";
 
 export const runtime = "nodejs";
@@ -162,6 +162,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     const adminId = await requireAdmin(request);
     const body = createBookingSchema.parse(await request.json());
@@ -229,6 +232,9 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     const adminId = await requireAdmin(request);
     const body = patchBookingSchema.parse(await request.json());

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
+import { checkCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,6 +34,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     const adminUser = await requireAdmin(request);
     const body = postSchema.parse(await request.json());

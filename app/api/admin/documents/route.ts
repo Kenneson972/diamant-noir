@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { checkCsrf } from "@/lib/security";
 
 const ALLOWED_TAGS = ["facture", "reporting", "contrat", "autre"];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export async function POST(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     await requireAdmin(request);
     const supabase = await getSupabaseServer();
@@ -80,6 +84,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     await requireAdmin(request);
     const supabase = await getSupabaseServer();

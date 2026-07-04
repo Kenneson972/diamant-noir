@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getUserFromRequest } from "@/lib/auth/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { checkCsrf } from "@/lib/security";
 
 export const runtime = "nodejs";
 
@@ -50,6 +51,9 @@ export async function GET(request: NextRequest) {
  * Verifies the notification belongs to the authenticated user.
  */
 export async function PATCH(request: NextRequest) {
+  const csrf = checkCsrf(request);
+  if (csrf) return csrf;
+
   try {
     const { user } = await getUserFromRequest(request);
     if (!user) {
