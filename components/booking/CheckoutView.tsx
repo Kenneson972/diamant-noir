@@ -86,12 +86,14 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
         .map((line) => line.trim())
         .filter(Boolean);
     }
+    const checkIn = villa.check_in_time ?? "17:00";
+    const checkOut = villa.check_out_time ?? "10:00";
     return [
-      "Arrivée à partir de 17h, départ avant 10h sauf accord conciergerie.",
+      `Arrivée à partir de ${checkIn}, départ avant ${checkOut} sauf accord conciergerie.`,
       "Respect du voisinage et des équipements de la villa.",
       "Non-fumeur à l'intérieur. Animaux sur demande préalable.",
     ];
-  }, [villa.checkout_instructions]);
+  }, [villa.checkout_instructions, villa.check_in_time, villa.check_out_time]);
 
   const handleConfirmBooking = async () => {
     if (!guestEmail.trim()) {
