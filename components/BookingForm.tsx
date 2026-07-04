@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { calculatePrice } from "@/lib/price-engine";
+import { parseDateOnly } from "@/lib/utils";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
 import { NumberStepper } from "@heroui-pro/react";
@@ -105,7 +106,7 @@ export const BookingForm = ({
   };
 
   const dateLabel = (value: string) =>
-    new Date(value).toLocaleDateString("fr-FR", {
+    parseDateOnly(value).toLocaleDateString("fr-FR", {
       day: "2-digit",
       month: "short",
     });
