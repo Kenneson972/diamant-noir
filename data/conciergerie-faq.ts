@@ -25,7 +25,7 @@ export const CONCIERGERIE_FAQ: FaqTheme[] = [
       },
       {
         q: "Y a-t-il un montant minimum de facturation ?",
-        a: "Oui. Afin de couvrir le suivi permanent de votre logement (disponibilité, surveillance, gestion administrative et coordination des interventions), une facturation minimale de 50 € par mois s'applique lorsque la commission du mois est inférieure à ce montant — notamment en l'absence de réservation. Dès que votre commission mensuelle dépasse 50 €, ce minimum ne s'applique plus.",
+        a: "Oui. Afin de couvrir le suivi permanent de votre logement (disponibilité, surveillance, gestion administrative et coordination des interventions), une facturation minimale de 50 € par mois s'applique lorsque la commission du mois est inférieure à ce montant — notamment en l'absence de réservation. Dès que votre commission mensuelle dépasse 50 €, ce minimum ne s'applique plus. À noter : ce minimum ne s'applique qu'après la période d'essai de 3 mois. Pendant ces trois premiers mois, vous ne réglez que la commission réellement due, sans aucun minimum.",
       },
     ],
   },
