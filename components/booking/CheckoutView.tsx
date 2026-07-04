@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import { ChevronLeft } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
-import { calculatePrice } from "@/lib/price-engine";
+import { calculatePrice, SERVICE_FEE_PERCENT } from "@/lib/price-engine";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { KayvilaPressableButton } from "@/components/ui/pro";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
@@ -72,7 +72,7 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
   );
 
   const cleaningFee = (villa.cleaning_fee_cents ?? 0) / 100;
-  const serviceFee = Math.round(priceResult.total * 0.05);
+  const serviceFee = Math.round(priceResult.total * (SERVICE_FEE_PERCENT / 100));
   const totalAmount = priceResult.total + cleaningFee + serviceFee;
   const nights = priceResult.nights;
 

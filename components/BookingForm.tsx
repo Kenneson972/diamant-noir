@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { calculatePrice } from "@/lib/price-engine";
+import { calculatePrice, SERVICE_FEE_PERCENT } from "@/lib/price-engine";
 import { parseDateOnly } from "@/lib/utils";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -205,11 +205,11 @@ export const BookingForm = ({
           </div>
           <div className="flex justify-between">
             <span className="underline decoration-navy/20 underline-offset-4">Frais de service Kayvila</span>
-            <span>{formatPrice(Math.round(price.total * 0.05))}</span>
+            <span>{formatPrice(Math.round(price.total * (SERVICE_FEE_PERCENT / 100)))}</span>
           </div>
           <div className="flex justify-between font-bold text-navy pt-4 border-t border-navy/10 text-lg">
             <span>Total</span>
-            <span>{formatPrice(Math.round(price.total + cleaningFee + price.total * 0.05))}</span>
+            <span>{formatPrice(Math.round(price.total + cleaningFee + price.total * (SERVICE_FEE_PERCENT / 100)))}</span>
           </div>
         </div>
       ) : (

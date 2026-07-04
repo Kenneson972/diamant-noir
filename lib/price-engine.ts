@@ -1,5 +1,8 @@
 import type { BookingPriceInput, BookingPriceResult } from "@/types";
 
+/** Pourcentage des frais de service Kayvila appliqué sur le montant des nuitées (hors ménage). */
+export const SERVICE_FEE_PERCENT = 5;
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const diffDays = (start: Date, end: Date) =>
