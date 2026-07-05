@@ -127,8 +127,8 @@ export async function middleware(request: NextRequest) {
       ? "/dashboard"
       : "/espace-client";
     const redirectRes = NextResponse.redirect(new URL(dest, request.url));
-    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-      redirectRes.cookies.set(name, value);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie);
     });
     return redirectRes;
   }
@@ -143,9 +143,9 @@ export async function middleware(request: NextRequest) {
     const url = new URL("/login", request.url);
     url.searchParams.set("redirect", pathname);
     const redirectRes = NextResponse.redirect(url);
-    // Copier les cookies rafraîchis par Supabase
-    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-      redirectRes.cookies.set(name, value);
+    // Copier les cookies rafraîchis par Supabase (avec leurs options : maxAge, sameSite, secure…)
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie);
     });
     return redirectRes;
   }
@@ -182,8 +182,8 @@ export async function middleware(request: NextRequest) {
   const doRedirect = (path: string) => {
     const url = new URL(path, request.url);
     const res = NextResponse.redirect(url);
-    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-      res.cookies.set(name, value);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      res.cookies.set(cookie);
     });
     return res;
   };
