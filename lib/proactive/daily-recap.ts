@@ -22,8 +22,16 @@ export function buildDailyRecap(input: {
   return { sections, hasSignal: sections.some((s) => s.lines.length > 0) };
 }
 
+/** Texte brut pour la notification in-app — une ligne par section non vide. */
+export function buildDailyRecapNotificationBody(recap: DailyRecap): string {
+  return recap.sections
+    .filter((s) => s.lines.length > 0)
+    .map((s) => `${s.title} (${s.lines.length}) : ${s.lines.join(", ")}`)
+    .join("\n");
+}
+
 /** Début de fenêtre "aujourd'hui" en UTC (même jour en MQ). */
-function todayStartUTC(): Date {
+export function todayStartUTC(): Date {
   const now = new Date();
   // Martinique = UTC-4, donc début du jour MQ = 04:00 UTC
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 4));
@@ -60,5 +68,15 @@ export async function runDailyRecap(admin: SupabaseClient): Promise<number> {
     bookings: input.bookings,
     icalErrors: input.icalErrors,
   });
+
+  const { error: notifError } = await admin.from("notifications").insert({
+    type: "admin_daily_recap",
+    title: "Point quotidien admin",
+    body: buildDailyRecapNotificationBody(recap),
+    action_url: "/admin/hub-classique",
+    user_id: null,
+  });
+  if (notifError) console.error("[daily-recap] notif insert", notifError);
+
   return recap.sections.reduce((sum, s) => sum + s.lines.length, 0);
 }

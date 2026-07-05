@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildDailyRecap } from "@/lib/proactive/daily-recap";
+import { buildDailyRecap, buildDailyRecapNotificationBody } from "@/lib/proactive/daily-recap";
 
 describe("buildDailyRecap", () => {
   it("hasSignal false si tout est vide", () => {
@@ -19,5 +19,18 @@ describe("buildDailyRecap", () => {
       "Réservations du jour",
       "Erreurs iCal",
     ]);
+  });
+});
+
+describe("buildDailyRecapNotificationBody", () => {
+  it("ne liste que les sections non vides, avec leur compte", () => {
+    const recap = buildDailyRecap({ submissions: ["Villa X"], leads: [], bookings: ["Jean"], icalErrors: [] });
+    const body = buildDailyRecapNotificationBody(recap);
+    expect(body).toBe("Nouvelles soumissions villa (1) : Villa X\nRéservations du jour (1) : Jean");
+  });
+
+  it("chaîne vide si aucune section", () => {
+    const recap = buildDailyRecap({ submissions: [], leads: [], bookings: [], icalErrors: [] });
+    expect(buildDailyRecapNotificationBody(recap)).toBe("");
   });
 });
