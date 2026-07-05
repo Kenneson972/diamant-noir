@@ -26,6 +26,22 @@ async function fetchPendingSubmissions(admin: SupabaseClient) {
   return (data ?? []) as { id: string; villa_name: string | null; created_at: string }[];
 }
 
+export function buildPendingSubmissionNotification(item: { villa: string; since: string }): {
+  type: "pending_submission";
+  title: string;
+  body: string;
+  action_url: string;
+  user_id: null;
+} {
+  return {
+    type: "pending_submission",
+    title: "Soumission en attente",
+    body: `${item.villa} — en attente depuis ${item.since}`,
+    action_url: "/admin/soumissions",
+    user_id: null,
+  };
+}
+
 /** Orchestrateur complet : fetch → decide → filterNew → sendEmail → markAlerted. Retourne le nombre d'items alertés. */
 export async function runPendingSubmissions(admin: SupabaseClient): Promise<number> {
   const rows = await fetchPendingSubmissions(admin);
@@ -40,6 +56,10 @@ export async function runPendingSubmissions(admin: SupabaseClient): Promise<numb
   await sendAdminPendingSubmissionsEmail(
     toAlert.map((c) => ({ villa: c.villa, since: c.since }))
   );
+  const { error: notifError } = await admin
+    .from("notifications")
+    .insert(toAlert.map((c) => buildPendingSubmissionNotification(c)));
+  if (notifError) console.error("[pending-submissions] notif insert", notifError);
   await markAlerted(admin, "pending_submission", fresh);
   return toAlert.length;
 }
