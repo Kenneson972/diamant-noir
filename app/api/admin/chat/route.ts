@@ -4,9 +4,12 @@ import { getBookingPriceCents } from "@/lib/utils";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 import { requiresConfirmation, buildConfirmationPrompt } from "@/lib/admin-confirm";
 import {
-  computeOccupancyByVilla, computeHealthScores, computeAdminAlerts, buildDailyBriefing,
+  computeOccupancyByVilla, computeHealthScores, computeAdminAlerts, buildDailyBriefing, computeAdminInsights,
   type AdminAnalyticsInput,
 } from "@/lib/admin-assistant-context";
+import { getSupabaseServer } from "@/lib/supabase-server";
+import { buildAdminFallbackReply, parseAdminCommand, type AdminFallbackContext } from "@/lib/admin-chat-fallback";
+import { logChatbotFeedback } from "@/lib/chatbot/feedback";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,94 +31,6 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
-// ─── Mode démo intelligent — analyse la question et répond avec les données réelles ──
-function buildAdminDemoReply(message: string, ctx: Record<string, any>): {
-  text: string;
-  action?: string;
-  suggestions?: string[];
-} {
-  const msg = message.toLowerCase();
-  const vs = ctx.villas_summary || {};
-  const bs = ctx.bookings_summary || {};
-  const ts = ctx.tasks_summary || {};
-  const fin = ctx.finances || {};
-  const sub = ctx.submissions_summary || {};
-  const ota = ctx.ota_health || {};
-
-  // ── Revenus / Finances ──
-  if (/revenu|chiffre|argent|financ|encaiss|mois|€|euro/.test(msg)) {
-    const monthly = (fin.monthly_revenue as any[] || []).map((m: any) =>
-      `• ${m.month} : ${m.revenue.toLocaleString("fr-FR")} €`
-    ).join("\n");
-    return {
-      text: `💰 **Revenus**\n\nTotal encaissé : **${fin.revenue_total?.toLocaleString("fr-FR") || 0} €**\nCe mois : **${fin.revenue_this_month?.toLocaleString("fr-FR") || 0} €**\nLe mois dernier : ${fin.revenue_last_month?.toLocaleString("fr-FR") || 0} €\n\n📊 **6 derniers mois :**\n${monthly}`,
-      action: "SHOW_FINANCES",
-      suggestions: ["Taux d'occupation ce mois ?", "Top 3 villas par revenu ?", "Check-ins de la semaine ?"],
-    };
-  }
-
-  // ── Réservations / Check-ins ──
-  if (/réservation|booking|check.?in|arrivée|client|séjour/.test(msg)) {
-    return {
-      text: `📅 **Réservations**\n\n✅ Confirmées : ${bs.confirmed}\n⏳ En attente : ${bs.pending}\n🟢 Check-ins aujourd'hui : **${bs.checkins_today}**\n📅 Check-ins sous 48h : ${bs.checkins_48h}\n📅 Check-ins sous 7 jours : ${bs.checkins_7d}\n🔴 Check-outs aujourd'hui : ${bs.checkouts_today}`,
-      action: "SHOW_BOOKINGS",
-      suggestions: ["Check-ins de demain ?", "Réservations en attente ?", "Taux de remplissage ?"],
-    };
-  }
-
-  // ── Tâches ──
-  if (/tâche|tache|todo|urgent|retard|maintenance|en cours/.test(msg)) {
-    return {
-      text: `📋 **Tâches**\n\n📊 Total : ${ts.total}\n🔴 En retard : **${ts.overdue}**\n🟡 À faire aujourd'hui : ${ts.due_today}\n⏳ En attente : ${ts.pending}\n🔄 En cours : ${ts.in_progress}`,
-      action: "SHOW_TASKS",
-      suggestions: ["Tâches urgentes ?", "Créer une tâche", "Check-ins du jour ?"],
-    };
-  }
-
-  // ── Villas ──
-  if (/villa|propriété|parc|catalogue|publi/.test(msg)) {
-    return {
-      text: `🏠 **Villas**\n\n📊 ${vs.total} villa(s) au total\n✅ ${vs.published} publiée(s)\n🔒 ${vs.draft} brouillon(s)`,
-      action: "SHOW_VILLAS",
-      suggestions: ["Ajouter une villa", "Villas non publiées ?", "Revenus par villa ?"],
-    };
-  }
-
-  // ── Soumissions ──
-  if (/soumission|candidat|proprio|propriétaire/.test(msg)) {
-    return {
-      text: `📬 **Soumissions**\n\n📊 ${sub.total} soumission(s)\n🆕 Reçues : ${sub.received}\n🔍 En cours : ${sub.in_progress}\n✅ Approuvées : ${sub.approved}\n📸 Besoin de photos : ${sub.needs_photos}`,
-      action: "SHOW_SUBMISSIONS",
-      suggestions: ["Soumissions récentes ?", "Soumissions en cours ?"],
-    };
-  }
-
-  // ── OTA / Sync ──
-  if (/ota|sync|airbnb|booking|synchro|ical|erreur/.test(msg)) {
-    const last = ota.last_sync ? new Date(ota.last_sync).toLocaleString("fr-FR") : "jamais";
-    return {
-      text: `🔄 **Synchronisation OTA**\n\nDernière synchro : ${last}\nCanaux avec erreurs : ${ota.channels_with_errors?.length || 0}\nImportés : ${ota.total_imported_last_sync || 0}`,
-      action: "SHOW_OTA_HEALTH",
-      suggestions: ["Détail des erreurs ?", "Forcer une synchro ?"],
-    };
-  }
-
-  // ── Santé / comparaison villas ──
-  if (/santé|sante|score|comparer|comparaison|occupation|performance|meilleure|pire/.test(msg)) {
-    return {
-      text: `📊 Demande la vue détaillée dans le tableau de bord : occupation et score de santé par villa sont calculés en direct.`,
-      action: "SHOW_VILLAS",
-      suggestions: ["Quelle villa est la plus occupée ?", "Quelles villas sont à risque ?"],
-    };
-  }
-
-  // ── Par défaut : résumé général ──
-  return {
-    text: `👋 Voici votre tableau de bord :\n\n🏠 **${vs.total} villa(s)** (${vs.published} publiée(s))\n📅 **${bs.checkins_today} check-in(s)** aujourd'hui — ${bs.confirmed + bs.pending} résas\n📋 **${ts.overdue} tâche(s)** en retard sur ${ts.total}\n💰 **${fin.revenue_this_month?.toLocaleString("fr-FR") || 0} €** ce mois-ci\n📬 **${sub.received} soumission(s)** en attente\n🔄 Dernière synchro OTA : ${ota.last_sync ? new Date(ota.last_sync).toLocaleDateString("fr-FR") : "jamais"}\n\nQue puis-je faire pour vous ?`,
-    action: "SHOW_STATS",
-    suggestions: ["Check-ins de la semaine ?", "Tâches urgentes ?", "Revenus par villa ?"],
-  };
-}
 
 // ─── DATA GATHERING HELPER ────────────────────────────────────────────────────
 
@@ -354,6 +269,17 @@ export async function POST(request: Request) {
   try {
     const userId = await requireAdmin(request);
 
+    // Token Supabase pour l'auth du bot n8n (Fetch Admin Context) — P0 audit :
+    // sans lui, le workflow reçoit Bearer vide → 401 → jamais de LLM.
+    let n8nToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+    if (!n8nToken) {
+      try {
+        const supaSrv = await getSupabaseServer();
+        const { data: { session } } = await supaSrv.auth.getSession();
+        n8nToken = session?.access_token ?? "";
+      } catch { /* cookie session absente — on envoie vide, le bot répondra 401 */ }
+    }
+
     // Rate limiting
     if (!checkRateLimit(userId)) {
       return NextResponse.json(
@@ -378,26 +304,139 @@ export async function POST(request: Request) {
     const { contextData, villas, bookings, tasks, submissions, otaLogs, today, todayStr } =
       await gatherAdminContext(supabase);
 
+    // ── Analytics + insights pour fallback/démo (fonctions pures) ────────────
+    const profilesRes = await supabase
+      .from("profiles")
+      .select("id, full_name, role, stripe_connect_onboarding_completed")
+      .limit(200);
+    const profiles = profilesRes.data ?? [];
+
+    const villasFullRes = await supabase
+      .from("villas")
+      .select("id, name, is_published, image_url, image_urls")
+      .limit(200);
+    const villasFull = villasFullRes.data ?? [];
+
+    const analyticsInput = {
+      today: todayStr,
+      villas: villas.map((v: any) => ({ id: String(v.id), name: String(v.name ?? "Villa") })),
+      bookings: bookings.map((b: any) => ({
+        villa_id: String(b.villa_id), start_date: String(b.start_date), end_date: String(b.end_date),
+        status: String(b.status ?? ""), payment_status: String(b.payment_status ?? ""),
+      })),
+      blocks: [],
+      tasks: tasks.map((t: any) => ({ id: String(t.id), villa_id: String(t.villa_id), status: String(t.status ?? ""), due_date: t.due_date ?? null })),
+      reviews: [],
+      submissions: submissions.map((s: any) => ({ id: String(s.id), status: String(s.status ?? ""), created_at: String(s.created_at), owner_name: s.owner_name, villa_name: s.villa_name })),
+      revenueByVilla: {},
+      revenueLastMonthByVilla: {},
+    };
+
+    const insights = computeAdminInsights({
+      revenue_this_month: (contextData.finances as any).revenue_this_month ?? 0,
+      revenue_last_month: (contextData.finances as any).revenue_last_month ?? 0,
+      villas: villasFull.map((v: any) => ({
+        id: String(v.id), name: String(v.name ?? "Villa"),
+        is_published: !!v.is_published,
+        has_photo: !!v.image_url || (Array.isArray(v.image_urls) && v.image_urls.length > 0),
+      })),
+      owners: profiles
+        .filter((p: any) => ["owner", "proprietaire", "proprio"].includes(String(p.role)))
+        .map((p: any) => ({ id: String(p.id), full_name: p.full_name ?? null, connect_completed: !!p.stripe_connect_onboarding_completed })),
+      overdue_tasks: (contextData.tasks_summary as any).overdue ?? 0,
+      submissions_received: (contextData.submissions_summary as any).received ?? 0,
+      ota_channels_with_errors: ((contextData.ota_health as any).channels_with_errors as string[]) ?? [],
+    });
+
+    // Insights envoyés aussi à n8n via contextData
+    (contextData as any).insights = insights;
+
+    const villaNames: Record<string, string> = Object.fromEntries(
+      villas.map((v: any) => [String(v.id), String(v.name ?? "Villa")])
+    );
+
+    const fallbackCtx: AdminFallbackContext = {
+      contextData,
+      occupancy: computeOccupancyByVilla(analyticsInput),
+      villaNames,
+      alerts: computeAdminAlerts(analyticsInput).map((a) => ({ severity: a.severity, label: a.label })),
+      briefing: buildDailyBriefing(analyticsInput),
+      insights,
+      checkins7d: bookings
+        .filter((b: any) => b.start_date >= todayStr && b.start_date <= addDays(todayStr, 7) && b.status !== "cancelled")
+        .map((b: any) => ({
+          guest_name: b.guest_name ?? null,
+          villa_name: villaNames[String(b.villa_id)] ?? "Villa",
+          start_date: String(b.start_date),
+        })),
+    };
+
+    // Réponse locale unifiée (mode démo ET panne n8n) — actions locales incluses
+    async function localReply(reason: string) {
+      const cmd = parseAdminCommand(message.trim(), todayStr);
+      if (cmd?.type === "create_task") {
+        const { data: created, error } = await supabase.from("tasks").insert({
+          title: cmd.title, type: "other", status: "pending", due_date: cmd.dueDate,
+        }).select("id").single();
+        return NextResponse.json({
+          success: true,
+          response: error
+            ? `Impossible de créer la tâche : ${error.message}`
+            : `Tâche créée : « ${cmd.title} »${cmd.dueDate ? ` (échéance ${cmd.dueDate})` : ""} — #${created?.id}`,
+          action: "SHOW_TASKS", action_data: contextData,
+          suggested_prompts: ["Mes tâches en retard ?", "Briefing du jour ?"],
+          request_id, metadata: { source: "local", reason },
+        });
+      }
+      if (cmd?.type === "complete_task") {
+        const { error, count } = await supabase.from("tasks")
+          .update({ status: "done", completed_at: new Date().toISOString() }, { count: "exact" })
+          .eq("id", cmd.taskRef);
+        return NextResponse.json({
+          success: true,
+          response: error || !count
+            ? `Tâche #${cmd.taskRef} introuvable ou non modifiable.`
+            : `Tâche #${cmd.taskRef} marquée comme faite.`,
+          action: "SHOW_TASKS", action_data: contextData,
+          suggested_prompts: ["Tâches restantes ?", "Briefing du jour ?"],
+          request_id, metadata: { source: "local", reason },
+        });
+      }
+      if (cmd?.type === "note_client") {
+        const { error } = await supabase.from("tasks").insert({
+          title: `Note — ${cmd.client} : ${cmd.note}`.slice(0, 200),
+          type: "other", status: "pending",
+        });
+        return NextResponse.json({
+          success: true,
+          response: error
+            ? `Impossible d'enregistrer la note : ${error.message}`
+            : `Note enregistrée sur ${cmd.client} (visible dans les tâches).`,
+          action: "SHOW_TASKS", action_data: contextData,
+          suggested_prompts: ["Voir les tâches ?"],
+          request_id, metadata: { source: "local", reason },
+        });
+      }
+
+      const local = buildAdminFallbackReply(message.trim(), fallbackCtx);
+      void logChatbotFeedback({
+        agent: "admin", sessionId: sessionid ?? null,
+        question: message.trim(), matched: local.matchedFaqId !== null,
+      });
+      return NextResponse.json({
+        success: true,
+        response: local.text,
+        action: local.action, action_data: contextData,
+        suggested_prompts: local.suggestions,
+        request_id, metadata: { source: "local", reason },
+      });
+    }
+
     // ─── WEBHOOK n8n ─────────────────────────────────────────────────────────
     const webhookURL =
       process.env.N8N_ADMIN_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
 
-    if (!webhookURL) {
-      // Mode démo intelligent — répond en français avec les vraies données
-      const demoResponse = buildAdminDemoReply(message.trim(), contextData);
-      return NextResponse.json({
-        success: true,
-        response: demoResponse.text,
-        action: demoResponse.action || "SHOW_STATS",
-        action_data: contextData,
-        suggested_prompts: demoResponse.suggestions || [
-          "Quel est mon taux d'occupation ce mois ?",
-          "Quels check-ins sont prévus cette semaine ?",
-          "Y a-t-il des tâches en retard ?",
-        ],
-        request_id,
-      });
-    }
+    if (!webhookURL) return localReply("no_webhook");
 
     // ── Appel n8n avec timeout + fallback ──
     let webhookRes: Response;
@@ -413,38 +452,18 @@ export async function POST(request: Request) {
           request_id,
           context: contextData,
           source: "admin_dashboard",
+          token: n8nToken,
         }),
         signal: AbortSignal.timeout(20_000),
       });
     } catch (fetchErr) {
       console.error("[admin-chat] webhook fetch error", fetchErr);
-      return NextResponse.json({
-        success: true,
-        response: `[Fallback] Mon analyse est temporairement indisponible.\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui, ${tasks.filter((t) => t.status !== "done" && t.due_date && t.due_date < todayStr).length} tâches en retard.`,
-        action: "SHOW_STATS",
-        action_data: contextData,
-        suggested_prompts: [
-          "Quel est mon taux d'occupation ce mois ?",
-          "Y a-t-il des tâches en retard ?",
-        ],
-        request_id,
-        metadata: { source: "local", reason: "n8n_unreachable" },
-      });
+      return localReply("n8n_unreachable");
     }
 
     if (!webhookRes.ok) {
       console.error("[admin-chat] webhook status", webhookRes.status);
-      return NextResponse.json({
-        success: true,
-        response: `[Fallback] n8n a rencontré une erreur (${webhookRes.status}).\n\nVoici votre snapshot : ${villas.length} villas, ${bookings.filter((b) => b.start_date === todayStr).length} check-ins aujourd'hui.`,
-        action: "SHOW_STATS",
-        action_data: contextData,
-        suggested_prompts: [
-          "Quel est mon taux d'occupation ce mois ?",
-        ],
-        request_id,
-        metadata: { source: "local", reason: `n8n_status_${webhookRes.status}` },
-      });
+      return localReply(`n8n_status_${webhookRes.status}`);
     }
 
     const data = await webhookRes.json().catch(() => ({}));
@@ -472,7 +491,7 @@ export async function POST(request: Request) {
         villa_id: actionData.task.villa_id,
         title: actionData.task.title,
         type: actionData.task.type || "other",
-        status: "todo",
+        status: "pending",
         due_date: actionData.task.due_date || null,
         assigned_to: actionData.task.assigned_to || null,
       });
