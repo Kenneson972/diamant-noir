@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { corsHeaders } from "@/lib/cors";
 import { sanitizeUserMessage, sanitizeConversationSummary, sanitizeLeadData } from "@/lib/chatbot/sanitize";
 import { getPublishedVillasForChatbot, extractUniqueAmenities } from "@/lib/chatbot/villa-context";
+import { buildPublicFallback } from "@/lib/chatbot/public-fallback";
+import { logChatbotFeedback } from "@/lib/chatbot/feedback";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
 import { CONCIERGERIE_FACTS, validateOwnerLead } from "@/lib/chatbot/conciergerie-context";
@@ -18,28 +20,43 @@ import type {
 
 export const runtime = "nodejs";
 
-// Réponse de fallback si n8n est indisponible
+// Réponse de fallback si n8n est indisponible — moteur FAQ offline
 function buildFallbackResponse(
   sessionId: string,
-  villaCount: number,
-  reason: "no_webhook" | "timeout" | "error"
+  _villaCount: number,
+  reason: "no_webhook" | "timeout" | "error",
+  opts?: { message?: string; stage?: string; villas?: import("@/types/chatbot").VillaContextItem[]; villaId?: string }
 ): ChatbotResponse {
-  const messages: Record<typeof reason, string> = {
-    no_webhook:
-      `Bonjour, bienvenue chez Kayvila.\n\nNous proposons ${villaCount} villa${villaCount > 1 ? "s" : ""} en Martinique. Je suis votre concierge privé — comment puis-je vous aider ?\n\n_(Mode démonstration — configurez N8N_WEBHOOK_URL pour activer l'assistant IA)_`,
-    timeout:
-      "Notre service de conciergerie est momentanément surchargé. Nous vous invitons à réessayer dans quelques instants ou à nous contacter directement.",
-    error:
-      "Je rencontre une difficulté technique passagère. Notre équipe reste disponible pour vous accompagner.",
-  };
+  const fb = buildPublicFallback({
+    message: opts?.message ?? "",
+    stage: opts?.stage ?? "greet",
+    villas: opts?.villas ?? [],
+    villaId: opts?.villaId,
+  });
+
+  // Log fire-and-forget des questions sans réponse (pas de await)
+  if (opts?.message) {
+    void logChatbotFeedback({
+      agent: "public",
+      sessionId,
+      question: opts.message,
+      matched: fb.matchedFaqId !== null,
+    });
+  }
+
+  const suffix =
+    reason === "no_webhook" && process.env.NODE_ENV === "development"
+      ? "\n\n(Mode démonstration — configurez N8N_WEBHOOK_URL)"
+      : "";
 
   return {
     success: true,
-    reply: messages[reason],
+    reply: fb.reply + suffix,
     sessionId,
-    stage: "greet",
-    suggestedQuickReplies: ["Découvrir nos villas", "Demander un devis", "Contacter le concierge"],
-  };
+    stage: "fallback",
+    cta: fb.link ? { type: "navigate" as const, url: fb.link } : undefined,
+    suggestedQuickReplies: fb.quickReplies,
+  } as ChatbotResponse;
 }
 
 function stripMarkdown(text: string): string {
@@ -231,7 +248,12 @@ export async function POST(request: Request) {
   const webhookURL = process.env.N8N_WEBHOOK_URL || process.env.CHAT_WEBHOOK_URL;
 
   if (!webhookURL) {
-    return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "no_webhook"));
+    return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "no_webhook", {
+      message: sanitized.sanitized,
+      stage: body.currentStage ?? "greet",
+      villas,
+      villaId: typeof body.villaId === "string" ? body.villaId : undefined,
+    }));
   }
 
   // Payload enrichi vers n8n
@@ -273,7 +295,12 @@ export async function POST(request: Request) {
 
     if (!n8nRes.ok) {
       console.error(`[api/chat] n8n error: ${n8nRes.status}`);
-      return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "error"));
+      return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "error", {
+        message: sanitized.sanitized,
+        stage: body.currentStage ?? "greet",
+        villas,
+        villaId: typeof body.villaId === "string" ? body.villaId : undefined,
+      }));
     }
 
     const rawData = await n8nRes.json();
@@ -281,7 +308,12 @@ export async function POST(request: Request) {
 
     if (!parsed) {
       console.error("[api/chat] n8n response unparseable:", JSON.stringify(rawData).slice(0, 300));
-      return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "error"));
+      return NextResponse.json(buildFallbackResponse(sessionId, villas.length, "error", {
+        message: sanitized.sanitized,
+        stage: body.currentStage ?? "greet",
+        villas,
+        villaId: typeof body.villaId === "string" ? body.villaId : undefined,
+      }));
     }
 
     const cleanReply = stripMarkdown(parsed.reply);
@@ -328,7 +360,12 @@ export async function POST(request: Request) {
       error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
     console.error("[api/chat]", isTimeout ? "timeout" : error);
     return NextResponse.json(
-      buildFallbackResponse(sessionId, villas.length, isTimeout ? "timeout" : "error")
+      buildFallbackResponse(sessionId, villas.length, isTimeout ? "timeout" : "error", {
+        message: sanitized.sanitized,
+        stage: body.currentStage ?? "greet",
+        villas,
+        villaId: typeof body.villaId === "string" ? body.villaId : undefined,
+      })
     );
   }
 }

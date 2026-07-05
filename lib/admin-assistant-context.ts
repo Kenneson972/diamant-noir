@@ -146,3 +146,62 @@ export function buildDailyBriefing(input: AdminAnalyticsInput): DailyBriefing {
 
   return { checkins_today, checkouts_today, submissions_pending, highlights };
 }
+
+// ─── Insights proactifs (Task 8) ─────────────────────────────────────────────
+
+export type AdminInsightsInput = {
+  revenue_this_month: number;
+  revenue_last_month: number;
+  villas: { id: string; name: string; is_published: boolean; has_photo: boolean }[];
+  owners: { id: string; full_name: string | null; connect_completed: boolean }[];
+  overdue_tasks: number;
+  submissions_received: number;
+  ota_channels_with_errors: string[];
+};
+
+export type AdminInsights = {
+  revenue_delta_pct: number | null;
+  villas_without_photo: { id: string; name: string }[];
+  owners_without_connect: { id: string; name: string | null }[];
+  top_actions: string[];
+};
+
+export function computeAdminInsights(input: AdminInsightsInput): AdminInsights {
+  const {
+    revenue_this_month, revenue_last_month, villas, owners,
+    overdue_tasks, submissions_received, ota_channels_with_errors,
+  } = input;
+
+  const revenue_delta_pct =
+    revenue_last_month > 0
+      ? Math.round(((revenue_this_month - revenue_last_month) / revenue_last_month) * 100)
+      : null;
+
+  const villas_without_photo = villas
+    .filter((v) => v.is_published && !v.has_photo)
+    .map((v) => ({ id: v.id, name: v.name }));
+
+  const owners_without_connect = owners
+    .filter((o) => !o.connect_completed)
+    .map((o) => ({ id: o.id, name: o.full_name }));
+
+  // Actions recommandées, par criticité : OTA > tâches en retard > soumissions > photos > Connect
+  const actions: string[] = [];
+  if (ota_channels_with_errors.length > 0)
+    actions.push(`Vérifier la synchro OTA en erreur (${ota_channels_with_errors.join(", ")})`);
+  if (overdue_tasks > 0)
+    actions.push(`Traiter ${overdue_tasks} tâche(s) en retard`);
+  if (submissions_received > 0)
+    actions.push(`Répondre à ${submissions_received} soumission(s) de villa en attente`);
+  if (villas_without_photo.length > 0)
+    actions.push(`Ajouter des photos à ${villas_without_photo.map((v) => v.name).join(", ")}`);
+  if (owners_without_connect.length > 0)
+    actions.push(`Relancer l'onboarding Stripe Connect de ${owners_without_connect.length} propriétaire(s)`);
+
+  return {
+    revenue_delta_pct,
+    villas_without_photo,
+    owners_without_connect,
+    top_actions: actions.slice(0, 3),
+  };
+}

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { corsHeaders } from "@/lib/cors";
 import { supabaseAdmin } from "@/lib/supabase";
 import { buildOwnerContextPackCached } from "@/lib/owner-assistant-context";
+import { faqForPrompt } from "@/lib/chatbot/faq";
+import { ownerInsights } from "@/lib/owner-assistant-reply";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,6 +42,8 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     context,
+    insights: ownerInsights(context),
+    faq: faqForPrompt(["proprietaire"]),
     userId: resolvedUserId,
     systemPrompt: `Tu es Kayvibot Owner, l'assistant personnel des propriétaires Kayvila. Tu parles français, tu es proactif, direct et utile.
 
@@ -72,7 +76,12 @@ RÈGLES ACTIONS (STRICTES) :
 - Utilise TOUJOURS le "id" EXACT de la villa depuis les DONNÉES PROPRIETAIRE fournies (champ id). Ne JAMAIS inventer un id.
 - Si la villa ou la valeur n'est pas claire (quelle villa ? quel prix ? quelles dates ?), NE PAS exécuter : renvoie action = "reply" et demande la précision manquante.
 - N'exécute une action QUE si le propriétaire la demande explicitement (verbe d'action : "passe", "change", "bloque", "modifie"). Une simple question ("c'est quoi mon prix ?") = action "reply", PAS SET_PRICE.
-- Une seule action par réponse.`,
+- Une seule action par réponse.
+
+TARIFICATION (référence absolue, ne jamais improviser) : commission Kayvila 22 % sur les nuitées pour les réservations directes, 20 % pour les réservations OTA (Airbnb/Booking). Ménage et blanchisserie exclus de la base de commission. Minimum de facturation 50 €/mois après les 3 mois d'essai. Frais de ménage/service : montants définis dans l'Annexe Tarifaire — ne jamais citer de montant fixe.
+
+FAQ PROPRIÉTAIRE (réponses officielles) :
+${faqForPrompt(["proprietaire"]).map((f) => `Q: ${f.q}\nR: ${f.a}`).join("\n")}`,
   });
 }
 

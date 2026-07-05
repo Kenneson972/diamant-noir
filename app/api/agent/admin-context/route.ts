@@ -8,8 +8,10 @@ import {
   computeHealthScores,
   computeAdminAlerts,
   buildDailyBriefing,
+  computeAdminInsights,
   type AdminAnalyticsInput,
 } from "@/lib/admin-assistant-context";
+import { faqForPrompt } from "@/lib/chatbot/faq";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,14 +36,14 @@ async function gatherAdminContext(supabase: ReturnType<typeof supabaseAdmin>) {
   const [
     villasRes, bookingsRes, blocksRes, tasksRes, submissionsRes, otaRes, reviewsRes, profilesRes, changesRes,
   ] = await Promise.all([
-    supabase.from("villas").select("id,name,price_per_night,seasonal_prices,owner_id,status,cancellation_policy,currency").order("name"),
+    supabase.from("villas").select("id,name,price_per_night,seasonal_prices,owner_id,status,cancellation_policy,currency,is_published,image_url,image_urls").order("name"),
     supabase.from("bookings").select("*").order("start_date", { ascending: false }).limit(200),
     supabase.from("villa_date_blocks").select("*").order("created_at", { ascending: false }).limit(100),
     supabase.from("tasks").select("*").order("created_at", { ascending: false }).limit(200),
     supabase.from("villa_submissions").select("*").order("created_at", { ascending: false }),
     supabase.from("ota_sync_logs").select("*").order("created_at", { ascending: false }).limit(30),
     supabase.from("reviews").select("*").order("created_at", { ascending: false }).limit(200),
-    supabase.from("profiles").select("id,role,full_name,email,phone").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("id,role,full_name,email,phone,stripe_connect_onboarding_completed").order("created_at", { ascending: false }),
     supabase.from("villa_changes").select("villa_id, owner_id, field, old_value, new_value, changed_at").gte("changed_at", sevenDaysAgoStr).order("changed_at", { ascending: false }).limit(50),
   ]);
 
@@ -161,6 +163,24 @@ export async function GET(request: Request) {
       recent_villa_changes: ctx.recent_villa_changes,
     };
 
+    const insights = computeAdminInsights({
+      revenue_this_month: contextData.finances.revenue_this_month,
+      revenue_last_month: contextData.finances.revenue_last_month,
+      villas: ctx.villas.map((v: any) => ({
+        id: String(v.id), name: String(v.name ?? "Villa"),
+        is_published: !!v.is_published,
+        has_photo: !!v.image_url || (Array.isArray(v.image_urls) && v.image_urls.length > 0),
+      })),
+      owners: ctx.profiles
+        .filter((p: any) => ["owner", "proprietaire", "proprio"].includes(String(p.role)))
+        .map((p: any) => ({ id: String(p.id), full_name: p.full_name ?? null, connect_completed: !!p.stripe_connect_onboarding_completed })),
+      overdue_tasks: contextData.tasks_summary.overdue,
+      submissions_received: contextData.submissions_summary.received,
+      ota_channels_with_errors: contextData.ota_health.channels_with_errors as string[],
+    });
+    (contextData as any).insights = insights;
+    (contextData as any).faq = faqForPrompt(["admin"]);
+
     return NextResponse.json({
       context: contextData,
       analytics: {
@@ -199,7 +219,12 @@ ACTIONS EXÉCUTABLES (l'admin confirmera avant exécution — propose, n'exécut
 RÈGLES ACTIONS (STRICTES) :
 - Utilise TOUJOURS le "id" exact depuis les données (villas, villa_submissions). Ne jamais inventer un id.
 - N'émets une action QUE sur demande explicite (verbe : "passe", "bloque", "accepte", "refuse", "montre"). Une question = action "SHOW_STATS".
-- Une seule action par réponse. Confirme dans "response" ce que l'action va faire.`,
+- Une seule action par réponse. Confirme dans "response" ce que l'action va faire.
+
+INSIGHTS PROACTIFS — le contexte contient "insights" : delta CA vs mois dernier, villas publiées sans photo, propriétaires sans onboarding Stripe Connect, top actions recommandées. Mentionne spontanément le plus critique quand l'admin demande un état des lieux ou un briefing.
+
+FAQ INTERNE (référence des demandes types) :
+${faqForPrompt(["admin"]).map((f) => `Q: ${f.q} → ${f.a}`).join("\n")}`,
     });
   } catch (error) {
     if (error instanceof AuthError) {
