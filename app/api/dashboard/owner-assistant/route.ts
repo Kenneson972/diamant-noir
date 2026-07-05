@@ -9,6 +9,9 @@ import {
   DEFAULT_SUGGESTED_PROMPTS,
   type OwnerAssistantAction,
 } from "@/lib/owner-assistant-types";
+import { buildOwnerReply, buildOwnerFallbackText, ownerInsights } from "@/lib/owner-assistant-reply";
+import { faqForPrompt } from "@/lib/chatbot/faq";
+import { logChatbotFeedback } from "@/lib/chatbot/feedback";
 
 export const runtime = "nodejs";
 // L'agent B (owner-context + Postgres + DeepSeek) tourne ~20-22s — laisser la marge
@@ -133,94 +136,9 @@ function buildCompactContext(pack: OwnerContextPack) {
       slug: v.slug,
       is_published: v.is_published,
     })),
+    insights: ownerInsights(pack),
+    faq: faqForPrompt(["proprietaire"]),
   };
-}
-
-function smartReply(pack: OwnerContextPack, userMessage: string): string {
-  const p = pack.portfolio;
-  const msg = userMessage.toLowerCase();
-
-  // ── Revenus ──
-  if (/revenu|chiffre|encaiss|gagné|financ|mois|argent/.test(msg)) {
-    const momPercent = p.revenue_last_month > 0
-      ? Math.round(((p.revenue_current_month - p.revenue_last_month) / p.revenue_last_month) * 100)
-      : 0;
-    const trend = momPercent >= 0 ? `+${momPercent}%` : `${momPercent}%`;
-    return (
-      `💰 **Revenus**\n\n` +
-      `Ce mois-ci : **${p.revenue_current_month.toLocaleString("fr-FR")} €**\n` +
-      `Le mois dernier : ${p.revenue_last_month.toLocaleString("fr-FR")} € (${trend})\n` +
-      `Total encaissé : ${p.total_revenue_paid.toLocaleString("fr-FR")} €`
-    );
-  }
-
-  // ── Réservations ──
-  if (/réservation|booking|séjour|check.?in|arrivée|départ|client|voyageur/.test(msg)) {
-    if (pack.today.length === 0) {
-      return "📅 **Réservations**\n\nAucun check-in ni check-out aujourd'hui.\n\n" +
-        `${p.upcoming_bookings_count} réservation(s) à venir dans les prochains jours.`;
-    }
-    const lines = pack.today.slice(0, 8).map((e: any) => {
-      const icon = e.type === "checkin" ? "🟢" : e.type === "checkout" ? "🔴" : "📋";
-      const label = e.type === "checkin" ? "Arrivée" : e.type === "checkout" ? "Départ" : "Tâche";
-      return `${icon} ${label} — ${e.villa_name || "Villa"} — ${e.guest_name || e.title || ""}`;
-    }).join("\n");
-    return `📅 **Aujourd'hui — ${pack.today.length} évènement(s)**\n\n${lines}\n\n${p.upcoming_bookings_count} réservation(s) à venir.`;
-  }
-
-  // ── Tâches ──
-  if (/tâche|tache|todo|urgent|retard|en cours|maintenance/.test(msg)) {
-    if (p.pending_tasks_count === 0) {
-      return "📋 **Tâches**\n\nAucune tâche en attente. Tout est en ordre !";
-    }
-    const tasks = (pack.tasks_open as any[]).slice(0, 10);
-    const lines = tasks.map((t: any) =>
-      `• ${t.content || t.title || "Sans titre"} — ${t.villa_name || ""}`
-    ).join("\n");
-    const overdue = pack.alerts.filter((a: any) => a.severity === "high").length;
-    return `📋 **Tâches — ${p.pending_tasks_count} en attente**${overdue > 0 ? ` (dont ${overdue} urgentes)` : ""}\n\n${lines}`;
-  }
-
-  // ── Villas ──
-  if (/villa|propriété|maison|bungalow|appartement|portfolio|parc/.test(msg)) {
-    const villaList = (pack.villas as any[]).map((v: any) =>
-      `• ${v.name || "Villa"} — ${v.is_published ? "✅ Publiée" : "🔒 Non publiée"}`
-    ).join("\n");
-    return `🏠 **Votre parc — ${p.total_villas} villa(s)** (${p.published_villas} publiée(s))\n\n${villaList}`;
-  }
-
-  // ── Blocage / Dispo ──
-  if (/blocage|bloquer|disponibilité|calendrier|date/.test(msg)) {
-    return (
-      "📆 **Blocages de disponibilités**\n\n" +
-      "Pour bloquer des dates sur votre villa, dites-moi simplement :\n" +
-      "« Bloquer la Villa [nom] du [date début] au [date fin] »\n" +
-      "Exemple : « Bloquer la Villa Azur du 15 au 20 juillet pour travaux »"
-    );
-  }
-
-  // ── Par défaut : résumé général ──
-  const momPercent = p.revenue_last_month > 0
-    ? ` (${p.revenue_current_month >= p.revenue_last_month ? "+" : ""}${Math.round(((p.revenue_current_month - p.revenue_last_month) / p.revenue_last_month) * 100)}% vs mois dernier)`
-    : "";
-  return (
-    `👋 Voici votre vue d'ensemble :\n\n` +
-    `🏠 **${p.total_villas} villa(s)** — ${p.published_villas} publiée(s)\n` +
-    `📅 **${pack.today.length} évènement(s)** aujourd'hui\n` +
-    `📋 **${p.pending_tasks_count} tâche(s)** en attente\n` +
-    `💰 **${p.revenue_current_month.toLocaleString("fr-FR")} €** ce mois-ci${momPercent}\n\n` +
-    `Que puis-je faire pour vous ?`
-  );
-}
-
-/** Réponse fallback propre quand n8n est en erreur (pas un crash). */
-function fallbackReply(pack: OwnerContextPack): string {
-  return (
-    `[Copilot] Mon analyse est temporairement indisponible.\n` +
-    `Voici votre snapshot : ${pack.portfolio.total_villas} villa(s), ` +
-    `${pack.today.length} évènement(s) aujourd'hui, ` +
-    `${pack.portfolio.pending_tasks_count} tâche(s) en attente.`
-  );
 }
 
 // ─── Route GET — snapshot ─────────────────────────────────────────────────────
@@ -339,7 +257,11 @@ export async function POST(request: Request) {
     if (!webhookURL) {
       return NextResponse.json({
         success: true,
-        response: smartReply(pack, userMessage),
+        response: (() => {
+          const r = buildOwnerReply(pack, userMessage);
+          void logChatbotFeedback({ agent: "proprio", sessionId: sessionid ?? null, question: userMessage, matched: r.matchedFaqId !== null });
+          return r.text;
+        })(),
         action: "SHOW_STATS" as OwnerAssistantAction,
         action_data: { context: statsPayload, strategic_alert },
         suggested_prompts: DEFAULT_SUGGESTED_PROMPTS,
@@ -379,7 +301,7 @@ export async function POST(request: Request) {
       console.error("[owner-assistant] webhook fetch error", fetchErr);
       return NextResponse.json({
         success: true,
-        response: fallbackReply(pack),
+        response: buildOwnerFallbackText(pack),
         action: "SHOW_STATS" as OwnerAssistantAction,
         action_data: { context: statsPayload, strategic_alert },
         suggested_prompts: DEFAULT_SUGGESTED_PROMPTS,
@@ -393,7 +315,7 @@ export async function POST(request: Request) {
       console.error("[owner-assistant] webhook status", n8nResponse.status);
       return NextResponse.json({
         success: true,
-        response: fallbackReply(pack),
+        response: buildOwnerFallbackText(pack),
         action: "SHOW_STATS" as OwnerAssistantAction,
         action_data: { context: statsPayload, strategic_alert },
         suggested_prompts: DEFAULT_SUGGESTED_PROMPTS,
@@ -416,7 +338,7 @@ export async function POST(request: Request) {
       console.error("[owner-assistant] réponse n8n malformée", data);
       return NextResponse.json({
         success: true,
-        response: fallbackReply(pack),
+        response: buildOwnerFallbackText(pack),
         action: "SHOW_STATS" as OwnerAssistantAction,
         action_data: { context: statsPayload, strategic_alert },
         suggested_prompts: DEFAULT_SUGGESTED_PROMPTS,
