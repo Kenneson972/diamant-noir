@@ -43,6 +43,7 @@ const publicPaths = [
   "/api/concierge",
   "/api/agent",
   "/api/tenant/request-ack",
+  "/api/debug",
 ];
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
