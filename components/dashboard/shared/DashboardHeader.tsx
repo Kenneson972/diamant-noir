@@ -1,10 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
 import { Sidebar } from "@heroui-pro/react/sidebar";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
-import { findSidebarBreadcrumb } from "@/components/dashboard/shared/kayvila-sidebar-panel";
 import type { SidebarMenuItem } from "./dashboard-sidebar-types";
 
 interface DashboardHeaderProps {
@@ -22,8 +20,6 @@ export function DashboardHeader({
   role,
   menu = [],
 }: DashboardHeaderProps) {
-  const pathname = usePathname() ?? "";
-
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("fr-FR", {
@@ -42,11 +38,6 @@ export function DashboardHeader({
 
   const initial = (displayName[0] ?? "?").toUpperCase();
 
-  const breadcrumb = useMemo(
-    () => findSidebarBreadcrumb(menu, pathname),
-    [menu, pathname]
-  );
-
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-navy/[0.08] bg-white/95 px-4 backdrop-blur-md md:h-[4.25rem] md:px-8">
       <div className="flex min-w-0 items-center gap-3">
@@ -58,21 +49,9 @@ export function DashboardHeader({
           <p className="font-display-dashboard text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
             {roleLabel}
           </p>
-          {breadcrumb ? (
-            <p className="hidden min-w-0 items-baseline gap-1.5 font-display-dashboard text-sm text-navy/50 md:flex">
-              {breadcrumb.parent ? (
-                <>
-                  <span>{breadcrumb.parent}</span>
-                  <span className="text-navy/30">/</span>
-                </>
-              ) : null}
-              <span className="font-semibold text-navy">{breadcrumb.current}</span>
-            </p>
-          ) : (
-            <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">
-              Kayvila
-            </p>
-          )}
+          <p className="truncate font-display-dashboard text-lg font-semibold leading-tight text-navy md:text-xl">
+            Kayvila
+          </p>
         </div>
       </div>
 
