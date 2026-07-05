@@ -62,6 +62,9 @@ export function TenantTeamThread({ guestId, firstName, villaName }: Props) {
 
   useEffect(() => {
     if (!supabase) return;
+    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "tenant-messages-realtime");
+    if (existing) return;
+
     const channel = supabase
       .channel("tenant-messages-realtime")
       .on(

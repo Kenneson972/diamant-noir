@@ -61,6 +61,9 @@ export function OwnerTeamThread({ ownerId, firstName }: Props) {
 
   useEffect(() => {
     if (!supabase) return;
+    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "owner-messages-realtime");
+    if (existing) return;
+
     const channel = supabase
       .channel("owner-messages-realtime")
       .on(

@@ -84,6 +84,9 @@ export function AdminTravelerChatPanel() {
 
   useEffect(() => {
     if (!supabase) return;
+    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "admin-tenant-messages-realtime");
+    if (existing) return;
+
     const channel = supabase
       .channel("admin-tenant-messages-realtime")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "tenant_messages" }, fetchAll)
