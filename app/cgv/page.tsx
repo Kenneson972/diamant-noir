@@ -6,6 +6,7 @@ import {
 } from "@/components/marketing/landing-sections";
 import { PageHero } from "@/components/marketing/PageHero";
 import { CgvContent } from "@/components/legal/CgvContent";
+import { CgvTabs } from "@/components/legal/CgvTabs";
 import { CGV_PROPRIETAIRES } from "@/lib/legal";
 
 /** CGV Propriétaires — affichées uniquement sur la page /cgv, jamais dans le modal checkout voyageur (CgvContent). */
@@ -28,11 +29,8 @@ function CgvSimple() {
     <main className="page-px min-h-dvh bg-offwhite pb-16 pt-24 md:pb-20 md:pt-28">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-5 font-display text-2xl text-navy sm:text-3xl">Conditions générales de vente</h1>
-        <CgvContent />
-        <hr className="my-10 border-navy/10" />
-        <h2 className="mb-5 font-display text-xl text-navy sm:text-2xl">CGV Propriétaires</h2>
-        <CgvProprietairesContent />
-        <Link href="/contact" className="font-medium text-gold hover:underline">
+        <CgvTabs voyageurs={<CgvContent />} proprietaires={<CgvProprietairesContent />} />
+        <Link href="/contact" className="mt-10 inline-block font-medium text-gold hover:underline">
           Nous contacter
         </Link>
         <br />
@@ -59,12 +57,7 @@ export default function CgvPage() {
       />
 
       <LandingSectionNarrow bg="white">
-        <CgvContent />
-      </LandingSectionNarrow>
-
-      <LandingSectionNarrow bg="white">
-        <h2 className="mb-5 font-display text-xl text-navy sm:text-2xl">CGV Propriétaires</h2>
-        <CgvProprietairesContent />
+        <CgvTabs voyageurs={<CgvContent />} proprietaires={<CgvProprietairesContent />} />
       </LandingSectionNarrow>
 
       <LandingSectionNarrow bg="white">

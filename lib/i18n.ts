@@ -85,7 +85,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "common.properties_plural": "propriétés",
 
     // ── Villas listing ───────────────────────────────────────
-    "villas.title": "Nos Villas en Martinique.",
+    "villas.title": "Nos Villas en Martinique",
     "villas.subtitle": "La Sélection",
     "villas.show_map": "Afficher la carte",
     "villas.hide_map": "Masquer la carte",
@@ -323,7 +323,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "common.properties_plural": "properties",
 
     // ── Villas listing ───────────────────────────────────────
-    "villas.title": "Our Villas in Martinique.",
+    "villas.title": "Our Villas in Martinique",
     "villas.subtitle": "The Selection",
     "villas.show_map": "Show map",
     "villas.hide_map": "Hide map",
@@ -561,7 +561,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "common.properties_plural": "propiedades",
 
     // ── Villas listing ───────────────────────────────────────
-    "villas.title": "Nuestras Villas en Martinica.",
+    "villas.title": "Nuestras Villas en Martinica",
     "villas.subtitle": "La Selección",
     "villas.show_map": "Mostrar mapa",
     "villas.hide_map": "Ocultar mapa",
