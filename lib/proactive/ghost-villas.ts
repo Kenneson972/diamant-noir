@@ -31,6 +31,22 @@ async function fetchGhostVillaCandidates(admin: SupabaseClient) {
   }[];
 }
 
+export function buildGhostVillaNotification(item: { name: string; reason: string }): {
+  type: "ghost_villa";
+  title: string;
+  body: string;
+  action_url: string;
+  user_id: null;
+} {
+  return {
+    type: "ghost_villa",
+    title: "Villa fantôme détectée",
+    body: `${item.name} — ${item.reason}`,
+    action_url: "/admin/villas",
+    user_id: null,
+  };
+}
+
 export async function runGhostVillas(admin: SupabaseClient): Promise<number> {
   const rows = await fetchGhostVillaCandidates(admin);
   const candidates = decideGhostVillas(rows, new Date());
@@ -42,6 +58,10 @@ export async function runGhostVillas(admin: SupabaseClient): Promise<number> {
   if (fresh.length === 0) return 0;
   const toAlert = candidates.filter((c) => fresh.includes(c.id));
   await sendAdminGhostVillasEmail(toAlert.map((c) => ({ name: c.name, reason: c.reason })));
+  const { error: notifError } = await admin
+    .from("notifications")
+    .insert(toAlert.map((c) => buildGhostVillaNotification(c)));
+  if (notifError) console.error("[ghost-villas] notif insert", notifError);
   await markAlerted(admin, "ghost_villa", fresh);
   return toAlert.length;
 }
