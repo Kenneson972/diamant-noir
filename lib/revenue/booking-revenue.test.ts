@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getCommissionRate, grossCentsFromBooking } from "./booking-revenue";
+import { getCommissionRate, grossCentsFromBooking, channelLabel } from "./booking-revenue";
 
 describe("getCommissionRate", () => {
   it('"airbnb" → 20%', () => {
@@ -39,5 +39,47 @@ describe("grossCentsFromBooking", () => {
       total_price_cents: 30000,
     });
     expect(result).toBe(30000);
+  });
+});
+
+describe("channelLabel", () => {
+  it('"airbnb" → "Airbnb"', () => {
+    expect(channelLabel("airbnb")).toBe("Airbnb");
+  });
+
+  it('"booking" → "Booking.com"', () => {
+    expect(channelLabel("booking")).toBe("Booking.com");
+  });
+
+  it('"expedia" → "Expedia"', () => {
+    expect(channelLabel("expedia")).toBe("Expedia");
+  });
+
+  it('"vrbo" → "VRBO"', () => {
+    expect(channelLabel("vrbo")).toBe("VRBO");
+  });
+
+  it('"trivago" → "Trivago"', () => {
+    expect(channelLabel("trivago")).toBe("Trivago");
+  });
+
+  it('"ical" → "Import iCal"', () => {
+    expect(channelLabel("ical")).toBe("Import iCal");
+  });
+
+  it('"direct" → "Direct"', () => {
+    expect(channelLabel("direct")).toBe("Direct");
+  });
+
+  it('"manual" → "Direct"', () => {
+    expect(channelLabel("manual")).toBe("Direct");
+  });
+
+  it('null → "Direct"', () => {
+    expect(channelLabel(null)).toBe("Direct");
+  });
+
+  it('valeur inconnue → "Direct" (fallback)', () => {
+    expect(channelLabel("some_unknown_source")).toBe("Direct");
   });
 });

@@ -65,3 +65,18 @@ export function grossCentsFromBooking(b: BookingRevenueInput): number {
   if (cleaning > 0 || service > 0) return stay + cleaning + service;
   return b.total_price_cents ?? stay;
 }
+
+const CHANNEL_LABELS: Record<string, string> = {
+  airbnb: 'Airbnb',
+  booking: 'Booking.com',
+  expedia: 'Expedia',
+  vrbo: 'VRBO',
+  trivago: 'Trivago',
+  ical: 'Import iCal',
+};
+
+/** Libellé affichable d'un canal de réservation ; tout ce qui n'est pas une OTA connue → "Direct". */
+export function channelLabel(source: string | null): string {
+  if (!source) return 'Direct';
+  return CHANNEL_LABELS[source] ?? 'Direct';
+}
