@@ -5,6 +5,7 @@ import {
   computeHealthScores,
   computeAdminAlerts,
   buildDailyBriefing,
+  computeAdminInsights,
   type AdminAnalyticsInput,
 } from "./admin-assistant-context";
 
@@ -66,5 +67,44 @@ describe("buildDailyBriefing", () => {
     expect(b.checkins_today).toBe(2);
     expect(b.submissions_pending).toBe(1);
     expect(Array.isArray(b.highlights)).toBe(true);
+  });
+});
+
+describe("computeAdminInsights", () => {
+  const base = {
+    revenue_this_month: 6000,
+    revenue_last_month: 5000,
+    villas: [
+      { id: "v1", name: "Villa Azur", is_published: true, has_photo: true },
+      { id: "v2", name: "Villa Corail", is_published: true, has_photo: false },
+      { id: "v3", name: "Brouillon", is_published: false, has_photo: false },
+    ],
+    owners: [
+      { id: "o1", full_name: "Richard", connect_completed: true },
+      { id: "o2", full_name: "Marie", connect_completed: false },
+    ],
+    overdue_tasks: 2,
+    submissions_received: 1,
+    ota_channels_with_errors: ["airbnb"],
+  };
+
+  it("delta CA en % vs mois dernier", () => {
+    expect(computeAdminInsights(base).revenue_delta_pct).toBe(20);
+    expect(computeAdminInsights({ ...base, revenue_last_month: 0 }).revenue_delta_pct).toBeNull();
+  });
+
+  it("villas publiées sans photo uniquement", () => {
+    const r = computeAdminInsights(base);
+    expect(r.villas_without_photo).toEqual([{ id: "v2", name: "Villa Corail" }]);
+  });
+
+  it("proprios sans Stripe Connect", () => {
+    expect(computeAdminInsights(base).owners_without_connect).toEqual([{ id: "o2", name: "Marie" }]);
+  });
+
+  it("top 3 actions max, priorisées", () => {
+    const r = computeAdminInsights(base);
+    expect(r.top_actions.length).toBeLessThanOrEqual(3);
+    expect(r.top_actions[0]).toMatch(/OTA|retard/i); // erreurs OTA ou tâches en retard d'abord
   });
 });
