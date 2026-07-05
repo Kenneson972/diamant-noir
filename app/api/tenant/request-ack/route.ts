@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { render } from "@react-email/render";
 import { getResend, isResendConfigured, RESEND_FROM } from "@/lib/resend";
+import TenantRequestAckEmail from "@/emails/tenant-request-ack";
 
 const REQUEST_TYPE_LABELS: Record<string, string> = {
   early_checkin: "Early check-in",
@@ -20,20 +22,18 @@ export async function POST(request: Request) {
     if (isResendConfigured()) {
       const resend = getResend();
       const label = REQUEST_TYPE_LABELS[type] ?? type;
+      const html = await render(TenantRequestAckEmail({ label }));
       await resend.emails.send({
         from: RESEND_FROM,
         to: email,
         subject: "Kayvila — Nous avons bien reçu votre demande",
-        html: `<p>Bonjour,</p>
-<p>Nous avons bien reçu votre demande <strong>« ${label} »</strong>.</p>
-<p>Notre équipe revient vers vous très rapidement.</p>
-<p>L'équipe Kayvila</p>`,
+        html,
       });
     }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("request-ack error:", e);
-    return NextResponse.json({ ok: false }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

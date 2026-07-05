@@ -5,6 +5,7 @@ import ReviewRequestEmail from "@/emails/review-request";
 import OwnerNewBookingEmail from "@/emails/owner-new-booking";
 import AdminDisputeAlertEmail from "@/emails/admin-dispute-alert";
 import OwnerConnectOnboardedEmail from "@/emails/owner-connect-onboarded";
+import AdminBookingNotificationEmail from "@/emails/admin-booking-notification";
 import {
   ADMIN_NOTIFICATION_EMAIL,
   getResend,
@@ -120,16 +121,17 @@ export async function sendAdminBookingNotificationEmail(
   let emailSent = false;
 
   if (isResendConfigured()) {
-    const html = `
-      <div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929">
-        <h2 style="font-weight:400;color:#d4af37">Nouvelle réservation</h2>
-        <p><strong>Villa :</strong> ${villa?.name ?? "—"}</p>
-        <p><strong>Voyageur :</strong> ${booking.guest_name ?? "—"} (${booking.guest_email ?? "—"})</p>
-        <p><strong>Dates :</strong> ${formatDateFr(booking.start_date)} → ${formatDateFr(booking.end_date)}</p>
-        <p><strong>Montant :</strong> ${total}</p>
-        <p><strong>Réf. :</strong> ${booking.id}</p>
-      </div>
-    `;
+    const html = await render(
+      AdminBookingNotificationEmail({
+        villaName: villa?.name ?? "—",
+        guestName: booking.guest_name ?? "—",
+        guestEmail: booking.guest_email ?? "—",
+        startDate: booking.start_date,
+        endDate: booking.end_date,
+        total,
+        bookingId: booking.id,
+      })
+    );
 
     const { error } = await getResend().emails.send({
       from: RESEND_FROM,

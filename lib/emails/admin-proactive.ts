@@ -1,4 +1,6 @@
+import { render } from "@react-email/render";
 import { getResend, isResendConfigured, RESEND_FROM, ADMIN_NOTIFICATION_EMAIL } from "@/lib/resend";
+import AdminProactiveSummaryEmail from "@/emails/admin-proactive-summary";
 
 /** Échappe HTML pour éviter toute injection dans les emails. */
 function escapeHtml(s: string): string {
@@ -7,29 +9,23 @@ function escapeHtml(s: string): string {
   );
 }
 
-/** Bloc HTML réutilisable : titre + liste à puces. Chaîne vide si aucun item. */
-export function renderList(title: string, lines: string[]): string {
-  if (lines.length === 0) return "";
-  const items = lines.map((l) => `<li style="margin:4px 0">${escapeHtml(l)}</li>`).join("");
-  return `<h3 style="color:#1a2238;font-family:sans-serif;margin:16px 0 8px">${escapeHtml(title)}</h3><ul style="color:#333;font-family:sans-serif;padding-left:20px">${items}</ul>`;
-}
-
-async function sendAdmin(subject: string, html: string): Promise<void> {
+async function sendAdmin(subject: string, blocks: { label: string; items: string[] }[]): Promise<void> {
   if (!isResendConfigured()) return;
   try {
+    const nonEmpty = blocks.filter((b) => b.items.length > 0);
+    if (nonEmpty.length === 0) return;
+    const html = await render(
+      AdminProactiveSummaryEmail({ title: subject, blocks: nonEmpty })
+    );
     await getResend().emails.send({
       from: RESEND_FROM,
       to: [ADMIN_NOTIFICATION_EMAIL],
       subject,
-      html: `<div style="max-width:600px;margin:16px auto;font-family:sans-serif;color:#333">${html}</div>`,
+      html,
     });
   } catch (e) {
     console.warn("[admin-proactive] Resend send failed", e);
   }
-}
-
-function fullHtml(...blocks: string[]): string {
-  return blocks.filter(Boolean).join("");
 }
 
 // ── Senders spécialisés (no-op si liste vide / no signal) ──
@@ -37,9 +33,9 @@ function fullHtml(...blocks: string[]): string {
 export async function sendAdminPendingSubmissionsEmail(
   items: { villa: string; since: string }[]
 ): Promise<void> {
-  if (items.length === 0) return;
-  const list = renderList("Soumissions en attente depuis +24h", items.map((i) => `${i.villa} — depuis ${i.since}`));
-  await sendAdmin(`Kayvila — ${items.length} soumission(s) en attente +24h`, fullHtml(list));
+  await sendAdmin(`Kayvila — ${items.length} soumission(s) en attente +24h`, [
+    { label: "Soumissions en attente depuis +24h", items: items.map((i) => `${i.villa} — depuis ${i.since}`) },
+  ]);
 }
 
 export async function sendAdminDailyRecapEmail(data: {
@@ -48,14 +44,12 @@ export async function sendAdminDailyRecapEmail(data: {
   bookings: string[];
   icalErrors: string[];
 }): Promise<void> {
-  const blocks = [
-    renderList("Nouvelles soumissions villa", data.submissions),
-    renderList("Nouveaux leads", data.leads),
-    renderList("Réservations du jour", data.bookings),
-    renderList("Erreurs iCal", data.icalErrors),
-  ];
-  if (blocks.every((b) => !b)) return;
-  await sendAdmin("Kayvila — Point quotidien", fullHtml(...blocks));
+  await sendAdmin("Kayvila — Point quotidien", [
+    { label: "Nouvelles soumissions villa", items: data.submissions },
+    { label: "Nouveaux leads", items: data.leads },
+    { label: "Réservations du jour", items: data.bookings },
+    { label: "Erreurs iCal", items: data.icalErrors },
+  ]);
 }
 
 export async function sendAdminWeeklyRecapEmail(data: {
@@ -67,39 +61,35 @@ export async function sendAdminWeeklyRecapEmail(data: {
   anomalyFlag: boolean;
 }): Promise<void> {
   const blocks = [
-    `<h2 style="color:#1a2238">Récap hebdomadaire</h2>`,
     data.anomalyFlag
-      ? `<p style="color:#c0392b;font-weight:bold">⚠️ Baisse de CA > 30 % détectée cette semaine</p>`
-      : "",
-    `<div style="margin:12px 0">${data.revenueSection}</div>`,
-    renderList("Propriétaires inactifs (14j+)", data.inactiveOwners),
-    renderList("Top villas", data.topVillas),
-    renderList("Leads convertis", data.convertedLeads),
-    renderList("Tendances vs mois précédent", data.trends),
-  ];
-  await sendAdmin("Kayvila — Récap hebdomadaire", fullHtml(...blocks));
+      ? { label: "⚠️ Alerte", items: ["Baisse de CA > 30 % détectée cette semaine"] }
+      : null,
+    { label: "Chiffres", items: [data.revenueSection] },
+    { label: "Propriétaires inactifs (14j+)", items: data.inactiveOwners },
+    { label: "Top villas", items: data.topVillas },
+    { label: "Leads convertis", items: data.convertedLeads },
+    { label: "Tendances vs mois précédent", items: data.trends },
+  ].filter(Boolean) as { label: string; items: string[] }[];
+  await sendAdmin("Kayvila — Récap hebdomadaire", blocks);
 }
 
 export async function sendAdminGhostVillasEmail(
   items: { name: string; reason: string }[]
 ): Promise<void> {
-  if (items.length === 0) return;
-  const list = renderList("Villas détectées", items.map((i) => `${i.name} — ${i.reason}`));
-  await sendAdmin(`Kayvila — ${items.length} villa(s) fantôme(s) détectée(s)`, fullHtml(list));
+  await sendAdmin(`Kayvila — ${items.length} villa(s) fantôme(s) détectée(s)`, [
+    { label: "Villas détectées", items: items.map((i) => `${i.name} — ${i.reason}`) },
+  ]);
 }
 
 export async function sendAdminHotLeadEmail(data: { summary: string }): Promise<void> {
-  if (!data.summary) return;
-  await sendAdmin(
-    "Kayvila — Nouveau lead chaud détecté",
-    fullHtml(`<p style="font-size:15px">${escapeHtml(data.summary)}</p>`)
-  );
+  await sendAdmin("Kayvila — Nouveau lead chaud détecté", [
+    { label: "Résumé", items: [data.summary] },
+  ]);
 }
 
 export async function sendAdminIcalErrorEmail(data: { villa: string; error: string }): Promise<void> {
-  if (!data.villa) return;
-  await sendAdmin(
-    `Kayvila — Erreur iCal : ${escapeHtml(data.villa)}`,
-    fullHtml(`<p><strong>Villa :</strong> ${escapeHtml(data.villa)}</p><p><strong>Erreur :</strong> ${escapeHtml(data.error)}</p>`)
-  );
+  await sendAdmin(`Kayvila — Erreur iCal : ${escapeHtml(data.villa)}`, [
+    { label: "Villa", items: [data.villa] },
+    { label: "Erreur", items: [data.error] },
+  ]);
 }

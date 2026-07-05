@@ -11,6 +11,7 @@ import {
   RESEND_FROM,
 } from "@/lib/resend";
 import SubmissionReceived from "@/emails/submission-received";
+import AdminSubmissionNotificationEmail from "@/emails/admin-submission-notification";
 import { updateSubmissionStatus } from "@/lib/submissions/update-status";
 
 export const runtime = "nodejs";
@@ -127,23 +128,24 @@ export async function POST(request: Request) {
           surface && `${surface} m²`,
         ].filter(Boolean).join(" · ");
 
+        const html = await render(
+          AdminSubmissionNotificationEmail({
+            name: name || "—",
+            email: email || "—",
+            phone: phone || undefined,
+            villaName: villa_name || "Villa",
+            details: details || "—",
+            airbnbUrl: airbnb_url || undefined,
+            message: message || undefined,
+            submissionId: submission.id,
+          })
+        );
+
         await getResend().emails.send({
           from: RESEND_FROM,
           to: [ADMIN_NOTIFICATION_EMAIL],
           subject: `Nouvelle soumission villa — ${villa_name || name}`,
-          html: `
-            <div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#0a1929">
-              <h2 style="font-weight:400;color:#d4af37">Nouvelle soumission villa</h2>
-              <p><strong>Nom :</strong> ${escapeHtml(name)}</p>
-              <p><strong>Email :</strong> ${escapeHtml(email)}</p>
-              ${phone ? `<p><strong>Tél. :</strong> ${escapeHtml(phone)}</p>` : ""}
-              <p style="margin-top:16px"><strong>${escapeHtml(villa_name || "Villa")}</strong></p>
-              <p>${escapeHtml(details || "—")}</p>
-              ${airbnb_url ? `<p><strong>Airbnb :</strong> <a href="${escapeHtml(airbnb_url)}">${escapeHtml(airbnb_url)}</a></p>` : ""}
-              ${message ? `<p style="margin-top:12px;font-style:italic">« ${escapeHtml(message)} »</p>` : ""}
-              <p style="margin-top:16px;font-size:11px;color:#999">Réf. ${submission.id}</p>
-            </div>
-          `,
+          html,
         });
       } catch (e) {
         console.error("Villa submission email failed:", e);
