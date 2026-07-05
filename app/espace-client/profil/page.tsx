@@ -8,7 +8,6 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button, Chip } from "@heroui/react";
 import Link from "next/link";
 import { Spinner } from "@/components/espace-client/tenant-ui";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import { tenantFieldClass, tenantLabelClass } from "@/components/espace-client/tenant-form-styles";
 
@@ -91,7 +90,7 @@ export default function ProfilPage() {
   if (loading) {
     return (
       <>
-        <PageTopbar title="Mon profil" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
@@ -102,7 +101,7 @@ export default function ProfilPage() {
   if (!user) {
     return (
       <>
-        <PageTopbar title="Mon profil" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
         <KayvilaEmptyState
           title="Connexion requise"
           description="Connectez-vous pour accéder à vos informations personnelles."
@@ -115,7 +114,7 @@ export default function ProfilPage() {
 
   return (
     <>
-      <PageTopbar title="Mon profil" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
       <div className="mx-auto max-w-2xl space-y-6">
         <p className="text-sm text-navy/55">Gérez vos informations et préférences d&apos;accueil.</p>
 

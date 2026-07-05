@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { TenantTeamThread } from "@/components/espace-client/TenantTeamThread";
 
@@ -41,7 +40,7 @@ export default async function MessageriePage() {
 
   return (
     <>
-      <PageTopbar title="Notre équipe" section="Espace Client" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Notre équipe</h1>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
           eyebrow="NOTRE ÉQUIPE"

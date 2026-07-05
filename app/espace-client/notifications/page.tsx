@@ -7,7 +7,6 @@ import { CheckCheck, ExternalLink } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button, Chip } from "@heroui/react";
 import { timeAgo } from "@/lib/utils";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
@@ -66,7 +65,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <PageTopbar title="Notifications" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Notifications</h1>
       <div className="mx-auto max-w-2xl space-y-6">
         <TenantSectionHeader
           eyebrow="MES NOTIFICATIONS"

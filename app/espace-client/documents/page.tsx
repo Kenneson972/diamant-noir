@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { Button } from "@heroui/react";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
@@ -66,7 +65,7 @@ export default function DocumentsPage() {
 
   return (
     <>
-      <PageTopbar title="Documents" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mes documents</h1>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
           eyebrow="MES DOCUMENTS"

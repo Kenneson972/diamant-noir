@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { RequestForm } from "@/components/espace-client/RequestForm";
 import { RequestList } from "@/components/espace-client/RequestList";
@@ -37,7 +36,7 @@ export default function DemandesPage() {
   if (loading) {
     return (
       <>
-        <PageTopbar title="Demandes" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
@@ -48,7 +47,7 @@ export default function DemandesPage() {
   if (!bookingId) {
     return (
       <>
-        <PageTopbar title="Demandes" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
         <div className="mx-auto max-w-2xl space-y-6">
           <TenantSectionHeader
             eyebrow="Demandes"
@@ -68,7 +67,7 @@ export default function DemandesPage() {
 
   return (
     <>
-      <PageTopbar title="Demandes" section="Espace Client" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
           eyebrow="SERVICES & DEMANDES"

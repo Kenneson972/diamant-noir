@@ -8,7 +8,6 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import Link from "next/link";
 import { Skeleton } from "@/components/espace-client/tenant-ui";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantPageHeader } from "@/components/espace-client/TenantPageHeader";
 import { UpcomingStayHero } from "@/components/espace-client/UpcomingStayHero";
 import { TenantQuickLinks } from "@/components/espace-client/TenantQuickLinks";
@@ -153,7 +152,7 @@ export default function EspaceClientPage() {
   if (bookings.length === 0) {
     return (
       <>
-        <PageTopbar title="Mon Séjour" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon séjour</h1>
       <div className="space-y-8">
         <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 
@@ -190,10 +189,7 @@ export default function EspaceClientPage() {
   // ── Main dashboard ──
   return (
     <>
-      <PageTopbar
-        title="Mon Séjour"
-        badge={daysUntil !== null && daysUntil > 0 ? `J — ${daysUntil}` : undefined}
-      />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon séjour</h1>
     <div className="space-y-10">
       <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 

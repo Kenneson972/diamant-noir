@@ -6,7 +6,6 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button } from "@heroui/react";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState } from "@/components/ui/pro";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
@@ -50,7 +49,7 @@ export default function FavorisPage() {
 
   return (
     <>
-      <PageTopbar title="Mes favoris" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mes favoris</h1>
       <div className="space-y-6">
         <p className="text-sm text-navy/55">
           {ids.size > 0

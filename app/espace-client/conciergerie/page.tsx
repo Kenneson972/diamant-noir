@@ -1,4 +1,3 @@
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { KayvilaTenantWidget } from "@/components/ui/pro";
 import { AlertTriangle } from "lucide-react";
@@ -48,7 +47,7 @@ const SERVICES = [
 export default function ConciergeriePage() {
   return (
     <>
-      <PageTopbar title="Conciergerie" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Contacts &amp; urgences</h1>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
           eyebrow="Conciergerie"

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { Button, Chip } from "@heroui/react";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
@@ -199,7 +198,7 @@ export default function ChecklistPage() {
   if (loading) {
     return (
       <>
-        <PageTopbar title="Avant votre arrivée" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Avant votre arrivée</h1>
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
@@ -209,7 +208,7 @@ export default function ChecklistPage() {
 
   return (
     <>
-      <PageTopbar title="Avant votre arrivée" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Avant votre arrivée</h1>
 
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
-import { PageTopbar } from "@/components/espace-client/PageTopbar";
 import { CheckinGuide } from "@/components/espace-client/CheckinGuide";
 import { CheckoutInstructions } from "@/components/espace-client/CheckoutInstructions";
 
@@ -311,7 +310,7 @@ export default function LivretPage() {
   if (loading) {
     return (
       <>
-        <PageTopbar title="Livret d'accueil" />
+        <h1 className="font-display text-2xl font-normal text-navy mb-6">Livret d&apos;accueil</h1>
         <div className="max-w-4xl mx-auto px-6 py-8"><LivretSkeleton /></div>
       </>
     );
@@ -319,7 +318,7 @@ export default function LivretPage() {
 
   return (
     <>
-      <PageTopbar title="Livret d'accueil" />
+      <h1 className="font-display text-2xl font-normal text-navy mb-6">Livret d&apos;accueil</h1>
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8 flex items-end justify-between gap-4">
