@@ -86,6 +86,18 @@ export function buildWeeklyRecap(input: WeeklyRecapInput) {
   };
 }
 
+/** Texte brut pour la notification in-app — une ligne par bloc non vide. */
+export function buildWeeklyRecapNotificationBody(recap: ReturnType<typeof buildWeeklyRecap>): string {
+  const lines = [
+    recap.anomalyFlag ? "Baisse de CA de plus de 30% cette semaine" : null,
+    recap.inactiveOwners.length ? `Propriétaires inactifs (${recap.inactiveOwners.length}) : ${recap.inactiveOwners.join(", ")}` : null,
+    recap.topVillas.length ? `Top villas : ${recap.topVillas.join(", ")}` : null,
+    recap.convertedLeads.length ? `Leads convertis (${recap.convertedLeads.length})` : null,
+    ...recap.trends,
+  ].filter((l): l is string => Boolean(l));
+  return lines.join("\n");
+}
+
 export async function runWeeklyRecap(admin: SupabaseClient): Promise<number> {
   const [revenue, inactiveOwners] = await Promise.all([
     fetchWeeklyRevenue(admin),
@@ -143,5 +155,15 @@ export async function runWeeklyRecap(admin: SupabaseClient): Promise<number> {
   });
 
   await sendAdminWeeklyRecapEmail(recap);
+
+  const { error: notifError } = await admin.from("notifications").insert({
+    type: "admin_weekly_recap",
+    title: "Récap hebdomadaire admin",
+    body: buildWeeklyRecapNotificationBody(recap),
+    action_url: "/admin/revenus",
+    user_id: null,
+  });
+  if (notifError) console.error("[weekly-recap] notif insert", notifError);
+
   return recap.inactiveOwners.length + topVillas.length + convertedLeads.length + (recap.anomalyFlag ? 1 : 0);
 }
