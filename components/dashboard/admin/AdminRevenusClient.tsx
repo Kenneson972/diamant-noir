@@ -1,23 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import { BarChart3, DollarSign } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatCurrency } from "@/lib/utils";
 import { AdminPageIntro } from "@/components/dashboard/admin/AdminPageIntro";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import type { VillaRevenueRow, RevenueStats } from "@/app/(admin)/admin/revenus/page";
+import type { MonthDetail } from "@/lib/revenue/monthly-detail";
+import { computeMomChange, shiftMonthKey } from "@/lib/revenue/monthly-comparison";
+import { RevenueMonthDetail } from "./RevenueMonthDetail";
+
+type MonthlyChartPoint = { monthKey: string; month: string; revenue: number };
 
 export function AdminRevenusClient({
   stats,
   monthlyData,
   byVilla,
+  monthlyDetails,
+  monthlyGrossHistory,
   error,
 }: {
   stats: RevenueStats;
-  monthlyData: { month: string; revenue: number }[];
+  monthlyData: MonthlyChartPoint[];
   byVilla: VillaRevenueRow[];
+  monthlyDetails: Record<string, MonthDetail>;
+  monthlyGrossHistory: Record<string, number>;
   error: string | null;
 }) {
+  const defaultMonthKey = monthlyData[monthlyData.length - 1]?.monthKey ?? "";
+  const [selectedMonthKey, setSelectedMonthKey] = useState(defaultMonthKey);
+
   const exportCSV = () => {
     const rows = [
       ["Villa", "CA total (€)", "Commission Kayvila (€)", "Reversement proprio (€)", "Réservations"],
@@ -38,6 +51,14 @@ export function AdminRevenusClient({
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const selectedDetail = monthlyDetails[selectedMonthKey];
+  const momChangePct = selectedDetail
+    ? computeMomChange(selectedDetail.gross, monthlyGrossHistory[shiftMonthKey(selectedMonthKey, -1)] ?? 0)
+    : null;
+  const yoyChangePct = selectedDetail
+    ? computeMomChange(selectedDetail.gross, monthlyGrossHistory[shiftMonthKey(selectedMonthKey, -12)] ?? 0)
+    : null;
 
   return (
     <div className="space-y-8">
@@ -106,14 +127,40 @@ export function AdminRevenusClient({
 
       {monthlyData.length > 0 ? (
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-semibold text-navy">CA mensuel brut (12 derniers mois)</h3>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-navy">CA mensuel brut (12 derniers mois)</h3>
+            <select
+              aria-label="Sélectionner un mois"
+              value={selectedMonthKey}
+              onChange={(e) => setSelectedMonthKey(e.target.value)}
+              className="min-h-[40px] rounded-full border border-navy/10 bg-white px-3 py-2 text-[11px] text-navy/70 focus:border-gold/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
+            >
+              {monthlyData.map((point) => (
+                <option key={point.monthKey} value={point.monthKey}>
+                  {monthlyDetails[point.monthKey]?.label ?? point.month}
+                </option>
+              ))}
+            </select>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}€`} />
               <Tooltip />
-              <Bar dataKey="revenue" fill="#D4AF37" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="revenue"
+                radius={[4, 4, 0, 0]}
+                cursor="pointer"
+                onClick={(data: any) => setSelectedMonthKey(data.payload.monthKey)}
+              >
+                {monthlyData.map((point) => (
+                  <Cell
+                    key={point.monthKey}
+                    fill={point.monthKey === selectedMonthKey ? "#D4AF37" : "#D4AF3766"}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -123,6 +170,14 @@ export function AdminRevenusClient({
           <p className="mt-4 text-sm text-gray-500">Aucune donnée de revenus disponible.</p>
         </div>
       )}
+
+      {selectedDetail ? (
+        <RevenueMonthDetail
+          detail={selectedDetail}
+          momChangePct={momChangePct}
+          yoyChangePct={yoyChangePct}
+        />
+      ) : null}
 
       {byVilla.length > 0 && (
         <div className="rounded-lg border bg-white shadow-sm">

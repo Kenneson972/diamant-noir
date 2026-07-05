@@ -149,7 +149,8 @@ describe("buildMonthlyDetails — agrégats du mois", () => {
     const july = monthlyDetails["2026-07"];
     expect(july.cancelled).toEqual({ count: 0, lostGross: 0 });
     expect(july.pending).toEqual({ count: 0, potentialGross: 0 });
-    expect(july.occupancyRate).toBe(0);
+    // occupancyRate is now computed (Task 5): 14 nights / (31 days * 2 villas) = 23%
+    expect(july.occupancyRate).toBe(23);
   });
 });
 
@@ -197,5 +198,73 @@ describe("buildMonthlyDetails — annulé et pipeline", () => {
     // Le CA confirmé ne doit PAS inclure les annulations ni le pipeline
     expect(july.gross).toBe(200000); // inchangé
     expect(july.bookingCount).toBe(3); // inchangé
+  });
+});
+
+describe("buildMonthlyDetails — taux d'occupation (chevauchement)", () => {
+  const occVillas: VillaInfo[] = [
+    { id: "v1", name: "Villa A" },
+    { id: "v2", name: "Villa B" },
+  ];
+
+  it("compte les nuits occupées avec chevauchement, indépendamment du mois de rattachement du CA", () => {
+    const result = buildMonthlyDetails({
+      confirmedBookings: [
+        {
+          id: "b1",
+          villa_id: "v1",
+          guest_name: "Client A",
+          start_date: "2026-06-01",
+          end_date: "2026-06-16", // 15 nuits, entièrement en juin
+          price: 1500,
+          cleaning_fee: 0,
+          service_fee: 0,
+          total_price_cents: null,
+          source: "direct",
+        },
+        {
+          id: "b2",
+          villa_id: "v2",
+          guest_name: "Client B",
+          // À cheval mai → juin : rattaché à mai pour le CA (start_date), mais
+          // ses nuits de juin doivent compter dans l'occupation de juin.
+          start_date: "2026-05-25",
+          end_date: "2026-06-10", // 9 nuits en juin (06-01 → 06-10)
+          price: 1600,
+          cleaning_fee: 0,
+          service_fee: 0,
+          total_price_cents: null,
+          source: "direct",
+        },
+      ],
+      cancelledBookings: [],
+      pendingBookings: [],
+      villas: occVillas,
+      monthKeys: ["2026-06"], // mai hors fenêtre affichée
+    });
+
+    const june = result.monthlyDetails["2026-06"];
+    // v1 : 15 nuits / 30 jours = 50%
+    const v1 = june.byVilla.find((v) => v.villaId === "v1")!;
+    expect(v1.occupancyRate).toBe(50);
+
+    // v2 n'a aucun check-in en juin (son check-in est en mai, hors fenêtre)
+    // → pas de ligne dans byVilla, limitation documentée. Ses nuits comptent
+    // quand même dans le taux global.
+    expect(june.byVilla.find((v) => v.villaId === "v2")).toBeUndefined();
+
+    // Global : (15 + 9) nuits occupées / (30 jours * 2 villas) = 24/60 = 40%
+    expect(june.occupancyRate).toBe(40);
+  });
+
+  it("mois sans aucune réservation → occupancyRate à 0, pas d'exception", () => {
+    const result = buildMonthlyDetails({
+      confirmedBookings: [],
+      cancelledBookings: [],
+      pendingBookings: [],
+      villas: occVillas,
+      monthKeys: ["2026-06"],
+    });
+    expect(result.monthlyDetails["2026-06"].occupancyRate).toBe(0);
   });
 });

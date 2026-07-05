@@ -108,6 +108,11 @@ function nightsBetween(startDate: string, endDate: string): number {
   return Math.max(0, Math.round(ms / 86400000));
 }
 
+function daysInMonthOf(monthKey: string): number {
+  const [year, month] = monthKey.split("-").map(Number);
+  return new Date(year, month, 0).getDate();
+}
+
 function emptyMonthDetail(monthKey: string): MonthDetail {
   return {
     monthKey,
@@ -280,6 +285,42 @@ export function buildMonthlyDetails(params: {
       .sort((a, b) => b.gross - a.gross);
 
     detail.bookings.sort((a, b) => a.startDate.localeCompare(b.startDate));
+  }
+
+  // Occupation : chevauchement nuit par nuit, indépendant du mois de rattachement
+  // du CA (cf. JSDoc) — itère tout confirmedBookings, pas seulement les réservations
+  // dont le check-in tombe dans la fenêtre affichée.
+  for (const key of monthKeys) {
+    const [year, month] = key.split("-").map(Number);
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 1); // exclusif (1er du mois suivant)
+    const days = daysInMonthOf(key);
+
+    const occupiedByVilla: Record<string, number> = {};
+    for (const b of confirmedBookings) {
+      const bStart = new Date(b.start_date);
+      const bEnd = new Date(b.end_date);
+      const overlapStart = bStart > monthStart ? bStart : monthStart;
+      const overlapEnd = bEnd < monthEnd ? bEnd : monthEnd;
+      if (overlapEnd > overlapStart) {
+        const nights = Math.round((overlapEnd.getTime() - overlapStart.getTime()) / 86400000);
+        occupiedByVilla[b.villa_id] = (occupiedByVilla[b.villa_id] ?? 0) + nights;
+      }
+    }
+
+    const detail = monthlyDetails[key];
+    // Note : une villa dont TOUTE l'occupation du mois vient d'une réservation à
+    // cheval (check-in le mois précédent, aucun check-in ce mois-ci) n'aura pas
+    // de ligne dans byVilla (pas de CA ce mois-là côté rattachement check-in),
+    // mais compte bien dans occupancyRate global ci-dessous.
+    for (const row of detail.byVilla) {
+      const occupied = occupiedByVilla[row.villaId] ?? 0;
+      row.occupancyRate = days > 0 ? Math.round((occupied / days) * 100) : 0;
+    }
+    const totalOccupiedNights = Object.values(occupiedByVilla).reduce((sum, n) => sum + n, 0);
+    detail.occupancyRate = villas.length > 0 && days > 0
+      ? Math.round((totalOccupiedNights / (days * villas.length)) * 100)
+      : 0;
   }
 
   return { monthlyDetails, monthlyGrossHistory };
