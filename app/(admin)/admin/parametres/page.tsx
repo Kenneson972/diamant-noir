@@ -145,7 +145,7 @@ export default async function AdminParametresPage() {
 
       <SettingsSection icon={Phone} title="Conciergerie">
         <p className="mb-4 text-xs text-gray-500">
-          Contacts et informations affichés sur la page Conciergerie de l&apos;espace client.
+          Contacts et informations affichés sur la page Conciergerie de l'espace client.
         </p>
         <ConciergerieSettingsForm />
       </SettingsSection>

@@ -33,8 +33,8 @@ export default async function RevenusPage() {
   const currentMonth = now.getMonth(); // 0-indexed
   const currentYear = now.getFullYear();
 
-  // Fetch last 6 months of confirmed/paid bookings
-  const sixMonthsAgo = new Date(currentYear, currentMonth - 5, 1).toISOString();
+  // Fetch current month's confirmed/paid bookings
+  const currentMonthStart = new Date(currentYear, currentMonth, 1).toISOString();
 
   const { data: bookings } = villaIds.length > 0
     ? await supabase
@@ -42,7 +42,7 @@ export default async function RevenusPage() {
         .select("id, price, cleaning_fee, service_fee, villa_id, start_date, end_date, guest_name, source, status, payment_status, stripe_transfer_id, stripe_transfer_date, stripe_transfer_status")
         .in("villa_id", villaIds)
         .in("status", ["confirmed", "paid"])
-        .gte("start_date", sixMonthsAgo)
+        .gte("start_date", currentMonthStart)
     : { data: [] };
 
   const revenueRows: RevenueRow[] = (bookings ?? []).map((b: any) => {
@@ -102,27 +102,20 @@ export default async function RevenusPage() {
     monthMap[monthIndex] = (monthMap[monthIndex] ?? 0) + ownerNetCents(b);
   }
 
-  // Build 6-month series (oldest → newest)
-  const monthlyData = Array.from({ length: 6 }, (_, i) => {
-    const monthIndex = (currentMonth - 5 + i + 12) % 12;
-    const revenue = Math.round((monthMap[monthIndex] ?? 0) / 100);
-    return {
-      month: MONTH_LABELS[monthIndex],
-      revenue,
-      isCurrent: monthIndex === currentMonth,
-    };
-  });
+  // Build current-month series (single month)
+  const monthlyData = [
+    {
+      month: MONTH_LABELS[currentMonth],
+      revenue: Math.round((monthMap[currentMonth] ?? 0) / 100),
+      isCurrent: true,
+    },
+  ];
 
-  const totalMonth = monthlyData.find((m) => m.isCurrent)?.revenue ?? 0;
-  const totalYear = monthlyData.reduce((s, m) => s + m.revenue, 0);
-  const paidMonths = monthlyData.filter((m) => m.revenue > 0);
-  const averagePerNight = paidMonths.length > 0
-    ? Math.round(totalYear / paidMonths.length)
-    : 0;
-  const prevMonthIndex = (currentMonth - 1 + 12) % 12;
-  const comparisonMonth = Math.round((monthMap[prevMonthIndex] ?? 0) / 100);
+  const totalNet = Math.round(revenueRows.reduce((s, r) => s + r.net, 0) / 100);
+  const totalGross = Math.round(revenueRows.reduce((s, r) => s + r.gross, 0) / 100);
+  const totalCommission = Math.round(revenueRows.reduce((s, r) => s + r.commission, 0) / 100);
 
-  const hasEnoughHistory = monthlyData.filter((m) => m.revenue > 0).length >= 3;
+  const hasEnoughHistory = revenueRows.length > 0;
 
   return (
     <div>
@@ -147,10 +140,9 @@ export default async function RevenusPage() {
 
         <div className="space-y-6">
           <RevenueSummary
-            totalMonth={totalMonth}
-            totalYear={totalYear}
-            averagePerNight={averagePerNight}
-            comparisonMonth={comparisonMonth}
+            totalNet={totalNet}
+            totalGross={totalGross}
+            totalCommission={totalCommission}
           />
 
           <RevenueChart data={monthlyData} hasEnoughHistory={hasEnoughHistory} />
