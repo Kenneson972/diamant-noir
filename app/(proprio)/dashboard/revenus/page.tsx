@@ -4,7 +4,11 @@ import type { Metadata } from "next";
 import { RevenueChart } from "@/components/dashboard/proprio/RevenueChart";
 import { RevenueSummary } from "@/components/dashboard/proprio/RevenueSummary";
 import { calculateTransferAmounts } from "@/lib/stripe/connect";
-import { getCommissionRate } from "@/lib/revenue/booking-revenue";
+import {
+  getCommissionRate,
+  stayCentsFromBooking,
+  ownerNetCents,
+} from "@/lib/revenue/booking-revenue";
 import { RevenuePageClient } from "@/components/dashboard/proprio/RevenuePageClient";
 import type { RevenueRow } from "@/components/dashboard/proprio/RevenueBreakdownTable";
 
@@ -12,8 +16,9 @@ export const metadata: Metadata = {
   title: "Revenus — Kayvila",
 };
 
-const MONTH_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+export const dynamic = "force-dynamic";
 
+const MONTH_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 
 export default async function RevenusPage() {
   const supabase = await getSupabaseServer();
@@ -33,24 +38,25 @@ export default async function RevenusPage() {
   const currentMonth = now.getMonth(); // 0-indexed
   const currentYear = now.getFullYear();
 
-  // Fetch current month's confirmed/paid bookings
-  const currentMonthStart = new Date(currentYear, currentMonth, 1).toISOString();
+  // Fetch last 6 months of confirmed/paid bookings
+  const sixMonthsAgo = new Date(currentYear, currentMonth - 5, 1).toISOString();
 
   const { data: bookings } = villaIds.length > 0
     ? await supabase
         .from("bookings")
-        .select("id, price, cleaning_fee, service_fee, villa_id, start_date, end_date, guest_name, source, status, payment_status, stripe_transfer_id, stripe_transfer_date, stripe_transfer_status")
+        .select("id, price, cleaning_fee, service_fee, total_price_cents, villa_id, start_date, end_date, guest_name, source, status, payment_status, stripe_transfer_id, stripe_transfer_date, stripe_transfer_status")
         .in("villa_id", villaIds)
         .in("status", ["confirmed", "paid"])
-        .gte("start_date", currentMonthStart)
+        .gte("start_date", sixMonthsAgo)
     : { data: [] };
 
+  // Build revenue rows using unified functions (consistent with admin revenue)
   const revenueRows: RevenueRow[] = (bookings ?? []).map((b: any) => {
-    const stayCents = Math.round((b.price ?? 0) * 100);
+    const stayCents = stayCentsFromBooking(b);
     const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
     const serviceCents = Math.round((b.service_fee ?? 0) * 100);
-    const commissionRate = commissionByVilla.get(b.villa_id) ?? 22;
-    const rate = getCommissionRate(b.source ?? null);
+    const source = b.source as string | null;
+    const rate = getCommissionRate(source); // 20% OTA / 22% direct — consistent with admin
     const { ownerAmountCents, platformFeeCents } = calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate);
     const gross = stayCents + cleaningCents + serviceCents;
     const nights =
@@ -67,7 +73,7 @@ export default async function RevenusPage() {
       villaName: villaNameMap.get(b.villa_id) ?? "—",
       nights,
       gross,
-      commissionRate,
+      commissionRate: rate, // affiche le taux réellement utilisé (source)
       commission: platformFeeCents,
       cleaningFee: cleaningCents,
       net: ownerAmountCents,
@@ -79,43 +85,39 @@ export default async function RevenusPage() {
     };
   });
 
-  function ownerNetCents(b: {
-    price?: number | null;
-    cleaning_fee?: number | null;
-    service_fee?: number | null;
-    villa_id?: string | null;
-  }) {
-    const stayCents = Math.round((b.price ?? 0) * 100);
-    const cleaningCents = Math.round((b.cleaning_fee ?? 0) * 100);
-    const serviceCents = Math.round((b.service_fee ?? 0) * 100);
-    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 22;
-    return calculateTransferAmounts(stayCents, cleaningCents, serviceCents, rate)
-      .ownerAmountCents;
-  }
-
   const currentPeriod = `${now.toLocaleString("fr-FR", { month: "long" })} ${now.getFullYear()}`;
 
-  const monthMap: Record<number, number> = {};
-  for (const b of bookings ?? []) {
+  // Build 6-month chart data using unified ownerNetCents (consistent with dashboard KPI)
+  const monthMap: Record<string, number> = {}; // key = "YYYY-MM"
+  for (const b of (bookings ?? [])) {
     const d = new Date(b.start_date);
-    const monthIndex = d.getMonth();
-    monthMap[monthIndex] = (monthMap[monthIndex] ?? 0) + ownerNetCents(b);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    // Use unified function: fallback total_price_cents, source-based rate
+    const net = ownerNetCents(b, getCommissionRate(b.source ?? null));
+    monthMap[key] = (monthMap[key] ?? 0) + net;
   }
 
-  // Build current-month series (single month)
-  const monthlyData = [
-    {
-      month: MONTH_LABELS[currentMonth],
-      revenue: Math.round((monthMap[currentMonth] ?? 0) / 100),
-      isCurrent: true,
-    },
-  ];
+  // Last 6 months (oldest → newest)
+  const monthlyData = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(currentYear, currentMonth - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    monthlyData.push({
+      month: MONTH_LABELS[d.getMonth()],
+      revenue: Math.round((monthMap[key] ?? 0) / 100),
+      isCurrent: i === 0,
+    });
+  }
 
+  // Compute totals from the unified revenue rows
   const totalNet = Math.round(revenueRows.reduce((s, r) => s + r.net, 0) / 100);
   const totalGross = Math.round(revenueRows.reduce((s, r) => s + r.gross, 0) / 100);
   const totalCommission = Math.round(revenueRows.reduce((s, r) => s + r.commission, 0) / 100);
 
-  const hasEnoughHistory = revenueRows.length > 0;
+  // Enough history = at least 2 months with data (not just current)
+  const monthsWithData = Object.values(monthMap).filter((v) => v > 0).length;
+  const completedMonths = monthlyData.slice(0, -1).filter((m) => m.revenue > 0).length;
+  const hasEnoughHistory = completedMonths >= 2 || monthsWithData >= 2;
 
   return (
     <div>

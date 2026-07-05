@@ -8,6 +8,7 @@ import type { DashboardTimelineItem } from "@/components/dashboard/shared/dashbo
 import type { DashboardAlert } from "@/components/dashboard/shared/dashboard-alert-list";
 import { supabaseAdmin } from "@/lib/supabase";
 import { calculateTransferAmounts, getConnectAccount } from "@/lib/stripe/connect";
+import { getCommissionRate, stayCentsFromBooking } from "@/lib/revenue/booking-revenue";
 
 function getMonthBounds() {
   const now = new Date();
@@ -128,7 +129,7 @@ export default async function ProprioDashboardPage(props: {
     supabase
       .from("bookings")
       .select(
-        "start_date, price, cleaning_fee, service_fee, total_price_cents, villa_id, payment_status"
+        "start_date, price, cleaning_fee, service_fee, total_price_cents, villa_id, payment_status, source"
       )
       .in("villa_id", villaIds)
       .in("status", ["confirmed", "paid"])
@@ -214,22 +215,21 @@ export default async function ProprioDashboardPage(props: {
   const occupancyRate =
     maxNights > 0 ? Math.round((totalOccupiedNights / maxNights) * 100) : 0;
 
-  const commissionByVilla = new Map(
-    (villas ?? []).map((v) => [v.id, v.commission_rate ?? 22])
-  );
-
   const ownerNetCents = (b: {
     price?: number | null;
     cleaning_fee?: number | null;
     service_fee?: number | null;
     total_price_cents?: number | null;
     villa_id?: string | null;
+    source?: string | null;
   }) => {
-    const stayCents =
-      b.price != null && Number(b.price) > 0
-        ? Math.round(Number(b.price) * 100)
-        : (b.total_price_cents ?? 0);
-    const rate = commissionByVilla.get(b.villa_id ?? "") ?? 22;
+    const stayCents = stayCentsFromBooking({
+      price: b.price ?? null,
+      cleaning_fee: b.cleaning_fee ?? null,
+      service_fee: b.service_fee ?? null,
+      total_price_cents: b.total_price_cents ?? null,
+    });
+    const rate = getCommissionRate(b.source ?? null);
     return calculateTransferAmounts(
       stayCents,
       Math.round(Number(b.cleaning_fee ?? 0) * 100),
