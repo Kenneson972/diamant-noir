@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { decidePendingSubmissions } from "@/lib/proactive/pending-submissions";
+import { decidePendingSubmissions, buildPendingSubmissionNotification } from "@/lib/proactive/pending-submissions";
 
 const now = new Date("2026-06-21T12:00:00Z");
 
@@ -17,5 +17,18 @@ describe("decidePendingSubmissions", () => {
   it("retourne vide si aucune >24h", () => {
     const rows = [{ id: "1", villa_name: "X", created_at: "2026-06-21T00:00:00Z" }];
     expect(decidePendingSubmissions(rows, now)).toEqual([]);
+  });
+});
+
+describe("buildPendingSubmissionNotification", () => {
+  it("construit la notification avec le bon type et body", () => {
+    const notif = buildPendingSubmissionNotification({ villa: "Azur", since: "2026-06-19" });
+    expect(notif).toEqual({
+      type: "pending_submission",
+      title: "Soumission en attente",
+      body: "Azur — en attente depuis 2026-06-19",
+      action_url: "/admin/soumissions",
+      user_id: null,
+    });
   });
 });
