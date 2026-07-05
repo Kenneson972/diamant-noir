@@ -169,27 +169,66 @@ rien de cassé).
   ajoutés au `systemPrompt`/`context` servi à Kayvibot B.
 - Questions non matchées en fallback → log `chatbot_feedback`.
 
-## Améliorations des workflows n8n (livrées en JSON, import manuel)
+## Audit complet (2026-07-05) — corrections intégrées au plan
 
-Nouveaux fichiers dans `~/Downloads/KAYVILABOT/` (les originaux sont conservés) :
+Audit nœud par nœud des 3 workflows n8n + code site associé. **Tout est corrigé** (option
+« tout corriger + réparer le digest » validée par Kenneson).
 
-1. **Kayvibot A v4** — le méga-prompt CONCIERGE hardcodé dans le nœud « Build Context »
-   est supprimé : le bot utilise uniquement le `systemPrompt` servi par
-   `/api/agent/visitor-context` (consolidé côté site, voir Agent 1). Élimine le conflit
-   actuel des deux listes de stages contradictoires envoyées au LLM.
-2. **Kayvibot B v5 / C v5** —
-   - troncature sûre des données : le `JSON.stringify(data).slice(0, 6000)` actuel peut
-     couper le JSON en plein milieu → remplacement par une sérialisation compacte champ
-     par champ avec budget de caractères ;
-   - garde anti-injection légère sur le message entrant (le bot A a déjà sa modération,
-     B/C n'ont rien) : longueur max + neutralisation des tentatives « ignore tes
-     instructions ».
-3. Aucun changement d'URL de webhook, de credentials, ni de structure de réponse —
-   ré-import sans risque, rollback = ré-importer l'ancien JSON.
+### P0 — cassé en production
 
-**Validation** : après import, un message de test par bot (visiteur : question commission
-→ doit répondre 22 % direct / 20 % OTA ; proprio : « mes revenus ce mois ? » ; admin :
-« bonjour » → briefing).
+1. **Bot C Admin jamais connecté au LLM** : `app/api/admin/chat/route.ts` n'envoie pas de
+   `token` dans le payload webhook → `Fetch Admin Context` part avec `Bearer ` vide → 401.
+   **Fix côté site** : forwarder le token Supabase de l'admin dans le payload (`token`),
+   comme le fait déjà owner-assistant.
+2. **Bot B — branche digest 8h morte** :
+   - route `/api/agent/owners-digest-context` inexistante → **à créer** (liste des owners
+     avec contexte compact du jour, auth par secret Bearer en variable d'env) ;
+   - nœud `LLM - Generateur de message` sans prompt → prompt digest ajouté dans le JSON ;
+   - nœud `Insert Digest` : expression malformée `={ $('cron-split')… }` (mauvaise syntaxe
+     + nœud inexistant) → corrigée vers `Split Out - Per Owner`.
+3. **Bot B — `Resend - Alerte Proprio` body vide** → l'email n'envoie rien (422). Fix :
+   body complet (from/to/subject/html). Le `IF - Urgent ?` matche `check-in|aujourd|demain`
+   (messages banals) → regex resserrée sur les vraies urgences.
+4. **Bot A — double prompt contradictoire** : méga-prompt hardcodé dans Build Context +
+   `systemPrompt` API (2 listes de stages, 2 formats JSON). Fix : prompt unique consolidé
+   côté `/api/agent/visitor-context`, le nœud n8n n'assemble plus que données + heure.
+
+### P1 — risques
+
+5. **Webhook Bot A public sans auth** : vérification du header `X-Webhook-Secret` ajoutée
+   dans le workflow (le site l'envoie déjà via `N8N_WEBHOOK_SECRET`).
+6. **`Check Auth` B/C inopérant** : les nœuds `Fetch … Context` jettent sur 4xx (pas de
+   `neverError`) → option `neverError: true` ajoutée pour que le test `statusCode` serve.
+7. **Secret Bearer hardcodé** dans le JSON Bot B (digest) → déplacé vers `$vars`.
+8. **PII vers DeepSeek** : Bot C injecte emails/noms de 50 profils → requête `Fetch Admin
+   Data` nettoyée (compteurs par rôle, pas de données nominatives utilisateurs).
+9. **Modèle DeepSeek sans options** → `temperature` basse + `response_format` JSON quand
+   supporté, pour stabiliser le parsing.
+10. **Troncature dangereuse** : `JSON.stringify(data).slice(0, 6000)` (B/C) peut couper le
+    JSON en plein milieu → sérialisation compacte champ par champ avec budget.
+
+### P2 — bugs site corrigés au passage
+
+11. `smartReply` proprio : lit `e.type === "checkin"` mais les items ont
+    `kind: "check_in"` → jamais matché. Fix : utiliser `kind`.
+12. Statuts de tâches incohérents : chat admin insère `"todo"`, proprio `"pending"`,
+    compteurs sur `pending/in_progress` → statut unifié `"pending"` à la création.
+13. Fallbacks admin/proprio renvoient markdown + emojis (bannis par les prompts et le
+    rendu) → réponses fallback en texte brut cohérent.
+14. `gatherAdminContext` dupliqué (route chat admin vs `/api/agent/admin-context`), les
+    deux divergent → extraction d'une implémentation partagée dans
+    `lib/admin-assistant-context.ts` (fonctions de gathering réutilisées par les 2 routes).
+
+### Workflows n8n livrés (import manuel)
+
+Nouveaux fichiers dans `~/Downloads/KAYVILABOT/` (originaux conservés) : `Kayvibot A v4`,
+`Kayvibot B v5`, `Kayvibot C v5` intégrant les fixes ci-dessus. Aucun changement d'URL de
+webhook ni de structure de réponse — rollback = ré-importer l'ancien JSON.
+
+**Validation après import** : visiteur → question commission (attend 22 % direct / 20 %
+OTA) ; proprio → « mes revenus ce mois ? » (chiffres réels) ; admin → « bonjour »
+(briefing) ; test alerte urgente proprio (email Resend reçu) ; exécution manuelle du cron
+digest (notification insérée).
 
 ## Gestion d'erreurs
 
