@@ -35,7 +35,11 @@ type NotifType =
   | "request_urgent"
   | "checkin_reminder"
   | "checkout_reminder"
-  | "new_message";
+  | "new_message"
+  | "pending_submission"
+  | "ghost_villa"
+  | "admin_daily_recap"
+  | "admin_weekly_recap";
 
 interface Notification {
   id: string;
@@ -60,6 +64,10 @@ const TYPE_CONFIG: Record<NotifType, { iconType: "lucide" | "png"; icon: any; co
   checkin_reminder:   { iconType: "png", icon: "door",         color: "text-emerald-500",bg: "bg-emerald-50" },
   checkout_reminder:  { iconType: "png", icon: "door",         color: "text-amber-500",  bg: "bg-amber-50" },
   new_message:        { iconType: "png", icon: "message",      color: "text-blue-500",   bg: "bg-blue-50" },
+  pending_submission: { iconType: "lucide", icon: AlertTriangle,color: "text-orange-500", bg: "bg-orange-50" },
+  ghost_villa:        { iconType: "lucide", icon: AlertTriangle,color: "text-red-500",    bg: "bg-red-50" },
+  admin_daily_recap:  { iconType: "lucide", icon: Info,        color: "text-blue-500",   bg: "bg-blue-50" },
+  admin_weekly_recap: { iconType: "lucide", icon: Info,        color: "text-indigo-500", bg: "bg-indigo-50" },
 };
 
 const SCORE_COLOR = (score: number) =>
