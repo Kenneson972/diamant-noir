@@ -2,9 +2,27 @@
 # scripts/n8n-apply-fixes.py
 # Genere les workflows n8n corriges (audit 2026-07-05) dans ~/Downloads/KAYVILABOT/.
 # Les originaux ne sont jamais modifies. Rollback = reimporter l'ancien JSON.
-import json, copy, os, sys
+#
+# CONFIGURATION — remplacer par les vraies valeurs :
+#   KAYVILA_URL       = l'URL de production Kayvila (ex: https://kayvila.com)
+#   DIGEST_SECRET      = un secret genere (openssl rand -hex 32), a mettre AUSSI
+#                         dans Vercel → OWNERS_DIGEST_SECRET
+#   CHAT_WEBHOOK_SECRET = meme valeur que le secret du webhook Stripe (ou autre
+#                          secret partage) pour securiser l'appel chat → n8n
+#
+# Les secrets sont encodes EN DUR dans le JSON — pas de $vars n8n requis.
+import json, copy, os, sys, secrets
 
 SRC = os.path.expanduser("~/Downloads/KAYVILABOT")
+
+# ── CONFIG ── (modifier ces valeurs avant d'executer)
+KAYVILA_URL = os.environ.get("KAYVILA_URL", "https://kayvila.com")
+DIGEST_SECRET = os.environ.get("DIGEST_SECRET", secrets.token_hex(32))
+CHAT_WEBHOOK_SECRET = os.environ.get("CHAT_WEBHOOK_SECRET", secrets.token_hex(32))
+
+print(f"KAYVILA_URL = {KAYVILA_URL}")
+print(f"DIGEST_SECRET = {DIGEST_SECRET}")
+print(f"CHAT_WEBHOOK_SECRET = {CHAT_WEBHOOK_SECRET}")
 
 # Decouverte dynamique des fichiers sources pour eviter les problemes d'encodage
 def find_file(pattern):
@@ -96,8 +114,8 @@ set_model_temp(wf, 0.4)
 # Verification du secret webhook : Ban Eval refuse si X-Webhook-Secret invalide
 ban = node(wf, "Code - Ban Eval")
 ban["parameters"]["jsCode"] = (
-    "const secretOk = !$vars.KAYVILA_WEBHOOK_SECRET || "
-    "($('Webhook Trigger').first().json.headers?.['x-webhook-secret'] === $vars.KAYVILA_WEBHOOK_SECRET);\n"
+    f"const secretOk = {json.dumps(CHAT_WEBHOOK_SECRET)} ? true : "
+    f"($('Webhook Trigger').first().json.headers?.['x-webhook-secret'] === {json.dumps(CHAT_WEBHOOK_SECRET)});\n"
     + ban["parameters"]["jsCode"].replace(
         "const banned = !!(d.session_id || (d[0] && d[0].session_id));",
         "const banned = !secretOk || !!(d.session_id || (d[0] && d[0].session_id));",
@@ -115,11 +133,11 @@ resend = node(wf, "Resend - Alerte Proprio")
 resend["parameters"]["specifyBody"] = "json"
 resend["parameters"].pop("bodyParameters", None)
 resend["parameters"]["jsonBody"] = (
-    '={{ JSON.stringify({ from: $vars.RESEND_FROM || "Kayvila <onboarding@resend.dev>", '
-    'to: [$vars.ADMIN_ALERT_EMAIL || "karibloom972@gmail.com"], '
-    'subject: "Kayvila — message proprietaire urgent", '
-    'html: "<p>Message proprietaire (session " + $json.sessionId + ") : " + '
-    '($(\'Edit Fields\').first().json.chatInput || "") + "</p><p>Reponse du bot : " + ($json.reply || "") + "</p>" }) }}'
+    f'={{{{ JSON.stringify({{ from: "Kayvila <conciergerie@kayvila.com>", '
+    f'to: ["equipe@kayvila.com"], '
+    f'subject: "Kayvila — message proprietaire urgent", '
+    f'html: "<p>Message proprietaire (session " + $json.sessionId + ") : " + '
+    f'($(\'Edit Fields\').first().json.chatInput || "") + "</p><p>Reponse du bot : " + ($json.reply || "") + "</p>" }}}} }}'
 )
 
 urgent = node(wf, "IF - Urgent ?")
@@ -129,7 +147,7 @@ urgent["parameters"]["conditions"]["conditions"][0]["rightValue"] = (
 
 dig = node(wf, "HTTP - Fetch Owners Digest Context")
 dig["parameters"]["headerParameters"]["parameters"] = [
-    {"name": "Authorization", "value": "=Bearer {{ $vars.OWNERS_DIGEST_SECRET }}"}
+    {"name": "Authorization", "value": f"=Bearer {DIGEST_SECRET}"}
 ]
 set_never_error(dig)
 
