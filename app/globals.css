@@ -178,7 +178,7 @@
 }
 
 @import "@heroui/styles";
-/* @import "@heroui-pro/react/css"; supprime — deplace dans layouts dashboard */
+@import "@heroui-pro/react/css";
 
 /* Sidebar dashboard Kayvila — HeroUI Pro Sidebar sur fond clair */
 .kayvila-sidebar {

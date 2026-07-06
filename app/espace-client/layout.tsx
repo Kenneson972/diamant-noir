@@ -1,3 +1,4 @@
+import "./globals.css";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getSupabaseServer } from "@/lib/supabase-server";
