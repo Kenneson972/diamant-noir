@@ -4,29 +4,30 @@ import { AlertTriangle } from "lucide-react";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { KAYVILA_EMAIL, KAYVILA_PHONE_DISPLAY, KAYVILA_PHONE_TEL } from "@/lib/constants";
 
 const CONTACTS: { label: string; value: string; sub: string; href: string; icon: LucideIcon | KayvilaPngName; gold: boolean }[] = [
   {
     label: "Urgences 24h/24",
-    value: "+596 696 68 18 69",
+    value: KAYVILA_PHONE_DISPLAY,
     sub: "Disponible en permanence",
-    href: "tel:+596696681869",
+    href: `tel:${KAYVILA_PHONE_TEL}`,
     icon: AlertTriangle,
     gold: true,
   },
   {
     label: "Téléphone",
-    value: "+596 696 68 18 69",
+    value: KAYVILA_PHONE_DISPLAY,
     sub: "Lun – Sam, 8h – 20h",
-    href: "tel:+596696681869",
+    href: `tel:${KAYVILA_PHONE_TEL}`,
     icon: "phone",
     gold: false,
   },
   {
     label: "Email",
-    value: "contact@kayvila.com",
+    value: KAYVILA_EMAIL,
     sub: "Réponse sous 24h",
-    href: "mailto:contact@kayvila.com",
+    href: `mailto:${KAYVILA_EMAIL}`,
     icon: "mail",
     gold: false,
   },
@@ -46,11 +47,8 @@ const SERVICES = [
 
 export default function ConciergeriePage() {
   return (
-    <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Contacts &amp; urgences</h1>
-      <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          eyebrow="Conciergerie"
           title="Contacts & urgences"
           description="Notre équipe est à votre disposition avant, pendant et après votre séjour."
         />
@@ -125,7 +123,6 @@ export default function ConciergeriePage() {
           Pour toute demande non urgente, privilégiez la messagerie — elle conserve un historique de votre échange avec
           notre équipe.
         </p>
-      </div>
-    </>
+    </div>
   );
 }

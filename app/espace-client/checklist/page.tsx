@@ -30,7 +30,12 @@ interface Booking {
   start_date: string;
   end_date: string;
   checklist_state: ChecklistState | null;
-  villa: { name: string; location?: string } | null;
+  villa: {
+    name: string;
+    location?: string;
+    check_in_time?: string | null;
+    check_out_time?: string | null;
+  } | null;
 }
 
 // ── Helpers iCal / Calendrier ─────────────────────────────────────────────────
@@ -117,7 +122,8 @@ const ITEMS: Array<{
   {
     key: "access",
     label: "Horaires & accès",
-    description: "Check-in à partir de 16h00 · Check-out avant 11h00",
+    // Description calculée au rendu depuis les horaires de la villa
+    description: "",
     cta: "livret",
   },
 ];
@@ -159,7 +165,7 @@ export default function ChecklistPage() {
 
       const { data: villaRaw } = await supabase
         .from("villas")
-        .select("name, location")
+        .select("name, location, check_in_time, check_out_time")
         .eq("id", bk.villa_id)
         .single();
 
@@ -168,7 +174,7 @@ export default function ChecklistPage() {
         start_date: bk.start_date,
         end_date: bk.end_date,
         checklist_state: bk.checklist_state ?? null,
-        villa: villaRaw as { name: string; location?: string } | null,
+        villa: villaRaw as Booking["villa"],
       };
 
       setBooking(bkWithVilla);
@@ -195,24 +201,24 @@ export default function ChecklistPage() {
   const fmt = (d: string) =>
     new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+  const checkInTime = booking?.villa?.check_in_time || "17:00";
+  const checkOutTime = booking?.villa?.check_out_time || "10:00";
+
   if (loading) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Avant votre arrivée</h1>
+      <div className="mx-auto max-w-2xl space-y-8">
+        <TenantSectionHeader title="Avant votre arrivée" />
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
-      </>
+      </div>
     );
   }
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Avant votre arrivée</h1>
-
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          eyebrow="Checklist avant-arrivée"
           title="Avant votre arrivée"
           description={
             booking ? `${booking.villa?.name} · ${fmt(booking.start_date)}` : undefined
@@ -268,6 +274,10 @@ export default function ChecklistPage() {
             <div className="space-y-[2px] -mx-6 -my-5">
             {ITEMS.map(({ key, label, description, cta }) => {
               const isChecked = checklist[key];
+              const itemDescription =
+                key === "access"
+                  ? `Check-in à partir de ${checkInTime} · Check-out avant ${checkOutTime}`
+                  : description;
               return (
                 <div
                   key={key}
@@ -311,7 +321,7 @@ export default function ChecklistPage() {
                         isChecked ? "text-[rgba(13,27,42,0.25)]" : "text-[rgba(13,27,42,0.45)]",
                       ].join(" ")}
                     >
-                      {description}
+                      {itemDescription}
                     </p>
 
                     {/* CTA calendrier */}

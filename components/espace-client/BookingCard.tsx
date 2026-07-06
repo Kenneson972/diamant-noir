@@ -74,9 +74,9 @@ export function BookingCard({ booking }: { booking: Booking }) {
         <div className="min-w-0">
           <p className="truncate font-display text-base text-navy">{villaName}</p>
           {location ? (
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-navy/55">
-              <KayvilaPngIcon name="location" size={18} alt="" aria-hidden />
-              {location}
+            <p className="mt-0.5 flex min-w-0 items-center gap-1 text-xs text-navy/55">
+              <KayvilaPngIcon name="location" size={18} alt="" className="shrink-0" aria-hidden />
+              <span className="truncate">{location}</span>
             </p>
           ) : null}
         </div>

@@ -65,10 +65,8 @@ export default function DocumentsPage() {
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mes documents</h1>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          eyebrow="MES DOCUMENTS"
           title="Mes documents"
           description="Contrats, livret d'accueil et factures de séjour."
         />
@@ -87,7 +85,7 @@ export default function DocumentsPage() {
           />
         ) : (
           <>
-            <KayvilaTenantWidget title="Séjours confirmés" description="Documents liés à vos réservations">
+            <KayvilaTenantWidget title="Séjours confirmés">
               <div className="space-y-4">
                 {bookings.map((b) => (
                   <div key={b.id} className="border border-navy/8 bg-offwhite px-5 py-4">

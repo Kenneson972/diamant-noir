@@ -151,8 +151,6 @@ export default function EspaceClientPage() {
   // ── Empty state ──
   if (bookings.length === 0) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon séjour</h1>
       <div className="space-y-8">
         <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 
@@ -182,14 +180,11 @@ export default function EspaceClientPage() {
           </p>
         </KayvilaTenantWidget>
       </div>
-      </>
     );
   }
 
   // ── Main dashboard ──
   return (
-    <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon séjour</h1>
     <div className="space-y-10 min-w-0">
       <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 
@@ -283,23 +278,15 @@ export default function EspaceClientPage() {
             {otherBookings.map((booking) => {
               const isPast = new Date(booking.end_date) < new Date();
               return (
-                <div key={booking.id} className="space-y-3">
+                <div key={booking.id} className="min-w-0 space-y-3">
                   <BookingCard booking={booking} />
                   {isPast && (
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <Link
-                        href={`/villas/${booking.villa_id}`}
-                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
-                      >
-                        RE-RÉSERVER
-                      </Link>
-                      <Link
-                        href="/espace-client/messagerie"
-                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 border border-navy/15 px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-navy no-underline transition-colors hover:border-navy/30"
-                      >
-                        Contacter la conciergerie
-                      </Link>
-                    </div>
+                    <Link
+                      href={`/villas/${booking.villa_id}`}
+                      className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
+                    >
+                      RE-RÉSERVER
+                    </Link>
                   )}
                 </div>
               );
@@ -316,7 +303,7 @@ export default function EspaceClientPage() {
               <Link
                 key={v.id}
                 href={`/villas/${v.id}`}
-                className="group overflow-hidden border border-navy/10 bg-white no-underline transition-colors hover:border-gold/30"
+                className="group min-w-0 overflow-hidden border border-navy/10 bg-white no-underline transition-colors hover:border-gold/30"
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-navy/5">
                   <VillaCoverImage
@@ -327,10 +314,10 @@ export default function EspaceClientPage() {
                     sizes="(max-width: 640px) 100vw, 33vw"
                   />
                 </div>
-                <div className="p-4">
-                  <h3 className="font-display text-sm text-navy transition-colors group-hover:text-gold">{v.name}</h3>
+                <div className="min-w-0 p-4">
+                  <h3 className="truncate font-display text-sm text-navy transition-colors group-hover:text-gold">{v.name}</h3>
                   {v.location ? (
-                    <p className="mt-0.5 text-[11px] text-navy/55">{v.location}</p>
+                    <p className="mt-0.5 truncate text-[11px] text-navy/55">{v.location}</p>
                   ) : null}
                   <p className="mt-2 text-sm font-semibold text-navy">
                     {v.price_per_night}€
@@ -346,7 +333,9 @@ export default function EspaceClientPage() {
       {/* Guide local */}
       {(upcomingBooking || pastBookings.length > 0) && <LocalGuide />}
 
-      <KayvilaTenantWidget title="Services" description="Votre conciergerie à portée de main">
+      {/* Raccourcis conciergerie — uniquement quand TenantQuickLinks n'est pas affiché */}
+      {!upcomingBooking && (
+      <KayvilaTenantWidget title="Services">
         <div className="grid gap-0 sm:grid-cols-2 sm:divide-x sm:divide-navy/6">
           <Link
             href="/espace-client/messagerie"
@@ -384,7 +373,7 @@ export default function EspaceClientPage() {
           </Link>
         </div>
       </KayvilaTenantWidget>
+      )}
     </div>
-    </>
   );
 }

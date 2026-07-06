@@ -14,6 +14,8 @@ interface VillaData {
   location?: string;
   wifi_name?: string;
   wifi_password?: string;
+  check_in_time?: string | null;
+  check_out_time?: string | null;
   checkout_instructions?: string;
   local_recommendations?: string;
   emergency_contacts?: string;
@@ -174,11 +176,11 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
         <div className="space-y-5">
           <div>
             <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-in</p>
-            <p className="font-display text-[16px] text-[#0D1B2A]">À partir de 16h00</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">À partir de {villa.check_in_time || "17:00"}</p>
           </div>
           <div>
             <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-out</p>
-            <p className="font-display text-[16px] text-[#0D1B2A]">Avant 11h00</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">Avant {villa.check_out_time || "10:00"}</p>
           </div>
           {villa.checkout_instructions && (
             <div>
@@ -288,7 +290,7 @@ export default function LivretPage() {
 
       const { data: villaRaw } = await supabase
         .from("villas")
-        .select("id, name, location, wifi_name, wifi_password, checkout_instructions, local_recommendations, emergency_contacts")
+        .select("id, name, location, wifi_name, wifi_password, check_in_time, check_out_time, checkout_instructions, local_recommendations, emergency_contacts")
         .eq("id", bk.villa_id)
         .single();
 
@@ -308,27 +310,20 @@ export default function LivretPage() {
   };
 
   if (loading) {
-    return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Livret d&apos;accueil</h1>
-        <div className="max-w-4xl mx-auto px-6 py-8"><LivretSkeleton /></div>
-      </>
-    );
+    return <div className="max-w-4xl mx-auto px-6 py-8"><LivretSkeleton /></div>;
   }
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Livret d&apos;accueil</h1>
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-2">Votre villa</p>
-            <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
+            <h1 className="font-display text-2xl font-normal text-navy">
               {villa?.name ?? "Livret d'accueil"}
             </h1>
             {villa?.location && (
-              <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.4)] mt-1">
+              <p className="font-display italic text-[15px] font-light text-navy/40 mt-1">
                 {villa.location}, Martinique
               </p>
             )}
@@ -351,10 +346,12 @@ export default function LivretPage() {
           <>
             <CheckinGuide
               startDate={booking.start_date}
+              checkInTime={booking.villa?.check_in_time ?? undefined}
               address={booking.villa?.location ? `${booking.villa.location}, Martinique` : undefined}
             />
             <CheckoutInstructions
               endDate={booking.end_date}
+              checkOutTime={booking.villa?.check_out_time ?? undefined}
             />
           </>
         )}

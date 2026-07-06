@@ -22,8 +22,9 @@
  *     4.4 Formulaire création villa — tous les champs
  *     4.5 NotificationBell — broadcast demandes urgentes admin
  *
- *   Audit Richard :
- *     R1. Labels dorés espace client (MES NOTIFICATIONS, SERVICES & DEMANDES, MES DOCUMENTS)
+ *   Espace client (refonte 2026-07-06) :
+ *     Titres non redondants — 1 seul h1 par page, label doré porté par le
+ *     kicker du header, plus d'eyebrow répétant le titre en majuscules.
  *
  *   Mobile :
  *     M1. Form inputs font-size 16px (text-base — pas de zoom iOS)
@@ -368,54 +369,45 @@ test.describe("Wave 4 — Formulaire création villa", () => {
 });
 
 // ===========================================================================
-// AUDIT RICHARD — Labels dorés espace client
+// AUDIT ESPACE CLIENT — Titres non redondants
 // ===========================================================================
-test.describe("Audit Richard — Labels dorés espace client", () => {
+// Refonte 2026-07-06 : le label doré est désormais porté uniquement par le
+// kicker du header (VOTRE DOSSIER, RESTEZ INFORMÉ…). Le titre de section n'est
+// plus doublé par un eyebrow qui le répète en majuscules (ex. l'ancien
+// "MES DOCUMENTS" au-dessus de "Mes documents"). Chaque page = 1 seul h1.
+test.describe("Espace client — titres non redondants", () => {
   test.skip(
     !!process.env.PLAYWRIGHT_SKIP_DB_TESTS,
     "Needs local Supabase"
   );
 
-  test("R1. Notifications — eyebrow MES NOTIFICATIONS", async ({ page }) => {
-    await loginAsTenant(page);
-    await page.goto("/espace-client/notifications");
-    await page.waitForLoadState("networkidle");
+  // Chaque entrée : route → { title (h1 unique), kicker (label doré header) }
+  const PAGES: { route: string; title: string; kicker: string }[] = [
+    { route: "/espace-client/notifications", title: "Mes notifications", kicker: "RESTEZ INFORMÉ" },
+    { route: "/espace-client/demandes", title: "Services & demandes", kicker: "PENDANT VOTRE SÉJOUR" },
+    { route: "/espace-client/documents", title: "Mes documents", kicker: "VOTRE DOSSIER" },
+  ];
 
-    const eyebrow = page.locator("text=MES NOTIFICATIONS").first();
-    await expect(eyebrow).toBeVisible({ timeout: 10_000 });
-  });
+  for (const { route, title, kicker } of PAGES) {
+    test(`Titre unique + kicker doré — ${route}`, async ({ page }) => {
+      await loginAsTenant(page);
+      await page.goto(route);
+      await page.waitForLoadState("networkidle");
 
-  test("R1. Demandes — eyebrow SERVICES & DEMANDES", async ({ page }) => {
-    await loginAsTenant(page);
-    await page.goto("/espace-client/demandes");
-    await page.waitForLoadState("networkidle");
+      // 1. Le titre est un h1 unique et visible
+      const h1 = page.locator("h1").filter({ hasText: title });
+      await expect(h1.first()).toBeVisible({ timeout: 10_000 });
+      await expect(h1).toHaveCount(1);
 
-    const eyebrow = page.locator("text=SERVICES & DEMANDES").first();
-    await expect(eyebrow).toBeVisible({ timeout: 10_000 });
-  });
+      // 2. Le label doré vit dans le header (kicker), pas dupliqué en eyebrow
+      const headerKicker = page.locator(`text=${kicker}`).first();
+      await expect(headerKicker).toBeVisible({ timeout: 10_000 });
 
-  test("R1. Documents — eyebrow MES DOCUMENTS", async ({ page }) => {
-    await loginAsTenant(page);
-    await page.goto("/espace-client/documents");
-    await page.waitForLoadState("networkidle");
-
-    const eyebrow = page.locator("text=MES DOCUMENTS").first();
-    await expect(eyebrow).toBeVisible({ timeout: 10_000 });
-  });
-
-  test("R1. Notifications — pas de H2 redondant", async ({ page }) => {
-    await loginAsTenant(page);
-    await page.goto("/espace-client/notifications");
-    await page.waitForLoadState("networkidle");
-
-    // Le titre doit être un h1 (dans TenantSectionHeader), pas un h2
-    const h1 = page.locator("h1").filter({ hasText: "Mes notifications" }).first();
-    await expect(h1).toBeVisible({ timeout: 10_000 });
-
-    // Aucun h2 "Mes notifications" ne doit exister
-    const h2 = page.locator("h2").filter({ hasText: "Mes notifications" });
-    await expect(h2).toHaveCount(0);
-  });
+      // 3. Aucun eyebrow ne répète le titre en majuscules
+      const redundantEyebrow = page.locator(`text=${title.toUpperCase()}`);
+      await expect(redundantEyebrow).toHaveCount(0);
+    });
+  }
 });
 
 // ===========================================================================

@@ -50,7 +50,7 @@ const HUB_LINKS: {
 
 export function TenantQuickLinks() {
   return (
-    <KayvilaTenantWidget title="Votre séjour" description="Accès rapides à l'essentiel">
+    <KayvilaTenantWidget title="Accès rapides">
       <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3">
         {HUB_LINKS.map(({ label, sub, href, icon }) => (
           <li key={href}>

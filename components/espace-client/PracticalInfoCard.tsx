@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { KayvilaTenantWidget } from "@/components/ui/pro";
@@ -59,10 +58,7 @@ export function PracticalInfoCard({
   if (rows.length === 0 && !villa.welcome_booklet_url) return null;
 
   return (
-    <KayvilaTenantWidget
-      title="Infos pratiques"
-      description="Tout ce qu'il faut pour votre séjour"
-    >
+    <KayvilaTenantWidget title="Infos pratiques">
       <dl className="divide-y divide-navy/5">
         {rows.map((row) => (
           <div key={row.label} className="flex min-h-[44px] items-center justify-between gap-3 py-2">
@@ -76,8 +72,8 @@ export function PracticalInfoCard({
           </div>
         ))}
       </dl>
-      <div className="mt-3 flex flex-wrap gap-4">
-        {villa.welcome_booklet_url ? (
+      {villa.welcome_booklet_url ? (
+        <div className="mt-3">
           <a
             href={villa.welcome_booklet_url}
             target="_blank"
@@ -87,14 +83,8 @@ export function PracticalInfoCard({
             <KayvilaPngIcon name="book" size={18} alt="" aria-hidden />
             Livret d&apos;accueil
           </a>
-        ) : null}
-        <Link
-          href="/espace-client/livret"
-          className="inline-flex min-h-[44px] items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/55 no-underline transition-colors hover:text-navy"
-        >
-          Guide complet du logement
-        </Link>
-      </div>
+        </div>
+      ) : null}
     </KayvilaTenantWidget>
   );
 }

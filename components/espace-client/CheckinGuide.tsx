@@ -2,6 +2,7 @@
 
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Image from "next/image";
+import { KAYVILA_PHONE_TEL } from "@/lib/constants";
 
 interface CheckinGuideProps {
   startDate: string;
@@ -57,7 +58,7 @@ export function CheckinGuide({
   return (
     <div className="border border-gold/20 bg-white mt-8">
       <div className="border-b border-gold/10 bg-gold/[0.03] px-6 py-4">
-        <h3 className="font-display text-lg text-navy">Check-in — {isToday ? "C&apos;est aujourd&apos;hui !" : "Demain"}</h3>
+        <h3 className="font-display text-lg text-navy">Check-in — {isToday ? "C'est aujourd'hui !" : "Demain"}</h3>
         <p className="text-sm text-navy/50 mt-0.5">À partir de {checkInTime}</p>
       </div>
       <div className="p-6 space-y-6">
@@ -89,7 +90,7 @@ export function CheckinGuide({
           </div>
         )}
         <a
-          href="tel:+596696000000"
+          href={`tel:${KAYVILA_PHONE_TEL}`}
           className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-navy/80 hover:text-navy transition-colors"
         >
           <KayvilaPngIcon name="phone" size={18} alt="" className="opacity-70" />

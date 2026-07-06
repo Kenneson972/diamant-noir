@@ -11,7 +11,7 @@ export function TenantPageHeader({ firstName, avatarUrl, subtitle }: TenantPageH
     <div className="flex items-start justify-between gap-4">
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.42em] text-navy/40">
-          {subtitle ?? "Conciergerie Kayvila"}
+          {subtitle ?? "Mon séjour"}
         </p>
         <h1 className="mt-2 font-display text-3xl font-normal leading-none text-navy">
           Bonjour{firstName ? `, ${firstName}` : ""}

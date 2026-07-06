@@ -1,5 +1,10 @@
 // ═══ Constantes partagées Kayvila — types, statuts, configs ═══
 
+/* ─── Contact conciergerie (source unique — ne pas re-coder en dur) ── */
+export const KAYVILA_PHONE_DISPLAY = "+596 696 68 18 69";
+export const KAYVILA_PHONE_TEL = "+596696681869";
+export const KAYVILA_EMAIL = "contact@kayvila.com";
+
 /* ─── Types de demandes ─────────────────────────────────── */
 export const REQUEST_TYPE_LABELS: Record<string, string> = {
   early_checkin: "Early check-in",

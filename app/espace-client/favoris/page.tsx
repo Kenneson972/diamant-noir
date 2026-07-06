@@ -8,6 +8,7 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { Button } from "@heroui/react";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState } from "@/components/ui/pro";
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
 
@@ -49,13 +50,15 @@ export default function FavorisPage() {
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mes favoris</h1>
       <div className="space-y-6">
-        <p className="text-sm text-navy/55">
-          {ids.size > 0
-            ? `${ids.size} villa${ids.size > 1 ? "s" : ""} enregistrée${ids.size > 1 ? "s" : ""}`
-            : "Retrouvez ici les villas que vous avez aimées"}
-        </p>
+        <TenantSectionHeader
+          title="Mes favoris"
+          description={
+            ids.size > 0
+              ? `${ids.size} villa${ids.size > 1 ? "s" : ""} enregistrée${ids.size > 1 ? "s" : ""}`
+              : "Retrouvez ici les villas que vous avez aimées"
+          }
+        />
 
         {loading ? (
           <div className="flex justify-center py-20">
@@ -74,7 +77,7 @@ export default function FavorisPage() {
             {villas.map((v) => (
               <article
                 key={v.id}
-                className="group overflow-hidden border border-navy/10 bg-white transition-colors hover:border-gold/25"
+                className="group min-w-0 overflow-hidden border border-navy/10 bg-white transition-colors hover:border-gold/25"
               >
                 <div className="relative aspect-[16/7] overflow-hidden bg-navy/5">
                   <VillaCoverImage
@@ -100,8 +103,8 @@ export default function FavorisPage() {
                       <h2 className="truncate font-display text-base text-navy">{v.name}</h2>
                       {v.location ? (
                         <p className="mt-0.5 flex items-center gap-1 text-[11px] text-navy/55">
-                          <KayvilaPngIcon name="location" size={16} alt="" />
-                          {v.location}
+                          <KayvilaPngIcon name="location" size={16} alt="" className="shrink-0" />
+                          <span className="truncate">{v.location}</span>
                         </p>
                       ) : null}
                     </div>

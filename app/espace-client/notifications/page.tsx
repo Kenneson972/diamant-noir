@@ -65,15 +65,13 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Notifications</h1>
       <div className="mx-auto max-w-2xl space-y-6">
         <TenantSectionHeader
-          eyebrow="MES NOTIFICATIONS"
           title="Mes notifications"
           description={
             unreadCount > 0
               ? `${unreadCount} notification${unreadCount > 1 ? "s" : ""} non lue${unreadCount > 1 ? "s" : ""}`
-              : "Tout est lu"
+              : undefined
           }
         />
 

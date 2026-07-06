@@ -35,52 +35,44 @@ export default function DemandesPage() {
 
   if (loading) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <TenantSectionHeader title="Services & demandes" />
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
-      </>
+      </div>
     );
   }
 
   if (!bookingId) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
-        <div className="mx-auto max-w-2xl space-y-6">
-          <TenantSectionHeader
-            eyebrow="Demandes"
-            title="Services & demandes"
-            description="Conciergerie, ménage, transferts et autres besoins pendant votre séjour."
-          />
-          <KayvilaEmptyState
-            title="Aucun séjour actif"
-            description="Les demandes sont disponibles pendant votre séjour confirmé."
-            actionLabel="Voir mes réservations"
-            actionHref="/espace-client"
-          />
-        </div>
-      </>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <TenantSectionHeader
+          title="Services & demandes"
+          description="Conciergerie, ménage, transferts et autres besoins pendant votre séjour."
+        />
+        <KayvilaEmptyState
+          title="Aucun séjour actif"
+          description="Les demandes sont disponibles pendant votre séjour confirmé."
+          actionLabel="Voir mes réservations"
+          actionHref="/espace-client"
+        />
+      </div>
     );
   }
 
   return (
-    <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Services &amp; demandes</h1>
-      <div className="mx-auto max-w-2xl space-y-8">
-        <TenantSectionHeader
-          eyebrow="SERVICES & DEMANDES"
-          title="Services & demandes"
-          description="Notre équipe traite vos demandes sous 24h en moyenne."
-        />
-        <KayvilaTenantWidget title="Nouvelle demande">
-          <RequestForm bookingId={bookingId} onSuccess={() => setRefreshKey((k) => k + 1)} />
-        </KayvilaTenantWidget>
-        <KayvilaTenantWidget title="Historique" description="Suivi de vos demandes en cours">
-          <RequestList bookingId={bookingId} refreshKey={refreshKey} />
-        </KayvilaTenantWidget>
-      </div>
-    </>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <TenantSectionHeader
+        title="Services & demandes"
+        description="Notre équipe traite vos demandes sous 24h en moyenne."
+      />
+      <KayvilaTenantWidget title="Nouvelle demande">
+        <RequestForm bookingId={bookingId} onSuccess={() => setRefreshKey((k) => k + 1)} />
+      </KayvilaTenantWidget>
+      <KayvilaTenantWidget title="Historique">
+        <RequestList bookingId={bookingId} refreshKey={refreshKey} showTitle={false} />
+      </KayvilaTenantWidget>
+    </div>
   );
 }

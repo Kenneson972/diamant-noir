@@ -25,10 +25,7 @@ const RECOMMENDATIONS = [
 export function LocalGuide() {
   return (
     <section className="space-y-6">
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-navy/25">Conciergerie</p>
-        <h2 className="font-display text-2xl font-normal text-navy mt-2">Les recommandations Kayvila</h2>
-      </div>
+      <h2 className="font-display text-2xl font-normal text-navy">Les recommandations Kayvila</h2>
       {RECOMMENDATIONS.map((cat) => (
         <div key={cat.category}>
           <h3 className="font-sora text-sm font-semibold uppercase tracking-wider text-navy mb-3">

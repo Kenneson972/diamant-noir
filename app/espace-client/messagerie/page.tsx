@@ -39,16 +39,12 @@ export default async function MessageriePage() {
   }
 
   return (
-    <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Notre équipe</h1>
-      <div className="mx-auto max-w-2xl space-y-8">
-        <TenantSectionHeader
-          eyebrow="NOTRE ÉQUIPE"
-          title="Notre équipe"
-          description="Une question, un besoin pendant votre séjour ? Écrivez-nous, on vous répond sous 24h."
-        />
-        <TenantTeamThread guestId={user.id} firstName={firstName} villaName={villaName} />
-      </div>
-    </>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <TenantSectionHeader
+        title="Notre équipe"
+        description="Une question, un besoin pendant votre séjour ? Écrivez-nous, on vous répond sous 24h."
+      />
+      <TenantTeamThread guestId={user.id} firstName={firstName} villaName={villaName} />
+    </div>
   );
 }

@@ -15,7 +15,16 @@ interface RequestItem {
 
 
 
-export function RequestList({ bookingId, refreshKey }: { bookingId: string; refreshKey: number }) {
+export function RequestList({
+  bookingId,
+  refreshKey,
+  showTitle = true,
+}: {
+  bookingId: string;
+  refreshKey: number;
+  /** false quand la liste est déjà encapsulée dans un widget titré. */
+  showTitle?: boolean;
+}) {
   const supabase = getSupabaseBrowser();
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +47,7 @@ export function RequestList({ bookingId, refreshKey }: { bookingId: string; refr
 
   return (
     <div className="space-y-3">
-      <h3 className="font-display text-lg text-navy">Mes demandes</h3>
+      {showTitle ? <h3 className="font-display text-lg text-navy">Mes demandes</h3> : null}
       {requests.map((r) => (
         <div key={r.id} className="border border-navy/10 bg-white p-4">
           <div className="flex items-center justify-between gap-3 mb-2">

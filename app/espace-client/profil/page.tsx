@@ -5,10 +5,10 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
 import { Baby } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
-import { Button, Chip } from "@heroui/react";
-import Link from "next/link";
+import { Button } from "@heroui/react";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
+import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { tenantFieldClass, tenantLabelClass } from "@/components/espace-client/tenant-form-styles";
 
 export default function ProfilPage() {
@@ -89,34 +89,36 @@ export default function ProfilPage() {
 
   if (loading) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <TenantSectionHeader title="Mon profil" />
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
-      </>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <>
-        <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <TenantSectionHeader title="Mon profil" />
         <KayvilaEmptyState
           title="Connexion requise"
           description="Connectez-vous pour accéder à vos informations personnelles."
           actionLabel="Se connecter"
           actionHref="/login?redirect=/espace-client/profil"
         />
-      </>
+      </div>
     );
   }
 
   return (
     <>
-      <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon profil</h1>
       <div className="mx-auto max-w-2xl space-y-6">
-        <p className="text-sm text-navy/55">Gérez vos informations et préférences d&apos;accueil.</p>
+        <TenantSectionHeader
+          title="Mon profil"
+          description="Gérez vos informations et préférences d'accueil."
+        />
 
         <KayvilaTenantWidget title="Informations personnelles">
           <ProfileForm
@@ -231,28 +233,6 @@ export default function ProfilPage() {
           </form>
         </KayvilaTenantWidget>
 
-        <KayvilaTenantWidget
-          title="Mes documents"
-          description="Contrats et factures de séjour"
-          action={
-            <Chip size="sm" variant="soft" color="default" className="uppercase">
-              Bientôt
-            </Chip>
-          }
-        >
-          <div className="flex flex-col items-center gap-3 py-4 text-center">
-            <KayvilaPngIcon name="download" size={24} alt="" className="text-navy/60" aria-hidden />
-            <p className="max-w-sm text-sm text-navy/55">
-              Vos contrats et factures apparaîtront ici dès qu&apos;ils seront disponibles.
-            </p>
-            <Link
-              href="/contact"
-              className="text-[10px] font-bold uppercase tracking-[0.22em] text-gold transition-colors hover:text-navy"
-            >
-              Demander un document →
-            </Link>
-          </div>
-        </KayvilaTenantWidget>
       </div>
     </>
   );
