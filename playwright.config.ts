@@ -53,5 +53,12 @@ export default defineConfig({
       ],
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "espace-client",
+      testMatch: [
+        "tests/espace-client/**/*.spec.ts",
+      ],
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
 });
