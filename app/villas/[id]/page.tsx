@@ -696,14 +696,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── CTA bas de page ── */}
-      <div className="bg-navy py-20 text-center px-6">
+      <div className="bg-gold/10 py-20 text-center px-6 border-t border-gold/20">
         <div className="mx-auto max-w-xl space-y-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-gold">Kayvila</p>
-          <h3 className="font-display text-4xl text-white">{ts(locale, "villa.cta_ready")}</h3>
-          <p className="text-white/50 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
+          <h3 className="font-display text-4xl text-navy">{ts(locale, "villa.cta_ready")}</h3>
+          <p className="text-navy/60 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
           <Link
             href="/contact"
-            className="inline-block rounded-none border border-gold/50 px-10 py-4 text-[11px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-navy transition-all duration-300"
+            className="inline-block rounded-none border border-transparent bg-navy px-10 py-4 text-[11px] font-bold uppercase tracking-[0.3em] text-white hover:bg-gold hover:text-navy transition-all duration-300"
           >
             Contacter la conciergerie
           </Link>
