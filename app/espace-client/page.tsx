@@ -139,7 +139,7 @@ export default function EspaceClientPage() {
         <Skeleton className="h-52 w-full rounded-none" />
         <div className="space-y-2">
           <Skeleton className="h-4 w-32 rounded-md mb-4" />
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 min-w-0">
             <BookingCardSkeleton />
             <BookingCardSkeleton />
           </div>
@@ -279,7 +279,7 @@ export default function EspaceClientPage() {
               Historique
             </p>
           )}
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 min-w-0">
             {otherBookings.map((booking) => {
               const isPast = new Date(booking.end_date) < new Date();
               return (
@@ -311,7 +311,7 @@ export default function EspaceClientPage() {
       {/* Ré-réservation */}
       {pastBookings.length > 0 && similarVillas.length > 0 ? (
         <KayvilaTenantWidget title="Envie de revenir ?" description="Ces villas pourraient vous plaire">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3 min-w-0">
             {similarVillas.map((v: { id: string; name: string; location?: string; image_url?: string; price_per_night: number }) => (
               <Link
                 key={v.id}
