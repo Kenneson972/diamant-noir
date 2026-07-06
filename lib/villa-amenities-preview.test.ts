@@ -65,6 +65,6 @@ describe("buildAmenitiesPreview", () => {
       aLaCarte: [],
     });
     expect(result.preview).toEqual(["Wifi"]);
-    expect(result.total).toBe(2);
+    expect(result.total).toBe(1);
   });
 });

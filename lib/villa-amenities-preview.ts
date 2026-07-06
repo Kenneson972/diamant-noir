@@ -28,7 +28,7 @@ export function buildAmenitiesPreview(input: AmenityCategoryInput): AmenitiesPre
     ...input.aLaCarte,
   ];
 
-  const total = ordered.length;
+  const total = ordered.filter((item) => item !== "").length;
 
   const seen = new Set<string>();
   const preview: string[] = [];
