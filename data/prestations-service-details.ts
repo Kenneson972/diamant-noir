@@ -34,7 +34,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     tagline: "Votre villa visible partout, valorisée au bon prix",
     metaDescription:
       "Estimation locative, reportage photos, annonces optimisées et gestion dynamique des prix pour maximiser le revenu de votre villa en Martinique — Kayvila conciergerie.",
-    image: "/marketing.png",
+    image: "/marketing.webp",
     imageAlt: "Piscine de villa de standing au coucher du soleil avec appareil photo — Marketing locatif Kayvila Martinique",
     imagePosition: "center 40%",
     overlay: "bg-gradient-to-r from-black/70 via-black/40 to-black/10",
@@ -58,7 +58,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
     ],
     images: {
-      sectionIntro: "/marketing.png",
+      sectionIntro: "/marketing.webp",
       sectionDetails: "/marketing.webp",
       sectionIntroAlt: "Piscine villa standing au coucher du soleil — stratégie marketing locatif",
       sectionDetailsAlt: "Annonce premium optimisée pour villa martiniquaise",
@@ -71,7 +71,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     tagline: "Zéro contrainte — tout géré sur place",
     metaDescription:
       "Check-in et check-out pris en charge, contrôles qualité entre chaque séjour, coordination ménage et artisans sur votre villa en Martinique — Kayvila conciergerie.",
-    image: "/terrain.png",
+    image: "/terrain.webp",
     imageAlt: "Accueil personnalisé à l'entrée d'une villa avec boîte à clés sécurisée — Opérations terrain Kayvila Martinique",
     imagePosition: "center 35%",
     overlay: "bg-gradient-to-l from-black/65 via-black/35 to-black/10",
@@ -95,7 +95,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
     ],
     images: {
-      sectionIntro: "/terrain.png",
+      sectionIntro: "/terrain.webp",
       sectionDetails: "/terrain.webp",
       sectionIntroAlt: "Entrée villa avec boîte à clés sécurisée — accueil check-in",
       sectionDetailsAlt: "Équipe terrain inspectant une villa avant un séjour",
@@ -108,7 +108,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     tagline: "Vos voyageurs entre de bonnes mains, 7j/7",
     metaDescription:
       "Gestion complète des réservations, interlocuteur unique pour les voyageurs, suivi des avis et zéro sollicitation pour le propriétaire — Kayvila Martinique.",
-    image: "/relation.png",
+    image: "/relation.webp",
     imageAlt: "Couple en terrasse face à l'océan, verre de coco à la main — Relation voyageurs Kayvila Martinique",
     imagePosition: "center 50%",
     overlay: "bg-gradient-to-r from-black/75 via-black/45 to-black/15",
@@ -132,7 +132,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
     ],
     images: {
-      sectionIntro: "/relation.png",
+      sectionIntro: "/relation.webp",
       sectionDetails: "/relation.webp",
       sectionIntroAlt: "Couple en terrasse face à l'océan — accueil voyageurs Kayvila",
       sectionDetailsAlt: "Communication avec les voyageurs — service réactif 7j/7",
@@ -145,7 +145,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     tagline: "Facturé aux voyageurs — transparent pour vous",
     metaDescription:
       "Frais de ménage et blanchisserie facturés aux voyageurs, hors commission 22 %, réassort consommables inclus, entretien piscine et jardin coordonné — Kayvila Martinique.",
-    image: "/menage.png",
+    image: "/menage.webp",
     imageAlt: "Lit impeccable avec drap blanc et fleur de frangipanier — Ménage blanchisserie Kayvila Martinique",
     imagePosition: "center 45%",
     overlay: "bg-gradient-to-r from-black/72 via-black/42 to-black/12",
@@ -173,7 +173,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
     ],
     images: {
-      sectionIntro: "/menage.png",
+      sectionIntro: "/menage.webp",
       sectionDetails: "/menage.webp",
       sectionIntroAlt: "Lit impeccable avec drap blanc et fleur — ménage blanchisserie haut standing",
       sectionDetailsAlt: "Linge de maison préparé aux standards hôteliers",
@@ -186,7 +186,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
     tagline: "Vos comptes, en toute confiance",
     metaDescription:
       "Encaissement des loyers, commission 22 % sur les nuitées, espace propriétaire en ligne et Copilot — gestion locative transparente Kayvila Martinique.",
-    image: "/finance.png",
+    image: "/finance.webp",
     imageAlt: "Bureau en terrasse avec MacBook, café et orchidée — Gestion financière Kayvila Martinique",
     imagePosition: "center 40%",
     overlay: "bg-gradient-to-l from-black/70 via-black/40 to-black/15",
@@ -210,7 +210,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
       },
     ],
     images: {
-      sectionIntro: "/finance.png",
+      sectionIntro: "/finance.webp",
       sectionDetails: "/finance.webp",
       sectionIntroAlt: "Bureau terrasse avec MacBook et café — gestion financière sereine",
       sectionDetailsAlt: "Tableau de bord propriétaire — reversements et commissions",
