@@ -25,11 +25,14 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: [
       "lucide-react",
-      "@radix-ui/react-dropdown-menu",
-      "@radix-ui/react-tabs",
       "leaflet",
       "shiki",
       "date-fns",
+      "motion",
+      "recharts",
+      "react-aria-components",
+      "@heroui/react",
+      "@heroui-pro/react",
     ],
   },
   // Désactiver le watching webpack en mode dev pour éviter EMFILE
