@@ -840,3 +840,18 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 - **`vault.create_secret(valeur, nom, description)`** — l'ordre des paramètres est valeur d'abord, puis nom. Pas l'inverse.
 - **`cron.job_run_details` utilise `jobid` (FK integer), pas `jobname`** — joindre avec `cron.job` pour avoir le nom lisible.
 - **Vérifier `origin/main` avant d'affirmer qu'un push a été fait** — les 9 commits Agent C étaient listés dans `git log` local (merged via branche supprimée) mais jamais poussés. Utiliser `git log origin/main` pour confirmer.
+
+## 2026-07-06 (soir) — Fix latence chatbots + Fiche villa layout Airbnb + fixes CSP/CTA
+
+### Fait
+- **Fix latence chatbots** (codé, ⚠️ pas encore commité) : diagnostic par test réel (`/api/chat` timeout 10,6s) — les 3 bots n8n refaisaient un aller-retour HTTP vers `kayvila.com/api/agent/*-context` pour un contexte déjà envoyé dans le payload initial. Context+systemPrompt construits en process côté Next.js, n8n JSON patchés pour lire `body.context`/`body.systemPrompt` directement.
+- **Migration Supabase `chatbot_feedback.sql`** appliquée via MCP sur DIAMANT NOIR (`wsdawdxucyuyopkpgjij`).
+- **Fiche villa — layout Airbnb** (mergé + pushé, `81804f7`) : brainstorm → spec → plan → exécution subagent-driven (5 tâches) → revue finale → merge. Nouvel ordre de sections, aperçu équipements + modale (réutilise `LegalModal`), "À savoir" en 3 colonnes à plat. 202/202 tests.
+- **Fix carte CSP + bandeau CTA recoloré** (commité `81804f7`, à pousser) : `frame-src` manquait `https://www.google.com` ; bandeau navy → clair/or.
+
+### Règles dures apprises
+- **Un module `"use client"` ne peut exporter QUE des choses appelées depuis le client.** Une fonction pure (ex: `getEquipmentIcon`) exportée d'un fichier `"use client"` et appelée directement dans un Server Component plante en prod ("client function called from server") — **invisible à `tsc`**, ne se révèle qu'à l'exécution. Toujours mettre la logique pure partagée entre client et serveur dans un module neutre (`lib/`), jamais dans un fichier `"use client"`, même si la fonction elle-même n'a rien de React/browser-only.
+- **`frame-src` CSP doit lister CHAQUE domaine d'iframe réellement utilisé** — `https://maps.googleapis.com` (API JS) ≠ `https://www.google.com` (iframe embed `/maps?...&output=embed`). Un iframe pointant vers un domaine absent de l'allowlist est bloqué silencieusement côté navigateur (visible seulement dans la console, jamais une erreur serveur).
+- **Un reviewer subagent dispatché peut ne jamais renvoyer son rapport dans la conversation** (notifications "idle" en boucle sans contenu, même après plusieurs relances) alors qu'un implementer subagent le fait presque toujours après une relance. Ne pas bloquer indéfiniment dessus : faire la revue soi-même directement (lire le diff/brief/report déjà en contexte) plutôt que d'attendre. Dans cette session, le rapport du reviewer final est quand même arrivé — mais après coup, une fois la décision de merge déjà prise sur la base de la revue manuelle. Les deux revues concordaient.
+- **`git worktree add` ne copie jamais `.env.local`** (fichier non tracké) — un `npm run dev` lancé dans un worktree tombe sur les fallbacks de démo (Supabase non configuré) tant qu'on n'a pas copié le fichier manuellement.
+- **Toujours vérifier en vrai dans le navigateur avant de clôturer une tâche UI**, même avec `tsc`/tests verts — le bug RSC ci-dessus n'aurait jamais été détecté autrement, et l'implementer subagent l'avait signalé "DONE" avec typecheck + tests propres avant cette vérification.
