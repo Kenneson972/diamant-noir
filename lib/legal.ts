@@ -13,7 +13,7 @@ Kayvila Conciergerie est une SARLU au capital social de 1 000 €, immatriculée
 SIRET : 106 394 489 00012
 Numéro de TVA intracommunautaire : FR32106394489
 Représentée par : GELARD-THOMACHOT Richard, en qualité de gérant.
-Contact : contact@kayvila.com — 0696 68 18 69
+Contact : contact@kayvila.com — +596 696 68 18 69
 Ci-après désignée « la Conciergerie ».
 
 Article 2 — Champ d'application
@@ -129,7 +129,7 @@ Kayvila Conciergerie est une SARLU au capital social de 1 000 €, immatriculée
 SIRET : 106 394 489 00012
 Numéro de TVA intracommunautaire : FR32106394489
 Représentée par : GELARD-THOMACHOT Richard, en qualité de gérant.
-Contact : contact@kayvila.com — 0696 68 18 69
+Contact : contact@kayvila.com — +596 696 68 18 69
 Ci-après désignée « la Conciergerie ».
 
 Article 2 — Champ d'application

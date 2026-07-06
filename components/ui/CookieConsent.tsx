@@ -129,27 +129,27 @@ export default function CookieConsent() {
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           onClick={() => save({ essentials: true, analytics: true, marketing: true })}
-          className="h-9 bg-gold px-4 text-[11px] font-semibold text-white transition-colors hover:bg-gold/90"
+          className="min-h-[44px] bg-gold px-4 text-[11px] font-semibold text-white transition-colors hover:bg-gold/90"
         >
           {s.acceptAll}
         </button>
         <button
           onClick={() => save({ essentials: true, analytics: false, marketing: false })}
-          className="h-9 border border-navy/15 px-4 text-[11px] text-navy/70 transition-colors hover:bg-navy/5"
+          className="min-h-[44px] border border-navy/15 px-4 text-[11px] text-navy/70 transition-colors hover:bg-navy/5"
         >
           {s.rejectAll}
         </button>
         {!customizing ? (
           <button
             onClick={() => setCustomizing(true)}
-            className="h-9 px-4 text-[11px] text-navy/50 underline underline-offset-2"
+            className="min-h-[44px] px-4 text-[11px] text-navy/50 underline underline-offset-2"
           >
             {s.customize}
           </button>
         ) : (
           <button
             onClick={() => save(prefs)}
-            className="h-9 border border-navy/15 px-4 text-[11px] text-navy/70 transition-colors hover:bg-navy/5"
+            className="min-h-[44px] border border-navy/15 px-4 text-[11px] text-navy/70 transition-colors hover:bg-navy/5"
           >
             {s.save}
           </button>

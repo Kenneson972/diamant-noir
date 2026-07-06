@@ -28,7 +28,7 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
             Nos villas
           </span>
           <h2 className="mx-auto mt-3 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
-            Une sélection d&apos;exception
+            Nos villas en Martinique
           </h2>
           <div className="mt-6">
             <Link

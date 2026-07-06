@@ -502,6 +502,7 @@ export const Chatbot = () => {
                 placeholder="Tapez votre message..."
                 disabled={isLoading}
                 rows={1}
+                aria-label="Votre message"
                 className="flex-1 resize-none rounded-2xl border border-black/10 bg-offwhite px-4 py-3 text-sm text-black focus:border-black focus:outline-none"
               />
               <button

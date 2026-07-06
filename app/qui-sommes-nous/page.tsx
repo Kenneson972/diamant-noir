@@ -83,7 +83,7 @@ export default async function QuiSommesNousPage() {
             <p>
               Conciergerie haut de gamme, coordination de l&apos;entretien des espaces et des piscines, ménage
               et remise en état, états des lieux rigoureux : nous protégeons votre patrimoine tout en offrant à
-              vos hôtes une expérience mémorable. L&apos;excellence, pour nous, c&apos;est la cohérence — entre ce que
+              vos hôtes une expérience sans accroc. Pour nous, la qualité c&apos;est la cohérence — entre ce que
               vous promettez en ligne et ce que vivent vos voyageurs sur place.
             </p>
           }

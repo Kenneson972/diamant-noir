@@ -622,7 +622,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <h4 className="font-display text-lg text-navy">{ts(locale, "villa.excellence")}</h4>
                 <p className="text-xs text-navy/80 leading-relaxed">
-                  Cette maison fait partie de notre collection. Elle a été inspectée en personne par nos équipes pour garantir des standards hôteliers de très haut niveau.
+                  Cette maison fait partie de notre collection. Elle a été inspectée en personne par nos équipes pour garantir des standards hôteliers exigeants.
                 </p>
               </div>
             </div>

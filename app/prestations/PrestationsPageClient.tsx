@@ -508,7 +508,7 @@ export default function PrestationsPageClient() {
         ) : (
           <section
             className="relative w-full overflow-hidden bg-navy"
-            aria-labelledby="prestations-title"
+            aria-labelledby="prestations-title-fallback"
           >
             <div className="relative aspect-[4/5] max-h-[min(80vh,640px)] w-full sm:aspect-[16/10] sm:max-h-[min(56vh,520px)]">
               <Image
@@ -526,7 +526,7 @@ export default function PrestationsPageClient() {
               <div className="absolute inset-0 flex flex-col items-center justify-center px-6 pb-12 pt-20 text-center">
                 <div className="mx-auto mb-5 h-px w-12 bg-gold/50" aria-hidden />
                 <h1
-                  id="prestations-title"
+                  id="prestations-title-fallback"
                   className="m-0 max-w-3xl font-display font-normal leading-[1.08] text-white uppercase"
                   style={{
                     fontSize: "clamp(1.5rem, 6vw, 2.75rem)",
@@ -732,7 +732,7 @@ export default function PrestationsPageClient() {
               <div className="space-y-10">
                 <p className="text-[15px] leading-relaxed text-navy/60">
                   Rejoignez les propriétaires qui font confiance à Kayvila pour gérer leur bien
-                  avec exigence — et transformez votre villa en une expérience mémorable.
+                  avec exigence, pour une location sereine et maîtrisée.
                 </p>
                 <ul className="space-y-4">
                   {REASSURANCES.map(({ icon, text }) => (

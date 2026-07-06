@@ -337,8 +337,8 @@ html {
 
 body {
   font-family: inherit;
-  background-color: #FAFAFA;
-  color: #0A0A0A;
+  background-color: var(--color-offwhite);
+  color: var(--color-navy);
 }
 
 /* Réduit le délai de tap (300ms) sur les contrôles — sans affecter le zoom page */
@@ -399,7 +399,7 @@ button,
 
 /* Focus rings accessibles */
 :focus-visible {
-  outline: 2px solid #0A0A0A;
+  outline: 2px solid var(--color-navy);
   outline-offset: 3px;
   border-radius: 4px;
 }

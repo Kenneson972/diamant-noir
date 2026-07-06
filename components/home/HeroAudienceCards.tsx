@@ -46,7 +46,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
           <button
             type="button"
             onClick={clearAudience}
-            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 active:scale-95 ${
+            className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 active:scale-95 ${
               isLight
                 ? "text-navy/55 hover:bg-navy/5 focus-visible:ring-navy/20"
                 : "text-white/50 hover:bg-white/10 focus-visible:ring-white/25"

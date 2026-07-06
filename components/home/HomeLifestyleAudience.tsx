@@ -15,7 +15,7 @@ export function HomeLifestyleAudience() {
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50">
               Plus qu&apos;un séjour
             </span>
-            <h2 className="font-display text-5xl md:text-7xl">Un Art de Vivre.</h2>
+            <h2 className="font-display text-5xl md:text-7xl">L&apos;art de recevoir</h2>
             <p className="text-lg font-light leading-relaxed text-white/60">
               Chaque propriété de notre collection est pensée pour la déconnexion. Notre conciergerie
               privée s&apos;occupe de chaque détail pour que votre seule préoccupation soit l&apos;instant présent.
@@ -26,14 +26,14 @@ export function HomeLifestyleAudience() {
             <ScrollReveal delay={0}>
               <div className="space-y-4">
                 <KayvilaPngIcon name="shield-check" size={32} invert className="opacity-60" />
-                <h3 className="font-bold">Confidentialité Totale</h3>
-                <p className="text-sm text-white/60">Accès privés et discrétion absolue pour votre sérénité.</p>
+                <h3 className="font-bold">Confidentialité</h3>
+                <p className="text-sm text-white/60">Accès privés et discrétion pour votre tranquillité.</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={150}>
               <div className="space-y-4">
                 <KayvilaPngIcon name="calendar" size={32} invert className="opacity-60" />
-                <h3 className="font-bold">Services Sur-Mesure</h3>
+                <h3 className="font-bold">Services sur mesure</h3>
                 <p className="text-sm text-white/60">Chefs, chauffeurs et excursions privées à la demande.</p>
               </div>
             </ScrollReveal>
