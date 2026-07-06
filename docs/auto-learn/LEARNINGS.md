@@ -855,3 +855,16 @@ Lots 0–8 FAITS et mergés sur `main`. **Reste le Lot 9** = chantiers à cadrer
 - **Un reviewer subagent dispatché peut ne jamais renvoyer son rapport dans la conversation** (notifications "idle" en boucle sans contenu, même après plusieurs relances) alors qu'un implementer subagent le fait presque toujours après une relance. Ne pas bloquer indéfiniment dessus : faire la revue soi-même directement (lire le diff/brief/report déjà en contexte) plutôt que d'attendre. Dans cette session, le rapport du reviewer final est quand même arrivé — mais après coup, une fois la décision de merge déjà prise sur la base de la revue manuelle. Les deux revues concordaient.
 - **`git worktree add` ne copie jamais `.env.local`** (fichier non tracké) — un `npm run dev` lancé dans un worktree tombe sur les fallbacks de démo (Supabase non configuré) tant qu'on n'a pas copié le fichier manuellement.
 - **Toujours vérifier en vrai dans le navigateur avant de clôturer une tâche UI**, même avec `tsc`/tests verts — le bug RSC ci-dessus n'aurait jamais été détecté autrement, et l'implementer subagent l'avait signalé "DONE" avec typecheck + tests propres avant cette vérification.
+
+### Suite de session (nuit) — Audit n8n + sécurisation + timeout
+
+### Fait
+- Fix latence commité/pushé (`9ad55d2`), audit complet des 3 workflows n8n (3 bugs cassants corrigés), auth webhooks B/C par secret partagé (`d05af47`), workflows importés par Kenneson, fix timeout 10s→20s (`18ad396`) vérifié en prod. Détail : handoff section 10.
+
+### Règles dures apprises
+- **Un prompt système écrit sans accents fait répondre le LLM sans accents.** DeepSeek imite le style d'écriture de ses instructions : le workflow prod avait tout son prompt hardcodé sans accents/apostrophes ("systematique", "l ordre") → toutes les réponses du bot sortaient pareil. Ce n'était PAS un bug d'encodage. Toujours écrire les prompts en français correct.
+- **`scripts/n8n-apply-fixes.py` a généré du JavaScript invalide** (`const secretOk` déclaré 3× dans le même scope = SyntaxError garantie → 100% des messages auraient planté). Ne jamais relancer ce script tel quel. Avant tout import n8n : extraire chaque `jsCode` et le valider avec `node --check` (stub `$`/`$input`/`$json`, wrapper `async function`).
+- **Dans un header n8n, `=Bearer {{ re_xxx }}` évalue `re_xxx` comme identifiant JS** → `Bearer undefined`. Une clé API littérale se met SANS `=` ni `{{}}`.
+- **Le Postgres de n8n bypasse le RLS Supabase** (rôle privilégié). L'isolation par proprio du bot B vient du `WHERE owner_id=$1` + du `userId` fourni par Next.js après auth — pas du RLS. Un webhook n8n sans vérification de secret permet donc de forger n'importe quel `userId`. Toujours vérifier `X-Webhook-Secret` en tête de workflow quand le webhook expose des données par utilisateur.
+- **Mesurer la latence réelle du LLM avant de fixer un timeout.** DeepSeek v4 pro répond en 8-11s : un timeout à 10s = fallback une fois sur deux (mesuré en prod : 10,7s→fallback, 9,8s→OK). Le timeout doit couvrir le p95 du modèle, pas une valeur ronde héritée d'une autre architecture.
+- **`rtk` compresse les sorties curl JSON en vue schéma** (`reply: string[430]`) — pour lire le contenu réel en débogage, parser avec python3/jq derrière le pipe.
