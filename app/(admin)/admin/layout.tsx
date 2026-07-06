@@ -45,31 +45,43 @@ export default async function AdminDashboardLayout({
     redirect("/espace-client");
   }
 
-  const [reservations, soumissions, avis, demandes] = await Promise.all([
-    supabase
-      .from("bookings")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
-    supabase
-      .from("villa_submissions")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
-    supabase
-      .from("reviews")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
-    supabase
-      .from("requests")
-      .select("id", { count: "exact", head: true })
-      .eq("priority", "urgent")
-      .neq("status", "resolved"),
-  ]);
+  const [reservations, soumissions, avis, demandes, ownerMsgUnread, tenantMsgUnread] =
+    await Promise.all([
+      supabase
+        .from("bookings")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase
+        .from("villa_submissions")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase
+        .from("reviews")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase
+        .from("requests")
+        .select("id", { count: "exact", head: true })
+        .eq("priority", "urgent")
+        .neq("status", "resolved"),
+      supabase
+        .from("owner_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender_role", "owner")
+        .is("read_at", null),
+      supabase
+        .from("tenant_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender_role", "guest")
+        .is("read_at", null),
+    ]);
 
   const badgeMap: Record<string, number> = {
     "/admin/reservations": reservations.count ?? 0,
     "/admin/soumissions": soumissions.count ?? 0,
     "/admin/avis": avis.count ?? 0,
-    "/admin/messages": demandes.count ?? 0,
+    "/admin/messages":
+      (demandes.count ?? 0) + (ownerMsgUnread.count ?? 0) + (tenantMsgUnread.count ?? 0),
   };
 
   const menuWithBadges = applyMenuBadges(adminMenuItems, badgeMap);
