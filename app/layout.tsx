@@ -108,6 +108,12 @@ export default async function RootLayout({
       className={`${sora.variable} ${instrumentSans.variable} ${playfairDisplay.variable} scroll-smooth`}
     >
       <head>
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://wsdawdxucyuyopkpgjij.supabase.co"} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://js.stripe.com" />
+        <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+        <link rel="dns-prefetch" href="https://api.stripe.com" />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>
       <body className="bg-offwhite font-sans">
