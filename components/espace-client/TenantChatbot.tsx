@@ -225,7 +225,7 @@ export function TenantChatbot({
             >
               {msg.content}
             </div>
-            <span className="px-1 text-[6.5px] uppercase tracking-[0.12em] text-navy/25">
+            <span className="px-1 text-[10px] uppercase tracking-[0.12em] text-navy/25">
               {formatTime(msg.timestamp)}
             </span>
           </div>
@@ -258,7 +258,7 @@ export function TenantChatbot({
               key={action}
               type="button"
               onClick={() => sendMessage(action)}
-              className="border border-navy/10 bg-white px-4 py-2 text-[8px] uppercase tracking-[0.14em] text-navy/50 transition-colors hover:border-gold/40 hover:text-gold"
+              className="border border-navy/10 bg-white px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-navy/50 transition-colors hover:border-gold/40 hover:text-gold"
             >
               {action}
             </button>
@@ -274,7 +274,7 @@ export function TenantChatbot({
             onKeyDown={handleKeyDown}
             placeholder="Écrivez votre message…"
             rows={1}
-            className="flex-1 resize-none border border-navy/10 bg-offwhite px-4 py-3 font-display text-[14px] italic text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none"
+            className="flex-1 resize-none border border-navy/10 bg-offwhite px-4 py-3 font-display text-base italic text-navy placeholder:text-navy/30 focus:border-gold/50 focus:outline-none"
             style={{ minHeight: 44, maxHeight: 120 }}
           />
           <button
@@ -294,10 +294,10 @@ export function TenantChatbot({
           </button>
         </form>
         <div className="flex items-center justify-between mt-2 px-0.5">
-          <p className="text-[6.5px] uppercase tracking-[0.14em] text-navy/20">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-navy/20">
             Échanges conservés pour la qualité du service
           </p>
-          <p className="text-[6.5px] uppercase tracking-[0.14em] text-navy/20">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-navy/20">
             Conversation sauvegardée
           </p>
         </div>

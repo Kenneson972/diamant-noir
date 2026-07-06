@@ -253,7 +253,7 @@ export default function ReservationDetailPage() {
                 <KayvilaPngIcon name="location" size={18} alt="" className="mt-0.5 shrink-0" />
                 <div>
                   <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
-                  <p className="text-navy">{villa.location}</p>
+                  <p className="text-navy break-words">{villa.location}</p>
                   <p className="text-xs text-navy/55">Martinique</p>
                 </div>
               </div>

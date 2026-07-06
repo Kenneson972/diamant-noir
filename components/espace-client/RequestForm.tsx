@@ -89,7 +89,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
           id="request-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="w-full border border-navy/15 bg-white px-4 py-2.5 text-sm text-navy focus:outline-none focus:border-gold/50"
+          className="w-full border border-navy/15 bg-white px-4 py-2.5 text-base text-navy focus:outline-none focus:border-gold/50"
         >
           {Object.entries(REQUEST_TYPES).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
@@ -107,7 +107,7 @@ export function RequestForm({ bookingId, onSuccess }: RequestFormProps) {
           rows={4}
           required
           placeholder="Décrivez votre demande..."
-          className="w-full border border-navy/15 bg-white px-4 py-3 text-sm text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold/50 resize-none"
+          className="w-full border border-navy/15 bg-white px-4 py-3 text-base text-navy placeholder:text-navy/30 focus:outline-none focus:border-gold/50 resize-none"
         />
       </div>
       <label className="mt-3 flex items-start gap-2 text-sm text-navy/80">

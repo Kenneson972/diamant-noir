@@ -81,9 +81,9 @@ export function BookingCard({ booking }: { booking: Booking }) {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-navy/80">
+        <div className="flex items-center gap-2 text-sm text-navy/80 min-w-0">
           <Calendar size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
-          <span>
+          <span className="truncate">
             {new Date(booking.start_date).toLocaleDateString("fr-FR", {
               day: "numeric",
               month: "short",

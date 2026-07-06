@@ -278,7 +278,7 @@ export default function ChecklistPage() {
                     type="button"
                     onClick={() => toggle(key)}
                     className={[
-                      "shrink-0 w-[28px] h-[28px] rounded-full border flex items-center justify-center transition-all mt-0.5",
+                      "shrink-0 w-[44px] h-[44px] rounded-full border flex items-center justify-center transition-all mt-0.5",
                       isChecked
                         ? "bg-[#D4AF37] border-[#D4AF37]"
                         : "border-[rgba(13,27,42,0.18)] hover:border-[#D4AF37]",

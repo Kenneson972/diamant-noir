@@ -235,7 +235,7 @@ export function TenantTeamThread({ guestId, firstName, villaName }: Props) {
             <select
               value={subject}
               onChange={(e) => setSubject(e.target.value as Subject)}
-              className="border border-navy/15 bg-white px-3 py-2 text-sm text-navy focus:border-gold/50 focus:outline-none"
+              className="border border-navy/15 bg-white px-3 py-2 text-base text-navy focus:border-gold/50 focus:outline-none"
             >
               {SUBJECTS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -252,12 +252,12 @@ export function TenantTeamThread({ guestId, firstName, villaName }: Props) {
               onChange={(e) => setContent(e.target.value.slice(0, 2000))}
               placeholder="Dites-nous tout — on est là pour vous aider..."
               rows={2}
-              className="flex-1 border border-navy/15 px-3 py-2 text-sm resize-none focus:outline-none focus:border-gold/50"
+              className="flex-1 border border-navy/15 px-3 py-2 text-base resize-none focus:outline-none focus:border-gold/50"
             />
             <button
               onClick={handleSend}
               disabled={sending || !content.trim()}
-              className="shrink-0 inline-flex items-center justify-center w-10 h-10 bg-navy text-white hover:bg-gold hover:text-navy disabled:opacity-60 transition-colors"
+              className="shrink-0 inline-flex items-center justify-center w-11 h-11 bg-navy text-white hover:bg-gold hover:text-navy disabled:opacity-60 transition-colors"
             >
               <Send size={16} strokeWidth={1.5} />
             </button>
