@@ -43,8 +43,12 @@ def load(name):
 
 def save(wf, name):
     path = os.path.join(SRC, name)
+    # Remplacer tous les domaines obsoletes
+    raw = json.dumps(wf, ensure_ascii=False, indent=2)
+    raw = raw.replace("kayvila.vercel.app", KAYVILA_URL.replace("https://", ""))
+    raw = raw.replace("diamant-noir.vercel.app", KAYVILA_URL.replace("https://", ""))
     with open(path, "w") as f:
-        json.dump(wf, f, ensure_ascii=False, indent=2)
+        f.write(raw)
     print("ecrit:", path)
 
 

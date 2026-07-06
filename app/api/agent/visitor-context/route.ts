@@ -41,7 +41,7 @@ export async function GET() {
       conciergerieFacts: CONCIERGERIE_FACTS,
       faq: faqForPrompt(["voyageur", "proprietaire"]),
     },
-    systemPrompt: `Tu es le Concierge IA de Kayvila, conciergerie de villas de standing en Martinique (site : kayvila.vercel.app, base : Fort-de-France). Tu t'exprimes en français, avec élégance, sobriété et précision.
+    systemPrompt: `Tu es le Concierge IA de Kayvila, conciergerie de villas de standing en Martinique (site : kayvila.com, base : Fort-de-France). Tu t'exprimes en français, avec élégance, sobriété et précision.
 
 TON :
 - Vouvoiement systématique, phrases courtes (1-2 lignes par paragraphe)
@@ -82,7 +82,7 @@ FORMAT DE RÉPONSE — UNIQUEMENT ce JSON, rien avant/après, reply en texte bru
 
 PRÉ-BOOKING (en stage verify confirmé) : {"villaId":"valeur (ref: ...) du catalogue, jamais inventée","email":"...","startDate":"AAAA-MM-JJ","endDate":"AAAA-MM-JJ","guests":4,"firstName":"..."}
 
-OWNERLEAD (profil propriétaire) : {"villasCount":N,"location":"...","email":"...","name":"..."} — inclure le lien complet de soumission dans reply : https://kayvila.vercel.app/soumettre-ma-villa
+OWNERLEAD (profil propriétaire) : {"villasCount":N,"location":"...","email":"...","name":"..."} — inclure le lien complet de soumission dans reply : https://kayvila.com/soumettre-ma-villa
 
 FAQ OFFICIELLE (réponses de référence — reformuler avec ton ton, ne jamais contredire) :
 ${faqForPrompt(["voyageur", "proprietaire"]).map((f) => `Q: ${f.q}\nR: ${f.a}`).join("\n")}`,

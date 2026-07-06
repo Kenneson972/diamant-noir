@@ -290,7 +290,7 @@ export async function POST(request: Request) {
       method: "POST",
       headers: n8nHeaders,
       body: JSON.stringify(apiInput),
-      signal: AbortSignal.timeout(25000),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!n8nRes.ok) {
