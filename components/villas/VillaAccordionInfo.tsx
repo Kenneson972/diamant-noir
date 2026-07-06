@@ -1,38 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
-function AccordionSection({
-  title,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <section className="pt-10 border-t border-navy/10">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between text-left"
-        aria-expanded={open}
-      >
-        <h2 className="font-display font-normal text-2xl text-navy">{title}</h2>
-        <span
-          className={`text-navy/55 text-xs transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
-        >
-          ▼
-        </span>
-      </button>
-      {open && <div className="mt-6">{children}</div>}
-    </section>
-  );
-}
-
 type VillaExtraInfoProps = {
   checkInTime: string;
   checkOutTime: string;
@@ -42,8 +7,6 @@ type VillaExtraInfoProps = {
 };
 
 export function VillaAccordionInfo({
-  checkInTime,
-  checkOutTime,
   houseRules,
   cancellationPolicy,
   safetyInfo,
@@ -52,19 +15,12 @@ export function VillaAccordionInfo({
   const hasCancellation = cancellationPolicy && cancellationPolicy !== "";
   const hasSafety = safetyInfo && safetyInfo !== "";
 
+  if (!hasHouseRules && !hasCancellation && !hasSafety) return null;
+
   return (
-    <AccordionSection title="Informations complémentaires">
-      <div className="grid sm:grid-cols-2 gap-10">
-        {hasHouseRules && (
-          <div>
-            <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
-              Règlement
-            </h4>
-            <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
-              {houseRules}
-            </p>
-          </div>
-        )}
+    <section className="pt-10 border-t border-navy/10">
+      <h2 className="font-display font-normal text-2xl text-navy mb-8">À savoir</h2>
+      <div className="grid sm:grid-cols-3 gap-10">
         {hasCancellation && (
           <div>
             <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
@@ -72,6 +28,16 @@ export function VillaAccordionInfo({
             </h4>
             <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
               {cancellationPolicy}
+            </p>
+          </div>
+        )}
+        {hasHouseRules && (
+          <div>
+            <h4 className="font-bold text-navy text-sm mb-4 uppercase tracking-wider">
+              Règlement
+            </h4>
+            <p className="text-navy/80 text-sm leading-relaxed whitespace-pre-line">
+              {houseRules}
             </p>
           </div>
         )}
@@ -86,6 +52,6 @@ export function VillaAccordionInfo({
           </div>
         )}
       </div>
-    </AccordionSection>
+    </section>
   );
 }
