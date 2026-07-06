@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
+import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 
