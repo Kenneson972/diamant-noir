@@ -566,7 +566,7 @@ export default function PrestationsPageClient() {
                 </Link>
               </div>
               <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/30 md:mt-3">
-                Commission 22&nbsp;% · Équipe locale 7j/7 · Présence en Martinique
+                Commission 22&nbsp;% (20&nbsp;% OTA) · Équipe locale 7j/7 · Présence en Martinique
               </p>
             </div>
           </section>
@@ -576,7 +576,7 @@ export default function PrestationsPageClient() {
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-5 text-center">
               {[
                 { val: "13", label: "prestations incluses" },
-                { val: "22\u202f%", label: "commission" },
+                { val: "22\u202f%\u00a0/\u00a020\u202f%", label: "commission" },
                 { val: "100+", label: "séjours gérés" },
                 { val: "7j/7", label: "équipe locale" },
               ].map(({ val, label }, i, arr) => (

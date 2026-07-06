@@ -197,7 +197,7 @@ export const SERVICE_DETAILS: Record<ServiceSlug, ServiceDetail> = {
         desc: "Kayvila ne perçoit pas les loyers à votre place. Vous encaissez directement les paiements voyageurs via Airbnb, Booking ou toute autre plateforme. En fin de mois, Kayvila vous adresse une facture de commission — réglable sous 8 jours. Un mandat de prélèvement SEPA peut simplifier ce règlement.",
       },
       {
-        title: "Commission 22 % sur les nuitées",
+        title: "Commission 22 % sur les nuitées (20 % via OTA)",
         desc: "La commission de 22 % s'applique uniquement sur le montant des nuitées réglé par le voyageur. Les frais de ménage et de blanchisserie sont exclus de la base de commission : vous savez précisément ce sur quoi nous nous rémunérons. Le ménage et la blanchisserie sont facturés aux voyageurs — vous ne les avancez pas. Sur les plateformes qui intègrent le ménage au prix affiché, le forfait ménage est déduit du montant encaissé pour reconstituer la base de commission.",
       },
       {

@@ -21,7 +21,7 @@ function MentionsLegalesSimple() {
 
         <h2 className="mb-2 mt-6 font-display text-lg text-navy">Éditeur</h2>
         <p className="mb-1 text-navy/70">Kayvila Conciergerie</p>
-        <p className="mb-1 text-navy/70">EURL au capital de 1 000 €</p>
+        <p className="mb-1 text-navy/70">SARLU au capital social de 1 000 €</p>
         <p className="mb-1 text-navy/70">SIREN : 106 394 489 — RCS Fort-de-France</p>
         <p className="mb-1 text-navy/70">SIRET : 106 394 489 00012</p>
         <p className="mb-1 text-navy/70">TVA intracommunautaire : FR32106394489</p>
@@ -91,7 +91,7 @@ export default function MentionsLegalesPage() {
       <LandingSectionNarrow bg="white">
         <LandingBlockTitle eyebrow="Éditeur" title="Responsable de la publication" />
         <p className="mb-1 text-navy/80 leading-relaxed">
-          <strong>Kayvila Conciergerie</strong> — EURL au capital de 1 000 €
+          <strong>Kayvila Conciergerie</strong> — SARLU au capital social de 1 000 €
         </p>
         <p className="mb-1 text-navy/80 leading-relaxed">
           SIREN : 106 394 489 — RCS Fort-de-France

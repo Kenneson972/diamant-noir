@@ -45,7 +45,7 @@ const SERVICE_TAGLINES: Record<string, string> = {
   operations: "Check-in, contrôles qualité, coordination ménage et artisans.",
   voyageurs: "Interlocuteur unique 7j/7, de la réservation au départ.",
   menage: "Ménage et blanchisserie facturés aux voyageurs, hors commission.",
-  finance: "Commission 22 %, espace propriétaire, Copilot IA inclus.",
+  finance: "Commission 22 % (20 % OTA), espace propriétaire, Copilot IA inclus.",
 };
 
 const SERVICE_DESCS: Record<string, string> = {

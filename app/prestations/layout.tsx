@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Nos Prestations | Kayvila",
     description:
-      "Conciergerie privée clé en main pour villas de standing en Martinique. 13 services inclus, équipe locale 7j/7, commission transparente 22%.",
+      "Conciergerie privée clé en main pour villas de standing en Martinique. 13 services inclus, équipe locale 7j/7, commission transparente 22% (20% OTA).",
     images: [
       {
         url: "/prestations-hero.png",

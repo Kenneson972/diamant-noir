@@ -666,7 +666,7 @@ export function VideoScrollHero() {
 
           {/* Commission */}
           <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-white/35">
-            Commission 22% · 13 prestations incluses · Équipe locale
+            Commission 22% (20% OTA) · 13 prestations incluses · Équipe locale
           </p>
 
           {/* CTAs */}
