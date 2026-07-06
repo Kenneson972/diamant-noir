@@ -19,7 +19,8 @@ import { VillaAccordionInfo } from "@/components/villas/VillaAccordionInfo";
 import { VillaReviews } from "@/components/VillaReviews";
 import { WishlistButton } from "@/components/villas/WishlistButton";
 import { VillaHostCard } from "@/components/villas/VillaHostCard";
-import { VillaAmenitiesPreview, getEquipmentIcon } from "@/components/villas/VillaAmenitiesPreview";
+import { VillaAmenitiesPreview } from "@/components/villas/VillaAmenitiesPreview";
+import { getEquipmentIcon } from "@/lib/villa-amenities-preview";
 
 export const revalidate = 900;
 
