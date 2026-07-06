@@ -248,7 +248,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
           shadow-2xl rounded-xl overflow-hidden
           ${collapsed
             ? "left-full ml-2 bottom-0 w-80 max-w-[calc(100vw-2rem)]"
-            : "left-0 bottom-full mb-2 w-80 max-w-[calc(100vw-2rem)]"
+            : "right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)]"
           }
         `}>
           {/* Header dropdown */}
