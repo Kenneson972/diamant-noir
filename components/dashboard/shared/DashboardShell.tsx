@@ -85,7 +85,7 @@ export function DashboardShell({
           />
           <main
             id={`${role}-main`}
-            className="flex-1 px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:py-8 md:pb-8"
+            className="flex-1 min-w-0 px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:py-8 md:pb-8"
           >
             {children}
           </main>

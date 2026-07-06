@@ -35,7 +35,7 @@ export default function EspaceClientShell({ children }: { children: ReactNode })
 
   return (
     <DashboardShell role="tenant" roleLabel={kicker} menu={tenantMenuItems}>
-      <div className="mx-auto w-full max-w-6xl p-5 md:p-10">{children}</div>
+      <div className="mx-auto w-full max-w-6xl min-w-0 p-5 md:p-10">{children}</div>
     </DashboardShell>
   );
 }

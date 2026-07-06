@@ -190,7 +190,7 @@ export default function EspaceClientPage() {
   return (
     <>
       <h1 className="font-display text-2xl font-normal text-navy mb-6">Mon séjour</h1>
-    <div className="space-y-10">
+    <div className="space-y-10 min-w-0">
       <TenantPageHeader firstName={firstName} avatarUrl={avatarUrl} />
 
       {/* Réservations en attente de confirmation */}
