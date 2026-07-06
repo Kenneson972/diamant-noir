@@ -20,6 +20,9 @@ import type {
 } from "@/types/chatbot";
 
 export const runtime = "nodejs";
+// DeepSeek répond en ~8-10s : un timeout à 10s faisait basculer une réponse
+// sur deux en fallback FAQ (mesuré en prod). 20s laisse la marge nécessaire.
+export const maxDuration = 25;
 
 // Réponse de fallback si n8n est indisponible — moteur FAQ offline
 function buildFallbackResponse(
@@ -294,7 +297,7 @@ export async function POST(request: Request) {
       method: "POST",
       headers: n8nHeaders,
       body: JSON.stringify(apiInput),
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(20000),
     });
 
     if (!n8nRes.ok) {
