@@ -44,13 +44,19 @@ export async function POST(request: Request) {
       systemPrompt: buildOwnerSystemPrompt(),
     };
 
+    // Secret partagé — le workflow n8n rejette (401) toute requête sans ce header,
+    // sinon l'URL du webhook suffirait à interroger les données de n'importe quel proprio
+    const n8nHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    const webhookSecret = process.env.N8N_WEBHOOK_SECRET;
+    if (webhookSecret) n8nHeaders["X-Webhook-Secret"] = webhookSecret;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 22_000);
 
     try {
       const res = await fetch(webhookURL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: n8nHeaders,
         body: JSON.stringify(payload),
         signal: controller.signal,
       });

@@ -84,12 +84,18 @@ export async function POST(request: Request) {
     // authentifié via requireAdmin ci-dessus — au lieu d'un aller-retour n8n → kayvila.com)
     const agentPayload = await buildAdminAgentPayload(supabaseAdmin());
 
+    // Secret partagé — le workflow n8n rejette (401) toute requête sans ce header,
+    // sinon l'URL du webhook suffirait à interroger les données plateforme
+    const n8nHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    const webhookSecret = process.env.N8N_WEBHOOK_SECRET;
+    if (webhookSecret) n8nHeaders["X-Webhook-Secret"] = webhookSecret;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 22_000);
     try {
       const res = await fetch(webhookURL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: n8nHeaders,
         body: JSON.stringify({ message, ...agentPayload }),
         signal: controller.signal,
       });
