@@ -60,11 +60,13 @@ export function AdminOwnerMessagesPanel() {
 
   useEffect(() => {
     if (!supabase) return;
-    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "admin-owner-messages-realtime");
-    if (existing) return;
 
+    // Topic unique par montage : `supabase.channel()` réutilise un channel existant
+    // par nom de topic, et `removeChannel()` est asynchrone. Un remount rapide
+    // (Strict Mode, changement d'onglet) peut récupérer l'ancien channel déjà
+    // `subscribe()` et faire planter `.on()` avec "... after subscribe()".
     const channel = supabase
-      .channel("admin-owner-messages-realtime")
+      .channel(`admin-owner-messages-realtime-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "owner_messages" }, fetchAll)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "owner_messages" }, fetchAll)
       .subscribe();

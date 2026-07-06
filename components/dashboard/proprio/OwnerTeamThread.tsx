@@ -61,11 +61,14 @@ export function OwnerTeamThread({ ownerId, firstName }: Props) {
 
   useEffect(() => {
     if (!supabase) return;
-    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "owner-messages-realtime");
-    if (existing) return;
 
+    // Topic unique par montage : `supabase.channel()` réutilise un channel existant
+    // par nom de topic, et `removeChannel()` est asynchrone (attend un aller-retour
+    // serveur avant de le détruire). Un remount rapide (Strict Mode, changement
+    // d'onglet) peut donc récupérer l'ancien channel déjà `subscribe()` et faire
+    // planter `.on()` avec "cannot add postgres_changes callbacks ... after subscribe()".
     const channel = supabase
-      .channel("owner-messages-realtime")
+      .channel(`owner-messages-realtime-${ownerId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "owner_messages" },

@@ -62,11 +62,13 @@ export function TenantTeamThread({ guestId, firstName, villaName }: Props) {
 
   useEffect(() => {
     if (!supabase) return;
-    const existing = supabase.getChannels().find((c: { topic: string }) => c.topic === "tenant-messages-realtime");
-    if (existing) return;
 
+    // Topic unique par montage : `supabase.channel()` réutilise un channel existant
+    // par nom de topic, et `removeChannel()` est asynchrone. Un remount rapide
+    // (Strict Mode, navigation) peut récupérer l'ancien channel déjà `subscribe()`
+    // et faire planter `.on()` avec "... after subscribe()".
     const channel = supabase
-      .channel("tenant-messages-realtime")
+      .channel(`tenant-messages-realtime-${guestId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "tenant_messages" },
