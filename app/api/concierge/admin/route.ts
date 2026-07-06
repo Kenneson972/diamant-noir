@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { requireAdmin, AuthError } from "@/lib/auth/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
 import { updateSubmissionStatus } from "@/lib/submissions/update-status";
+import { buildAdminAgentPayload } from "@/lib/admin-assistant-context";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 35;
+// Contexte désormais construit en process (plus d'aller-retour n8n → kayvila.com/api/agent/admin-context) — marge réduite
+export const maxDuration = 25;
 
 const READ_ACTIONS = new Set(["SHOW_STATS", "SHOW_BOOKING"]);
 const WRITE_ACTIONS = new Set(["SET_PRICE", "BLOCK_DATE", "UPDATE_SUBMISSION_STATUS"]);
@@ -79,24 +80,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ response: "Mode démo : configurez N8N_ADMIN_WEBHOOK_URL.", request_id: "demo" });
     }
 
-    // Token admin pour que l'agent n8n fetch admin-context.
-    // Priorité au Bearer de la requête (rafraîchi côté client, toujours valide) ;
-    // le token de session cookie peut être périmé en contexte route handler → 401
-    // côté admin-context → le nœud n8n "Fetch Admin Context" throw → 500 → fallback.
-    const authHeader = request.headers.get("authorization") || "";
-    const bearerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    const supabase = await getSupabaseServer();
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = bearerToken || session?.access_token || "";
-    if (!token) console.warn("[concierge-admin] token vide — admin-context risque d'échouer côté n8n");
+    // Contexte + analytics + prompt système construits en process (admin déjà
+    // authentifié via requireAdmin ci-dessus — au lieu d'un aller-retour n8n → kayvila.com)
+    const agentPayload = await buildAdminAgentPayload(supabaseAdmin());
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 32_000);
+    const timeout = setTimeout(() => controller.abort(), 22_000);
     try {
       const res = await fetch(webhookURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, token }),
+        body: JSON.stringify({ message, ...agentPayload }),
         signal: controller.signal,
       });
       clearTimeout(timeout);

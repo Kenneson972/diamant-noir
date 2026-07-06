@@ -7,6 +7,7 @@ import { logChatbotFeedback } from "@/lib/chatbot/feedback";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isHotLead } from "@/lib/chatbot/lead-scoring";
 import { CONCIERGERIE_FACTS, validateOwnerLead } from "@/lib/chatbot/conciergerie-context";
+import { buildVisitorAgentPayload } from "@/lib/chatbot/system-prompt";
 import { checkRateLimit, getClientIP } from "@/lib/chatbot/rate-limit";
 import { sendAdminHotLeadEmail } from "@/lib/emails/admin-proactive";
 import type {
@@ -256,6 +257,13 @@ export async function POST(request: Request) {
     }));
   }
 
+  // Contexte + prompt système construits en process (évite l'aller-retour n8n → kayvila.com)
+  const { context: agentContext, systemPrompt } = buildVisitorAgentPayload(
+    villas,
+    availableAmenities,
+    CONCIERGERIE_FACTS
+  );
+
   // Payload enrichi vers n8n
   const apiInput: ChatbotApiInput = {
     message: sanitized.sanitized,
@@ -267,12 +275,8 @@ export async function POST(request: Request) {
     villaId: typeof body.villaId === "string" ? body.villaId : undefined,
     knownLeadData: sanitizeLeadData(body.knownLeadData),
     currentStage: body.currentStage ?? "greet",
-    context: {
-      villas,
-      availableAmenities,
-      villaCount: villas.length,
-      conciergerieFacts: CONCIERGERIE_FACTS,
-    },
+    context: agentContext,
+    systemPrompt,
     capabilities: {
       canVerifyAvailability: true,   // A1 : dispos pré-calculées injectées dans context.villas
       canCreateBooking: false,       // V1 : pre-booking uniquement

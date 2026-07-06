@@ -309,7 +309,12 @@ export interface ChatbotApiInput {
     availableAmenities: string[];
     villaCount: number;
     conciergerieFacts?: readonly string[];
+    faq?: { q: string; a: string }[];
   };
+
+  /** Prompt système complet (instructions + FAQ) — construit en process côté Next.js,
+   *  évite l'aller-retour n8n → kayvila.com/api/agent/visitor-context. */
+  systemPrompt: string;
 
   // Capabilities déclarées (guide le workflow n8n)
   capabilities: {

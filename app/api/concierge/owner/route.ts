@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabaseAdmin } from "@/lib/supabase";
+import { buildOwnerContextPackCached } from "@/lib/owner-assistant-context";
+import { ownerInsights } from "@/lib/owner-assistant-reply";
+import { faqForPrompt } from "@/lib/chatbot/faq";
+import { buildOwnerSystemPrompt } from "@/lib/owner-assistant-system-prompt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-// L'agent B (owner-context + Postgres + DeepSeek) tourne ~20-22s — laisser la marge
-export const maxDuration = 35;
+// Contexte désormais construit en process (plus d'aller-retour n8n → kayvila.com/api/agent/owner-context) — marge réduite
+export const maxDuration = 25;
 
 export async function POST(request: Request) {
   try {
@@ -13,10 +18,6 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
-
-    // Token de session — l'agent B en a besoin pour fetch owner-context (identité dérivée du token, anti-IDOR)
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token ?? "";
 
     const { message } = await request.json();
     if (!message?.trim()) {
@@ -31,14 +32,26 @@ export async function POST(request: Request) {
       });
     }
 
+    // Contexte + prompt système construits en process (identité dérivée de la session
+    // déjà authentifiée — anti-IDOR — au lieu d'un aller-retour n8n → kayvila.com)
+    const context = await buildOwnerContextPackCached(supabaseAdmin(), user.id);
+    const payload = {
+      message: message.trim(),
+      userId: user.id,
+      context,
+      insights: ownerInsights(context),
+      faq: faqForPrompt(["proprietaire"]),
+      systemPrompt: buildOwnerSystemPrompt(),
+    };
+
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 32_000);
+    const timeout = setTimeout(() => controller.abort(), 22_000);
 
     try {
       const res = await fetch(webhookURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message.trim(), userId: user.id, token }),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
       clearTimeout(timeout);
