@@ -1,3 +1,4 @@
+import "./globals.css";
 import { redirect } from "next/navigation";
 import { getSupabaseServer, getCurrentUser, getOwnerVillas } from "@/lib/supabase-server";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
