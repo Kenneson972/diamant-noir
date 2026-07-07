@@ -14,27 +14,27 @@ const SERVICE_VISUALS: Record<
   { src: string; alt: string; position: string }
 > = {
   marketing: {
-    src: "/marketing.png",
+    src: "/marketing.webp",
     alt: "Piscine de villa de standing au coucher du soleil avec appareil photo — Marketing locatif Martinique",
     position: "center 30%",
   },
   operations: {
-    src: "/terrain.png",
+    src: "/terrain.webp",
     alt: "Entrée de villa avec boîte à clés sécurisée et serviette fraîche — Opérations terrain Martinique",
     position: "center 25%",
   },
   voyageurs: {
-    src: "/relation.png",
+    src: "/relation.webp",
     alt: "Couple en terrasse face à l'océan, verre de coco à la main — Relation voyageurs Martinique",
     position: "center 55%",
   },
   menage: {
-    src: "/menage.png",
+    src: "/menage.webp",
     alt: "Lit impeccable avec drap blanc et fleur de frangipanier — Ménage blanchisserie Martinique",
     position: "center 40%",
   },
   finance: {
-    src: "/finance.png",
+    src: "/finance.webp",
     alt: "Bureau en terrasse avec MacBook, café et orchidée — Gestion financière Martinique",
     position: "right 30%",
   },

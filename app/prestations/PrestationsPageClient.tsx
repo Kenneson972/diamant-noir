@@ -615,11 +615,11 @@ export default function PrestationsPageClient() {
               {SCROLL_SECTIONS.map((s, idx) => {
                 const visual = (() => {
                   switch (s.id) {
-                    case "marketing": return { src: "/marketing.png", alt: "Piscine villa standing coucher soleil — Marketing Kayvila", pos: "center 30%" };
-                    case "operations": return { src: "/terrain.png", alt: "Entrée villa vue extérieure — Opérations Kayvila", pos: "center 35%" };
-                    case "voyageurs": return { src: "/relation.png", alt: "Couple en terrasse face océan — Relation voyageurs Kayvila", pos: "center 50%" };
-                    case "menage": return { src: "/menage.png", alt: "Lit impeccable drap blanc — Ménage Kayvila", pos: "center 40%" };
-                    case "finance": return { src: "/finance.png", alt: "Bureau terrasse MacBook café — Finance Kayvila", pos: "center 30%" };
+                    case "marketing": return { src: "/marketing-old.webp", alt: "Piscine villa standing coucher soleil — Marketing Kayvila", pos: "center 30%" };
+                    case "operations": return { src: "/terrain-old.webp", alt: "Entrée villa vue extérieure — Opérations Kayvila", pos: "center 35%" };
+                    case "voyageurs": return { src: "/relation-old.webp", alt: "Couple en terrasse face océan — Relation voyageurs Kayvila", pos: "center 50%" };
+                    case "menage": return { src: "/menage-old.webp", alt: "Lit impeccable drap blanc — Ménage Kayvila", pos: "center 40%" };
+                    case "finance": return { src: "/finance-old.webp", alt: "Bureau terrasse MacBook café — Finance Kayvila", pos: "center 30%" };
                     default: return null;
                   }
                 })();
