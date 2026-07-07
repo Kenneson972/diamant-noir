@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Finalisez votre réservation villa Kayvila en Martinique — paiement sécurisé Stripe.",
   alternates: { canonical: "https://kayvila.com/book" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Réserver votre villa Kayvila en Martinique" }],
+    images: [{ url: "https://kayvila.com/og-default.jpg", width: 1200, height: 630, alt: "Réserver votre villa Kayvila en Martinique" }],
   },
 };
 

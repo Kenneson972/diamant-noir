@@ -23,7 +23,7 @@ export const metadata = {
     "La mission de Kayvila : conciergerie de standing, entretien et gestion de villas en Martinique.",
   alternates: { canonical: "https://kayvila.com/qui-sommes-nous" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Kayvila — Conciergerie de standing en Martinique" }],
+    images: [{ url: "https://kayvila.com/og-default.jpg", width: 1200, height: 630, alt: "Kayvila — Conciergerie de standing en Martinique" }],
   },
 };
 

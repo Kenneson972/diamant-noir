@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     "Comparez les villas Kayvila en Martinique : capacité, équipements, tarifs et prestations, côte à côte.",
   alternates: { canonical: "/villas/comparer" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Comparateur de villas Kayvila en Martinique" }],
+    images: [{ url: "https://kayvila.com/og-default.jpg", width: 1200, height: 630, alt: "Comparateur de villas Kayvila en Martinique" }],
   },
 };
 

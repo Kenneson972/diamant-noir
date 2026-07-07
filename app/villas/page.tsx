@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "Découvrez notre collection de villas de standing en Martinique. Réservation en ligne, conciergerie, entretien et gestion locative.",
   openGraph: {
-    title: "Villas de standing en Martinique | Kayvila",
+    title: "Villas de standing en Martinique",
     description:
       "Découvrez notre collection de villas de standing en Martinique. Réservation en ligne, conciergerie.",
     url: "https://kayvila.com/villas",

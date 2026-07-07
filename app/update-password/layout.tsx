@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mise à jour du mot de passe — Kayvila",
+  title: "Mise à jour du mot de passe",
   description: "Définissez un nouveau mot de passe pour votre compte Kayvila.",
   robots: { index: false, follow: false },
 };
