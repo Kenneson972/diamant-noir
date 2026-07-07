@@ -5,7 +5,7 @@ import { BarChart3 } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 
 export const metadata: Metadata = {
-  title: "Statistiques — Kayvila",
+  title: "Statistiques",
 };
 
 export default async function ProprioStatistiquesIndexPage() {

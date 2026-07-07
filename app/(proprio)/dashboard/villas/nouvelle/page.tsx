@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { VillaCreateForm } from "@/components/dashboard/villa-editor/VillaCreateForm";
 
 export const metadata: Metadata = {
-  title: "Ajouter une villa — Kayvila",
+  title: "Ajouter une villa",
 };
 
 export default function NewVillaPage() {

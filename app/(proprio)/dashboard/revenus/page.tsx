@@ -13,7 +13,7 @@ import { RevenuePageClient } from "@/components/dashboard/proprio/RevenuePageCli
 import type { RevenueRow } from "@/components/dashboard/proprio/RevenueBreakdownTable";
 
 export const metadata: Metadata = {
-  title: "Revenus — Kayvila",
+  title: "Revenus",
 };
 
 export const dynamic = "force-dynamic";

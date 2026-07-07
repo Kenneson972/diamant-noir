@@ -9,7 +9,7 @@ import { BookingList } from "@/components/dashboard/proprio/BookingList";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Réservations — Kayvila",
+  title: "Réservations",
 };
 
 interface PageProps {

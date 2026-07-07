@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { VillaImageManagerWrapper } from "@/components/dashboard/villa-editor/VillaImageManagerWrapper";
 
 export const metadata: Metadata = {
-  title: "Photos — Kayvila",
+  title: "Photos",
 };
 
 interface Props {

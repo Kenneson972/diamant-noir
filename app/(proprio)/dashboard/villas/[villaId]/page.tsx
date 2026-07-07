@@ -9,7 +9,7 @@ import { VillaEditor } from "@/components/dashboard/villa-editor/VillaEditor";
 import { VillaIcalPanel } from "@/components/dashboard/proprio/VillaIcalPanel";
 
 export const metadata: Metadata = {
-  title: "Modifier la villa — Kayvila",
+  title: "Modifier la villa",
 };
 
 interface Props {

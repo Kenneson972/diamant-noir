@@ -11,7 +11,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Réservations — Kayvila",
+  title: "Réservations",
 };
 
 export default async function ProprioReservationsIndexPage() {

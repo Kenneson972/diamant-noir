@@ -3,7 +3,7 @@ import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import { AvailabilityCalendar } from "@/components/dashboard/proprio/AvailabilityCalendar";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Disponibilités — Kayvila" };
+export const metadata: Metadata = { title: "Disponibilités" };
 
 interface Props {
   params: Promise<{ villaId: string }>;

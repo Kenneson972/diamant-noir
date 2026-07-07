@@ -5,7 +5,7 @@ import { TaskList } from "@/components/dashboard/proprio/TaskList";
 import { ReportIssueButton } from "@/components/dashboard/proprio/ReportIssueButton";
 
 export const metadata: Metadata = {
-  title: "Tâches — Kayvila",
+  title: "Tâches",
 };
 
 export default async function TasksPage() {

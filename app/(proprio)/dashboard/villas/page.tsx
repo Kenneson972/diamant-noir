@@ -7,7 +7,7 @@ import { VillaCard } from "@/components/dashboard/proprio/VillaCard";
 import { EmptyDashboard } from "@/components/dashboard/proprio/EmptyDashboard";
 
 export const metadata: Metadata = {
-  title: "Mes Villas — Kayvila",
+  title: "Mes Villas",
 };
 
 export default async function ProprioVillasPage() {

@@ -19,7 +19,7 @@ import {
 import { fr } from "date-fns/locale";
 
 export const metadata: Metadata = {
-  title: "Statistiques — Kayvila",
+  title: "Statistiques",
 };
 
 interface PageProps {
