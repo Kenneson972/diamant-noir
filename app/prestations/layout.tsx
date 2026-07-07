@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 // Metadata isolé ici — page.tsx est "use client" et ne peut pas exporter metadata
 export const metadata: Metadata = {
-  title: "Nos Prestations | Kayvila — Conciergerie Privée Martinique",
+  title: "Nos Prestations — Conciergerie Privée Martinique",
   description:
     "Gestion hôtelière complète de votre villa en Martinique : marketing, opérations, relation voyageurs, finance. Commission 22%, ménage facturé aux voyageurs.",
   keywords: [

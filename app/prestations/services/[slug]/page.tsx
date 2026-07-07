@@ -59,11 +59,11 @@ export async function generateMetadata({
   if (!isServiceSlug(slug)) return {};
   const d = SERVICE_DETAILS[slug];
   return {
-    title: `${d.title} | Prestations — Kayvila`,
+    title: `${d.title} | Prestations`,
     description: d.metaDescription,
     alternates: { canonical: `https://kayvila.com/prestations/services/${slug}` },
     openGraph: {
-      title: `${d.title} | Kayvila`,
+      title: d.title,
       description: d.metaDescription,
       images: [{ url: d.image, width: 1200, height: 630, alt: d.imageAlt }],
     },

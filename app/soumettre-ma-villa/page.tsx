@@ -5,12 +5,12 @@ import { tServer } from "@/lib/i18n";
 import { VillaWizard } from "@/components/marketing/VillaWizard";
 
 export const metadata: Metadata = {
-  title: "Confier ma villa — Kayvila Conciergerie",
+  title: "Confier ma villa — Conciergerie",
   description:
     "Confiez votre villa à Kayvila. Remplissez notre formulaire en quelques minutes et recevez une réponse sous 24h.",
   alternates: { canonical: "https://kayvila.com/soumettre-ma-villa" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "Confier ma villa à Kayvila" }],
+    images: [{ url: "https://kayvila.com/og-default.jpg", width: 1200, height: 630, alt: "Confier ma villa à Kayvila" }],
   },
 };
 

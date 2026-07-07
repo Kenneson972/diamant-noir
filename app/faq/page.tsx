@@ -9,12 +9,12 @@ import { PageHero } from "@/components/marketing/PageHero";
 import { tServer } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "FAQ | Conciergerie Kayvila — Martinique",
+  title: "FAQ — Conciergerie en Martinique",
   description:
     "Questions fréquentes sur la conciergerie Kayvila : réservation, annulation, services inclus, gestion locative en Martinique.",
   alternates: { canonical: "https://kayvila.com/faq" },
   openGraph: {
-    images: [{ url: "https://kayvila.com/og-image.jpg", width: 1200, height: 630, alt: "FAQ Kayvila — Conciergerie Martinique" }],
+    images: [{ url: "https://kayvila.com/og-default.jpg", width: 1200, height: 630, alt: "FAQ Kayvila — Conciergerie Martinique" }],
   },
 };
 
@@ -23,6 +23,24 @@ export default async function FaqPage() {
   const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
 
   return (
+    <>
+      {/* JSON-LD FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: CONCIERGERIE_FAQ.flatMap((theme) =>
+              theme.items.map(({ q, a }) => ({
+                "@type": "Question",
+                name: q,
+                acceptedAnswer: { "@type": "Answer", text: a },
+              }))
+            ),
+          }),
+        }}
+      />
     <LandingShell>
       <PageHero
         imageSrc="/faq-hero.webp"
@@ -84,5 +102,6 @@ export default async function FaqPage() {
         </div>
       </LandingSection>
     </LandingShell>
+    </>
   );
 }

@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const image = data.image_url || (Array.isArray(data.image_urls) && data.image_urls[0]) || null;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
     return {
-      title: `${data.name} — Kayvila`,
+      title: data.name.length > 60 ? data.name.slice(0, 57) + "..." : data.name,
       description: (data.description || "").slice(0, 160),
       alternates: { canonical: `https://kayvila.com/villas/${id}` },
       openGraph: {
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       },
     };
   } catch {
-    return { title: "Villa — Kayvila" };
+    return { title: "Villa" };
   }
 }
 
@@ -331,6 +331,22 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 unitText: "nuit",
               },
             },
+          }),
+        }}
+      />
+
+      {/* JSON-LD BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Accueil", item: "https://kayvila.com" },
+              { "@type": "ListItem", position: 2, name: "Villas", item: "https://kayvila.com/villas" },
+              { "@type": "ListItem", position: 3, name: villa.name },
+            ],
           }),
         }}
       />
