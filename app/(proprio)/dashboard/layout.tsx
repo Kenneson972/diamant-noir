@@ -49,25 +49,33 @@ export default async function ProprioDashboardLayout({
   // Fetch badge counts
   const ownerVillaIds = (ownerVillas ?? []).map((v) => v.id);
 
-  const [reservations, taches] =
+  const [reservations, taches, ownerMsgUnread] = await Promise.all([
     ownerVillaIds.length > 0
-      ? await Promise.all([
-          supabase
-            .from("bookings")
-            .select("id", { count: "exact", head: true })
-            .in("villa_id", ownerVillaIds)
-            .eq("status", "pending"),
-          supabase
-            .from("tasks")
-            .select("id", { count: "exact", head: true })
-            .in("villa_id", ownerVillaIds)
-            .neq("status", "done"),
-        ])
-      : ([{ count: 0 }, { count: 0 }] as const);
+      ? supabase
+          .from("bookings")
+          .select("id", { count: "exact", head: true })
+          .in("villa_id", ownerVillaIds)
+          .eq("status", "pending")
+      : Promise.resolve({ count: 0 } as { count: number | null }),
+    ownerVillaIds.length > 0
+      ? supabase
+          .from("tasks")
+          .select("id", { count: "exact", head: true })
+          .in("villa_id", ownerVillaIds)
+          .neq("status", "done")
+      : Promise.resolve({ count: 0 } as { count: number | null }),
+    supabase
+      .from("owner_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", user.id)
+      .eq("sender_role", "admin")
+      .is("read_at", null),
+  ]);
 
   const badgeMap: Record<string, number> = {
     "/dashboard/reservations": reservations.count ?? 0,
     "/dashboard/taches": taches.count ?? 0,
+    "/dashboard/concierge": ownerMsgUnread.count ?? 0,
   };
 
   const menuWithBadges = applyMenuBadges(proprioMenuItems, badgeMap);
