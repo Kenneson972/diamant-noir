@@ -71,8 +71,20 @@ function PasswordPanel({
   const [fieldErrors, setFieldErrors] = useState<{ confirm?: string }>({})
   const [signupSuccess, setSignupSuccess] = useState<"confirm_email" | null>(null)
   const [forgotSuccess, setForgotSuccess] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const router = useRouter()
   const supabase = getSupabaseBrowser()
+
+  // Restaurer l'email sauvegardé au montage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kv-remembered-email")
+      if (saved) {
+        setEmail(saved)
+        setRememberMe(true)
+      }
+    } catch { /* localStorage indisponible */ }
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,6 +108,15 @@ function PasswordPanel({
       )
       setLoading(false)
     } else {
+      // Sauvegarder ou effacer l'email pour "Se souvenir de moi"
+      try {
+        if (rememberMe) {
+          localStorage.setItem("kv-remembered-email", cleanEmail)
+        } else {
+          localStorage.removeItem("kv-remembered-email")
+        }
+      } catch { /* localStorage indisponible */ }
+
       // Forcer un rechargement complet pour que le middleware voie les cookies
       const { data: userData } = await supabase.auth.getUser()
       const u = userData.user
@@ -418,7 +439,23 @@ function PasswordPanel({
           )}
         </div>
         {mode === "login" && (
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => {
+                  setRememberMe(e.target.checked)
+                  if (!e.target.checked) {
+                    try { localStorage.removeItem("kv-remembered-email") } catch { /* ignore */ }
+                  }
+                }}
+                className="h-3.5 w-3.5 cursor-pointer border-navy/30 bg-transparent text-navy accent-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+              />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-navy/60">
+                Se souvenir de moi
+              </span>
+            </label>
             <button
               type="button"
               onClick={() => { setMode("forgot"); setError(null) }}
