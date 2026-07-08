@@ -48,12 +48,12 @@ export async function generateMetadata(): Promise<Metadata> {
     ? "Kayvila | Premium Concierge Martinique"
     : localeCookie === "es"
     ? "Kayvila | Conserjería de alto standing Martinica"
-    : "Kayvila | Conciergerie de standing Martinique";
+    : "Kayvila | Conciergerie pour villa de standing en Martinique";
   const description = localeCookie === "en"
-    ? "Premium concierge in Martinique. Villas by the sea, online booking, maintenance and management. Diamond Rock, Sun Beach."
+    ? "Premium villa concierge in Martinique. Villas by the sea, online booking, maintenance and management. Diamond Rock, Sun Beach."
     : localeCookie === "es"
-    ? "Conserjería de alto standing en Martinica. Villas frente al mar, reserva en línea, mantenimiento y gestión."
-    : "Conciergerie de standing en Martinique. Villas en bord de mer, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.";
+    ? "Conserjería de villas de alto standing en Martinica. Villas frente al mar, reserva en línea, mantenimiento y gestión."
+    : "Conciergerie pour villa de standing en Martinique. Location de villas en bord de mer, réservation en ligne, entretien et gestion. Rocher du Diamant, plages du Soleil.";
 
   return {
     metadataBase: new URL(siteUrl),
@@ -126,7 +126,7 @@ export default async function RootLayout({
               name: "Kayvila",
               url: "https://kayvila.com",
               description:
-                "Conciergerie de standing en Martinique. Villas en bord de mer, réservation en ligne, entretien et gestion.",
+                "Conciergerie pour villa de standing en Martinique. Location de villas en bord de mer, réservation en ligne, entretien et gestion.",
               sameAs: [
                 "https://www.instagram.com/kayvilaconciergerie",
                 "https://www.facebook.com/share/1EttHdFGZp/?mibextid=wwXIfr",

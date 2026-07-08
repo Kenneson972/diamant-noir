@@ -50,7 +50,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Conditions d'utilisation",
     "footer.privacy": "Politique de confidentialité",
     "footer.cookies": "Gestion des cookies",
-    "footer.branding_desc": "Conciergerie de standing en Martinique. Villas en bord de mer, service sur mesure.",
+    "footer.branding_desc": "Conciergerie pour villa de standing en Martinique. Villas en bord de mer, service sur mesure.",
 
     // ── Commun ───────────────────────────────────────────────
     "common.book_now": "Réserver",
@@ -211,7 +211,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.success_desc": "Nous vous répondrons dans les meilleurs délais.",
 
     // ── Accueil ──────────────────────────────────────────────
-    "home.hero_tagline": "Conciergerie de standing en Martinique",
+    "home.hero_tagline": "Conciergerie pour villa de standing en Martinique",
     "home.hero_cta": "Découvrir nos villas",
     "home.hero_secondary": "Confier ma villa",
     "home.villas_section": "Nos villas de standing",
