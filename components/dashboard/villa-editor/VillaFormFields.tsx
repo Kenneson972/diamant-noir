@@ -3,6 +3,7 @@
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { DashboardNavIcon } from "@/components/dashboard/shared/dashboard-nav-icon";
 import { Input } from "@/components/ui/input";
+import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { ChipEditor } from "./ChipEditor";
 import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
@@ -18,6 +19,10 @@ export type VillaFormFieldsProps = {
   embedded?: boolean;
   /** En mode embedded : "identity" = identité (nom, prix, capacité…), "details" = description & accès. Sans variant : tout. */
   variant?: "identity" | "details";
+  /** Bouton "Importer depuis Airbnb" affiché à côté du champ URL (variant "details"). Réservé admin (route API admin-only). */
+  onImportAirbnb?: () => void;
+  importingAirbnb?: boolean;
+  importAirbnbMessage?: { type: "success" | "error"; text: string } | null;
 };
 
 /* ─── Helpers ───────────────────────────────────────── */
@@ -75,7 +80,7 @@ const NEARBY_SUGGESTIONS = ["Plage", "Restaurant", "Supermarché", "Pharmacie", 
 
 /* ─── Composant principal ───────────────────────────── */
 
-export function VillaFormFields({ form, onChange, embedded, variant }: VillaFormFieldsProps) {
+export function VillaFormFields({ form, onChange, embedded, variant, onImportAirbnb, importingAirbnb, importAirbnbMessage }: VillaFormFieldsProps) {
   const handleGeolocate = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -162,7 +167,34 @@ export function VillaFormFields({ form, onChange, embedded, variant }: VillaForm
       </div>
       <div className="sm:col-span-2">
         <FieldLabel htmlFor="vf-airbnb" label="URL Airbnb" />
-        <Input id="vf-airbnb" defaultValue={s(form.airbnb_url)} placeholder="https://www.airbnb.fr/rooms/..." className="text-sm" onChange={(e: any) => onChange("airbnb_url", e.target.value)} />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input id="vf-airbnb" defaultValue={s(form.airbnb_url)} placeholder="https://www.airbnb.fr/rooms/..." className="flex-1 text-sm" onChange={(e: any) => onChange("airbnb_url", e.target.value)} />
+          {onImportAirbnb && (
+            <button
+              type="button"
+              onClick={onImportAirbnb}
+              disabled={importingAirbnb}
+              className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl border border-gold/30 bg-gold/5 px-4 text-sm font-medium text-gold transition-colors hover:bg-gold/10 disabled:opacity-50"
+            >
+              {importingAirbnb ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Import…
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" aria-hidden />
+                  Importer depuis Airbnb
+                </>
+              )}
+            </button>
+          )}
+        </div>
+        {importAirbnbMessage && (
+          <p className={`mt-2 text-xs ${importAirbnbMessage.type === "success" ? "text-emerald-600" : "text-red-600"}`} role="status">
+            {importAirbnbMessage.text}
+          </p>
+        )}
       </div>
     </div>
   );

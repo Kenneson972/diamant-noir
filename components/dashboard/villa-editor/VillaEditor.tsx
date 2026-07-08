@@ -63,6 +63,8 @@ export function VillaEditor({
   const [autoStatus, setAutoStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [importingAirbnb, setImportingAirbnb] = useState(false);
+  const [importAirbnbMessage, setImportAirbnbMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const statuses = sectionCompleteness(form);
@@ -110,6 +112,77 @@ export function VillaEditor({
     dispatch({ type: "SET_FIELD", field: key, value });
   };
 
+  const handleImportAirbnb = useCallback(async () => {
+    const url = form.airbnb_url?.trim();
+    if (!url) {
+      setImportAirbnbMessage({ type: "error", text: "Renseignez d'abord une URL Airbnb ci-dessus" });
+      return;
+    }
+    setImportingAirbnb(true);
+    setImportAirbnbMessage(null);
+    try {
+      const res = await fetch("/api/import-airbnb", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Échec de l'import");
+
+      let filled = 0;
+      const setField = (field: string, value: unknown) => {
+        if (value == null || value === "") return;
+        dispatch({ type: "SET_FIELD", field, value });
+        filled++;
+      };
+      const setArray = (field: string, raw: unknown) => {
+        const arr = Array.isArray(raw)
+          ? raw.filter(Boolean).map(String)
+          : typeof raw === "string" && raw.trim()
+            ? raw.split(/\n+|(?<=[.;])\s+/).map((s) => s.trim()).filter(Boolean)
+            : [];
+        if (arr.length === 0) return;
+        dispatch({ type: "SET_ARRAY", field, value: arr });
+        filled++;
+      };
+
+      setField("name", data.name);
+      setField("description", data.description);
+      setField("location", data.location);
+      if (typeof data.capacity === "number") setField("capacity", data.capacity);
+      if (typeof data.price_per_night === "number") setField("price_per_night", data.price_per_night);
+      if (typeof data.bathrooms_count === "number") setField("bathrooms_count", data.bathrooms_count);
+      if (typeof data.surface_m2 === "number") setField("surface_m2", data.surface_m2);
+      setField("check_in_time", data.check_in_time);
+      setField("check_out_time", data.check_out_time);
+      if (typeof data.latitude === "number") setField("latitude", data.latitude);
+      if (typeof data.longitude === "number") setField("longitude", data.longitude);
+      setField("environment", data.environment);
+      setField("cancellation_policy", data.cancellation_policy);
+      setArray("house_rules", data.house_rules);
+      setArray("safety_info", data.safety_info);
+      setArray("nearby_points", data.nearby_points);
+      setArray("equipment_interior", data.amenities);
+
+      const photos: string[] = Array.isArray(data.image_urls) && data.image_urls.length
+        ? data.image_urls
+        : data.image_url ? [data.image_url] : [];
+      if (photos.length > 0) {
+        dispatch({ type: "SET_IMAGES", urls: photos });
+        filled++;
+      }
+
+      setImportAirbnbMessage({
+        type: "success",
+        text: `Import réussi — ${filled} champ${filled > 1 ? "s" : ""} rempli${filled > 1 ? "s" : ""}${data.ai_note ? ` · ${data.ai_note}` : ""}`,
+      });
+    } catch (err) {
+      setImportAirbnbMessage({ type: "error", text: err instanceof Error ? err.message : "Échec de l'import" });
+    } finally {
+      setImportingAirbnb(false);
+    }
+  }, [form.airbnb_url]);
+
   const backHref = isAdmin ? "/admin/villas" : "/dashboard/villas";
 
   const renderSection = (id: string, children: ReactNode) => {
@@ -133,7 +206,17 @@ export function VillaEditor({
   const adminSections = sections.filter((def) => def.bloc === "admin");
 
   const sectionContent: Record<string, ReactNode> = {
-    details: <VillaFormFields form={form as Record<string, unknown>} onChange={handleChange} embedded variant="details" />,
+    details: (
+      <VillaFormFields
+        form={form as Record<string, unknown>}
+        onChange={handleChange}
+        embedded
+        variant="details"
+        onImportAirbnb={isAdmin ? handleImportAirbnb : undefined}
+        importingAirbnb={importingAirbnb}
+        importAirbnbMessage={importAirbnbMessage}
+      />
+    ),
     equipments: (
       <VillaAmenitiesEditorV2
         interior={form.equipment_interior}
