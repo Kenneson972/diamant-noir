@@ -41,27 +41,6 @@ const SERVICE_VISUALS: Record<
   },
 };
 
-const SERVICE_TAGLINES: Record<string, string> = {
-  marketing: "Estimation locative, reportage photos, annonces optimisées.",
-  operations: "Check-in, contrôles qualité, coordination ménage et artisans.",
-  voyageurs: "Interlocuteur unique 7j/7, de la réservation au départ.",
-  menage: "Ménage et blanchisserie facturés aux voyageurs, hors commission.",
-  finance: "Commission 22 % (20 % OTA), espace propriétaire, Copilot IA inclus.",
-};
-
-const SERVICE_DESCS: Record<string, string> = {
-  marketing:
-    "Votre villa visible partout, valorisée au bon prix — estimation locative, reportage photos, annonces optimisées et prix dynamiques automatiques.",
-  operations:
-    "Zéro contrainte, tout géré sur place — check-in, contrôles qualité entre chaque séjour, coordination ménage, linge, consommables et artisans.",
-  voyageurs:
-    "Vous ne recevez aucun appel, aucun message — nous sommes l'interlocuteur unique de vos voyageurs 7j/7, de la réservation au départ.",
-  menage:
-    "Les frais de ménage et blanchisserie sont facturés aux voyageurs, hors commission. Réassort des consommables à nos frais dès la 2e location.",
-  finance:
-    "Vous encaissez directement via Airbnb ou Booking. Kayvila facture sa commission sur les nuitées réalisées en fin de mois. Espace propriétaire en ligne et assistant IA Copilot inclus.",
-};
-
 export function HomeServicesSection() {
   const { t } = useLocale();
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -143,8 +122,8 @@ export function HomeServicesSection() {
               type="button"
               role="tab"
               aria-selected={i === activeIdx}
-              aria-label={`Pilier ${i + 1} — ${s.title}`}
-              title={s.title}
+              aria-label={`${t("prestations.pillar_progress").replace("{{n}}", String(i + 1))} — ${t(`services.${s.id}.title`)}`}
+              title={t(`services.${s.id}.title`)}
               onClick={() => scrollTo(i)}
               className="relative flex h-11 w-11 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
@@ -183,8 +162,8 @@ export function HomeServicesSection() {
             <div className="flex gap-4 md:gap-6">
               {SCROLL_SECTIONS.map((service, i) => {
                 const visual = SERVICE_VISUALS[service.id];
-                const tagline = SERVICE_TAGLINES[service.id];
-                const desc = SERVICE_DESCS[service.id];
+                const tagline = t(`services.${service.id}.card_tagline`);
+                const desc = t(`services.${service.id}.desc`);
 
                 return (
                   <div
@@ -230,7 +209,7 @@ export function HomeServicesSection() {
                         </p>
 
                         <h3 className="mt-2 font-display text-lg leading-tight text-navy md:mt-3 md:text-2xl">
-                          {service.title}
+                          {t(`services.${service.id}.title`)}
                         </h3>
 
                         <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/80 md:mt-3 md:text-[13px]">

@@ -55,37 +55,19 @@ function scrollSectionVerticalClasses(v: ScrollSection["vertical"] | undefined) 
 
 // ─── Données page (hub — détail : /prestations/services/[slug]) ───────────────
 
-const REASSURANCES: { icon: KayvilaPngName; text: string }[] = [
-  { icon: "shield-check", text: "Pas d'exclusivité obligatoire" },
-  { icon: "clock", text: "Réponse sous 24h garantie" },
-  { icon: "star", text: "Estimation gratuite et sans engagement" },
+const REASSURANCE_KEYS: { icon: KayvilaPngName; key: string }[] = [
+  { icon: "shield-check", key: "prestations.reassurance_no_exclusivity" },
+  { icon: "clock", key: "prestations.reassurance_response_24h" },
+  { icon: "star", key: "prestations.reassurance_free_estimate" },
 ];
 
-const FAQ_ITEMS: { q: string; a: string }[] = [
-  {
-    q: "Quelle est la première étape ?",
-    a: "Soumettez votre villa en 5 minutes via notre dossier interactif. Notre équipe vous recontacte sous 24h pour une estimation gratuite et sans engagement.",
-  },
-  {
-    q: "Y a-t-il un engagement de durée ?",
-    a: "Nous travaillons avec une période de découverte de 3 mois, renouvelable. Résiliable avec 30 jours de préavis, sans frais ni pénalité.",
-  },
-  {
-    q: "Est-ce que je garde la propriété de mes annonces ?",
-    a: "Oui, vos annonces vous appartiennent. Nous les optimisons et les gérons pour votre compte, sans transfert de propriété.",
-  },
-  {
-    q: "Puis-je bloquer des dates pour ma propre utilisation ?",
-    a: "Vous conservez un accès complet au calendrier pour bloquer des périodes à votre convenance, à tout moment.",
-  },
-  {
-    q: "Que se passe-t-il si un voyageur cause des dégâts ?",
-    a: "Nous documentons et vous informons immédiatement avec photos. Nous intervenons auprès des plateformes pour les remboursements via Airbnb AirCover et caution Booking.",
-  },
-  {
-    q: "Combien de temps avant la première mise en ligne ?",
-    a: "En général 7 à 14 jours : shooting photo, création des annonces, et optimisation sur les plateformes clés.",
-  },
+const FAQ_ITEM_KEYS: { q: string; a: string }[] = [
+  { q: "prestations.faq_q1", a: "prestations.faq_a1" },
+  { q: "prestations.faq_q2", a: "prestations.faq_a2" },
+  { q: "prestations.faq_q3", a: "prestations.faq_a3" },
+  { q: "prestations.faq_q4", a: "prestations.faq_a4" },
+  { q: "prestations.faq_q5", a: "prestations.faq_a5" },
+  { q: "prestations.faq_q6", a: "prestations.faq_a6" },
 ];
 
 function subscribeReducedMotion(cb: () => void) {
@@ -371,7 +353,10 @@ export default function PrestationsPageClient() {
 
                   <div className="relative rounded-2xl border border-white/60 bg-[rgba(255,255,255,0.76)] p-5 max-md:bg-[rgba(255,255,255,0.92)] md:rounded-3xl md:p-7 md:backdrop-blur-md [box-shadow:0_18px_45px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.55)]">
                     {/* Indicateur de progression 360° */}
-                    <div className="mb-5 flex items-center gap-2" aria-label={`Pilier ${idx + 1} sur 5`}>
+                    <div
+                      className="mb-5 flex items-center gap-2"
+                      aria-label={t("prestations.pillar_progress").replace("{{n}}", String(idx + 1))}
+                    >
                       {SCROLL_SECTIONS.map((_, si) => (
                         <div
                           key={si}
@@ -383,17 +368,17 @@ export default function PrestationsPageClient() {
                       </span>
                     </div>
                     <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.35em] text-navy/70">
-                      {section.tagline}
+                      {t(`services.${section.id}.tagline`)}
                     </p>
                     <h2 className="mb-1 font-display text-xl font-bold leading-tight text-navy md:text-2xl">
-                      {section.title}
+                      {t(`services.${section.id}.title`)}
                     </h2>
                     <button
                       type="button"
                       onClick={() => router.push(`/prestations/services/${section.id}`)}
                       className="pointer-events-auto mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-navy/75 underline-offset-4 transition-colors hover:text-navy hover:underline"
                     >
-                      Voir le détail <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                      {t("prestations.view_detail")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                     </button>
                   </div>
                 </div>
@@ -450,7 +435,7 @@ export default function PrestationsPageClient() {
                 </h1>
 
                 <p className="animate-in fade-in slide-in-from-bottom-1 mt-4 m-0 font-display font-normal text-[10px] uppercase tracking-[0.3em] text-white/60 delay-75 duration-700 md:tracking-[0.35em]">
-                  Gestion complète · Clé en main · Équipe locale
+                  {t("prestations.hero_kicker")}
                 </p>
 
                 <button
@@ -461,7 +446,7 @@ export default function PrestationsPageClient() {
                   }}
                   className="animate-in fade-in slide-in-from-bottom-2 mt-8 inline-flex min-h-[44px] items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 delay-150 transition-colors duration-300 hover:text-white"
                 >
-                  Explorer les cinq piliers <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                  {t("prestations.hero_explore")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </button>
 
                 {arrowVisible && (
@@ -500,7 +485,7 @@ export default function PrestationsPageClient() {
                 }}
               />
               <div className="relative flex flex-col items-center gap-2 text-white/30">
-                <p className="text-[8px] uppercase tracking-[0.4em]">Gestion clé en main</p>
+                <p className="text-[8px] uppercase tracking-[0.4em]">{t("prestations.pillars_eyebrow")}</p>
                 <ChevronDown size={18} strokeWidth={1.5} />
               </div>
             </div>
@@ -536,14 +521,14 @@ export default function PrestationsPageClient() {
                   {t("prestations.title")}
                 </h1>
                 <p className="mt-4 max-w-md font-display text-[10px] uppercase tracking-[0.28em] text-white/65">
-                  Gestion complète · Clé en main · Équipe locale
+                  {t("prestations.hero_kicker")}
                 </p>
                 <button
                   type="button"
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
                   className="mt-8 inline-flex min-h-[48px] items-center gap-2 border border-white/25 bg-white/10 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                 >
-                  Explorer les cinq piliers<KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                  {t("prestations.hero_explore")}<KayvilaPngIcon name="arrow-right" size={18} alt="" />
                 </button>
               </div>
             </div>
@@ -562,11 +547,11 @@ export default function PrestationsPageClient() {
                   href="/soumettre-ma-villa"
                   className="inline-flex min-h-[44px] items-center justify-center border border-white bg-white px-5 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  Confier ma villa
+                  {t("nav.submit_villa")}
                 </Link>
               </div>
               <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/30 md:mt-3">
-                Commission 22&nbsp;% (20&nbsp;% OTA) · Équipe locale 7j/7 · Présence en Martinique
+                {t("prestations.strip_cta_footer")}
               </p>
             </div>
           </section>
@@ -575,10 +560,10 @@ export default function PrestationsPageClient() {
           <section className="border-b border-black/[0.07] bg-offwhite px-5 py-10 sm:px-6">
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-5 text-center">
               {[
-                { val: "13", label: "prestations incluses" },
-                { val: "22\u202f%\u00a0/\u00a020\u202f%", label: "commission" },
-                { val: "100+", label: "séjours gérés" },
-                { val: "7j/7", label: "équipe locale" },
+                { val: "13", label: t("prestations.stat_services") },
+                { val: "22\u202f%\u00a0/\u00a020\u202f%", label: t("prestations.stat_commission") },
+                { val: "100+", label: t("prestations.stat_stays") },
+                { val: "7j/7", label: t("prestations.stat_local_team") },
               ].map(({ val, label }, i, arr) => (
                 <div key={label} className="flex items-center gap-10">
                   <div className="flex flex-col items-center gap-1">
@@ -600,13 +585,13 @@ export default function PrestationsPageClient() {
             <ScrollReveal>
               <div className="mx-auto max-w-2xl text-center">
                 <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
-                  Gestion clé en main
+                  {t("prestations.pillars_eyebrow")}
                 </span>
                 <h2 className="mt-4 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl">
-                  Cinq piliers,<br />une seule équipe
+                  {t("prestations.pillars_title_l1")}<br />{t("prestations.pillars_title_l2")}
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-navy/80 md:text-[15px]">
-                  Chaque pilier est un chapitre à part entière — découvrez leur identité et ce qu'ils incluent.
+                  {t("prestations.pillars_subtitle")}
                 </p>
               </div>
             </ScrollReveal>
@@ -648,7 +633,7 @@ export default function PrestationsPageClient() {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden />
                         <span className="absolute bottom-4 left-5 font-display text-[12px] font-bold tracking-[0.3em] text-white/0 transition-all duration-300 group-hover:text-white/80">
-                          Voir le détail →
+                          {t("prestations.view_detail")} →
                         </span>
                       </Link>
                     </ScrollReveal>
@@ -663,22 +648,22 @@ export default function PrestationsPageClient() {
                       </div>
 
                       <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-navy/60">
-                        {s.tagline}
+                        {t(`services.${s.id}.tagline`)}
                       </span>
 
                       <h3 className="mt-3 font-display text-2xl font-normal leading-[1.08] text-navy md:text-3xl">
-                        {s.title}
+                        {t(`services.${s.id}.title`)}
                       </h3>
 
                       <div className="mt-5 h-px w-10 bg-gold/30" aria-hidden />
 
                       <ul className="mt-6 space-y-3">
-                        {s.items.map((item, j) => (
+                        {Array.from({ length: s.itemCount }, (_, j) => (
                           <li key={j} className="flex items-start gap-3 text-sm leading-relaxed text-navy/65 stagger-item">
                             <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/[0.04] text-[9px] font-bold text-navy/60">
                               {j + 1}
                             </span>
-                            {item}
+                            {t(`services.${s.id}.item_${j + 1}_title`)}
                           </li>
                         ))}
                       </ul>
@@ -687,7 +672,7 @@ export default function PrestationsPageClient() {
                         href={`/prestations/services/${s.id}`}
                         className="mt-8 inline-flex min-h-[44px] items-center gap-2 border border-navy/20 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                       >
-                        Voir le détail complet <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                        {t("prestations.view_detail_full")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                       </Link>
                     </ScrollReveal>
                   </div>
@@ -700,45 +685,44 @@ export default function PrestationsPageClient() {
           <LandingSection bg="white">
             <div className="mx-auto max-w-2xl text-center">
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
-                Questions fréquentes
+                {t("prestations.faq_eyebrow")}
               </span>
               <h2 className="mt-4 font-display text-3xl font-light leading-[1.08] text-navy md:text-4xl">
-                Tout ce qu&apos;il faut savoir
+                {t("prestations.faq_title")}
               </h2>
-              <p className="mt-3 text-sm text-navy/80">Consultez notre FAQ ou contactez-nous directement.</p>
+              <p className="mt-3 text-sm text-navy/80">{t("prestations.faq_subtitle")}</p>
             </div>
             <div className="mx-auto mt-10 max-w-2xl space-y-0 border-t border-navy/10">
-              {FAQ_ITEMS.map(({ q, a }) => (
+              {FAQ_ITEM_KEYS.map(({ q, a }) => (
                 <details key={q} className="group border-b border-navy/10 py-4">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[12px] font-bold uppercase tracking-[0.2em] text-navy outline-none transition-colors hover:text-navy/70 [&::-webkit-details-marker]:hidden">
-                    {q}
+                    {t(q)}
                     <span className="shrink-0 text-navy/60 transition-transform duration-200 group-open:rotate-180" aria-hidden>▾</span>
                   </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-navy/80">{a}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-navy/80">{t(a)}</p>
                 </details>
               ))}
             </div>
             <div className="mt-8 text-center">
               <Link href="/faq" className="text-[10px] font-medium uppercase tracking-[0.22em] text-navy underline-offset-4 hover:underline">
-                Voir toutes les questions →
+                {t("prestations.faq_see_all")}
               </Link>
             </div>
           </LandingSection>
 
           {/* ── 14. Section soumettre (simplifiée) ── */}
           <LandingSection id="soumettre" bg="offwhite">
-            <LandingBlockTitle eyebrow="Devenez partenaire" title="Confiez-nous votre villa" />
+            <LandingBlockTitle eyebrow={t("prestations.submit_eyebrow")} title={t("prestations.submit_title")} />
             <div className="grid gap-14 md:grid-cols-2 md:gap-20">
               <div className="space-y-10">
                 <p className="text-[15px] leading-relaxed text-navy/60">
-                  Rejoignez les propriétaires qui font confiance à Kayvila pour gérer leur bien
-                  avec exigence, pour une location sereine et maîtrisée.
+                  {t("prestations.submit_desc")}
                 </p>
                 <ul className="space-y-4">
-                  {REASSURANCES.map(({ icon, text }) => (
-                    <li key={text} className="flex items-center gap-4">
+                  {REASSURANCE_KEYS.map(({ icon, key }) => (
+                    <li key={key} className="flex items-center gap-4">
                       <KayvilaPngIcon name={icon} size={22} alt="" className="shrink-0" />
-                      <span className="text-[13px] font-semibold text-navy/75">{text}</span>
+                      <span className="text-[13px] font-semibold text-navy/75">{t(key)}</span>
                     </li>
                   ))}
                 </ul>
@@ -746,17 +730,21 @@ export default function PrestationsPageClient() {
               <div className="flex flex-col justify-center">
                 <div className="border border-navy/10 bg-navy px-8 py-12 text-center">
                   <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.4em] text-gold/70">
-                    Estimation gratuite · Sans engagement
+                    {t("prestations.submit_card_kicker")}
                   </p>
-                  <p className="font-display text-2xl font-normal text-white md:text-3xl">Votre villa mérite mieux.</p>
+                  <p className="font-display text-2xl font-normal text-white md:text-3xl">{t("prestations.submit_card_title")}</p>
                   <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/55">
-                    Dossier interactif en 4 étapes — 5 minutes. Notre équipe vous recontacte sous 24h avec une estimation personnalisée.
+                    {t("prestations.submit_card_desc")}
                   </p>
                   <ul className="mx-auto mt-6 max-w-xs space-y-2 text-left">
-                    {["Pas d'exclusivité obligatoire", "Commission 22\u202f% tout compris", "Réponse sous 24h garantie"].map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-[11px] text-white/50">
+                    {[
+                      "prestations.reassurance_no_exclusivity",
+                      "prestations.submit_card_commission",
+                      "prestations.reassurance_response_24h",
+                    ].map((key) => (
+                      <li key={key} className="flex items-center gap-3 text-[11px] text-white/50">
                         <Check size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
-                        {item}
+                        {t(key)}
                       </li>
                     ))}
                   </ul>
@@ -764,13 +752,13 @@ export default function PrestationsPageClient() {
                     href="/soumettre-ma-villa"
                     className="mt-8 inline-flex min-h-[52px] items-center gap-3 border border-gold bg-gold px-8 py-4 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
-                    Déposer mon dossier <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                    {t("prestations.submit_card_cta")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                   </Link>
                 </div>
                 <p className="mt-6 text-center text-sm text-navy/60">
-                  Une question avant de soumettre ?{" "}
+                  {t("prestations.submit_card_question")}{" "}
                   <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
-                    Contactez-nous directement
+                    {t("prestations.submit_card_contact_cta")}
                   </Link>
                 </p>
               </div>
@@ -782,11 +770,11 @@ export default function PrestationsPageClient() {
             <div className="mx-auto max-w-2xl text-center">
               <div className="mx-auto mb-5 h-px w-8 bg-gold/40" aria-hidden />
               <p className="text-sm text-navy/80">
-                Consultez notre{" "}
+                {t("prestations.faq_link_intro")}{" "}
                 <Link href="/faq" className="font-medium text-navy underline-offset-4 hover:underline">
-                  FAQ dédiée
+                  {t("prestations.faq_link_label")}
                 </Link>{" "}
-                pour toutes les questions sur la commission, les services inclus, les prix, le pack de démarrage et le contrat.
+                {t("prestations.faq_link_suffix")}
               </p>
             </div>
           </LandingSection>

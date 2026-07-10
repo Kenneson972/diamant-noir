@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerLocale, tServer as ts } from "@/lib/i18n";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import {
   LandingShell,
@@ -14,6 +15,7 @@ import {
   isServiceSlug,
   type ServiceSlug,
 } from "@/data/prestations-service-details";
+import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
 
 const SERVICE_ICONS: Record<ServiceSlug, KayvilaPngName> = {
   marketing: "pilier-marketing",
@@ -21,29 +23,6 @@ const SERVICE_ICONS: Record<ServiceSlug, KayvilaPngName> = {
   voyageurs: "pilier-voyageurs",
   menage: "pilier-menage",
   finance: "pilier-finance",
-};
-
-const SERVICE_CONTEXT: Record<ServiceSlug, { intro: string }> = {
-  marketing: {
-    intro:
-      "En Martinique, la visibilité d'une villa ne se décrète pas — elle se construit. Entre la concurrence des locations saisonnières et les attentes croissantes des voyageurs internationaux, une annonce standard ne suffit plus.",
-  },
-  operations: {
-    intro:
-      "La réussite d'une location saisonnière tient dans les détails opérationnels. Un voyageur qui arrive dans une villa impeccable, avec un accueil chaleureux et des équipements fonctionnels, est un voyageur qui revient et qui laisse une bonne note.",
-  },
-  voyageurs: {
-    intro:
-      "La relation avec les voyageurs est souvent ce qui rebute les propriétaires : les messages à toute heure, les demandes spéciales, les imprévus de dernière minute. Notre mission est de vous libérer totalement de cette charge mentale.",
-  },
-  menage: {
-    intro:
-      "Le ménage et la blanchisserie sont des services souvent sous-estimés dans leur impact sur la note et le taux de retour des voyageurs. Une villa impeccable est le premier critère de satisfaction — et le premier motif de plainte quand ce n'est pas le cas.",
-  },
-  finance: {
-    intro:
-      "La gestion financière d'une location saisonnière peut rapidement devenir complexe : encaissements multiples, commissions variables, devises, déclarations. Notre objectif est de rendre cette partie aussi transparente que possible.",
-  },
 };
 
 export function generateStaticParams() {
@@ -57,15 +36,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   if (!isServiceSlug(slug)) return {};
+  const { headers } = await import("next/headers");
+  const locale = getServerLocale(await headers());
   const d = SERVICE_DETAILS[slug];
+  const title = ts(locale, `services.${slug}.title`);
+  const description = ts(locale, `services.${slug}.meta_description`);
   return {
-    title: `${d.title} | Prestations`,
-    description: d.metaDescription,
+    title: `${title} | Prestations`,
+    description,
     alternates: { canonical: `https://kayvila.com/prestations/services/${slug}` },
     openGraph: {
-      title: d.title,
-      description: d.metaDescription,
-      images: [{ url: d.image, width: 1200, height: 630, alt: d.imageAlt }],
+      title,
+      description,
+      images: [{ url: d.image, width: 1200, height: 630, alt: ts(locale, `services.${slug}.image_alt`) }],
     },
   };
 }
@@ -78,9 +61,16 @@ export default async function PrestationServicePage({
   const { slug } = await params;
   if (!isServiceSlug(slug)) notFound();
 
+  const { headers } = await import("next/headers");
+  const locale = getServerLocale(await headers());
+
   const d = SERVICE_DETAILS[slug];
   const iconName = SERVICE_ICONS[slug];
-  const ctx = SERVICE_CONTEXT[slug];
+  const itemCount = SCROLL_SECTIONS.find((s) => s.id === slug)?.itemCount ?? 0;
+  const items = Array.from({ length: itemCount }, (_, j) => ({
+    title: ts(locale, `services.${slug}.item_${j + 1}_title`),
+    desc: ts(locale, `services.${slug}.item_${j + 1}_desc`),
+  }));
 
   return (
     <LandingShell>
@@ -91,7 +81,7 @@ export default async function PrestationServicePage({
       >
         <Image
           src={d.image}
-          alt={d.imageAlt}
+          alt={ts(locale, `services.${slug}.image_alt`)}
           fill
           className="object-cover"
           style={{ objectPosition: d.imagePosition }}
@@ -109,14 +99,14 @@ export default async function PrestationServicePage({
         />
 
         <nav
-          aria-label="Fil d'Ariane"
+          aria-label={ts(locale, "prestations.breadcrumb_aria")}
           className="absolute left-6 top-20 z-10 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60 md:left-10 md:top-24"
         >
           <Link href="/prestations" className="transition-colors hover:text-white">
-            Prestations
+            {ts(locale, "prestations.breadcrumb_root")}
           </Link>
           <span className="text-white/25" aria-hidden>/</span>
-          <span className="text-white/90">{d.title}</span>
+          <span className="text-white/90">{ts(locale, `services.${slug}.title`)}</span>
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-10 md:px-12 md:pb-14">
@@ -124,7 +114,7 @@ export default async function PrestationServicePage({
             <div className="mb-3 flex items-center gap-2.5">
               <KayvilaPngIcon name={iconName} size={20} invert alt="" className="shrink-0" />
               <p className="text-[9px] font-bold uppercase tracking-[0.48em] text-gold/90">
-                {d.eyebrow}
+                {ts(locale, `services.${slug}.eyebrow`)}
               </p>
             </div>
             <div className="mb-4 h-px w-10 bg-gold/55" aria-hidden />
@@ -136,10 +126,10 @@ export default async function PrestationServicePage({
                 lineHeight: 1.08,
               }}
             >
-              {d.title}
+              {ts(locale, `services.${slug}.title`)}
             </h1>
             <p className="mt-4 max-w-lg text-[13px] leading-relaxed text-white/60">
-              {d.tagline}
+              {ts(locale, `services.${slug}.detail_tagline`)}
             </p>
           </div>
         </div>
@@ -151,21 +141,21 @@ export default async function PrestationServicePage({
           {/* Texte */}
           <div>
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
-              Notre approche
+              {ts(locale, "prestations.detail_approach_eyebrow")}
             </span>
             <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
-              {d.title}
+              {ts(locale, `services.${slug}.title`)}
             </h2>
             <div className="mt-4 h-px w-8 bg-gold/40" aria-hidden />
             <p className="mt-6 text-[15px] leading-relaxed text-navy/75 md:text-[17px]">
-              {ctx.intro}
+              {ts(locale, `services.${slug}.intro`)}
             </p>
           </div>
           {/* Image */}
           <div className="relative aspect-[4/3] w-full overflow-hidden">
             <Image
               src={d.images.sectionIntro}
-              alt={d.images.sectionIntroAlt}
+              alt={ts(locale, `services.${slug}.image_intro_alt`)}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -182,7 +172,7 @@ export default async function PrestationServicePage({
             <div className="relative aspect-[4/3] w-full overflow-hidden">
               <Image
                 src={d.images.sectionDetails}
-                alt={d.images.sectionDetailsAlt}
+                alt={ts(locale, `services.${slug}.image_details_alt`)}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -192,14 +182,14 @@ export default async function PrestationServicePage({
           {/* Texte */}
           <div className="lg:order-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/60">
-              Comment nous travaillons
+              {ts(locale, "prestations.detail_how_eyebrow")}
             </span>
             <h2 className="mt-4 font-display text-3xl font-normal leading-[1.08] text-navy md:text-4xl">
-              Ce que nous incluons
+              {ts(locale, "prestations.detail_included_title")}
             </h2>
             <div className="mt-4 h-px w-8 bg-gold/40" aria-hidden />
             <div className="mt-8 space-y-6 text-[13px] leading-relaxed text-navy/80">
-              {d.items.map(({ title: iTitle, desc }) => (
+              {items.map(({ title: iTitle, desc }) => (
                 <div key={iTitle} className="flex items-start gap-3">
                   <KayvilaPngIcon name="check-circle" size={20} alt="" className="mt-[1px] shrink-0" />
                   <div>
@@ -224,8 +214,7 @@ export default async function PrestationServicePage({
         <div className="mx-auto max-w-2xl text-center">
           <div className="mx-auto mb-6 h-px w-8 bg-gold/40" aria-hidden />
           <p className="text-[13px] leading-relaxed text-navy/80">
-            Prêt à passer à l&apos;étape suivante ? Recevez une estimation gratuite de votre villa
-            et découvrez ce que Kayvila peut apporter à votre patrimoine.
+            {ts(locale, "prestations.detail_cta_text")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -233,32 +222,30 @@ export default async function PrestationServicePage({
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
-              Tous les piliers
+              {ts(locale, "prestations.detail_all_pillars")}
             </Link>
             {(() => {
               const currentIdx = SERVICE_SLUGS.indexOf(slug as ServiceSlug);
               const prevIdx = currentIdx > 0 ? currentIdx - 1 : -1;
               const nextIdx = (currentIdx + 1) % SERVICE_SLUGS.length;
               const prevSlug = prevIdx >= 0 ? SERVICE_SLUGS[prevIdx] : null;
-              const prev = prevSlug ? SERVICE_DETAILS[prevSlug as ServiceSlug] : null;
               const nextSlug = SERVICE_SLUGS[nextIdx];
-              const next = SERVICE_DETAILS[nextSlug as ServiceSlug];
               const isLoop = nextIdx === 0;
               return (
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  {prev && (
+                  {prevSlug && (
                     <Link
                       href={`/prestations/services/${prevSlug}`}
                       className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                     >
-                      <KayvilaPngIcon name="arrow-right" size={18} alt="" className="rotate-180" /> Pilier précédent : {prev.title}
+                      <KayvilaPngIcon name="arrow-right" size={18} alt="" className="rotate-180" /> {ts(locale, "prestations.detail_prev_pillar")} {ts(locale, `services.${prevSlug}.title`)}
                     </Link>
                   )}
                   <Link
                     href={`/prestations/services/${nextSlug}`}
                     className="inline-flex min-h-[48px] items-center gap-2 border border-navy/25 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
                   >
-                    {isLoop ? "Retour au pilier 1 :" : "Pilier suivant :"} {next.title} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+                    {isLoop ? ts(locale, "prestations.detail_back_to_first") : ts(locale, "prestations.detail_next_pillar")} {ts(locale, `services.${nextSlug}.title`)} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                   </Link>
                 </div>
               );
@@ -267,7 +254,7 @@ export default async function PrestationServicePage({
               href="/soumettre-ma-villa"
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-6 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
-              Confier ma villa <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+              {ts(locale, "nav.submit_villa")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
             </Link>
           </div>
         </div>
