@@ -25,6 +25,7 @@ import {
   Skeleton,
   linkAsButtonClasses,
 } from "@/components/espace-client/tenant-ui";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function getNights(start: string, end: string) {
   return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86400000);
@@ -52,20 +53,24 @@ function DetailSkeleton() {
   );
 }
 
-function statusChipProps(status: string): { color: "success" | "warning" | "danger" | "default"; label: string } {
+function statusChipProps(
+  status: string,
+  t: (key: string) => string
+): { color: "success" | "warning" | "danger" | "default"; label: string } {
   switch (status) {
     case "confirmed":
-      return { color: "success", label: "Confirmée" };
+      return { color: "success", label: t("client.reservation_detail_status_confirmed") };
     case "pending":
-      return { color: "warning", label: "En attente" };
+      return { color: "warning", label: t("client.reservation_detail_status_pending") };
     case "cancelled":
-      return { color: "danger", label: "Annulée" };
+      return { color: "danger", label: t("client.reservation_detail_status_cancelled") };
     default:
       return { color: "default", label: status };
   }
 }
 
 export default function ReservationDetailPage() {
+  const { t } = useLocale();
   const params = useParams();
   const router = useRouter();
   const supabase = getSupabaseBrowser();
@@ -95,12 +100,12 @@ export default function ReservationDetailPage() {
 
       const booking = bookingRaw as any;
       if (bookingError || !booking) {
-        setError("Réservation introuvable.");
+        setError(t("client.reservation_detail_not_found"));
         setLoading(false);
         return;
       }
       if (!bookingBelongsToTenant(booking, session.user)) {
-        setError("Accès non autorisé.");
+        setError(t("client.reservation_detail_unauthorized"));
         setLoading(false);
         return;
       }
@@ -117,7 +122,7 @@ export default function ReservationDetailPage() {
       setData({ booking, villa });
       setLoading(false);
     })();
-  }, [supabase, params?.id, router]);
+  }, [supabase, params?.id, router, t]);
 
   if (loading) return <DetailSkeleton />;
 
@@ -125,15 +130,15 @@ export default function ReservationDetailPage() {
     return (
       <div className="mx-auto max-w-lg space-y-6 py-10">
         <Alert status="danger" className="rounded-none border-red-200">
-          <AlertTitle>Impossible d&apos;afficher la réservation</AlertTitle>
-          <AlertDescription>{error ?? "Erreur inattendue."}</AlertDescription>
+          <AlertTitle>{t("client.reservation_detail_error_title")}</AlertTitle>
+          <AlertDescription>{error ?? t("client.reservation_detail_unexpected_error")}</AlertDescription>
         </Alert>
         <div className="text-center">
           <Link
             href="/espace-client"
             className="text-[10px] font-bold uppercase tracking-widest text-gold transition-colors hover:text-navy"
           >
-            ← Retour aux réservations
+            {t("client.reservation_detail_back_to_bookings")}
           </Link>
         </div>
       </div>
@@ -143,7 +148,7 @@ export default function ReservationDetailPage() {
   const { booking, villa } = data;
   const nights = getNights(booking.start_date, booking.end_date);
   const isConfirmed = booking.status === "confirmed";
-  const chipStatus = statusChipProps(booking.status);
+  const chipStatus = statusChipProps(booking.status, t);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -164,11 +169,11 @@ export default function ReservationDetailPage() {
         body: JSON.stringify({ bookingId: booking.id }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Erreur inconnue");
+      if (!res.ok) throw new Error(json.error ?? t("client.reservation_detail_cancel_error_fallback"));
       setData((prev) => prev ? { ...prev, booking: { ...prev.booking, status: "cancelled" } } : prev);
       setCancelStep("done");
     } catch (err) {
-      setCancelError(err instanceof Error ? err.message : "Erreur inconnue");
+      setCancelError(err instanceof Error ? err.message : t("client.reservation_detail_cancel_error_fallback"));
       setCancelStep("confirm");
     }
   }
@@ -178,8 +183,8 @@ export default function ReservationDetailPage() {
       <BreadcrumbsRow
         className="text-[10px] uppercase tracking-[0.2em] text-navy/55"
         items={[
-          { href: "/espace-client", label: "Espace client" },
-          { label: "Livret séjour" },
+          { href: "/espace-client", label: t("nav.client_space") },
+          { label: t("client.reservation_detail_breadcrumb") },
         ]}
       />
 
@@ -192,7 +197,7 @@ export default function ReservationDetailPage() {
         )}
       >
         <ArrowLeft size={13} strokeWidth={1.5} />
-        Mes réservations
+        {t("client.reservation_detail_back_link")}
       </Link>
 
       <span className="block h-px w-10 bg-gold/50" />
@@ -202,7 +207,7 @@ export default function ReservationDetailPage() {
         <CardHeader className="px-6 pb-4 pt-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <CardTitle className="font-display text-xl font-normal text-navy">
-              {villa?.name ?? "Votre séjour"}
+              {villa?.name ?? t("client.reservation_detail_stay_fallback")}
             </CardTitle>
             <div className="flex flex-wrap items-center gap-2">
               <Chip color={chipStatus.color} className="uppercase">
@@ -225,7 +230,7 @@ export default function ReservationDetailPage() {
             <div className="flex items-start gap-3">
               <KayvilaPngIcon name="calendar" size={18} alt="" className="mt-0.5 shrink-0" />
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Dates</p>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">{t("client.reservation_detail_dates_label")}</p>
                 <p className="text-navy">
                   {new Date(booking.start_date).toLocaleDateString("fr-FR", {
                     day: "numeric",
@@ -242,7 +247,7 @@ export default function ReservationDetailPage() {
                   })}
                 </p>
                 <p className="mt-0.5 text-xs text-navy/30">
-                  {nights} nuit{nights > 1 ? "s" : ""}
+                  {nights} {nights > 1 ? t("common.nights_plural") : t("common.nights")}
                 </p>
               </div>
             </div>
@@ -252,9 +257,9 @@ export default function ReservationDetailPage() {
               <div className="flex items-start gap-3">
                 <KayvilaPngIcon name="location" size={18} alt="" className="mt-0.5 shrink-0" />
                 <div>
-                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">Lieu</p>
+                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-navy/30">{t("client.reservation_detail_location_label")}</p>
                   <p className="text-navy break-words">{villa.location}</p>
-                  <p className="text-xs text-navy/55">Martinique</p>
+                  <p className="text-xs text-navy/55">{t("client.reservation_detail_martinique")}</p>
                 </div>
               </div>
             )}
@@ -263,7 +268,7 @@ export default function ReservationDetailPage() {
           {isConfirmed ? (
             <div className="mt-6 border-t border-navy/8 pt-5">
               <AddToCalendar
-                villaName={villa?.name ?? "Villa Kayvila"}
+                villaName={villa?.name ?? t("client.dashboard_villa_fallback")}
                 startDate={booking.start_date}
                 endDate={booking.end_date}
                 address={villa?.location ?? undefined}
@@ -279,7 +284,7 @@ export default function ReservationDetailPage() {
         <Card className="rounded-none border border-navy/8 bg-white shadow-none">
           <CardContent className="p-6 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/25">
-              Livret d&apos;accueil disponible une fois la réservation confirmée
+              {t("client.reservation_detail_welcome_book_pending")}
             </p>
           </CardContent>
         </Card>
@@ -291,13 +296,13 @@ export default function ReservationDetailPage() {
           <CardContent className="p-5 space-y-4">
             {cancelStep === "idle" && (
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-navy/80">Vous souhaitez annuler cette réservation ?</p>
+                <p className="text-sm text-navy/80">{t("client.reservation_detail_cancel_prompt")}</p>
                 <button
                   type="button"
                   onClick={() => setCancelStep("confirm")}
                   className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-red-600 transition-colors hover:text-red-800"
                 >
-                  Annuler ma réservation →
+                  {t("client.reservation_detail_cancel_cta")}
                 </button>
               </div>
             )}
@@ -307,20 +312,20 @@ export default function ReservationDetailPage() {
                 <div className="flex items-start gap-3">
                   <AlertTriangle size={16} className="mt-0.5 shrink-0 text-red-500" />
                   <div className="space-y-1">
-                    <p className="text-sm font-semibold text-navy">Confirmer l&apos;annulation</p>
+                    <p className="text-sm font-semibold text-navy">{t("client.reservation_detail_cancel_confirm_title")}</p>
                     <p className="text-xs text-navy/80">
-                      Cette action est irréversible. Votre réservation sera marquée comme annulée.
+                      {t("client.reservation_detail_cancel_confirm_desc")}
                     </p>
                     {refundCents !== null ? (
                       <p className="text-xs text-navy/70">
-                        Remboursement estimé selon notre politique Kayvila :{" "}
+                        {t("client.reservation_detail_refund_estimate")}{" "}
                         <span className="font-semibold text-navy">
-                          {refundCents > 0 ? formatCurrency(refundCents) : "Aucun remboursement"}
+                          {refundCents > 0 ? formatCurrency(refundCents) : t("client.reservation_detail_refund_none")}
                         </span>
                         {refundCents > 0 && totalCents > 0 ? (
                           <span className="text-navy/50">
                             {" "}
-                            ({Math.round((refundCents / totalCents) * 100)} % du montant payé)
+                            ({Math.round((refundCents / totalCents) * 100)}{t("client.reservation_detail_refund_percent_of_paid")})
                           </span>
                         ) : null}
                       </p>
@@ -341,7 +346,7 @@ export default function ReservationDetailPage() {
                     disabled={cancelStep === "loading"}
                     className="inline-flex items-center gap-2 border border-red-500 bg-red-500 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-red-600 disabled:opacity-50"
                   >
-                    {cancelStep === "loading" ? "Annulation…" : "Oui, annuler"}
+                    {cancelStep === "loading" ? t("client.reservation_detail_cancel_loading") : t("client.reservation_detail_cancel_confirm_yes")}
                   </button>
                   <button
                     type="button"
@@ -349,7 +354,7 @@ export default function ReservationDetailPage() {
                     disabled={cancelStep === "loading"}
                     className="inline-flex items-center gap-2 border border-navy/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy/80 transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
                   >
-                    Conserver
+                    {t("client.reservation_detail_cancel_keep")}
                   </button>
                 </div>
               </div>
@@ -360,21 +365,21 @@ export default function ReservationDetailPage() {
 
       {cancelStep === "done" && (
         <Alert status="success" className="rounded-none">
-          <AlertTitle>Réservation annulée</AlertTitle>
+          <AlertTitle>{t("client.reservation_detail_cancelled_title")}</AlertTitle>
           <AlertDescription>
-            Votre réservation a bien été annulée. Contactez-nous pour toute question sur le remboursement.
+            {t("client.reservation_detail_cancelled_desc")}
           </AlertDescription>
         </Alert>
       )}
 
       <Card className="rounded-none border border-gold/15 bg-gold/[0.03] shadow-none">
         <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-navy/80">Un problème ou une question sur votre séjour ?</p>
+          <p className="text-sm text-navy/80">{t("client.sav_prompt")}</p>
           <Link
             href="/espace-client/messagerie"
             className="shrink-0 text-[10px] font-bold uppercase tracking-[0.25em] text-gold no-underline transition-colors hover:text-navy"
           >
-            Contacter le SAV →
+            {t("client.contact_sav")} →
           </Link>
         </CardContent>
       </Card>
