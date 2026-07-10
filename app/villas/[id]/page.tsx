@@ -691,7 +691,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       >
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs text-navy/50">{ts(locale, "villa.from_price")}</p>
+            <p className="text-xs text-navy/50">{ts(locale, "common.from")}</p>
             <p className="text-base font-semibold text-navy">
               {fp(villa!.price)}
               <span className="text-xs font-normal text-navy/50"> {ts(locale, "common.per_night")}</span>

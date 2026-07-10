@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Share2, Heart, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function getShareUrl(villaId: string) {
   if (typeof window !== "undefined") {
@@ -12,6 +13,7 @@ function getShareUrl(villaId: string) {
 }
 
 export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; villaId: string }) => {
+  const { t } = useLocale();
   const { isFav, toggle } = useWishlist();
   const saved = isFav(villaId);
   const [shareOpen, setShareOpen] = useState(false);
@@ -47,7 +49,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
           className="flex items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white"
         >
           <Share2 size={12} strokeWidth={2} />
-          Partager
+          {t("common.share")}
         </button>
 
         {shareOpen && (
@@ -113,12 +115,12 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
               className="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-colors hover:bg-navy hover:text-white w-full text-left"
             >
               <Copy size={14} strokeWidth={2} />
-              Copier le lien
+              {t("villa.copy_link")}
             </button>
 
             {showCopied && (
               <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-green-600 bg-green-50">
-                Lien copié
+                {t("villa.link_copied")}
               </div>
             )}
           </div>
@@ -128,7 +130,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
       {/* Favoris */}
       <button
         onClick={() => toggle(villaId)}
-        aria-label={saved ? "Retirer des favoris" : "Ajouter aux favoris"}
+        aria-label={saved ? t("villa.remove_favorite") : t("villa.add_favorite")}
         className="flex items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white"
       >
         <Heart
@@ -136,13 +138,14 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
           strokeWidth={2}
           className={saved ? "fill-red-500 text-red-500" : ""}
         />
-        {saved ? "Enregistré" : "Enregistrer"}
+        {saved ? t("common.saved") : t("common.save")}
       </button>
     </div>
   );
 };
 
 export const ExpandableDescription = ({ text }: { text: string }) => {
+  const { t } = useLocale();
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = text.length > 300;
   const displayText = isExpanded ? text : text.slice(0, 300) + (shouldTruncate ? "…" : "");
@@ -155,7 +158,7 @@ export const ExpandableDescription = ({ text }: { text: string }) => {
           onClick={() => setIsExpanded((v) => !v)}
           className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy underline underline-offset-4 transition-colors hover:text-gold"
         >
-          {isExpanded ? "Afficher moins" : "En savoir plus"}
+          {isExpanded ? t("common.show_less") : t("common.show_more")}
           {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
         </button>
       )}
