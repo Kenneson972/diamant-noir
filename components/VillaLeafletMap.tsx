@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import type { LatLngBounds } from "leaflet";
 import { pickVillaImageUrl } from "@/lib/villa-image";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export type VillaMapItem = {
   id: string;
@@ -50,6 +51,7 @@ function makeHouseIcon(L: any, active: boolean) {
 }
 
 export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, onBoundsChange }: Props) {
+  const { t } = useLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
@@ -112,7 +114,7 @@ export default function VillaLeafletMap({ villas, hoveredId, onHover, onSelect, 
             <div class="dn-popup__body">
               <p class="dn-popup__name">${villa.name}</p>
               <p class="dn-popup__loc">${villa.location || ""}</p>
-              <p class="dn-popup__price">${villa.price.toLocaleString("fr-FR")} € <span>/ nuit</span></p>
+              <p class="dn-popup__price">${villa.price.toLocaleString("fr-FR")} € <span>${t("common.per_night")}</span></p>
             </div>
           </div>
         `;

@@ -358,9 +358,9 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
       {/* ── Breadcrumb ── */}
       <div className="mx-auto max-w-7xl px-6 pt-10 pb-0">
-        <nav aria-label="Fil d'Ariane" className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]">
+        <nav aria-label={ts(locale, "villa.breadcrumb")} className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]">
           <Link href="/villas" className="min-h-[44px] flex items-center text-navy/55 hover:text-gold transition-colors duration-300">
-            Toutes nos villas
+            {ts(locale, "villa.all_villas")}
           </Link>
           <span className="text-navy/20" aria-hidden="true">→</span>
           <span className="text-navy/50 min-h-[44px] flex items-center">{villa.name}</span>
@@ -382,11 +382,11 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <WishlistButton villaId={villa.id} className="relative opacity-100" />
             </h1>
             <div className="flex items-center gap-3 mt-4 text-sm text-navy/80 font-medium">
-              <span>{villa.capacity} voyageurs</span>
+              <span>{villa.capacity} {ts(locale, "villas.travelers")}</span>
               <span>·</span>
-              <span>{villa.rooms?.length ? `${villa.rooms.length} chambres` : "Chambres sur demande"}</span>
+              <span>{villa.rooms?.length ? `${villa.rooms.length} ${ts(locale, "villa.bedroom_count")}` : ts(locale, "villa.bedrooms_on_request")}</span>
               <span>·</span>
-              <span>{villa.bathrooms_count || villa.rooms?.length || 4} salles de bain</span>
+              <span>{villa.bathrooms_count || villa.rooms?.length || 4} {ts(locale, "villa.bathroom_count")}</span>
               <span>·</span>
               <span>{villa.surface_m2 || 250} m²</span>
             </div>
@@ -417,12 +417,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               <h2 className="font-display font-normal text-2xl text-navy mb-8">{ts(locale, "villa.experience")}</h2>
               <div className="grid sm:grid-cols-2 gap-px bg-navy/8">
                 {[
-                  { num: "01", title: "Concierge dédié", desc: "Un interlocuteur unique avant et pendant votre séjour pour orchestrer chaque détail." },
-                  { num: "02", title: "Accueil personnalisé", desc: "Remise des clés en main propre, visite guidée de la villa et conseils locaux par notre équipe." },
-                  { num: "03", title: "Équipe 7j/7", desc: "Réactive et joignable à tout moment — un message, une question, nous sommes là." },
-                  { num: "04", title: "Services à la carte", desc: (villa.a_la_carte_services && villa.a_la_carte_services.length > 0
-    ? villa.a_la_carte_services.join(", ") + " — composez votre séjour sur mesure."
-    : "Chef à domicile, bateau, massage, transfert VIP — composez votre séjour sur mesure.") },
+                  { num: "01", title: ts(locale, "villa.exp_concierge_title"), desc: ts(locale, "villa.exp_concierge_desc") },
+                  { num: "02", title: ts(locale, "villa.exp_welcome_title"), desc: ts(locale, "villa.exp_welcome_desc") },
+                  { num: "03", title: ts(locale, "villa.exp_team_title"), desc: ts(locale, "villa.exp_team_desc") },
+                  { num: "04", title: ts(locale, "villa.exp_services_title"), desc: (villa.a_la_carte_services && villa.a_la_carte_services.length > 0
+    ? villa.a_la_carte_services.join(", ") + " — " + ts(locale, "villa.exp_services_desc_suffix")
+    : ts(locale, "villa.exp_services_desc_fallback")) },
                 ].map((item) => (
                   <div key={item.num} className="bg-white p-8 flex gap-5">
                     <span className="text-3xl font-light text-gold/25 tabular-nums shrink-0">{item.num}</span>
@@ -435,7 +435,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
               </div>
               {villa.a_la_carte_services && villa.a_la_carte_services.length > 0 ? (
                 <div className="mt-8 border-t border-navy/8 pt-8">
-                  <h3 className="font-sora text-lg text-navy mb-4">Services à la carte</h3>
+                  <h3 className="font-sora text-lg text-navy mb-4">{ts(locale, "villa.services_carte")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {villa.a_la_carte_services.map((service) => (
                       <div key={service} className="flex items-center gap-2 text-navy/70">
@@ -447,14 +447,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
               ) : (
                 <p className="mt-8 text-sm text-navy/80 border-t border-navy/8 pt-8">
-                  Services disponibles sur demande. Contactez notre conciergerie.
+                  {ts(locale, "villa.services_carte_fallback")}
                 </p>
               )}
             </section>
 
             {/* 2. Description */}
             <section className="pt-10 border-t border-navy/10">
-              <ExpandableDescription text={villa.description || "Description à venir pour cette villa."} />
+              <ExpandableDescription text={villa.description || ts(locale, "villa.description_fallback")} />
             </section>
 
             {/* 3. Découvrez les chambres */}
@@ -470,10 +470,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                       <div className="sm:w-2/3 space-y-2">
                         <p className="text-navy/70 text-sm flex items-center gap-2">
                           <KayvilaPngIcon name="bed" size={20} alt="" />
-                          {room.description || "1 Lit double King Size"}
+                          {room.description || ts(locale, "villa.room_bed_fallback")}
                         </p>
                         <p className="text-navy/50 text-sm flex items-center gap-2">
-                          <KayvilaPngIcon name="ac" size={20} alt="" /> Climatisation
+                          <KayvilaPngIcon name="ac" size={20} alt="" /> {ts(locale, "villa.room_ac")}
                         </p>
                       </div>
                     </div>
@@ -500,10 +500,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <h2 className="font-display font-normal text-2xl text-navy">{ts(locale, "villa.availability")}</h2>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="rounded-none border border-gold/40 bg-gold/10 px-3 py-1 font-semibold text-navy">
-                    Arrivée: {villa.check_in_time || "17:00"}
+                    {ts(locale, "villa.checkin")}: {villa.check_in_time || "17:00"}
                   </span>
                   <span className="rounded-none border border-navy/20 bg-offwhite px-3 py-1 font-semibold text-navy/80">
-                    Départ: {villa.check_out_time || "10:00"}
+                    {ts(locale, "villa.checkout")}: {villa.check_out_time || "10:00"}
                   </span>
                 </div>
               </div>
@@ -519,15 +519,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <h2 className="font-display font-normal text-2xl text-navy mb-6">{ts(locale, "villa.surroundings")}</h2>
                 <div className="mb-6 grid gap-6 sm:grid-cols-2">
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">Environnement</p>
-                    <p className="text-sm text-navy/70">{villa.environment || "En dehors de la ville"}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">{ts(locale, "villa.environment_label")}</p>
+                    <p className="text-sm text-navy/70">{villa.environment || ts(locale, "villa.environment_fallback")}</p>
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">À proximité</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 mb-2">{ts(locale, "villa.nearby")}</p>
                     <div className="flex flex-wrap gap-2">
                       {(villa.nearby_points?.length
                         ? villa.nearby_points
-                        : ["Plage", "Restaurants et bars", "Commerces"]).map((point, index) => (
+                        : [ts(locale, "villa.nearby_beach"), ts(locale, "villa.nearby_restaurants"), ts(locale, "villa.nearby_shops")]).map((point, index) => (
                         <span key={`near-${index}`} className="rounded-none border border-navy/10 px-3 py-1 text-xs text-navy/70">
                           {point}
                         </span>
@@ -538,12 +538,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div className="relative overflow-hidden border border-navy/10 aspect-[16/7] bg-navy/5 group">
                   <div className="absolute top-3 left-3 z-10">
                     <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-navy/55 bg-white/80 px-3 py-1">
-                      Carte interactive
+                      {ts(locale, "villa.interactive_map")}
                     </span>
                   </div>
                   <iframe
                     src={villa.map_embed_url || `https://www.google.com/maps?q=${villa.latitude},${villa.longitude}&z=15&output=embed`}
-                    title="Carte"
+                    title={ts(locale, "villa.map")}
                     className="w-full h-full grayscale-[0.3] contrast-[1.05] transition-all duration-300 group-hover:grayscale-0"
                     allowFullScreen
                     loading="lazy"
@@ -556,7 +556,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     className="absolute inset-0 flex items-center justify-center bg-navy/0 group-hover:bg-navy/10 transition-all duration-300"
                   >
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 border border-navy/15 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-navy">
-                      Ouvrir dans Google Maps
+                      {ts(locale, "villa.open_google_maps")}
                     </span>
                   </a>
                 </div>
@@ -584,15 +584,15 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 </div>
                 <div>
                   <h3 className="font-display text-xl text-navy mb-1">{ts(locale, "villa.team")}</h3>
-                  <p className="text-[11px] text-navy/55 mb-3">Conciergerie · Martinique</p>
+                  <p className="text-[11px] text-navy/55 mb-3">{ts(locale, "villa.concierge_location")}</p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Avis</span><span className="font-semibold text-navy">98% satisfaits</span></div>
-                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Réponse</span><span className="font-semibold text-navy">&lt; 2 heures</span></div>
-                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Expérience</span><span className="font-semibold text-navy">8+ ans</span></div>
-                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">Langues</span><span className="font-semibold text-navy">FR · EN · ES</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">{ts(locale, "villa.stat_reviews")}</span><span className="font-semibold text-navy">{ts(locale, "villa.stat_satisfied")}</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">{ts(locale, "villa.stat_response")}</span><span className="font-semibold text-navy">{ts(locale, "villa.stat_response_value")}</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">{ts(locale, "villa.stat_experience")}</span><span className="font-semibold text-navy">{ts(locale, "villa.stat_experience_value")}</span></div>
+                    <div><span className="block text-navy/55 text-[11px] uppercase tracking-wide">{ts(locale, "villa.stat_languages")}</span><span className="font-semibold text-navy">FR · EN · ES</span></div>
                   </div>
                   <p className="mt-4 text-sm text-navy/80 leading-relaxed">
-                    Une équipe dédiée, locale et passionnée. Nous connaissons chaque villa, chaque quartier, chaque restaurant — pour vous offrir un séjour fluide, sans surprise, avec la chaleur martiniquaise.
+                    {ts(locale, "villa.team_desc")}
                   </p>
                 </div>
               </div>
@@ -604,14 +604,14 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                 <div>
                   <h3 className="font-display text-2xl text-navy">{ts(locale, "villa.questions", { name: villa.name })}</h3>
                   <p className="text-sm text-navy/80 mt-2">
-                    Planifiez un appel avec notre équipe pour préparer un séjour entièrement sur mesure.
+                    {ts(locale, "villa.questions_desc")}
                   </p>
                 </div>
                 <Link
                   href="/contact"
                   className="inline-flex items-center justify-center rounded-none border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-navy hover:border-navy transition-colors"
                 >
-                  Vivre l&apos;expérience Kayvila
+                  {ts(locale, "villa.live_experience")}
                 </Link>
               </div>
             </section>
@@ -675,7 +675,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
                     <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-navy/55">{item.location || "Martinique"}</p>
                     <p className="font-display text-xl text-navy">{item.name}</p>
                     <p className="text-sm text-navy/80">
-                      {item.capacity || 0} voyageurs · <PriceDisplay amount={item.price_per_night} /> / nuit
+                      {item.capacity || 0} {ts(locale, "villas.travelers")} · <PriceDisplay amount={item.price_per_night} /> {ts(locale, "common.per_night")}
                     </p>
                   </div>
                 </Link>
@@ -691,13 +691,13 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
       >
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs text-navy/50">À partir de</p>
+            <p className="text-xs text-navy/50">{ts(locale, "villa.from_price")}</p>
             <p className="text-base font-semibold text-navy">
               {fp(villa!.price)}
-              <span className="text-xs font-normal text-navy/50"> / nuit</span>
+              <span className="text-xs font-normal text-navy/50"> {ts(locale, "common.per_night")}</span>
             </p>
           </div>
-          <BookingBottomSheet trigger="Réserver" ariaLabel="Réserver votre séjour">
+          <BookingBottomSheet trigger={ts(locale, "common.book_now")} ariaLabel={ts(locale, "villa.book_your_stay")}>
             <ConnectedMobileBookingForm
               villaId={villa.id}
               basePrice={villa.price}
@@ -716,12 +716,12 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
         <div className="mx-auto max-w-xl space-y-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-gold">Kayvila</p>
           <h3 className="font-display text-4xl text-navy">{ts(locale, "villa.cta_ready")}</h3>
-          <p className="text-navy/60 leading-relaxed">Contactez notre équipe de conciergerie pour organiser votre séjour.</p>
+          <p className="text-navy/60 leading-relaxed">{ts(locale, "villa.contact_concierge")}</p>
           <Link
             href="/contact"
             className="inline-block rounded-none border border-transparent bg-navy px-10 py-4 text-[11px] font-bold uppercase tracking-[0.3em] text-white hover:bg-gold hover:text-navy transition-all duration-300"
           >
-            Contacter la conciergerie
+            {ts(locale, "villa.contact_cta")}
           </Link>
         </div>
       </div>

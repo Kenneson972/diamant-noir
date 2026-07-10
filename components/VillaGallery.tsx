@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
 import { KayvilaCarousel } from "@/components/ui/pro";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type VillaGalleryProps = {
   images: string[];
@@ -11,6 +12,7 @@ type VillaGalleryProps = {
 };
 
 export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => {
+  const { t } = useLocale();
   const galleryImages = images.filter(Boolean);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -71,7 +73,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
             className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy shadow-lg backdrop-blur-sm tap-target"
           >
             <Images size={14} />
-            {galleryImages.length} photos
+            {galleryImages.length} {t("villa.gallery_photos_count")}
           </button>
         </div>
 
@@ -123,7 +125,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
           className="hidden md:flex absolute bottom-6 right-6 items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy shadow-lg hover:bg-white transition-colors border border-navy/10"
         >
           <Images size={14} />
-          Toutes les photos
+          {t("villa.gallery_show_all")}
         </button>
       </div>
 
@@ -132,7 +134,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={`Galerie photos — ${title}`}
+          aria-label={t("villa.gallery_label").replace("{{title}}", title)}
           className="fixed inset-0 z-[1100] bg-navy/95 backdrop-blur-xl flex flex-col modal-enter"
         >
           {/* Header */}
@@ -145,7 +147,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               ref={closeBtnRef}
               onClick={close}
               className="tap-target rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-              aria-label="Fermer"
+              aria-label={t("villa.gallery_close")}
             >
               <X size={20} />
             </button>
@@ -157,7 +159,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               <button
                 onClick={showPrev}
                 className="tap-target absolute left-4 md:left-6 z-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-                aria-label="Précédent"
+                aria-label={t("villa.gallery_prev")}
               >
                 <ChevronLeft size={24} />
               </button>
@@ -178,7 +180,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               <button
                 onClick={showNext}
                 className="tap-target absolute right-4 md:right-6 z-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-                aria-label="Suivant"
+                aria-label={t("villa.gallery_next")}
               >
                 <ChevronRight size={24} />
               </button>

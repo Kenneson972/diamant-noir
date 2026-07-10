@@ -9,6 +9,7 @@ import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { useCompare } from "@/contexts/CompareContext";
 import { KayvilaEmptyState, KayvilaNumberValue } from "@/components/ui/pro";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type CompareVilla = {
   id: string;
@@ -23,6 +24,7 @@ type CompareVilla = {
 };
 
 export default function ComparePage() {
+  const { t } = useLocale();
   const searchParams = useSearchParams();
   const { items, remove } = useCompare();
   const [villas, setVillas] = useState<CompareVilla[]>([]);
@@ -62,9 +64,9 @@ export default function ComparePage() {
       <main className="mx-auto max-w-6xl px-6 py-16">
         <KayvilaEmptyState
           icon={<Scale size={24} strokeWidth={1.5} />}
-          title="Aucune villa à comparer"
-          description="Ajoutez jusqu'à 3 villas depuis la page de recherche."
-          actionLabel="Voir les villas"
+          title={t("villas.compare_empty_title")}
+          description={t("villas.compare_empty_desc")}
+          actionLabel={t("villas.compare_empty_cta")}
           actionHref="/villas"
         />
       </main>
@@ -73,11 +75,13 @@ export default function ComparePage() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12 pb-24">
-      <h1 className="font-display text-3xl text-navy mb-2">Comparer les villas</h1>
-      <p className="text-sm text-navy/60 mb-8">{villas.length} villa{villas.length > 1 ? "s" : ""} sélectionnée{villas.length > 1 ? "s" : ""}</p>
+      <h1 className="font-display text-3xl text-navy mb-2">{t("villas.compare_title")}</h1>
+      <p className="text-sm text-navy/60 mb-8">
+        {villas.length} {villas.length > 1 ? t("villas.compare_selected_plural") : t("villas.compare_selected")}
+      </p>
 
       {loading ? (
-        <p className="text-sm text-navy/60">Chargement…</p>
+        <p className="text-sm text-navy/60">{t("common.loading")}</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {villas.map((villa) => {
@@ -88,7 +92,7 @@ export default function ComparePage() {
                   type="button"
                   onClick={() => remove(villa.id)}
                   className="absolute right-4 top-4 text-navy/60 transition-colors hover:text-red-500"
-                  aria-label={`Retirer ${villa.name}`}
+                  aria-label={t("villas.compare_remove").replace("{{name}}", villa.name)}
                 >
                   <X size={16} strokeWidth={1.5} />
                 </button>
@@ -108,7 +112,7 @@ export default function ComparePage() {
                 <div className="mt-4 space-y-2 text-sm text-navy/70">
                   <p className="flex items-center gap-2">
                     <KayvilaPngIcon name="users" size={18} alt="" className="text-gold shrink-0" />
-                    {villa.capacity ?? "—"} voyageurs
+                    {villa.capacity ?? "—"} {t("villas.traveler")}
                   </p>
                   <p className="flex items-center gap-2">
                     <Maximize2 size={16} strokeWidth={1.5} className="text-gold shrink-0" />
@@ -116,18 +120,18 @@ export default function ComparePage() {
                   </p>
                   <p className="flex items-center gap-2">
                     <Waves size={16} strokeWidth={1.5} className="text-gold shrink-0" />
-                    {hasPool ? "Piscine" : "Sans piscine"}
+                    {hasPool ? t("villas.filter.pool") : t("villas.compare_no_pool")}
                   </p>
                 </div>
                 <p className="mt-4">
                   <KayvilaNumberValue value={villa.price_per_night} format="currency" className="font-sora font-semibold text-gold" />
-                  <span className="text-sm text-navy/60"> / nuit</span>
+                  <span className="text-sm text-navy/60"> {t("common.per_night")}</span>
                 </p>
                 <Link
                   href={`/villas/${villa.id}`}
                   className="mt-4 inline-block text-[10px] font-bold uppercase tracking-wider text-navy hover:text-gold"
                 >
-                  Voir la fiche →
+                  {t("villas.compare_view_sheet")} →
                 </Link>
               </article>
             );
