@@ -50,24 +50,6 @@ function getCoordFallback(location: string | null): [number, number] {
   return [14.6415, -61.0242]; // Centre Martinique
 }
 
-const FALLBACK_VILLAS: VillaMapItem[] = [
-  {
-    id: "1", name: "Villa Kayvila", location: "Le Diamant, Martinique",
-    price: 1000, image: "/prestations-hero.png", coords: [14.4750, -61.0247],
-    images: ["/prestations-hero.png", "/villa-hero.jpg"], capacity: 6, surface: 280, amenities: ["Piscine", "Vue mer"],
-  },
-  {
-    id: "2", name: "Villa Horizon", location: "Les Anses-d'Arlet, Martinique",
-    price: 1200, image: "/villa-hero.jpg", coords: [14.4917, -61.0650],
-    images: ["/villa-hero.jpg"], capacity: 8, surface: 350, amenities: ["Piscine", "Vue mer", "Plage directe"],
-  },
-  {
-    id: "3", name: "Villa Émeraude", location: "Trois-Îlets, Martinique",
-    price: 900, image: "/notregestion.webp", coords: [14.5361, -61.0261],
-    images: ["/notregestion.webp", "/villa-hero.jpg"], capacity: 4, surface: 200, amenities: ["Piscine"],
-  },
-];
-
 function formatIsoDateFr(d: string) {
   try {
     return new Date(d + "T00:00:00").toLocaleDateString("fr-FR", {
@@ -92,7 +74,7 @@ export default async function VillasListingPage({
   const qCheckout = typeof sp.checkout === "string" ? sp.checkout : "";
   const qGuests = typeof sp.guests === "string" ? sp.guests : "";
   const dateIntent = Boolean(qCheckin && qCheckout);
-  let villas: VillaMapItem[] = FALLBACK_VILLAS;
+  let villas: VillaMapItem[] = [];
 
   try {
     const supabase = await getSupabaseServer();
