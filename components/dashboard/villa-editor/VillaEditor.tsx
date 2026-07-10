@@ -2,6 +2,7 @@
 
 import { useReducer, useEffect, useState, useRef, useCallback, type ReactNode } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { villaFormReducer, createEmptyForm, sectionCompleteness } from "@/lib/villa-editor-state";
 import { sectionsForRole } from "@/lib/villa-editor-sections";
 import type { SectionStatus } from "@/lib/villa-editor-sections";
@@ -259,10 +260,37 @@ export function VillaEditor({
             <option value="iconic">Iconic</option>
           </select>
         </div>
-        <label className="flex min-h-[44px] items-center gap-3">
-          <input type="checkbox" checked={form.is_published} onChange={(e) => handleChange("is_published", e.target.checked)} className="size-5 rounded border-navy/25 text-gold focus:ring-gold" />
-          <span className="text-sm font-medium text-navy">Publiée</span>
-        </label>
+        <div>
+          <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Visibilité côté client</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.is_published}
+            onClick={() => handleChange("is_published", !form.is_published)}
+            className={cn(
+              "flex min-h-[44px] items-center gap-3 rounded-lg border px-4 text-sm font-semibold transition-colors",
+              form.is_published
+                ? "border-gold/40 bg-gold/10 text-gold hover:bg-gold/15"
+                : "border-navy/15 bg-navy/[0.05] text-navy/55 hover:bg-navy/10"
+            )}
+          >
+            <span
+              className={cn(
+                "relative h-5 w-9 shrink-0 rounded-full transition-colors",
+                form.is_published ? "bg-gold" : "bg-navy/20"
+              )}
+              aria-hidden
+            >
+              <span
+                className={cn(
+                  "absolute top-0.5 size-4 rounded-full bg-white shadow transition-transform",
+                  form.is_published ? "translate-x-[18px]" : "translate-x-0.5"
+                )}
+              />
+            </span>
+            {form.is_published ? "Publiée — visible sur le site" : "Masquée — invisible sur le site"}
+          </button>
+        </div>
         <div>
           <label htmlFor="ve-admin-commission" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Commission (%)</label>
           <input id="ve-admin-commission" type="number" inputMode="numeric" min={0} max={100} value={form.commission_rate} onChange={(e) => handleChange("commission_rate", Number(e.target.value))} className="min-h-[44px] w-32 rounded-lg border border-navy/10 bg-white px-4 text-base focus:border-gold/50 focus:outline-none" />
@@ -295,6 +323,23 @@ export function VillaEditor({
         <h2 className="min-w-0 truncate font-display text-xl font-bold text-navy">{form.name || "Villa"}</h2>
         <div className="flex items-center gap-3">
           <AutosaveIndicator status={autoStatus} lastSaved={lastSaved} onRetry={() => { void doSave(); }} />
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => handleChange("is_published", !form.is_published)}
+              aria-pressed={form.is_published}
+              title={form.is_published ? "Cliquer pour masquer cette villa côté client" : "Cliquer pour publier cette villa côté client"}
+              className={cn(
+                "flex min-h-[44px] items-center gap-2 rounded-lg border px-4 text-sm font-semibold transition-colors",
+                form.is_published
+                  ? "border-gold/40 bg-gold/10 text-gold hover:bg-gold/15"
+                  : "border-navy/15 bg-navy/[0.05] text-navy/55 hover:bg-navy/10"
+              )}
+            >
+              <span className={cn("size-2 shrink-0 rounded-full", form.is_published ? "bg-gold" : "bg-navy/30")} aria-hidden />
+              {form.is_published ? "Publiée" : "Masquée"}
+            </button>
+          )}
           <a
             href={`/villas/${villa.id}`}
             target="_blank"
