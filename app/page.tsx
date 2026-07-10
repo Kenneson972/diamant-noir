@@ -38,7 +38,7 @@ async function fetchVillas(): Promise<{
   }
 
   try {
-    const apiUrl = `${url}/rest/v1/villas?select=id,name,price_per_night,location,image_url,image_urls,created_at&order=created_at.desc&limit=9`;
+    const apiUrl = `${url}/rest/v1/villas?select=id,name,price_per_night,location,image_url,image_urls,created_at&is_published=eq.true&order=created_at.desc&limit=9`;
     const res = await fetch(apiUrl, {
       headers: {
         apikey: anonKey,
