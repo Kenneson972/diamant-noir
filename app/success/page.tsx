@@ -11,8 +11,10 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function SuccessContent() {
+  const { t, locale } = useLocale();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const bookingId = searchParams.get("bookingId");
@@ -67,9 +69,7 @@ function SuccessContent() {
                 await sleep(2000);
                 continue;
               }
-              setError(
-                "Paiement reçu — finalisation en cours. Consultez votre email ou votre espace client dans quelques minutes."
-              );
+              setError(t("success.payment_pending"));
               setLoading(false);
               return;
             }
@@ -82,7 +82,7 @@ function SuccessContent() {
             throw new Error("Not found");
           } catch {
             if (attempt >= maxAttempts - 1) {
-              setError("Réservation introuvable.");
+              setError(t("success.booking_not_found"));
               setLoading(false);
               return;
             }
@@ -98,7 +98,7 @@ function SuccessContent() {
         return;
       }
 
-      setError("Paramètres de confirmation manquants.");
+      setError(t("success.missing_params"));
       setLoading(false);
     };
 
@@ -106,7 +106,7 @@ function SuccessContent() {
     return () => {
       cancelled = true;
     };
-  }, [sessionId, bookingId, emailParam]);
+  }, [sessionId, bookingId, emailParam, locale]);
 
   const handleSendMagicLink = async () => {
     if (!guestEmail) return;
@@ -114,7 +114,7 @@ function SuccessContent() {
     setMagicError(null);
     try {
       const supabase = getSupabaseBrowser();
-      if (!supabase) throw new Error("Supabase non disponible");
+      if (!supabase) throw new Error(t("success.supabase_unavailable"));
       const { error } = await supabase.auth.signInWithOtp({
         email: guestEmail,
         options: {
@@ -124,7 +124,7 @@ function SuccessContent() {
       if (error) throw error;
       setMagicLinkSent(true);
     } catch (err) {
-      setMagicError(err instanceof Error ? err.message : "Erreur d'envoi");
+      setMagicError(err instanceof Error ? err.message : t("success.send_error"));
     } finally {
       setMagicLoading(false);
     }
@@ -136,9 +136,9 @@ function SuccessContent() {
         <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center px-6">
           <div className="text-center">
             <div role="status" className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent">
-              <span className="sr-only">Chargement de votre confirmation...</span>
+              <span className="sr-only">{t("success.loading_confirmation")}</span>
             </div>
-            <p className="mt-6 text-sm text-navy/60">Vérification de votre réservation...</p>
+            <p className="mt-6 text-sm text-navy/60">{t("success.checking_booking")}</p>
           </div>
         </div>
       </main>
@@ -152,13 +152,13 @@ function SuccessContent() {
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
             <span className="text-2xl text-red-400">!</span>
           </div>
-          <p className="mb-2 text-lg font-semibold text-navy">Oups</p>
-          <p className="mb-8 text-sm text-navy/80">{error || "Une erreur est survenue."}</p>
+          <p className="mb-2 text-lg font-semibold text-navy">{t("success.oops")}</p>
+          <p className="mb-8 text-sm text-navy/80">{error || t("common.error")}</p>
           <Link
             href="/villas"
             className="inline-flex items-center gap-2 rounded-full bg-navy px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-gold hover:text-navy"
           >
-            Découvrir nos villas
+            {t("home.hero_cta")}
             <KayvilaPngIcon name="arrow-right" size={18} alt="" />
           </Link>
         </div>
@@ -198,12 +198,12 @@ function SuccessContent() {
             <PartyPopper className="h-9 w-9 text-emerald-500" strokeWidth={1.5} size={18} />
           </div>
           <h1 className="font-display text-3xl text-navy sm:text-4xl">
-            Réservation confirmée !
+            {t("success.title")}
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-navy/80">
             {isLoggedIn
-              ? "Votre séjour est enregistré. Retrouvez tous les détails dans votre espace client."
-              : `Un email de confirmation a été envoyé à ${guestEmail || "votre adresse"}.`}
+              ? t("success.stay_saved")
+              : t("success.email_sent").replace("{{email}}", guestEmail || t("success.your_address"))}
           </p>
         </div>
 
@@ -218,7 +218,7 @@ function SuccessContent() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
-                    Villa
+                    {t("success.villa_label")}
                   </p>
                   <h2 className="mt-1 font-display text-xl text-navy">{villa.name}</h2>
                   {villa.location && (
@@ -238,13 +238,13 @@ function SuccessContent() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
-                    Dates du séjour
+                    {t("success.stay_dates")}
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-navy">
-                    Du {startDate} au {endDate}
+                    {t("booking.landing_dates_range").replace("{{checkin}}", startDate ?? "").replace("{{checkout}}", endDate ?? "")}
                   </p>
                   {nights && (
-                    <p className="text-xs text-navy/60">{nights} nuit{nights > 1 ? "s" : ""}</p>
+                    <p className="text-xs text-navy/60">{nights} {nights > 1 ? t("common.nights_plural") : t("common.nights")}</p>
                   )}
                 </div>
               </div>
@@ -257,7 +257,7 @@ function SuccessContent() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
-                    Montant réglé
+                    {t("success.amount_paid")}
                   </p>
                   <p className="mt-0.5 text-sm font-semibold text-navy">
                     {formatCurrency(getBookingPriceCents(booking))}
@@ -277,10 +277,9 @@ function SuccessContent() {
                   <KayvilaPngIcon name="lock" size={20} alt="" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-display text-lg text-navy">Créez votre espace client</h3>
+                  <h3 className="font-display text-lg text-navy">{t("success.create_account_title")}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-navy/80">
-                    Accédez à vos réservations, factures, livret d&apos;accueil et bien plus depuis
-                    votre espace personnel. Un simple lien magique vous suffit.
+                    {t("success.create_account_desc")}
                   </p>
 
                   <div className="mt-5 flex items-center gap-3 rounded-2xl border border-navy/10 bg-white px-4 py-3">
@@ -293,8 +292,7 @@ function SuccessContent() {
                       <div className="flex items-center gap-3">
                         <Check size={16} strokeWidth={1.5} className="shrink-0 text-emerald-500" />
                         <p className="text-sm text-emerald-700">
-                          Lien magique envoyé ! Vérifiez votre boîte de réception (et vos
-                          spams). Le lien expire dans 1 heure.
+                          {t("success.magic_link_sent")}
                         </p>
                       </div>
                     </div>
@@ -310,14 +308,14 @@ function SuccessContent() {
                             role="status"
                             className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
                           >
-                            <span className="sr-only">Envoi en cours...</span>
+                            <span className="sr-only">{t("success.sending")}</span>
                           </div>
-                          Envoi en cours...
+                          {t("success.sending")}
                         </>
                       ) : (
                         <>
                           <KayvilaPngIcon name="login" size={18} alt="" />
-                          Recevoir mon lien magique
+                          {t("success.receive_magic_link")}
                         </>
                       )}
                     </button>
@@ -328,7 +326,7 @@ function SuccessContent() {
                   )}
 
                   <p className="mt-3 text-xs text-navy/60">
-                    Un email avec un lien de connexion instantané. Sans mot de passe.
+                    {t("success.magic_link_desc")}
                   </p>
                 </div>
               </div>
@@ -344,40 +342,40 @@ function SuccessContent() {
               className="inline-flex items-center gap-3 rounded-2xl bg-navy px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-lg transition-all hover:bg-gold hover:text-navy"
             >
               <ExternalLink size={16} strokeWidth={1.5} />
-              Accéder à mon espace client
+              {t("success.access_client_space")}
             </Link>
           </div>
         )}
 
         {/* ── What's next section ── */}
         <div className="mt-14">
-          <h3 className="text-center font-display text-xl text-navy">Prochaines étapes</h3>
+          <h3 className="text-center font-display text-xl text-navy">{t("success.next_steps")}</h3>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
                 <KayvilaPngIcon name="mail" size={20} alt="" />
               </div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Email confirmé</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">{t("success.email_confirmed")}</p>
               <p className="mt-1 text-xs text-navy/60">
-                Votre confirmation vous a été envoyée par email
+                {t("success.email_confirmed_desc")}
               </p>
             </div>
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
                 <KayvilaPngIcon name="shield-check" size={20} alt="" />
               </div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Paiement sécurisé</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">{t("booking.secure")}</p>
               <p className="mt-1 text-xs text-navy/60">
-                Votre paiement a bien été traité par Stripe
+                {t("success.payment_secure_desc")}
               </p>
             </div>
             <div className="rounded-2xl border border-navy/10 bg-white p-5 text-center">
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold">
                 <KayvilaPngIcon name="calendar" size={20} alt="" />
               </div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">Préparez votre séjour</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-navy">{t("success.prepare_stay")}</p>
               <p className="mt-1 text-xs text-navy/60">
-                Consultez le livret d&apos;accueil et la checklist
+                {t("success.prepare_stay_desc")}
               </p>
             </div>
           </div>
@@ -389,15 +387,33 @@ function SuccessContent() {
             href="/villas"
             className="inline-flex items-center gap-2 rounded-full border border-navy/20 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy transition-all hover:bg-navy hover:text-white"
           >
-            Découvrir nos villas
+            {t("home.hero_cta")}
             <KayvilaPngIcon name="arrow-right" size={18} alt="" />
           </Link>
           <Link
             href="/"
             className="inline-flex items-center gap-2 rounded-full bg-navy/5 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/60 transition-all hover:bg-navy/10"
           >
-            Retour à l&apos;accueil
+            {t("success.back_to_home")}
           </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function SuccessFallback() {
+  const { t } = useLocale();
+  return (
+    <main className="min-h-dvh bg-offwhite">
+      <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center px-6">
+        <div className="text-center">
+          <div
+            role="status"
+            className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent"
+          >
+            <span className="sr-only">{t("common.loading")}</span>
+          </div>
         </div>
       </div>
     </main>
@@ -406,22 +422,7 @@ function SuccessContent() {
 
 export default function SuccessPage() {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-dvh bg-offwhite">
-          <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center px-6">
-            <div className="text-center">
-              <div
-                role="status"
-                className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent"
-              >
-                <span className="sr-only">Chargement...</span>
-              </div>
-            </div>
-          </div>
-        </main>
-      }
-    >
+    <Suspense fallback={<SuccessFallback />}>
       <SuccessContent />
     </Suspense>
   );

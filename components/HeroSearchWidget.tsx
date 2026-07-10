@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { HeroDateRangePicker } from "@/components/search/HeroDateRangePicker";
 import { HeroGuestPicker } from "@/components/search/HeroGuestPicker";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type HeroSearchWidgetProps = {
   surface?: "light" | "dark";
@@ -30,6 +31,7 @@ function nightsBetween(a: string, b: string) {
 
 export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
   const router = useRouter();
+  const { t } = useLocale();
   const containerRef = useRef<HTMLFormElement>(null);
 
   const [checkin, setCheckin] = useState("");
@@ -69,14 +71,14 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
 
   const dateSummary = checkin
     ? `${formatFrShort(checkin)}${checkout ? ` → ${formatFrShort(checkout)}` : " → \u2026"}`
-    : "Ajouter";
+    : t("booking.search_add_dates");
 
   /* ─── Render ─────────────────────────────────────────── */
 
   return (
     <form
       onSubmit={handleSearch}
-      aria-label="Recherche de s\u00e9jour par dates et nombre de voyageurs"
+      aria-label={t("booking.search_form_label")}
       className={`relative mx-auto flex w-full max-w-2xl flex-col items-stretch sm:flex-row sm:items-center ${
         isLight
           ? "rounded-2xl border border-navy/10 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]"
@@ -93,7 +95,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
             ? "border-b border-navy/10 text-navy sm:border-b-0 sm:rounded-l-2xl"
             : "border-b border-white/15 text-white sm:border-b-0 sm:rounded-l-2xl"
         }`}
-        aria-label="Choisir les dates du s\u00e9jour"
+        aria-label={t("booking.search_choose_dates")}
       >
         <KayvilaPngIcon
           name="calendar"
@@ -103,7 +105,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         <div className="flex min-h-[52px] flex-1 items-center justify-between gap-2 py-3 sm:min-h-[56px]">
           <div className="flex flex-col gap-0.5">
             <span className={`text-[11px] font-semibold uppercase tracking-[0.15em] ${isLight ? "text-navy/50" : "text-white/55"}`}>
-              Dates
+              {t("villas.dates_banner")}
             </span>
             <span className={`text-sm ${!checkin ? (isLight ? "text-navy/50" : "text-white/40") : ""}`}>
               {dateSummary}
@@ -113,7 +115,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               isLight ? "bg-navy/5 text-navy/80" : "bg-white/10 text-white/60"
             }`}>
-              {nNights} nuit{nNights > 1 ? "s" : ""}
+              {nNights} {nNights > 1 ? t("common.nights_plural") : t("common.nights")}
             </span>
           )}
         </div>
@@ -127,7 +129,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         <div className="flex items-center px-4">
           <div className="flex-1">
             <span className={`mb-0.5 block text-[11px] font-semibold uppercase tracking-[0.15em] ${isLight ? "text-navy/50" : "text-white/55"}`}>
-              Voyageurs
+              {t("booking.guests")}
             </span>
             <HeroGuestPicker value={guests} onChange={setGuests} surface={isLight ? "light" : "dark"} />
           </div>
@@ -144,7 +146,7 @@ export function HeroSearchWidget({ surface = "dark" }: HeroSearchWidgetProps) {
         } sm:rounded-full`}
       >
         <Search size={14} aria-hidden />
-        Rechercher
+        {t("booking.search_submit")}
       </button>
 
       {/* Datepicker dropdown */}
