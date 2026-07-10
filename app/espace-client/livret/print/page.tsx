@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface VillaPrint {
   name: string;
@@ -15,6 +16,7 @@ interface VillaPrint {
 }
 
 export default function LivretPrintPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
   const [villa, setVilla] = useState<VillaPrint | null>(null);
   const [dates, setDates] = useState<{ start: string; end: string } | null>(null);
@@ -75,14 +77,14 @@ export default function LivretPrintPage() {
 
       <div className="no-print py-4 px-6 border-b border-[rgba(13,27,42,0.07)] flex items-center justify-between">
         <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.4)]">
-          {ready ? "Prêt à imprimer" : "Chargement…"}
+          {ready ? t("client.livret_print_ready") : t("client.livret_print_loading")}
         </p>
         <button
           type="button"
           onClick={() => window.print()}
           className="text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
         >
-          Imprimer
+          {t("client.livret_print_button")}
         </button>
       </div>
 
@@ -90,10 +92,10 @@ export default function LivretPrintPage() {
         {/* Header */}
         <div className="mb-8 pb-6 border-b border-[rgba(13,27,42,0.12)]">
           <p className="text-[10px] tracking-[0.28em] uppercase text-[#D4AF37] mb-1">
-            Kayvila · Conciergerie
+            {t("client.livret_print_kicker")}
           </p>
           <h1 className="font-display text-2xl font-normal text-[#0D1B2A]">
-            {villa?.name ?? "Livret d'accueil"}
+            {villa?.name ?? t("client.livret_title_fallback")}
           </h1>
           {villa?.location && (
             <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.5)] mt-1">
@@ -109,15 +111,15 @@ export default function LivretPrintPage() {
 
         {(villa?.wifi_name || villa?.wifi_password) && (
           <section className="mb-8">
-            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Wi-Fi & accès</h2>
+            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">{t("client.livret_section_wifi")}</h2>
             {villa.wifi_name && (
               <p className="font-display text-[16px] text-[#0D1B2A]">
-                Réseau : <strong>{villa.wifi_name}</strong>
+                {t("client.livret_print_network_prefix")} <strong>{villa.wifi_name}</strong>
               </p>
             )}
             {villa.wifi_password && (
               <p className="font-display text-[16px] text-[#0D1B2A]">
-                Mot de passe :{" "}
+                {t("client.livret_print_password_prefix")}{" "}
                 <code className="bg-[#FAFAF8] border border-[rgba(13,27,42,0.08)] px-2 py-0.5 text-sm">
                   {villa.wifi_password}
                 </code>
@@ -127,9 +129,9 @@ export default function LivretPrintPage() {
         )}
 
         <section className="mb-8">
-          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Check-in / Check-out</h2>
-          <p className="font-display text-[16px] text-[#0D1B2A]">Check-in : À partir de 16h00</p>
-          <p className="font-display text-[16px] text-[#0D1B2A]">Check-out : Avant 11h00</p>
+          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">{t("client.livret_section_checkinout")}</h2>
+          <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_print_checkin_fixed")}</p>
+          <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_print_checkout_fixed")}</p>
           {villa?.checkout_instructions && (
             <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed mt-3">
               {villa.checkout_instructions}
@@ -139,7 +141,7 @@ export default function LivretPrintPage() {
 
         {villa?.local_recommendations && (
           <section className="mb-8">
-            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">À proximité</h2>
+            <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">{t("client.livret_section_proximite")}</h2>
             <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed">
               {villa.local_recommendations}
             </p>
@@ -147,16 +149,16 @@ export default function LivretPrintPage() {
         )}
 
         <section className="mb-8">
-          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">Urgences</h2>
+          <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">{t("client.livret_section_urgences")}</h2>
           <div className="grid grid-cols-2 gap-3">
             {[
               { name: "SAMU", number: "15" },
               { name: "Police", number: "17" },
               { name: "Pompiers", number: "18" },
-              { name: "Urgences Europe", number: "112" },
+              { name: t("client.livret_emergency_europe_name"), number: "112" },
             ].map(({ name, number }) => (
               <p key={name} className="font-display text-[15px] text-[#0D1B2A]">
-                <span className="text-[rgba(13,27,42,0.45)]">{name} — </span>
+                <span className="text-[rgba(13,27,42,0.45)]">{name} {t("client.livret_print_emergency_name_sep")} </span>
                 <strong>{number}</strong>
               </p>
             ))}
@@ -170,7 +172,7 @@ export default function LivretPrintPage() {
 
         <div className="pt-6 border-t border-[rgba(13,27,42,0.08)]">
           <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.25)]">
-            Kayvila · Conciergerie de standing, Martinique
+            {t("client.livret_print_footer")}
           </p>
         </div>
       </div>

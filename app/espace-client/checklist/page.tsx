@@ -8,6 +8,7 @@ import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHea
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,10 +46,9 @@ function formatDateICS(dateStr: string): string {
   return dateStr.replace(/-/g, "").slice(0, 8);
 }
 
-function generateICS(booking: Booking): string {
+function generateICS(booking: Booking, summary: string): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const summary = `Séjour ${booking.villa?.name ?? "Villa Kayvila"}`;
   const location = booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique";
   return [
     "BEGIN:VCALENDAR",
@@ -64,26 +64,26 @@ function generateICS(booking: Booking): string {
   ].join("\r\n");
 }
 
-function googleCalendarUrl(booking: Booking): string {
+function googleCalendarUrl(booking: Booking, summary: string): string {
   const dtstart = formatDateICS(booking.start_date);
   const dtend = formatDateICS(booking.end_date);
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
+  const title = encodeURIComponent(summary);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dtstart}/${dtend}&location=${location}`;
 }
 
-function outlookCalendarUrl(booking: Booking): string {
-  const title = encodeURIComponent(`Séjour ${booking.villa?.name ?? "Villa Kayvila"}`);
+function outlookCalendarUrl(booking: Booking, summary: string): string {
+  const title = encodeURIComponent(summary);
   const location = encodeURIComponent(
     booking.villa?.location ? `${booking.villa.location}, Martinique` : "Martinique"
   );
   return `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&startdt=${booking.start_date}&enddt=${booking.end_date}&location=${location}`;
 }
 
-function downloadICS(booking: Booking) {
-  const content = generateICS(booking);
+function downloadICS(booking: Booking, summary: string) {
+  const content = generateICS(booking, summary);
   const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -97,41 +97,45 @@ function downloadICS(booking: Booking) {
 
 // ── Checklist items config ────────────────────────────────────────────────────
 
-const ITEMS: Array<{
+function buildItems(t: (key: string) => string): Array<{
   key: keyof ChecklistState;
   label: string;
   description: string;
   cta?: "calendar" | "livret";
-}> = [
-  {
-    key: "identity",
-    label: "Pièce d'identité",
-    description: "Passeport ou carte d'identité en cours de validité",
-  },
-  {
-    key: "contract",
-    label: "Contrat de location signé",
-    description: "Vérifier votre email de confirmation ou contacter la conciergerie",
-  },
-  {
-    key: "calendar",
-    label: "Ajouter au calendrier",
-    description: "Enregistrez les dates de votre séjour dans votre agenda",
-    cta: "calendar",
-  },
-  {
-    key: "access",
-    label: "Horaires & accès",
-    // Description calculée au rendu depuis les horaires de la villa
-    description: "",
-    cta: "livret",
-  },
-];
+}> {
+  return [
+    {
+      key: "identity",
+      label: t("client.checklist_item_identity_label"),
+      description: t("client.checklist_item_identity_desc"),
+    },
+    {
+      key: "contract",
+      label: t("client.checklist_item_contract_label"),
+      description: t("client.checklist_item_contract_desc"),
+    },
+    {
+      key: "calendar",
+      label: t("client.checklist_item_calendar_label"),
+      description: t("client.checklist_item_calendar_desc"),
+      cta: "calendar",
+    },
+    {
+      key: "access",
+      label: t("client.checklist_item_access_label"),
+      // Description calculée au rendu depuis les horaires de la villa
+      description: "",
+      cta: "livret",
+    },
+  ];
+}
 
 // ── Composant principal ───────────────────────────────────────────────────────
 
 export default function ChecklistPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
+  const ITEMS = buildItems(t);
   const [booking, setBooking] = useState<Booking | null>(null);
   const [checklist, setChecklist] = useState<ChecklistState>(DEFAULT_STATE);
   const [loading, setLoading] = useState(true);
@@ -204,10 +208,16 @@ export default function ChecklistPage() {
   const checkInTime = booking?.villa?.check_in_time || "17:00";
   const checkOutTime = booking?.villa?.check_out_time || "10:00";
 
+  const villaNameForSummary = booking?.villa?.name ?? t("client.dashboard_villa_fallback");
+  const icsSummary = t("client.checklist_ics_summary").replace("{{villa}}", villaNameForSummary);
+  const accessDesc = t("client.checklist_access_desc")
+    .replace("{{checkin}}", checkInTime)
+    .replace("{{checkout}}", checkOutTime);
+
   if (loading) {
     return (
       <div className="mx-auto max-w-2xl space-y-8">
-        <TenantSectionHeader title="Avant votre arrivée" />
+        <TenantSectionHeader title={t("client.checklist_title")} />
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
@@ -219,7 +229,7 @@ export default function ChecklistPage() {
     <>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          title="Avant votre arrivée"
+          title={t("client.checklist_title")}
           description={
             booking ? `${booking.villa?.name} · ${fmt(booking.start_date)}` : undefined
           }
@@ -227,15 +237,15 @@ export default function ChecklistPage() {
 
         {booking ? (
           <KayvilaTenantWidget
-            title="Progression"
+            title={t("client.checklist_progress")}
             action={
               saving ? (
                 <Chip size="sm" variant="soft" color="default" className="uppercase">
-                  Sauvegarde…
+                  {t("client.checklist_saving")}
                 </Chip>
               ) : progress === 100 ? (
                 <Chip size="sm" variant="soft" color="success" className="uppercase">
-                  Prêt
+                  {t("client.checklist_ready")}
                 </Chip>
               ) : null
             }
@@ -244,14 +254,14 @@ export default function ChecklistPage() {
               <span className="font-display text-[28px] font-normal leading-none text-navy">
                 {checked} / {total}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/32">étapes complétées</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-navy/32">{t("client.checklist_steps_completed")}</span>
             </div>
             <div
               role="progressbar"
               aria-valuenow={progress}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`${checked} sur ${total} étapes complétées`}
+              aria-label={`${checked} / ${total} ${t("client.checklist_steps_completed")}`}
               className="h-[2px] overflow-hidden rounded-full bg-navy/7"
             >
               <div
@@ -264,20 +274,17 @@ export default function ChecklistPage() {
 
         {!booking ? (
           <KayvilaEmptyState
-            title="Aucune réservation à venir"
-            description="Votre checklist s'affichera dès qu'un séjour sera confirmé."
-            actionLabel="Découvrir nos villas"
+            title={t("client.checklist_empty_title")}
+            description={t("client.checklist_empty_desc")}
+            actionLabel={t("client.dashboard_discover_villas")}
             actionHref="/villas"
           />
         ) : (
-          <KayvilaTenantWidget title="Étapes à compléter">
+          <KayvilaTenantWidget title={t("client.checklist_steps_title")}>
             <div className="space-y-[2px] -mx-6 -my-5">
             {ITEMS.map(({ key, label, description, cta }) => {
               const isChecked = checklist[key];
-              const itemDescription =
-                key === "access"
-                  ? `Check-in à partir de ${checkInTime} · Check-out avant ${checkOutTime}`
-                  : description;
+              const itemDescription = key === "access" ? accessDesc : description;
               return (
                 <div
                   key={key}
@@ -294,7 +301,9 @@ export default function ChecklistPage() {
                         : "border-[rgba(13,27,42,0.18)] hover:border-[#D4AF37]",
                     ].join(" ")}
                     aria-pressed={isChecked}
-                    aria-label={`Marquer "${label}" comme ${isChecked ? "non complété" : "complété"}`}
+                    aria-label={t("client.checklist_toggle_aria")
+                      .replace("{{label}}", label)
+                      .replace("{{state}}", isChecked ? t("client.checklist_mark_undone") : t("client.checklist_mark_done"))}
                   >
                     {isChecked && (
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -330,26 +339,26 @@ export default function ChecklistPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onPress={() => downloadICS(booking)}
+                          onPress={() => downloadICS(booking, icsSummary)}
                           className="min-h-[44px] rounded-none border-navy/12 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 data-[hover=true]:border-gold data-[hover=true]:text-gold"
                         >
-                          iCal
+                          {t("client.checklist_ical")}
                         </Button>
                         <a
-                          href={googleCalendarUrl(booking)}
+                          href={googleCalendarUrl(booking, icsSummary)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex min-h-[44px] items-center rounded-none border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 no-underline transition-colors hover:border-gold hover:text-gold"
                         >
-                          Google
+                          {t("client.checklist_google")}
                         </a>
                         <a
-                          href={outlookCalendarUrl(booking)}
+                          href={outlookCalendarUrl(booking, icsSummary)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex min-h-[44px] items-center rounded-none border border-navy/12 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 no-underline transition-colors hover:border-gold hover:text-gold"
                         >
-                          Outlook
+                          {t("client.checklist_outlook")}
                         </a>
                       </div>
                     )}
@@ -361,7 +370,7 @@ export default function ChecklistPage() {
                         className="inline-block mt-2 text-[10px] tracking-[0.16em] uppercase text-[#D4AF37] underline underline-offset-4 decoration-[rgba(212,175,55,0.4)] hover:decoration-[#D4AF37] transition-colors no-underline"
                         style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}
                       >
-                        Voir dans le livret →
+                        {t("client.checklist_view_in_booklet")}
                       </Link>
                     )}
                   </div>
@@ -376,7 +385,7 @@ export default function ChecklistPage() {
           href="/espace-client"
           className="inline-block text-[10px] uppercase tracking-[0.18em] text-navy/35 no-underline transition-colors hover:text-navy"
         >
-          ← Retour à mon séjour
+          {t("client.checklist_back_to_stay")}
         </Link>
       </div>
     </>

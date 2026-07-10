@@ -11,6 +11,7 @@ import { KayvilaEmptyState } from "@/components/ui/pro";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { VillaCoverImage } from "@/components/ui/villa-cover-image";
 import { pickVillaImageUrl } from "@/lib/villa-image";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Villa {
   id: string;
@@ -22,6 +23,7 @@ interface Villa {
 }
 
 export default function FavorisPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
   const { ids, toggle } = useWishlist();
   const [villas, setVillas] = useState<Villa[]>([]);
@@ -52,11 +54,11 @@ export default function FavorisPage() {
     <>
       <div className="space-y-6">
         <TenantSectionHeader
-          title="Mes favoris"
+          title={t("client.favoris_title")}
           description={
             ids.size > 0
-              ? `${ids.size} villa${ids.size > 1 ? "s" : ""} enregistrée${ids.size > 1 ? "s" : ""}`
-              : "Retrouvez ici les villas que vous avez aimées"
+              ? `${ids.size} ${t(ids.size > 1 ? "client.favoris_count_plural" : "client.favoris_count_singular")}`
+              : t("client.favoris_empty_desc")
           }
         />
 
@@ -67,9 +69,9 @@ export default function FavorisPage() {
         ) : villas.length === 0 ? (
           <KayvilaEmptyState
             icon={<KayvilaPngIcon name="heart" size={24} alt="" />}
-            title="Aucune villa favorite"
-            description="Explorez nos villas et cliquez sur le cœur pour les ajouter ici."
-            actionLabel="Découvrir nos villas"
+            title={t("client.favoris_empty_title")}
+            description={t("client.favoris_empty_state_desc")}
+            actionLabel={t("client.dashboard_discover_villas")}
             actionHref="/villas"
           />
         ) : (
@@ -90,7 +92,7 @@ export default function FavorisPage() {
                   <Button
                     isIconOnly
                     variant="ghost"
-                    aria-label={`Retirer ${v.name} des favoris`}
+                    aria-label={t("client.favoris_remove_aria").replace("{{villa}}", v.name)}
                     onPress={() => toggle(v.id)}
                     className="absolute right-3 top-3 min-h-[44px] min-w-[44px] rounded-full bg-white/90 text-red-500 shadow-sm data-[hover=true]:bg-white"
                   >
@@ -110,14 +112,14 @@ export default function FavorisPage() {
                     </div>
                     <p className="shrink-0 text-sm font-semibold text-navy">
                       {v.price_per_night}€
-                      <span className="text-[10px] font-normal text-navy/55">/nuit</span>
+                      <span className="text-[10px] font-normal text-navy/55">{t("client.favoris_per_night")}</span>
                     </p>
                   </div>
                   <Link
                     href={`/villas/${v.id}`}
                     className="mt-4 inline-flex min-h-[44px] items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-gold transition-colors hover:text-navy"
                   >
-                    Voir la villa
+                    {t("client.favoris_view_villa")}
                     <KayvilaPngIcon name="arrow-right" size={18} alt="" aria-hidden />
                   </Link>
                 </div>

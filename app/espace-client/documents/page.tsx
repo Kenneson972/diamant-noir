@@ -10,6 +10,7 @@ import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
 import { FileText } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface BookingDoc {
   id: string;
@@ -19,6 +20,7 @@ interface BookingDoc {
 }
 
 export default function DocumentsPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
   const [bookings, setBookings] = useState<BookingDoc[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function DocumentsPage() {
       setBookings(
         (data || []).map((b: any) => ({
           id: b.id,
-          villa_name: b.villas?.name ?? "Villa Kayvila",
+          villa_name: b.villas?.name ?? t("client.dashboard_villa_fallback"),
           start_date: b.start_date,
           end_date: b.end_date,
         }))
@@ -56,8 +58,13 @@ export default function DocumentsPage() {
   const printInvoice = (b: BookingDoc) => {
     const w = window.open("", "_blank");
     if (!w) return;
+    const invoiceTitle = t("client.documents_invoice_title");
+    const tagline = t("client.documents_invoice_tagline");
+    const stayLabel = t("client.documents_invoice_stay_label");
+    const datesLabel = t("client.documents_invoice_dates_label");
+    const generatedOn = t("client.documents_invoice_generated_on");
     w.document.write(
-      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Facture Kayvila</title><style>body{font-family:Georgia,serif;max-width:600px;margin:60px auto;padding:20px;color:#0A0A0A}h1{font-size:24px;margin-bottom:4px}.gold{color:#D4AF37}.line{height:1px;background:#D4AF37;margin:20px 0}.footer{margin-top:40px;font-size:11px;color:#8B8B8B;line-height:1.6}</style></head><body><h1>Kayvila</h1><p class="gold">Conciergerie de standing — Martinique</p><div class="line"></div><p><strong>Séjour :</strong> ${b.villa_name}</p><p><strong>Dates :</strong> ${fmt(b.start_date)} → ${fmt(b.end_date)}</p><div class="line"></div><div class="footer"><p>Kayvila Conciergerie</p><p>contact@kayvila.com — +596 696 68 18 69</p><p>Facture générée le ${new Date().toLocaleDateString("fr-FR")}</p></div></body></html>`
+      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${invoiceTitle}</title><style>body{font-family:Georgia,serif;max-width:600px;margin:60px auto;padding:20px;color:#0A0A0A}h1{font-size:24px;margin-bottom:4px}.gold{color:#D4AF37}.line{height:1px;background:#D4AF37;margin:20px 0}.footer{margin-top:40px;font-size:11px;color:#8B8B8B;line-height:1.6}</style></head><body><h1>Kayvila</h1><p class="gold">${tagline}</p><div class="line"></div><p><strong>${stayLabel}</strong> ${b.villa_name}</p><p><strong>${datesLabel}</strong> ${fmt(b.start_date)} → ${fmt(b.end_date)}</p><div class="line"></div><div class="footer"><p>Kayvila Conciergerie</p><p>contact@kayvila.com — +596 696 68 18 69</p><p>${generatedOn} ${new Date().toLocaleDateString("fr-FR")}</p></div></body></html>`
     );
     w.document.close();
     window.setTimeout(() => w.print(), 300);
@@ -67,8 +74,8 @@ export default function DocumentsPage() {
     <>
       <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          title="Mes documents"
-          description="Contrats, livret d'accueil et factures de séjour."
+          title={t("client.documents_title")}
+          description={t("client.documents_desc")}
         />
 
         {loading ? (
@@ -78,18 +85,18 @@ export default function DocumentsPage() {
         ) : bookings.length === 0 ? (
           <KayvilaEmptyState
             icon={<FileText strokeWidth={1.5} size={24} aria-hidden />}
-            title="Aucun document disponible"
-            description="Vos documents apparaîtront ici après confirmation de votre séjour."
-            actionLabel="Découvrir nos villas"
+            title={t("client.documents_empty_title")}
+            description={t("client.documents_empty_desc")}
+            actionLabel={t("client.dashboard_discover_villas")}
             actionHref="/villas"
           />
         ) : (
           <>
-            <KayvilaTenantWidget title="Séjours confirmés">
+            <KayvilaTenantWidget title={t("client.documents_stays_title")}>
               <div className="space-y-4">
                 {bookings.map((b) => (
                   <div key={b.id} className="border border-navy/8 bg-offwhite px-5 py-4">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/50">Séjour</p>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-navy/50">{t("client.documents_stay_label")}</p>
                     <p className="mt-1 text-[13px] font-medium text-navy">{b.villa_name}</p>
                     <p className="mt-0.5 font-display text-[13px] italic text-navy/40">
                       {fmt(b.start_date)} – {fmt(b.end_date)}
@@ -100,7 +107,7 @@ export default function DocumentsPage() {
                         className="inline-flex min-h-[44px] items-center gap-1.5 rounded-none border border-navy/15 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-navy/55 no-underline transition-colors hover:border-gold hover:text-gold"
                       >
                         <KayvilaPngIcon name="book" size={18} alt="" aria-hidden />
-                        Livret d&apos;accueil PDF
+                        {t("client.documents_welcome_book_pdf")}
                       </Link>
                     </div>
                   </div>
@@ -109,7 +116,7 @@ export default function DocumentsPage() {
             </KayvilaTenantWidget>
 
             {pastBookings.length > 0 ? (
-              <KayvilaTenantWidget title="Factures" description="Séjours terminés">
+              <KayvilaTenantWidget title={t("client.documents_invoices_title")} description={t("client.documents_invoices_desc")}>
                 <div className="space-y-3">
                   {pastBookings.map((b) => (
                     <div
@@ -129,7 +136,7 @@ export default function DocumentsPage() {
                         className="min-h-[44px] shrink-0 rounded-none border-navy/20 text-[10px] font-bold uppercase tracking-[0.14em] text-navy/80 data-[hover=true]:border-navy data-[hover=true]:text-navy"
                       >
                         <FileText size={14} aria-hidden />
-                        Télécharger
+                        {t("client.documents_download")}
                       </Button>
                     </div>
                   ))}
@@ -140,7 +147,7 @@ export default function DocumentsPage() {
         )}
 
         <p className="border-t border-navy/[0.06] pt-6 text-[11px] leading-relaxed text-navy/50">
-          Pour toute autre demande, contactez notre équipe via la messagerie.
+          {t("client.documents_footer_note")}
         </p>
       </div>
     </>
