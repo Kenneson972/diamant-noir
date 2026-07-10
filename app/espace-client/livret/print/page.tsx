@@ -10,6 +10,8 @@ interface VillaPrint {
   location?: string;
   wifi_name?: string;
   wifi_password?: string;
+  check_in_time?: string | null;
+  check_out_time?: string | null;
   checkout_instructions?: string;
   local_recommendations?: string;
   emergency_contacts?: string;
@@ -42,7 +44,7 @@ export default function LivretPrintPage() {
 
       const { data: villaRaw } = await supabase
         .from("villas")
-        .select("name, location, wifi_name, wifi_password, checkout_instructions, local_recommendations, emergency_contacts")
+        .select("name, location, wifi_name, wifi_password, check_in_time, check_out_time, checkout_instructions, local_recommendations, emergency_contacts")
         .eq("id", bk.villa_id)
         .single();
 
@@ -130,8 +132,12 @@ export default function LivretPrintPage() {
 
         <section className="mb-8">
           <h2 className="text-[10px] tracking-[0.24em] uppercase text-[#D4AF37] mb-4">{t("client.livret_section_checkinout")}</h2>
-          <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_print_checkin_fixed")}</p>
-          <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_print_checkout_fixed")}</p>
+          <p className="font-display text-[16px] text-[#0D1B2A]">
+            {t("client.livret_checkin_label")} — {t("client.livret_checkin_value").replace("{{time}}", villa?.check_in_time || "17:00")}
+          </p>
+          <p className="font-display text-[16px] text-[#0D1B2A]">
+            {t("client.livret_checkout_label")} — {t("client.livret_checkout_value").replace("{{time}}", villa?.check_out_time || "10:00")}
+          </p>
           {villa?.checkout_instructions && (
             <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.7)] whitespace-pre-line leading-relaxed mt-3">
               {villa.checkout_instructions}

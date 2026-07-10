@@ -417,6 +417,14 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.no_bookings": "Aucune réservation",
     "client.contact_sav": "Contacter le SAV",
     "client.sav_prompt": "Un problème ou une question sur votre séjour ?",
+    // Nav sidebar (tenant)
+    "client.nav_sejour": "Séjour",
+    "client.nav_livret": "Livret",
+    "client.nav_favoris": "Favoris",
+    "client.nav_messages": "Messages",
+    "client.nav_notifications": "Notifications",
+    "client.nav_demandes": "Demandes",
+    "client.nav_profil": "Profil",
     // Shell (kicker par route)
     "client.shell_kicker_home": "CONCIERGERIE KAYVILA",
     "client.shell_kicker_livret": "VOTRE VILLA",
@@ -624,8 +632,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.livret_print_kicker": "Kayvila · Conciergerie",
     "client.livret_print_network_prefix": "Réseau :",
     "client.livret_print_password_prefix": "Mot de passe :",
-    "client.livret_print_checkin_fixed": "Check-in : À partir de 16h00",
-    "client.livret_print_checkout_fixed": "Check-out : Avant 11h00",
     "client.livret_print_emergency_name_sep": "—",
     "client.livret_print_footer": "Kayvila · Conciergerie de standing, Martinique",
 
@@ -1273,6 +1279,14 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.no_bookings": "No bookings",
     "client.contact_sav": "Contact support",
     "client.sav_prompt": "A problem or question about your stay?",
+    // Nav sidebar (tenant)
+    "client.nav_sejour": "Stay",
+    "client.nav_livret": "Guide",
+    "client.nav_favoris": "Favourites",
+    "client.nav_messages": "Messages",
+    "client.nav_notifications": "Notifications",
+    "client.nav_demandes": "Requests",
+    "client.nav_profil": "Profile",
     // Shell (route kicker)
     "client.shell_kicker_home": "KAYVILA CONCIERGE",
     "client.shell_kicker_livret": "YOUR VILLA",
@@ -1480,8 +1494,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.livret_print_kicker": "Kayvila · Concierge",
     "client.livret_print_network_prefix": "Network:",
     "client.livret_print_password_prefix": "Password:",
-    "client.livret_print_checkin_fixed": "Check-in: From 4pm",
-    "client.livret_print_checkout_fixed": "Check-out: Before 11am",
     "client.livret_print_emergency_name_sep": "—",
     "client.livret_print_footer": "Kayvila · Premium concierge service, Martinique",
 
@@ -2130,6 +2142,14 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.no_bookings": "Sin reservas",
     "client.contact_sav": "Contactar soporte",
     "client.sav_prompt": "¿Un problema o pregunta sobre su estancia?",
+    // Nav sidebar (tenant)
+    "client.nav_sejour": "Estancia",
+    "client.nav_livret": "Guía",
+    "client.nav_favoris": "Favoritos",
+    "client.nav_messages": "Mensajes",
+    "client.nav_notifications": "Notificaciones",
+    "client.nav_demandes": "Solicitudes",
+    "client.nav_profil": "Perfil",
     // Shell (kicker por ruta)
     "client.shell_kicker_home": "CONSERJERÍA KAYVILA",
     "client.shell_kicker_livret": "SU VILLA",
@@ -2337,8 +2357,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "client.livret_print_kicker": "Kayvila · Conserjería",
     "client.livret_print_network_prefix": "Red:",
     "client.livret_print_password_prefix": "Contraseña:",
-    "client.livret_print_checkin_fixed": "Check-in: A partir de las 16h00",
-    "client.livret_print_checkout_fixed": "Check-out: Antes de las 11h00",
     "client.livret_print_emergency_name_sep": "—",
     "client.livret_print_footer": "Kayvila · Conserjería de lujo, Martinica",
 
