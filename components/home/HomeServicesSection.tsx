@@ -7,6 +7,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useCallback, useEffect, useState } from "react";
 
 const SERVICE_VISUALS: Record<
@@ -62,6 +63,7 @@ const SERVICE_DESCS: Record<string, string> = {
 };
 
 export function HomeServicesSection() {
+  const { t } = useLocale();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     loop: false,
@@ -114,18 +116,18 @@ export function HomeServicesSection() {
         <ScrollReveal>
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
-              Gestion clé en main
+              {t("home.pillars_eyebrow")}
             </span>
             <h2
               id="services-title"
               className="mt-4 font-display text-2xl font-light leading-[1.04] text-navy md:text-4xl lg:text-5xl"
             >
-              Cinq piliers,
+              {t("home.pillars_title_l1")}
               <br />
-              une seule équipe
+              {t("home.pillars_title_l2")}
             </h2>
             <p className="mt-3 text-xs leading-relaxed text-navy/80 md:text-[15px] md:mt-4">
-              Faites défiler pour découvrir chaque pilier — ou cliquez directement sur un service.
+              {t("home.pillars_subtitle")}
             </p>
           </div>
         </ScrollReveal>
@@ -133,7 +135,7 @@ export function HomeServicesSection() {
         <div
           className="mt-8 flex items-center justify-center gap-1 md:mt-10"
           role="tablist"
-          aria-label="Pilier actif"
+          aria-label={t("home.pillars_tablist")}
         >
           {SCROLL_SECTIONS.map((s, i) => (
             <button
@@ -162,7 +164,7 @@ export function HomeServicesSection() {
             type="button"
             onClick={scrollPrev}
             disabled={!canPrev}
-            aria-label="Pilier précédent"
+            aria-label={t("home.pillar_prev")}
             className="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
           >
             <ChevronLeft size={18} strokeWidth={2} />
@@ -171,7 +173,7 @@ export function HomeServicesSection() {
             type="button"
             onClick={scrollNext}
             disabled={!canNext}
-            aria-label="Pilier suivant"
+            aria-label={t("home.pillar_next")}
             className="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
           >
             <ChevronRight size={18} strokeWidth={2} />
@@ -237,7 +239,7 @@ export function HomeServicesSection() {
 
                         <div
                           className="mt-4 flex items-center gap-1.5 md:mt-6"
-                          aria-label={`Pilier ${i + 1} sur 5`}
+                          aria-label={t("home.pillar_progress").replace("{{n}}", String(i + 1))}
                         >
                           {SCROLL_SECTIONS.map((_, si) => (
                             <div
@@ -252,7 +254,7 @@ export function HomeServicesSection() {
                         </div>
 
                         <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/50 transition-colors group-hover:text-navy md:mt-4">
-                          Voir le détail <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
+                          {t("home.service_detail")} <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
                         </span>
                       </div>
                     </Link>
@@ -270,7 +272,7 @@ export function HomeServicesSection() {
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
             >
-              Tout savoir sur la conciergerie <ArrowRight size={16} strokeWidth={1.5} aria-hidden />
+              {t("home.pillars_cta")} <ArrowRight size={16} strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
         </ScrollReveal>

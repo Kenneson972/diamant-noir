@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { HeroAudienceCards } from "@/components/home/HeroAudienceCards";
 import { HomeBottomCta } from "@/components/home/HomeBottomCta";
 import { HomeFeaturedAudience, type HomeFeaturedVilla } from "@/components/home/HomeFeaturedAudience";
@@ -7,6 +8,7 @@ import { HomeServicesSection } from "@/components/home/HomeServicesSection";
 import { HomeTrustBand } from "@/components/home/HomeTrustBand";
 import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 import { HeroBackgroundMedia } from "@/components/home/HeroBackgroundMedia";
+import { tServer } from "@/lib/i18n";
 
 export const revalidate = 3600;
 
@@ -99,6 +101,8 @@ const LOCAL_BUSINESS_JSONLD = {
 };
 
 export default async function HomePage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
   const { villas: featuredVillas, error: featuredError, count: featuredCount } =
     await fetchVillas();
 
@@ -118,7 +122,7 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 text-center sm:px-8">
           <HeroWordmarkBaseline
             headingId="hero-title"
-            titleLabel="Kayvila — Conciergerie privée"
+            titleLabel={tServer(locale, "home.hero_title_label")}
             showValuesTriplet={false}
           />
           <HeroAudienceCards />
