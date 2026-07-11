@@ -14,11 +14,9 @@ export type HomeFeaturedVilla = {
 
 type Props = {
   featuredVillas: HomeFeaturedVilla[];
-  featuredError: string | null;
-  featuredCount: number;
 };
 
-export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCount }: Props) {
+export function HomeFeaturedAudience({ featuredVillas }: Props) {
   return (
     <section id="nos-villas" tabIndex={-1} className="scroll-mt-24 bg-white">
       {/* En-tête — centré, titre grand */}
@@ -47,13 +45,8 @@ export function HomeFeaturedAudience({ featuredVillas, featuredError, featuredCo
         <div className="border border-navy/10 bg-offwhite mx-8 mb-14 px-8 py-12 text-center">
           <p className="text-sm font-semibold text-navy">Aucune villa disponible pour le moment.</p>
           <p className="mt-2 text-xs text-navy/50">
-            {featuredError ? `Statut: ${featuredError}` : "Ajoutez des villas dans Supabase pour les afficher ici."}
+            Nos nouvelles villas arrivent bientôt — contactez-nous pour un séjour sur mesure.
           </p>
-          {process.env.NODE_ENV === "development" && (
-            <p className="mt-3 text-[10px] uppercase tracking-widest text-navy/55">
-              Supabase: {featuredCount} ligne(s) reçue(s)
-            </p>
-          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-px sm:grid-cols-2 md:grid-cols-3">

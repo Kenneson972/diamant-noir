@@ -103,8 +103,7 @@ const LOCAL_BUSINESS_JSONLD = {
 export default async function HomePage() {
   const cookieStore = await cookies();
   const locale = (cookieStore.get("dn_locale")?.value ?? "fr") as "fr" | "en" | "es";
-  const { villas: featuredVillas, error: featuredError, count: featuredCount } =
-    await fetchVillas();
+  const { villas: featuredVillas } = await fetchVillas();
 
   return (
     <main className="min-h-dvh bg-offwhite">
@@ -141,11 +140,7 @@ export default async function HomePage() {
 
       {/* ⑤ Villas */}
       <section className="cv-auto">
-        <HomeFeaturedAudience
-          featuredVillas={featuredVillas}
-          featuredError={featuredError}
-          featuredCount={featuredCount}
-        />
+        <HomeFeaturedAudience featuredVillas={featuredVillas} />
       </section>
 
       {/* ⑥ Trust */}
