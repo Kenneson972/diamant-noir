@@ -133,9 +133,9 @@ function ProgressBar({ step }: { step: number }) {
                 <div
                   className={`relative flex h-10 w-10 items-center justify-center border-2 transition-all duration-500 ${
                     done
-                      ? "border-gold bg-gold text-navy"
+                      ? "border-gold bg-gold/10 text-gold"
                       : active
-                      ? "border-navy bg-navy text-white shadow-[0_0_0_4px_rgba(10,10,10,0.06)]"
+                      ? "border-navy bg-white text-navy shadow-[0_0_0_4px_rgba(10,10,10,0.05)]"
                       : "border-navy/15 bg-white text-navy/25"
                   }`}
                 >
@@ -220,7 +220,7 @@ function Step1({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
               onClick={() => onChange({ villa_type: t })}
               className={`border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] transition-all duration-200 active:scale-95 ${
                 data.villa_type === t
-                  ? "border-gold bg-gold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+                  ? "border-gold bg-gold/10 text-navy"
                   : "border-navy/15 bg-white text-navy/50 hover:border-navy/40 hover:bg-navy/[0.02]"
               }`}
             >
@@ -479,7 +479,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
               onClick={() => onChange({ gardien_existant: opt.value })}
               className={`border px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] transition-all duration-200 active:scale-95 ${
                 data.gardien_existant === opt.value
-                  ? "border-gold bg-gold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+                  ? "border-gold bg-gold/10 text-navy"
                   : "border-navy/15 bg-white text-navy/50 hover:border-navy/40 hover:bg-navy/[0.02]"
               }`}
             >
@@ -508,7 +508,7 @@ function Step3({ data, onChange }: { data: WizardData; onChange: (d: Partial<Wiz
               onClick={() => onChange({ delai_souhaite: r })}
               className={`border px-4 py-2.5 text-[11px] transition-all duration-200 active:scale-[0.97] ${
                 data.delai_souhaite === r
-                  ? "border-gold bg-gold font-bold text-navy shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+                  ? "border-gold bg-gold/10 font-bold text-navy"
                   : "border-navy/15 bg-white text-navy/80 hover:border-navy/35"
               }`}
             >

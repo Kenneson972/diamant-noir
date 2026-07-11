@@ -19,7 +19,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useScrollScrub, useIntersectionTrigger } from "@/lib/scroll/use-scroll-scrub";
 import Link from "next/link";
 import Image from "next/image";
-import { Check, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS, type ScrollSection } from "@/data/prestations-scroll-sections";
@@ -689,49 +689,41 @@ export default function PrestationsPageClient() {
           {/* ── 14. Section soumettre (simplifiée) ── */}
           <LandingSection id="soumettre" bg="offwhite">
             <LandingBlockTitle eyebrow={t("prestations.submit_eyebrow")} title={t("prestations.submit_title")} />
-            <div className="grid gap-14 md:grid-cols-2 md:gap-20">
-              <div className="space-y-10">
-                <p className="text-[15px] leading-relaxed text-navy/60">
+            <div className="grid gap-14 md:grid-cols-[1fr_1.1fr] md:gap-20">
+              <div className="flex flex-col gap-10 md:pt-2">
+                <p className="max-w-md text-[15px] leading-relaxed text-navy/60">
                   {t("prestations.submit_desc")}
                 </p>
-                <ul className="space-y-4">
+                <div className="flex flex-wrap gap-x-8 gap-y-5 border-y border-navy/8 py-6">
                   {REASSURANCE_KEYS.map(({ icon, key }) => (
-                    <li key={key} className="flex items-center gap-4">
-                      <KayvilaPngIcon name={icon} size={22} alt="" className="shrink-0" />
-                      <span className="text-[13px] font-semibold text-navy/75">{t(key)}</span>
-                    </li>
+                    <div key={key} className="flex items-center gap-3">
+                      <KayvilaPngIcon name={icon} size={20} alt="" className="shrink-0" />
+                      <span className="text-[12px] font-semibold text-navy/70">{t(key)}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
-              <div className="flex flex-col justify-center">
-                <div className="border border-navy/10 bg-navy px-8 py-12 text-center">
-                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.4em] text-gold/70">
+              <div>
+                <div className="border border-navy/[0.06] bg-white px-8 py-10 md:px-10 md:py-12">
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
                     {t("prestations.submit_card_kicker")}
                   </p>
-                  <p className="font-display text-2xl font-normal text-white md:text-3xl">{t("prestations.submit_card_title")}</p>
-                  <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+                  <p className="font-display text-2xl font-normal text-navy md:text-3xl">{t("prestations.submit_card_title")}</p>
+                  <span className="mt-4 block h-px w-10 bg-gold" aria-hidden />
+                  <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy/55">
                     {t("prestations.submit_card_desc")}
                   </p>
-                  <ul className="mx-auto mt-6 max-w-xs space-y-2 text-left">
-                    {[
-                      "prestations.reassurance_no_exclusivity",
-                      "prestations.submit_card_commission",
-                      "prestations.reassurance_response_24h",
-                    ].map((key) => (
-                      <li key={key} className="flex items-center gap-3 text-[11px] text-white/50">
-                        <Check size={16} strokeWidth={1.5} className="shrink-0 text-gold" aria-hidden />
-                        {t(key)}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.22em] text-navy/35">
+                    {t("prestations.submit_card_commission")}
+                  </p>
                   <Link
                     href="/soumettre-ma-villa"
-                    className="mt-8 inline-flex min-h-[52px] items-center gap-3 border border-gold bg-gold px-8 py-4 text-[10px] font-bold uppercase tracking-[0.24em] text-navy transition-colors hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                    className="mt-8 inline-flex min-h-[52px] w-full items-center justify-center gap-3 border border-navy bg-navy px-8 py-4 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy sm:w-auto"
                   >
                     {t("prestations.submit_card_cta")} <KayvilaPngIcon name="arrow-right" size={18} alt="" />
                   </Link>
                 </div>
-                <p className="mt-6 text-center text-sm text-navy/60">
+                <p className="mt-6 text-sm text-navy/60">
                   {t("prestations.submit_card_question")}{" "}
                   <Link href="/contact" className="font-medium text-navy underline-offset-4 hover:underline">
                     {t("prestations.submit_card_contact_cta")}
