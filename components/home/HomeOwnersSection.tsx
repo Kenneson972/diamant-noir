@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export function HomeOwnersSection() {
+  const { t } = useLocale();
   return (
     <section
       id="offre-proprietaire"
@@ -30,31 +32,29 @@ export function HomeOwnersSection() {
         <div className="flex w-full flex-col justify-center px-8 py-16 lg:w-[42%] lg:px-16 lg:py-0">
           <ScrollReveal delay={80}>
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/50">
-              Propriétaires
+              {t("home.owners_eyebrow")}
             </span>
             <h2 className="mt-4 font-display text-2xl font-light leading-[1.08] text-navy md:text-3xl">
-              Votre villa,
+              {t("home.owners_title_l1")}
               <br />
-              notre gestion
+              {t("home.owners_title_l2")}
             </h2>
             <div className="mt-5 h-px w-8 bg-gold/40" aria-hidden />
             <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-navy/80">
-              De la mise en ligne au suivi de vos revenus, nous prenons en charge chaque aspect de votre bien
-              avec une équipe locale en Martinique. Le fruit de vos locations vous revient directement,
-              vos voyageurs sont comblés, vous ne gérez rien.
+              {t("home.owners_text")}
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/prestations"
                 className="inline-flex min-h-[48px] items-center border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
               >
-                Découvrir nos services
+                {t("home.owners_cta_services")}
               </Link>
               <Link
                 href="/soumettre-ma-villa"
                 className="inline-flex min-h-[48px] items-center border border-navy/25 px-7 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
               >
-                Confier ma villa
+                {t("home.owners_cta_submit")}
               </Link>
             </div>
           </ScrollReveal>

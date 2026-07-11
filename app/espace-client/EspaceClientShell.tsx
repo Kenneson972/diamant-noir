@@ -4,37 +4,45 @@ import { useMemo, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/shared/DashboardShell";
 import { tenantMenuItems } from "@/components/espace-client/TenantMenuItems";
+import { useLocale } from "@/contexts/LocaleContext";
 
-const KICKER_BY_ROUTE: Record<string, string> = {
-  "/espace-client": "CONCIERGERIE KAYVILA",
-  "/espace-client/livret": "VOTRE VILLA",
-  "/espace-client/favoris": "VOS COUPS DE CŒUR",
-  "/espace-client/messagerie": "VOTRE CONCIERGE",
-  "/espace-client/notifications": "RESTEZ INFORMÉ",
-  "/espace-client/demandes": "PENDANT VOTRE SÉJOUR",
-  "/espace-client/checklist": "VOTRE SÉJOUR",
-  "/espace-client/profil": "VOTRE COMPTE",
-  "/espace-client/documents": "VOTRE DOSSIER",
-  "/espace-client/conciergerie": "NOUS JOINDRE",
+const KICKER_KEY_BY_ROUTE: Record<string, string> = {
+  "/espace-client": "client.shell_kicker_home",
+  "/espace-client/livret": "client.shell_kicker_livret",
+  "/espace-client/favoris": "client.shell_kicker_favoris",
+  "/espace-client/messagerie": "client.shell_kicker_messagerie",
+  "/espace-client/notifications": "client.shell_kicker_notifications",
+  "/espace-client/demandes": "client.shell_kicker_demandes",
+  "/espace-client/checklist": "client.shell_kicker_checklist",
+  "/espace-client/profil": "client.shell_kicker_profil",
+  "/espace-client/documents": "client.shell_kicker_documents",
+  "/espace-client/conciergerie": "client.shell_kicker_conciergerie",
 };
 
-const DEFAULT_KICKER = "CLIENT";
+const DEFAULT_KICKER_KEY = "client.shell_kicker_default";
 
 export default function EspaceClientShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { t } = useLocale();
 
-  const kicker = useMemo(() => {
+  const kickerKey = useMemo(() => {
     // Match exact path first, then fall back to prefix match for sub-routes
-    if (KICKER_BY_ROUTE[pathname]) return KICKER_BY_ROUTE[pathname];
-    // Check parent paths (e.g., /espace-client/reservations/xxx → CONCIERGERIE KAYVILA)
-    for (const [route, label] of Object.entries(KICKER_BY_ROUTE)) {
-      if (pathname.startsWith(route + "/")) return label;
+    if (KICKER_KEY_BY_ROUTE[pathname]) return KICKER_KEY_BY_ROUTE[pathname];
+    // Check parent paths (e.g., /espace-client/reservations/xxx → client.shell_kicker_home)
+    for (const [route, key] of Object.entries(KICKER_KEY_BY_ROUTE)) {
+      if (pathname.startsWith(route + "/")) return key;
     }
-    return DEFAULT_KICKER;
+    return DEFAULT_KICKER_KEY;
   }, [pathname]);
 
+  const kicker = t(kickerKey);
+  const menu = useMemo(
+    () => tenantMenuItems.map((item) => ({ ...item, label: t(item.labelKey) })),
+    [t]
+  );
+
   return (
-    <DashboardShell role="tenant" roleLabel={kicker} menu={tenantMenuItems}>
+    <DashboardShell role="tenant" roleLabel={kicker} menu={menu}>
       <div className="mx-auto w-full max-w-6xl min-w-0 p-5 md:p-10">{children}</div>
     </DashboardShell>
   );

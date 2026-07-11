@@ -11,6 +11,7 @@
  */
 
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Heart } from "lucide-react";
 import { useState } from "react";
 
@@ -21,6 +22,7 @@ interface WishlistButtonProps {
 
 export function WishlistButton({ villaId, className = "" }: WishlistButtonProps) {
   const { isFav, toggle } = useWishlist();
+  const { t } = useLocale();
   const [pop, setPop] = useState(false);
   const fav = isFav(villaId);
 
@@ -35,7 +37,7 @@ export function WishlistButton({ villaId, className = "" }: WishlistButtonProps)
   return (
     <button
       onClick={handleClick}
-      aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
+      aria-label={fav ? t("villa.remove_favorite") : t("villa.add_favorite")}
       className={`
         group/heart
         flex items-center justify-center

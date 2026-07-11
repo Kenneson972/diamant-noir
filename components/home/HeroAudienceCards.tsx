@@ -11,6 +11,7 @@ import {
 } from "@/contexts/HomeAudienceContext";
 import { HeroSearchWidget } from "@/components/HeroSearchWidget";
 import { SITE_BRAND_DISPLAY } from "@/data/site-brand";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type HeroAudienceCardsProps = {
   /** Accueil minimal clair vs ancien hero sombre */
@@ -18,6 +19,7 @@ type HeroAudienceCardsProps = {
 };
 
 export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) {
+  const { t } = useLocale();
   const router = useRouter();
   const { audience, ready, clearAudience } = useHomeAudience();
 
@@ -51,7 +53,7 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
                 ? "text-navy/55 hover:bg-navy/5 focus-visible:ring-navy/20"
                 : "text-white/50 hover:bg-white/10 focus-visible:ring-white/25"
             }`}
-            aria-label="Retour au choix voyageur ou propriétaire"
+            aria-label={t("home.audience_back")}
           >
             <ArrowLeft size={16} strokeWidth={1.5} aria-hidden />
           </button>
@@ -84,13 +86,13 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
         <button
           type="button"
           onClick={chooseProprio}
-          aria-label={`Conciergerie privée — Gérer ma villa avec ${SITE_BRAND_DISPLAY}`}
+          aria-label={`${t("home.audience_villa_pill")} — Gérer ma villa avec ${SITE_BRAND_DISPLAY}`}
           className={`group flex min-h-[min(104px,22dvh)] min-w-0 flex-col items-start gap-1.5 border px-3 py-4 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-[0.98] sm:min-h-[104px] sm:gap-2 sm:px-6 sm:py-6 ${isLight ? cardLight : cardDark}`}
         >
           <span
             className={`text-[9px] font-bold uppercase leading-tight tracking-[0.2em] sm:tracking-[0.38em] ${isLight ? "text-navy/50" : "text-white/55"}`}
           >
-            Conciergerie Privée
+            {t("home.audience_villa_pill")}
           </span>
           <span
             className={`w-full min-w-0 break-words font-display text-[0.9375rem] font-light leading-snug sm:text-[1.2rem] ${isLight ? titleLight : titleDark}`}
@@ -107,16 +109,16 @@ export function HeroAudienceCards({ surface = "dark" }: HeroAudienceCardsProps) 
         <button
           type="button"
           onClick={chooseVoyageur}
-          aria-label="Espace voyageur — Réserver un séjour"
+          aria-label={`${t("home.audience_voyageur_pill")} — ${t("home.audience_voyageur_title")}`}
           className={`group flex min-h-[min(104px,22dvh)] min-w-0 flex-col items-start gap-1.5 border px-3 py-4 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-[0.98] sm:min-h-[104px] sm:gap-2 sm:px-6 sm:py-6 ${isLight ? cardLightSecondary : cardDarkSecondary}`}
         >
           <span
             className={`text-[9px] font-bold uppercase leading-tight tracking-[0.2em] sm:tracking-[0.38em] ${isLight ? "text-navy/50" : "text-white/55"}`}
           >
-            Espace Voyageur
+            {t("home.audience_voyageur_pill")}
           </span>
           <span className={`font-display text-[0.9375rem] font-light leading-snug sm:text-[1.2rem] ${isLight ? titleLight : titleDark}`}>
-            Réserver un séjour
+            {t("home.audience_voyageur_title")}
           </span>
           <Search
             className={`mt-auto h-[14px] w-[14px] shrink-0 transition-transform duration-200 group-hover:scale-110 sm:h-[15px] sm:w-[15px] ${isLight ? iconLight2 : iconDark2}`}

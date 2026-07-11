@@ -1,12 +1,15 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { getSupabaseServer, getCurrentUser } from "@/lib/supabase-server";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { TenantTeamThread } from "@/components/espace-client/TenantTeamThread";
+import { getServerLocale, tServer } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 export default async function MessageriePage() {
+  const locale = getServerLocale(await headers());
   const supabase = await getSupabaseServer();
   const {
     data: { user },
@@ -41,8 +44,8 @@ export default async function MessageriePage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <TenantSectionHeader
-        title="Notre équipe"
-        description="Une question, un besoin pendant votre séjour ? Écrivez-nous, on vous répond sous 24h."
+        title={tServer(locale, "client.messagerie_title")}
+        description={tServer(locale, "client.messagerie_desc")}
       />
       <TenantTeamThread guestId={user.id} firstName={firstName} villaName={villaName} />
     </div>

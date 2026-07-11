@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { KayvilaEmptyState, KayvilaRating } from "@/components/ui/pro";
 import { MessageSquare } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Review {
   id: string;
@@ -20,12 +21,12 @@ interface Review {
   checkin_rating?: number | null;
 }
 
-const CATEGORIES: { key: keyof Review; label: string }[] = [
-  { key: "cleanliness_rating", label: "Propreté" },
-  { key: "location_rating", label: "Emplacement" },
-  { key: "communication_rating", label: "Communication" },
-  { key: "value_rating", label: "Rapport qualité-prix" },
-  { key: "checkin_rating", label: "Arrivée" },
+const CATEGORY_KEYS: { key: keyof Review; labelKey: string }[] = [
+  { key: "cleanliness_rating", labelKey: "villa.review_cleanliness" },
+  { key: "location_rating", labelKey: "villa.review_location" },
+  { key: "communication_rating", labelKey: "villa.review_communication" },
+  { key: "value_rating", labelKey: "villa.review_value" },
+  { key: "checkin_rating", labelKey: "villa.review_checkin" },
 ];
 
 function CategoryBar({ label, value }: { label: string; value: number }) {
@@ -62,6 +63,7 @@ function ReviewerAvatar({ review }: { review: Review }) {
 }
 
 export function VillaReviews({ villaId, villaName }: { villaId: string; villaName: string }) {
+  const { t } = useLocale();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -85,11 +87,11 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
   if (error) {
     return (
       <section className="pt-10 border-t border-navy/10">
-        <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
+        <h2 className="font-display font-normal text-2xl text-navy mb-4">{t("villa.reviews_title")}</h2>
         <div className="border border-navy/10 bg-white p-8 text-center">
-          <p className="text-sm text-navy/80 mb-3">Impossible de charger les avis.</p>
+          <p className="text-sm text-navy/80 mb-3">{t("villa.reviews_error")}</p>
           <button onClick={fetchReviews} className="text-xs font-bold uppercase tracking-wider text-gold hover:underline">
-            Réessayer
+            {t("villa.reviews_retry")}
           </button>
         </div>
       </section>
@@ -99,8 +101,8 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
   if (loading) {
     return (
       <section className="pt-10 border-t border-navy/10">
-        <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
-        <p className="text-sm text-navy/55">Chargement des avis...</p>
+        <h2 className="font-display font-normal text-2xl text-navy mb-4">{t("villa.reviews_title")}</h2>
+        <p className="text-sm text-navy/55">{t("villa.reviews_loading")}</p>
       </section>
     );
   }
@@ -108,11 +110,11 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
   if (reviews.length === 0) {
     return (
       <section className="pt-10 border-t border-navy/10">
-        <h2 className="font-display font-normal text-2xl text-navy mb-4">Avis voyageurs</h2>
+        <h2 className="font-display font-normal text-2xl text-navy mb-4">{t("villa.reviews_title")}</h2>
         <KayvilaEmptyState
           icon={<MessageSquare className="size-12" />}
-          title="Aucun avis pour le moment"
-          description={`Soyez le premier à partager votre expérience à ${villaName}.`}
+          title={t("villa.reviews_empty_title")}
+          description={t("villa.reviews_empty_desc").replace("{{name}}", villaName)}
         />
       </section>
     );
@@ -121,19 +123,19 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
   const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
   // Compute category averages
-  const categoryAverages = CATEGORIES.map((cat) => {
+  const categoryAverages = CATEGORY_KEYS.map((cat) => {
     const values = reviews
       .map((r) => r[cat.key] as number | null | undefined)
       .filter((v): v is number => typeof v === "number" && v > 0);
     if (values.length === 0) return null;
     const avg = values.reduce((a, b) => a + b, 0) / values.length;
-    return { label: cat.label, value: avg };
+    return { label: t(cat.labelKey), value: avg };
   }).filter((c): c is { label: string; value: number } => c !== null);
 
   return (
     <section className="pt-10 border-t border-navy/10">
       <h2 className="font-display font-normal text-2xl text-navy mb-2">
-        {avgRating.toFixed(1)} · {reviews.length} avis
+        {avgRating.toFixed(1)} · {reviews.length} {t("villa.reviews_count")}
       </h2>
       <div className="mb-6">
         <KayvilaRating value={avgRating} size="md" />

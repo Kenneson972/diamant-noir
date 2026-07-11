@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
+import { useLocale } from "@/contexts/LocaleContext";
 import { BookingCard } from "@/components/espace-client/BookingCard";
 import { CalendarX } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
@@ -42,6 +43,7 @@ function BookingCardSkeleton() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function EspaceClientPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,27 +158,27 @@ export default function EspaceClientPage() {
 
         <KayvilaEmptyState
           icon={<CalendarX className="size-12" strokeWidth={1.5} />}
-          title="Aucune réservation"
-          description="Connectez-vous avec la même adresse email que celle utilisée lors de votre réservation. Si besoin, demandez un lien magique depuis la page de connexion."
-          actionLabel="Découvrir nos villas"
+          title={t("client.no_bookings")}
+          description={t("client.dashboard_no_bookings_desc")}
+          actionLabel={t("client.dashboard_discover_villas")}
           actionHref="/villas"
         />
 
         <KayvilaTenantWidget
-          title="Conciergerie"
-          description="Besoin d'aide pour préparer votre séjour ?"
+          title={t("client.concierge")}
+          description={t("client.dashboard_concierge_prompt")}
           action={
             <Link
               href="/espace-client/messagerie"
               className="inline-flex min-h-[44px] items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-gold no-underline transition-colors hover:text-navy"
             >
               <KayvilaPngIcon name="message" size={18} alt="" aria-hidden />
-              Contacter
+              {t("client.dashboard_contact")}
             </Link>
           }
         >
           <p className="text-sm text-navy/55">
-            Notre équipe répond sous 24h pour toute question avant, pendant ou après votre séjour.
+            {t("client.dashboard_concierge_response_time")}
           </p>
         </KayvilaTenantWidget>
       </div>
@@ -198,10 +200,10 @@ export default function EspaceClientPage() {
             >
               <div className="flex-1 min-w-0">
                 <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-gold mb-1">
-                  En attente de confirmation
+                  {t("client.dashboard_pending_eyebrow")}
                 </p>
                 <p className="font-display text-[16px] font-normal text-navy leading-snug">
-                  {b.villa?.name ?? "Villa Kayvila"}
+                  {b.villa?.name ?? t("client.dashboard_villa_fallback")}
                 </p>
                 {b.start_date && b.end_date && (
                   <p className="font-display italic text-[13px] text-navy/55 mt-0.5">
@@ -211,14 +213,14 @@ export default function EspaceClientPage() {
                   </p>
                 )}
                 <p className="text-[11px] text-[rgba(13,27,42,0.45)] mt-2">
-                  Notre équipe traite votre demande et vous recontacte sous 24h.
+                  {t("client.dashboard_pending_processing")}
                 </p>
               </div>
               <Link
                 href="/espace-client/messagerie"
                 className="shrink-0 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[rgba(13,27,42,0.5)] no-underline hover:text-navy transition-colors"
               >
-                Contacter l&apos;équipe
+                {t("client.dashboard_pending_contact_team")}
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
                   <path d="M1.5 5.5h8M6.5 2.5l3 3-3 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -258,7 +260,7 @@ export default function EspaceClientPage() {
           <TenantQuickLinks />
           <TenantShareBar
             bookingId={upcomingBooking.id}
-            villaName={upcomingBooking.villa?.name ?? "Villa Kayvila"}
+            villaName={upcomingBooking.villa?.name ?? t("client.dashboard_villa_fallback")}
             startDate={upcomingBooking.start_date}
             endDate={upcomingBooking.end_date}
             address={upcomingBooking.villa?.location}
@@ -271,7 +273,7 @@ export default function EspaceClientPage() {
         <div className="space-y-4">
           {upcomingBooking && (
             <p className="text-[10px] tracking-[0.38em] uppercase text-navy/25">
-              Historique
+              {t("client.dashboard_history")}
             </p>
           )}
           <div className="grid gap-3 sm:grid-cols-2 min-w-0">
@@ -285,7 +287,7 @@ export default function EspaceClientPage() {
                       href={`/villas/${booking.villa_id}`}
                       className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
                     >
-                      RE-RÉSERVER
+                      {t("client.dashboard_rebook")}
                     </Link>
                   )}
                 </div>
@@ -297,7 +299,7 @@ export default function EspaceClientPage() {
 
       {/* Ré-réservation */}
       {pastBookings.length > 0 && similarVillas.length > 0 ? (
-        <KayvilaTenantWidget title="Envie de revenir ?" description="Ces villas pourraient vous plaire">
+        <KayvilaTenantWidget title={t("client.dashboard_come_back_title")} description={t("client.dashboard_come_back_desc")}>
           <div className="grid gap-4 sm:grid-cols-3 min-w-0">
             {similarVillas.map((v: { id: string; name: string; location?: string; image_url?: string; price_per_night: number }) => (
               <Link
@@ -321,7 +323,7 @@ export default function EspaceClientPage() {
                   ) : null}
                   <p className="mt-2 text-sm font-semibold text-navy">
                     {v.price_per_night}€
-                    <span className="text-[10px] font-normal text-navy/55">/nuit</span>
+                    <span className="text-[10px] font-normal text-navy/55">{t("client.dashboard_per_night")}</span>
                   </p>
                 </div>
               </Link>
@@ -335,7 +337,7 @@ export default function EspaceClientPage() {
 
       {/* Raccourcis conciergerie — uniquement quand TenantQuickLinks n'est pas affiché */}
       {!upcomingBooking && (
-      <KayvilaTenantWidget title="Services">
+      <KayvilaTenantWidget title={t("client.dashboard_services_title")}>
         <div className="grid gap-0 sm:grid-cols-2 sm:divide-x sm:divide-navy/6">
           <Link
             href="/espace-client/messagerie"
@@ -349,8 +351,8 @@ export default function EspaceClientPage() {
               aria-hidden
             />
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">Messagerie</p>
-              <p className="mt-0.5 font-display text-sm italic text-navy/50">Contacter la conciergerie</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">{t("client.messages")}</p>
+              <p className="mt-0.5 font-display text-sm italic text-navy/50">{t("client.dashboard_messaging_desc")}</p>
             </div>
             <KayvilaPngIcon name="arrow-right" size={18} alt="" className="shrink-0 opacity-60 transition-opacity group-hover:opacity-80" aria-hidden />
           </Link>
@@ -366,8 +368,8 @@ export default function EspaceClientPage() {
               aria-hidden
             />
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">Mon profil</p>
-              <p className="mt-0.5 font-display text-sm italic text-navy/50">Informations personnelles</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-navy">{t("client.my_profile")}</p>
+              <p className="mt-0.5 font-display text-sm italic text-navy/50">{t("client.dashboard_profile_desc")}</p>
             </div>
             <KayvilaPngIcon name="arrow-right" size={18} alt="" className="shrink-0 opacity-60 transition-opacity group-hover:opacity-80" aria-hidden />
           </Link>

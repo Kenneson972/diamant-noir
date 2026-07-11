@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type BookingBottomSheetProps = {
   trigger: ReactNode;
@@ -12,8 +13,10 @@ type BookingBottomSheetProps = {
 export const BookingBottomSheet = ({
   trigger,
   children,
-  ariaLabel = "Réserver votre séjour",
+  ariaLabel,
 }: BookingBottomSheetProps) => {
+  const { t } = useLocale();
+  const resolvedAriaLabel = ariaLabel ?? t("villa.book_your_stay");
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
@@ -80,7 +83,7 @@ export const BookingBottomSheet = ({
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label={ariaLabel}
+            aria-label={resolvedAriaLabel}
             tabIndex={-1}
             className="absolute bottom-0 left-0 right-0 max-h-[85dvh] overflow-y-auto bg-white rounded-t-[20px] shadow-2xl motion-safe:animate-slide-up"
             style={{ animationDuration: "300ms" }}
@@ -98,7 +101,7 @@ export const BookingBottomSheet = ({
               type="button"
               onClick={close}
               className="absolute top-3 right-4 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-navy/5 text-navy/50 hover:bg-navy/10 hover:text-navy/80 transition-colors"
-              aria-label="Fermer"
+              aria-label={t("common.close")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

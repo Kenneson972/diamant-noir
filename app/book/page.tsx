@@ -5,6 +5,8 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { getServerLocale, tServer } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,7 @@ export default async function BookPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   noStore();
+  const locale = getServerLocale(await headers());
 
   const sp = await searchParams;
   const villaId = typeof sp.villaId === "string" ? sp.villaId : "";
@@ -44,13 +47,13 @@ export default async function BookPage({
     if (!data || data.is_published === false) {
       return (
         <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-offwhite px-6 pt-20">
-          <p className="font-display text-2xl text-navy">Villa introuvable</p>
-          <p className="text-sm text-navy/55">Cette propriété n&apos;est plus disponible à la réservation.</p>
+          <p className="font-display text-2xl text-navy">{tServer(locale, "checkout.villa_not_found")}</p>
+          <p className="text-sm text-navy/55">{tServer(locale, "checkout.villa_unavailable")}</p>
           <Link
             href="/villas"
             className="text-[10px] font-bold uppercase tracking-[0.28em] text-gold hover:text-navy"
           >
-            Retour au catalogue
+            {tServer(locale, "checkout.return_catalog")}
           </Link>
         </main>
       );

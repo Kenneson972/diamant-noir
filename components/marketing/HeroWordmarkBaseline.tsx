@@ -1,5 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type Props = {
   headingId: string;
@@ -23,6 +26,7 @@ export function HeroWordmarkBaseline({
   tone = "dark",
   children,
 }: Props) {
+  const { t } = useLocale();
   const light = tone === "light";
   const logoVariant = light ? "onLight" : "onDark";
   const subtitleClass = light
@@ -57,7 +61,7 @@ export function HeroWordmarkBaseline({
         className="animate-in fade-in slide-in-from-bottom-1 m-0 duration-700 delay-75 motion-reduce:delay-0"
         aria-hidden={false}
       >
-        <span className={subtitleClass}>Conciergerie privée</span>
+        <span className={subtitleClass}>{t("home.hero_subtitle")}</span>
       </p>
 
       {showValuesTriplet ? (
@@ -66,15 +70,15 @@ export function HeroWordmarkBaseline({
           aria-hidden={false}
         >
           <span className={tripletWrap}>
-            <span className={tripletWord}>Confiance</span>
+            <span className={tripletWord}>{t("home.values_confiance")}</span>
             <span className={tripletSep} aria-hidden>
               ·
             </span>
-            <span className={tripletWord}>Réactivité</span>
+            <span className={tripletWord}>{t("home.values_reactivite")}</span>
             <span className={tripletSep} aria-hidden>
               ·
             </span>
-            <span className={tripletWord}>Excellence</span>
+            <span className={tripletWord}>{t("home.values_excellence")}</span>
           </span>
         </p>
       ) : null}

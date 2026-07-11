@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { KayvilaTenantWidget } from "@/components/ui/pro";
 import { AlertTriangle } from "lucide-react";
@@ -5,55 +6,87 @@ import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaP
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { KAYVILA_EMAIL, KAYVILA_PHONE_DISPLAY, KAYVILA_PHONE_TEL } from "@/lib/constants";
+import { getServerLocale, tServer } from "@/lib/i18n";
 
-const CONTACTS: { label: string; value: string; sub: string; href: string; icon: LucideIcon | KayvilaPngName; gold: boolean }[] = [
-  {
-    label: "Urgences 24h/24",
-    value: KAYVILA_PHONE_DISPLAY,
-    sub: "Disponible en permanence",
-    href: `tel:${KAYVILA_PHONE_TEL}`,
-    icon: AlertTriangle,
-    gold: true,
-  },
-  {
-    label: "Téléphone",
-    value: KAYVILA_PHONE_DISPLAY,
-    sub: "Lun – Sam, 8h – 20h",
-    href: `tel:${KAYVILA_PHONE_TEL}`,
-    icon: "phone",
-    gold: false,
-  },
-  {
-    label: "Email",
-    value: KAYVILA_EMAIL,
-    sub: "Réponse sous 24h",
-    href: `mailto:${KAYVILA_EMAIL}`,
-    icon: "mail",
-    gold: false,
-  },
-];
+function buildContacts(t: (key: string) => string): {
+  label: string;
+  value: string;
+  sub: string;
+  href: string;
+  icon: LucideIcon | KayvilaPngName;
+  gold: boolean;
+}[] {
+  return [
+    {
+      label: t("client.conciergerie_emergency_label"),
+      value: KAYVILA_PHONE_DISPLAY,
+      sub: t("client.conciergerie_emergency_sub"),
+      href: `tel:${KAYVILA_PHONE_TEL}`,
+      icon: AlertTriangle,
+      gold: true,
+    },
+    {
+      label: t("client.conciergerie_phone_label"),
+      value: KAYVILA_PHONE_DISPLAY,
+      sub: t("client.conciergerie_phone_sub"),
+      href: `tel:${KAYVILA_PHONE_TEL}`,
+      icon: "phone",
+      gold: false,
+    },
+    {
+      label: t("client.conciergerie_email_label"),
+      value: KAYVILA_EMAIL,
+      sub: t("client.conciergerie_email_sub"),
+      href: `mailto:${KAYVILA_EMAIL}`,
+      icon: "mail",
+      gold: false,
+    },
+  ];
+}
 
-const HOURS = [
-  { day: "Lundi – Vendredi", hours: "8h00 – 20h00" },
-  { day: "Samedi", hours: "9h00 – 18h00" },
-  { day: "Dimanche & jours fériés", hours: "Urgences uniquement" },
-];
+function buildHours(t: (key: string) => string) {
+  return [
+    { day: t("client.conciergerie_hours_weekdays"), hours: t("client.conciergerie_hours_weekdays_value") },
+    { day: t("client.conciergerie_hours_saturday"), hours: t("client.conciergerie_hours_saturday_value") },
+    { day: t("client.conciergerie_hours_sunday"), hours: t("client.conciergerie_hours_sunday_value") },
+  ];
+}
 
-const SERVICES = [
-  { label: "Ménage supplémentaire", price: "À partir de 80 €", desc: "Nettoyage complet en cours de séjour" },
-  { label: "Changement de linge", price: "À partir de 40 €", desc: "Draps, serviettes, torchons renouvelés" },
-  { label: "Remplissage gaz / eau", price: "Sur devis", desc: "Bouteille de gaz ou bonbonne d'eau remplacée" },
-];
+function buildServices(t: (key: string) => string) {
+  return [
+    {
+      label: t("client.conciergerie_service_cleaning_label"),
+      price: t("client.conciergerie_service_cleaning_price"),
+      desc: t("client.conciergerie_service_cleaning_desc"),
+    },
+    {
+      label: t("client.conciergerie_service_linen_label"),
+      price: t("client.conciergerie_service_linen_price"),
+      desc: t("client.conciergerie_service_linen_desc"),
+    },
+    {
+      label: t("client.conciergerie_service_refill_label"),
+      price: t("client.conciergerie_service_refill_price"),
+      desc: t("client.conciergerie_service_refill_desc"),
+    },
+  ];
+}
 
-export default function ConciergeriePage() {
+export default async function ConciergeriePage() {
+  const locale = getServerLocale(await headers());
+  const t = (key: string) => tServer(locale, key);
+  const CONTACTS = buildContacts(t);
+  const HOURS = buildHours(t);
+  const SERVICES = buildServices(t);
+
   return (
     <div className="mx-auto max-w-2xl space-y-8">
         <TenantSectionHeader
-          title="Contacts & urgences"
-          description="Notre équipe est à votre disposition avant, pendant et après votre séjour."
+          title={t("client.conciergerie_title")}
+          description={t("client.conciergerie_desc")}
         />
 
-        <KayvilaTenantWidget title="Nous joindre">
+        <KayvilaTenantWidget title={t("client.conciergerie_reach_us")}>
           <div className="divide-y divide-navy/5 -mx-6 -my-5">
             {CONTACTS.map(({ label, value, sub, href, icon: Icon, gold }) => (
               <a
@@ -86,7 +119,7 @@ export default function ConciergeriePage() {
         </KayvilaTenantWidget>
 
         <KayvilaTenantWidget
-          title="Horaires"
+          title={t("client.conciergerie_hours_title")}
           action={<KayvilaPngIcon name="clock" size={18} alt="" className="opacity-60" />}
         >
           <div className="divide-y divide-navy/5">
@@ -99,7 +132,7 @@ export default function ConciergeriePage() {
           </div>
         </KayvilaTenantWidget>
 
-        <KayvilaTenantWidget title="Services ponctuels" description="Cliquez pour faire une demande — tarif confirmé par l'équipe">
+        <KayvilaTenantWidget title={t("client.conciergerie_services_title")} description={t("client.conciergerie_services_desc")}>
           <div className="divide-y divide-navy/5 -mx-6 -my-5">
             {SERVICES.map((s) => (
               <Link
@@ -120,8 +153,7 @@ export default function ConciergeriePage() {
         </KayvilaTenantWidget>
 
         <p className="border-t border-navy/[0.06] pt-6 text-[11px] leading-relaxed text-navy/50">
-          Pour toute demande non urgente, privilégiez la messagerie — elle conserve un historique de votre échange avec
-          notre équipe.
+          {t("client.conciergerie_footer_note")}
         </p>
     </div>
   );

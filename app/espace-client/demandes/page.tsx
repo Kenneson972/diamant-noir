@@ -8,8 +8,10 @@ import { RequestForm } from "@/components/espace-client/RequestForm";
 import { RequestList } from "@/components/espace-client/RequestList";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function DemandesPage() {
+  const { t } = useLocale();
   const supabase = getSupabaseBrowser();
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function DemandesPage() {
   if (loading) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
-        <TenantSectionHeader title="Services & demandes" />
+        <TenantSectionHeader title={t("client.demandes_title")} />
         <div className="flex justify-center py-20">
           <Spinner size="lg" className="text-gold" />
         </div>
@@ -48,13 +50,13 @@ export default function DemandesPage() {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
         <TenantSectionHeader
-          title="Services & demandes"
-          description="Conciergerie, ménage, transferts et autres besoins pendant votre séjour."
+          title={t("client.demandes_title")}
+          description={t("client.demandes_desc")}
         />
         <KayvilaEmptyState
-          title="Aucun séjour actif"
-          description="Les demandes sont disponibles pendant votre séjour confirmé."
-          actionLabel="Voir mes réservations"
+          title={t("client.demandes_empty_title")}
+          description={t("client.demandes_empty_desc")}
+          actionLabel={t("client.demandes_empty_action")}
           actionHref="/espace-client"
         />
       </div>
@@ -64,13 +66,13 @@ export default function DemandesPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <TenantSectionHeader
-        title="Services & demandes"
-        description="Notre équipe traite vos demandes sous 24h en moyenne."
+        title={t("client.demandes_title")}
+        description={t("client.demandes_active_desc")}
       />
-      <KayvilaTenantWidget title="Nouvelle demande">
+      <KayvilaTenantWidget title={t("client.demandes_new_request")}>
         <RequestForm bookingId={bookingId} onSuccess={() => setRefreshKey((k) => k + 1)} />
       </KayvilaTenantWidget>
-      <KayvilaTenantWidget title="Historique">
+      <KayvilaTenantWidget title={t("client.demandes_history")}>
         <RequestList bookingId={bookingId} refreshKey={refreshKey} showTitle={false} />
       </KayvilaTenantWidget>
     </div>

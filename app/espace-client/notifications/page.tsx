@@ -10,6 +10,7 @@ import { timeAgo } from "@/lib/utils";
 import { TenantSectionHeader } from "@/components/espace-client/TenantSectionHeader";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Notification {
   id: string;
@@ -22,6 +23,7 @@ interface Notification {
 }
 
 export default function NotificationsPage() {
+  const { t } = useLocale();
   const router = useRouter();
   const supabase = getSupabaseBrowser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -67,10 +69,10 @@ export default function NotificationsPage() {
     <>
       <div className="mx-auto max-w-2xl space-y-6">
         <TenantSectionHeader
-          title="Mes notifications"
+          title={t("client.notifications_title")}
           description={
             unreadCount > 0
-              ? `${unreadCount} notification${unreadCount > 1 ? "s" : ""} non lue${unreadCount > 1 ? "s" : ""}`
+              ? `${unreadCount} ${t(unreadCount > 1 ? "client.notifications_unread_plural" : "client.notifications_unread_singular")}`
               : undefined
           }
         />
@@ -82,12 +84,12 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <KayvilaEmptyState
             icon={<KayvilaPngIcon name="bell" size={24} alt="" />}
-            title="Aucune notification"
-            description="Les notifications de vos demandes et messages apparaîtront ici."
+            title={t("client.notifications_empty_title")}
+            description={t("client.notifications_empty_desc")}
           />
         ) : (
           <KayvilaTenantWidget
-            title="Activité récente"
+            title={t("client.notifications_recent_activity")}
             action={
               unreadCount > 0 ? (
                 <Button
@@ -97,11 +99,11 @@ export default function NotificationsPage() {
                   className="min-h-[44px] rounded-none text-[10px] font-bold uppercase tracking-[0.16em] text-navy/50 data-[hover=true]:text-gold"
                 >
                   <CheckCheck size={16} strokeWidth={1.5} aria-hidden />
-                  Tout lire
+                  {t("client.notifications_mark_all_read")}
                 </Button>
               ) : (
                 <Chip size="sm" variant="soft" color="success" className="uppercase">
-                  À jour
+                  {t("client.notifications_up_to_date")}
                 </Chip>
               )
             }
@@ -132,7 +134,7 @@ export default function NotificationsPage() {
                           <span className="text-[10px] text-navy/30">{timeAgo(notif.created_at)}</span>
                           {notif.action_url ? (
                             <span className="inline-flex items-center gap-0.5 text-[10px] text-gold">
-                              Voir <ExternalLink size={12} strokeWidth={1.5} aria-hidden />
+                              {t("client.notifications_view_action")} <ExternalLink size={12} strokeWidth={1.5} aria-hidden />
                             </span>
                           ) : null}
                         </div>

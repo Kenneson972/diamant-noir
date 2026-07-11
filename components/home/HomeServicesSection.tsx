@@ -7,6 +7,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { KayvilaPngIcon, type KayvilaPngName } from "@/components/icons/KayvilaPngIcon";
 import { SCROLL_SECTIONS } from "@/data/prestations-scroll-sections";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useCallback, useEffect, useState } from "react";
 
 const SERVICE_VISUALS: Record<
@@ -40,28 +41,8 @@ const SERVICE_VISUALS: Record<
   },
 };
 
-const SERVICE_TAGLINES: Record<string, string> = {
-  marketing: "Estimation locative, reportage photos, annonces optimisées.",
-  operations: "Check-in, contrôles qualité, coordination ménage et artisans.",
-  voyageurs: "Interlocuteur unique 7j/7, de la réservation au départ.",
-  menage: "Ménage et blanchisserie facturés aux voyageurs, hors commission.",
-  finance: "Commission 22 % (20 % OTA), espace propriétaire, Copilot IA inclus.",
-};
-
-const SERVICE_DESCS: Record<string, string> = {
-  marketing:
-    "Votre villa visible partout, valorisée au bon prix — estimation locative, reportage photos, annonces optimisées et prix dynamiques automatiques.",
-  operations:
-    "Zéro contrainte, tout géré sur place — check-in, contrôles qualité entre chaque séjour, coordination ménage, linge, consommables et artisans.",
-  voyageurs:
-    "Vous ne recevez aucun appel, aucun message — nous sommes l'interlocuteur unique de vos voyageurs 7j/7, de la réservation au départ.",
-  menage:
-    "Les frais de ménage et blanchisserie sont facturés aux voyageurs, hors commission. Réassort des consommables à nos frais dès la 2e location.",
-  finance:
-    "Vous encaissez directement via Airbnb ou Booking. Kayvila facture sa commission sur les nuitées réalisées en fin de mois. Espace propriétaire en ligne et assistant IA Copilot inclus.",
-};
-
 export function HomeServicesSection() {
+  const { t } = useLocale();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     loop: false,
@@ -114,18 +95,18 @@ export function HomeServicesSection() {
         <ScrollReveal>
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-navy/45">
-              Gestion clé en main
+              {t("home.pillars_eyebrow")}
             </span>
             <h2
               id="services-title"
               className="mt-4 font-display text-2xl font-light leading-[1.04] text-navy md:text-4xl lg:text-5xl"
             >
-              Cinq piliers,
+              {t("home.pillars_title_l1")}
               <br />
-              une seule équipe
+              {t("home.pillars_title_l2")}
             </h2>
             <p className="mt-3 text-xs leading-relaxed text-navy/80 md:text-[15px] md:mt-4">
-              Faites défiler pour découvrir chaque pilier — ou cliquez directement sur un service.
+              {t("home.pillars_subtitle")}
             </p>
           </div>
         </ScrollReveal>
@@ -133,7 +114,7 @@ export function HomeServicesSection() {
         <div
           className="mt-8 flex items-center justify-center gap-1 md:mt-10"
           role="tablist"
-          aria-label="Pilier actif"
+          aria-label={t("home.pillars_tablist")}
         >
           {SCROLL_SECTIONS.map((s, i) => (
             <button
@@ -141,8 +122,8 @@ export function HomeServicesSection() {
               type="button"
               role="tab"
               aria-selected={i === activeIdx}
-              aria-label={`Pilier ${i + 1} — ${s.title}`}
-              title={s.title}
+              aria-label={`${t("prestations.pillar_progress").replace("{{n}}", String(i + 1))} — ${t(`services.${s.id}.title`)}`}
+              title={t(`services.${s.id}.title`)}
               onClick={() => scrollTo(i)}
               className="relative flex h-11 w-11 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
             >
@@ -162,7 +143,7 @@ export function HomeServicesSection() {
             type="button"
             onClick={scrollPrev}
             disabled={!canPrev}
-            aria-label="Pilier précédent"
+            aria-label={t("home.pillar_prev")}
             className="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
           >
             <ChevronLeft size={18} strokeWidth={2} />
@@ -171,7 +152,7 @@ export function HomeServicesSection() {
             type="button"
             onClick={scrollNext}
             disabled={!canNext}
-            aria-label="Pilier suivant"
+            aria-label={t("home.pillar_next")}
             className="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 h-11 w-11 items-center justify-center rounded-full border-2 border-navy/30 bg-white text-navy shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-0 md:flex focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/30"
           >
             <ChevronRight size={18} strokeWidth={2} />
@@ -181,8 +162,8 @@ export function HomeServicesSection() {
             <div className="flex gap-4 md:gap-6">
               {SCROLL_SECTIONS.map((service, i) => {
                 const visual = SERVICE_VISUALS[service.id];
-                const tagline = SERVICE_TAGLINES[service.id];
-                const desc = SERVICE_DESCS[service.id];
+                const tagline = t(`services.${service.id}.card_tagline`);
+                const desc = t(`services.${service.id}.desc`);
 
                 return (
                   <div
@@ -228,7 +209,7 @@ export function HomeServicesSection() {
                         </p>
 
                         <h3 className="mt-2 font-display text-lg leading-tight text-navy md:mt-3 md:text-2xl">
-                          {service.title}
+                          {t(`services.${service.id}.title`)}
                         </h3>
 
                         <p className="mt-2 max-w-md text-[12px] leading-relaxed text-navy/80 md:mt-3 md:text-[13px]">
@@ -237,7 +218,7 @@ export function HomeServicesSection() {
 
                         <div
                           className="mt-4 flex items-center gap-1.5 md:mt-6"
-                          aria-label={`Pilier ${i + 1} sur 5`}
+                          aria-label={t("home.pillar_progress").replace("{{n}}", String(i + 1))}
                         >
                           {SCROLL_SECTIONS.map((_, si) => (
                             <div
@@ -252,7 +233,7 @@ export function HomeServicesSection() {
                         </div>
 
                         <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-navy/50 transition-colors group-hover:text-navy md:mt-4">
-                          Voir le détail <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
+                          {t("home.service_detail")} <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
                         </span>
                       </div>
                     </Link>
@@ -270,7 +251,7 @@ export function HomeServicesSection() {
               scroll={true}
               className="inline-flex min-h-[48px] items-center gap-2 border border-navy bg-navy px-7 py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40"
             >
-              Tout savoir sur la conciergerie <ArrowRight size={16} strokeWidth={1.5} aria-hidden />
+              {t("home.pillars_cta")} <ArrowRight size={16} strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
         </ScrollReveal>

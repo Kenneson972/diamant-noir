@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { formatPrice } from "@/lib/i18n";
 import type { VillaMapItem } from "./VillaLeafletMap";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Props {
   villa: VillaMapItem | null;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function VillaQuickView({ villa, open, onClose }: Props) {
+  const { t } = useLocale();
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const trapRef = useFocusTrap(open);
 
@@ -39,7 +41,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
         ref={trapRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`Aperçu rapide — ${villa.name}`}
+        aria-label={t("villa.quick_view_label").replace("{{name}}", villa.name)}
         className={`fixed inset-x-0 bottom-0 z-[1060] bg-white max-h-[85dvh] transition-transform duration-300 ${
           open ? "translate-y-0" : "translate-y-full"
         }`}
@@ -63,7 +65,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fermer l'aperçu"
+          aria-label={t("villa.quick_close")}
           className="absolute top-4 right-4 z-10 flex items-center justify-center w-9 h-9 border border-navy/15 text-navy/50 hover:border-navy/30 hover:text-navy transition-colors"
         >
           <X size={16} strokeWidth={1.5} />
@@ -110,7 +112,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
                 {villa.capacity ?? "—"}
               </p>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
-                Ch.
+                {t("villa.quick_bedrooms_short")}
               </p>
             </div>
             <div className="text-center">
@@ -118,7 +120,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
                 {villa.capacity ? villa.capacity * 2 : "—"}
               </p>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
-                Voyag.
+                {t("villa.quick_travelers_short")}
               </p>
             </div>
             <div className="text-center">
@@ -132,7 +134,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
             <div className="text-center">
               <p className="text-lg font-display text-navy">★</p>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy/55 mt-0.5">
-                Note
+                {t("villa.quick_rating_short")}
               </p>
             </div>
           </div>
@@ -156,7 +158,7 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
             <span className="font-display text-2xl">
               {formatPrice(villa.price)}
             </span>
-            <span className="text-[11px] text-navy/45 ml-1">/ nuit</span>
+            <span className="text-[11px] text-navy/45 ml-1">{t("common.per_night")}</span>
           </p>
 
           {/* CTAs */}
@@ -165,13 +167,13 @@ export default function VillaQuickView({ villa, open, onClose }: Props) {
               href={`/villas/${villa.id}`}
               className="flex-1 text-center border border-navy py-3 text-[10px] font-bold uppercase tracking-[0.28em] text-navy hover:bg-navy hover:text-white transition-colors min-h-[44px] flex items-center justify-center"
             >
-              Voir la villa →
+              {t("villa.quick_view_villa")} →
             </Link>
             <Link
               href={`/book?villaId=${villa.id}`}
               className="flex-1 text-center bg-navy py-3 text-[10px] font-bold uppercase tracking-[0.28em] text-white hover:bg-navy/90 transition-colors min-h-[44px] flex items-center justify-center"
             >
-              Réserver
+              {t("common.book_now")}
             </Link>
           </div>
         </div>

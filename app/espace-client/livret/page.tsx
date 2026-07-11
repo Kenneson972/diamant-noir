@@ -5,6 +5,7 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { tenantBookingsOrFilter } from "@/lib/booking-tenant";
 import { CheckinGuide } from "@/components/espace-client/CheckinGuide";
 import { CheckoutInstructions } from "@/components/espace-client/CheckoutInstructions";
+import { useLocale } from "@/contexts/LocaleContext";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,13 +33,15 @@ interface BookingData {
 
 type SectionId = "wifi" | "checkinout" | "contacts" | "proximite" | "urgences";
 
-const SECTIONS: Array<{ id: SectionId; label: string }> = [
-  { id: "wifi", label: "Wi-Fi & accès" },
-  { id: "checkinout", label: "Check-in / Check-out" },
-  { id: "contacts", label: "Contacts utiles" },
-  { id: "proximite", label: "À proximité" },
-  { id: "urgences", label: "Urgences" },
-];
+function buildSections(t: (key: string) => string): Array<{ id: SectionId; label: string }> {
+  return [
+    { id: "wifi", label: t("client.livret_section_wifi") },
+    { id: "checkinout", label: t("client.livret_section_checkinout") },
+    { id: "contacts", label: t("client.livret_section_contacts") },
+    { id: "proximite", label: t("client.livret_section_proximite") },
+    { id: "urgences", label: t("client.livret_section_urgences") },
+  ];
+}
 
 const SECTION_ICONS: Record<SectionId, React.ReactNode> = {
   wifi: (
@@ -93,17 +96,17 @@ function LivretSkeleton() {
 
 // ── Empty section ─────────────────────────────────────────────────────────────
 
-function EmptySection() {
+function EmptySection({ t }: { t: (key: string) => string }) {
   return (
     <p className="font-display italic text-[15px] font-light text-[rgba(13,27,42,0.3)]">
-      Cette section sera complétée avant votre arrivée par l&apos;équipe Kayvila.
+      {t("client.livret_empty_section")}
     </p>
   );
 }
 
 // ── Section content ───────────────────────────────────────────────────────────
 
-function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
+function SectionContent({ id, villa, t }: { id: SectionId; villa: VillaData; t: (key: string) => string }) {
   const [showPass, setShowPass] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -118,20 +121,27 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
     }
   };
 
+  const EMERGENCY_NUMBERS = [
+    { name: "SAMU", number: "15", desc: t("client.livret_emergency_samu_desc") },
+    { name: "Police", number: "17", desc: t("client.livret_emergency_police_desc") },
+    { name: "Pompiers", number: "18", desc: t("client.livret_emergency_firefighters_desc") },
+    { name: t("client.livret_emergency_europe_name"), number: "112", desc: t("client.livret_emergency_europe_desc") },
+  ];
+
   switch (id) {
     case "wifi":
-      if (!villa.wifi_name && !villa.wifi_password) return <EmptySection />;
+      if (!villa.wifi_name && !villa.wifi_password) return <EmptySection t={t} />;
       return (
         <div className="space-y-5">
           {villa.wifi_name && (
             <div>
-              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Réseau</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">{t("client.livret_network_label")}</p>
               <p className="font-display text-[17px] text-[#0D1B2A]">{villa.wifi_name}</p>
             </div>
           )}
           {villa.wifi_password && (
             <div>
-              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Mot de passe</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">{t("client.livret_password_label")}</p>
               <div className="flex items-center gap-3">
                 <div className="flex-1 flex items-center gap-2 border border-[rgba(13,27,42,0.09)] bg-[#FAFAF8] px-3 py-2">
                   <span className="font-mono text-[13px] text-[#0D1B2A] flex-1 select-all">
@@ -141,7 +151,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
                     type="button"
                     onClick={() => setShowPass((v) => !v)}
                     className="text-[rgba(13,27,42,0.3)] hover:text-[#0D1B2A] transition-colors"
-                    aria-label={showPass ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                    aria-label={showPass ? t("client.livret_password_hide_aria") : t("client.livret_password_show_aria")}
                   >
                     {showPass ? (
                       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -161,9 +171,9 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
                   type="button"
                   onClick={copyPassword}
                   className="shrink-0 text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-3 py-2 text-[rgba(13,27,42,0.5)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
-                  aria-label="Copier le mot de passe Wi-Fi"
+                  aria-label={t("client.livret_password_copy_aria")}
                 >
-                  {copied ? "Copié ✓" : "Copier"}
+                  {copied ? t("client.livret_password_copied") : t("client.livret_password_copy")}
                 </button>
               </div>
             </div>
@@ -175,16 +185,16 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
       return (
         <div className="space-y-5">
           <div>
-            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-in</p>
-            <p className="font-display text-[16px] text-[#0D1B2A]">À partir de {villa.check_in_time || "17:00"}</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">{t("client.livret_checkin_label")}</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_checkin_value").replace("{{time}}", villa.check_in_time || "17:00")}</p>
           </div>
           <div>
-            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">Check-out</p>
-            <p className="font-display text-[16px] text-[#0D1B2A]">Avant {villa.check_out_time || "10:00"}</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-1">{t("client.livret_checkout_label")}</p>
+            <p className="font-display text-[16px] text-[#0D1B2A]">{t("client.livret_checkout_value").replace("{{time}}", villa.check_out_time || "10:00")}</p>
           </div>
           {villa.checkout_instructions && (
             <div>
-              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">Instructions</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-[rgba(13,27,42,0.32)] mb-2">{t("client.livret_instructions_label")}</p>
               <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
                 {villa.checkout_instructions}
               </p>
@@ -202,14 +212,14 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
                 <path d="M8 1C5.2 1 3 3.2 3 6c0 4 5 9 5 9s5-5 5-9c0-2.8-2.2-5-5-5z" stroke="currentColor" strokeWidth="1" />
                 <circle cx="8" cy="6" r="2" stroke="currentColor" strokeWidth="1" />
               </svg>
-              Voir sur Maps →
+              {t("client.livret_view_on_maps")}
             </a>
           )}
         </div>
       );
 
     case "contacts":
-      if (!villa.emergency_contacts) return <EmptySection />;
+      if (!villa.emergency_contacts) return <EmptySection t={t} />;
       return (
         <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
           {villa.emergency_contacts}
@@ -217,7 +227,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
       );
 
     case "proximite":
-      if (!villa.local_recommendations) return <EmptySection />;
+      if (!villa.local_recommendations) return <EmptySection t={t} />;
       return (
         <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line leading-relaxed">
           {villa.local_recommendations}
@@ -227,12 +237,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
     case "urgences":
       return (
         <div className="space-y-4">
-          {[
-            { name: "SAMU", number: "15", desc: "Urgences médicales" },
-            { name: "Police", number: "17", desc: "Urgences sécurité" },
-            { name: "Pompiers", number: "18", desc: "Incendie & secours" },
-            { name: "Urgences Europe", number: "112", desc: "Numéro universel" },
-          ].map(({ name, number, desc }) => (
+          {EMERGENCY_NUMBERS.map(({ name, number, desc }) => (
             <div key={name} className="flex items-center gap-4">
               <div className="flex-1">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)]">{desc}</p>
@@ -242,7 +247,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
                 href={`tel:${number}`}
                 className="font-display text-[20px] font-normal text-[#D4AF37] hover:opacity-80 transition-opacity"
                 style={{ textDecoration: "none" }}
-                aria-label={`Appeler ${name} au ${number}`}
+                aria-label={t("client.livret_emergency_call_aria").replace("{{name}}", name).replace("{{number}}", number)}
               >
                 {number}
               </a>
@@ -250,7 +255,7 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
           ))}
           {villa.emergency_contacts && (
             <div className="pt-4 border-t border-[rgba(13,27,42,0.07)]">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)] mb-2">Contact villa</p>
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[rgba(13,27,42,0.35)] mb-2">{t("client.livret_villa_contact_label")}</p>
               <p className="font-display text-[15px] font-light text-[rgba(13,27,42,0.6)] whitespace-pre-line">
                 {villa.emergency_contacts}
               </p>
@@ -264,6 +269,8 @@ function SectionContent({ id, villa }: { id: SectionId; villa: VillaData }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LivretPage() {
+  const { t } = useLocale();
+  const SECTIONS = buildSections(t);
   const supabase = getSupabaseBrowser();
   const [booking, setBooking] = useState<BookingData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -320,7 +327,7 @@ export default function LivretPage() {
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
             <h1 className="font-display text-2xl font-normal text-navy">
-              {villa?.name ?? "Livret d'accueil"}
+              {villa?.name ?? t("client.livret_title_fallback")}
             </h1>
             {villa?.location && (
               <p className="font-display italic text-[15px] font-light text-navy/40 mt-1">
@@ -337,7 +344,7 @@ export default function LivretPage() {
               <path d="M3 2h7l3 3v9H3z" stroke="currentColor" strokeWidth="1" />
               <path d="M10 2v3h3M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1" />
             </svg>
-            Télécharger PDF
+            {t("client.livret_download_pdf")}
           </button>
         </div>
 
@@ -359,7 +366,7 @@ export default function LivretPage() {
         {isEmptyBook ? (
           <div className="py-12 text-center">
             <p className="font-display italic text-[17px] font-light text-[rgba(13,27,42,0.4)]">
-              Le livret sera complété avant votre arrivée par l&apos;équipe Kayvila.
+              {t("client.livret_empty_book")}
             </p>
           </div>
         ) : (
@@ -367,7 +374,7 @@ export default function LivretPage() {
             {/* ── Index desktop ── */}
             <nav
               className="hidden md:flex w-[200px] shrink-0 flex-col gap-[2px]"
-              aria-label="Sections du livret"
+              aria-label={t("client.livret_index_aria")}
             >
               {SECTIONS.map(({ id, label }) => {
                 const active = activeSection === id;
@@ -425,7 +432,7 @@ export default function LivretPage() {
               <p className="text-[10px] tracking-[0.26em] uppercase text-[#D4AF37] mb-3">
                 {SECTIONS.find((s) => s.id === activeSection)?.label}
               </p>
-              <SectionContent id={activeSection} villa={villa!} />
+              <SectionContent id={activeSection} villa={villa!} t={t} />
 
               {/* PDF button mobile */}
               <div className="mt-8 sm:hidden">
@@ -434,7 +441,7 @@ export default function LivretPage() {
                   onClick={handlePrint}
                   className="text-[10px] tracking-[0.18em] uppercase border border-[rgba(13,27,42,0.12)] px-4 py-2.5 text-[rgba(13,27,42,0.45)] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
                 >
-                  Télécharger le livret PDF →
+                  {t("client.livret_download_pdf_mobile")}
                 </button>
               </div>
             </div>
