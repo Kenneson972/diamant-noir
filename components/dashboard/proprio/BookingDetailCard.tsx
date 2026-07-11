@@ -178,7 +178,7 @@ export function BookingDetailCard({ booking, villaName }: BookingDetailCardProps
           {/* Commission Kayvila */}
           <DetailRow
             icon={<KayvilaPngIcon name="trend-down" size={20} />}
-            label={`Commission Kayvila (${commissionRate}%)`}
+            label="Commission Kayvila"
             value={
               <span className="text-amber-700">
                 {formatCurrency(commissionCents)}

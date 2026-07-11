@@ -166,7 +166,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-navy/80">
-                                  Commission Kayvila ({row.commissionRate}%)
+                                  Commission Kayvila
                                 </span>
                                 <span className="text-red-500">
                                   -{formatEur(row.commission)}
