@@ -391,4 +391,7 @@ Error: Failed to parse source for import analysis because the content contains i
 10. Ajouter `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` à `.env.local.example` (et l'env) si un usage Stripe.js/Elements est prévu — non bloquant aujourd'hui (flux 100 % redirection serveur, section 1.2).
 11. Couverture de tests : cas d'erreur du `BookingRequestSchema` (section 1.6) et tests d'intégration route ↔ Connect (503 sans compte, `transfer_data` injecté).
 12. `CGV_VERSION` absent des metadata Stripe (section 1.8, point 7) : l'ajouter aux metadata de session si le process de litige s'appuie sur les données Stripe seules.
-13. Cosmétique UI : bandeau « RE-RÉSERVER » au rattachement visuel ambigu (`/espace-client`) ; sous-titre collé au titre « Préférences de séjour » (`/espace-client/profil`) ; noms de villa génériques « Villa » sur les cartes réservation (données villa manquantes en base).
+13. Cosmétique UI :
+    - ✅ **CORRIGÉ (2026-07-12)** — bandeau « RE-RÉSERVER » (`app/espace-client/page.tsx`) : rattaché visuellement à sa carte (bordure partagée, flush, plus de gap flottant) au lieu d'un bandeau ambigu entre deux cartes.
+    - ✅ **CORRIGÉ (2026-07-12)** — sous-titre collé au titre (`components/ui/pro/kayvila-tenant-widget.tsx`) : `Widget.Title`/`Widget.Description` forcés en `block` — « Préférences de séjour » et sa description s'affichent maintenant sur deux lignes distinctes (impactait tous les widgets espace client utilisant ce composant, pas seulement le profil).
+    - Non corrigé (se résout avec le contenu) : noms de villa génériques « Villa » sur les cartes réservation — conséquence de l'absence de villas réelles en base, pas un bug de code.

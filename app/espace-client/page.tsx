@@ -280,12 +280,12 @@ export default function EspaceClientPage() {
             {otherBookings.map((booking) => {
               const isPast = new Date(booking.end_date) < new Date();
               return (
-                <div key={booking.id} className="min-w-0 space-y-3">
+                <div key={booking.id} className="min-w-0">
                   <BookingCard booking={booking} />
                   {isPast && (
                     <Link
                       href={`/villas/${booking.villa_id}`}
-                      className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
+                      className="-mt-px inline-flex min-h-[48px] w-full items-center justify-center gap-2 border border-navy/8 border-t-0 bg-gold px-6 text-[11px] font-bold uppercase tracking-[0.22em] text-white no-underline transition-colors hover:bg-gold/90 active:scale-[0.98]"
                     >
                       {t("client.dashboard_rebook")}
                     </Link>
