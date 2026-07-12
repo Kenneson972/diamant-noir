@@ -22,6 +22,7 @@ function SuccessContent() {
   const [data, setData] = useState<{ booking: any; villa: any } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [awaitingPayment, setAwaitingPayment] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [guestEmail, setGuestEmail] = useState<string>("");
   const [magicLinkSent, setMagicLinkSent] = useState(false);
@@ -93,8 +94,33 @@ function SuccessContent() {
       }
 
       if (bookingId) {
-        setData({ booking: { id: bookingId }, villa: null });
-        setLoading(false);
+        // Vérification serveur du statut réel — ne jamais afficher la confirmation
+        // sur la seule foi du paramètre d'URL (P0 audit préprod 2026-07-11).
+        try {
+          const res = await fetch(
+            `/api/booking-session?bookingId=${encodeURIComponent(bookingId)}`
+          );
+          const json = await res.json().catch(() => null);
+          if (cancelled) return;
+
+          if (res.ok && json && !json.pending) {
+            setData(json);
+            setLoading(false);
+            return;
+          }
+          if (res.status === 202 && json?.pending) {
+            setData(json);
+            setAwaitingPayment(true);
+            setLoading(false);
+            return;
+          }
+          setError(t("success.booking_not_found"));
+          setLoading(false);
+        } catch {
+          if (cancelled) return;
+          setError(t("success.booking_not_found"));
+          setLoading(false);
+        }
         return;
       }
 
@@ -166,8 +192,32 @@ function SuccessContent() {
     );
   }
 
+  if (awaitingPayment) {
+    return (
+      <main className="min-h-dvh bg-offwhite">
+        <div className="mx-auto max-w-lg px-6 pt-32 pb-20 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50">
+            <span className="text-2xl text-amber-500">⏳</span>
+          </div>
+          <p className="mb-2 text-lg font-semibold text-navy">
+            {t("success.awaiting_payment_title")}
+          </p>
+          <p className="mb-8 text-sm leading-relaxed text-navy/80">
+            {t("success.awaiting_payment_desc")}
+          </p>
+          <Link
+            href="/villas"
+            className="inline-flex items-center gap-2 rounded-full bg-navy px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-gold hover:text-navy"
+          >
+            {t("home.hero_cta")}
+            <KayvilaPngIcon name="arrow-right" size={18} alt="" />
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const { booking, villa } = data;
-  const isConfirmed = booking?.status === "confirmed" || booking?.payment_status === "paid";
 
   const startDate = booking?.start_date
     ? new Date(booking.start_date).toLocaleDateString("fr-FR", {

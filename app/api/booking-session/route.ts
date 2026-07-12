@@ -15,7 +15,7 @@ const rateLimitBuckets: Map<string, { count: number; resetAt: number }> =
   (((globalThis as any).__dn_booking_session_rl = new Map()) as Map<string, { count: number; resetAt: number }>);
 
 const BOOKING_SELECT =
-  "id, villa_id, start_date, end_date, status, payment_status, price" as const;
+  "id, villa_id, start_date, end_date, status, payment_status, price, stripe_session_id" as const;
 
 function ipFromRequest(request: Request) {
   const xf = request.headers.get("x-forwarded-for");
@@ -26,6 +26,10 @@ function ipFromRequest(request: Request) {
 
 function isLikelyStripeSessionId(id: string) {
   return /^cs_(test|live)_[A-Za-z0-9]+$/.test(id);
+}
+
+function isUuid(id: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 }
 
 async function fetchVillaForBooking(
@@ -100,11 +104,15 @@ async function syncBookingFromStripeSession(
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const sessionId = searchParams.get("session_id");
-  if (!sessionId) {
+  const bookingIdParam = searchParams.get("bookingId");
+  if (!sessionId && !bookingIdParam) {
     return NextResponse.json({ error: "Missing session_id" }, { status: 400 });
   }
-  if (!isLikelyStripeSessionId(sessionId)) {
+  if (sessionId && !isLikelyStripeSessionId(sessionId)) {
     return NextResponse.json({ error: "Invalid session_id" }, { status: 400 });
+  }
+  if (!sessionId && bookingIdParam && !isUuid(bookingIdParam)) {
+    return NextResponse.json({ error: "Invalid bookingId" }, { status: 400 });
   }
 
   const ip = ipFromRequest(request);
@@ -120,11 +128,17 @@ export async function GET(request: Request) {
   }
 
   const supabase = supabaseAdmin();
-  let { data: booking } = await supabase
-    .from("bookings")
-    .select(BOOKING_SELECT)
-    .eq("stripe_session_id", sessionId)
-    .maybeSingle();
+  let { data: booking } = sessionId
+    ? await supabase
+        .from("bookings")
+        .select(BOOKING_SELECT)
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle()
+    : await supabase
+        .from("bookings")
+        .select(BOOKING_SELECT)
+        .eq("id", bookingIdParam!)
+        .maybeSingle();
 
   if (!booking) {
     return NextResponse.json({ error: "Booking not found" }, { status: 404 });
@@ -134,18 +148,22 @@ export async function GET(request: Request) {
     booking.payment_status === "paid" && booking.status === "confirmed";
 
   if (!isConfirmed) {
-    const synced = await syncBookingFromStripeSession(
-      supabase,
-      sessionId,
-      booking.id
-    );
-    if (synced) {
-      const { data: refreshed } = await supabase
-        .from("bookings")
-        .select(BOOKING_SELECT)
-        .eq("id", booking.id)
-        .maybeSingle();
-      if (refreshed) booking = refreshed;
+    // Lookup par bookingId : on retombe sur la session Stripe liée au booking si elle existe.
+    const syncSessionId = sessionId ?? booking.stripe_session_id;
+    if (syncSessionId) {
+      const synced = await syncBookingFromStripeSession(
+        supabase,
+        syncSessionId,
+        booking.id
+      );
+      if (synced) {
+        const { data: refreshed } = await supabase
+          .from("bookings")
+          .select(BOOKING_SELECT)
+          .eq("id", booking.id)
+          .maybeSingle();
+        if (refreshed) booking = refreshed;
+      }
     }
   }
 
@@ -153,12 +171,15 @@ export async function GET(request: Request) {
     booking.payment_status === "paid" && booking.status === "confirmed";
   const villa = await fetchVillaForBooking(supabase, booking.villa_id);
 
+  // Ne jamais exposer l'ID de session Stripe dans la réponse.
+  const { stripe_session_id: _stripeSessionId, ...publicBooking } = booking;
+
   if (!confirmed) {
     return NextResponse.json(
-      { booking, villa, pending: true },
+      { booking: publicBooking, villa, pending: true },
       { status: 202 }
     );
   }
 
-  return NextResponse.json({ booking, villa, pending: false });
+  return NextResponse.json({ booking: publicBooking, villa, pending: false });
 }

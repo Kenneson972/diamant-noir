@@ -310,6 +310,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "booking.landing_owner_contact_desc": "Pour un projet de mise en location ou le suivi de votre bien, notre équipe répond sur mesure.",
     // ── Page succès réservation ──────────────────────────────
     "success.payment_pending": "Paiement reçu — finalisation en cours. Consultez votre email ou votre espace client dans quelques minutes.",
+    "success.awaiting_payment_title": "Réservation en attente de paiement",
+    "success.awaiting_payment_desc": "Votre réservation est enregistrée mais le paiement n'a pas encore été confirmé. Si vous avez réglé, la confirmation arrive sous quelques minutes — sinon, reprenez la réservation depuis la fiche villa ou contactez-nous.",
     "success.booking_not_found": "Réservation introuvable.",
     "success.missing_params": "Paramètres de confirmation manquants.",
     "success.supabase_unavailable": "Supabase non disponible",
@@ -1168,6 +1170,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "booking.landing_owner_contact_desc": "For a rental project or to track your property, our team responds with a tailored answer.",
     // ── Booking success page ─────────────────────────────────
     "success.payment_pending": "Payment received — finalizing your booking. Check your email or client space in a few minutes.",
+    "success.awaiting_payment_title": "Booking awaiting payment",
+    "success.awaiting_payment_desc": "Your booking has been recorded but the payment has not been confirmed yet. If you have paid, the confirmation will arrive within a few minutes — otherwise, resume your booking from the villa page or contact us.",
     "success.booking_not_found": "Booking not found.",
     "success.missing_params": "Missing confirmation parameters.",
     "success.supabase_unavailable": "Supabase unavailable",
@@ -2027,6 +2031,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "booking.landing_owner_contact_desc": "Para un proyecto de alquiler o el seguimiento de su propiedad, nuestro equipo responde de forma personalizada.",
     // ── Página de confirmación de reserva ────────────────────
     "success.payment_pending": "Pago recibido — finalizando su reserva. Consulte su email o su espacio cliente en unos minutos.",
+    "success.awaiting_payment_title": "Reserva pendiente de pago",
+    "success.awaiting_payment_desc": "Su reserva está registrada pero el pago aún no ha sido confirmado. Si ya ha pagado, la confirmación llegará en unos minutos — si no, retome la reserva desde la ficha de la villa o contáctenos.",
     "success.booking_not_found": "Reserva no encontrada.",
     "success.missing_params": "Faltan parámetros de confirmación.",
     "success.supabase_unavailable": "Supabase no disponible",

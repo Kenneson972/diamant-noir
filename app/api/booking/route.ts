@@ -282,6 +282,14 @@ export async function POST(request: Request) {
       .single();
 
     if (bookingError) {
+      // 23P01 : contrainte d'exclusion bookings_no_overlap — une réservation
+      // concurrente a pris les dates entre notre check de conflit et cet INSERT.
+      if (bookingError.code === "23P01") {
+        return NextResponse.json(
+          { error: "Cette villa n'est pas disponible pour les dates sélectionnées" },
+          { status: 409 }
+        );
+      }
       throw new Error(`Database error: ${bookingError.message}`);
     }
 
