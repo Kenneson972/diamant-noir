@@ -125,34 +125,6 @@ type RecommendedVilla = {
   is_published?: boolean;
 };
 
-const fallbackVilla: VillaDetails = {
-  id: "fallback",
-  name: "Villa Kayvila",
-  location: "Le Diamant, Martinique",
-  description:
-    "Sur les hauteurs du sud caraïbe, Kayvila mêle modernité et nature tropicale. Volumes épurés, baies vitrées sur l'océan, espace extérieur et piscine invitent au calme — à deux pas du Rocher du Diamant et des plages du sud de la Martinique.",
-  price: 1000,
-  capacity: 8,
-  image: "/villa-hero.jpg",
-  images: ["/villa-hero.jpg"],
-  bathrooms_count: 4,
-  surface_m2: 250,
-  check_in_time: "17:00",
-  check_out_time: "10:00",
-  collection_tier: "signature",
-  nearby_points: ["Plage", "Restaurants et bars", "Commerces"],
-  equipment_interior: [],
-  equipment_exterior: [],
-  included_services_home: ["Property Manager"],
-  included_services_collection: [
-    "Concierge dédié avant et pendant votre séjour",
-    "Accueil personnalisé",
-  ],
-  a_la_carte_services: ["Chef à domicile", "Location de bateau", "Babysitter"],
-  booking_terms: [],
-  host: null,
-};
-
 export default async function VillaDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -162,7 +134,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   const locale = hdrs.get("x-dn-locale") ?? "fr";
   const { tServer: ts, formatPrice: fp } = await import("@/lib/i18n");
 
-  let villa: VillaDetails = fallbackVilla;
+  let villa: VillaDetails | null = null;
   let recommendedVillas: RecommendedVilla[] = [];
   let seasonalPrices: { season: string; start: string; end: string; price: number }[] = [];
 
@@ -189,8 +161,9 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
 
     const { data, error } = villaResult;
 
-    if (!error && data) {
-      if (data.is_published === false) notFound();
+    // Villa dépubliée : 404 décidé APRÈS le try/catch (un notFound() lancé ici
+    // serait avalé par le catch global et rendrait la page quand même).
+    if (!error && data && data.is_published !== false) {
       villa = {
         id: data.id,
         name: data.name,
@@ -275,6 +248,10 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   } catch (error) {
     console.error("Supabase fetch error (villa details):", error);
   }
+
+  // Villa inexistante, dépubliée ou erreur de chargement : 404 propre plutôt
+  // qu'une villa fictive à l'apparence réservable (P1 audit préprod 2026-07-11).
+  if (!villa) notFound();
 
   return (
     <main className="min-h-dvh bg-offwhite pb-24 sm:pb-0">

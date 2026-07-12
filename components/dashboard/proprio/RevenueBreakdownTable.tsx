@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 export type RevenueRow = {
   id: string;
@@ -20,8 +20,10 @@ export type RevenueRow = {
   villaId: string;
 };
 
-function formatEur(v: number) {
-  return v >= 1000 ? `${(v / 1000).toFixed(1)}K€` : `${v.toLocaleString("fr-FR")}€`;
+// Les montants des RevenueRow sont en centimes — convertir avant affichage,
+// et toujours afficher le montant exact (pas d'abréviation K€ dans un tableau financier).
+function formatEur(cents: number) {
+  return `${Math.round(cents / 100).toLocaleString("fr-FR")} €`;
 }
 
 function formatDate(d: string) {
@@ -88,11 +90,8 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
             {rows.map((row) => {
               const isOpen = expandedId === row.id;
               return (
-                <>
-                  <tr
-                    key={row.id}
-                    className="bg-white transition-colors hover:bg-offwhite"
-                  >
+                <Fragment key={row.id}>
+                  <tr className="bg-white transition-colors hover:bg-offwhite">
                     <td className="whitespace-nowrap px-3 py-3 text-navy/70">
                       {formatDate(row.checkIn)}
                     </td>
@@ -227,7 +226,7 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>

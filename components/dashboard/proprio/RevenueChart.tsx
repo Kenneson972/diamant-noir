@@ -124,7 +124,7 @@ export function RevenueChart({ data, hasEnoughHistory }: RevenueChartProps) {
         <span className="dashboard-eyebrow">REVERSEMENTS NETS MENSUELS</span>
         <div className="mt-4 flex h-80 items-center justify-center rounded-lg bg-[#FAF9F6]">
           <p className="text-sm text-muted text-center px-6">
-            Aucun revenu ce mois-ci
+            Pas encore assez d&apos;historique pour afficher la tendance mensuelle.
           </p>
         </div>
       </div>

@@ -299,7 +299,7 @@ export default function LivretPage() {
         .from("villas")
         .select("id, name, location, wifi_name, wifi_password, check_in_time, check_out_time, checkout_instructions, local_recommendations, emergency_contacts")
         .eq("id", bk.villa_id)
-        .single();
+        .maybeSingle();
 
       setBooking({ id: bk.id, start_date: bk.start_date, end_date: bk.end_date, villa: (villaRaw as VillaData | null) ?? null });
       setLoading(false);

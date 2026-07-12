@@ -46,7 +46,7 @@ export default function LivretPrintPage() {
         .from("villas")
         .select("name, location, wifi_name, wifi_password, check_in_time, check_out_time, checkout_instructions, local_recommendations, emergency_contacts")
         .eq("id", bk.villa_id)
-        .single();
+        .maybeSingle();
 
       if (villaRaw) {
         setVilla(villaRaw as unknown as VillaPrint);

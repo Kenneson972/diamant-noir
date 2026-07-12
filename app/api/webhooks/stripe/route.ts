@@ -156,14 +156,34 @@ export async function POST(request: Request) {
         ? { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }
         : { "Content-Type": "application/json" };
 
+      // Envoi de l'email de confirmation. En cas d'échec (réseau, 5xx, ou
+      // provider qui refuse) : alerte admin dans le dashboard via la table
+      // notifications — le client a payé, il ne doit pas rester sans email
+      // à l'insu de l'équipe (P1 audit préprod 2026-07-11).
       try {
-        await fetch(`${baseUrl}/api/send-booking-confirmation`, {
+        const confirmationRes = await fetch(`${baseUrl}/api/send-booking-confirmation`, {
           method: "POST",
           headers: authHeaders,
           body: JSON.stringify({ bookingId }),
         });
+        const confirmationJson = await confirmationRes.json().catch(() => null);
+        if (!confirmationRes.ok || confirmationJson?.emailSent === false) {
+          throw new Error(
+            `send-booking-confirmation → HTTP ${confirmationRes.status}, emailSent=${confirmationJson?.emailSent ?? "n/a"}`
+          );
+        }
       } catch (e) {
         console.error("Send booking confirmation failed:", e);
+        const { error: notifError } = await supabase.from("notifications").insert({
+          type: "system",
+          title: "Email de confirmation non envoyé",
+          body: `L'email de confirmation de la réservation ${bookingId} a échoué (${
+            e instanceof Error ? e.message : "erreur inconnue"
+          }). Le client a payé mais n'a pas reçu de confirmation — à renvoyer manuellement.`,
+        });
+        if (notifError) {
+          console.error("Failed to insert email-failure notification:", notifError.message);
+        }
       }
 
       try {

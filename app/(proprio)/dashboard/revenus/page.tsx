@@ -41,14 +41,21 @@ export default async function RevenusPage() {
   // Fetch last 6 months of confirmed/paid bookings
   const sixMonthsAgo = new Date(currentYear, currentMonth - 5, 1).toISOString();
 
-  const { data: bookings } = villaIds.length > 0
+  // NB : ne sélectionner que des colonnes existantes — les colonnes
+  // stripe_transfer_* n'existent pas dans bookings ; les demander faisait
+  // échouer silencieusement toute la requête → page à 0 € (P1 audit préprod).
+  const { data: bookings, error: bookingsError } = villaIds.length > 0
     ? await supabase
         .from("bookings")
-        .select("id, price, cleaning_fee, service_fee, total_price_cents, villa_id, start_date, end_date, guest_name, source, status, payment_status, stripe_transfer_id, stripe_transfer_date, stripe_transfer_status")
+        .select("id, price, cleaning_fee, service_fee, total_price_cents, villa_id, start_date, end_date, guest_name, source, status, payment_status")
         .in("villa_id", villaIds)
         .in("status", ["confirmed", "paid"])
         .gte("start_date", sixMonthsAgo)
-    : { data: [] };
+    : { data: [], error: null };
+
+  if (bookingsError) {
+    console.error("[dashboard/revenus] bookings fetch failed:", bookingsError.message);
+  }
 
   // Build revenue rows using unified functions (consistent with admin revenue)
   const revenueRows: RevenueRow[] = (bookings ?? []).map((b: any) => {
@@ -78,9 +85,11 @@ export default async function RevenusPage() {
       cleaningFee: cleaningCents,
       net: ownerAmountCents,
       paymentStatus: b.payment_status ?? "pending",
-      stripeTransferId: b.stripe_transfer_id ?? null,
-      stripeTransferDate: b.stripe_transfer_date ?? null,
-      stripeTransferStatus: b.stripe_transfer_status ?? null,
+      // Colonnes stripe_transfer_* pas encore en base — la table les affiche
+      // seulement si non-null.
+      stripeTransferId: null,
+      stripeTransferDate: null,
+      stripeTransferStatus: null,
       villaId: b.villa_id,
     };
   });
@@ -88,8 +97,11 @@ export default async function RevenusPage() {
   const currentPeriod = `${now.toLocaleString("fr-FR", { month: "long" })} ${now.getFullYear()}`;
 
   // Build 6-month chart data using unified ownerNetCents (consistent with dashboard KPI)
+  // Même filtre paiement que le graphique du tableau de bord (paid ou legacy null).
   const monthMap: Record<string, number> = {}; // key = "YYYY-MM"
-  for (const b of (bookings ?? [])) {
+  for (const b of (bookings ?? []).filter(
+    (b: any) => b.payment_status === "paid" || b.payment_status == null
+  )) {
     const d = new Date(b.start_date);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     // Use unified function: fallback total_price_cents, source-based rate
@@ -109,10 +121,22 @@ export default async function RevenusPage() {
     });
   }
 
-  // Compute totals from the unified revenue rows
-  const totalNet = Math.round(revenueRows.reduce((s, r) => s + r.net, 0) / 100);
-  const totalGross = Math.round(revenueRows.reduce((s, r) => s + r.gross, 0) / 100);
-  const totalCommission = Math.round(revenueRows.reduce((s, r) => s + r.commission, 0) / 100);
+  // Cartes « ce mois » : même périmètre que le KPI « Revenus du mois » du
+  // tableau de bord (mois courant par start_date + paiement validé ou legacy
+  // sans payment_status), pour que les deux vues affichent le même chiffre.
+  const paidBookingIds = new Set(
+    (bookings ?? [])
+      .filter((b: any) => b.payment_status === "paid" || b.payment_status == null)
+      .map((b: any) => b.id)
+  );
+  const currentMonthRows = revenueRows.filter((r) => {
+    if (!paidBookingIds.has(r.id)) return false;
+    const d = new Date(r.checkIn);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+  const totalNet = Math.round(currentMonthRows.reduce((s, r) => s + r.net, 0) / 100);
+  const totalGross = Math.round(currentMonthRows.reduce((s, r) => s + r.gross, 0) / 100);
+  const totalCommission = Math.round(currentMonthRows.reduce((s, r) => s + r.commission, 0) / 100);
 
   // Enough history = at least 2 months with data (not just current)
   const monthsWithData = Object.values(monthMap).filter((v) => v > 0).length;

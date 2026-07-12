@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       .from("villas")
       .select("name, location")
       .eq("id", booking.villa_id)
-      .single();
+      .maybeSingle();
 
     const result = await sendBookingConfirmationEmail(booking, villa);
 

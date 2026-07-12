@@ -171,7 +171,7 @@ export default function ChecklistPage() {
         .from("villas")
         .select("name, location, check_in_time, check_out_time")
         .eq("id", bk.villa_id)
-        .single();
+        .maybeSingle();
 
       const bkWithVilla: Booking = {
         id: bk.id,

@@ -116,7 +116,7 @@ export default function ReservationDetailPage() {
           "id, name, location, wifi_name, wifi_password, checkout_instructions, local_recommendations, emergency_contacts"
         )
         .eq("id", booking.villa_id)
-        .single();
+        .maybeSingle();
       const villa = villaRaw as any;
 
       setData({ booking, villa });
