@@ -144,9 +144,20 @@ export const Footer = () => {
         )}
 
         {/* ──── Barre du bas ──── */}
-        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/55 md:mt-12 md:flex md:items-center md:justify-between md:text-left">
+        <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/55 md:mt-12">
           <p>© 2026 Kayvila. Tous droits réservés.</p>
-          <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1 md:mt-0 md:justify-end">
+          <p className="mt-2 text-[10px] tracking-[0.15em] text-navy/40">
+            Site web créé par{" "}
+            <a
+              href="https://karibloom.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 transition-colors hover:text-navy/70"
+            >
+              Karibloom
+            </a>
+          </p>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1">
             <Link href="/mentions-legales" className="transition-colors hover:text-black/70">Mentions légales</Link>
             <Link href="/cgv" className="transition-colors hover:text-black/70">CGV</Link>
             <Link href="/confidentialite" className="transition-colors hover:text-black/70">Confidentialité</Link>
