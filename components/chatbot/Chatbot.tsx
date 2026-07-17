@@ -15,10 +15,10 @@ const QUICK_SUGGESTIONS = {
     "Contacter l'équipe",
   ],
   booking: [
-    "Réserver pour 2 personnes",
-    "Réserver pour 4 personnes",
-    "Réserver pour 8 personnes",
+    "Voir les photos",
+    "Comparer deux villas",
     "Voir les disponibilités",
+    "Parler à un humain",
   ],
   pricing: [
     "Tarif à la semaine",
@@ -314,7 +314,7 @@ export const Chatbot = () => {
     <>
       {/* FAB Button */}
       {!isOpen && (
-        <button
+        <button type="button"
           onClick={() => setIsOpen(true)}
           className="group fixed z-[1060] flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all hover:scale-110 hover:bg-navy/90 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] right-[max(1.5rem,env(safe-area-inset-right,0px))]"
           aria-label="Ouvrir le chat"
@@ -352,7 +352,7 @@ export const Chatbot = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <button type="button"
                 onClick={() => {
                   localStorage.removeItem("kayvila_session_id");
                   setMessages([{
@@ -366,7 +366,7 @@ export const Chatbot = () => {
                 <RotateCcw size={16} />
               </button>
               {!isMobile && (
-                <button
+                <button type="button"
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-white/10 transition-colors"
                   aria-label={isFullscreen ? "Réduire" : "Agrandir"}
@@ -374,7 +374,7 @@ export const Chatbot = () => {
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
               )}
-              <button
+              <button type="button"
                 onClick={() => setIsOpen(false)}
                 className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-white/10 transition-colors"
                 aria-label="Fermer"
@@ -453,7 +453,7 @@ export const Chatbot = () => {
             {quickSuggestions.length > 0 && !isLoading && (
               <div className="flex flex-wrap gap-2 pt-2">
                 {quickSuggestions.map((suggestion, index) => (
-                  <button
+                  <button type="button"
                     key={index}
                     onClick={() => sendMessage(suggestion)}
                     className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:border-black hover:bg-navy hover:text-white"
@@ -475,7 +475,7 @@ export const Chatbot = () => {
               >
                 <div className="grid grid-cols-10 gap-2">
                   {EMOJIS.map((emoji, index) => (
-                    <button
+                    <button type="button"
                       key={index}
                       onClick={() => insertEmoji(emoji)}
                       className="rounded-lg p-2 text-xl transition-colors hover:bg-navy/5"
@@ -487,7 +487,7 @@ export const Chatbot = () => {
               </div>
             )}
             <div className="flex items-end gap-2">
-              <button
+              <button type="button"
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="rounded-full p-2 text-black/50 transition-colors hover:bg-navy/5 hover:text-black"
                 aria-label="Émojis"
@@ -505,7 +505,7 @@ export const Chatbot = () => {
                 aria-label="Votre message"
                 className="flex-1 resize-none rounded-2xl border border-black/10 bg-offwhite px-4 py-3 text-sm text-black focus:border-black focus:outline-none"
               />
-              <button
+              <button type="button"
                 onClick={() => sendMessage()}
                 disabled={!inputMessage.trim() || isLoading}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-white transition-all hover:bg-navy/85 disabled:cursor-not-allowed disabled:opacity-50"
