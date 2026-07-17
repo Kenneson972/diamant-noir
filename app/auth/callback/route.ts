@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import type { EmailOtpType } from "@supabase/supabase-js";
 
 /**
  * Route appelée par Supabase Auth après :
@@ -8,26 +9,24 @@ import type { NextRequest } from "next/server";
  * - Magic link (login sans mot de passe)
  * - Réinitialisation de mot de passe
  *
- Elle échange le code d'authentification contre une session,
- * pose les cookies et redirige vers la page demandée.
+ * Elle finalise l'authentification puis redirige vers la page demandée.
+ * Deux flux sont supportés :
+ * - `?code=…` : flux PKCE (déclenché par l'app elle-même, avec code verifier local).
+ * - `?token_hash=…&type=…` : flux OTP/lien email (recovery, invite, magic link),
+ *   notamment les liens envoyés depuis le Dashboard Supabase — sans code verifier.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
 
-  // Récupérer le code d'authentification et le paramètre next
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next") ?? "/espace-client";
 
-  if (code) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.redirect(
-        `${origin}/login?error=${encodeURIComponent("Supabase non configuré")}`
-      );
-    }
-
+  if ((code || (tokenHash && type)) && supabaseUrl && supabaseAnonKey) {
     const response = NextResponse.redirect(`${origin}${next}`);
 
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -43,12 +42,19 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Échanger le code contre une session
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error } = code
+      ? await supabase.auth.exchangeCodeForSession(code)
+      : await supabase.auth.verifyOtp({ type: type!, token_hash: tokenHash! });
 
     if (!error) {
       return response;
     }
+  }
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.redirect(
+      `${origin}/login?error=${encodeURIComponent("Supabase non configuré")}`
+    );
   }
 
   // En cas d'erreur, rediriger vers login
