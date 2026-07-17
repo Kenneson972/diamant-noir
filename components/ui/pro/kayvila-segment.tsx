@@ -42,7 +42,7 @@ export function KayvilaSegment<T extends string>({
     >
       {options.map((option) => (
         <Segment.Item key={option.id} id={option.id}>
-          <span className="inline-flex items-center gap-1.5 px-1 text-[11px] font-semibold uppercase tracking-[0.08em]">
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap px-2 text-[11px] font-semibold uppercase tracking-[0.08em]">
             {option.icon}
             {option.label}
           </span>
