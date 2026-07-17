@@ -29,7 +29,7 @@ export function CopilotActionCard({ action, result }: CopilotActionCardProps) {
           <p className="text-[13px] font-semibold text-navy">
             {result.success ? config.title : config.errorTitle}
           </p>
-          <p className="mt-1 text-[12px] text-navy/65">{config.detail}</p>
+          <p className="mt-1 whitespace-pre-line text-[12px] text-navy/65">{config.detail}</p>
         </div>
       </div>
     </div>
@@ -85,6 +85,22 @@ function getConfig(
     case "SHOW_BOOKING": {
       if (!result.success)
         return { ...fail, errorTitle: "Recherche impossible" };
+      const list = ((result as Record<string, unknown>).bookings ??
+        []) as Record<string, unknown>[];
+      if (Array.isArray(list) && list.length > 1) {
+        const fmt = (bk: Record<string, unknown>) => {
+          const amt = bk.total_price_cents
+            ? `${(Number(bk.total_price_cents) / 100).toLocaleString("fr-FR")} €`
+            : "—";
+          return `${(bk.guest_name as string) ?? "Réservation"} · ${bk.start_date ?? ""} → ${bk.end_date ?? ""} · ${amt} · ${bk.status ?? ""}`;
+        };
+        return {
+          icon: <KayvilaPngIcon name="home" size={18} alt="" />,
+          title: `${list.length} réservations`,
+          errorTitle: "",
+          detail: list.map(fmt).join("\n"),
+        };
+      }
       const b = (result as Record<string, unknown>)
         .booking as Record<string, unknown> | undefined;
       if (!b) {

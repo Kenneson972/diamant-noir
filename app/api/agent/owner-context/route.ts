@@ -41,8 +41,26 @@ export async function GET(request: Request) {
 
   const context = await buildOwnerContextPackCached(admin, resolvedUserId);
 
+  // Liste de réservations lisible (noms de villa au lieu d'UUID, prix en €) —
+  // pour que l'agent B liste proprement sans exposer d'identifiants bruts.
+  const villaNameById = Object.fromEntries(
+    (context.villas as { id?: string; name?: string }[]).map((v) => [v.id, v.name || "Villa"]),
+  );
+  const bookings_list = [...(context.bookings as Record<string, unknown>[])]
+    .sort((a, b) => String(b.start_date).localeCompare(String(a.start_date)))
+    .slice(0, 40)
+    .map((b) => ({
+      guest_name: b.guest_name ?? null,
+      villa_name: villaNameById[String(b.villa_id)] || "Villa",
+      start_date: String(b.start_date ?? ""),
+      end_date: String(b.end_date ?? ""),
+      status: String(b.status ?? ""),
+      payment_status: String(b.payment_status ?? ""),
+      price_eur: b.total_price_cents ? Math.round(Number(b.total_price_cents) / 100) : null,
+    }));
+
   return NextResponse.json({
-    context,
+    context: { ...context, bookings_list },
     insights: ownerInsights(context),
     faq: faqForPrompt(["proprietaire"]),
     userId: resolvedUserId,

@@ -45,11 +45,14 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
   const close = useCallback(() => setIsOpen(false), []);
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
-  // Compute lastActionResult from the most recent assistant message
+  // Compute lastActionResult from the most recent assistant message.
+  // Ne construire la carte QUE si une action a réellement été exécutée
+  // (actionResult présent) — sinon une réponse type "SHOW_STATS"/"reply"
+  // sans résultat affichait une carte « Échec » parasite.
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
   const lastActionResult =
-    lastAssistantMsg?.action
-      ? { action: lastAssistantMsg.action, success: lastAssistantMsg.actionResult?.success ?? false, ...(lastAssistantMsg.actionResult ?? {}) }
+    lastAssistantMsg?.action && lastAssistantMsg.actionResult
+      ? { action: lastAssistantMsg.action, success: lastAssistantMsg.actionResult.success ?? false, ...lastAssistantMsg.actionResult }
       : null;
 
   // Load context when copilot opens

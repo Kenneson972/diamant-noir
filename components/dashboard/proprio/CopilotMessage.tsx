@@ -1,5 +1,8 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { cn } from "@/lib/utils";
 import type { CopilotMessage as CopilotMessageType } from "@/types/copilot";
@@ -34,7 +37,24 @@ export function CopilotMessage({ message }: CopilotMessageProps) {
             : "rounded-bl-sm bg-cream text-navy-900"
         )}
       >
-        {message.content}
+        {isUser ? (
+          message.content
+        ) : (
+          <div
+            className={cn(
+              "space-y-2",
+              "[&_ul]:my-1 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-4",
+              "[&_ol]:my-1 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-4",
+              "[&_li]:marker:text-gold [&_p]:leading-relaxed",
+              "[&_strong]:font-semibold [&_strong]:text-navy-900",
+              "[&_a]:text-gold [&_a]:underline"
+            )}
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+              {message.content}
+            </ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
   );

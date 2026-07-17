@@ -119,10 +119,15 @@ export async function POST(request: Request) {
         const admin = supabaseAdmin();
         const today = new Date().toISOString().split("T")[0];
         const villaId = ((actionData.booking ?? {}) as { villa_id?: string }).villa_id;
-        let q = admin.from("bookings").select("id, guest_name, villa_id, start_date, end_date, status, total_price_cents").or(`start_date.gte.${today},and(start_date.lte.${today},end_date.gte.${today})`).order("start_date", { ascending: true }).limit(1);
+        let q = admin.from("bookings").select("id, guest_name, villa_id, start_date, end_date, status, total_price_cents").or(`start_date.gte.${today},and(start_date.lte.${today},end_date.gte.${today})`).order("start_date", { ascending: true }).limit(20);
         if (villaId) q = q.eq("villa_id", villaId);
-        const { data: nextBooking } = await q.maybeSingle();
-        return NextResponse.json({ response: reply, action, action_result: { success: true, booking: nextBooking ?? null } });
+        const { data: bookingsData } = await q;
+        const list = bookingsData ?? [];
+        return NextResponse.json({
+          response: reply,
+          action,
+          action_result: { success: true, bookings: list, booking: list[0] ?? null },
+        });
       }
       // SHOW_STATS / défaut
       return NextResponse.json({ response: reply, action, request_id: data.request_id ?? "n8n" });

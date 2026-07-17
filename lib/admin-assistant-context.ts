@@ -310,10 +310,46 @@ export async function buildAdminAgentPayload(supabase: SupabaseClient) {
     revenueLastMonthByVilla: ctx.revenueLastMonthByVilla,
   };
 
+  const villaNameById: Record<string, string> = Object.fromEntries(
+    ctx.villas.map((v: any) => [String(v.id), String(v.name ?? "Villa")]),
+  );
+
+  // Liste détaillée des réservations (les plus récentes/à venir en premier) —
+  // indispensable pour répondre aux questions de type « liste les X réservations ».
+  // Sans elle, le LLM ne voit que le total et ne peut rien détailler.
+  const bookingsList = [...ctx.bookings]
+    .sort((a: any, b: any) => String(b.start_date).localeCompare(String(a.start_date)))
+    .slice(0, 40)
+    .map((b: any) => ({
+      id: b.id,
+      guest_name: b.guest_name ?? null,
+      villa_id: String(b.villa_id),
+      villa_name: villaNameById[String(b.villa_id)] ?? "Villa",
+      start_date: String(b.start_date),
+      end_date: String(b.end_date),
+      status: String(b.status ?? ""),
+      payment_status: String(b.payment_status ?? ""),
+      price_eur: Math.round((getBookingPriceCents(b) / 100) * 100) / 100,
+    }));
+
+  const tasksList = ctx.tasks
+    .filter((t: any) => t.status !== "done")
+    .slice(0, 30)
+    .map((t: any) => ({
+      id: t.id,
+      title: t.title ?? null,
+      villa_name: villaNameById[String(t.villa_id)] ?? null,
+      status: String(t.status ?? ""),
+      due_date: t.due_date ?? null,
+      type: t.type ?? null,
+    }));
+
   const contextData: Record<string, unknown> = {
     villas_summary: ctx.villas.map((v: any) => ({
       id: v.id, name: v.name, status: v.status, price_per_night: v.price_per_night,
     })),
+    bookings_list: bookingsList,
+    tasks_list: tasksList,
     bookings_summary: {
       total: ctx.bookings.length,
       active: ctx.bookings.filter((b: any) => b.status === "confirmed" && b.payment_status === "paid").length,

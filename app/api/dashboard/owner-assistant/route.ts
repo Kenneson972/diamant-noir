@@ -120,6 +120,27 @@ function tasksPreviewFromPack(pack: OwnerContextPack) {
     }));
 }
 
+/** Liste détaillée des réservations (récentes/à venir en premier) — indispensable
+ *  pour répondre aux questions « liste mes réservations » sans que le LLM esquive. */
+function bookingsPreviewFromPack(pack: OwnerContextPack) {
+  const villaNameById = Object.fromEntries(
+    (pack.villas as { id?: string; name?: string }[]).map((v) => [v.id, v.name || "Villa"]),
+  );
+  return [...(pack.bookings as Record<string, unknown>[])]
+    .sort((a, b) => String(b.start_date).localeCompare(String(a.start_date)))
+    .slice(0, 30)
+    .map((b) => ({
+      id: b.id,
+      guest_name: b.guest_name ?? null,
+      villa_name: villaNameById[String(b.villa_id)] || "Villa",
+      start_date: String(b.start_date ?? ""),
+      end_date: String(b.end_date ?? ""),
+      status: String(b.status ?? ""),
+      payment_status: String(b.payment_status ?? ""),
+      price_eur: b.total_price_cents ? Math.round(Number(b.total_price_cents) / 100) : null,
+    }));
+}
+
 /** Contexte compact envoyé à n8n — évite de surcharger le LLM. */
 function buildCompactContext(pack: OwnerContextPack) {
   return {
@@ -127,6 +148,7 @@ function buildCompactContext(pack: OwnerContextPack) {
     portfolio: pack.portfolio,
     today: pack.today,
     alerts: pack.alerts.slice(0, 5),
+    bookings_list: bookingsPreviewFromPack(pack),
     tasks_preview: tasksPreviewFromPack(pack).slice(0, 10),
     villas_summary: (
       pack.villas as { id?: string; name?: string; slug?: string; is_published?: boolean }[]
@@ -176,7 +198,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   // ── Avertissement secret manquant en prod ──
   const webhookURL = process.env.N8N_OWNER_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
-  const n8nSecret = process.env.N8N_OWNER_WEBHOOK_SECRET;
+  // Le workflow n8n owner valide le même secret partagé que l'admin/visiteur.
+  // Fallback sur N8N_WEBHOOK_SECRET si le nom spécifique n'est pas défini.
+  const n8nSecret = process.env.N8N_OWNER_WEBHOOK_SECRET || process.env.N8N_WEBHOOK_SECRET;
   if (
     process.env.NODE_ENV === "production" &&
     webhookURL &&
@@ -447,8 +471,8 @@ export async function POST(request: Request) {
     if (action === "SHOW_BOOKING") {
       const villaIdList = Array.from(ownerVillaIds);
       const today = new Date().toISOString().split("T")[0];
-      // Couvre check-ins futurs ET séjours en cours
-      const { data: nextBooking } = await admin
+      // Couvre check-ins futurs ET séjours en cours — liste complète (pas 1 seule)
+      const { data: bookingsData } = await admin
         .from("bookings")
         .select("id, guest_name, villa_id, start_date, end_date, status, total_price_cents")
         .in("villa_id", villaIdList)
@@ -456,10 +480,10 @@ export async function POST(request: Request) {
           `start_date.gte.${today},and(start_date.lte.${today},end_date.gte.${today})`
         )
         .order("start_date", { ascending: true })
-        .limit(1)
-        .maybeSingle();
+        .limit(20);
 
-      actionResult = { success: true, booking: nextBooking || null };
+      const list = bookingsData ?? [];
+      actionResult = { success: true, bookings: list, booking: list[0] || null };
     }
 
     return NextResponse.json({
