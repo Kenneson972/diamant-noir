@@ -77,15 +77,16 @@ export function AdminCommandPalette() {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((prev) => {
-          if (!prev) void loadData();
-          return !prev;
-        });
+        setOpen((prev) => !prev);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [loadData]);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) void loadData();
+  }, [isOpen, loadData]);
 
   const navigate = (href: string) => {
     setOpen(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import type { CopilotMessage, CopilotContextData, CopilotResponse } from "@/types/copilot";
 
@@ -34,7 +34,9 @@ export function useCopilot({ webhookUrl }: UseCopilotOptions) {
   const [isLoading, setIsLoading] = useState(false);
   const contextRef = useRef<CopilotContextData | null>(null);
   const messagesRef = useRef<CopilotMessage[]>(messages);
-  messagesRef.current = messages;
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const loadContext = useCallback(async () => {
     try {

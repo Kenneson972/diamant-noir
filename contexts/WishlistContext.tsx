@@ -17,6 +17,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   ReactNode,
 } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase";
@@ -39,6 +40,7 @@ const WishlistContext = createContext<WishlistCtx>({
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [ids, setIds] = useState<Set<string>>(new Set());
+  const idsRef = useRef(ids);
   const supabase = getSupabaseBrowser();
 
   // Hydratation depuis localStorage (côté client uniquement)
@@ -48,6 +50,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       if (stored) setIds(new Set(JSON.parse(stored)));
     } catch {}
   }, []);
+
+  // Persiste vers localStorage à chaque changement (effet unique, pas dans les updaters)
+  useEffect(() => {
+    idsRef.current = ids;
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify([...ids]));
+    } catch {}
+  }, [ids]);
 
   // Sync Supabase → localStorage si utilisateur connecté
   useEffect(() => {
@@ -61,24 +71,18 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       if (error) return;
       if (data && data.length > 0) {
         const remoteIds = new Set<string>(data.map((r: { villa_id: string }) => r.villa_id));
-        setIds((prev: Set<string>) => {
-          const merged = new Set([...prev, ...remoteIds]);
-          localStorage.setItem(LS_KEY, JSON.stringify([...merged]));
-          return merged;
-        });
+        setIds((prev: Set<string>) => new Set([...prev, ...remoteIds]));
       }
     });
   }, [supabase]);
 
   const toggle = useCallback(
     async (villaId: string) => {
-      let removing = false;
+      const removing = idsRef.current.has(villaId);
       setIds((prev) => {
         const next = new Set(prev);
-        removing = next.has(villaId);
         if (removing) next.delete(villaId);
         else next.add(villaId);
-        localStorage.setItem(LS_KEY, JSON.stringify([...next]));
         return next;
       });
 
