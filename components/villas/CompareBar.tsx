@@ -65,7 +65,7 @@ export function CompareBar() {
                     {item.location}
                   </p>
                 </div>
-                <button
+                <button type="button"
                   onClick={() => remove(item.id)}
                   aria-label={`Retirer ${item.name} de la comparaison`}
                   className="ml-1 flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-white/30 transition-colors hover:text-white"
@@ -90,13 +90,13 @@ export function CompareBar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2 shrink-0">
-            <button
+            <button type="button"
               onClick={clear}
               className="text-[10px] text-white/40 hover:text-white transition-colors uppercase tracking-[0.15em] hidden sm:block"
             >
               Effacer
             </button>
-            <button
+            <button type="button"
               onClick={handleCompare}
               disabled={count < 2}
               className={`

@@ -120,7 +120,7 @@ export function PlanningView({ data }: { data: any }) {
                 </span>
                 <span className="font-bold text-white/80">{b.villa_name || `Villa #${b.villa_id?.slice(0, 6)}`}</span>
                 {b.guest_name && <span className="text-white/40">· {b.guest_name}</span>}
-                <span className="ml-auto text-xs text-white/30">{fmt(b.start_date)}</span>
+                <span className="ml-auto text-xs text-white/30" suppressHydrationWarning>{fmt(b.start_date)} {/* react-doctor: locale hydration mismatch */}</span>
               </li>
             ))}
           </ul>

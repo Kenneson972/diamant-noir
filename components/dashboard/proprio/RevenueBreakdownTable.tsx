@@ -92,8 +92,8 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
               return (
                 <Fragment key={row.id}>
                   <tr className="bg-white transition-colors hover:bg-offwhite">
-                    <td className="whitespace-nowrap px-3 py-3 text-navy/70">
-                      {formatDate(row.checkIn)}
+                    <td className="whitespace-nowrap px-3 py-3 text-navy/70" suppressHydrationWarning>
+                      {formatDate(row.checkIn)} {/* react-doctor: locale hydration mismatch */}
                     </td>
                     <td className="px-3 py-3 font-medium text-navy">
                       {row.guestName}
@@ -198,8 +198,8 @@ export function RevenueBreakdownTable({ rows }: { rows: RevenueRow[] }) {
                                     <span className="text-navy/80">
                                       Date reversement
                                     </span>
-                                    <span className="text-navy">
-                                      {formatDate(row.stripeTransferDate)}
+                                    <span className="text-navy" suppressHydrationWarning>
+                                      {formatDate(row.stripeTransferDate)} {/* react-doctor: locale hydration mismatch */}
                                     </span>
                                   </div>
                                 )}

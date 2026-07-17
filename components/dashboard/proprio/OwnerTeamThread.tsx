@@ -253,7 +253,7 @@ export function OwnerTeamThread({ ownerId, firstName }: Props) {
               rows={2}
               className="flex-1 border border-navy/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-gold/50"
             />
-            <button
+            <button type="button"
               onClick={handleSend}
               disabled={sending || !content.trim()}
               className="shrink-0 inline-flex items-center justify-center w-10 h-10 bg-navy text-white rounded-lg hover:bg-gold hover:text-navy disabled:opacity-60 transition-colors"

@@ -119,7 +119,7 @@ export function VillaPastBookingsDrawer({ villaId, villaName, open, onClose }: V
             <h2 className="font-display text-xl text-navy">{villaName}</h2>
             <p className="text-xs text-navy/55">Historique des r&eacute;servations pass&eacute;es</p>
           </div>
-          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-navy/10 text-navy/55 hover:text-navy hover:border-navy/20 transition-colors">
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-navy/10 text-navy/55 hover:text-navy hover:border-navy/20 transition-colors">
             <X size={18} />
           </button>
         </div>

@@ -79,12 +79,12 @@ export function DocumentsList({ documents }: { documents: Doc[] }) {
               <td className="px-4 py-3 text-navy/50">
                 {formatSize(d.file_size)}
               </td>
-              <td className="px-4 py-3 text-navy/50">
+              <td className="px-4 py-3 text-navy/50" suppressHydrationWarning>
                 {new Date(d.created_at).toLocaleDateString("fr-FR", {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
-                })}
+                })} {/* react-doctor: locale hydration mismatch */}
               </td>
               <td className="px-4 py-3 text-right">
                 <a

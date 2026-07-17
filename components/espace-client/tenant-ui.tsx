@@ -42,7 +42,7 @@ const buttonVariants = {
   },
 };
 
-/** Classes pour un `<Link>` avec l’apparence d’un bouton (HTML valide, sans `<button>` imbriqué). */
+/** Classes pour un `<Link>` avec l’apparence d’un bouton (HTML valide, sans `<button type="button">` imbriqué). */
 export function linkAsButtonClasses(
   variant: keyof typeof buttonVariants.variant = "outline",
   size: keyof typeof buttonVariants.size = "sm",

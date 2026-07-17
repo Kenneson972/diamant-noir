@@ -19,7 +19,7 @@ export function BookingsView({ data }: { data: any }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[32px] border border-white/5 bg-[#0D0D14]">
+      <div className="overflow-x-auto rounded-[32px] border border-white/5 bg-[#0D0D14]">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-white/5 bg-white/[0.02]">
@@ -46,9 +46,9 @@ export function BookingsView({ data }: { data: any }) {
                     </div>
                   </td>
                   <td className="p-6">
-                    <div className="flex items-center gap-2 text-white/60 text-sm">
+                    <div className="flex items-center gap-2 text-white/60 text-sm" suppressHydrationWarning>
                       <KayvilaPngIcon name="clock" size={18} alt="" />
-                      {new Date(b.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} 
+                      {new Date(b.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} {/* react-doctor: locale hydration mismatch */}
                       <ChevronRight size={12} />
                       {new Date(b.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                     </div>

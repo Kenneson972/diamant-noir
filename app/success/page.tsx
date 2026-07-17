@@ -347,7 +347,7 @@ function SuccessContent() {
                       </div>
                     </div>
                   ) : (
-                    <button
+                    <button type="button"
                       onClick={handleSendMagicLink}
                       disabled={magicLoading}
                       className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-navy py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-lg transition-all hover:bg-gold hover:text-navy disabled:opacity-50 sm:w-auto sm:px-8"

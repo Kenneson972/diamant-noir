@@ -1,4 +1,4 @@
-# Spec — Amélioration des 3 Agents IA Kayvila
+cc# Spec — Amélioration des 3 Agents IA Kayvila
 
 > Projet : Kayvila (diamant-noir) · Date : 2026-06-16
 > Branche cible : à créer depuis `main` (commit c2b23dc)

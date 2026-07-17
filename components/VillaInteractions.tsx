@@ -42,7 +42,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
     <div className="flex items-center gap-3">
       {/* Partager */}
       <div ref={dropdownRef} className="relative">
-        <button
+        <button type="button"
           onClick={() => setShareOpen((v) => !v)}
           aria-expanded={shareOpen}
           aria-haspopup="true"
@@ -93,7 +93,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
             <div className="mx-4 h-px bg-navy/6" />
 
             {/* Copier le lien */}
-            <button
+            <button type="button"
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(shareUrl);
@@ -128,7 +128,7 @@ export const VillaHeaderActions = ({ villaName, villaId }: { villaName: string; 
       </div>
 
       {/* Favoris */}
-      <button
+      <button type="button"
         onClick={() => toggle(villaId)}
         aria-label={saved ? t("villa.remove_favorite") : t("villa.add_favorite")}
         className="flex items-center gap-2 border border-navy/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-all hover:border-navy hover:bg-navy hover:text-white"
@@ -154,7 +154,7 @@ export const ExpandableDescription = ({ text }: { text: string }) => {
     <div className="space-y-4">
       <p className="whitespace-pre-line leading-relaxed text-navy/70">{displayText}</p>
       {shouldTruncate && (
-        <button
+        <button type="button"
           onClick={() => setIsExpanded((v) => !v)}
           className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-navy underline underline-offset-4 transition-colors hover:text-gold"
         >

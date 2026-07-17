@@ -41,7 +41,7 @@ export function MaintenanceView({ data }: { data: any }) {
                       <p className="text-[10px] text-white/30 uppercase tracking-widest">{villa?.name || "Toute la flotte"}</p>
                     </div>
                   </div>
-                  <button className="rounded-xl border border-white/10 px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-navy transition-all">
+                  <button type="button" className="rounded-xl border border-white/10 px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-navy transition-all">
                     Marquer Fait
                   </button>
                 </div>

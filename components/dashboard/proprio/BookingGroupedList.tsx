@@ -185,10 +185,10 @@ export function BookingGroupedList({
                         </p>
                         <BookingStatusBadge status={b.status} />
                       </div>
-                      <p className="mt-1 text-sm text-navy/55">
+                      <p className="mt-1 text-sm text-navy/55" suppressHydrationWarning>
                         {b.villa_name} ·{" "}
                         {new Date(b.start_date).toLocaleDateString("fr-FR")} –{" "}
-                        {new Date(b.end_date).toLocaleDateString("fr-FR")}
+                        {new Date(b.end_date).toLocaleDateString("fr-FR")} {/* react-doctor: locale hydration mismatch */}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-navy/55">
                         <span className="text-sm font-semibold text-navy">

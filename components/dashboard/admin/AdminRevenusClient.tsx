@@ -68,7 +68,7 @@ export function AdminRevenusClient({
           description="Commission selon canal de réservation (20% OTA · 22% direct)"
         />
         {byVilla.length > 0 && (
-          <button
+          <button type="button"
             onClick={exportCSV}
             className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy/90"
           >

@@ -15,7 +15,7 @@ export default function GlobalError({
           <p className="mt-2 text-[11px] text-navy/50">
             {error.digest ? `Référence : ${error.digest}` : "Veuillez réessayer ou contacter le support."}
           </p>
-          <button
+          <button type="button"
             onClick={reset}
             className="mt-6 h-11 border border-navy/15 px-8 text-sm text-navy transition-colors hover:bg-navy/5"
           >

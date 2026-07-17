@@ -122,8 +122,8 @@ export function OwnerInfoTab({ profile }: Props) {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted">Inscrit le</span>
-            <span className="text-navy">
-              {new Date(profile.created_at).toLocaleDateString("fr-FR")}
+            <span className="text-navy" suppressHydrationWarning>
+              {new Date(profile.created_at).toLocaleDateString("fr-FR")} {/* react-doctor: locale hydration mismatch */}
             </span>
           </div>
         </div>

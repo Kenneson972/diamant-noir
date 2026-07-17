@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "@heroui-pro/react/sidebar";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import type { SidebarMenuItem } from "./dashboard-sidebar-types";
@@ -20,20 +20,25 @@ export function DashboardHeader({
   role,
   menu = [],
 }: DashboardHeaderProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const today = useMemo(
     () =>
-      new Date().toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    []
+      mounted
+        ? new Date().toLocaleDateString("fr-FR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
+        : "", // react-doctor: locale hydration mismatch
+    [mounted]
   );
 
   const isoDate = useMemo(
-    () => new Date().toISOString().split("T")[0] ?? "",
-    []
+    () => mounted ? (new Date().toISOString().split("T")[0] ?? "") : "",
+    [mounted]
   );
 
   const initial = (displayName[0] ?? "?").toUpperCase();

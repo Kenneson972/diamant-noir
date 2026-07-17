@@ -1,4 +1,4 @@
-# Migration Cron Vercel → pg_cron Supabase
+ok # Migration Cron Vercel → pg_cron Supabase
 
 **Date** : 2026-06-21
 **Statut** : ✅ Design approuvé

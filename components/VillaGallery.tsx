@@ -120,7 +120,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
         </div>
 
         {/* Bouton "Afficher toutes" — desktop */}
-        <button
+        <button type="button"
           onClick={() => openAt(0)}
           className="hidden md:flex absolute bottom-6 right-6 items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-navy shadow-lg hover:bg-white transition-colors border border-navy/10"
         >
@@ -143,7 +143,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
               {activeIndex + 1} <span className="text-white/30">/</span> {galleryImages.length}
             </span>
             <span className="font-display text-white text-lg tracking-[0.2em]">{title}</span>
-            <button
+            <button type="button"
               ref={closeBtnRef}
               onClick={close}
               className="tap-target rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
@@ -156,7 +156,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
           {/* Image principale */}
           <div className="relative flex-1 flex items-center justify-center px-4 md:px-20">
             {galleryImages.length > 1 && (
-              <button
+              <button type="button"
                 onClick={showPrev}
                 className="tap-target absolute left-4 md:left-6 z-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
                 aria-label={t("villa.gallery_prev")}
@@ -177,7 +177,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
             </div>
 
             {galleryImages.length > 1 && (
-              <button
+              <button type="button"
                 onClick={showNext}
                 className="tap-target absolute right-4 md:right-6 z-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
                 aria-label={t("villa.gallery_next")}
@@ -191,7 +191,7 @@ export const VillaGallery = ({ images, title = "Villa" }: VillaGalleryProps) => 
           <div className="shrink-0 pb-6 pt-4 px-6">
             <div className="flex gap-2 overflow-x-auto no-scrollbar justify-center">
               {galleryImages.map((img, i) => (
-                <button
+                <button type="button"
                   key={i}
                   onClick={() => setActiveIndex(i)}
                   className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${

@@ -71,7 +71,7 @@ export default function VillasMapView({ villas, dateQuery }: Props) {
             </p>
           )}
         </div>
-        <button
+        <button type="button"
           onClick={() => setMapVisible((v) => !v)}
           className="tap-target flex items-center gap-2 rounded-none border border-navy/15 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-all duration-200 hover:bg-navy hover:text-white hover:border-navy"
         >

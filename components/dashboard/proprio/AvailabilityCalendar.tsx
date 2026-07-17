@@ -187,7 +187,7 @@ export function AvailabilityCalendar({
     <div className="space-y-6">
       {/* Navigation */}
       <div className="flex items-center justify-between">
-        <button
+        <button type="button"
           onClick={() => setBaseMonth((m) => addMonths(m, -1))}
           className="rounded-lg p-2 hover:bg-navy/5 transition-colors"
         >
@@ -196,7 +196,7 @@ export function AvailabilityCalendar({
         <span className="text-sm font-medium text-navy capitalize">
           {format(baseMonth, "MMMM yyyy", { locale: fr })}
         </span>
-        <button
+        <button type="button"
           onClick={() => setBaseMonth((m) => addMonths(m, 1))}
           className="rounded-lg p-2 hover:bg-navy/5 transition-colors"
         >

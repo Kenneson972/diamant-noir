@@ -62,13 +62,13 @@ export function ReservationCalendar({ bookings, villaFilter }: BookingCalendarPr
     <div className="border border-navy/10 bg-white rounded-lg overflow-hidden">
       {/* En-tête */}
       <div className="flex items-center justify-between px-4 py-3 bg-navy/[0.02] border-b border-navy/10">
-        <button onClick={prevMonth} className="text-navy/50 hover:text-navy p-1">
+        <button type="button" onClick={prevMonth} className="text-navy/50 hover:text-navy p-1">
           <ChevronLeft size={18} />
         </button>
         <h3 className="text-sm font-semibold text-navy">
           {MONTHS[month]} {year}
         </h3>
-        <button onClick={nextMonth} className="text-navy/50 hover:text-navy p-1">
+        <button type="button" onClick={nextMonth} className="text-navy/50 hover:text-navy p-1">
           <ChevronRight size={18} />
         </button>
       </div>

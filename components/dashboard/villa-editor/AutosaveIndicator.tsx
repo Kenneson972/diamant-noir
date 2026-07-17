@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type AutosaveStatus = "idle" | "saving" | "saved" | "error";
@@ -13,6 +14,9 @@ export function AutosaveIndicator({
   lastSaved?: Date | null;
   onRetry: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   if (status === "error") {
     return (
       <button
@@ -30,7 +34,9 @@ export function AutosaveIndicator({
 
   const label =
     status === "saved" && lastSaved
-      ? `Enregistré à ${new Date(lastSaved).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+      ? mounted
+        ? `Enregistré à ${new Date(lastSaved).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` // react-doctor: locale hydration mismatch
+        : "Enregistré"
       : status === "saving"
         ? "Enregistrement en cours"
         : "Brouillon";

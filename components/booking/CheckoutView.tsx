@@ -29,14 +29,14 @@ function formatTripDate(iso: string) {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+  }); // react-doctor: locale hydration mismatch
 }
 
 function formatTripDateShort(iso: string) {
   return new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "short",
-  });
+  }); // react-doctor: locale hydration mismatch
 }
 
 export function CheckoutView({ villa, checkin, checkout, guestsCount }: CheckoutViewProps) {
@@ -251,8 +251,8 @@ export function CheckoutView({ villa, checkin, checkout, guestsCount }: Checkout
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-navy/45">
                         Arrivée — Départ
                       </p>
-                      <p className="mt-1 text-sm text-navy">
-                        {formatTripDateShort(checkin)} → {formatTripDate(checkout)}
+                      <p className="mt-1 text-sm text-navy" suppressHydrationWarning>
+                        {formatTripDateShort(checkin)} → {formatTripDate(checkout)} {/* react-doctor: locale hydration mismatch */}
                       </p>
                       <p className="mt-0.5 text-xs text-navy/50">
                         {nights} nuit{nights > 1 ? "s" : ""}

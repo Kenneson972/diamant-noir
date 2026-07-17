@@ -15,7 +15,7 @@ export function VillaFilters({ count }: { count: number }) {
         <div className="h-[1px] w-full bg-gold" />
       </div>
       {filters.map((filter) => (
-        <button
+        <button type="button"
           key={filter}
           onClick={() => setActiveFilter(activeFilter === filter ? null : filter)}
           className={`tap-target rounded-full px-5 text-[10px] font-bold uppercase tracking-widest transition-all duration-150 ${

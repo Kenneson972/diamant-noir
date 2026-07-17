@@ -40,8 +40,8 @@ function BookingCard({ booking, villaId }: { booking: BookingRow; villaId: strin
         <BookingStatusBadge status={booking.status} />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="text-sm text-navy/80">
-          {formatDate(booking.start_date)} → {formatDate(booking.end_date)}
+        <p className="text-sm text-navy/80" suppressHydrationWarning>
+          {formatDate(booking.start_date)} → {formatDate(booking.end_date)} {/* react-doctor: locale hydration mismatch */}
         </p>
         <p className="text-sm font-medium text-navy">
           {formatCurrency(getBookingPriceCents(booking))}
@@ -79,14 +79,14 @@ export function ProprioBookingDataGrid({ bookings, villaId }: ProprioBookingData
       header: "Arrivée",
       accessorKey: "start_date",
       allowsSorting: true,
-      cell: (item) => <span className="text-muted">{formatDate(item.start_date)}</span>,
+      cell: (item) => <span className="text-muted" suppressHydrationWarning>{formatDate(item.start_date)} {/* react-doctor: locale hydration mismatch */}</span>,
     },
     {
       id: "end_date",
       header: "Départ",
       accessorKey: "end_date",
       allowsSorting: true,
-      cell: (item) => <span className="text-muted">{formatDate(item.end_date)}</span>,
+      cell: (item) => <span className="text-muted" suppressHydrationWarning>{formatDate(item.end_date)} {/* react-doctor: locale hydration mismatch */}</span>,
     },
     {
       id: "amount",

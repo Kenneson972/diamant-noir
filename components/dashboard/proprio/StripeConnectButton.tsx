@@ -133,7 +133,7 @@ export const StripeConnectButton = ({ ownerId, isOnboarded, connectDone }: Strip
         </div>
       </div>
 
-      <button
+      <button type="button"
         onClick={handleConnect}
         disabled={loading}
         className="group flex w-full items-center justify-center gap-3 rounded-xl bg-navy px-6 py-4 text-sm font-bold text-white transition-all hover:bg-gold hover:text-navy disabled:opacity-50 sm:w-auto"

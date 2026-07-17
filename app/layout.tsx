@@ -48,7 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ? "Kayvila | Premium Concierge Martinique"
     : localeCookie === "es"
     ? "Kayvila | Conserjería de alto standing Martinica"
-    : "Kayvila | Conciergerie pour villa de standing en Martinique";
+    : "Kayvila | Conciergerie pour villas de standing en Martinique";
   const description = localeCookie === "en"
     ? "Premium villa concierge in Martinique. Villas by the sea, online booking, maintenance and management. Diamond Rock, Sun Beach."
     : localeCookie === "es"

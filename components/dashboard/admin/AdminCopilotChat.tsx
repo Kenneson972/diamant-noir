@@ -59,8 +59,8 @@ export function AdminCopilotChat() {
                         <p className="text-[13px] font-semibold text-navy">Confirmer cette action ?</p>
                         <p className="mt-1 text-[12px] text-navy/65">{describeAction(msg.proposedAction)}</p>
                         <div className="mt-3 flex gap-2">
-                          <button onClick={() => { confirmAction(msg.proposedAction!.action, msg.proposedAction!.action_data); setDismissed((p) => new Set(p).add(msg.id)); }} className="rounded-md bg-navy px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white hover:bg-navy/90">Confirmer</button>
-                          <button onClick={() => setDismissed((p) => new Set(p).add(msg.id))} className="rounded-md border border-navy/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-navy/55 hover:text-navy">Annuler</button>
+                          <button type="button" onClick={() => { confirmAction(msg.proposedAction!.action, msg.proposedAction!.action_data); setDismissed((p) => new Set(p).add(msg.id)); }} className="rounded-md bg-navy px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white hover:bg-navy/90">Confirmer</button>
+                          <button type="button" onClick={() => setDismissed((p) => new Set(p).add(msg.id))} className="rounded-md border border-navy/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-navy/55 hover:text-navy">Annuler</button>
                         </div>
                       </div>
                     </div>

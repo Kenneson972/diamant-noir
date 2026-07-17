@@ -126,8 +126,8 @@ export function SearchResults({ initialVillas, checkin, checkout, guests }: Sear
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-navy/55">
           {filteredAndSorted.length} villa{filteredAndSorted.length !== 1 ? "s" : ""}
           {checkin && checkout ? (
-            <span className="ml-1 text-navy/30">
-              · {new Date(checkin + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+            <span className="ml-1 text-navy/30" suppressHydrationWarning>
+              · {new Date(checkin + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} {/* react-doctor: locale hydration mismatch */}
               {" – "}
               {new Date(checkout + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
             </span>

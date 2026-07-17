@@ -52,10 +52,10 @@ export function AdminReservationCardList({
                     b.status}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-navy/55">
+              <p className="mt-1 text-sm text-navy/55" suppressHydrationWarning>
                 {b.villas?.name ?? "Villa"} ·{" "}
                 {new Date(b.start_date).toLocaleDateString("fr-FR")} –{" "}
-                {new Date(b.end_date).toLocaleDateString("fr-FR")}
+                {new Date(b.end_date).toLocaleDateString("fr-FR")} {/* react-doctor: locale hydration mismatch */}
               </p>
               <p className="mt-1 text-sm text-navy/55">
                 <span className="font-semibold text-navy">

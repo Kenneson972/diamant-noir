@@ -124,7 +124,7 @@ export function PriceCalculator({
           Voyageurs
         </label>
         <div className="flex items-center gap-3">
-          <button
+          <button type="button"
             onClick={() => setGuests((g) => Math.max(1, g - 1))}
             className="w-6 h-6 flex items-center justify-center border border-navy/15 text-navy hover:border-gold hover:text-gold transition-colors text-sm"
           >
@@ -133,7 +133,7 @@ export function PriceCalculator({
           <span className="text-sm font-medium text-navy w-4 text-center tabular-nums">
             {guests}
           </span>
-          <button
+          <button type="button"
             onClick={() => setGuests((g) => Math.min(20, g + 1))}
             className="w-6 h-6 flex items-center justify-center border border-navy/15 text-navy hover:border-gold hover:text-gold transition-colors text-sm"
           >

@@ -64,7 +64,7 @@ export default function AdminAvisPage() {
 
       <div className="flex gap-2 flex-wrap">
         {["pending", "approved", "rejected", "all"].map((f) => (
-          <button key={f} onClick={() => { setFilter(f); setLoading(true); }}
+          <button type="button" key={f} onClick={() => { setFilter(f); setLoading(true); }}
             className={`px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] rounded-full transition-colors ${filter === f ? "bg-navy text-white" : "bg-white border border-navy/10 text-navy/50 hover:border-navy/30"}`}>
             {f === "all" ? "Tous" : f === "pending" ? "En attente" : f === "approved" ? "Approuvés" : "Refusés"}
           </button>
@@ -123,11 +123,11 @@ export default function AdminAvisPage() {
               )}
               {r.status === "pending" && (
                 <div className="flex gap-2">
-                  <button onClick={() => handleAction(r, "approved")}
+                  <button type="button" onClick={() => handleAction(r, "approved")}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 text-[11px] font-semibold rounded-full hover:bg-emerald-100 transition-colors">
                     <Check size={14} /> Approuver
                   </button>
-                  <button onClick={() => handleAction(r, "rejected")}
+                  <button type="button" onClick={() => handleAction(r, "rejected")}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-700 text-[11px] font-semibold rounded-full hover:bg-red-100 transition-colors">
                     <X size={14} /> Refuser
                   </button>

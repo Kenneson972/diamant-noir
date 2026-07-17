@@ -465,7 +465,14 @@ export function parseListingFromHtml(html: string, pageUrl: string): ListingImpo
 
       if (!isLodging && !o.name && !o.description) return;
 
-      if (!fromLd.name && o.name) fromLd.name = asString(o.name);
+      if (!fromLd.name && o.name) {
+        // Airbnb embarque parfois dans le JSON-LD `name` le même résumé concaténé
+        // que le og:title ("Appartement · Le Lamentin · ★4,89 · 2 chambres · ...") :
+        // on applique le même nettoyage par séparateur que pour og:title plus bas.
+        const rawName = asString(o.name);
+        const cleanedName = rawName?.split(/\s*[·•|\-–—]\s*/)[0]?.trim();
+        if (cleanedName) fromLd.name = cleanedName;
+      }
       if (!fromLd.description && o.description) {
         fromLd.description = typeof o.description === "string" ? o.description : asString(o.description);
       }

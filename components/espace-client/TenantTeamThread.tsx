@@ -256,7 +256,7 @@ export function TenantTeamThread({ guestId, firstName, villaName }: Props) {
               rows={2}
               className="flex-1 border border-navy/15 px-3 py-2 text-base resize-none focus:outline-none focus:border-gold/50"
             />
-            <button
+            <button type="button"
               onClick={handleSend}
               disabled={sending || !content.trim()}
               className="shrink-0 inline-flex items-center justify-center w-11 h-11 bg-navy text-white hover:bg-gold hover:text-navy disabled:opacity-60 transition-colors"

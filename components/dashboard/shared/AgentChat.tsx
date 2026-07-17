@@ -69,7 +69,7 @@ export function AgentChat({
             {suggestedPrompts.length > 0 && (
               <div className="flex flex-wrap justify-center gap-2 mt-2">
                 {suggestedPrompts.map((p) => (
-                  <button
+                  <button type="button"
                     key={p}
                     onClick={() => send(p)}
                     className="rounded-full border border-navy/10 px-3 py-1.5 text-[10px] text-navy/80 hover:border-gold/30 hover:bg-gold/[0.04] transition-colors"

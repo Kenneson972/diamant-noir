@@ -81,8 +81,8 @@ export function OTAHealthView({ data }: { data: any }) {
               size={16}
               className={syncFresh ? "text-emerald-400" : "text-amber-400"}
             />
-            <p className={`text-sm font-bold ${syncFresh ? "text-emerald-400" : "text-amber-400"}`}>
-              {lastSync ? fmtDate(lastSync) : "Jamais"}
+            <p className={`text-sm font-bold ${syncFresh ? "text-emerald-400" : "text-amber-400"}`} suppressHydrationWarning>
+              {lastSync ? fmtDate(lastSync) : "Jamais"} {/* react-doctor: locale hydration mismatch */}
             </p>
           </div>
           {minutesSinceSync !== null && (
@@ -148,7 +148,7 @@ export function OTAHealthView({ data }: { data: any }) {
                 </span>
                 <div className="flex-1">
                   <p className="text-xs text-white/70">{err.error}</p>
-                  <p className="mt-0.5 text-[10px] text-white/30">{fmtDate(err.synced_at)}</p>
+                  <p className="mt-0.5 text-[10px] text-white/30" suppressHydrationWarning>{fmtDate(err.synced_at)} {/* react-doctor: locale hydration mismatch */}</p>
                 </div>
               </li>
             ))}

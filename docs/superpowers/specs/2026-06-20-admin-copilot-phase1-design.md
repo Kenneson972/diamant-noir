@@ -1,4 +1,4 @@
-# Spec — Phase 1 : Admin Copilot (agent C) — fondations + actions sûres + tracking modifs proprio
+xool# Spec — Phase 1 : Admin Copilot (agent C) — fondations + actions sûres + tracking modifs proprio
 
 **Date** : 2026-06-20 · **Statut** : Design validé
 **Projet** : Kayvila (Supabase `DIAMANT NOIR` = `wsdawdxucyuyopkpgjij`, prod `kayvila.vercel.app`)

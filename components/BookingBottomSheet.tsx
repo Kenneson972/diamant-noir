@@ -28,14 +28,15 @@ export const BookingBottomSheet = ({
       previousActiveElement.current = document.activeElement as HTMLElement;
       document.body.style.overflow = "hidden";
       // Focus le panel pour la navigation clavier
-      setTimeout(() => panelRef.current?.focus(), 100);
+      const focusTimer = setTimeout(() => panelRef.current?.focus(), 100);
+      return () => {
+        clearTimeout(focusTimer);
+        document.body.style.overflow = "";
+      };
     } else {
       document.body.style.overflow = "";
       previousActiveElement.current?.focus();
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [open]);
 
   // Fermer avec Escape
@@ -43,10 +44,8 @@ export const BookingBottomSheet = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
   const close = () => setOpen(false);

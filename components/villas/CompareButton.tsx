@@ -19,7 +19,7 @@ export function CompareButton({ villa }: CompareButtonProps) {
   const selected = isSelected(villa.id);
 
   return (
-    <button
+    <button type="button"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -72,7 +72,7 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
 
   return (
     <>
-      <button
+      <button type="button"
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
       >
@@ -133,13 +133,13 @@ export function ReportIssueButton({ villaId, userId }: ReportIssueButtonProps) {
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
                 <div className="flex gap-3 pt-2">
-                  <button
+                  <button type="button"
                     onClick={() => setOpen(false)}
                     className="flex-1 rounded-lg border border-navy/10 px-4 py-2 text-sm text-navy/80 hover:bg-gray-50"
                   >
                     Annuler
                   </button>
-                  <button
+                  <button type="button"
                     onClick={handleSubmit}
                     disabled={sending}
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90 disabled:opacity-50"

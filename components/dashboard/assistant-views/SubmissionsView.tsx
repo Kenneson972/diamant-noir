@@ -141,7 +141,7 @@ export function SubmissionsView({ data }: { data: any }) {
                       Sans photos
                     </span>
                   )}
-                  <span className="ml-auto text-xs text-white/25">{fmtDate(s.created_at)}</span>
+                  <span className="ml-auto text-xs text-white/25" suppressHydrationWarning>{fmtDate(s.created_at)} {/* react-doctor: locale hydration mismatch */}</span>
                 </li>
               );
             })}

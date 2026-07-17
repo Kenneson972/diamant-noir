@@ -35,7 +35,7 @@ export function WishlistButton({ villaId, className = "" }: WishlistButtonProps)
   }
 
   return (
-    <button
+    <button type="button"
       onClick={handleClick}
       aria-label={fav ? t("villa.remove_favorite") : t("villa.add_favorite")}
       className={`

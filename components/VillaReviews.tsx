@@ -90,7 +90,7 @@ export function VillaReviews({ villaId, villaName }: { villaId: string; villaNam
         <h2 className="font-display font-normal text-2xl text-navy mb-4">{t("villa.reviews_title")}</h2>
         <div className="border border-navy/10 bg-white p-8 text-center">
           <p className="text-sm text-navy/80 mb-3">{t("villa.reviews_error")}</p>
-          <button onClick={fetchReviews} className="text-xs font-bold uppercase tracking-wider text-gold hover:underline">
+          <button type="button" onClick={fetchReviews} className="text-xs font-bold uppercase tracking-wider text-gold hover:underline">
             {t("villa.reviews_retry")}
           </button>
         </div>

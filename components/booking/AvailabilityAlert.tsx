@@ -74,7 +74,7 @@ export function AvailabilityAlert({
 
   if (!open) {
     return (
-      <button
+      <button type="button"
         onClick={() => setOpen(true)}
         className="w-full flex items-center justify-center gap-2 py-3.5 border border-navy/15 text-[10px] font-bold uppercase tracking-[0.22em] text-navy/80 hover:text-navy hover:border-navy/30 transition-all duration-200"
       >

@@ -1,0 +1,76 @@
+---
+description: Contexte projet Kayvila — Conciergerie pour villa de standing en Martinique (Pack SCALE)
+globs:
+alwaysApply: true
+---
+
+# Projet Kayvila — Conciergerie Diamant Noir
+
+Site conciergerie haut de gamme pour villa de standing en Martinique. Pack **SCALE**
+— entreprise multi-acteurs avec booking, paiement, synchro OTA, espaces sécurisés
+client + admin + propriétaires, CRM et notifications.
+
+## Stack
+
+- **Framework** : Next.js 15 App Router, React 19, TypeScript
+- **UI** : HeroUI Pro, Tailwind CSS v4, Tailwind Variants
+- **Base de données / Auth / Storage** : Supabase (Postgres, RLS, Auth, Realtime, Storage)
+- **Paiement** : Stripe (Checkout Session, webhooks, Customer Portal)
+- **Email** : Resend (transactionnel, templates React Email)
+- **Booking** : FullCalendar + synchro iCal / OTA (Airbnb/Booking)
+- **PDF** : @react-pdf/renderer (factures, documents)
+- **Éditeur riche** : TipTap
+
+## Marque & Identité visuelle
+
+- **Marque** : Kayvila — Conciergerie pour villa de standing en Martinique
+- **Personnalité** : Confiance, Réactivité, Excellence — sobre, feutré, discret
+- **Palette** : Navy quasi-noir `#0a0a0a` | Or `#D4AF37` (accent signature) | Offwhite `#FAFAFA` | Crème `#F5F0E8` | Champagne `#F0E6CE`
+- **Typo** : Playfair Display (display/serif), Sora, Instrument Sans (corps)
+- **Signature** : Animation `gold-shimmer` sur le texte or (respecte `prefers-reduced-motion`)
+- **Multilingue** : fr, en, es
+
+## Architecture — 3 publics, 3 espaces
+
+| Public | Route group | Rôle |
+|--------|------------|------|
+| Voyageurs | `(marketing)` | Site vitrine + réservation villas |
+| Clients | `/espace-client` | Réservations, factures, demandes |
+| Admin | `/(admin)` | Dashboard gestion villas, réservations, propriétaires, revenus |
+| Propriétaires | `/(proprio)` | Dashboard proprio — calendrier, revenus, tâches |
+
+### Pages publiques
+
+| Route | Rôle |
+|-------|------|
+| `/` | Accueil — hero, villas en vedette, expérience, prestations, témoignages |
+| `/villas` | Catalogue villas filtrable (capacité, équipements, localisation, budget) |
+| `/villas/[slug]` | Fiche villa — galerie, équipements, calendrier dispo, réservation |
+| `/experience` | Expérience Kayvila — services et activités |
+| `/prestations` | Prestations détail — ménage, conciergerie, transport, etc. |
+| `/tarifs` | Grille tarifaire saisonnière |
+| `/faq` | Foire aux questions |
+| `/contact` | Formulaire de contact |
+| `/qui-sommes-nous` | Présentation équipe et valeurs |
+
+### Espaces sécurisés
+
+| Espace | Pages clés |
+|--------|-----------|
+| **Admin** `/(admin)` | Dashboard, villas CRUD, réservations, propriétaires, demandes, clients, stats, exports, audits |
+| **Proprio** `/(proprio)` | Dashboard proprio, calendrier disponibilités, revenus, tâches ménage, documents |
+| **Espace client** `/espace-client` | Dashboard client, réservations, factures, demandes, profil, parrainage |
+
+## Source de vérité client
+
+Toute la donnée variable client vit dans `template/client.config.ts` (objet `CLIENT`).
+Ne jamais coder en dur un nom, téléphone, email, adresse, URL ou couleur.
+
+## Contraintes
+
+- Mobile-first, WCAG AA, `prefers-reduced-motion` respecté
+- i18n actif (fr/en/es) — ne pas casser les routes localisées
+- RLS activée sur toutes les tables avec données utilisateur
+- Toute modification de schéma Supabase passe par une migration versionnée
+- `npm run build` doit passer avant livraison
+- Règles Karibloom complètes : `.cursor/rules/client-builder/_INDEX.mdc`

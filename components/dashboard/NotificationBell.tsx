@@ -126,6 +126,8 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
   useEffect(() => {
     if (!supabase) return;
 
+    const animTimers: ReturnType<typeof setTimeout>[] = [];
+
     const channel = supabase
       .channel("notifications-realtime")
       .on(
@@ -147,7 +149,8 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
 
           // Animation de la cloche
           setAnimating(true);
-          setTimeout(() => setAnimating(false), 1000);
+          const timer = setTimeout(() => setAnimating(false), 1000);
+          animTimers.push(timer);
 
           // Ajouter en tête de liste
           setNotifications((prev) => [newNotif, ...prev].slice(0, 20));
@@ -166,6 +169,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
       .subscribe();
 
     return () => {
+      animTimers.forEach(clearTimeout);
       supabase.removeChannel(channel);
     };
   }, [supabase, userId, role]);
@@ -214,7 +218,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
   return (
     <div ref={dropdownRef} className="relative">
       {/* Bouton cloche */}
-      <button
+      <button type="button"
         onClick={() => setOpen((v) => !v)}
         className={`
           relative flex items-center gap-3 rounded-lg px-3 py-2 w-full
@@ -237,7 +241,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
           )}
         </div>
         {!collapsed && (
-          <span className="text-sm font-medium truncate">Notifications</span>
+          <span className="hidden text-sm font-medium truncate sm:inline">Notifications</span>
         )}
       </button>
 
@@ -266,14 +270,14 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
             </div>
             <div className="flex items-center gap-1">
               {unreadCount > 0 && (
-                <button
+                <button type="button"
                   onClick={markAllRead}
                   className="text-[10px] text-navy/55 dark:text-white/40 hover:text-gold transition-colors uppercase tracking-wider px-2 py-1"
                 >
                   Tout lire
                 </button>
               )}
-              <button
+              <button type="button"
                 onClick={() => setOpen(false)}
                 className="text-navy/30 dark:text-white/30 hover:text-navy dark:hover:text-white transition-colors p-1"
               >
@@ -302,7 +306,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
                 const tier = notif.metadata?.ai_tier;
 
                 return (
-                  <button
+                  <button type="button"
                     key={notif.id}
                     onClick={() => handleNotifClick(notif)}
                     className={`
@@ -379,7 +383,7 @@ export function NotificationBell({ collapsed = false, userId, role }: Notificati
           {/* Footer dropdown */}
           {notifications.length > 0 && (
             <div className="px-4 py-2.5 border-t border-navy/[0.06] dark:border-white/10 bg-navy/[0.02] dark:bg-white/[0.02]">
-              <button
+              <button type="button"
                 onClick={() => {
                   setOpen(false);
                   router.push(

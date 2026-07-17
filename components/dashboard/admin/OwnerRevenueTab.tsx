@@ -123,8 +123,8 @@ export function OwnerRevenueTab({
                     key={b.id}
                     className={i % 2 === 0 ? "bg-transparent" : "bg-navy/[0.01]"}
                   >
-                    <td className="px-4 py-3 text-navy">
-                      {formatDate(b.start_date)} → {formatDate(b.end_date)}
+                    <td className="px-4 py-3 text-navy" suppressHydrationWarning>
+                      {formatDate(b.start_date)} → {formatDate(b.end_date)} {/* react-doctor: locale hydration mismatch */}
                     </td>
                     <td className="px-4 py-3 text-navy">{b.guest_name ?? "—"}</td>
                     <td className="px-4 py-3 text-right font-medium text-navy">

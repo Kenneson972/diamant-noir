@@ -23,7 +23,7 @@ export function ProactiveNotification() {
             {notification.body}
           </div>
         </div>
-        <button
+        <button type="button"
           onClick={() => markAsRead(notification.id)}
           className="shrink-0 rounded-md border border-navy/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-navy/55 transition-colors hover:border-gold/30 hover:text-gold"
           aria-label="Marquer comme lu"

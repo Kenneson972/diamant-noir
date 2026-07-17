@@ -134,9 +134,9 @@ export function VillaBookingsRegistry({
                     <p className="text-[10px] text-navy/55 uppercase tracking-widest">ID: {booking.id.slice(0, 8)}</p>
                   </td>
                   <td className="py-5">
-                    <p className="text-sm text-navy">
+                    <p className="text-sm text-navy" suppressHydrationWarning>
                       {new Date(booking.start_date).toLocaleDateString("fr-FR")} -{" "}
-                      {new Date(booking.end_date).toLocaleDateString("fr-FR")}
+                      {new Date(booking.end_date).toLocaleDateString("fr-FR")} {/* react-doctor: locale hydration mismatch */}
                     </p>
                   </td>
                   <td className="py-5">

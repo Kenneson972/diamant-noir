@@ -77,8 +77,8 @@ export function UpcomingStayHero({ booking }: { booking: UpcomingBooking }) {
             </p>
           ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70">
-              {fmt(startDate)} – {fmt(endDate)}
+            <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70" suppressHydrationWarning>
+              {fmt(startDate)} – {fmt(endDate)} {/* react-doctor: locale hydration mismatch */}
             </span>
             <span className="rounded-full border border-navy/10 px-3 py-1.5 text-[11px] font-medium text-navy/70">
               {nights} nuit{nights > 1 ? "s" : ""}

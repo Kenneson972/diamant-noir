@@ -74,7 +74,7 @@ export function DocumentsTable({ documents }: { documents: Doc[] }) {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           {ALL_TAGS.map((tag) => (
-            <button
+            <button type="button"
               key={tag}
               onClick={() => toggleTag(tag)}
               className={`rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] transition-colors ${
@@ -87,7 +87,7 @@ export function DocumentsTable({ documents }: { documents: Doc[] }) {
             </button>
           ))}
           {activeTags.length > 0 && (
-            <button
+            <button type="button"
               onClick={() => setActiveTags([])}
               className="text-[10px] text-navy/40 hover:text-navy"
             >
@@ -135,8 +135,8 @@ export function DocumentsTable({ documents }: { documents: Doc[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-navy/50">{formatSize(d.file_size)}</td>
-                <td className="px-4 py-3 text-navy/50">
-                  {new Date(d.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+                <td className="px-4 py-3 text-navy/50" suppressHydrationWarning>
+                  {new Date(d.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })} {/* react-doctor: locale hydration mismatch */}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-1">
@@ -149,7 +149,7 @@ export function DocumentsTable({ documents }: { documents: Doc[] }) {
                     >
                       <Download size={14} />
                     </a>
-                    <button
+                    <button type="button"
                       onClick={() => handleDelete(d.id)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-navy/30 hover:bg-red-50 hover:text-red-500"
                       title="Supprimer"

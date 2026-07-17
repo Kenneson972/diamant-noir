@@ -183,8 +183,8 @@ export const BookingForm = ({
       )}
 
       {start && end ? (
-        <p className="text-center text-xs text-navy/45">
-          Séjour du {dateLabel(start)} au {dateLabel(end)} · Arrivée {checkInTime} · Départ {checkOutTime}
+        <p className="text-center text-xs text-navy/45" suppressHydrationWarning>
+          Séjour du {dateLabel(start)} au {dateLabel(end)} · Arrivée {checkInTime} · Départ {checkOutTime} {/* react-doctor: locale hydration mismatch */}
         </p>
       ) : (
         <p className="text-center text-xs text-navy/45">

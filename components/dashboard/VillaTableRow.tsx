@@ -83,7 +83,7 @@ export function VillaTableRow({ villa }: { villa: VillaRow }) {
           </span>
         </td>
         <td className="px-4 py-3">
-          <button
+          <button type="button"
             onClick={() => setDrawerOpen(true)}
             className="text-sm font-medium text-gold hover:text-gold/70 transition-colors underline underline-offset-2"
           >

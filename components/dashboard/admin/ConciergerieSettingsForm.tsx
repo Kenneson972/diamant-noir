@@ -61,7 +61,7 @@ export function ConciergerieSettingsForm() {
           className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-gold/50" />
       </div>
       <div className="flex items-center gap-3">
-        <button onClick={handleSave} disabled={saving}
+        <button type="button" onClick={handleSave} disabled={saving}
           className="inline-flex items-center gap-1.5 px-4 py-2 bg-navy text-[11px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-navy/90 disabled:opacity-40 transition-colors rounded-md">
           <Save size={12} />
           {saving ? "Enregistrement..." : "Enregistrer"}
