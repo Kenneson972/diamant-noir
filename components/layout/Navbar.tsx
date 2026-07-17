@@ -159,7 +159,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
   const primaryCtaSolidStyle =
     isSolid || useLightTransparentChrome
-      ? "border-navy bg-navy text-white hover:bg-navy/90 focus-visible:ring-navy"
+      ? "border-gold/70 bg-navy/90 text-white hover:bg-navy focus-visible:ring-gold"
       : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white";
 
   /** Pages fond clair : jamais `bg-transparent` seul (illisible) — léger vitrage ; hero sombre : vraie transparence. */
