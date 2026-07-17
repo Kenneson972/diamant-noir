@@ -157,10 +157,14 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
   const logoVariant: "onLight" | "onDark" =
     !isSolid && isDarkHeroRoute ? "onDark" : "onLight";
 
+  /** Sur chrome clair (barre blanche ou header transparent sur page claire), garder le
+   * même traitement léger que les icônes voisines (pas de carré plein sombre) ; seul le
+   * hero sombre transparent justifie un fond translucide blanc pour rester lisible. */
   const primaryCtaSolidStyle =
     isSolid || useLightTransparentChrome
-      ? "border-2 border-gold bg-navy/90 text-white hover:bg-navy focus-visible:ring-gold"
+      ? "border-2 border-gold bg-white text-navy hover:bg-gold/10 focus-visible:ring-gold"
       : "border-white/90 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus-visible:ring-white";
+  const primaryCtaIconInvert = !(isSolid || useLightTransparentChrome);
 
   /** Pages fond clair : jamais `bg-transparent` seul (illisible) — léger vitrage ; hero sombre : vraie transparence. */
   const headerSurfaceClass = isSolid
@@ -374,7 +378,7 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
               aria-label={primaryCtaAria}
               className={`tap-target flex h-11 w-11 shrink-0 items-center justify-center border text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-11 sm:w-11 lg:h-auto lg:w-auto lg:px-5 lg:py-2 lg:text-[11px] lg:font-semibold lg:uppercase lg:leading-snug lg:tracking-[0.18em] ${primaryCtaSolidStyle}`}
             >
-              <KayvilaPngIcon name="sparkle" size={20} invert className="lg:hidden" />
+              <KayvilaPngIcon name="sparkle" size={20} invert={primaryCtaIconInvert} className="lg:hidden" />
               <span className="hidden lg:inline">{primaryCtaLabel}</span>
             </Link>
           </div>
