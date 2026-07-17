@@ -248,24 +248,10 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
         </nav>
 
         <div className="border-t border-black/8 bg-navy/[0.03] px-5 pt-6 text-[13px] leading-relaxed text-navy/75" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
-          <div className="flex gap-3">
-            <KayvilaPngIcon name="phone" size={18} className="mt-0.5 shrink-0 opacity-60" />
-            <div>
-              <p>
-                {t("nav.advisors")}{" "}
-                <a href={CONCIERGE_TEL_HREF} className="text-navy underline-offset-4 hover:underline">
-                  {CONCIERGE_TEL}
-                </a>
-              </p>
-              <p className="mt-1 text-[12px] text-navy/50">
-                {t("nav.hours")}
-              </p>
-            </div>
-          </div>
           <Link
             href="/contact"
             onClick={closeMenu}
-            className="mt-5 inline-flex items-center gap-2 text-[12px] font-medium text-navy underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-2 text-[12px] font-medium text-navy underline-offset-4 hover:underline"
           >
             <KayvilaPngIcon name="mail" size={18} className="opacity-60" />
             {t("nav.contact_us")}
