@@ -97,10 +97,7 @@ export function AdminCommandPalette() {
     <Command>
       <Command.Backdrop
         isOpen={isOpen}
-        onOpenChange={(open) => {
-          setOpen(open);
-          if (open) void loadData();
-        }}
+        onOpenChange={setOpen}
       >
         <Command.Container>
           <Command.Dialog aria-label="Recherche admin">
