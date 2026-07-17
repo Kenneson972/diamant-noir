@@ -52,7 +52,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
   const lastActionResult =
     lastAssistantMsg?.action && lastAssistantMsg.actionResult
-      ? { action: lastAssistantMsg.action, success: lastAssistantMsg.actionResult.success ?? false, ...lastAssistantMsg.actionResult }
+      ? { action: lastAssistantMsg.action, ...lastAssistantMsg.actionResult, success: lastAssistantMsg.actionResult.success ?? false }
       : null;
 
   // Load context when copilot opens
