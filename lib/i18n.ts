@@ -38,7 +38,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.client_space": "Espace client",
     "nav.submit_villa": "Confier ma villa",
     "nav.advisors": "Nos conseillers vous répondent au",
-    "nav.hours": "Lun. au sam. · 9h30 – 18h30 (heure de Paris)",
+    "nav.hours": "Lun. au sam. · 9h30 – 18h30 (UTC)",
     "nav.contact_us": "Contactez-nous",
 
     // ── Footer ───────────────────────────────────────────────
@@ -898,7 +898,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.client_space": "Client area",
     "nav.submit_villa": "List my villa",
     "nav.advisors": "Our advisors are available at",
-    "nav.hours": "Mon. to Sat. · 9:30 AM – 6:30 PM (Paris time)",
+    "nav.hours": "Mon. to Sat. · 9:30 AM – 6:30 PM (UTC)",
     "nav.contact_us": "Contact us",
 
     // ── Footer ───────────────────────────────────────────────
@@ -1758,7 +1758,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.client_space": "Área de clientes",
     "nav.submit_villa": "Registrar mi villa",
     "nav.advisors": "Nuestros asesores están disponibles en",
-    "nav.hours": "Lun. a sáb. · 9:30 – 18:30 (hora de París)",
+    "nav.hours": "Lun. a sáb. · 9:30 – 18:30 (UTC)",
     "nav.contact_us": "Contáctenos",
 
     // ── Footer ───────────────────────────────────────────────
