@@ -256,7 +256,7 @@ export default function AdminReservationsPage() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[10px] uppercase tracking-[0.1em] text-navy/40">Villa</span>
           <button
