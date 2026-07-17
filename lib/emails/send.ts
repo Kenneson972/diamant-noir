@@ -12,7 +12,7 @@ import {
   isResendConfigured,
   RESEND_FROM,
 } from "@/lib/resend";
-import { SITE_BRAND_DISPLAY } from "@/data/site-brand";
+import { SITE_BRAND_DISPLAY, SITE_CONTACT_PHONE } from "@/data/site-brand";
 import {
   bookingNights,
   bookingTotalEuros,
@@ -35,7 +35,12 @@ export async function sendBookingConfirmationEmail(booking: {
   total_price_cents?: number | null;
   status?: string | null;
   villa_id?: string | null;
-}, villa: { name?: string | null; location?: string | null } | null) {
+}, villa: {
+  name?: string | null;
+  location?: string | null;
+  check_in_time?: string | null;
+  check_out_time?: string | null;
+} | null) {
   const guestEmail = booking.guest_email;
   if (!guestEmail) {
     return { sent: false, reason: "missing_guest_email" as const };
@@ -56,6 +61,9 @@ export async function sendBookingConfirmationEmail(booking: {
         nights,
         totalPrice,
         clientAreaUrl: `${baseUrl}/espace-client/reservations/${booking.id}`,
+        emergencyPhone: SITE_CONTACT_PHONE,
+        ...(villa?.check_in_time ? { checkInTime: villa.check_in_time } : {}),
+        ...(villa?.check_out_time ? { checkOutTime: villa.check_out_time } : {}),
       })
     );
 

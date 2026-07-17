@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     const { data: villa } = await supabase
       .from("villas")
-      .select("name, location")
+      .select("name, location, check_in_time, check_out_time")
       .eq("id", booking.villa_id)
       .maybeSingle();
 

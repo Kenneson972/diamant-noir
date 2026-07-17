@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { supabasePublic } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 
 import { VillaGallery } from "@/components/VillaGallery";
@@ -47,7 +47,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const supabase = await getSupabaseServer();
+    const supabase = supabasePublic();
     const { data } = await supabase
       .from("villas")
       .select("name, description, image_url, image_urls, is_published")
@@ -139,7 +139,7 @@ export default async function VillaDetailsPage({ params }: { params: Promise<{ i
   let seasonalPrices: { season: string; start: string; end: string; price: number }[] = [];
 
   try {
-    const supabase = await getSupabaseServer();
+    const supabase = supabasePublic();
     const [villaResult, recommendationsResult, seasonalResult] = await Promise.all([
       supabase
         .from("villas")

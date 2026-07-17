@@ -12,6 +12,7 @@ export type BookingConfirmationEmailProps = {
   clientAreaUrl: string;
   emergencyPhone?: string;
   checkInTime?: string;
+  checkOutTime?: string;
   wifiCode?: string;
 };
 
@@ -23,8 +24,9 @@ export default function BookingConfirmationEmail({
   nights,
   totalPrice,
   clientAreaUrl,
-  emergencyPhone = "+596 96 00 00 00",
+  emergencyPhone = "+596 696 68 18 69",
   checkInTime = "15h",
+  checkOutTime = "11h",
 }: BookingConfirmationEmailProps) {
   return (
     <EmailLayout preview={`Confirmation — ${villaName}`}>
@@ -41,7 +43,7 @@ export default function BookingConfirmationEmail({
       </Text>
 
       <Text style={info}>
-        Check-in à partir de <strong>{checkInTime}</strong> · Check-out avant <strong>11h</strong>
+        Check-in à partir de <strong>{checkInTime}</strong> · Check-out avant <strong>{checkOutTime}</strong>
         <br />
         Urgence : <strong>{emergencyPhone}</strong>
       </Text>
