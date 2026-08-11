@@ -146,6 +146,43 @@ redémarrer — la précédente est restée bloquée dans la boucle, 15 436 lign
    (il n'a pas lieu d'être sur un back-office interne). **C'est l'option la plus robuste** :
    elle supprime la requête cross-domaine au lieu de la rattraper dans le middleware.
 
+---
+
+## RÉSOLUTION — 11/08/2026 (Claude)
+
+Il y avait **deux bugs empilés**, le premier masquant le second.
+
+### Bug 1 — boucle de navigation infinie (l'écran vide) → `c945eb1`
+`CookieConsent` est monté par le **root layout**, donc présent aussi sur le host admin.
+Son `<Link href="/cookies">` déclenchait un prefetch vers une route publique depuis
+`admin.kayvila.com` → 307 cross-domaine → bloqué par la CSP `connect-src 'self'` →
+`TypeError` → fallback Next « browser navigation » → renavigation → re-prefetch → **boucle**.
+
+Le correctif middleware `c4e5f97` (détection RSC élargie) **n'a pas suffi** : les en-têtes RSC
+ne permettent pas de rattraper ce cas de façon fiable. La bonne approche était de **supprimer
+la requête cross-domaine à la source** : le bandeau cookies ne se monte plus sur le host admin
+(un back-office interne n'a aucun visiteur à informer). Inchangé sur le public — RGPD préservé.
+
+→ Vérifié après déploiement : **0 erreur console**, la boucle a disparu.
+
+### Bug 2 — boucle de redirection `/admin` ↔ `/login` → `c45cf30`
+Une fois la boucle 1 levée, un second symptôme est apparu : la session n'était pas reconnue
+sur le sous-domaine.
+
+Cause : le login se fait **côté client** (`signInWithPassword`, `app/login/page.tsx:104`), donc
+c'est `createBrowserClient` qui écrit le cookie `sb-*` — et il était créé **sans domaine**
+(`lib/supabase.ts`) → cookie **host-only sur kayvila.com**, invisible sur admin.kayvila.com.
+`SUPABASE_COOKIE_DOMAIN` était bien appliqué côté serveur et middleware, mais **pas côté
+navigateur** (variable non `NEXT_PUBLIC`). Le domaine est désormais dérivé du host courant via
+`NEXT_PUBLIC_SITE_URL`. Local et previews `*.vercel.app` : comportement host-only inchangé.
+
+### Reste : vider le cache navigateur (pas un bug)
+Pendant la fenêtre de déploiement, le navigateur a mis en cache une réponse **404 / text/plain**
+pour `_next/static/chunks/app/layout-*.js` → `ChunkLoadError` → « Une erreur est survenue ».
+Le serveur est sain : le même chunk répond **200 `application/javascript`** en curl et depuis le
+navigateur avec `cache: 'no-store'` (avec comme sans cookies).
+→ **Test final à faire en navigation privée** (cache vierge).
+
 ## Fichiers modifiés (à ne pas écraser)
 
 - `middleware.ts` (routage hostname + RSC + login profile + cookies domain)
