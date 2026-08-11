@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Carousel } from "@heroui-pro/react";
+import { Carousel } from "@heroui-pro/react/carousel";
 import { cn } from "@/lib/utils";
 
 export type KayvilaCarouselImage = {

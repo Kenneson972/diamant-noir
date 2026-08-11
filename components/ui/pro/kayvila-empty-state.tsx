@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
-import { EmptyState } from "@heroui-pro/react";
+import { EmptyState } from "@heroui-pro/react/empty-state";
 
 type KayvilaEmptyStateProps = {
   icon?: ReactNode;

@@ -48,8 +48,14 @@ const publicPaths = [
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
+// Domaine des cookies Supabase : normalisé avec le point en tête pour couvrir
+// kayvila.com + tous les sous-domaines (admin.kayvila.com). En dev : host-only.
+const SUPABASE_COOKIE_DOMAIN = process.env.SUPABASE_COOKIE_DOMAIN
+  ? `.${process.env.SUPABASE_COOKIE_DOMAIN.replace(/^\./, "")}`
+  : undefined; // undefined en local/preview → cookie host-only, comportement inchangé
+
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, hostname } = request.nextUrl;
 
   if (
     pathname.startsWith("/_next") ||
@@ -59,6 +65,49 @@ export async function middleware(request: NextRequest) {
     /\.(?:jpg|jpeg|png|gif|svg|webp|avif|ico|webm|mp4|mov|woff2?|ttf|eot|otf|pdf|xml|txt)$/i.test(pathname)
   ) {
     return NextResponse.next();
+  }
+
+  // === Routage admin / public (production uniquement) ===
+  // Admin migré sur admin.kayvila.com. Les pages /admin et les routes API admin
+  // deviennent inaccessibles sur le domaine public. Le dashboard propriétaire
+  // (proprio) et les pages marketing/booking restent sur le domaine public.
+  const isAdminHost = hostname.startsWith("admin.");
+  const isAdminRoute =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api/admin") ||
+    pathname.startsWith("/api/concierge/admin") ||
+    pathname.startsWith("/api/stripe/admin-refund") ||
+    pathname.startsWith("/api/agent/admin-context");
+
+  // Cible admin : absolue en prod (cross-domaine), relative en dev
+  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || "https://admin.kayvila.com";
+  const adminDashboardDest =
+    process.env.NODE_ENV === "development" ? "/admin" : `${ADMIN_URL}/admin`;
+
+  if (process.env.NODE_ENV !== "development") {
+    const PUBLIC_BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://kayvila.com";
+    if (isAdminHost) {
+      // Racine du sous-domaine admin → dashboard admin
+      if (pathname === "/") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      // Route publique sur le sous-domaine admin → URL ABSOLUE du domaine public
+      // (jamais '/' relatif — boucle infinie sinon). Les assets et /api passent.
+      if (
+        !isAdminRoute &&
+        !pathname.startsWith("/api") &&
+        !pathname.startsWith("/_next") &&
+        !pathname.startsWith("/images") &&
+        !pathname.startsWith("/fonts")
+      ) {
+        return NextResponse.redirect(new URL(pathname + request.nextUrl.search, PUBLIC_BASE));
+      }
+      return NextResponse.next();
+    }
+    // Domaine public : routes admin → 404 (aucun appelant externe, isolation totale)
+    if (isAdminRoute) {
+      return new NextResponse(null, { status: 404 });
+    }
   }
 
   // Support des préfixes de langue /en et /es : vérifier si le chemin sans préfixe est public
@@ -102,12 +151,18 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => {
+        cookiesToSet.forEach(({ name, value, options }) => {
           request.cookies.set(name, value);
         });
         supabaseResponse = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) => {
-          supabaseResponse.cookies.set(name, value, options);
+          // Le domaine cross-subdomain doit être posé ICI (et au logout : même
+          // domaine que la création, sinon le cookie domain-scopé survit à la
+          // déconnexion — leçon Shiine)
+          const cookieOptions = SUPABASE_COOKIE_DOMAIN
+            ? { ...options, domain: SUPABASE_COOKIE_DOMAIN }
+            : options;
+          supabaseResponse.cookies.set(name, value, cookieOptions);
         });
       },
     },
@@ -122,7 +177,7 @@ export async function middleware(request: NextRequest) {
   if (user && pathname === "/login") {
     const meta = (user.user_metadata?.role as string | undefined) ?? "client";
     const dest = isStaffAdmin(null, meta, user.email)
-      ? "/admin"
+      ? adminDashboardDest
       : isOwnerRole(null, meta)
       ? "/dashboard"
       : "/espace-client";
@@ -196,14 +251,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Compte staff sur dashboard → admin
+  // Compte staff sur dashboard → admin (absolu en prod)
   if (adminUser && pathname.startsWith("/dashboard")) {
-    return doRedirect("/admin");
+    return doRedirect(adminDashboardDest);
   }
 
   // Staff sur espace-client → admin
   if (adminUser && pathname.startsWith("/espace-client")) {
-    return doRedirect("/admin");
+    return doRedirect(adminDashboardDest);
   }
 
   // Propriétaire sur espace-client → dashboard

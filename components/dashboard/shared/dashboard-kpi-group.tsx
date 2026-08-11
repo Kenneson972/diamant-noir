@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { KPIGroup } from "@heroui-pro/react";
+import { KPIGroup } from "@heroui-pro/react/kpi-group";
 import { KpiCard } from "@/components/dashboard/proprio/KpiCard";
 import type { KpiItem } from "@/components/dashboard/proprio/KpiRow";
 import { cn } from "@/lib/utils";

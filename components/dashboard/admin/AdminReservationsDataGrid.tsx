@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import type { DataGridColumn } from "@heroui-pro/react";
+import type { DataGridColumn } from "@heroui-pro/react/data-grid";
 import type { Selection } from "react-aria-components";
 import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants";

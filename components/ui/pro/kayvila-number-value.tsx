@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { NumberValue } from "@heroui-pro/react";
+import { NumberValue } from "@heroui-pro/react/number-value";
 import { cn } from "@/lib/utils";
 
 type KayvilaNumberValueProps = {

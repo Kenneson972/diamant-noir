@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ListView } from "@heroui-pro/react";
+import { ListView } from "@heroui-pro/react/list-view";
 import { Chip } from "@heroui/react";
 
 export type DashboardStayRow = {

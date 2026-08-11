@@ -1,7 +1,7 @@
 "use client";
 
 import type { Key } from "react";
-import { Segment } from "@heroui-pro/react";
+import { Segment } from "@heroui-pro/react/segment";
 import { cn } from "@/lib/utils";
 
 export type KayvilaSegmentOption<T extends string = string> = {

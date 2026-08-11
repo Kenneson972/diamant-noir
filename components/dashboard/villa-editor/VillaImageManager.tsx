@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
-import { DropZone } from "@heroui-pro/react";
+import { DropZone } from "@heroui-pro/react/drop-zone";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { SortableImage } from "@/components/dashboard/SortableImage";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
-import { PressableFeedback } from "@heroui-pro/react";
+import { PressableFeedback } from "@heroui-pro/react/pressable-feedback";
 import { cn } from "@/lib/utils";
 
 type KayvilaPressableButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

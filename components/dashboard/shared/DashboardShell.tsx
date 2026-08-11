@@ -40,7 +40,10 @@ export function DashboardShell({
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/");
+    // Après déconnexion : retour au site public (absolu en prod — sur le
+    // sous-domaine admin, "/" relatif ramènerait vers le dashboard)
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+    router.push(siteUrl || "/");
   };
 
   const handleOpenChange = (open: boolean) => {

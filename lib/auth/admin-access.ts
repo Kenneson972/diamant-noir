@@ -66,23 +66,28 @@ export function postLoginDestination(opts: {
   email?: string | null;
 }): string {
   const { requestedRedirect, profileRole, metadataRole, email } = opts;
+  // Destination admin : absolue en prod (admin.kayvila.com), relative en dev
+  const adminDest =
+    process.env.NODE_ENV === "development"
+      ? "/admin"
+      : `${process.env.NEXT_PUBLIC_ADMIN_URL || "https://admin.kayvila.com"}/admin`;
   if (!isStaffAdmin(profileRole, metadataRole, email)) {
     return requestedRedirect;
   }
   if (requestedRedirect.startsWith("/admin")) {
-    return requestedRedirect;
+    return adminDest;
   }
   if (
     requestedRedirect === "/dashboard" ||
     requestedRedirect.startsWith("/dashboard/")
   ) {
-    return "/admin";
+    return adminDest;
   }
   if (
     requestedRedirect === "/espace-client" ||
     requestedRedirect.startsWith("/espace-client/")
   ) {
-    return "/admin";
+    return adminDest;
   }
   return requestedRedirect;
 }

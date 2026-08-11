@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { DataGridColumn } from "@heroui-pro/react";
+import type { DataGridColumn } from "@heroui-pro/react/data-grid";
 import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "@/components/dashboard/proprio/BookingStatusBadge";
 import { KayvilaDataGrid } from "@/components/ui/pro";

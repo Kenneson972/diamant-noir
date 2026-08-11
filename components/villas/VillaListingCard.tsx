@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Sheet } from "@heroui-pro/react";
+import { Sheet } from "@heroui-pro/react/sheet";
 import type { VillaMapItem } from "@/components/VillaLeafletMap";
 import { Maximize2 } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";

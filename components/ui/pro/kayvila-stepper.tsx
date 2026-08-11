@@ -1,6 +1,6 @@
 "use client";
 
-import { Stepper } from "@heroui-pro/react";
+import { Stepper } from "@heroui-pro/react/stepper";
 import { cn } from "@/lib/utils";
 
 export type KayvilaStep = {

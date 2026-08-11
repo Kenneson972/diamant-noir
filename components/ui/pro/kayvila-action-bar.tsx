@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ActionBar } from "@heroui-pro/react";
+import { ActionBar } from "@heroui-pro/react/action-bar";
 import { Button, Chip, Separator } from "@heroui/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";

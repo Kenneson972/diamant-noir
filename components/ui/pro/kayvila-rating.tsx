@@ -1,6 +1,6 @@
 "use client";
 
-import { Rating } from "@heroui-pro/react";
+import { Rating } from "@heroui-pro/react/rating";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 

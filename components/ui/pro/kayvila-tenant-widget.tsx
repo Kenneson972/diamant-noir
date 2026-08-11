@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Widget } from "@heroui-pro/react";
+import { Widget } from "@heroui-pro/react/widget";
 import { cn } from "@/lib/utils";
 
 type KayvilaTenantWidgetProps = {

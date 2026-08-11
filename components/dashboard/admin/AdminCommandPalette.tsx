@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, CalendarDays, Search } from "lucide-react";
-import { Command } from "@heroui-pro/react";
+import { Command } from "@heroui-pro/react/command";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { adminMenuItems } from "@/components/dashboard/admin/AdminMenuItems";
 import type { SidebarMenuItem } from "@/components/dashboard/shared/dashboard-sidebar-types";

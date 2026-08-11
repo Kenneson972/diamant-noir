@@ -17,6 +17,12 @@ export const getSupabaseServer = cache(async function getSupabaseServer() {
     throw new Error("Supabase server client is not configured.");
   }
 
+  // Domaine des cookies : .kayvila.com en prod pour que la session Supabase
+  // survive entre le domaine public et admin.kayvila.com (host-only en dev)
+  const cookieDomain = process.env.SUPABASE_COOKIE_DOMAIN
+    ? `.${process.env.SUPABASE_COOKIE_DOMAIN.replace(/^\./, "")}`
+    : undefined;
+
   const client = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
@@ -25,7 +31,11 @@ export const getSupabaseServer = cache(async function getSupabaseServer() {
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
+            cookieStore.set(
+              name,
+              value,
+              cookieDomain ? { ...options, domain: cookieDomain } : options
+            )
           );
         } catch {
           // The `setAll` method was called from a Server Component.

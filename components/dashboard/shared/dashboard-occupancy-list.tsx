@@ -1,6 +1,6 @@
 "use client";
 
-import { KPI } from "@heroui-pro/react";
+import { KPI } from "@heroui-pro/react/kpi";
 import { progressStatus } from "@/lib/dashboard/sparkline";
 import { DashboardWidget } from "./dashboard-widget";
 

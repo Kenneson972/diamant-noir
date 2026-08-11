@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Kanban, useKanban, useKanbanColumn } from "@heroui-pro/react";
+import { Kanban, useKanban, useKanbanColumn } from "@heroui-pro/react/kanban";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import { formatDate } from "@/lib/utils";
 import { KayvilaNumberValue } from "@/components/ui/pro";

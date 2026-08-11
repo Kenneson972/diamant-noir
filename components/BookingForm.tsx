@@ -5,7 +5,7 @@ import { calculatePrice, SERVICE_FEE_PERCENT } from "@/lib/price-engine";
 import { parseDateOnly } from "@/lib/utils";
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { useLocale } from "@/contexts/LocaleContext";
-import { NumberStepper } from "@heroui-pro/react";
+import { NumberStepper } from "@heroui-pro/react/number-stepper";
 import { KayvilaPressableButton } from "@/components/ui/pro";
 
 type BookingDate = {

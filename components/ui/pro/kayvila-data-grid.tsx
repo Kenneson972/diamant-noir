@@ -1,8 +1,8 @@
 "use client";
 
-import type { DataGridColumn, DataGridProps } from "@heroui-pro/react";
+import type { DataGridColumn, DataGridProps } from "@heroui-pro/react/data-grid";
 import type { Selection } from "react-aria-components";
-import { DataGrid } from "@heroui-pro/react";
+import { DataGrid } from "@heroui-pro/react/data-grid";
 import { cn } from "@/lib/utils";
 
 type KayvilaDataGridProps<T extends object> = Omit<DataGridProps<T>, "className"> & {

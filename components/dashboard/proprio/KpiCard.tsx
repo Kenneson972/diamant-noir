@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { KPI } from "@heroui-pro/react";
+import { KPI } from "@heroui-pro/react/kpi";
 import { cn } from "@/lib/utils";
 import { DollarSign, Percent, UserCircle } from "lucide-react";
 import { toChartData, progressStatus } from "@/lib/dashboard/sparkline";
