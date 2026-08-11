@@ -1,7 +1,9 @@
 # Kayvila — Migration admin sur admin.kayvila.com : PROBLÈME RÉSIDUEL (chargement infini)
 
 **Date** : 11/08/2026 — **Auteur** : Élise (assistante Karibloom)
-**Statut** : ⚠️ À debugger — tout marche côté serveur, le rendu client reste vide après login.
+**Statut** : ✅ **RÉSOLU le 11/08/2026** (Claude) — validé par Ken en navigation privée.
+Voir `RECAP-ADMIN-RESOLUTION.md` pour le récap court, et la section « RÉSOLUTION » en bas de ce
+document pour le détail. Le reste du document est conservé tel qu'écrit par Élise (historique).
 
 ## Contexte (ce qui est FAIT et DÉPLOYÉ)
 
