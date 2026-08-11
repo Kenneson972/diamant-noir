@@ -180,12 +180,26 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Utilisateur connecté sur /login → rediriger vers son espace
+  // Utilisateur connecté sur /login → rediriger vers son espace.
+  // ⚠️ Le role JWT (user_metadata) peut être absent (compte créé via API admin).
+  // On consulte le profile en base comme pour les routes protégées (leçon Kayvila).
   if (user && pathname === "/login") {
     const meta = (user.user_metadata?.role as string | undefined) ?? "client";
-    const dest = isStaffAdmin(null, meta, user.email)
+    let loginProfileRole: string | null = null;
+    try {
+      await supabase.auth.getSession();
+      const { data: loginProfile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      loginProfileRole = loginProfile?.role ?? null;
+    } catch (e) {
+      console.error("[RBAC] login profile query error:", e);
+    }
+    const dest = isStaffAdmin(loginProfileRole, meta, user.email)
       ? adminDashboardDest
-      : isOwnerRole(null, meta)
+      : isOwnerRole(loginProfileRole, meta)
       ? "/dashboard"
       : "/espace-client";
     const redirectRes = NextResponse.redirect(new URL(dest, request.url));
