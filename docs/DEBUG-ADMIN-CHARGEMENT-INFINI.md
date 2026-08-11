@@ -116,7 +116,35 @@ fallback **« Falling back to browser navigation »** → la page renavigue → 
 re-prefetch → échec → renavigation… **boucle infinie**. Le document ne finit jamais de se
 parser, donc écran vide.
 
-Le fix middleware ci-dessus casse la boucle à la racine (le prefetch est servi en 200 localement).
+Le fix middleware ci-dessus vise à casser la boucle à la racine (prefetch servi en 200 localement).
+
+### ⏳ Vérification post-déploiement — NON CONCLUANTE à ce stade
+
+Commit `c4e5f97` poussé et déployé (`dpl_3NTzhnDkKZT5cU3sWmLoWeYZ74qA`, READY,
+alias `admin.kayvila.com` confirmé, `aliasError: null`).
+
+En curl, le comportement **semble** inchangé :
+
+| Requête vers `admin.kayvila.com/cookies` | Avant | Après |
+|---|---|---|
+| `Accept: text/x-component` | 200 | 200 |
+| `RSC: 1` / `Next-Router-Prefetch: 1` / `?_rsc=` | 307 | **307** |
+
+⚠️ **Mais ce test curl n'est probablement pas représentatif** : Next/Vercel neutralise les
+en-têtes RSC lorsqu'ils proviennent d'un client externe (protection anti-spoofing), alors
+qu'ils sont conservés pour un vrai prefetch navigateur. Le `?_rsc=` seul aurait dû suffire à
+déclencher `next()` — s'il ne le fait pas, c'est que `nextUrl.searchParams` ne voit pas ce
+param (Next le consomme en amont).
+
+**Deux issues possibles, à trancher par un test navigateur réel** (session Playwright à
+redémarrer — la précédente est restée bloquée dans la boucle, 15 436 lignes de console) :
+1. le fix marche pour les vrais prefetch → l'admin se charge, dossier clos ;
+2. le fix ne marche pas → il faut cesser de détecter le RSC par en-têtes et **traiter le
+   problème à la source** : le `<Link href="/cookies">` du bandeau cookies ne devrait pas
+   pointer en relatif depuis le host admin. Solutions : `prefetch={false}`, ou URL absolue
+   `https://kayvila.com/cookies`, ou ne pas monter le bandeau cookies sur le host admin
+   (il n'a pas lieu d'être sur un back-office interne). **C'est l'option la plus robuste** :
+   elle supprime la requête cross-domaine au lieu de la rattraper dans le middleware.
 
 ## Fichiers modifiés (à ne pas écraser)
 
