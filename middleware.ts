@@ -102,8 +102,15 @@ export async function middleware(request: NextRequest) {
         !pathname.startsWith("/images") &&
         !pathname.startsWith("/fonts")
       ) {
+        // Détecter TOUTES les variantes de requête RSC : le prefetch du Link Next
+        // envoie `RSC: 1` + `Next-Router-Prefetch: 1` avec `Accept: */*` (et le
+        // param `?_rsc=`), PAS `Accept: text/x-component` — tester l'Accept seul
+        // laissait passer les prefetch en 307 → bloqués par la CSP connect-src.
         const isRSC =
-          request.headers.get("accept")?.includes("text/x-component") ?? false;
+          (request.headers.get("accept")?.includes("text/x-component") ?? false) ||
+          request.headers.get("rsc") === "1" ||
+          request.headers.has("next-router-prefetch") ||
+          request.nextUrl.searchParams.has("_rsc");
         if (!isRSC) {
           return NextResponse.redirect(new URL(pathname + request.nextUrl.search, PUBLIC_BASE));
         }

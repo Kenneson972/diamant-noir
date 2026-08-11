@@ -50,6 +50,74 @@ Migration de l'admin staff sur le sous-domaine `admin.kayvila.com` (méthode ép
 4. **Le prefetch /cookies** : vérifier s'il reste des erreurs RSC. Si oui, chercher le composant qui fait le lien /cookies (cookie banner global ?) et soit `prefetch={false}`, soit lien absolu `https://kayvila.com/cookies`.
 5. **Le layout (admin) redirection** : `app/(admin)/admin/layout.tsx` → `redirect("/login?redirect=/admin")` — en cas de session absente, ce redirect RELATIF atterrit sur admin.kayvila.com/login → le middleware le renvoie vers kayvila.com/login. Vérifier qu'il n'y a pas de boucle visible.
 
+---
+
+## Investigation Claude — 11/08/2026
+
+### ✅ Piste 1 (cache CDN) — écartée
+`cache-control: private, no-cache, no-store` + `x-vercel-cache: MISS`. Le HTML change entre
+deux requêtes → rendu dynamique, aucun cache. Pas de `Vary: Cookie` à ajouter.
+
+### ✅ Piste 3 (streaming interrompu) — écartée
+HTML complet, `</html>` présent, 32 169 octets. Les 20 chunks `/_next/static/*.js` répondent
+tous en 200 `application/javascript` sur le host admin. L'erreur MIME `text/plain` était bien
+transitoire (déploiement en cours).
+
+### ✅ « /admin en 200 sans cookie » — NON, ce n'est pas une faille
+Le layout redirige correctement. Le HTML contient `NEXT_REDIRECT ... /login?redirect=/admin;307`.
+Comme le rendu est **streamé**, les headers sont déjà partis quand `redirect()` se déclenche :
+Next ne peut plus émettre un vrai 307 et renvoie un **200 dont le payload porte l'ordre de
+redirection**, exécuté côté client. Vérifié en vrai navigateur (Playwright) : sans session,
+`admin.kayvila.com/admin` atterrit bien sur `kayvila.com/login?redirect=%2Fadmin`.
+Le « dashboard » visible dans le HTML est le shell rendu avant résolution du redirect, avec
+des données **vides** (`items:[]`, `alerts:[]`) — aucune donnée réelle exposée.
+
+### 🔴 CAUSE RACINE TROUVÉE ET CORRIGÉE — le fix RSC `094caef` ne marchait pas
+
+Erreurs console reproduites en vrai navigateur :
+```
+Connecting to 'https://kayvila.com/cookies' violates the CSP directive
+  "connect-src 'self' https://*.supabase.co ..." — The action has been blocked.
+Failed to fetch RSC payload for https://admin.kayvila.com/cookies. TypeError: Failed to fetch
+  ... at IntersectionObserver.rootMargin   ← prefetch d'un <Link> entrant dans le viewport
+```
+
+Le middleware détectait les requêtes RSC via `Accept: text/x-component` uniquement. Or le
+**prefetch** d'un `<Link>` Next envoie `RSC: 1` + `Next-Router-Prefetch: 1` avec `Accept: */*`
+(et `?_rsc=`). Preuve :
+
+| Requête vers `admin.kayvila.com/cookies` | Résultat |
+|---|---|
+| `Accept: text/x-component` (ce que le code testait) | **200** ✅ |
+| `RSC: 1` + `Next-Router-Prefetch: 1` + `Accept: */*` (prefetch réel) | **307 → kayvila.com** ❌ |
+
+Le 307 cross-origin est alors bloqué par la CSP `connect-src` → `TypeError: Failed to fetch`
+dans le routeur Next à chaque `<Link>` prefetché.
+
+**Fix appliqué** (`middleware.ts`) : détecter toutes les variantes RSC — `Accept`,
+header `RSC: 1`, header `Next-Router-Prefetch`, param `?_rsc`. `npx tsc --noEmit` OK.
+
+### ✅ SYMPTÔME REPRODUIT — c'est bien une boucle de navigation
+
+Login réel effectué en prod (compte admin) sur la version actuellement déployée :
+
+- `document.title` = **`Loading https://admin.kayvila.com/admin`** — le document ne finit
+  jamais de charger (exactement le « chargement infini » de Ken, et le `readyState='loading'`
+  qu'Élise voyait en headless : ce n'était PAS un artefact).
+- **1428 entrées console**, dont **75 × le même couple d'erreurs** :
+  `Failed to fetch RSC payload for .../cookies` + `violates CSP connect-src`.
+- Toute évaluation JS renvoie `Execution context was destroyed, because of a navigation`,
+  en boucle.
+
+**Mécanisme complet :** le bandeau cookies (présent sur toutes les pages, y compris l'admin)
+contient un `<Link href="/cookies">`. Son prefetch part en `RSC: 1` → non détecté par le
+middleware → 307 vers `kayvila.com` → bloqué par la CSP → `TypeError` → Next applique son
+fallback **« Falling back to browser navigation »** → la page renavigue → le bandeau
+re-prefetch → échec → renavigation… **boucle infinie**. Le document ne finit jamais de se
+parser, donc écran vide.
+
+Le fix middleware ci-dessus casse la boucle à la racine (le prefetch est servi en 200 localement).
+
 ## Fichiers modifiés (à ne pas écraser)
 
 - `middleware.ts` (routage hostname + RSC + login profile + cookies domain)
