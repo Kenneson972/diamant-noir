@@ -64,6 +64,14 @@ export default function CookieConsent() {
   const [prefs, setPrefs] = useState<ConsentState>({ essentials: true, analytics: false, marketing: false });
 
   useEffect(() => {
+    // Jamais de bandeau sur le back-office admin (admin.kayvila.com) : c'est un
+    // outil interne, il n'y a pas de visiteur à informer. Surtout, son
+    // <Link href="/cookies"> déclenchait un prefetch vers une route publique
+    // depuis le host admin → 307 cross-domaine → bloqué par la CSP connect-src
+    // → fallback "browser navigation" de Next → renavigation → re-prefetch :
+    // boucle infinie qui empêchait le dashboard admin de se charger.
+    if (window.location.hostname.startsWith("admin.")) return;
+
     setLocale(getLocale());
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
