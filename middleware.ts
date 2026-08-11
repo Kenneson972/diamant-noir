@@ -93,6 +93,8 @@ export async function middleware(request: NextRequest) {
       }
       // Route publique sur le sous-domaine admin → URL ABSOLUE du domaine public
       // (jamais '/' relatif — boucle infinie sinon). Les assets et /api passent.
+      // ⚠️ Les fetch RSC (Accept: text/x-component) NE SUIVENT PAS les redirects →
+      // les servir localement pour ne pas casser la navigation client (leçon Kayvila).
       if (
         !isAdminRoute &&
         !pathname.startsWith("/api") &&
@@ -100,7 +102,12 @@ export async function middleware(request: NextRequest) {
         !pathname.startsWith("/images") &&
         !pathname.startsWith("/fonts")
       ) {
-        return NextResponse.redirect(new URL(pathname + request.nextUrl.search, PUBLIC_BASE));
+        const isRSC =
+          request.headers.get("accept")?.includes("text/x-component") ?? false;
+        if (!isRSC) {
+          return NextResponse.redirect(new URL(pathname + request.nextUrl.search, PUBLIC_BASE));
+        }
+        return NextResponse.next();
       }
       return NextResponse.next();
     }
