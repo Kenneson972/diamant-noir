@@ -11,9 +11,11 @@ test.describe("Prestations à venir", () => {
     const cards = section.locator('a[href^="/experiences/"]');
     await expect(cards).toHaveCount(4);
 
-    // Le badge « Bientôt » est présent sur chaque carte.
+    // Chaque carte est visible et affiche le badge « Bientôt ».
     for (const slug of SLUGS) {
-      await expect(section.locator(`a[href="/experiences/${slug}"]`)).toBeVisible();
+      const card = section.locator(`a[href="/experiences/${slug}"]`);
+      await expect(card).toBeVisible();
+      await expect(card.getByText("Bientôt")).toBeVisible();
     }
   });
 
@@ -40,7 +42,7 @@ test.describe("Prestations à venir", () => {
       expect(await page.locator("main img").count()).toBeGreaterThanOrEqual(3);
 
       // Les 4 items « ce qui est inclus » et les 3 étapes
-      await expect(page.locator("ol > li")).toHaveCount(3);
+      await expect(page.locator("main ol > li")).toHaveCount(3);
 
       // CTA contact
       await expect(page.locator('main a[href="/contact"]').first()).toBeVisible();
