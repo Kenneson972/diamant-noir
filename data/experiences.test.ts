@@ -4,7 +4,7 @@ import {
   EXPERIENCE_DETAILS,
   isExperienceSlug,
 } from "./experiences";
-import { SUPPORTED_LOCALES, t } from "@/lib/i18n";
+import { SUPPORTED_LOCALES, hasTranslation, t } from "@/lib/i18n";
 
 describe("EXPERIENCE_SLUGS", () => {
   it("contient exactement les 4 prestations à venir", () => {
@@ -109,10 +109,9 @@ describe("i18n des prestations à venir", () => {
     const missing: string[] = [];
     for (const locale of SUPPORTED_LOCALES) {
       for (const key of allKeys()) {
-        const value = t(locale, key);
-        // `t` retourne la clé elle-même quand la traduction est absente,
-        // et retombe sur le français : on exige une valeur propre à la locale.
-        if (value === key || value.trim() === "") missing.push(`${locale}:${key}`);
+        // `hasTranslation` vérifie la présence réelle dans la locale,
+        // sans repli sur le français (contrairement à `t`).
+        if (!hasTranslation(locale, key)) missing.push(`${locale}:${key}`);
       }
     }
     expect(missing).toEqual([]);
@@ -123,6 +122,9 @@ describe("i18n des prestations à venir", () => {
     const offenders: string[] = [];
     for (const locale of SUPPORTED_LOCALES) {
       for (const key of allKeys()) {
+        if (!hasTranslation(locale, key)) continue;
+        // `hasTranslation` garantit que la clé existe réellement pour cette
+        // locale : `t` ne peut donc pas retomber sur le français ici.
         const value = t(locale, key);
         if (banned.some((re) => re.test(value))) offenders.push(`${locale}:${key}`);
       }
