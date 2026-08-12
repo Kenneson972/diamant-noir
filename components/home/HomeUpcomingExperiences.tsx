@@ -7,29 +7,29 @@ import { tServer as ts } from "@/lib/i18n";
 
 /**
  * Bloc teaser « Nos prestations à venir » — inséré sur la home juste après
- * la grille des villas. Fond navy pour marquer la rupture avec la section
- * villas (blanche). Chaque carte mène à `/experiences/<slug>`.
+ * la grille des villas. Fond blanc épuré, dans la continuité de la section
+ * villas. Chaque carte mène à `/experiences/<slug>`.
  */
 export function HomeUpcomingExperiences({ locale }: { locale: string }) {
   return (
     <section
       id="prestations-a-venir"
       tabIndex={-1}
-      className="scroll-mt-24 bg-navy"
+      className="scroll-mt-24 bg-white"
       aria-labelledby="upcoming-title"
     >
       <ScrollReveal>
         <div className="px-6 pb-10 pt-14 text-center md:px-8 md:pb-12 md:pt-20 lg:px-12">
-          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-gold/80">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-navy/50">
             {ts(locale, "home.upcoming_eyebrow")}
           </span>
           <h2
             id="upcoming-title"
-            className="mx-auto mt-3 font-display text-4xl font-light leading-[1.04] text-white md:text-5xl lg:text-6xl"
+            className="mx-auto mt-3 font-display text-4xl font-light leading-[1.04] text-navy md:text-5xl lg:text-6xl"
           >
             {ts(locale, "home.upcoming_title")}
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-[13px] leading-relaxed text-white/55">
+          <p className="mx-auto mt-5 max-w-xl text-[13px] leading-relaxed text-navy/55">
             {ts(locale, "home.upcoming_subtitle")}
           </p>
         </div>
@@ -44,7 +44,7 @@ export function HomeUpcomingExperiences({ locale }: { locale: string }) {
               key={slug}
               href={`/experiences/${slug}`}
               aria-label={ts(locale, "home.upcoming_card_aria", { name })}
-              className="stagger-item group relative block aspect-[4/5] overflow-hidden bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-inset"
+              className="stagger-item group relative block aspect-[4/5] overflow-hidden bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-inset"
             >
               <Image
                 src={d.hero}
