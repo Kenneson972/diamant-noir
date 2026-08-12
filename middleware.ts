@@ -18,6 +18,7 @@ const publicPaths = [
   "/cookies",
   "/tarifs",
   "/experience",
+  "/experiences",
   "/soumettre-ma-villa",
   "/success",
   "/update-password",
