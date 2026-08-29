@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import type { DataGridColumn } from "@heroui-pro/react/data-grid";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { AdminVillaDeleteButton } from "@/components/dashboard/admin/AdminVillaDeleteButton";
 import { KayvilaDataGrid, KayvilaNumberValue } from "@/components/ui/pro";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
 import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
@@ -211,7 +212,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
       id: "actions",
       header: "Actions",
       pinned: "end",
-      width: 220,
+      width: 320,
       cell: (item) => (
         <div className="flex items-center gap-3">
           <Link href={`/admin/villas/${item.id}`} className="text-sm font-medium text-gold hover:text-gold/80">
@@ -234,6 +235,7 @@ export function AdminVillasDataGrid({ rows }: { rows: AdminVillaRow[] }) {
           >
             Voir ↗
           </a>
+          <AdminVillaDeleteButton villaId={item.id} villaName={item.name} />
         </div>
       ),
     },

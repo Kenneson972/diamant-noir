@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { AdminVillaDeleteButton } from "@/components/dashboard/admin/AdminVillaDeleteButton";
 import { VillaThumb } from "@/components/dashboard/admin/VillaThumb";
 import { VillaPastBookingsDrawer } from "@/components/dashboard/VillaPastBookingsDrawer";
 import type { AdminVillaRow } from "@/components/dashboard/admin/AdminVillasDataGrid";
@@ -77,6 +78,9 @@ export function AdminVillaCardList({ rows }: { rows: AdminVillaRow[] }) {
                 <KayvilaPngIcon name="calendar" size={18} alt="" />
                 Calendrier
               </Link>
+            </div>
+            <div className="flex min-h-[48px] items-center justify-center border-t border-navy/8">
+              <AdminVillaDeleteButton villaId={villa.id} villaName={villa.name} />
             </div>
           </li>
         ))}

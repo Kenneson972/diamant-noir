@@ -19,6 +19,7 @@ import { RoomsEditor } from "./RoomsEditor";
 import { SeasonalPricesEditor } from "./SeasonalPricesEditor";
 import { EmergencyContactsEditor } from "./EmergencyContactsEditor";
 import { ChipEditor } from "./ChipEditor";
+import { AdminVillaDeleteButton } from "@/components/dashboard/admin/AdminVillaDeleteButton";
 
 export function VillaEditor({
   villa,
@@ -384,6 +385,18 @@ export function VillaEditor({
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Administration</p>
           {adminSections.map((def) => renderSection(def.id, sectionContent[def.id]))}
           {adminExtras && <div className="mt-4 space-y-4 border-t border-navy/8 pt-4">{adminExtras}</div>}
+          <div className="mt-4 border-t border-navy/8 pt-4">
+            <p className="mb-2 text-xs text-navy/55">
+              Supprime définitivement la villa et ses photos. Pour la retirer du site
+              sans perdre la fiche, utilisez plutôt l&apos;état de publication.
+            </p>
+            <AdminVillaDeleteButton
+              villaId={villa.id}
+              villaName={villa.name}
+              variant="button"
+              redirectTo="/admin/villas"
+            />
+          </div>
         </div>
       )}
     </VillaEditorShell>
