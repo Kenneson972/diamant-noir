@@ -22,27 +22,10 @@ import { VillaHostCard } from "@/components/villas/VillaHostCard";
 import { VillaAmenitiesPreview } from "@/components/villas/VillaAmenitiesPreview";
 import { getEquipmentIcon } from "@/lib/villa-amenities-preview";
 
-export const revalidate = 900;
-
-export async function generateStaticParams() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anonKey) return [];
-  try {
-    const res = await fetch(
-      `${url}/rest/v1/villas?select=id&is_published=eq.true&limit=20`,
-      {
-        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-        next: { revalidate: 900 },
-      }
-    );
-    if (!res.ok) return [];
-    const villas: { id: string }[] = await res.json();
-    return (Array.isArray(villas) ? villas : []).map((v) => ({ id: String(v.id) }));
-  } catch {
-    return [];
-  }
-}
+// La page lit `x-dn-locale` via headers() : elle ne peut pas être générée
+// statiquement. Avec `revalidate` + generateStaticParams, Next tentait un rendu
+// statique et headers() levait DYNAMIC_SERVER_USAGE → 500 sur TOUTES les fiches.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
