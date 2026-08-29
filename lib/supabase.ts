@@ -55,6 +55,38 @@ export const getSupabaseBrowser = () => {
   return supabaseBrowserClient;
 };
 
+let staleSessionPurge: Promise<void> | null = null;
+
+/**
+ * Un refresh token périmé fait échouer getUser()/getSession() pour CHAQUE
+ * consommateur monté (AuthContext, Navbar, wishlist, pages…). Chacun relance un
+ * refresh, gotrue vole le verrou des autres, et le navigateur a émis ~110
+ * requêtes /auth/v1/token en 10 s avant que Supabase rate-limite l'IP : le login
+ * légitime échouait alors en 429 (audit préprod 2026-08-29).
+ *
+ * On purge donc la session locale au premier échec, une seule fois par page
+ * (la promesse est mémorisée), ce qui coupe la boucle et laisse l'utilisateur
+ * dans un état déconnecté propre plutôt que bloqué au login.
+ */
+export function isStaleRefreshTokenError(
+  error: { message?: string; code?: string } | null | undefined
+): boolean {
+  if (!error) return false;
+  return error.code === "refresh_token_not_found" || /refresh token/i.test(error.message ?? "");
+}
+
+export function purgeStaleSession(): Promise<void> {
+  if (staleSessionPurge) return staleSessionPurge;
+  const supabase = getSupabaseBrowser();
+  if (!supabase) return Promise.resolve();
+  const purge: Promise<void> = supabase.auth
+    .signOut({ scope: "local" })
+    .then(() => undefined)
+    .catch(() => undefined);
+  staleSessionPurge = purge;
+  return purge;
+}
+
 /**
  * Client anon SANS cookies — pour les lectures publiques côté serveur
  * (pages ISR/statiques comme /villas/[id]). Ne PAS utiliser `getSupabaseServer`
