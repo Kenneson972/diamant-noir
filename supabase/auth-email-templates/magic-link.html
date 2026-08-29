@@ -1,0 +1,51 @@
+<!-- Supabase → Authentication → Emails → « Magic Link »
+     Objet à définir : Votre lien de connexion — Kayvila -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fafafa;padding:32px 0;font-family:Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #ececec;">
+        <tr>
+          <td style="background:#0a0a0a;padding:28px 32px;text-align:center;">
+            <div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;letter-spacing:.06em;color:#d4af37;">Kayvila</div>
+            <div style="margin-top:6px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffffff;opacity:.65;">Conciergerie · Martinique</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:36px 32px 8px;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:400;color:#0a0a0a;">Votre lien de connexion</h1>
+            <p style="margin:18px 0 0;font-size:15px;line-height:1.65;color:#3c3c3c;">
+              Connectez-vous à votre espace Kayvila en un clic. Ce lien est valable une heure et à usage unique.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 32px;">
+            <a href="{{ .ConfirmationURL }}"
+               style="display:inline-block;background:#0a0a0a;color:#ffffff;text-decoration:none;padding:15px 32px;font-size:11px;font-weight:bold;letter-spacing:.22em;text-transform:uppercase;">
+              Accéder à mon espace
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 32px;">
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#6b6b6b;">
+              Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br />
+              <span style="color:#8a6d1f;word-break:break-all;">{{ .ConfirmationURL }}</span>
+            </p>
+            <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#6b6b6b;">
+              Vous n'êtes pas à l'origine de cette demande ? Ignorez simplement ce message.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:1px solid #ececec;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:11px;line-height:1.6;color:#9b9b9b;">
+              Kayvila — Conciergerie de villas de standing en Martinique<br />
+              <a href="https://kayvila.com" style="color:#8a6d1f;text-decoration:none;">kayvila.com</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
