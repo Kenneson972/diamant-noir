@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { getSupabaseBrowser } from "@/lib/supabase";
+import { getSupabaseBrowser, isStaleRefreshTokenError, purgeStaleSession } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 /* ─── Types ─────────────────────────────────────────── */
@@ -30,6 +30,7 @@ const AuthContext = createContext<AuthContextValue>({
 });
 
 export const useAuth = () => useContext(AuthContext);
+
 
 /* ─── Provider ──────────────────────────────────────── */
 
@@ -69,12 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
-      const u = data?.user ?? null;
-      setUser(u);
-      if (u) fetchProfileRole(u.id);
-      setLoading(false);
-    });
+    supabase.auth
+      .getUser()
+      .then(async ({ data, error }: { data: { user: User | null }; error: unknown }) => {
+        if (isStaleRefreshTokenError(error as { message?: string; code?: string } | null)) {
+          await purgeStaleSession();
+          setUser(null);
+          setProfileRole(null);
+          setLoading(false);
+          return;
+        }
+        const u = data?.user ?? null;
+        setUser(u);
+        if (u) fetchProfileRole(u.id);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
 
     const {
       data: { subscription },
@@ -107,16 +118,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push("/login");
   }, [router]);
 
-  /* ─── Détermination du rôle — profiles.role primaire, JWT fallback ── */
+  /* ─── Rôle : `profiles.role` uniquement ──────────────────────────────
+   * Pas de repli sur `user_metadata`, que l'utilisateur peut modifier lui-même
+   * (auth.updateUser) : il afficherait sinon les entrées de navigation admin à
+   * n'importe quel compte. Le serveur refuserait l'accès, mais l'UI mentirait.
+   */
   const role: UserRole = (() => {
     if (!user) return "guest";
-    // Primary: profiles.role from DB
     if (profileRole === "admin") return "admin";
     if (profileRole === "owner" || profileRole === "proprio") return "owner";
-    // Fallback: JWT user_metadata
-    const metadata = user.user_metadata;
-    if (metadata?.role === "admin") return "admin";
-    if (metadata?.role === "owner") return "owner";
     return "guest";
   })();
 
