@@ -62,10 +62,9 @@ export default function UpdatePasswordPage() {
           .maybeSingle()
         profileRole = p?.role ?? null
       }
-      const meta = (u?.user_metadata?.role as string | undefined) ?? "client"
-      const dest = isStaffAdmin(profileRole, meta, u?.email)
+      const dest = isStaffAdmin(profileRole, u?.email)
         ? "/admin"
-        : isOwnerRole(profileRole, meta)
+        : isOwnerRole(profileRole)
         ? "/dashboard"
         : "/espace-client"
       window.location.href = dest

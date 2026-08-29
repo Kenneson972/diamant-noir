@@ -42,11 +42,7 @@ export const POST = withCsrf(async (request: Request) => {
       .eq("id", user.id)
       .maybeSingle();
 
-    const isAdmin = isStaffAdmin(
-      profile?.role,
-      user.user_metadata?.role as string | undefined,
-      user.email
-    );
+    const isAdmin = isStaffAdmin(profile?.role, user.email);
 
     if (!isAdmin && villa.owner_id && villa.owner_id !== user.id) {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });

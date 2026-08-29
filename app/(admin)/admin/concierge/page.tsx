@@ -16,7 +16,7 @@ export default async function AdminConciergePage() {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!isStaffAdmin(profile?.role, user.user_metadata?.role as string | undefined, user.email)) {
+  if (!isStaffAdmin(profile?.role, user.email)) {
     redirect("/espace-client");
   }
 

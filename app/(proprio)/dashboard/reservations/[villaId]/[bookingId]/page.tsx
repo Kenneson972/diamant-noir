@@ -25,8 +25,7 @@ export default async function BookingDetailPage({ params }: PageProps) {
     supabaseAdmin(),
     villaId,
     user.id,
-    user.email,
-    user.user_metadata?.role as string | undefined
+    user.email
   );
   if (!allowed) notFound();
 

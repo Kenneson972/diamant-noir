@@ -31,14 +31,8 @@ export default async function AdminDashboardLayout({
     .eq("id", user.id)
     .maybeSingle();
 
-  const effective = normalizeRole(profile?.role ?? user.user_metadata?.role);
-  if (
-    !isStaffAdmin(
-      profile?.role,
-      user.user_metadata?.role as string | undefined,
-      user.email
-    )
-  ) {
+  const effective = normalizeRole(profile?.role);
+  if (!isStaffAdmin(profile?.role, user.email)) {
     if (effective === "owner") {
       redirect("/dashboard");
     }

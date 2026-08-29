@@ -27,11 +27,7 @@ export async function GET(request: Request) {
       .eq("id", userId)
       .maybeSingle();
 
-    const isAdmin = isStaffAdmin(
-      profile?.role ?? null,
-      userData.user.user_metadata?.role as string | undefined,
-      userData.user.email
-    );
+    const isAdmin = isStaffAdmin(profile?.role ?? null, userData.user.email);
 
     // Get owner's villa IDs if not admin
     let ownerVillaIds: string[] = [];

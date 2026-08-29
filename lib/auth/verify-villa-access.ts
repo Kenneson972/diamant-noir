@@ -6,8 +6,7 @@ export async function verifyVillaOwnerOrAdmin(
   admin: SupabaseClient,
   villaId: string,
   userId: string,
-  userEmail?: string | null,
-  metadataRole?: string | null
+  userEmail?: string | null
 ): Promise<boolean> {
   const { data: profile } = await admin
     .from("profiles")
@@ -15,7 +14,7 @@ export async function verifyVillaOwnerOrAdmin(
     .eq("id", userId)
     .maybeSingle();
 
-  if (isStaffAdmin(profile?.role, metadataRole, userEmail)) return true;
+  if (isStaffAdmin(profile?.role, userEmail)) return true;
 
   const { data: villa } = await admin
     .from("villas")

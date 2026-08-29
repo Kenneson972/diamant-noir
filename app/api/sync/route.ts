@@ -22,7 +22,7 @@ async function isAuthorized(request: Request): Promise<boolean> {
       .eq("id", user.id)
       .maybeSingle();
 
-    return isStaffAdmin(profile?.role ?? null, null, user.email ?? null);
+    return isStaffAdmin(profile?.role ?? null, user.email ?? null);
   } catch {
     return false;
   }

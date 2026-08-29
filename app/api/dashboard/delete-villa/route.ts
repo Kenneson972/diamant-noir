@@ -40,11 +40,7 @@ export async function POST(request: Request) {
       .eq("id", user.id)
       .maybeSingle();
 
-    const isAdmin = isStaffAdmin(
-      profile?.role,
-      user.user_metadata?.role as string | undefined,
-      user.email
-    );
+    const isAdmin = isStaffAdmin(profile?.role, user.email);
     const isOwner = villa.owner_id === user.id;
 
     if (!isAdmin && !isOwner) {

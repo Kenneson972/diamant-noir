@@ -137,7 +137,6 @@ function PasswordPanel({
       const dest = postLoginDestination({
         requestedRedirect: redirectTo,
         profileRole,
-        metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
       // Délai pour laisser les cookies Supabase s'écrire avant redirection
@@ -195,7 +194,6 @@ function PasswordPanel({
       const dest = postLoginDestination({
         requestedRedirect: redirectTo,
         profileRole,
-        metadataRole: u?.user_metadata?.role as string | undefined,
         email: u?.email,
       })
       await new Promise((resolve) => setTimeout(resolve, 300));

@@ -79,16 +79,7 @@ export async function requireAdmin(request: Request): Promise<string> {
     .eq("id", user.id)
     .maybeSingle();
 
-  const metadataRole =
-    (user.user_metadata?.role as string | undefined) ??
-    (user.app_metadata?.role as string | undefined) ??
-    null;
-
-  const admin = isStaffAdmin(
-    profile?.role ?? null,
-    metadataRole,
-    user.email ?? null,
-  );
+  const admin = isStaffAdmin(profile?.role ?? null, user.email ?? null);
 
   if (!admin) throw new AuthError("Accès administrateur requis", 403);
   return user.id;

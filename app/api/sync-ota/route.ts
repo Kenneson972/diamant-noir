@@ -43,11 +43,7 @@ export async function POST(req: Request) {
       .eq("id", userId)
       .maybeSingle();
 
-    const isAdmin = isStaffAdmin(
-      profile?.role,
-      user.user_metadata?.role as string | undefined,
-      user.email
-    );
+    const isAdmin = isStaffAdmin(profile?.role, user.email);
     if (!isAdmin && villa.owner_id !== userId) {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }

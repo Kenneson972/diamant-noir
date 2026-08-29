@@ -27,11 +27,7 @@ export const POST = withCsrf(async (request: Request) => {
       .eq("id", user.id)
       .maybeSingle();
 
-    const isAdmin = isStaffAdmin(
-      profile?.role,
-      user.user_metadata?.role as string | undefined,
-      user.email
-    );
+    const isAdmin = isStaffAdmin(profile?.role, user.email);
 
     // Champs réservés à l'admin — un non-admin ne doit pas pouvoir les fixer (Sec#7)
     const ADMIN_ONLY_FIELDS = ["is_published", "commission_rate", "collection_tier", "owner_id"] as const;

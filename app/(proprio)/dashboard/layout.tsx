@@ -33,17 +33,10 @@ export default async function ProprioDashboardLayout({
     getOwnerVillas(user.id),
   ]);
 
-  const adminUser = isStaffAdmin(
-    profile?.role,
-    user.user_metadata?.role as string | undefined,
-    user.email
-  );
+  const adminUser = isStaffAdmin(profile?.role, user.email);
   if (adminUser) redirect("/admin");
 
-  const ownerUser = isOwnerRole(
-    profile?.role,
-    user.user_metadata?.role as string | undefined
-  );
+  const ownerUser = isOwnerRole(profile?.role);
   if (!ownerUser) redirect("/espace-client");
 
   // Fetch badge counts

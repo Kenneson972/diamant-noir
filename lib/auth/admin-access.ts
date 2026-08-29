@@ -30,28 +30,26 @@ export function isEmailStaffAdmin(email: string | null | undefined): boolean {
   return allow.includes(email.trim().toLowerCase());
 }
 
-/** True if either profile role or JWT metadata role is admin (avoids lockout when one source is stale). */
+/**
+ * Staff admin. Ne JAMAIS se fier à `user_metadata.role` du JWT : ce champ est
+ * modifiable par l'utilisateur lui-même via auth.updateUser(), donc n'importe
+ * quel compte pouvait s'auto-promouvoir admin (audit préprod 2026-08-29).
+ * Sources de confiance : `profiles.role` (écrit côté serveur) et la liste
+ * STAFF_ADMIN_EMAILS, qui sert déjà de filet anti-lockout.
+ */
 export function isStaffAdmin(
   profileRole: string | null | undefined,
-  metadataRole: string | null | undefined,
   email?: string | null
 ): boolean {
-  return (
-    isAdminRole(profileRole) ||
-    isAdminRole(metadataRole ?? undefined) ||
-    isEmailStaffAdmin(email ?? undefined)
-  );
+  return isAdminRole(profileRole) || isEmailStaffAdmin(email ?? undefined);
 }
 
 /**
- * Propriétaire (accès /dashboard) : priorité au profil — les JWT ont souvent role absent ou "client".
+ * Propriétaire (accès /dashboard) : `profiles.role` uniquement, même raison que
+ * pour isStaffAdmin — `user_metadata` n'est pas une source de confiance.
  */
-export function isOwnerRole(
-  profileRole: string | null | undefined,
-  metadataRole: string | null | undefined
-): boolean {
-  if (normalizeRole(profileRole) === "owner") return true;
-  return normalizeRole(metadataRole) === "owner";
+export function isOwnerRole(profileRole: string | null | undefined): boolean {
+  return normalizeRole(profileRole) === "owner";
 }
 
 /**
@@ -62,16 +60,15 @@ export function isOwnerRole(
 export function postLoginDestination(opts: {
   requestedRedirect: string;
   profileRole: string | null | undefined;
-  metadataRole: string | null | undefined;
   email?: string | null;
 }): string {
-  const { requestedRedirect, profileRole, metadataRole, email } = opts;
+  const { requestedRedirect, profileRole, email } = opts;
   // Destination admin : absolue en prod (admin.kayvila.com), relative en dev
   const adminDest =
     process.env.NODE_ENV === "development"
       ? "/admin"
       : `${process.env.NEXT_PUBLIC_ADMIN_URL || "https://admin.kayvila.com"}/admin`;
-  if (!isStaffAdmin(profileRole, metadataRole, email)) {
+  if (!isStaffAdmin(profileRole, email)) {
     return requestedRedirect;
   }
   if (requestedRedirect.startsWith("/admin")) {

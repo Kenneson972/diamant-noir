@@ -188,10 +188,9 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Utilisateur connecté sur /login → rediriger vers son espace.
-  // ⚠️ Le role JWT (user_metadata) peut être absent (compte créé via API admin).
-  // On consulte le profile en base comme pour les routes protégées (leçon Kayvila).
+  // Le rôle vient exclusivement de `profiles` : `user_metadata` est modifiable
+  // par l'utilisateur lui-même et ne peut pas servir au contrôle d'accès.
   if (user && pathname === "/login") {
-    const meta = (user.user_metadata?.role as string | undefined) ?? "client";
     let loginProfileRole: string | null = null;
     try {
       await supabase.auth.getSession();
@@ -204,9 +203,9 @@ export async function middleware(request: NextRequest) {
     } catch (e) {
       console.error("[RBAC] login profile query error:", e);
     }
-    const dest = isStaffAdmin(loginProfileRole, meta, user.email)
+    const dest = isStaffAdmin(loginProfileRole, user.email)
       ? adminDashboardDest
-      : isOwnerRole(loginProfileRole, meta)
+      : isOwnerRole(loginProfileRole)
       ? "/dashboard"
       : "/espace-client";
     const redirectRes = NextResponse.redirect(new URL(dest, request.url));
@@ -233,9 +232,6 @@ export async function middleware(request: NextRequest) {
     return redirectRes;
   }
 
-  const metaRole =
-    (user.user_metadata?.role as string | undefined) ?? "client";
-
   // ── RBAC ──
   const needsProfileForRbac =
     pathname.startsWith("/admin") ||
@@ -258,8 +254,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const adminUser = isStaffAdmin(profileRole, metaRole, user.email);
-  const ownerUser = isOwnerRole(profileRole, metaRole);
+  const adminUser = isStaffAdmin(profileRole, user.email);
+  const ownerUser = isOwnerRole(profileRole);
 
   // Helper pour rediriger en copiant les cookies de session
   const doRedirect = (path: string) => {
