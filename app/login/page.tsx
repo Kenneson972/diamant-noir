@@ -231,9 +231,12 @@ function PasswordPanel({
     if (!supabase) { setError(t("auth.error_supabase_unconfigured")); return }
     setError(null)
     const origin = typeof window !== "undefined" ? window.location.origin : ""
+    // Un compte Google est toujours un client (tenant) → défaut /espace-client,
+    // pas /dashboard (qui est le dashboard proprio, défaut du redirectTo email/mdp).
+    const next = redirectTo && redirectTo !== "/dashboard" ? redirectTo : "/espace-client"
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo || "/espace-client")}` },
+      options: { redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` },
     })
     if (googleError) {
       setError(formatSupabaseAuthMessage(googleError.message, t))
