@@ -7,7 +7,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { Menu, X, User } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
 import type { Session } from "@supabase/supabase-js";
-import { getSupabaseBrowser } from "@/lib/supabase";
+import { getSupabaseBrowser, isStaleRefreshTokenError, purgeStaleSession } from "@/lib/supabase";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLocale } from "@/contexts/LocaleContext";
 import { acquireBodyScrollLock } from "@/lib/bodyScrollLock";
@@ -50,9 +50,17 @@ export function Navbar({ isDevelopment }: { isDevelopment: boolean }) {
 
   useEffect(() => {
     if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
-        setSession(session);
-      });
+      supabase.auth
+        .getSession()
+        .then(async ({ data: { session }, error }: { data: { session: Session | null }; error: unknown }) => {
+          if (isStaleRefreshTokenError(error as { message?: string; code?: string } | null)) {
+            await purgeStaleSession();
+            setSession(null);
+            return;
+          }
+          setSession(session);
+        })
+        .catch(() => setSession(null));
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {

@@ -116,7 +116,22 @@ export async function middleware(request: NextRequest) {
         }
         return NextResponse.next();
       }
-      return NextResponse.next();
+      // Assets et routes API admin : laisser passer (les handlers API portent leur
+      // propre contrôle d'accès).
+      if (
+        pathname.startsWith("/api") ||
+        pathname.startsWith("/_next") ||
+        pathname.startsWith("/images") ||
+        pathname.startsWith("/fonts")
+      ) {
+        return NextResponse.next();
+      }
+      // ⚠️ NE PAS court-circuiter les PAGES admin ici : sans session, le middleware
+      // doit émettre le 307 vers /login. Si on rend la main à Next, le layout
+      // `app/(admin)/admin/layout.tsx` appelle bien redirect(), mais `loading.tsx` a
+      // déjà flushé le shell → la réponse est committée en 200 et la redirection ne
+      // part jamais : l'admin reste sur un squelette vide (« chargement infini »).
+      // On tombe volontairement dans le bloc auth/RBAC ci-dessous.
     }
     // Domaine public : routes admin → 404 (aucun appelant externe, isolation totale)
     if (isAdminRoute) {
@@ -216,7 +231,17 @@ export async function middleware(request: NextRequest) {
     } catch (e) {
       console.error("[RBAC] login profile query error:", e);
     }
-    const dest = isStaffAdmin(loginProfileRole, meta, user.email)
+    const isAdminUser = isStaffAdmin(loginProfileRole, meta, user.email);
+    // Garde anti-boucle : on arrive ici REJETÉ par admin.kayvila.com (?sso=retry)
+    // alors qu'on a une session valide sur le domaine public. Le cookie de session
+    // n'est donc pas visible sur le sous-domaine admin (scope host-only ou mauvais
+    // domaine → vérifier SUPABASE_COOKIE_DOMAIN = "kayvila.com", sans "www").
+    // Renvoyer vers l'admin ici produirait un ping-pong 307 infini : on affiche le
+    // login avec une erreur explicite à la place.
+    if (isAdminUser && request.nextUrl.searchParams.get("sso") === "retry") {
+      return supabaseResponse;
+    }
+    const dest = isAdminUser
       ? adminDashboardDest
       : isOwnerRole(loginProfileRole, meta)
       ? "/dashboard"
@@ -235,8 +260,19 @@ export async function middleware(request: NextRequest) {
 
   // Pages protégées : pas d'utilisateur → rediriger vers login
   if (!user) {
-    const url = new URL("/login", request.url);
+    // Le login vit sur le domaine public : depuis admin.kayvila.com, pointer
+    // directement dessus (sinon admin.kayvila.com/login part en second redirect).
+    const loginBase =
+      isAdminHost && process.env.NODE_ENV !== "development"
+        ? process.env.NEXT_PUBLIC_SITE_URL || "https://kayvila.com"
+        : request.url;
+    const url = new URL("/login", loginBase);
     url.searchParams.set("redirect", pathname);
+    // Marqueur lu plus haut (garde anti-boucle) : signale que le sous-domaine admin
+    // n'a pas vu la session, pour ne pas y renvoyer en boucle depuis /login.
+    if (isAdminHost && process.env.NODE_ENV !== "development") {
+      url.searchParams.set("sso", "retry");
+    }
     const redirectRes = NextResponse.redirect(url);
     // Copier les cookies rafraîchis par Supabase (avec leurs options : maxAge, sameSite, secure…)
     supabaseResponse.cookies.getAll().forEach((cookie) => {
