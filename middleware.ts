@@ -133,8 +133,12 @@ export async function middleware(request: NextRequest) {
       // part jamais : l'admin reste sur un squelette vide (« chargement infini »).
       // On tombe volontairement dans le bloc auth/RBAC ci-dessous.
     }
-    // Domaine public : routes admin → 404 (aucun appelant externe, isolation totale)
-    if (isAdminRoute) {
+    // Domaine public UNIQUEMENT : routes admin → 404 (aucun appelant externe,
+    // isolation totale). ⚠️ Le test `!isAdminHost` est indispensable : depuis que
+    // les pages admin traversent le bloc ci-dessus au lieu de retourner, une route
+    // admin servie sur admin.kayvila.com atteindrait ce 404 et rendrait tout
+    // l'admin inaccessible.
+    if (!isAdminHost && isAdminRoute) {
       return new NextResponse(null, { status: 404 });
     }
   }
