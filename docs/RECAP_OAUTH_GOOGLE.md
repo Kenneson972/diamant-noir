@@ -45,7 +45,20 @@ lançait `getUser()` sur la requête callback. Avec une session périmée, le re
 
 **Résultat** : en navigation privée (cookies vierges), le login Google fonctionne et crée la session.
 
-## 4. Ce qui RESTE à régler (problème actuel)
+## 4. ~~Ce qui RESTE à régler (problème actuel)~~ — RÉSOLU le 03/09/2026
+
+> ⚠️ **SECTION PÉRIMÉE — NE PAS L'UTILISER COMME PISTE DE DEBUG.**
+> Le problème est résolu et livré en production. La cause réelle était une **boucle
+> de refresh token côté navigateur** aboutissant à un `429` Supabase, **pas** un
+> problème de domaine ni d'environnement. **Les trois causes env listées ci-dessous
+> ont été vérifiées une par une et sont toutes fausses.**
+> 👉 Voir **`docs/RECAP_AUTH_2026-09-03.md`** pour le diagnostic complet, les
+> correctifs (`841cf2e`, `50e2bf6`, `693aafd`) et la matrice de vérification.
+>
+> À noter aussi : les variables d'env Vercel sont de type *Sensitive*, donc
+> **illisibles** — `vercel env pull` écrit littéralement `[SENSITIVE]` (11 caractères,
+> soit la longueur de `kayvila.com`), ce qui induit des diagnostics erronés.
+> Valider par preuve d'exécution en prod, jamais par lecture d'env.
 
 En nav privée, un login Google avec un compte **admin** redirige vers `admin.kayvila.com`
 mais **« c'est pas le bon domaine »** — la session n'est pas reconnue côté admin.
