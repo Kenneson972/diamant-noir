@@ -12,6 +12,7 @@ import {
   User,
 } from "lucide-react"
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon"
+import { GoogleIcon } from "@/components/icons/GoogleIcon"
 import Link from "next/link"
 import { postLoginDestination } from "@/lib/auth/admin-access"
 import { useLocale } from "@/contexts/LocaleContext"
@@ -223,6 +224,19 @@ function PasswordPanel({
       setError(formatSupabaseAuthMessage(resetError.message, t))
     } else {
       setForgotSuccess(true)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    if (!supabase) { setError(t("auth.error_supabase_unconfigured")); return }
+    setError(null)
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo || "/espace-client")}` },
+    })
+    if (googleError) {
+      setError(formatSupabaseAuthMessage(googleError.message, t))
     }
   }
 
@@ -494,6 +508,24 @@ function PasswordPanel({
             </>
           )}
         </button>
+
+          {mode === "login" && (
+            <>
+              <div className="flex items-center gap-3" aria-hidden>
+                <span className="h-px flex-1 bg-navy/10" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-navy/50">{t("auth.or")}</span>
+                <span className="h-px flex-1 bg-navy/10" />
+              </div>
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="tap-target inline-flex w-full items-center justify-center gap-3 border border-navy/20 bg-white px-6 py-4 text-[10px] font-bold uppercase tracking-[0.22em] text-navy transition-colors hover:bg-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+              >
+                <GoogleIcon className="h-4 w-4" />
+                {t("auth.google_login")}
+              </button>
+            </>
+          )}
       </form>
 
       {mode === "login" ? (

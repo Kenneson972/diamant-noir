@@ -5,6 +5,7 @@ import { getSupabaseBrowser } from "@/lib/supabase";
 import { ProfileForm } from "@/components/espace-client/ProfileForm";
 import { Baby } from "lucide-react";
 import { KayvilaPngIcon } from "@/components/icons/KayvilaPngIcon";
+import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Button } from "@heroui/react";
 import { Spinner } from "@/components/espace-client/tenant-ui";
 import { KayvilaEmptyState, KayvilaTenantWidget } from "@/components/ui/pro";
@@ -25,6 +26,25 @@ export default function ProfilPage() {
   const [needsHighChair, setNeedsHighChair] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
+  const [linkingGoogle, setLinkingGoogle] = useState(false);
+  const [googleLinkError, setGoogleLinkError] = useState("");
+
+  const googleLinked = user?.identities?.some((i: { provider?: string }) => i.provider === "google") ?? false;
+
+  const handleLinkGoogle = async () => {
+    if (!supabase) return;
+    setLinkingGoogle(true);
+    setGoogleLinkError("");
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const { error } = await supabase.auth.linkIdentity({
+      provider: "google",
+      options: { redirectTo: `${origin}/auth/callback?next=/espace-client/profil` },
+    });
+    if (error) {
+      setLinkingGoogle(false);
+      setGoogleLinkError(t("auth.google_link_error"));
+    }
+  };
 
   useEffect(() => {
     if (!supabase) {
@@ -131,6 +151,34 @@ export default function ProfilPage() {
             currentAvatar={metadata.avatar_url}
             demoMode={false}
           />
+        </KayvilaTenantWidget>
+
+        <KayvilaTenantWidget title={t("auth.security_title")}>
+          {googleLinked ? (
+            <div className="flex items-center gap-3 rounded bg-gray-50 px-4 py-3">
+              <GoogleIcon className="h-4 w-4 shrink-0" />
+              <p className="text-sm text-navy">{t("auth.google_linked")}</p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleLinkGoogle}
+              disabled={linkingGoogle}
+              className="inline-flex min-h-[48px] w-full items-center justify-center gap-3 border border-navy/20 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-navy transition-colors hover:bg-navy/5 disabled:opacity-50"
+            >
+              {linkingGoogle ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-navy/20 border-t-navy" />
+              ) : (
+                <GoogleIcon className="h-4 w-4" />
+              )}
+              {t("auth.link_google")}
+            </button>
+          )}
+          {googleLinkError && (
+            <p role="alert" className="text-sm text-red-700">
+              {googleLinkError}
+            </p>
+          )}
         </KayvilaTenantWidget>
 
         <KayvilaTenantWidget
