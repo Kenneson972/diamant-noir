@@ -72,6 +72,14 @@ export function postLoginDestination(opts: {
       ? "/admin"
       : `${process.env.NEXT_PUBLIC_ADMIN_URL || "https://admin.kayvila.com"}/admin`;
   if (!isStaffAdmin(profileRole, metadataRole, email)) {
+    // Un non-staff ne doit JAMAIS être renvoyé vers /admin : sur le domaine public
+    // cette route est un 404 volontaire (isolation), donc l'utilisateur atterrirait
+    // dans un cul-de-sac. Le cas se produit depuis que le middleware redirige
+    // admin.kayvila.com/admin vers `/login?redirect=/admin` : un compte non admin
+    // qui se connecte alors repartait sur kayvila.com/admin → 404.
+    if (requestedRedirect === "/admin" || requestedRedirect.startsWith("/admin/")) {
+      return isOwnerRole(profileRole, metadataRole) ? "/dashboard" : "/espace-client";
+    }
     return requestedRedirect;
   }
   if (requestedRedirect.startsWith("/admin")) {
