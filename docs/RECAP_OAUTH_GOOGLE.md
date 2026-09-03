@@ -50,14 +50,27 @@ lançait `getUser()` sur la requête callback. Avec une session périmée, le re
 En nav privée, un login Google avec un compte **admin** redirige vers `admin.kayvila.com`
 mais **« c'est pas le bon domaine »** — la session n'est pas reconnue côté admin.
 
-**Lead principal (à vérifier en premier)** :
-- Vérifier la valeur de **`SUPABASE_COOKIE_DOMAIN`** dans Vercel (projet `kayvila`,
-  id `prj_L76eVSBn16PR978h3zo5uqS0f5Yz`).
-- Elle **doit valoir `kayvila.com`** (SANS `www.`). Le code fait
-  `.${SUPABASE_COOKIE_DOMAIN}` → `.kayvila.com`, ce qui couvre `kayvila.com` +
-  tous les sous-domaines (`admin.kayvila.com`).
-- Si elle vaut `www.kayvila.com` → le cookie devient `.www.kayvila.com`, scopé sur le
-  mauvais domaine → `admin.kayvila.com` ne le voit pas → redirect cassé.
+**Deux causes d'env DISTINCTES à trancher par le symptôme** (toutes deux dans Vercel,
+projet `kayvila`, id `prj_L76eVSBn16PR978h3zo5uqS0f5Yz`) :
+
+1. **Cible du redirect admin** = `NEXT_PUBLIC_ADMIN_URL` (middleware ligne 83 →
+   `${ADMIN_URL}/admin`). Si elle vaut `https://www.kayvila.com` au lieu de
+   `https://admin.kayvila.com`, le redirect part sur `www.kayvila.com/admin` → **404**
+   (l'admin est migré sur le sous-domaine ; `/admin` renvoie 404 sur le domaine public,
+   middleware lignes 122-124).
+2. **Scope du cookie session** = `SUPABASE_COOKIE_DOMAIN`. Elle **doit valoir
+   `kayvila.com`** (SANS `www.`). Le code fait `.${SUPABASE_COOKIE_DOMAIN}` →
+   `.kayvila.com`, ce qui couvre `kayvila.com` + tous les sous-domaines
+   (`admin.kayvila.com`). Si elle vaut `www.kayvila.com` → le cookie devient
+   `.www.kayvila.com`, scopé sur le mauvais domaine → `admin.kayvila.com` ne le voit pas.
+
+**Disambiguateur (le symptôme tranche)** :
+- Après login, si l'URL affiche **`www.kayvila.com/admin`** → cause (1) `NEXT_PUBLIC_ADMIN_URL`.
+- Si l'URL affiche **`admin.kayvila.com/admin` mais re-boucle vers le login** → cause (2) `SUPABASE_COOKIE_DOMAIN`.
+
+**Vérif rapide en DevTools** : Application → Cookies → attribut **Domain** du cookie
+`sb-*-auth-token` → il doit être **`.kayvila.com`** (avec le point). S'il est host-only
+(`kayvila.com` sans point) ou `www.kayvila.com`, le scope est cassé → cause (2).
 
 **Points de contexte utiles pour le debug** :
 - Le site sert **`kayvila.com` ET `www.kayvila.com` sans redirect canonique** (les deux
