@@ -149,6 +149,18 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-dn-locale", locale);
 
+  // Route /auth/callback gère elle-même l'échange (PKCE `code` ou `token_hash`).
+  // Ne PAS lancer getUser() ici : le cookie `sb-*-auth-token-code-verifier`
+  // contient "auth" et satisfait hasSupabaseAuthCookie ci-dessous, donc sans ce
+  // retour anticipé le middleware ferait getUser() sur la requête callback.
+  // Avec une session périmée, le refresh échoue (400/429) et supabase-js purge
+  // `${storageKey}-code-verifier` (GoTrueClient.js _removeSession) AVANT
+  // l'exchangeCodeForSession de la route → échec silencieux
+  // « Impossible de finaliser l'authentification ».
+  if (pathname === "/auth/callback") {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
   // Visiteur anonyme sur page publique : pas d'appel réseau Supabase Auth (getUser = ~100–300 ms/clic)
   const hasSupabaseAuthCookie = request.cookies
     .getAll()

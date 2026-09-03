@@ -3,6 +3,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
+// Domaine des cookies Supabase : identique au middleware.ts. Sans lui, la
+// session posée après exchangeCodeForSession serait host-only (kayvila.com)
+// et invisible sur admin.kayvila.com — et la suppression du code-verifier
+// (cookie scopé `.kayvila.com` par le client navigateur) échouerait aussi.
+const SUPABASE_COOKIE_DOMAIN = process.env.SUPABASE_COOKIE_DOMAIN
+  ? `.${process.env.SUPABASE_COOKIE_DOMAIN.replace(/^\./, "")}`
+  : undefined;
+
 /**
  * Route appelée par Supabase Auth après :
  * - Confirmation d'email (signup)
@@ -36,7 +44,13 @@ export async function GET(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
+            response.cookies.set(
+              name,
+              value,
+              SUPABASE_COOKIE_DOMAIN
+                ? { ...options, domain: SUPABASE_COOKIE_DOMAIN }
+                : options
+            )
           );
         },
       },
