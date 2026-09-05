@@ -74,47 +74,11 @@ export default async function ExperiencePage({
 
   return (
     <LandingShell>
-      {/* ── ① Hero — bloc titre clair, puis image pleine largeur ─ */}
-      <section className="bg-offwhite px-6 pb-10 pt-24 md:px-12 md:pb-14 md:pt-28">
-        <div className="mx-auto max-w-5xl">
-          <nav
-            aria-label={ts(locale, "experiences.breadcrumb_aria")}
-            className="mb-8 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-navy/45"
-          >
-            <Link href="/" className="transition-colors hover:text-navy">
-              {ts(locale, "nav.home")}
-            </Link>
-            <span className="text-navy/25" aria-hidden>/</span>
-            <span className="text-navy/70">{ts(locale, "experiences.breadcrumb_root")}</span>
-          </nav>
-
-          <span className="mb-4 inline-flex items-center border border-navy/20 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.28em] text-navy/70">
-            {ts(locale, "experiences.badge_soon")}
-          </span>
-          <div className="mb-3 flex items-center gap-2.5">
-            <KayvilaPngIcon name={d.icon} size={20} alt="" className="shrink-0" />
-            <p className="text-[9px] font-bold uppercase tracking-[0.48em] text-navy/55">
-              {ts(locale, `experiences.${slug}.eyebrow`)}
-            </p>
-          </div>
-          <div className="mb-4 h-px w-10 bg-navy/20" aria-hidden />
-          <h1
-            className="font-display font-normal text-navy"
-            style={{
-              fontSize: "clamp(1.7rem, 4.5vw, 3.25rem)",
-              letterSpacing: "0.07em",
-              lineHeight: 1.08,
-            }}
-          >
-            {title}
-          </h1>
-          <p className="mt-4 max-w-lg text-[13px] leading-relaxed text-navy/60">
-            {ts(locale, `experiences.${slug}.tagline`)}
-          </p>
-        </div>
-      </section>
-
-      <div className="relative w-full overflow-hidden bg-navy/5 aspect-[16/9] max-h-[520px]">
+      {/* ── ① Hero — titre en navy sur la photo, voile clair ─── */}
+      <section
+        className="relative flex items-center overflow-hidden bg-offwhite"
+        style={{ minHeight: "min(70vh, 580px)" }}
+      >
         <Image
           src={d.hero}
           alt={ts(locale, `experiences.${slug}.image_alt`)}
@@ -124,7 +88,66 @@ export default async function ExperiencePage({
           sizes="100vw"
           priority
         />
-      </div>
+
+        {/* Voile clair. Sur mobile le texte occupe toute la largeur : il faut un
+            voile uniforme et couvrant. Sur desktop il est calé à gauche, donc un
+            dégradé horizontal suffit — la photo reste lisible sur sa moitié
+            droite au lieu d'être délavée entièrement. */}
+        <div className="absolute inset-0 bg-offwhite/[0.88] md:hidden" aria-hidden />
+        <div
+          className="absolute inset-0 hidden md:block"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(250,250,250,0.97) 0%, rgba(250,250,250,0.93) 32%, rgba(250,250,250,0.6) 55%, rgba(250,250,250,0.15) 80%, rgba(250,250,250,0) 100%)",
+          }}
+          aria-hidden
+        />
+
+        <div className="relative z-10 w-full px-6 py-16 md:px-12 md:py-20">
+          <div className="mx-auto max-w-7xl">
+            {/* max-w-2xl et pas xl : à 576px, « Massage & bien-être » cassait sur
+                son trait d'union. Le tagline reste bridé plus court en dessous. */}
+            <div className="max-w-2xl">
+              <nav
+                aria-label={ts(locale, "experiences.breadcrumb_aria")}
+                className="mb-8 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-navy/55"
+              >
+                <Link href="/" className="transition-colors hover:text-navy">
+                  {ts(locale, "nav.home")}
+                </Link>
+                <span className="text-navy/30" aria-hidden>/</span>
+                <span className="text-navy/75">
+                  {ts(locale, "experiences.breadcrumb_root")}
+                </span>
+              </nav>
+
+              <div className="mb-3 flex items-center gap-2.5">
+                <KayvilaPngIcon name={d.icon} size={20} alt="" className="shrink-0" />
+                <p className="text-[9px] font-bold uppercase tracking-[0.48em] text-navy/60">
+                  {ts(locale, `experiences.${slug}.eyebrow`)}
+                </p>
+              </div>
+              <div className="mb-5 h-px w-10 bg-navy/25" aria-hidden />
+              <h1
+                className="font-display font-normal text-navy"
+                style={{
+                  fontSize: "clamp(1.9rem, 5vw, 3.5rem)",
+                  letterSpacing: "0.06em",
+                  lineHeight: 1.06,
+                }}
+              >
+                {title}
+              </h1>
+              <p className="mt-5 max-w-md text-[14px] leading-relaxed text-navy/70">
+                {ts(locale, `experiences.${slug}.tagline`)}
+              </p>
+              <span className="mt-7 inline-flex items-center border border-navy/25 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.28em] text-navy/70">
+                {ts(locale, "experiences.badge_soon")}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── ② Intro : texte [gauche] | image [droite] ──────── */}
       <section className="border-b border-navy/[0.06] bg-offwhite px-5 py-16 sm:px-6 md:py-24 lg:py-28">
