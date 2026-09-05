@@ -26,6 +26,7 @@ const publicPaths = [
   "/register",
   "/auth/callback",
   "/auth/confirm",
+  "/auth/reset",
   // API
   "/api/booking",
   "/api/booking-session",
@@ -177,6 +178,14 @@ export async function middleware(request: NextRequest) {
   // l'exchangeCodeForSession de la route → échec silencieux
   // « Impossible de finaliser l'authentification ».
   if (pathname === "/auth/callback") {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  // Route /auth/reset : purge des cookies `sb-*`. Surtout ne PAS lancer
+  // getUser() ici — il rafraîchirait la session et le `setAll` ci-dessous
+  // ré-émettrait les cookies que la route s'apprête à expirer, dans la même
+  // réponse. La purge serait alors silencieusement annulée.
+  if (pathname === "/auth/reset") {
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 

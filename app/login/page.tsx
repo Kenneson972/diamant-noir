@@ -636,6 +636,9 @@ function LoginForm() {
   const redirectTo = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard"
   const passwordTab = searchParams.get("tab") === "signup" ? "signup" : "login"
   const urlAuthError = loginUrlErrorMessage(searchParams.get("error"), t)
+  // Retour de /auth/reset : sans confirmation, l'utilisateur revient sur un
+  // login d'apparence identique et ne sait pas si la purge a eu lieu.
+  const justReset = searchParams.get("reset") === "1"
 
   return (
     <main className="flex min-h-[100dvh] flex-col bg-white lg:flex-row">
@@ -654,6 +657,12 @@ function LoginForm() {
           {urlAuthError && (
             <p role="alert" className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               {urlAuthError}
+            </p>
+          )}
+
+          {justReset && !urlAuthError && (
+            <p role="status" className="border border-navy/12 bg-navy/[0.03] px-4 py-3 text-sm text-navy/80">
+              {t("auth.reset_done")}
             </p>
           )}
 
