@@ -82,8 +82,10 @@ export const EXPERIENCE_DETAILS: Record<ExperienceSlug, ExperienceDetail> = {
     slug: "garde-enfants",
     icon: "users",
     hero: "/experiences/garde-enfants-hero.webp",
-    // Les enfants sont assis au sol, dans la moitié basse du cadre.
-    heroPosition: "center 60%",
+    // L'adulte est assis haut dans le cadre, les enfants au sol tout en bas :
+    // les deux ne tiennent pas ensemble dans le hero (16:9 rogné en ~2.6:1).
+    // 35% privilégie les visages — au-delà, la tête de l'adulte est coupée.
+    heroPosition: "center 35%",
     images: {
       intro: "/experiences/garde-enfants-intro.webp",
       included: "/experiences/garde-enfants-inclus.webp",
