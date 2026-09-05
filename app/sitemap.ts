@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { EXPERIENCE_SLUGS } from "@/data/experiences";
 
 const BASE = "https://kayvila.com";
 
@@ -18,6 +19,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/prestations/services/voyageurs`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
     { url: `${BASE}/prestations/services/menage`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
     { url: `${BASE}/prestations/services/finance`, lastModified: new Date(), priority: 0.6, changeFrequency: "monthly" },
+    ...EXPERIENCE_SLUGS.map((slug) => ({
+      url: `${BASE}/experiences/${slug}`,
+      lastModified: new Date(),
+      priority: 0.6,
+      changeFrequency: "monthly" as const,
+    })),
   ];
 
   // Pages villas dynamiques — dégradation gracieuse si Supabase est indisponible

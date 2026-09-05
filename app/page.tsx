@@ -6,6 +6,7 @@ import { HomeFeaturedAudience, type HomeFeaturedVilla } from "@/components/home/
 import { HomeOwnersSection } from "@/components/home/HomeOwnersSection";
 import { HomeServicesSection } from "@/components/home/HomeServicesSection";
 import { HomeTrustBand } from "@/components/home/HomeTrustBand";
+import { HomeUpcomingExperiences } from "@/components/home/HomeUpcomingExperiences";
 import { HeroWordmarkBaseline } from "@/components/marketing/HeroWordmarkBaseline";
 import { HeroBackgroundMedia } from "@/components/home/HeroBackgroundMedia";
 import { tServer } from "@/lib/i18n";
@@ -141,6 +142,11 @@ export default async function HomePage() {
       {/* ⑤ Villas */}
       <section className="cv-auto">
         <HomeFeaturedAudience featuredVillas={featuredVillas} />
+      </section>
+
+      {/* ⑤bis Prestations à venir */}
+      <section className="cv-auto">
+        <HomeUpcomingExperiences locale={locale} />
       </section>
 
       {/* ⑥ Trust */}

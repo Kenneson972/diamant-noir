@@ -7,6 +7,7 @@ import { useHomeAudience } from "@/contexts/HomeAudienceContext";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SUPPORTED_LOCALES, SUPPORTED_CURRENCIES, type Locale, type Currency } from "@/lib/i18n";
+import { EXPERIENCE_SLUGS } from "@/data/experiences";
 
 export const Footer = () => {
   const pathname = usePathname();
@@ -142,6 +143,25 @@ export const Footer = () => {
             </button>
           </div>
         )}
+
+        {/* ──── Prestations à venir ──── */}
+        <div className="mt-10 border-t border-black/10 pt-6 md:mt-12 md:pt-8">
+          <h4 className="mb-4 text-center text-[11px] font-bold uppercase tracking-[0.25em] text-black/35 md:text-left">
+            {t("footer.upcoming")}
+          </h4>
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-navy/65 md:justify-start">
+            {EXPERIENCE_SLUGS.map((slug) => (
+              <li key={slug}>
+                <Link
+                  href={`/experiences/${slug}`}
+                  className="transition-colors hover:text-navy"
+                >
+                  {t(`experiences.${slug}.title`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* ──── Barre du bas ──── */}
         <div className="mt-10 border-t border-black/10 pt-6 text-center text-[11px] uppercase tracking-[0.1em] text-navy/55 md:mt-12">
