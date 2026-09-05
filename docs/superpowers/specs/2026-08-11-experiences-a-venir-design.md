@@ -15,7 +15,9 @@ renvoie vers `/contact`. Aucun formulaire de collecte d'emails n'est créé.
 ## Contraintes de marque (rappel)
 
 - Sobriété : pas d'urgence artificielle, pas de compte à rebours, pas de « places limitées ».
-- Palette navy `#0a0a0a` / or `#d4af37` / offwhite `#fafafa`, Playfair Display en display.
+- Palette : **thème clair** sur tout ce chantier — offwhite `#fafafa` / blanc / texte navy
+  `#0a0a0a`, Playfair Display en display. **Pas d'accent or** sur les pages `/experiences`
+  ni sur les cartes home (décision Kenneson, 2026-09-05).
 - **Le terme « à domicile » est proscrit** dans toute la copie (fr/en/es). Remplacer par
   « à la villa », « chez vous », « sur place », « il/elle se déplace ».
 - Tout le texte passe par `lib/i18n.ts` — zéro chaîne en dur dans les composants.
@@ -47,7 +49,7 @@ Les slugs sont identiques dans les trois locales (même convention que
 | `data/experiences.ts` | `EXPERIENCE_SLUGS`, `ExperienceSlug`, `isExperienceSlug`, `EXPERIENCE_DETAILS`. Données **non textuelles** uniquement : chemins d'images, `imagePosition`, nom d'icône. Calqué sur `data/prestations-service-details.ts`. |
 | `app/experiences/[slug]/page.tsx` | Page serveur (RSC). Layout éditorial 5 blocs. `generateStaticParams` + `generateMetadata`. `notFound()` si slug inconnu. |
 | `app/experiences/layout.tsx` | Frame marketing, calqué sur `app/prestations/layout.tsx`. |
-| `components/home/HomeUpcomingExperiences.tsx` | Bloc home, 4 cartes sur fond navy. |
+| `components/home/HomeUpcomingExperiences.tsx` | Bloc home, 4 cartes sur fond blanc. |
 
 ### Fichiers modifiés
 
@@ -78,8 +80,9 @@ le contenu est entièrement statique.
 
 Cinq blocs, trois images par page.
 
-1. **Hero** — image plein format (`min-height: min(68vh, 560px)`), overlay dégradé
-   navy, breadcrumb `Accueil / Prestations à venir / <titre>`, **badge or « Bientôt disponible »**,
+1. **Hero** — bloc titre sur fond offwhite (breadcrumb `Accueil / Prestations à venir`,
+   **badge navy « Bientôt disponible »**), suivi de l'image en bandeau pleine largeur
+   16:9 (`max-h-[520px]`), sans overlay ni texte par-dessus,
    `<h1>` (Playfair, `clamp(1.7rem, 4.5vw, 3.25rem)`) + tagline d'une phrase.
    Un seul `<h1>` par page.
 2. **Intro** — fond offwhite. Texte à gauche / image à droite (`aspect-[4/3]`).
@@ -90,7 +93,7 @@ Cinq blocs, trois images par page.
 4. **Comment ça se passe** — fond offwhite, 3 étapes numérotées `01 / 02 / 03`,
    **sans image**. Exemple chef : *Vous nous dites l'occasion → On vous propose un menu
    et un chef → Il arrive, cuisine, sert, et laisse la cuisine impeccable.*
-5. **Bandeau « À venir »** — fond navy. Texte honnête (« Cette prestation ouvre
+5. **Bandeau « À venir »** — fond offwhite, CTA navy plein. Texte honnête (« Cette prestation ouvre
    prochainement. Dites-nous votre intérêt, nous vous recontactons dès l'ouverture. »),
    CTA vers `/contact`, puis navigation horizontale vers les 3 autres expériences.
 
@@ -103,17 +106,17 @@ Cinq blocs, trois images par page.
 
 ## Bloc home — `HomeUpcomingExperiences`
 
-- Section `id="prestations-a-venir"`, `scroll-mt-24`, **fond navy** (rupture visuelle
-  après la section villas qui est blanche).
-- En-tête centrée : eyebrow or `Bientôt chez Kayvila`, `<h2>` `Nos prestations à venir`,
+- Section `id="prestations-a-venir"`, `scroll-mt-24`, **fond blanc épuré**, dans la
+  continuité de la section villas.
+- En-tête centrée : eyebrow navy `Bientôt chez Kayvila`, `<h2>` `Nos prestations à venir`,
   sous-titre d'une ligne.
 - Grille `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px`, cartes `aspect-[4/5]`,
-  image `next/image` + overlay bas dégradé, **badge or « Bientôt »** en haut à gauche,
+  image `next/image` + overlay bas dégradé, **badge blanc sur voile navy « Bientôt »** en haut à gauche,
   titre en Playfair et pitch d'une ligne en bas.
 - Hover : `scale-[1.04]` sur l'image, `duration-700 ease-out`. `ScrollReveal` + `stagger-item`,
   comme la grille villas.
 - Chaque carte est un `<Link>` vers sa page, avec `aria-label` explicite et
-  `focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-inset`.
+  `focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-inset`.
 - Mobile : 1 colonne. Tablette : 2 colonnes. Desktop : 4 colonnes.
 
 ## Internationalisation
@@ -151,25 +154,32 @@ excursions-hero.webp      excursions-intro.webp      excursions-inclus.webp
 garde-enfants-hero.webp   garde-enfants-intro.webp   garde-enfants-inclus.webp
 ```
 
-- **Hero** : 16:9 paysage. Sujet dans le tiers central (l'image est recadrée en `aspect-[4/5]`
-  sur les cartes de la home et en `min(68vh,560px)` plein écran sur la page). Laisser de
-  l'air en bas pour l'overlay et le titre.
+- **Hero** : 16:9 paysage, affiché en bandeau pleine largeur sous le titre (`max-h-[520px]`),
+  **sans overlay ni texte par-dessus** — l'image doit tenir seule. Sujet dans le tiers
+  central : le même fichier est recadré en `aspect-[4/5]` sur les cartes de la home, où un
+  dégradé navy et du texte blanc occupent le bas. Garder donc le tiers inférieur calme
+  (sol, eau, terrasse vide) pour ce recadrage-là.
 - **Intro** et **Inclus** : 4:3.
 - Le hero sert aussi de carte home et d'image OpenGraph.
 
 ### Direction artistique commune (préfixe de tous les prompts)
 
-> Editorial travel photography, natural Caribbean daylight, soft desaturated palette of
-> deep navy, warm gold accents and off-white, fine film grain, shallow depth of field,
-> calm and understated luxury, no identifiable faces in close-up, no text or watermark
-> in the image, no logos, photorealistic.
+Les pages sont désormais en **thème clair** (offwhite / blanc, texte navy, aucun accent or).
+Les images doivent être lumineuses et aérées — pas de rendu sombre ni doré.
+
+> Editorial travel photography, bright natural Caribbean daylight, airy high-key exposure,
+> soft desaturated palette of off-white, pale sand, natural wood and muted sea blue-green,
+> fine film grain, shallow depth of field, calm and understated luxury, no identifiable
+> faces in close-up, no text or watermark in the image, no logos, photorealistic.
+>
+> Négatif : dark moody lighting, heavy shadows, gold or amber colour grading, orange teal
+> look, black background, HDR, oversaturated.
 
 ### Les 12 prompts
 
 **Masseur — hero (16:9)**
 > [DA] A massage table dressed in white linen on a wooden villa terrace overlooking the
-> Caribbean sea, rolled towels and a small bowl of frangipani flowers, late afternoon
-> golden light, tropical plants framing the edges, no people, subject centred with open
+> Caribbean sea, rolled towels and a small bowl of frangipani flowers, bright mid-morning light, tropical plants framing the edges, no people, subject centred with open
 > sky and empty terrace floor in the lower third.
 
 **Masseur — intro (4:3)**
@@ -178,14 +188,14 @@ garde-enfants-hero.webp   garde-enfants-intro.webp   garde-enfants-inclus.webp
 > diffused light, hands only, no face.
 
 **Masseur — inclus (4:3)**
-> [DA] Still life of spa essentials on a dark wooden surface: folded white towels, a small
+> [DA] Still life of spa essentials on a pale bleached-wood surface: folded white towels, a small
 > amber glass oil bottle, a candle, a sprig of tropical leaves, low contrast, quiet and
 > minimal composition, top-down angle.
 
 **Chef cuisinier — hero (16:9)**
-> [DA] A private outdoor dining table on a villa terrace at dusk, set for six with white
-> linen, brass cutlery and low candles, plated creole dishes, sea visible in the far
-> background, warm ambient light, no people, table centred with empty terrace floor in
+> [DA] A private outdoor dining table on a villa terrace in bright late-morning light, set for six with
+> white linen, pale ceramics and fresh flowers, plated creole dishes, sea visible in the
+> far background, open and airy, no people, table centred with empty terrace floor in
 > the lower third.
 
 **Chef cuisinier — intro (4:3)**
@@ -194,7 +204,7 @@ garde-enfants-hero.webp   garde-enfants-intro.webp   garde-enfants-inclus.webp
 > ingredients on the counter, natural window light.
 
 **Chef cuisinier — inclus (4:3)**
-> [DA] Overhead composition of fresh Martinique ingredients on a dark stone counter:
+> [DA] Overhead composition of fresh Martinique ingredients on a pale stone counter:
 > red snapper, limes, christophine, mangoes, thyme, scotch bonnet peppers, a bottle of
 > agricultural rum, natural daylight, editorial food styling.
 
@@ -212,7 +222,7 @@ garde-enfants-hero.webp   garde-enfants-intro.webp   garde-enfants-inclus.webp
 > ferns, mist filtering through the canopy, deep greens, soft diffused light, no people.
 
 **Garde d'enfants — hero (16:9)**
-> [DA] A calm villa living space in soft late-afternoon light, low wooden table with
+> [DA] A calm villa living space in bright soft daylight, low wooden table with
 > picture books, wooden toys and a folded blanket on a linen sofa, open doors onto a
 > garden, warm and reassuring atmosphere, no people, centred composition with clear
 > floor space in the lower third.
@@ -244,7 +254,7 @@ Le remplacement se fait ensuite par simple substitution des chemins dans `data/e
 ## Critères d'acceptation
 
 1. La home affiche, entre « Nos villas » et la bande de confiance, une section navy avec
-   quatre cartes cliquables portant chacune un badge or « Bientôt ».
+   quatre cartes cliquables portant chacune un badge « Bientôt ».
 2. Les quatre URLs `/experiences/<slug>` répondent en 200 et sont générées statiquement.
 3. Chaque page comporte exactement un `<h1>`, un breadcrumb, cinq blocs, trois images.
 4. Aucune chaîne de texte visible n'est codée en dur : tout passe par `lib/i18n.ts`,

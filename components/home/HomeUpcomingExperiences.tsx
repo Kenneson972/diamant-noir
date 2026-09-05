@@ -55,10 +55,10 @@ export function HomeUpcomingExperiences({ locale }: { locale: string }) {
                 style={{ objectPosition: d.heroPosition }}
               />
               <div
-                className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10"
+                className="absolute inset-0 bg-gradient-to-t from-navy/75 via-navy/20 to-navy/5"
                 aria-hidden
               />
-              <span className="absolute left-4 top-4 z-10 border border-gold/60 bg-navy/60 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.24em] text-gold">
+              <span className="absolute left-4 top-4 z-10 border border-white/50 bg-navy/55 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.24em] text-white">
                 {ts(locale, "experiences.badge_soon_short")}
               </span>
               <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-6 pt-16">
@@ -68,7 +68,7 @@ export function HomeUpcomingExperiences({ locale }: { locale: string }) {
                 <p className="mt-1.5 min-w-0 text-[11px] leading-relaxed text-white/60">
                   {ts(locale, `experiences.${slug}.tagline`)}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.28em] text-gold/85">
+                <span className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.28em] text-white/85">
                   {ts(locale, "common.learn_more")}
                   <ArrowRight
                     size={13}
