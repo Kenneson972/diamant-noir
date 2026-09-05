@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isOwnerRole, isStaffAdmin } from "@/lib/auth/admin-access";
+import { isStaleAuthError, buildAuthCookiePurge } from "@/lib/auth/stale-session";
 
 const publicPaths = [
   // Pages marketing / info
@@ -225,7 +226,44 @@ export async function middleware(request: NextRequest) {
   // getUser() valide le JWT côté serveur et rafraîchit le token si nécessaire
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
+
+  // Refresh token mort : couper la rafale AVANT qu'elle ne déclenche le 429.
+  //
+  // Le matcher couvre tout sauf les assets, donc chaque prefetch Next.js d'un
+  // <Link> entrant dans le viewport invoque ce middleware. Chaque invocation
+  // construit son PROPRE createServerClient : aucun verrou n'est partagé entre
+  // elles, contrairement au client navigateur (singleton + refreshingDeferred).
+  // Une grille de villas produisait ainsi ~15 POST /token par seconde avec le
+  // même token mort ; Supabase rate-limitait l'IP et TOUT appel auth echouait
+  // ensuite, y compris l'exchangeCodeForSession qui finalise le login Google
+  // (constaté en prod le 2026-09-05 : 274 reponses 429 en 10 minutes).
+  //
+  // purgeStaleSession() ne traite que le navigateur : il ne pouvait rien pour
+  // ce chemin serveur. On expire donc les cookies ici, ce qui ramene la rafale
+  // a un seul refresh echoue — les requetes suivantes n'ont plus de cookie.
+  //
+  // ⚠️ On ne retourne PAS ici : rendre la main à Next sur une page protégée
+  // court-circuiterait le bloc auth/RBAC ci-dessous et renverrait un 200 au
+  // lieu du 307 vers /login — c'est exactement ce qui avait produit le
+  // « chargement infini » de l'admin (935b2e8). On calcule les en-têtes et on
+  // les attache aux réponses existantes, sans toucher au routage.
+  const stalePurge =
+    !user && hasSupabaseAuthCookie && isStaleAuthError(userError)
+      ? buildAuthCookiePurge(
+          request.cookies.getAll().map((c) => c.name),
+          {
+            domain: SUPABASE_COOKIE_DOMAIN,
+            secure: request.nextUrl.protocol === "https:",
+          }
+        )
+      : [];
+
+  const withStalePurge = <T extends NextResponse>(response: T): T => {
+    for (const header of stalePurge) response.headers.append("set-cookie", header);
+    return response;
+  };
 
   // Utilisateur connecté sur /login → rediriger vers son espace.
   // ⚠️ Le role JWT (user_metadata) peut être absent (compte créé via API admin).
@@ -268,7 +306,7 @@ export async function middleware(request: NextRequest) {
 
   // Pages publiques : laisser passer (la session a été rafraîchie)
   if (isPublic) {
-    return supabaseResponse;
+    return withStalePurge(supabaseResponse);
   }
 
   // Pages protégées : pas d'utilisateur → rediriger vers login
@@ -288,10 +326,15 @@ export async function middleware(request: NextRequest) {
     }
     const redirectRes = NextResponse.redirect(url);
     // Copier les cookies rafraîchis par Supabase (avec leurs options : maxAge, sameSite, secure…)
-    supabaseResponse.cookies.getAll().forEach((cookie) => {
-      redirectRes.cookies.set(cookie);
-    });
-    return redirectRes;
+    // ⚠️ Sauf quand le refresh vient d'échouer : ces cookies-là sont morts, et les
+    // recopier via l'API `cookies` écrase les en-têtes de purge ajoutés ensuite
+    // (même nom → une seule entrée survit, sans la variante host-only).
+    if (stalePurge.length === 0) {
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectRes.cookies.set(cookie);
+      });
+    }
+    return withStalePurge(redirectRes);
   }
 
   const metaRole =

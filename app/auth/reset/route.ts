@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {
+  buildAuthCookiePurge,
+  normalizeCookieDomain,
+} from "@/lib/auth/stale-session";
 
-const SUPABASE_COOKIE_DOMAIN = process.env.SUPABASE_COOKIE_DOMAIN
-  ? `.${process.env.SUPABASE_COOKIE_DOMAIN.replace(/^\./, "")}`
-  : undefined;
+const SUPABASE_COOKIE_DOMAIN = normalizeCookieDomain(process.env.SUPABASE_COOKIE_DOMAIN);
 
 /**
  * Purge de l'état d'authentification local — l'équivalent supporté de
@@ -37,30 +39,13 @@ export async function GET(request: NextRequest) {
     .map((cookie) => cookie.name)
     .filter((name) => name.startsWith("sb-"));
 
-  const domains: (string | undefined)[] = SUPABASE_COOKIE_DOMAIN
-    ? [undefined, SUPABASE_COOKIE_DOMAIN]
-    : [undefined];
 
-  // On sérialise les en-têtes à la main : `response.cookies.set()` indexe par
-  // NOM seul, donc poser la variante domain-scopée écraserait la variante
-  // host-only du même cookie et une seule des deux serait supprimée.
-  const secure = new URL(request.url).protocol === "https:";
-
-  for (const name of staleNames) {
-    for (const domain of domains) {
-      const attrs = [
-        `${name}=`,
-        "Path=/",
-        "Max-Age=0",
-        "Expires=Thu, 01 Jan 1970 00:00:00 GMT",
-        "SameSite=Lax",
-      ];
-      if (domain) attrs.push(`Domain=${domain}`);
-      // Un cookie `Secure` posé en http est rejeté : en local la purge doit
-      // rester effective, donc l'attribut suit le protocole de la requête.
-      if (secure) attrs.push("Secure");
-      response.headers.append("set-cookie", attrs.join("; "));
-    }
+  // Sérialisation partagée avec le coupe-circuit du middleware.
+  for (const header of buildAuthCookiePurge(staleNames, {
+    domain: SUPABASE_COOKIE_DOMAIN,
+    secure: new URL(request.url).protocol === "https:",
+  })) {
+    response.headers.append("set-cookie", header);
   }
 
   // Empêche tout cache (CDN ou navigateur) de resservir cette réponse sans
