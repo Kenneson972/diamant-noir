@@ -897,8 +897,6 @@ const translations: Record<Locale, Record<string, string>> = {
     // ── Prestations à venir (voyageurs) ──────────────────────
     "experiences.badge_soon": "Bientôt disponible",
     "experiences.badge_soon_short": "Bientôt",
-    "experiences.breadcrumb_root": "Prestations à venir",
-    "experiences.breadcrumb_aria": "Fil d'ariane",
     "experiences.approach_eyebrow": "Notre approche",
     "experiences.included_eyebrow": "Le détail",
     "experiences.included_title": "Ce qui est inclus",
@@ -1871,8 +1869,6 @@ const translations: Record<Locale, Record<string, string>> = {
     // ── Upcoming services (guests) ───────────────────────────
     "experiences.badge_soon": "Coming soon",
     "experiences.badge_soon_short": "Soon",
-    "experiences.breadcrumb_root": "Upcoming services",
-    "experiences.breadcrumb_aria": "Breadcrumb",
     "experiences.approach_eyebrow": "Our approach",
     "experiences.included_eyebrow": "The detail",
     "experiences.included_title": "What's included",
@@ -2852,8 +2848,6 @@ const translations: Record<Locale, Record<string, string>> = {
     // ── Servicios próximamente (viajeros) ────────────────────
     "experiences.badge_soon": "Próximamente",
     "experiences.badge_soon_short": "Pronto",
-    "experiences.breadcrumb_root": "Servicios próximamente",
-    "experiences.breadcrumb_aria": "Ruta de navegación",
     "experiences.approach_eyebrow": "Nuestro enfoque",
     "experiences.included_eyebrow": "El detalle",
     "experiences.included_title": "Qué incluye",

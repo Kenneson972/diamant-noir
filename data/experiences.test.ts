@@ -78,8 +78,6 @@ const PER_SLUG_KEYS = [
 const SHARED_KEYS = [
   "experiences.badge_soon",
   "experiences.badge_soon_short",
-  "experiences.breadcrumb_root",
-  "experiences.breadcrumb_aria",
   "experiences.approach_eyebrow",
   "experiences.included_eyebrow",
   "experiences.included_title",

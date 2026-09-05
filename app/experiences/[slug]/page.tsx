@@ -108,19 +108,6 @@ export default async function ExperiencePage({
             {/* max-w-2xl et pas xl : à 576px, « Massage & bien-être » cassait sur
                 son trait d'union. Le tagline reste bridé plus court en dessous. */}
             <div className="max-w-2xl">
-              <nav
-                aria-label={ts(locale, "experiences.breadcrumb_aria")}
-                className="mb-8 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-navy/55"
-              >
-                <Link href="/" className="transition-colors hover:text-navy">
-                  {ts(locale, "nav.home")}
-                </Link>
-                <span className="text-navy/30" aria-hidden>/</span>
-                <span className="text-navy/75">
-                  {ts(locale, "experiences.breadcrumb_root")}
-                </span>
-              </nav>
-
               <div className="mb-3 flex items-center gap-2.5">
                 <KayvilaPngIcon name={d.icon} size={20} alt="" className="shrink-0" />
                 <p className="text-[9px] font-bold uppercase tracking-[0.48em] text-navy/60">
