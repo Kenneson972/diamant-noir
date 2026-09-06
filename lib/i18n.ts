@@ -911,7 +911,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     "experiences.masseur.title": "Massage & bien-être",
     "experiences.masseur.eyebrow": "Bien-être",
-    "experiences.masseur.tagline": "Un praticien vient à vous, entre deux journées de mer.",
+    "experiences.masseur.tagline": "Un praticien vient à vous, entre deux journées à la plage.",
     "experiences.masseur.meta_description": "Massage et soins bien-être à la villa en Martinique, avec des praticiens sélectionnés par Kayvila. Prestation bientôt disponible.",
     "experiences.masseur.intro": "En vacances, personne n'a envie de reprendre la voiture pour aller se détendre. Nous préférons faire venir le soin jusqu'à vous : une table installée sur la terrasse ou au bord du bassin, le bruit de la mer, et une heure pour soi. Nous travaillons avec des praticiens installés en Martinique, choisis pour leur formation, leur discrétion et leur régularité. Vous nous dites le moment qui vous arrange, nous nous occupons du reste. Rien à préparer, rien à ranger : la villa retrouve son calme aussitôt après.",
     "experiences.masseur.item_1_title": "Praticiens sélectionnés",
@@ -934,7 +934,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     "experiences.chef-cuisinier.title": "Chef cuisinier",
     "experiences.chef-cuisinier.eyebrow": "Table privée",
-    "experiences.chef-cuisinier.tagline": "Une grande tablée chez vous, et personne en cuisine le lendemain.",
+    "experiences.chef-cuisinier.tagline": "Une grande tablée chez vous, et rien à ranger le lendemain.",
     "experiences.chef-cuisinier.meta_description": "Chef cuisinier à la villa en Martinique : menu créole sur mesure, service à table et cuisine remise en état. Prestation Kayvila bientôt disponible.",
     "experiences.chef-cuisinier.intro": "Un dîner d'anniversaire, un premier soir d'arrivée, un déjeuner qui s'étire : certains repas méritent que personne ne reste coincé derrière les fourneaux. Nous faisons venir un chef à la villa, avec son marché, son menu et son service. La cuisine créole que nous aimons — poisson du jour, épices, produits de saison — travaillée sans lourdeur et adaptée à vos envies comme à vos allergies. À la fin du repas, la cuisine est rendue telle que vous l'avez trouvée. Vous, vous restez à table.",
     "experiences.chef-cuisinier.item_1_title": "Menu construit avec vous",
@@ -1884,7 +1884,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     "experiences.masseur.title": "Massage & wellbeing",
     "experiences.masseur.eyebrow": "Wellbeing",
-    "experiences.masseur.tagline": "A therapist comes to you, between two days by the sea.",
+    "experiences.masseur.tagline": "A therapist comes to you, between two days at the beach.",
     "experiences.masseur.meta_description": "Massage and wellbeing treatments at the villa in Martinique, with therapists selected by Kayvila. Service coming soon.",
     "experiences.masseur.intro": "On holiday, nobody wants to get back in the car just to unwind. We would rather bring the treatment to you: a table set up on the terrace or by the pool, the sound of the sea, and an hour to yourself. We work with therapists based in Martinique, chosen for their training, their discretion and their reliability. You tell us the moment that suits you, we handle the rest. Nothing to prepare, nothing to tidy away: the villa is quiet again the minute it's over.",
     "experiences.masseur.item_1_title": "Selected therapists",
@@ -1907,7 +1907,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     "experiences.chef-cuisinier.title": "Private chef",
     "experiences.chef-cuisinier.eyebrow": "Private table",
-    "experiences.chef-cuisinier.tagline": "A long table at the villa, and nobody stuck in the kitchen the next morning.",
+    "experiences.chef-cuisinier.tagline": "A long table at the villa, and nothing to tidy up the next morning.",
     "experiences.chef-cuisinier.meta_description": "A chef cooking at your villa in Martinique: bespoke creole menu, table service, kitchen left spotless. Kayvila service coming soon.",
     "experiences.chef-cuisinier.intro": "A birthday dinner, a first evening after landing, a lunch that stretches into the afternoon: some meals deserve to have nobody stuck at the stove. We bring a chef to the villa, with the shopping, the menu and the service. The creole cooking we love — catch of the day, spices, seasonal produce — done lightly and adapted to your tastes and any allergies. When the meal is over, the kitchen is left exactly as you found it. You stay at the table.",
     "experiences.chef-cuisinier.item_1_title": "A menu written with you",
@@ -2887,7 +2887,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     "experiences.chef-cuisinier.title": "Chef privado",
     "experiences.chef-cuisinier.eyebrow": "Mesa privada",
-    "experiences.chef-cuisinier.tagline": "Una gran mesa en la villa, y nadie en la cocina al día siguiente.",
+    "experiences.chef-cuisinier.tagline": "Una gran mesa en la villa, y nada que recoger al día siguiente.",
     "experiences.chef-cuisinier.meta_description": "Chef que cocina en tu villa en Martinica: menú criollo a medida, servicio en mesa y cocina impecable. Servicio Kayvila próximamente.",
     "experiences.chef-cuisinier.intro": "Una cena de cumpleaños, la primera noche tras llegar, una comida que se alarga: hay comidas que merecen que nadie se quede atrapado entre fogones. Llevamos un chef a la villa, con su compra, su menú y su servicio. La cocina criolla que nos gusta — pescado del día, especias, producto de temporada — trabajada sin pesadez y adaptada a vuestros gustos y alergias. Al terminar, la cocina queda tal y como la encontrasteis. Vosotros os quedáis en la mesa.",
     "experiences.chef-cuisinier.item_1_title": "Un menú escrito contigo",
